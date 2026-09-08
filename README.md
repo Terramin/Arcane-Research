@@ -4,7 +4,8 @@ Ported version of Thaumcraft 6 for Minecraft 1.20.1 Forge
 
 
 
-> ## Port is \\\\\\\~80% complete
+> ## Port is \\\\\\\~89% complete
+> UPD: Full port biome, structure
 
 
 
