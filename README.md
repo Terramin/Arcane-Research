@@ -46,4 +46,19 @@ Ported version of Thaumcraft 6 for Minecraft 1.20.1 Forge
 
 <img src="banner/13.png" width="40%" alt="...">
 </p>
-
+<p align="center">
+  <img src="banner/14.png" width="48%" alt="...">
+  <img src="banner/15.png" width="48%" alt="...">
+  <br>
+  <img src="banner/16.png" width="80%" alt="...">
+</p>
+<p align="center">
+  <img src="banner/17.png" width="48%" alt="...">
+  <img src="banner/18.png" width="48%" alt="...">
+  <br>
+  <img src="banner/19.png" width="80%" alt="...">
+</p>
+<p align="center">
+  <img src="banner/20.png" width="48%" alt="...">
+  <img src="banner/21.png" width="48%" alt="...">
+</p>
