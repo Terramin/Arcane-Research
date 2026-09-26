@@ -15,6 +15,12 @@ Ported version of Thaumcraft 6 for Minecraft 1.20.1 Forge
 
 > Thaumcraft 6 will also be ported to NeoForge versions 1.21.1 and 26.2 once all bugs, errors, and inaccuracies have been fully resolved.
 
+## TODO
+
+<p align="center">
+<img src="todo.png" width="40%" alt="...">
+</p>
+
 ## Showcase
 
 <p align="center">
