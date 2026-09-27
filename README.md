@@ -18,7 +18,10 @@ Ported version of Thaumcraft 6 for Minecraft 1.20.1 Forge
 ## TODO
 
 <p align="center">
-<img src="banner/todo.png" width="40%" alt="...">
+  <img src="banner/todo.png" width="48%" alt="...">
+  <img src="banner/todo1.png" width="48%" alt="...">
+  <br>
+  <img src="banner/todo2.png" width="80%" alt="...">
 </p>
 
 ## Showcase
