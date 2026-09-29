@@ -17,6 +17,20 @@ Ported version of Thaumcraft 6 for Minecraft 1.20.1 Forge
 >
 > New content will be added, and mechanics will be expanded.
 
+I had a good laugh while browsing the discussions about the port online, so here are some answers to the questions raised:
+
+1. Will the source code be publicly available or released as a "shadow drop"? No!!! Absolutely not!!! Not at all. Only I—and my own twisted mind—own the code. (There will only be a JAR file for the fans.)
+
+2. The repository will be deleted after the release. Gone for good—nobody is getting the code. (I see no reason to compete with Team CoFH, since I’m doing this just for myself and for anyone wanting to satisfy their craving before TC7 comes out.)
+
+3. This repository is hosted on a separate account on purpose.
+
+4. This one really cracked me up. Do you seriously think the avatar was AI-generated? To me, it sounds like you’ve got a problem if you see AI where there isn't any. (Source: *You're an Extra in an Adult Webtoon*—I can't give you the exact chapter, but try checking around page 46 or 48.)
+
+5. And here’s something just as funny. Do you really think someone with four years of commercial development experience—plus two years of creating APK mods back in 2016–2017—wouldn't be able to throw the file into something like Jadx, JD, or Ghidra and manually reconstruct the source code? Are you really that naive? Porting the renderer to the new version's engine actually gave me more trouble than converting Dalvik bytecode into human-readable Java; that part was a relatively new experience for me, as I’d never done anything like it before.
+
+(Text translated via Google Translate)
+
 ## TODO
 
 <p align="center">
