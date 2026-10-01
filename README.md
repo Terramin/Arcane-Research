@@ -127,5 +127,3 @@ Any third-party images, screenshots, or visual materials used for comparison, pa
 The author(s) do not guarantee that this mod will work correctly with every version of the game, mod loader, operating system, modpack, or other software.
 
 Use of this mod is entirely at your own risk. To the maximum extent permitted by applicable law, the author(s) shall not be held liable for any direct, indirect, incidental, special, consequential, or other damages arising from or related to the downloading, installation, modification, distribution, or use of this mod.
-
-Nothing in this disclaimer grants any additional rights to copy, distribute, modify, publish, sell, or otherwise redistribute the mod beyond those expressly permitted by the applicable license.
