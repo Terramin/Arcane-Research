@@ -83,6 +83,9 @@ I had a good laugh while browsing the discussions about the port online, so here
   <img src="banner/19.png" width="80%" alt="...">
 </p>
 <p align="center">
+  <img src="banner/20.png" width="48%" alt="...">
+  <img src="banner/21.png" width="48%" alt="...">
+</p>
 
 
 
@@ -126,6 +129,3 @@ The author(s) do not guarantee that this mod will work correctly with every vers
 Use of this mod is entirely at your own risk. To the maximum extent permitted by applicable law, the author(s) shall not be held liable for any direct, indirect, incidental, special, consequential, or other damages arising from or related to the downloading, installation, modification, distribution, or use of this mod.
 
 Nothing in this disclaimer grants any additional rights to copy, distribute, modify, publish, sell, or otherwise redistribute the mod beyond those expressly permitted by the applicable license.
-  <img src="banner/20.png" width="48%" alt="...">
-  <img src="banner/21.png" width="48%" alt="...">
-</p>
