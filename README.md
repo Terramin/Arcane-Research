@@ -9,6 +9,8 @@ Ported version for Minecraft 1.20.1 Forge
 > Forge 47.3.0 + terrablender:3.0.1.10 + JEI + Curios
 
 > New content will be added, and mechanics will be expanded.
+>
+> The textures were created by Ufoss_xxs. Thanks to him for the help.(The author distributes the textures under a free license, subject to attribution.)
 
 I had a good laugh while browsing the discussions about the port online, so here are some answers to the questions raised:
 
