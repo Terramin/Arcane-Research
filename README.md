@@ -33,7 +33,12 @@ I had a good laugh while browsing the discussions about the port online, so here
   <br>
   <img src="banner/todo2.png" width="80%" alt="...">
 </p>
-
+<p align="center">
+  <img src="banner/todo3.png" width="48%" alt="...">
+  <img src="banner/todo4.png" width="48%" alt="...">
+  <br>
+  <img src="banner/todo5.png" width="80%" alt="...">
+</p>
 ## Showcase
 
 <p align="center">
