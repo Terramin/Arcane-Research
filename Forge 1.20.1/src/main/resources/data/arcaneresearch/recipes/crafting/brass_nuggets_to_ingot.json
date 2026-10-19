@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:brass_stuff",
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "key": {
+    "N": {"item": "arcaneresearch:brass_nugget"}
+  },
+  "result": {
+    "item": "arcaneresearch:brass_ingot",
+    "count": 1
+  }
+}

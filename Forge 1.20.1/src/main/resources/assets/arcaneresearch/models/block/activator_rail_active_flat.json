@@ -1,0 +1,6 @@
+{
+    "parent": "block/rail_flat",
+    "textures": {
+        "rail": "arcaneresearch:block/rail_activator_powered"
+    }
+}

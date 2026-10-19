@@ -1,0 +1,8 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "arcaneresearch:crystal"
+  ],
+  "step": "underground_decoration"
+}

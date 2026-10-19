@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "BASEALCHEMY",
+  "vis": 25,
+  "crystals": {
+    "aqua": 5,
+    "ignis": 5
+  },
+  "pattern": [
+    "I I",
+    "I I",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:crucible"
+  }
+}

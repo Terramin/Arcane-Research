@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/block",
+    "textures": {
+        "particle": "arcaneresearch:models/obelisk_side"
+    }
+}

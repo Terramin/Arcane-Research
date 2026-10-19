@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "arcaneresearch:block/eldritch_stone_1",
+        "up": "arcaneresearch:block/eldritch_stone_1",
+        "down": "arcaneresearch:block/eldritch_stone_1",
+        "east": "arcaneresearch:block/eldritch_stone_2",
+        "west": "arcaneresearch:block/eldritch_stone_2",
+        "north": "arcaneresearch:block/eldritch_stone_3",
+        "south": "arcaneresearch:block/eldritch_stone_3"
+    }
+}

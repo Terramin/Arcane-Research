@@ -1,0 +1,69 @@
+{
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [75, 45, 0],
+            "translation": [ 0, 2.5, 0 ],
+            "scale": [0.45, 0.45, 0.45]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [75, 45, 0],
+            "translation": [ 0, 2.5, 0 ],
+            "scale": [0.45, 0.45, 0.45]
+        },
+        "firstperson_righthand": {
+            "rotation": [0, 45, 0],
+            "scale": [0.5, 0.5, 0.5]
+        },
+        "firstperson_lefthand": {
+            "rotation": [0, 45, 0],
+            "scale": [0.5, 0.5, 0.5]
+        },
+        "ground": {
+            "translation": [0, 3, 0],
+            "scale": [0.25, 0.25, 0.25]
+        },
+        "gui": {
+            "rotation": [30, 225, 0],
+            "scale": [0.7, 0.7, 0.7]
+        },
+        "head": {
+            "translation": [0, 14, 0]
+        },
+        "fixed": {
+            "scale": [0.5, 0.5, 0.5]
+        }
+    },
+    "textures": {
+        "side": "arcaneresearch:block/loot_crate_side_0",
+        "bottom": "arcaneresearch:block/loot_crate_top",
+        "top": "arcaneresearch:block/loot_crate_top",
+        "particle": "arcaneresearch:block/loot_crate_side_0"
+    },
+    "elements": [
+        {
+            "from": [1, 0, 1],
+            "to": [15, 14, 15],
+            "faces": {
+                "up": {
+                    "texture": "#top"
+                },
+                "down": {
+                    "texture": "#bottom",
+                    "cullface": "down"
+                },
+                "west": {
+                    "texture": "#side"
+                },
+                "east": {
+                    "texture": "#side"
+                },
+                "north": {
+                    "texture": "#side"
+                },
+                "south": {
+                    "texture": "#side"
+                }
+            }
+        }
+    ]
+}

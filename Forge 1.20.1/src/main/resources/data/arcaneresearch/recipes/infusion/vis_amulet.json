@@ -1,0 +1,26 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "VISAMULET",
+  "instability": 6,
+  "center": {
+    "item": "arcaneresearch:bauble_amulet_mundane"
+  },
+  "ingredients": [
+    {
+      "item": "arcaneresearch:vis_resonator"
+    },
+    { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" }
+  ],
+  "aspects": {
+    "auram": 50,
+    "potentia": 100,
+    "vacuos": 50
+  },
+  "result": {
+    "item": "arcaneresearch:amulet_vis_crafted"
+  }
+}

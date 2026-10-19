@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "W W"
+  ],
+  "key": {
+    "S": {"tag": "minecraft:wooden_slabs"},
+    "W": {"tag": "minecraft:planks"}
+  },
+  "result": {
+    "item": "arcaneresearch:table_wood",
+    "count": 1
+  }
+}

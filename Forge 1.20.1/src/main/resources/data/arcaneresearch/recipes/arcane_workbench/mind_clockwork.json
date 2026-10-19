@@ -1,0 +1,23 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "MINDCLOCKWORK@2",
+  "vis": 25,
+  "crystals": {
+    "ignis": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    " P ",
+    "PGP",
+    "BCB"
+  ],
+  "key": {
+    "P": {"tag": "forge:glass_panes"},
+    "G": {"item": "arcaneresearch:mechanism_simple"},
+    "B": {"tag": "forge:plates/brass"},
+    "C": {"item": "minecraft:comparator"}
+  },
+  "result": {
+    "item": "arcaneresearch:brain_clockwork"
+  }
+}

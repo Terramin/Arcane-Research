@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ADVANCEDTURRET",
+  "vis": 150,
+  "crystals": {
+    "aer": 2
+  },
+  "pattern": [
+    "PMP",
+    "PTP",
+    "   "
+  ],
+  "key": {
+    "P": {"tag": "forge:plates/iron"},
+    "M": {"item": "arcaneresearch:brain_curious"},
+    "T": {"item": "arcaneresearch:turret_placer_basic"}
+  },
+  "result": {
+    "item": "arcaneresearch:turret_placer_advanced"
+  }
+}

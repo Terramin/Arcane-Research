@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "facing=east,part=main": {
+      "model": "arcaneresearch:block/cognition_note_table"
+    },
+    "facing=east,part=side": {
+      "model": "arcaneresearch:block/cognition_note_table_side"
+    },
+    "facing=south,part=main": {
+      "model": "arcaneresearch:block/cognition_note_table",
+      "y": 90
+    },
+    "facing=south,part=side": {
+      "model": "arcaneresearch:block/cognition_note_table_side"
+    },
+    "facing=west,part=main": {
+      "model": "arcaneresearch:block/cognition_note_table",
+      "y": 180
+    },
+    "facing=west,part=side": {
+      "model": "arcaneresearch:block/cognition_note_table_side"
+    },
+    "facing=north,part=main": {
+      "model": "arcaneresearch:block/cognition_note_table",
+      "y": 270
+    },
+    "facing=north,part=side": {
+      "model": "arcaneresearch:block/cognition_note_table_side"
+    }
+  }
+}

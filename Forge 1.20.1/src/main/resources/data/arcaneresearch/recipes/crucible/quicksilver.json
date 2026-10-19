@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "UNLOCKALCHEMY",
+  "catalyst": {
+    "item": "minecraft:redstone"
+  },
+  "aspects": {
+    "metallum": 5,
+    "permutatio": 3
+  },
+  "result": {
+    "item": "arcaneresearch:quicksilver"
+  }
+}

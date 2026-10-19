@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:tallowcandles",
+  "pattern": [
+    " S ",
+    " T ",
+    " T "
+  ],
+  "key": {
+    "S": {"tag": "forge:string"},
+    "T": {"item": "arcaneresearch:tallow"}
+  },
+  "result": {
+    "item": "arcaneresearch:candle_white",
+    "count": 3
+  }
+}

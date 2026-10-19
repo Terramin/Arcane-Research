@@ -1,0 +1,12 @@
+{
+  "type": "arcaneresearch:infusion_enchantment",
+  "enchantment": "DESTRUCTIVE",
+  "aspects": {
+    "aversio": 200,
+    "perditio": 250
+  },
+  "components": [
+    { "item": "minecraft:enchanted_book" },
+    { "item": "minecraft:tnt" }
+  ]
+}

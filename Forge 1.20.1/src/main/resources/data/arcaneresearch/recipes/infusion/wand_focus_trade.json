@@ -1,0 +1,27 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSTRADE",
+  "instability": 4,
+  "center": {
+    "item": "minecraft:glass"
+  },
+  "ingredients": [
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" },
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" },
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" },
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "minecraft:gold_ingot" }
+  ],
+  "aspects": {
+    "ordo": 250,
+    "permutatio": 50,
+    "terra": 25,
+    "praecantatio": 50
+  },
+  "result": {
+    "item": "arcaneresearch:wand_focus_trade"
+  }
+}

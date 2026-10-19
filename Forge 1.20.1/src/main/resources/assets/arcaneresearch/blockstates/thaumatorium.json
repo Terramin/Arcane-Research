@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "arcaneresearch:block/thaumatorium" },
+    "facing=south": { "model": "arcaneresearch:block/thaumatorium", "y": 180 },
+    "facing=east": { "model": "arcaneresearch:block/thaumatorium", "y": 90 },
+    "facing=west": { "model": "arcaneresearch:block/thaumatorium", "y": 270 }
+  }
+}

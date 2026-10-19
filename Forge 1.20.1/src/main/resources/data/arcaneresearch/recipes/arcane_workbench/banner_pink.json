@@ -1,0 +1,25 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "group": "arcaneresearch:banners",
+  "research": "BASEINFUSION",
+  "vis": 10,
+  "pattern": [
+    "WS",
+    "WS",
+    "WB"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:pink_wool"
+    },
+    "S": {
+      "tag": "forge:rods/wooden"
+    },
+    "B": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:banner_pink"
+  }
+}

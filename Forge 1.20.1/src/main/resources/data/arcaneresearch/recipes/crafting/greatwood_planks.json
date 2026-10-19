@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item": "arcaneresearch:greatwood_log"}
+  ],
+  "result": {
+    "item": "arcaneresearch:greatwood_planks",
+    "count": 4
+  }
+}

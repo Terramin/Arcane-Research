@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "KKK"
+  ],
+  "key": {
+    "K": {"item": "arcaneresearch:ancient_stone"}
+  },
+  "result": {
+    "item": "arcaneresearch:ancient_stone_slab",
+    "count": 6
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:brass_stuff",
+  "pattern": [
+    "III"
+  ],
+  "key": {
+    "I": {"item": "arcaneresearch:brass_ingot"}
+  },
+  "result": {
+    "item": "arcaneresearch:plate_brass",
+    "count": 3
+  }
+}

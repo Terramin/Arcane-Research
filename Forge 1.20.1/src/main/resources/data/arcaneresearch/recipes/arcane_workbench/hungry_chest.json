@@ -1,0 +1,25 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "HUNGRYCHEST",
+  "vis": 15,
+  "crystals": {
+    "terra": 1,
+    "aqua": 1
+  },
+  "pattern": [
+    "WTW",
+    "W W",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "arcaneresearch:greatwood_planks"
+    },
+    "T": {
+      "tag": "minecraft:wooden_trapdoors"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:hungry_chest"
+  }
+}

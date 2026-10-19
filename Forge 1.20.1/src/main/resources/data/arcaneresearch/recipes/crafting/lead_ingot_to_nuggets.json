@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:compat_nuggets",
+  "ingredients": [
+    {"tag": "forge:ingots/lead"}
+  ],
+  "result": {
+    "item": "arcaneresearch:nugget_lead",
+    "count": 9
+  }
+}

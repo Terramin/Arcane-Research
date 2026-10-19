@@ -1,0 +1,37 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "IMPROVEDSMELTING",
+  "vis": 100,
+  "crystals": {
+    "aer": 1,
+    "terra": 1
+  },
+  "pattern": [
+    "WTW",
+    "RGR",
+    "IBI"
+  ],
+  "key": {
+    "W": {
+      "item": "arcaneresearch:greatwood_planks"
+    },
+    "T": {
+      "item": "arcaneresearch:tube_filter"
+    },
+    "R": {
+      "item": "arcaneresearch:plate_brass"
+    },
+    "G": {
+      "item": "arcaneresearch:alchemical_brass_block"
+    },
+    "I": {
+      "item": "arcaneresearch:plate_iron"
+    },
+    "B": {
+      "item": "arcaneresearch:bellows"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:smelter_aux"
+  }
+}

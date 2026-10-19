@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ELEMENTALTOOLS",
+  "instability": 1,
+  "center": {
+    "item": "arcaneresearch:thaumium_axe"
+  },
+  "ingredients": [
+    { "type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "item": "arcaneresearch:nugget_rareearth" },
+    { "item": "arcaneresearch:greatwood_planks" }
+  ],
+  "aspects": {
+    "aqua": 60,
+    "herba": 30
+  },
+  "result": {
+    "item": "arcaneresearch:elemental_axe",
+    "nbt": "{infench:[{id:0s,lvl:1s},{id:2s,lvl:1s}]}"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "RUNICKINETIC",
+  "instability": 7,
+  "center": {
+    "item": "arcaneresearch:runic_girdle"
+  },
+  "ingredients": [
+    { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "type": "forge:partial_nbt", "item": "minecraft:splash_potion", "nbt": "{Potion:\"minecraft:strong_harming\"}" },
+    { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "type": "arcaneresearch:crystal", "aspect": "aer" }
+  ],
+  "aspects": {
+    "praemunio": 33,
+    "praecantatio": 55,
+    "aer": 64
+  },
+  "result": {
+    "item": "arcaneresearch:runic_girdle_kinetic"
+  }
+}

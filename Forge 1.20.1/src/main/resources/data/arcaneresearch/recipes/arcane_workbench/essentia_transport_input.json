@@ -1,0 +1,23 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ESSENTIATRANSPORT",
+  "vis": 100,
+  "crystals": {
+    "aer": 1,
+    "aqua": 1
+  },
+  "pattern": [
+    "   ",
+    "BQB",
+    "IGI"
+  ],
+  "key": {
+    "B": {"tag": "forge:plates/brass"},
+    "Q": {"item": "minecraft:dispenser"},
+    "I": {"tag": "forge:plates/iron"},
+    "G": {"item": "arcaneresearch:alchemical_brass_block"}
+  },
+  "result": {
+    "item": "arcaneresearch:essentia_input"
+  }
+}

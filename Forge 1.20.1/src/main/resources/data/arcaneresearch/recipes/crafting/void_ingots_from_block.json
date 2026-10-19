@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:void_stuff",
+  "ingredients": [
+    {"item": "arcaneresearch:void_metal_block"}
+  ],
+  "result": {
+    "item": "arcaneresearch:void_metal_ingot",
+    "count": 9
+  }
+}

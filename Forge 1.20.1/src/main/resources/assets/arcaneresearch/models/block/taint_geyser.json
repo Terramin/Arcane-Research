@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "arcaneresearch:block/taint_geyser_side",
+    "top": "arcaneresearch:block/taint_geyser_top",
+    "side": "arcaneresearch:block/taint_geyser_side"
+  }
+}
