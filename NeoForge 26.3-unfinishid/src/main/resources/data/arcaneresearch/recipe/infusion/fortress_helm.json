@@ -1,0 +1,21 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "ARMORFORTRESS",
+  "instability": 3,
+  "center": "arcaneresearch:thaumium_helm",
+  "ingredients": [
+    "arcaneresearch:plate_thaumium",
+    "arcaneresearch:plate_thaumium",
+    "#c:ingots/gold",
+    "#c:ingots/gold",
+    "#c:gems/emerald"
+  ],
+  "aspects": {
+    "metallum": 50,
+    "praemunio": 20,
+    "potentia": 25
+  },
+  "result": {
+    "id": "arcaneresearch:fortress_helm"
+  }
+}

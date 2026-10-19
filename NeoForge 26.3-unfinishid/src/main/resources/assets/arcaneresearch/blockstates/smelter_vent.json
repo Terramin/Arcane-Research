@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model": "arcaneresearch:block/smelter_vent"},
+    "facing=south": {"model": "arcaneresearch:block/smelter_vent", "y": 180},
+    "facing=east": {"model": "arcaneresearch:block/smelter_vent", "y": 90},
+    "facing=west": {"model": "arcaneresearch:block/smelter_vent", "y": 270}
+  }
+}

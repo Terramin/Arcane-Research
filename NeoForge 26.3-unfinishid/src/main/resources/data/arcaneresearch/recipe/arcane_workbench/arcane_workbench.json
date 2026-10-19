@@ -1,0 +1,26 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "UNLOCKAUROMANCY",
+  "vis": 50,
+  "crystals": {
+    "aer": 1,
+    "aqua": 1,
+    "ignis": 1,
+    "terra": 1,
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "SSS",
+    "WTW",
+    "WSW"
+  ],
+  "key": {
+    "S": "#c:stones",
+    "W": "#minecraft:planks",
+    "T": "arcaneresearch:table_wood"
+  },
+  "result": {
+    "id": "arcaneresearch:arcane_workbench"
+  }
+}

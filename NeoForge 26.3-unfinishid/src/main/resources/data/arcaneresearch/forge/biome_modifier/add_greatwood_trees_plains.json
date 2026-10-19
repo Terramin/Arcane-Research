@@ -1,0 +1,6 @@
+{
+  "type": "c:add_features",
+  "biomes": "#arcaneresearch:greatwood_common",
+  "features": "arcaneresearch:greatwood_tree_common",
+  "step": "vegetal_decoration"
+}

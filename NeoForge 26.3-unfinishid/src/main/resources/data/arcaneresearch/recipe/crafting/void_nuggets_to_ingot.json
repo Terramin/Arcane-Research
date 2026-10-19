@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:void_stuff",
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "key": {
+    "N": "arcaneresearch:void_metal_nugget"
+  },
+  "result": {
+    "id": "arcaneresearch:void_metal_ingot",
+    "count": 1
+  }
+}

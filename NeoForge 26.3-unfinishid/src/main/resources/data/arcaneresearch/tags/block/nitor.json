@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:nitor_white",
+    "arcaneresearch:nitor_orange",
+    "arcaneresearch:nitor_magenta",
+    "arcaneresearch:nitor_light_blue",
+    "arcaneresearch:nitor_yellow",
+    "arcaneresearch:nitor_lime",
+    "arcaneresearch:nitor_pink",
+    "arcaneresearch:nitor_gray",
+    "arcaneresearch:nitor_light_gray",
+    "arcaneresearch:nitor_cyan",
+    "arcaneresearch:nitor_purple",
+    "arcaneresearch:nitor_blue",
+    "arcaneresearch:nitor_brown",
+    "arcaneresearch:nitor_green",
+    "arcaneresearch:nitor_red",
+    "arcaneresearch:nitor_black"
+  ]
+}

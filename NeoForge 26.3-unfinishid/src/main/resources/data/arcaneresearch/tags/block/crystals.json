@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:crystal_air",
+    "arcaneresearch:crystal_fire",
+    "arcaneresearch:crystal_water",
+    "arcaneresearch:crystal_earth",
+    "arcaneresearch:crystal_order",
+    "arcaneresearch:crystal_entropy",
+    "arcaneresearch:crystal_flux"
+  ]
+}

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "arcaneresearch",
+  "name": "Arcane Research",
+  "description": "Arcane Research",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Terramin"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

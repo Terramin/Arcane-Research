@@ -1,0 +1,19 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "SEALBREAK",
+  "instability": 1,
+  "aspects": {
+    "instrumentum": 10,
+    "perditio": 10,
+    "humanus": 10
+  },
+  "center": "arcaneresearch:blank_seal",
+  "ingredients": [
+    "minecraft:golden_axe",
+    "minecraft:golden_pickaxe",
+    "minecraft:golden_shovel"
+  ],
+  "result": {
+    "id": "arcaneresearch:seal_breaker"
+  }
+}

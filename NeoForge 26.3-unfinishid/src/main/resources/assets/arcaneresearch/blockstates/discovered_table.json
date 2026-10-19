@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=z": {
+      "model": "arcaneresearch:block/discovered_table"
+    },
+    "axis=x": {
+      "model": "arcaneresearch:block/discovered_table",
+      "y": 90
+    }
+  }
+}

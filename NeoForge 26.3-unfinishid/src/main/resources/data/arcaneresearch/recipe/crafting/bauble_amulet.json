@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:baubles_stuff",
+  "pattern": [
+    " S ",
+    "S S",
+    " I "
+  ],
+  "key": {
+    "S": "#c:strings",
+    "I": "arcaneresearch:brass_ingot"
+  },
+  "result": {
+    "id": "arcaneresearch:bauble_amulet_mundane",
+    "count": 1
+  }
+}

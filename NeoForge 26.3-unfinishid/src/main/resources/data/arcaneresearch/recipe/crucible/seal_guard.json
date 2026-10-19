@@ -1,0 +1,13 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALGUARD",
+  "catalyst": "arcaneresearch:blank_seal",
+  "aspects": {
+    "aversio": 20,
+    "praemunio": 20
+  },
+  "result": {
+    "id": "arcaneresearch:seal_guard",
+    "count": 1
+  }
+}

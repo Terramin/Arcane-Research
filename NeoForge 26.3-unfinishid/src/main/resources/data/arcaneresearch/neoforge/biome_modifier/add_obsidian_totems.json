@@ -1,0 +1,8 @@
+﻿{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "arcaneresearch:obsidian_totem"
+  ],
+  "step": "surface_structures"
+}

@@ -1,0 +1,11 @@
+﻿{
+  "model": {
+    "type": "minecraft:model",
+    "model": "arcaneresearch:item/candle_magenta",
+    "tints": [
+      {
+        "type": "arcaneresearch:candle"
+      }
+    ]
+  }
+}

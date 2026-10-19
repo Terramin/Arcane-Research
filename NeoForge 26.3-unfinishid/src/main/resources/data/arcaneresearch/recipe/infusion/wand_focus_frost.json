@@ -1,0 +1,25 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSFROST",
+  "instability": 4,
+  "center": "minecraft:glass",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aqua" },
+    "minecraft:snowball",
+    "minecraft:snowball",
+    "minecraft:snowball",
+    "minecraft:snowball"
+  ],
+  "aspects": {
+    "aqua": 250,
+    "gelum": 25,
+    "ordo": 25,
+    "praecantatio": 50
+  },
+  "result": {
+    "id": "arcaneresearch:wand_focus_frost"
+  }
+}

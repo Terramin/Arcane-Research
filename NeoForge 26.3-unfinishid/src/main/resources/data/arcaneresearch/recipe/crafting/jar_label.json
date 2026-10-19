@@ -1,0 +1,15 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "#c:dyes/black",
+    "minecraft:slime_ball",
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper"
+  ],
+  "result": {
+    "id": "arcaneresearch:label_blank",
+    "count": 4
+  }
+}

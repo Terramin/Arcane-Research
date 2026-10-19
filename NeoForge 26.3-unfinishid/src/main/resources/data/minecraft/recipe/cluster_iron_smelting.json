@@ -1,0 +1,8 @@
+﻿{
+  "type": "minecraft:smelting",
+  "ingredient": "arcaneresearch:cluster_iron",
+  "result": {"id": "minecraft:iron_ingot", "count": 2},
+  "experience": 1.0,
+  "cookingtime": 200,
+  "group": "arcaneresearch:cluster_smelting"
+}

@@ -1,0 +1,12 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:nitor_color",
+  "ingredients": [
+    "minecraft:lime_dye",
+    "#arcaneresearch:nitor"
+  ],
+  "result": {
+    "id": "arcaneresearch:nitor_lime",
+    "count": 1
+  }
+}

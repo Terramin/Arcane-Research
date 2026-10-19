@@ -1,0 +1,12 @@
+{
+  "type": "c:add_spawns",
+  "biomes": "#arcaneresearch:is_magical",
+  "spawners": [
+    {
+      "type": "arcaneresearch:pech",
+      "weight": 10,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

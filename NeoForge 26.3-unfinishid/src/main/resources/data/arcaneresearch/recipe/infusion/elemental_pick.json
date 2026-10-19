@@ -1,0 +1,21 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "ELEMENTALTOOLS",
+  "instability": 1,
+  "center": "arcaneresearch:thaumium_pick",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ignis" },
+    "arcaneresearch:nugget_rareearth",
+    "arcaneresearch:greatwood_planks"
+  ],
+  "aspects": {
+    "ignis": 30,
+    "metallum": 30,
+    "sensus": 30
+  },
+  "result": {
+    "id": "arcaneresearch:elemental_pick",
+    "components": { "minecraft:custom_data": {"infench":[{"id":4,"lvl":1},{"id":3,"lvl":2}]} }
+  }
+}

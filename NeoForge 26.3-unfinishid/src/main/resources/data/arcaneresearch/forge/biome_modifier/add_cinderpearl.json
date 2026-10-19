@@ -1,0 +1,6 @@
+{
+  "type": "c:add_features",
+  "biomes": "minecraft:desert",
+  "features": "arcaneresearch:cinderpearl_patch",
+  "step": "vegetal_decoration"
+}

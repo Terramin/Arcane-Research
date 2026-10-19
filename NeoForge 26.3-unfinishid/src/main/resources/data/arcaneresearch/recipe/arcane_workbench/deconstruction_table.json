@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "DECONSTRUCTOR",
+  "vis": 20,
+  "crystals": {
+    "perditio": 1
+  },
+  "pattern": [
+    " T ",
+    "AXP"
+  ],
+  "key": {
+    "T": "arcaneresearch:thaumometer",
+    "A": "minecraft:golden_axe",
+    "X": "arcaneresearch:table_wood",
+    "P": "minecraft:golden_pickaxe"
+  },
+  "result": {
+    "id": "arcaneresearch:deconstruction_table"
+  }
+}

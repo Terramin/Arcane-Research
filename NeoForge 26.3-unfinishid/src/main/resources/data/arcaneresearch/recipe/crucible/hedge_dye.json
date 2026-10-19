@@ -1,0 +1,12 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "ingredient": "minecraft:bone_meal",
+  "result": {
+    "id": "minecraft:red_dye",
+    "count": 2
+  },
+  "aspects": {
+    "sensus": 5
+  },
+  "research": "HEDGEALCHEMY@2"
+}

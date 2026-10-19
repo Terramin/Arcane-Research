@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "arcaneresearch:block/ancient_stone_0",
+    "top": "arcaneresearch:block/ancient_stone_0",
+    "side": "arcaneresearch:block/ancient_stone_0"
+  }
+}

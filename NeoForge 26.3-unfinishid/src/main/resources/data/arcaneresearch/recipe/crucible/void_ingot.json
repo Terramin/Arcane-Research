@@ -1,0 +1,13 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "group": "arcaneresearch:void_stuff",
+  "research": "BASEELDRITCH",
+  "catalyst": "arcaneresearch:void_seed",
+  "aspects": {
+    "metallum": 10,
+    "vitium": 5
+  },
+  "result": {
+    "id": "arcaneresearch:void_metal_ingot"
+  }
+}

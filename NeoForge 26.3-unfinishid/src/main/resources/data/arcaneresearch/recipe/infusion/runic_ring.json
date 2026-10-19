@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "RUNICARMOR",
+  "instability": 3,
+  "center": "arcaneresearch:bauble_ring_mundane",
+  "ingredients": [
+    "arcaneresearch:salis_mundus",
+    "arcaneresearch:amber",
+    "arcaneresearch:enchanted_fabric",
+    "#arcaneresearch:nitor",
+    "minecraft:ink_sac"
+  ],
+  "aspects": {
+    "praemunio": 10,
+    "praecantatio": 25,
+    "potentia": 25
+  },
+  "result": {
+    "id": "arcaneresearch:runic_ring"
+  }
+}

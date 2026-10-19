@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INFUSION",
+  "vis": 25,
+  "crystals": {
+    "ordo": 1
+  },
+  "pattern": [
+    "GGG",
+    "G G",
+    "GGG"
+  ],
+  "key": {
+    "G": "#c:nuggets/gold"
+  },
+  "result": {
+    "id": "arcaneresearch:inlay",
+    "count": 8
+  }
+}

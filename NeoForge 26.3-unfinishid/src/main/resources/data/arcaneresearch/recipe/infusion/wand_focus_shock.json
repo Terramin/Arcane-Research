@@ -1,0 +1,25 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSSHOCK",
+  "instability": 4,
+  "center": "minecraft:glass",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    "minecraft:feather",
+    "minecraft:feather",
+    "minecraft:feather",
+    "minecraft:feather"
+  ],
+  "aspects": {
+    "aer": 250,
+    "ordo": 25,
+    "perditio": 25,
+    "praecantatio": 50
+  },
+  "result": {
+    "id": "arcaneresearch:wand_focus_shock"
+  }
+}

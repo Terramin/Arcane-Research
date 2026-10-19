@@ -1,0 +1,12 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "ingredient": "arcaneresearch:tallow",
+  "result": {
+    "id": "arcaneresearch:candle_white",
+    "count": 4
+  },
+  "aspects": {
+    "lux": 5
+  },
+  "research": "HEDGEALCHEMY@2"
+}

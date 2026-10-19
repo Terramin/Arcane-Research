@@ -1,0 +1,15 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:rotten_flesh"
+  },
+  "result": {
+    "id": "arcaneresearch:flesh_block",
+    "count": 1
+  }
+}

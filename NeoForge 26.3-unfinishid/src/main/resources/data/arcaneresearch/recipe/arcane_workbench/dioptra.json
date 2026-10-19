@@ -1,0 +1,23 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "DIOPTRA",
+  "vis": 50,
+  "crystals": {
+    "aer": 1,
+    "aqua": 1
+  },
+  "pattern": [
+    "APA",
+    "IGI",
+    "AAA"
+  ],
+  "key": {
+    "A": "arcaneresearch:arcane_stone",
+    "P": "arcaneresearch:vis_resonator",
+    "I": "arcaneresearch:plate_iron",
+    "G": "arcaneresearch:thaumometer"
+  },
+  "result": {
+    "id": "arcaneresearch:dioptra"
+  }
+}

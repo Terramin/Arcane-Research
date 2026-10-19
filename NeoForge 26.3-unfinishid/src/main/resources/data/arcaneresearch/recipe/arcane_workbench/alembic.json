@@ -1,0 +1,22 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ESSENTIASMELTER",
+  "vis": 50,
+  "crystals": {
+    "aqua": 1
+  },
+  "pattern": [
+    "WFW",
+    "SBS",
+    "WFW"
+  ],
+  "key": {
+    "W": "arcaneresearch:greatwood_planks",
+    "F": "arcaneresearch:filter",
+    "S": "arcaneresearch:plate_brass",
+    "B": "minecraft:bucket"
+  },
+  "result": {
+    "id": "arcaneresearch:alembic"
+  }
+}

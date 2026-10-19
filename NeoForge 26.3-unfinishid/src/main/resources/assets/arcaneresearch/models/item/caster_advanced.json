@@ -1,0 +1,13 @@
+{
+    "parent": "item/generated",    
+    "overrides": [
+        {
+            "predicate": { "arcaneresearch:focus": 0 },
+            "model": "arcaneresearch:item/caster_advanced_model"
+        },
+        {
+            "predicate": { "arcaneresearch:focus": 1 },
+            "model": "arcaneresearch:item/caster_advanced_focus_model"
+        }
+    ]
+}

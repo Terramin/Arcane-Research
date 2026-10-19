@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "ELEMENTALTOOLS",
+  "instability": 1,
+  "center": "arcaneresearch:thaumium_axe",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aqua" },
+    "arcaneresearch:nugget_rareearth",
+    "arcaneresearch:greatwood_planks"
+  ],
+  "aspects": {
+    "aqua": 60,
+    "herba": 30
+  },
+  "result": {
+    "id": "arcaneresearch:elemental_axe",
+    "components": { "minecraft:custom_data": {"infench":[{"id":0,"lvl":1},{"id":2,"lvl":1}]} }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "arcaneresearch:block/infernal_furnace" },
+    "facing=south": { "model": "arcaneresearch:block/infernal_furnace", "y": 180 },
+    "facing=east": { "model": "arcaneresearch:block/infernal_furnace", "y": 90 },
+    "facing=west": { "model": "arcaneresearch:block/infernal_furnace", "y": 270 }
+  }
+}

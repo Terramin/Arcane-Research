@@ -1,0 +1,16 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shapeless",
+  "research": "UNLOCKAUROMANCY@2",
+  "vis": 50,
+  "crystals": {
+    "aer": 1,
+    "aqua": 1
+  },
+  "ingredients": [
+    "arcaneresearch:plate_iron",
+    "#c:gems/quartz"
+  ],
+  "result": {
+    "id": "arcaneresearch:vis_resonator"
+  }
+}

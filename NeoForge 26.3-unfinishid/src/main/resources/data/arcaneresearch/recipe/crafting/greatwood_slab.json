@@ -1,0 +1,13 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "KKK"
+  ],
+  "key": {
+    "K": "arcaneresearch:greatwood_planks"
+  },
+  "result": {
+    "id": "arcaneresearch:greatwood_slab",
+    "count": 6
+  }
+}

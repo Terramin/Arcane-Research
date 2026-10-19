@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "VOIDSEERPEARL",
+  "instability": 8,
+  "center": "arcaneresearch:bauble_amulet_fancy",
+  "ingredients": [
+    "arcaneresearch:zombie_brain",
+    "arcaneresearch:void_seed",
+    "arcaneresearch:zombie_brain",
+    "arcaneresearch:primordial_pearl"
+  ],
+  "aspects": {
+    "cognitio": 150,
+    "vacuos": 150,
+    "praecantatio": 100
+  },
+  "result": {
+    "id": "arcaneresearch:voidseer_charm"
+  }
+}

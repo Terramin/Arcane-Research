@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "arcaneresearch:block/mirrorframe2",
+        "layer1": "arcaneresearch:block/mirrorpaneopen"
+    }
+}

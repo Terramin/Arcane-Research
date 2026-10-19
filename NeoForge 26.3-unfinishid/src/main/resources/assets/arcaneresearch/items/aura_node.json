@@ -1,0 +1,10 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "arcaneresearch:item/aura_node_base",
+    "model": {
+      "type": "arcaneresearch:node",
+      "jar": false
+    }
+  }
+}

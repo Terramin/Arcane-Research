@@ -1,0 +1,17 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:baubles_stuff",
+  "pattern": [
+    "NGN",
+    "N N",
+    "NNN"
+  ],
+  "key": {
+    "G": "#c:gems/diamond",
+    "N": "#c:nuggets/gold"
+  },
+  "result": {
+    "id": "arcaneresearch:bauble_ring_fancy",
+    "count": 1
+  }
+}

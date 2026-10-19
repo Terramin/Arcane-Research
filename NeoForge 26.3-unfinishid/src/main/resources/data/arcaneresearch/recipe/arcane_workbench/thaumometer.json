@@ -1,0 +1,25 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "FIRSTSTEPS@2",
+  "vis": 20,
+  "crystals": {
+    "aer": 1,
+    "aqua": 1,
+    "ignis": 1,
+    "terra": 1,
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    " G ",
+    "GPG",
+    " G "
+  ],
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "P": "minecraft:glass_pane"
+  },
+  "result": {
+    "id": "arcaneresearch:thaumometer"
+  }
+}

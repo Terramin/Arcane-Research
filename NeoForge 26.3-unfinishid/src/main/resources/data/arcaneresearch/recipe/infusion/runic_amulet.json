@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "RUNICARMOR",
+  "instability": 4,
+  "center": "arcaneresearch:bauble_amulet_mundane",
+  "ingredients": [
+    "arcaneresearch:salis_mundus",
+    "arcaneresearch:amber",
+    "arcaneresearch:enchanted_fabric",
+    "#arcaneresearch:nitor",
+    "#arcaneresearch:nitor",
+    "minecraft:ink_sac"
+  ],
+  "aspects": {
+    "praemunio": 20,
+    "praecantatio": 35,
+    "potentia": 35
+  },
+  "result": {
+    "id": "arcaneresearch:runic_amulet"
+  }
+}

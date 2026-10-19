@@ -1,0 +1,23 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "CENTRIFUGE",
+  "vis": 100,
+  "crystals": {
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    " T ",
+    "RCP",
+    " T "
+  ],
+  "key": {
+    "T": "arcaneresearch:tube_normal",
+    "R": "arcaneresearch:morphic_resonator",
+    "C": "arcaneresearch:alchemical_brass_block",
+    "P": "arcaneresearch:mechanism_simple"
+  },
+  "result": {
+    "id": "arcaneresearch:centrifuge"
+  }
+}

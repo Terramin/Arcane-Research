@@ -1,0 +1,13 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALCOLLECT&&MINDBIOTHAUMIC",
+  "catalyst": "arcaneresearch:seal_pickup",
+  "aspects": {
+    "sensus": 10,
+    "cognitio": 10
+  },
+  "result": {
+    "id": "arcaneresearch:seal_pickup_advanced",
+    "count": 1
+  }
+}

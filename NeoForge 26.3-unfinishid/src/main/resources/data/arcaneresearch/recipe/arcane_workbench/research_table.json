@@ -1,0 +1,22 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "UNLOCKAUROMANCY",
+  "vis": 25,
+  "crystals": {
+    "aer": 2,
+    "ordo": 2
+  },
+  "pattern": [
+    "PPP",
+    "SSS",
+    "W W"
+  ],
+  "key": {
+    "P": "minecraft:paper",
+    "S": "#minecraft:wooden_slabs",
+    "W": "#minecraft:planks"
+  },
+  "result": {
+    "id": "arcaneresearch:research_table"
+  }
+}

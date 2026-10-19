@@ -1,0 +1,25 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSGRAPPLE",
+  "instability": 4,
+  "center": "minecraft:lead",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    "minecraft:tripwire_hook",
+    "minecraft:tripwire_hook",
+    "minecraft:tripwire_hook",
+    "minecraft:tripwire_hook"
+  ],
+  "aspects": {
+    "motus": 250,
+    "aer": 50,
+    "vinculum": 50,
+    "praecantatio": 50
+  },
+  "result": {
+    "id": "arcaneresearch:wand_focus_grapple"
+  }
+}

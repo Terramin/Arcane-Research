@@ -1,0 +1,16 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "arcaneresearch:item/grapple_gun"
+    },
+    "overrides": [
+        {
+            "predicate": { "arcaneresearch:type": 0 },
+            "model": "arcaneresearch:item/grapple_gun_1"
+        },
+        {
+            "predicate": { "arcaneresearch:type": 1 },
+            "model": "arcaneresearch:item/grapple_gun_2"
+        }
+    ]
+}

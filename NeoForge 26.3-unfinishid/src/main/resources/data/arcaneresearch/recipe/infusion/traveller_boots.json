@@ -1,0 +1,26 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "BOOTSTRAVELLER",
+  "instability": 1,
+  "center": "minecraft:leather_boots",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aer" },
+    "arcaneresearch:enchanted_fabric",
+    "arcaneresearch:enchanted_fabric",
+    "minecraft:feather",
+    [
+      "minecraft:cod",
+      "minecraft:salmon",
+      "minecraft:pufferfish",
+      "minecraft:tropical_fish"
+    ]
+  ],
+  "aspects": {
+    "volatus": 100,
+    "motus": 100
+  },
+  "result": {
+    "id": "arcaneresearch:traveller_boots"
+  }
+}

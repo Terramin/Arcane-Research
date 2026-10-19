@@ -1,0 +1,12 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shapeless",
+  "research": "",
+  "vis": 25,
+  "ingredients": [
+    "arcaneresearch:void_metal_ingot"
+  ],
+  "result": {
+    "id": "arcaneresearch:wand_cap",
+    "components": { "minecraft:custom_data": {"cap":"void"} }
+  }
+}

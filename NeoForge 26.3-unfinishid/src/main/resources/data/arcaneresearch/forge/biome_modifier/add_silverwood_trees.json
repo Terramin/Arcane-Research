@@ -1,0 +1,6 @@
+{
+  "type": "c:add_features",
+  "biomes": "#minecraft:is_forest",
+  "features": "arcaneresearch:silverwood_tree",
+  "step": "vegetal_decoration"
+}

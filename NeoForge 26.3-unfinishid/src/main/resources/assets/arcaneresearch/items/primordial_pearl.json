@@ -1,0 +1,33 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "arcaneresearch:type",
+    "cases": [
+      {
+        "when": "0",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/primordial_pearl_0"
+        }
+      },
+      {
+        "when": "1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/primordial_pearl_1"
+        }
+      },
+      {
+        "when": "2",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/primordial_pearl_2"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "arcaneresearch:item/primordial_pearl"
+    }
+  }
+}
