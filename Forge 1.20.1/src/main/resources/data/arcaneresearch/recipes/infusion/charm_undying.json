@@ -1,0 +1,17 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "CHARMUNDYING",
+  "instability": 2,
+  "center": {
+    "item": "minecraft:totem_of_undying"
+  },
+  "ingredients": [
+    { "item": "arcaneresearch:plate_brass" }
+  ],
+  "aspects": {
+    "victus": 25
+  },
+  "result": {
+    "item": "arcaneresearch:charm_undying"
+  }
+}

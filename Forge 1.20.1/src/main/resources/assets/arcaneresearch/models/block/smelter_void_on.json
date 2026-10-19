@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {          
+        "north": "arcaneresearch:block/smelter_void_front_on",  
+        "south": "arcaneresearch:block/smelter_void_side",      
+        "east": "arcaneresearch:block/smelter_void_side",
+        "west": "arcaneresearch:block/smelter_void_side",
+        "particle": "arcaneresearch:block/smelter_void_side",   
+        "up": "arcaneresearch:block/smelter_top",
+        "down": "arcaneresearch:block/metal_void"
+    }
+}

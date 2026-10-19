@@ -1,0 +1,16 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "BASEALCHEMY",
+  "catalyst": {
+    "item": "arcaneresearch:quartz_nugget"
+  },
+  "aspects": {
+    "perditio": 2
+  },
+  "result": {
+    "item": "arcaneresearch:crystal_essence",
+    "count": 1,
+    "nbt": "{Aspects:[{key:\"perditio\",amount:1}]}"
+  },
+  "group": "arcaneresearch:vis_crystal"
+}

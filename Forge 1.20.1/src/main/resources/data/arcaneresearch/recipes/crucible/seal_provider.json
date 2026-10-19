@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALPROVIDE",
+  "catalyst": {
+    "item": "arcaneresearch:seal_empty_advanced"
+  },
+  "aspects": {
+    "permutatio": 10,
+    "desiderium": 10
+  },
+  "result": {
+    "item": "arcaneresearch:seal_provide",
+    "count": 1
+  }
+}

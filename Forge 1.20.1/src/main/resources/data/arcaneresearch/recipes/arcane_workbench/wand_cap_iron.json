@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shapeless",
+  "research": "",
+  "vis": 2,
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "item": "arcaneresearch:wand_cap",
+    "nbt": "{cap:\"iron\"}"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "VISGENERATOR",
+  "vis": 25,
+  "crystals": {
+    "ignis": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    "WSW",
+    "EPE",
+    "WRW"
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:planks"
+    },
+    "S": {
+      "tag": "forge:dusts/redstone"
+    },
+    "E": {
+      "item": "arcaneresearch:nugget_rareearth"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "R": {
+      "item": "arcaneresearch:vis_resonator"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:vis_generator"
+  }
+}

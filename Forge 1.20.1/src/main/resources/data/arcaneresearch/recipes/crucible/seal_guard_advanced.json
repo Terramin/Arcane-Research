@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALGUARD&&MINDBIOTHAUMIC",
+  "catalyst": {
+    "item": "arcaneresearch:seal_guard"
+  },
+  "aspects": {
+    "sensus": 20,
+    "cognitio": 20
+  },
+  "result": {
+    "item": "arcaneresearch:seal_guard_advanced",
+    "count": 1
+  }
+}

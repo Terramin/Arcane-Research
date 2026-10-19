@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {"item": "arcaneresearch:amber_ore"},
+  "result": "arcaneresearch:amber",
+  "experience": 1.0,
+  "cookingtime": 200
+}

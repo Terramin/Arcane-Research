@@ -1,0 +1,6 @@
+{
+    "parent": "arcaneresearch:item/caster_gauntlet",
+    "textures": {
+        "skin": "arcaneresearch:item/caster_basic"
+    }
+}

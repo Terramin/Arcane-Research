@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "arcaneresearch:block/chest" },
+    "facing=south": { "model": "arcaneresearch:block/chest", "y": 180 },
+    "facing=east": { "model": "arcaneresearch:block/chest", "y": 90 },
+    "facing=west": { "model": "arcaneresearch:block/chest", "y": 270 }
+  }
+}

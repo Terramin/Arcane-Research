@@ -1,0 +1,33 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "LAMPFERTILITY",
+  "instability": 4,
+  "center": {
+    "item": "arcaneresearch:lamp_arcane"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:rotten_flesh"
+    },
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:carrot"
+    },
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" }
+  ],
+  "aspects": {
+    "bestia": 20,
+    "lux": 15,
+    "victus": 15,
+    "desiderium": 15
+  },
+  "result": {
+    "item": "arcaneresearch:lamp_fertility"
+  }
+}

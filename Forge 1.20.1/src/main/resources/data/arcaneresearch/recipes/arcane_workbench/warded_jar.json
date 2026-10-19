@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "WARDEDJARS",
+  "vis": 5,
+  "crystals": {},
+  "pattern": [
+    "GWG",
+    "G G",
+    "GGG"
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "G": {
+      "tag": "forge:glass_panes"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:jar_normal"
+  }
+}

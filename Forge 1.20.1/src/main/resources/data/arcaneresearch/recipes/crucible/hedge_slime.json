@@ -1,0 +1,16 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "HEDGEALCHEMY@2",
+  "catalyst": {
+    "item": "minecraft:slime_ball"
+  },
+  "aspects": {
+    "aqua": 5,
+    "victus": 5
+  },
+  "result": {
+    "item": "minecraft:slime_ball",
+    "count": 2
+  },
+  "group": "arcaneresearch:hedge_duplication"
+}

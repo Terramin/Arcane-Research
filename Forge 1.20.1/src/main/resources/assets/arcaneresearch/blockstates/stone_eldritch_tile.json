@@ -1,0 +1,15 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "arcaneresearch:eldritch_stone",
+        "transform": "forge:default-block"
+     },
+    "variants": {
+        "normal": [
+                { "model": "arcaneresearch:eldritch_stone" },
+                { "model": "arcaneresearch:eldritch_stone", "x": 90 },
+                { "model": "arcaneresearch:eldritch_stone", "y": 90 },
+                { "model": "arcaneresearch:eldritch_stone", "x": 90, "y": 90 }
+        ], "inventory": [{}]
+    }
+}

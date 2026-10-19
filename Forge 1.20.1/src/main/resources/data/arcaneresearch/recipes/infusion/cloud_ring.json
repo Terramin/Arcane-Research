@@ -1,0 +1,20 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "CLOUDRING",
+  "instability": 1,
+  "center": {
+    "item": "arcaneresearch:bauble_ring_mundane"
+  },
+  "ingredients": [
+    { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    {
+      "item": "minecraft:feather"
+    }
+  ],
+  "aspects": {
+    "aer": 50
+  },
+  "result": {
+    "item": "arcaneresearch:cloud_ring"
+  }
+}

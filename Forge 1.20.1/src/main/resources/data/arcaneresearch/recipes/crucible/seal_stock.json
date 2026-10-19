@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALSTOCK",
+  "catalyst": {
+    "item": "arcaneresearch:seal_fill"
+  },
+  "aspects": {
+    "cognitio": 10,
+    "desiderium": 10
+  },
+  "result": {
+    "item": "arcaneresearch:seal_stock",
+    "count": 1
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "parent": "arcaneresearch:block/table_wood",
+    "textures": {
+        "particle": "arcaneresearch:block/table_stone_top",
+        "top": "arcaneresearch:block/table_stone_top",
+        "side": "arcaneresearch:block/table_stone_side",
+        "bottom": "arcaneresearch:block/base_stone"
+    }
+}

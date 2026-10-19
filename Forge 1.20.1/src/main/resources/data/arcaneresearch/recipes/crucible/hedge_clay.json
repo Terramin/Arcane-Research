@@ -1,0 +1,16 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "HEDGEALCHEMY@3",
+  "catalyst": {
+    "item": "minecraft:dirt"
+  },
+  "aspects": {
+    "aqua": 5,
+    "terra": 5
+  },
+  "result": {
+    "item": "minecraft:clay_ball",
+    "count": 1
+  },
+  "group": "arcaneresearch:hedge_transmutation"
+}

@@ -1,0 +1,20 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shapeless",
+  "research": "INFUSIONSTABLE",
+  "vis": 25,
+  "crystals": {
+    "aqua": 1
+  },
+  "ingredients": [
+    {
+      "tag": "forge:dusts/redstone"
+    },
+    {
+      "tag": "forge:ingots/gold"
+    }
+  ],
+  "result": {
+    "item": "arcaneresearch:inlay",
+    "count": 2
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FORTRESSMASK",
+  "instability": 5,
+  "center": {
+    "item": "arcaneresearch:fortress_helm"
+  },
+  "ingredients": [
+    { "item": "minecraft:slime_ball" },
+    { "item": "arcaneresearch:goggles" }
+  ],
+  "aspects": {
+    "sensus": 40,
+    "auram": 20,
+    "praemunio": 20
+  },
+  "result": {
+    "item": "arcaneresearch:fortress_helm",
+    "nbt": "{goggles:1b}"
+  }
+}

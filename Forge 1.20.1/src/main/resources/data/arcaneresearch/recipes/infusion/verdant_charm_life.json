@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "VERDANTCHARMS",
+  "instability": 5,
+  "center": {
+    "item": "arcaneresearch:verdant_charm"
+  },
+  "ingredients": [
+    { "item": "minecraft:golden_apple" },
+    { "type": "arcaneresearch:crystal", "aspect": "victus" },
+    { "type": "forge:partial_nbt", "item": "minecraft:potion", "nbt": "{Potion:\"minecraft:strong_healing\"}" },
+    { "type": "arcaneresearch:crystal", "aspect": "humanus" }
+  ],
+  "aspects": {
+    "victus": 80,
+    "humanus": 80
+  },
+  "result": {
+    "item": "arcaneresearch:verdant_charm_life"
+  }
+}

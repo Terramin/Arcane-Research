@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:bauble_girdle_mundane",
+    "arcaneresearch:bauble_girdle_fancy",
+    "arcaneresearch:focus_pouch",
+    "arcaneresearch:wand_focus_pouch",
+    "arcaneresearch:runic_girdle",
+    "arcaneresearch:runic_girdle_kinetic"
+  ]
+}

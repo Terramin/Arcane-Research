@@ -1,0 +1,19 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "UNLOCKINFUSION",
+  "vis": 100,
+  "crystals": {},
+  "pattern": [
+    "III",
+    "I I",
+    "I I"
+  ],
+  "key": {
+    "I": {
+      "item": "arcaneresearch:enchanted_fabric"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:cloth_legs"
+  }
+}
