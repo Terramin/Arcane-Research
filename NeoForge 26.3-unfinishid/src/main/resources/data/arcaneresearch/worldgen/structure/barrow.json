@@ -1,0 +1,30 @@
+{
+  "type": "arcaneresearch:pool",
+  "start_pool": "arcaneresearch:barrow",
+  "size": 1,
+  "y_offset": -10,
+  "flat_radius": 9,
+  "flat_variance": 4,
+  "min_y": 60,
+  "max_y": 200,
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:sunflower_plains",
+    "minecraft:meadow",
+    "minecraft:forest",
+    "minecraft:flower_forest",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:dark_forest",
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:bamboo_jungle",
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:windswept_savanna",
+    "minecraft:swamp"
+  ],
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "none"
+}

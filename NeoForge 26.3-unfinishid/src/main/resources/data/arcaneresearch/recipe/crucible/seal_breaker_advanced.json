@@ -1,0 +1,14 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALBREAK&&MINDBIOTHAUMIC",
+  "catalyst": "arcaneresearch:seal_breaker",
+  "aspects": {
+    "sensus": 10,
+    "cognitio": 10,
+    "instrumentum": 20
+  },
+  "result": {
+    "id": "arcaneresearch:seal_breaker_advanced",
+    "count": 1
+  }
+}

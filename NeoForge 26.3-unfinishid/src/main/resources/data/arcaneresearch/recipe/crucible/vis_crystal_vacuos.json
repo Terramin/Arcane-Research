@@ -1,0 +1,14 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "research": "BASEALCHEMY",
+  "catalyst": "arcaneresearch:quartz_nugget",
+  "aspects": {
+    "vacuos": 2
+  },
+  "result": {
+    "id": "arcaneresearch:crystal_essence",
+    "count": 1,
+    "components": { "minecraft:custom_data": {"Aspects":[{"key":"vacuos","amount":1}]} }
+  },
+  "group": "arcaneresearch:vis_crystal"
+}

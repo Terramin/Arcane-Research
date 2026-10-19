@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:arcane_stone",
+    "arcaneresearch:arcane_stone_brick",
+    "arcaneresearch:ancient_stone",
+    "arcaneresearch:ancient_stone_tile",
+    "arcaneresearch:ancient_rock",
+    "arcaneresearch:ancient_stone_glyphed",
+    "arcaneresearch:ancient_pedestal_doorway",
+    "arcaneresearch:eldritch_stone_tile",
+    "arcaneresearch:porous_stone",
+    "arcaneresearch:amber_block",
+    "arcaneresearch:amber_brick",
+    "arcaneresearch:matrix_speed",
+    "arcaneresearch:matrix_cost"
+  ]
+}

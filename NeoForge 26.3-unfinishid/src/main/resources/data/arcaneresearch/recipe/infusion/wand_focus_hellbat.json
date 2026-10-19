@@ -1,0 +1,25 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSHELLBAT",
+  "instability": 5,
+  "center": "minecraft:fire_charge",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ignis" },
+    "minecraft:feather",
+    "minecraft:feather",
+    "minecraft:feather",
+    "minecraft:feather"
+  ],
+  "aspects": {
+    "ignis": 250,
+    "aer": 50,
+    "bestia": 50,
+    "perditio": 50
+  },
+  "result": {
+    "id": "arcaneresearch:wand_focus_hellbat"
+  }
+}

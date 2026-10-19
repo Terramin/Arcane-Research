@@ -1,0 +1,11 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:compat_nuggets",
+  "ingredients": [
+    "#c:ingots/tin"
+  ],
+  "result": {
+    "id": "arcaneresearch:nugget_tin",
+    "count": 9
+  }
+}

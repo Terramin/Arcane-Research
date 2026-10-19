@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "NODESTABILIZER",
+  "instability": 4,
+  "center": "arcaneresearch:node_stabilizer",
+  "ingredients": [
+    "arcaneresearch:void_metal_nugget",
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ordo" },
+    "minecraft:obsidian",
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "terra" }
+  ],
+  "aspects": {
+    "ordo": 60,
+    "terra": 30,
+    "praecantatio": 30
+  },
+  "result": {
+    "id": "arcaneresearch:node_stabilizer_advanced"
+  }
+}

@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:thaumium_stuff",
+  "research": "ARMORFORTRESS",
+  "instability": 1,
+  "center": "minecraft:iron_boots",
+  "ingredients": [
+    "arcaneresearch:thaumium_ingot",
+    "arcaneresearch:thaumium_ingot",
+    "arcaneresearch:thaumium_ingot"
+  ],
+  "aspects": {
+    "metallum": 15,
+    "praecantatio": 8,
+    "praemunio": 12
+  },
+  "result": {
+    "id": "arcaneresearch:thaumium_boots"
+  }
+}

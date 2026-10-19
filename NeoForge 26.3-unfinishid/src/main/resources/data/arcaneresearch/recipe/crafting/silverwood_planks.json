@@ -1,0 +1,10 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "arcaneresearch:silverwood_log"
+  ],
+  "result": {
+    "id": "arcaneresearch:silverwood_planks",
+    "count": 4
+  }
+}

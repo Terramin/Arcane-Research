@@ -1,0 +1,21 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ARCANELAMP",
+  "vis": 50,
+  "crystals": {
+    "aer": 1,
+    "ignis": 1
+  },
+  "pattern": [
+    " I ",
+    "IAI",
+    " I "
+  ],
+  "key": {
+    "I": "arcaneresearch:plate_iron",
+    "A": "arcaneresearch:amber_block"
+  },
+  "result": {
+    "id": "arcaneresearch:lamp_arcane"
+  }
+}

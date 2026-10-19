@@ -1,0 +1,24 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:void_stuff",
+  "research": "VOIDSIPHON",
+  "instability": 7,
+  "center": "arcaneresearch:void_metal_block",
+  "ingredients": [
+    "arcaneresearch:arcane_stone",
+    "arcaneresearch:arcane_stone",
+    "arcaneresearch:mechanism_complex",
+    "arcaneresearch:plate_brass",
+    "arcaneresearch:plate_brass",
+    "minecraft:nether_star"
+  ],
+  "aspects": {
+    "alienis": 50,
+    "perditio": 50,
+    "vacuos": 100,
+    "fabrico": 50
+  },
+  "result": {
+    "id": "arcaneresearch:void_siphon"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "arcaneresearch:item/discovery",
+    "layer1": "arcaneresearch:item/discovery_overlay"
+  }
+}

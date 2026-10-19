@@ -1,0 +1,26 @@
+{
+    "parent": "arcaneresearch:block/jar_void",
+    
+    "overrides": [
+        {
+            "predicate": { "arcaneresearch:fill": 0 },
+            "model": "arcaneresearch:block/jar_void"
+        },
+        {
+            "predicate": { "arcaneresearch:fill": 1 },
+            "model": "arcaneresearch:block/jar_void_25"
+        },
+        {
+            "predicate": { "arcaneresearch:fill": 2 },
+            "model": "arcaneresearch:block/jar_void_50"
+        },
+        {
+            "predicate": { "arcaneresearch:fill": 3 },
+            "model": "arcaneresearch:block/jar_void_75"
+        },
+        {
+            "predicate": { "arcaneresearch:fill": 4 },
+            "model": "arcaneresearch:block/jar_void_100"
+        }
+    ]
+}

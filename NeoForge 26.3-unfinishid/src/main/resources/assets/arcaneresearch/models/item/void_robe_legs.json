@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "arcaneresearch:item/void_robe_legs_over",
+        "layer1": "arcaneresearch:item/void_robe_legs"
+    }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FORTRESSMASK",
+  "instability": 8,
+  "center": "arcaneresearch:fortress_helm",
+  "ingredients": [
+    "#c:dyes/black",
+    "arcaneresearch:plate_iron",
+    "#c:leathers",
+    "arcaneresearch:shimmerleaf",
+    "arcaneresearch:zombie_brain",
+    "arcaneresearch:plate_iron"
+  ],
+  "aspects": {
+    "cognitio": 80,
+    "victus": 80,
+    "praemunio": 20
+  },
+  "result": {
+    "id": "arcaneresearch:fortress_helm",
+    "components": { "minecraft:custom_data": {"mask":0} }
+  }
+}

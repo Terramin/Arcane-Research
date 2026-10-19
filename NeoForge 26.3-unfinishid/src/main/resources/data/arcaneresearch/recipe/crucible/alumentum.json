@@ -1,0 +1,13 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "research": "ALUMENTUM",
+  "catalyst": "#minecraft:coals",
+  "aspects": {
+    "ignis": 10,
+    "potentia": 10,
+    "perditio": 5
+  },
+  "result": {
+    "id": "arcaneresearch:alumentum"
+  }
+}

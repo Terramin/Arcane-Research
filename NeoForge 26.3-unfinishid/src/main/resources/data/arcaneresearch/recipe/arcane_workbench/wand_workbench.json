@@ -1,0 +1,25 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "BASEAUROMANCY@2",
+  "vis": 100,
+  "crystals": {
+    "terra": 1,
+    "aqua": 1
+  },
+  "pattern": [
+    "ISI",
+    "BRB",
+    "GTG"
+  ],
+  "key": {
+    "S": "arcaneresearch:arcane_stone_slab",
+    "T": "arcaneresearch:table_stone",
+    "R": "arcaneresearch:vis_resonator",
+    "B": "arcaneresearch:arcane_stone",
+    "G": "#c:ingots/gold",
+    "I": "arcaneresearch:plate_iron"
+  },
+  "result": {
+    "id": "arcaneresearch:focal_manipulator"
+  }
+}

@@ -1,0 +1,22 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "GOLEMVISION",
+  "vis": 50,
+  "crystals": {
+    "aqua": 1
+  },
+  "pattern": [
+    "B B",
+    "E E",
+    "PGP"
+  ],
+  "key": {
+    "B": "minecraft:ender_pearl",
+    "E": "minecraft:ender_eye",
+    "P": "arcaneresearch:plate_brass",
+    "G": "arcaneresearch:mechanism_simple"
+  },
+  "result": {
+    "id": "arcaneresearch:golem_module_vision"
+  }
+}

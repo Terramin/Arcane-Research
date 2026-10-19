@@ -1,0 +1,13 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "group": "arcaneresearch:thaumium_stuff",
+  "research": "METALLURGY@2",
+  "catalyst": "minecraft:iron_ingot",
+  "aspects": {
+    "praecantatio": 5,
+    "terra": 5
+  },
+  "result": {
+    "id": "arcaneresearch:thaumium_ingot"
+  }
+}

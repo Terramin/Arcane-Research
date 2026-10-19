@@ -1,0 +1,12 @@
+﻿{
+  "type": "arcaneresearch:infusion_enchantment",
+  "enchantment": "ESSENCE",
+  "aspects": {
+    "bestia": 40,
+    "vitium": 60
+  },
+  "components": [
+    "minecraft:enchanted_book",
+    "arcaneresearch:crystal_essence"
+  ]
+}

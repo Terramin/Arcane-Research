@@ -1,0 +1,11 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "arcaneresearch:scribing_tools",
+    "#c:dyes/black"
+  ],
+  "result": {
+    "id": "arcaneresearch:scribing_tools",
+    "count": 1
+  }
+}

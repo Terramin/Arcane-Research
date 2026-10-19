@@ -1,0 +1,16 @@
+{
+    "variants": {
+        "facing=east,linked=false":  { "model": "arcaneresearch:block/mirror_item", "y": 90 },
+        "facing=west,linked=false":  { "model": "arcaneresearch:block/mirror_item", "y": 270 },
+        "facing=north,linked=false": { "model": "arcaneresearch:block/mirror_item" },
+        "facing=south,linked=false": { "model": "arcaneresearch:block/mirror_item", "y": 180 },
+        "facing=up,linked=false":    { "model": "arcaneresearch:block/mirror_item", "x": 270 },
+        "facing=down,linked=false":  { "model": "arcaneresearch:block/mirror_item", "x": 90 },
+        "facing=east,linked=true":   { "model": "arcaneresearch:block/mirror_on", "y": 90 },
+        "facing=west,linked=true":   { "model": "arcaneresearch:block/mirror_on", "y": 270 },
+        "facing=north,linked=true":  { "model": "arcaneresearch:block/mirror_on" },
+        "facing=south,linked=true":  { "model": "arcaneresearch:block/mirror_on", "y": 180 },
+        "facing=up,linked=true":     { "model": "arcaneresearch:block/mirror_on", "x": 270 },
+        "facing=down,linked=true":   { "model": "arcaneresearch:block/mirror_on", "x": 90 }
+    }
+}

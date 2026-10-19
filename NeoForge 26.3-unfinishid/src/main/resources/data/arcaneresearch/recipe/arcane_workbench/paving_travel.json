@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "PAVINGSTONES",
+  "vis": 50,
+  "crystals": {
+    "aer": 1,
+    "terra": 1
+  },
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": "arcaneresearch:arcane_stone_brick"
+  },
+  "result": {
+    "id": "arcaneresearch:paving_stone_travel",
+    "count": 4
+  }
+}

@@ -1,0 +1,22 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ARCANEEAR",
+  "vis": 15,
+  "crystals": {
+    "aer": 1
+  },
+  "pattern": [
+    "P P",
+    " G ",
+    "WRW"
+  ],
+  "key": {
+    "W": "#minecraft:wooden_slabs",
+    "R": "minecraft:redstone",
+    "G": "arcaneresearch:mechanism_simple",
+    "P": "arcaneresearch:plate_brass"
+  },
+  "result": {
+    "id": "arcaneresearch:arcane_ear"
+  }
+}

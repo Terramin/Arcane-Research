@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:banner_white",
+    "arcaneresearch:banner_orange",
+    "arcaneresearch:banner_magenta",
+    "arcaneresearch:banner_light_blue",
+    "arcaneresearch:banner_yellow",
+    "arcaneresearch:banner_lime",
+    "arcaneresearch:banner_pink",
+    "arcaneresearch:banner_gray",
+    "arcaneresearch:banner_light_gray",
+    "arcaneresearch:banner_cyan",
+    "arcaneresearch:banner_purple",
+    "arcaneresearch:banner_blue",
+    "arcaneresearch:banner_brown",
+    "arcaneresearch:banner_green",
+    "arcaneresearch:banner_red",
+    "arcaneresearch:banner_black",
+    "arcaneresearch:banner_crimson_cult"
+  ]
+}

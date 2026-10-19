@@ -1,0 +1,17 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "MINDBIOTHAUMIC",
+  "instability": 4,
+  "aspects": {
+    "cognitio": 50,
+    "machina": 25
+  },
+  "input": "arcaneresearch:brain_clockwork",
+  "ingredients": [
+    "arcaneresearch:zombie_brain",
+    "arcaneresearch:mechanism_complex"
+  ],
+  "result": {
+    "id": "arcaneresearch:brain_curious"
+  }
+}

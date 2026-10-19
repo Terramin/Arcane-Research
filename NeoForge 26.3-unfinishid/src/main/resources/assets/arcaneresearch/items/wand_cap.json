@@ -1,0 +1,54 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "arcaneresearch:cap",
+    "cases": [
+      {
+        "when": "1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/wand/cap/cap_copper"
+        }
+      },
+      {
+        "when": "2",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/wand/cap/cap_gold"
+        }
+      },
+      {
+        "when": "3",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/wand/cap/cap_brass"
+        }
+      },
+      {
+        "when": "4",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/wand/cap/cap_silver"
+        }
+      },
+      {
+        "when": "5",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/wand/cap/cap_thaumium"
+        }
+      },
+      {
+        "when": "6",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/wand/cap/cap_void"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "arcaneresearch:item/wand/cap/cap_iron"
+    }
+  }
+}

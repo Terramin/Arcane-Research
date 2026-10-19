@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:thaumium_stuff",
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "key": {
+    "N": "arcaneresearch:thaumium_nugget"
+  },
+  "result": {
+    "id": "arcaneresearch:thaumium_ingot",
+    "count": 1
+  }
+}

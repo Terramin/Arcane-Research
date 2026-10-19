@@ -1,0 +1,23 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ARCANESPA",
+  "vis": 50,
+  "crystals": {
+    "aqua": 1
+  },
+  "pattern": [
+    "QIQ",
+    "SJS",
+    "SPS"
+  ],
+  "key": {
+    "Q": "minecraft:quartz_block",
+    "I": "minecraft:iron_bars",
+    "S": "arcaneresearch:arcane_stone",
+    "J": "arcaneresearch:jar_normal",
+    "P": "arcaneresearch:mechanism_simple"
+  },
+  "result": {
+    "id": "arcaneresearch:spa"
+  }
+}

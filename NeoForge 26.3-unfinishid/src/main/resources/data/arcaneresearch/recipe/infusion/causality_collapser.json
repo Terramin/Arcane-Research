@@ -1,0 +1,23 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "RIFTCLOSER",
+  "instability": 8,
+  "aspects": {
+    "alienis": 50,
+    "vitium": 50
+  },
+  "input": "minecraft:tnt",
+  "ingredients": [
+    "arcaneresearch:morphic_resonator",
+    "minecraft:redstone_block",
+    "arcaneresearch:alumentum",
+    "#arcaneresearch:nitor",
+    "arcaneresearch:vis_resonator",
+    "minecraft:redstone_block",
+    "arcaneresearch:alumentum",
+    "#arcaneresearch:nitor"
+  ],
+  "result": {
+    "id": "arcaneresearch:causality_collapser"
+  }
+}

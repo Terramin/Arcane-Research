@@ -1,0 +1,21 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:thaumium_stuff",
+  "research": "ELEMENTALTOOLS",
+  "instability": 2,
+  "central": "minecraft:iron_sword",
+  "components": [
+    "arcaneresearch:thaumium_ingot",
+    "arcaneresearch:thaumium_ingot",
+    "arcaneresearch:quicksilver",
+    "arcaneresearch:quicksilver"
+  ],
+  "aspects": {
+    "praecantatio": 20,
+    "instrumentum": 15,
+    "aversio": 10
+  },
+  "result": {
+    "id": "arcaneresearch:thaumium_sword"
+  }
+}

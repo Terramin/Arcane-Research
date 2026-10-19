@@ -1,0 +1,20 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "TUBES",
+  "vis": 10,
+  "pattern": [
+    " Q ",
+    "IGI",
+    " B "
+  ],
+  "key": {
+    "Q": "arcaneresearch:quicksilver",
+    "I": "arcaneresearch:plate_iron",
+    "G": "#c:glass_blocks",
+    "B": "arcaneresearch:brass_nugget"
+  },
+  "result": {
+    "id": "arcaneresearch:tube_normal",
+    "count": 8
+  }
+}

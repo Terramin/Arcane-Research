@@ -1,0 +1,22 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:void_stuff",
+  "research": "VOIDROBEARMOR",
+  "instability": 3,
+  "input": "arcaneresearch:thaumium_boots",
+  "ingredients": [
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_seed"
+  ],
+  "aspects": {
+    "alienis": 15,
+    "vacuos": 15,
+    "praemunio": 10,
+    "tenebrae": 8
+  },
+  "result": {
+    "id": "arcaneresearch:void_boots"
+  }
+}

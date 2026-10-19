@@ -1,0 +1,14 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AA",
+    "AA"
+  ],
+  "key": {
+    "A": "arcaneresearch:amber_brick"
+  },
+  "result": {
+    "id": "arcaneresearch:amber_block",
+    "count": 4
+  }
+}

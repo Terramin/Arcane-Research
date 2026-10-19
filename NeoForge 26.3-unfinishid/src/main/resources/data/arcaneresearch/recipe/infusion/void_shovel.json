@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:void_stuff",
+  "research": "VOIDROBEARMOR",
+  "instability": 3,
+  "input": "arcaneresearch:thaumium_shovel",
+  "ingredients": [
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_seed"
+  ],
+  "aspects": {
+    "alienis": 15,
+    "vacuos": 10,
+    "instrumentum": 15,
+    "tenebrae": 8
+  },
+  "result": {
+    "id": "arcaneresearch:void_shovel"
+  }
+}

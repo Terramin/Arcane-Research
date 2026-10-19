@@ -1,0 +1,362 @@
+package arcaneresearch.discovered.table;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.TreeSet;
+
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.api.capabilities.IPlayerKnowledge;
+import arcaneresearch.api.research.ResearchCategories;
+import arcaneresearch.api.research.ResearchCategory;
+import arcaneresearch.api.research.ResearchEntry;
+import arcaneresearch.api.research.ResearchStage;
+import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
+import arcaneresearch.common.lib.research.ResearchManager;
+import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.discovered.note.DiscoveredNotes;
+
+/**
+ * Логика стола записок, порт в паритете с:
+ * - reforged ResearchManager: progressTableResearch, findLostResearch,
+ *   findMatchingResearch, researchIterations, createResearchNoteForTable;
+ * - TC3 ResearchManager + TileResearchTable: те же + failed cap 100,
+ *   маркер готовности, замена битой записки.
+ *
+ * Адаптация: требуемые аспекты исследования (need) берутся из формулы
+ * категории ({@code ResearchCategory.formula}) — у ResearchEntry проекта
+ * нет аспект-стоимости, как в reforged ResearchItem.tags.
+ * HIDDEN-исследования считаются «потерянными» (lost) — их находит только стол.
+ *
+ * NEOFORGE_PORT: getKnowledge возвращает @Nullable IPlayerKnowledge напрямую
+ * (без Optional) — проверки через null.
+ */
+public final class DiscoveredTableResearch {
+
+    private DiscoveredTableResearch() {
+    }
+
+    // ------------------------------------------------------------ aspects
+
+    private static List<String> orderedTags;
+
+    /** Детерминированный порядок тегов (по алфавиту) для ContainerData-индексов. */
+    public static synchronized List<String> orderedTags() {
+        if (orderedTags == null) {
+            orderedTags = new ArrayList<>(new TreeSet<>(Aspect.aspects.keySet()));
+        }
+        return orderedTags;
+    }
+
+    /** Индекс тега +1 (0 = пусто), паритет слотам ContainerData. */
+    public static int aspectIndex(Aspect aspect) {
+        if (aspect == null) {
+            return 0;
+        }
+        int i = orderedTags().indexOf(aspect.getTag());
+        return i < 0 ? 0 : i + 1;
+    }
+
+    public static Aspect aspectByIndex(int index) {
+        List<String> order = orderedTags();
+        if (index <= 0 || index > order.size()) {
+            return null;
+        }
+        return Aspect.getAspect(order.get(index - 1));
+    }
+
+    /**
+     * Требуемые аспекты исследования: сначала точный набор
+     * ({@link DiscoveredResearchAspects}, паритет reforged ResearchItem.tags),
+     * иначе формула его категории. Ключ-открытие без своего исследования —
+     * формула категории требующего исследования.
+     */
+    public static AspectList requiredAspects(String key) {
+        AspectList exact = DiscoveredResearchAspects.get(key);
+        if (exact != null && exact.size() > 0) {
+            return exact;
+        }
+        ResearchEntry entry = ResearchCategories.getResearch(key);
+        if (entry == null) {
+            entry = requiringResearch(key);
+        }
+        if (entry == null || entry.getCategory() == null) {
+            return null;
+        }
+        ResearchCategory category = ResearchCategories.getResearchCategory(entry.getCategory());
+        if (category == null || category.formula == null || category.formula.size() <= 0) {
+            return null;
+        }
+        return category.formula.copy();
+    }
+
+    /** Первое исследование, чья стадия требует это открытие. */
+    public static ResearchEntry requiringResearch(String discoveryKey) {
+        if (discoveryKey == null) {
+            return null;
+        }
+        for (ResearchEntry entry : allEntries()) {
+            if (entry.getStages() == null) {
+                continue;
+            }
+            for (ResearchStage stage : entry.getStages()) {
+                if (stage == null || stage.getDiscovery() == null) {
+                    continue;
+                }
+                for (String d : stage.getDiscovery()) {
+                    if (discoveryKey.equals(d)) {
+                        return entry;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Есть ли у исследования стадии с required_discovery.
+     * Стол создаёт записки только под такие (иначе открытия не нужны).
+     */
+    public static boolean hasDiscoveryRequirement(ResearchEntry entry) {
+        if (entry == null || entry.getStages() == null) {
+            return false;
+        }
+        for (ResearchStage stage : entry.getStages()) {
+            if (stage != null && stage.getDiscovery() != null && stage.getDiscovery().length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Открытие уже потрачено или предъявлено: все стадии, требующие #key,
+     * пройдены, либо ключ предъявлен ПКМ. Такие записки стол больше не создаёт.
+     */
+    public static boolean isDiscoverySpent(Player player, String discoveryKey) {
+        if (player == null || discoveryKey == null) {
+            return false;
+        }
+        IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+        if (knowledge != null && knowledge.hasPresentedDiscovery(discoveryKey)) {
+            return true;
+        }
+        boolean needed = false;
+        for (ResearchEntry entry : allEntries()) {
+            if (entry.getStages() == null) {
+                continue;
+            }
+            int current = knowledge != null ? knowledge.getResearchStage(entry.getKey()) - 1 : -2;
+            ResearchStage[] stages = entry.getStages();
+            for (int i = 0; i < stages.length; i++) {
+                if (stages[i] == null || stages[i].getDiscovery() == null) {
+                    continue;
+                }
+                for (String d : stages[i].getDiscovery()) {
+                    if (discoveryKey.equals(d)) {
+                        if (current <= i) {
+                            return false;
+                        }
+                        needed = true;
+                    }
+                }
+            }
+        }
+        return needed;
+    }
+
+    /**
+     * Все ключи открытий, требуемые стадиями загруженных исследований
+     * (union для вкладки: новые required_discovery подхватываются сами).
+     */
+    public static List<String> discoveryKeys() {
+        LinkedHashSet<String> out = new LinkedHashSet<>();
+        for (ResearchEntry entry : allEntries()) {
+            if (entry.getStages() == null) {
+                continue;
+            }
+            for (ResearchStage stage : entry.getStages()) {
+                if (stage == null || stage.getDiscovery() == null) {
+                    continue;
+                }
+                for (String d : stage.getDiscovery()) {
+                    if (d != null && !d.isEmpty()) {
+                        out.add(d);
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(out);
+    }
+
+    public static List<ResearchEntry> allEntries() {
+        List<ResearchEntry> out = new ArrayList<>();
+        for (ResearchCategory category : ResearchCategories.researchCategories.values()) {
+            if (category.research != null) {
+                out.addAll(category.research.values());
+            }
+        }
+        return out;
+    }
+
+    // ------------------------------------------------------------ finders
+
+    /**
+     * Паритет reforged findMatchingResearch: лучший скор совпадений
+     * входных тегов с требуемыми (первые 5 слотов).
+     * HIDDEN пропускаются (это lost-пул); без discovery-требований,
+     * готовые, потраченные и недоступные — тоже мимо.
+     */
+    public static String findMatchingResearch(Player player, Aspect[] tags, int[] amounts) {
+        int bestMatch = 0;
+        String best = null;
+        for (ResearchEntry entry : allEntries()) {
+            if (entry.hasMeta(ResearchEntry.EnumResearchMeta.HIDDEN)) {
+                continue;
+            }
+            if (ArcaneresearchCapabilities.isResearchComplete(player, entry.getKey())) {
+                continue;
+            }
+            if (!hasDiscoveryRequirement(entry)) {
+                continue;
+            }
+            if (isDiscoverySpent(player, entry.getKey())) {
+                continue;
+            }
+            if (!ResearchManager.doesPlayerHaveRequisites(player, entry.getKey())) {
+                continue;
+            }
+            AspectList required = requiredAspects(entry.getKey());
+            if (required == null) {
+                continue;
+            }
+            int match = 0;
+            for (int i = 0; i < 5 && i < tags.length && i < amounts.length; i++) {
+                if (tags[i] != null && amounts[i] > 0 && required.getAmount(tags[i]) > 0) {
+                    match++;
+                }
+            }
+            if (match > 0 && match > bestMatch) {
+                bestMatch = match;
+                best = entry.getKey();
+            }
+        }
+        return best;
+    }
+
+    /**
+     * Паритет reforged/TC3 findLostResearch: случайное HIDDEN-исследование
+     * с выполненными реквизитами. Маппинг lost -> HIDDEN (у проекта нет флага lost).
+     * Только discovery-исследования; готовые/потраченные мимо.
+     */
+    public static String findLostResearch(Player player) {
+        List<String> choices = new ArrayList<>();
+        for (ResearchEntry entry : allEntries()) {
+            if (!entry.hasMeta(ResearchEntry.EnumResearchMeta.HIDDEN)) {
+                continue;
+            }
+            if (ArcaneresearchCapabilities.isResearchComplete(player, entry.getKey())) {
+                continue;
+            }
+            if (!hasDiscoveryRequirement(entry)) {
+                continue;
+            }
+            if (isDiscoverySpent(player, entry.getKey())) {
+                continue;
+            }
+            if (!ResearchManager.doesPlayerHaveRequisites(player, entry.getKey())) {
+                continue;
+            }
+            choices.add(entry.getKey());
+        }
+        if (choices.isEmpty()) {
+            return null;
+        }
+        return choices.get(player.getRandom().nextInt(choices.size()));
+    }
+
+    // ------------------------------------------------------------ progress
+
+    public static int researchIterations(int amount) {
+        return 1 + amount / 2;
+    }
+
+    /**
+     * Паритет reforged progressTableResearch + TC3 progressTableResearch.
+     * Пустая записка начинает lost-исследование; чужие теги копят failed
+     * (cap 100); свои — шанс baseChance/100 за researchIterations попыток,
+     * затухание chance*=0.9. Возвращает, был ли прогресс.
+     */
+    public static boolean progressTableResearch(Level level, Player researcher, ItemStack note,
+            int baseChance, int baseLoss, Aspect[] inTags, int[] inAmounts) {
+        if (baseLoss <= 0) {
+            baseLoss = 1;
+        }
+        DiscoveredNoteData data = DiscoveredNoteData.read(note);
+        if (data.key == null) {
+            String key = findLostResearch(researcher);
+            AspectList required = key == null ? null : requiredAspects(key);
+            if (key == null || required == null) {
+                return false;
+            }
+            DiscoveredNoteData.write(note, DiscoveredNoteData.create(key, required));
+            data = DiscoveredNoteData.read(note);
+        } else if (ArcaneresearchCapabilities.isResearchComplete(researcher, data.key)
+                || isDiscoverySpent(researcher, data.key)) {
+            return false;
+        }
+        for (Aspect tag : inTags) {
+            if (tag != null && !contains(data.tags, tag) && data.getFailed(tag.getTag()) < 100) {
+                data.addFailed(tag.getTag(),
+                        (byte) Math.round((2 + level.getRandom().nextInt(baseLoss)) / 10.0F));
+            }
+        }
+        boolean progressed = false;
+        for (int t = 0; t < data.tags.length; t++) {
+            Aspect tag = data.tags[t];
+            if (tag == null) {
+                continue;
+            }
+            int entry = -1;
+            for (int i = 0; i < inTags.length; i++) {
+                if (inTags[i] == tag) {
+                    entry = i;
+                    break;
+                }
+            }
+            if (entry < 0) {
+                continue;
+            }
+            float chance = baseChance / 100.0F;
+            int tries = researchIterations(entry < inAmounts.length ? inAmounts[entry] : 0);
+            for (int a = 0; a < tries; a++) {
+                if (level.getRandom().nextFloat() <= chance) {
+                    int want = t < data.need.length ? data.need[t] : 0;
+                    int got = t < data.have.length ? data.have[t] : 0;
+                    if (got < want) {
+                        data.have[t] = got + 1;
+                        chance *= 0.9F;
+                        progressed = true;
+                        break;
+                    }
+                }
+            }
+        }
+        DiscoveredNoteData.write(note, data);
+        return progressed;
+    }
+
+    private static boolean contains(Aspect[] tags, Aspect tag) {
+        for (Aspect t : tags) {
+            if (t == tag) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

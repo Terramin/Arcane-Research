@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "W W"
+  ],
+  "key": {
+    "S": "#minecraft:wooden_slabs",
+    "W": "#minecraft:planks"
+  },
+  "result": {
+    "id": "arcaneresearch:discovered_table",
+    "count": 1
+  }
+}
