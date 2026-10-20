@@ -350,7 +350,8 @@ public class TileGolemBuilder extends TileArcaneresearchInventory implements Men
         return 0;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x; the tile's
+    // renderer forwards to this from IBlockEntityRendererExtension.getRenderBoundingBox.
     public AABB getRenderBoundingBox() {
         return AABB.encapsulatingFullBlocks(worldPosition.offset(-1, 0, -1), worldPosition.offset(2, 2, 2));
     }

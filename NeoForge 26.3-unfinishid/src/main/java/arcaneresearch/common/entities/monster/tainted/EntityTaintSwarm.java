@@ -219,8 +219,9 @@ public class EntityTaintSwarm extends Monster implements ITaintedMob {
                     }
 
                     target.setDeltaMovement(targetMotion);
-// NEOFORGE_PORT: Entity.hurtMarked removed in 26.x; motion was restored to the
-// original above, so the extra velocity sync it suppressed is a harmless no-op.
+                    // NEOFORGE_PORT (26.3): Entity.hurtMarked renamed to syncVelocity; clearing it keeps the
+                    // knockback motion packet from being sent (players would still be knocked back).
+                    target.syncVelocity = false;
 
                     playSound(ModSounds.SWARM_ATTACK.get(), 0.3f, 0.9f + random.nextFloat() * 0.2f);
                 }
@@ -251,8 +252,9 @@ public class EntityTaintSwarm extends Monster implements ITaintedMob {
         setYRot(getYRot() + yawDiff);
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+    // NEOFORGE_PORT: 26.x causeFallDamage takes a double fall distance.
+    @Override
+    public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return false;
     }
 

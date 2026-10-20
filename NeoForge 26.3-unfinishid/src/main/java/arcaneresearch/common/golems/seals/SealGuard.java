@@ -67,7 +67,9 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
         }
 
         AABB area = GolemHelper.getBoundsForArea(seal);
-        List<LivingEntity> targets = level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(LivingEntity.class), area, e -> true);
+        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists (NO_SPECTATORS filter);
+        // the getEntities(..., e -> true) rewrite also returned spectators.
+        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area);
 
         if (!targets.isEmpty()) {
             for (LivingEntity target : targets) {

@@ -45,7 +45,7 @@ public class CommonInternals {
     public static int generateUniqueItemstackId(ItemStack stack) {
         ItemStack sc = stack.copy();
         sc.setCount(1);
-        return ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, sc)
+        return ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), sc)
                 .result().map(Object::toString).orElse("").hashCode();
     }
 
@@ -53,7 +53,7 @@ public class CommonInternals {
         ItemStack sc = stack.copy();
         sc.setCount(1);
         sc.remove(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-        return ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, sc)
+        return ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), sc)
                 .result().map(Object::toString).orElse("").hashCode();
     }
 }

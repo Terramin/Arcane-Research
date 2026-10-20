@@ -62,11 +62,6 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
     protected int taskID = Integer.MAX_VALUE;
     private int rankXp = 0;
     private boolean firstRun = true;
-    // NEOFORGE_PORT: LivingEntity.swinging/swingTime removed in 26.x (private SwingState);
-    // swingArm() drives its own swing timing, kept as local fields 1:1.
-    protected boolean swinging;
-    protected int swingTime;
-
     public EntityArcaneresearchGolem(EntityType<? extends EntityArcaneresearchGolem> type, Level level) {
         super(type, level);
         this.xpReward = 5;
@@ -355,8 +350,12 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         BlockPos checkPos = home;
         // NEOFORGE_PORT: getMaxBuildHeight gone -> getMaxY (LevelHeightAccessor);
         // blocksMotion gone -> isSolid (same motion-blocking intent).
-        while (!foundCeiling && checkPos.getY() < level().getMaxY()) {
-            if (level().getBlockState(checkPos.above()).isSolid()) {
+        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= getMaxBuildHeight() - 1), and 1.20.1
+        // blocksMotion() was isSolid() minus cobweb and bamboo sapling.
+        while (!foundCeiling && checkPos.getY() <= level().getMaxY()) {
+            net.minecraft.world.level.block.state.BlockState ceiling = level().getBlockState(checkPos.above());
+            if (ceiling.isSolid() && !ceiling.is(net.minecraft.world.level.block.Blocks.COBWEB)
+                    && !ceiling.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING)) {
                 foundCeiling = true;
             } else {
                 newY++;
@@ -388,10 +387,12 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         if (source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION) && getProperties().hasTrait(EnumGolemTrait.BLASTPROOF)) {
             amount = Math.min(getMaxHealth() / 2.0f, amount * 0.3f);
         }
-        if (source == damageSources().cactus()) {
+        // NEOFORGE_PORT (26.3): match by damage type like 1.20.1 (identity checks against the
+        // cached damageSources() instances missed any equal-typed source created elsewhere).
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)) {
             return false;
         }
-        if (hasHome() && (source == damageSources().inWall() || source == damageSources().fellOutOfWorld())) {
+        if (hasHome() && (source.is(net.minecraft.world.damagesource.DamageTypes.IN_WALL) || source.is(net.minecraft.world.damagesource.DamageTypes.FELL_OUT_OF_WORLD))) {
             teleportToHome();
         }
         return super.hurtServer(serverLevel, source, amount);
@@ -669,22 +670,21 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         return level();
     }
 
-    // NEOFORGE_PORT: render states cannot see the protected swing fields;
-    // this exposes the same 0..1 arm-wiggle phase the old attackAnim gave.
+    // NEOFORGE_PORT: render states read the arm-wiggle phase through this accessor;
+    // it is the old LivingEntity.getAttackAnim(partialTicks) (26.x: SwingState animation).
     public float getArmSwingPhase(float partialTicks) {
-        return swinging && swingTime >= 0
-                ? Math.min(1.0F, (swingTime + partialTicks) / 3.0F) : 0.0F;
+        return getSwingAnimation(partialTicks);
     }
 
+    // NEOFORGE_PORT (26.3): LivingEntity.swinging/swingTime are now the private SwingState.
+    // The previous port kept shadow fields that never ticked and broadcast entity event 0,
+    // which no 26.x client handles, so golem arms never animated. Vanilla swing() is the
+    // same logic as the 1.20.1 body: restart only when idle, before the first tick or past
+    // duration/2 (= 3 of 6 ticks), then ClientboundSwingAnimationPacket(MAIN_HAND) to
+    // trackers and self (old broadcastAndSend(ClientboundAnimatePacket(this, 0))).
     @Override
     public void swingArm() {
-        if (!swinging || swingTime >= 3 || swingTime < 0) {
-            swingTime = -1;
-            swinging = true;
-            // NEOFORGE_PORT: ChunkSource.broadcastAndSend gone -> Level.broadcastEntityEvent
-            // (id 0 = arm swing, same packet as Forge ClientboundAnimatePacket(this, 0)).
-            level().broadcastEntityEvent(this, (byte) 0);
-        }
+        swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
     }
 
     @Override

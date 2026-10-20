@@ -94,12 +94,14 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
         float[] glow = lock == 2
                 ? new float[]{1.0F, 0.2F, 0.2F}
                 : new float[]{1.0F, 1.0F, 1.0F};
-        int glowLight = glowLight(count, playerTickCount);
         int overlay = OverlayTexture.NO_OVERLAY;
 
+        // NEOFORGE_PORT (26.3): Forge stabilizer frame is translate(0.5, 0, 0.5) +
+        // XP(-90) (device stands on the floor, pistons up toward the node); the
+        // converter's (y 1, XP 90) frame drew it upside down.
         poseStack.pushPose();
-        poseStack.translate(0.5, 1.0, 0.5);
-        poseStack.rotate(Axis.XP.rotationDegrees(90.0F));
+        poseStack.translate(0.5, 0.0, 0.5);
+        poseStack.rotate(Axis.XP.rotationDegrees(-90.0F));
 
         RenderType baseType = TCRenderTypes.objSolid(TEXTURE);
         emitObj(poseStack, collector, baseType, model, "lock", packedLight, overlay, 1, 1, 1, 1);
@@ -111,7 +113,9 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
             poseStack.rotate(Axis.YP.rotationDegrees(45.0F));
             poseStack.translate(0.0, 0.0, v);
             emitObj(poseStack, collector, baseType, model, "piston", packedLight, overlay, 1, 1, 1, 1);
-            emitObj(poseStack, collector, overType, model, "piston", glowLight, overlay,
+            // Forge glowLight(count, a): per-piston phase offset (a * 5 ticks).
+            emitObj(poseStack, collector, overType, model, "piston",
+                    glowLight(count, playerTickCount + a * 5), overlay,
                     glow[0], glow[1], glow[2], 1);
             poseStack.popPose();
         }
@@ -166,5 +170,12 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
         int glow = 50 + (int) (170.0F * Math.max(0, count) / 37.0F * scale);
         // NEOFORGE_PORT: LightTexture removed in 26.x; same packing.
         return (Math.min(15, Math.max(0, glow >> 4)) & 0xF) << 4;
+    }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(StabilizerTile blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 }

@@ -120,6 +120,10 @@ public class EldritchCrabModel extends EntityModel<EldritchCrabRenderer.State> {
         float limbSwingAmount = state.walkAnimationSpeed;
         float ageInTicks = state.ageInTicks;
         this.showHelm = state.helm;
+        // NEOFORGE_PORT (26.3): the 8-float renderToBuffer (helm XOR bare tail) is dead;
+        // the final root render draws every visible part, so toggle visibility here.
+        this.tailHelm.visible = state.helm;
+        this.tailBare.visible = !state.helm;
         setRot(this.rrLeg1, 0.0f, 0.2094395f, 0.4363323f);
         setRot(this.rfLeg1, 0.0f, -0.2094395f, 0.4363323f);
         setRot(this.lrLeg1, 0.0f, -0.2094395f, -0.4363323f);

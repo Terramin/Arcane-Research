@@ -25,7 +25,8 @@ import net.minecraft.util.ARGB;
 // NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
 public class FXVoidStream extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
-    private static final Identifier VOID_TEX = Identifier.parse("textures/entity/end_portal.png");
+    // NEOFORGE_PORT (26.3): vanilla moved the texture to entity/end_portal/ (old path = missing texture).
+    private static final Identifier VOID_TEX = Identifier.parse("textures/entity/end_portal/end_portal.png");
 
     private final double targetX, targetY, targetZ;
     private final double startX, startY, startZ;

@@ -68,6 +68,14 @@ public class LogisticsMenu extends AbstractContainerMenu {
             public int getMaxStackSize() {
                 return Integer.MAX_VALUE;
             }
+
+            // NEOFORGE_PORT (26.3): SimpleContainer.setItem now clamps to
+            // getMaxStackSize(stack) = min(container, item max) -> aggregated counts
+            // were cut to 64. Forge 1.20.1 clamped to the container max only.
+            @Override
+            public int getMaxStackSize(ItemStack stack) {
+                return getMaxStackSize();
+            }
         };
 
         this.data = new SimpleContainerData(2);
@@ -111,9 +119,13 @@ public class LogisticsMenu extends AbstractContainerMenu {
                                 continue;
                             }
 
+                            // NEOFORGE_PORT (26.3): Forge keyed on the WHOLE item tag
+                            // (enchantments, stored enchantments, potion, ...), not just
+                            // custom data; the component patch is the 26.x equivalent
+                            // (otherwise e.g. all enchanted books merge into one entry).
                             String key = stack.getHoverName().getString() +
                                     "_" + stack.getDamageValue() +
-                                    "_" + (arcaneresearch.api.ArcaneresearchInvHelper.getCustomTag(stack) != null ? arcaneresearch.api.ArcaneresearchInvHelper.getCustomTag(stack).hashCode() : 0);
+                                    "_" + (!stack.isComponentsPatchEmpty() ? stack.getComponentsPatch().hashCode() : 0);
 
                             if (tempItems.containsKey(key)) {
                                 ItemStack existing = tempItems.get(key);

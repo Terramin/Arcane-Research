@@ -25,9 +25,18 @@ public class AspectRenderer {
 
     private static final DecimalFormat AMOUNT_FORMATTER = new DecimalFormat("#");
     private static final int ICON_SIZE = 16;
-    // NEOFORGE_PORT: blit needs explicit texture dims; recorded while stripping (same image read).
+    // NEOFORGE_PORT: blit needs explicit texture dims; recorded in
+    // UtilsFX.processedAspectTexture while the image is read (same image read).
+    // FIX: the map is only ever READ here - it is POPULATED by UtilsFX via
+    // registerTextureDims below. Without entries, renderColoredTexture skipped
+    // its blit and aspect icons were silently never drawn (tooltips, HUD, JEI).
     private static final java.util.Map<Identifier, int[]> TEXTURE_DIMS =
             new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** Called by UtilsFX.processedAspectTexture with the pixels size of an aspect texture. */
+    public static void registerTextureDims(Identifier texture, int width, int height) {
+        TEXTURE_DIMS.put(texture, new int[]{width, height});
+    }
 
     public static String formatAmount(float amount) {
         if (amount == (int) amount) {
@@ -94,16 +103,11 @@ public class AspectRenderer {
 
     /**
      * Full pixel dimensions of a GUI texture for blit sampling. Populated by
-     * {@link #strippedTexture} while the image is read. Null when the resource
-     * is missing/unreadable (callers keep their previous sampling then).
+     * {@link arcaneresearch.client.lib.UtilsFX#strippedAspectTexture} while the image is read.
+     * Null when the resource is missing/unreadable (callers skip drawing then).
      */
     public static int[] textureDims(Identifier texture) {
-        int[] dims = TEXTURE_DIMS.get(texture);
-        if (dims == null) {
-            strippedTexture(texture);
-            dims = TEXTURE_DIMS.get(texture);
-        }
-        return dims;
+        return TEXTURE_DIMS.get(texture);
     }
 
     private static void renderColoredTexture(GuiGraphicsExtractor graphics, Identifier texture,

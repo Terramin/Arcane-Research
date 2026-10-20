@@ -48,11 +48,18 @@ public class EntitySpecialItem extends ItemEntity {
         }
     }
 
-    // NEOFORGE_PORT: Forge overrode hurt() to ignore IS_EXPLOSION damage.
-    // 26.x routes explosion damage through ignoreExplosion (hurtServer is final
-    // in ItemEntity), so immunity is expressed here instead — same behavior.
-    @Override
-    public boolean ignoreExplosion(net.minecraft.world.level.Explosion explosion) {
-        return true;
+    // NEOFORGE_PORT (26.3): Forge overrode hurt() to ignore IS_EXPLOSION damage only (the item was
+    // still pushed by the blast). ItemEntity.hurtServer is final and ignoreExplosion would also drop
+    // the knockback, so the damage immunity goes through NeoForge's invulnerability-check hook
+    // (fired from Entity.isInvulnerableToBase, which ItemEntity.hurtServer/hurtClient consult first).
+    @net.neoforged.fml.common.EventBusSubscriber(modid = arcaneresearch.Arcaneresearch.MODID)
+    public static final class ExplosionImmunity {
+        @net.neoforged.bus.api.SubscribeEvent
+        public static void onInvulnerabilityCheck(net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent event) {
+            if (event.getEntity() instanceof EntitySpecialItem
+                    && event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
+                event.setInvulnerable(true);
+            }
+        }
     }
 }

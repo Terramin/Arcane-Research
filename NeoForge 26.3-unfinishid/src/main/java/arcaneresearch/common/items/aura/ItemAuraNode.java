@@ -3,7 +3,6 @@ package arcaneresearch.common.items.aura;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -11,8 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -52,27 +49,25 @@ public class ItemAuraNode extends BlockItem implements IEssentiaContainerItem {
     }
 
     // NEOFORGE_PORT: BlockItem.updateCustomBlockEntityTag is now a static helper
-    // (Level, Player, pos, stack); custom post-place tile init moves to place().
-    // Order preserved: vanilla data applied inside super.place, then node data.
+    // (Level, Player, pos, stack); custom post-place tile init moves to the NeoForge
+    // BlockItem.onBlockPlacedBy callback.
+    // NEOFORGE_PORT (26.3): it must NOT run after super.place(): place() ends with
+    // itemStack.consume(1, player), which empties a 1-count survival stack, and an empty
+    // stack reports no CUSTOM_DATA -> the node data was dropped. onBlockPlacedBy runs on
+    // both sides before consume, i.e. at the same point as Forge updateCustomBlockEntityTag.
     @Override
-    public InteractionResult place(BlockPlaceContext context) {
-        InteractionResult result = super.place(context);
-        if (result.consumesAction()) {
-            try {
-                Level level = context.getLevel();
-                BlockPos pos = context.getClickedPos();
-                ItemStack stack = context.getItemInHand();
-                BlockEntity tile = level.getBlockEntity(pos);
-                if (tile instanceof AuraNodeTile node
-                        && arcaneresearch.api.ArcaneresearchInvHelper.hasCustomTag(stack)) {
-                    NodeStackData.applyTo(node, arcaneresearch.api.ArcaneresearchInvHelper.getCustomTag(stack));
+    public void onBlockPlacedBy(BlockPlaceContext context, Level level, BlockPos pos, BlockState state,
+                                @Nullable Player placer, ItemStack stack) {
+        try {
+            BlockEntity tile = level.getBlockEntity(pos);
+            if (tile instanceof AuraNodeTile node
+                    && arcaneresearch.api.ArcaneresearchInvHelper.hasCustomTag(stack)) {
+                NodeStackData.applyTo(node, arcaneresearch.api.ArcaneresearchInvHelper.getCustomTag(stack));
 
-                    node.syncTile(true);
-                }
-            } catch (Exception ignored) {
+                node.syncTile(true);
             }
+        } catch (Exception ignored) {
         }
-        return result;
     }
 
     // NEOFORGE_PORT: appendHoverText signature changed in 26.x
@@ -105,12 +100,8 @@ public class ItemAuraNode extends BlockItem implements IEssentiaContainerItem {
         return false;
     }
 
-    // NEOFORGE_PORT: Item.initializeClient removed in 26.x; kept as a no-op hook.
-    @OnlyIn(Dist.CLIENT)
-    public void initializeClient(
-            java.util.function.Consumer<net.neoforged.neoforge.client.extensions.common.IClientItemExtensions> consumer) {
-        // NEOFORGE_PORT: BlockEntityWithoutLevelRenderer removed in 26.x; done via
-        // client/renderers/item/NodeSpecialRenderer (arcaneresearch:node), registered
-        // in SpecialItemModels and wired in assets/arcaneresearch/items/{aura_node,jar_node}.json.
-    }
+    // NEOFORGE_PORT (26.3): Item.initializeClient(Consumer<IClientItemExtensions>) was removed
+    // in 26.x (the old no-op kept a client-only type in this common class). The Forge BEWLR
+    // is done via client/renderers/item/NodeSpecialRenderer (arcaneresearch:node), registered
+    // in SpecialItemModels and wired in assets/arcaneresearch/items/{aura_node,jar_node}.json.
 }

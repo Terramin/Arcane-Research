@@ -81,14 +81,21 @@ public class GolemObjLayer extends RenderLayer<GolemRenderer.State, GolemModel> 
             return;
         }
         fillCache(state);
-        if (!state.ghostOn) {
+        // NEOFORGE_PORT (26.3): layers run inside LivingEntityRenderer's model flip
+        // (scale(-1,-1,1) + translate(0,-1.501,0)); 1.20.1 drew the OBJ y-up from the
+        // feet, so undo it. Invisible golems draw nothing unless the ghost pass applies.
+        poseStack.pushPose();
+        poseStack.translate(0.0F, 1.501F, 0.0F);
+        poseStack.scale(-1.0F, -1.0F, 1.0F);
+        if (!state.isInvisible) {
             emitBody(poseStack, collector, packedLight, state, 1.0F, 1.0F, 1.0F, 1.0F, false);
-        } else {
+        } else if (state.ghostOn) {
             emitBody(poseStack, collector, packedLight, state, 1.0F, 1.0F, 1.0F, 0.15F, false);
         }
         if (state.sealXray) {
             emitBody(poseStack, collector, packedLight, state, 0.25F, 0.25F, 0.25F, 0.25F, true);
         }
+        poseStack.popPose();
     }
 
     private void emitBody(PoseStack poseStack, SubmitNodeCollector collector, int packedLight,

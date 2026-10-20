@@ -72,7 +72,9 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
     private static List<Ingredient> parseShapeless(Object[] recipe) {
         List<Ingredient> ingredients = new ArrayList<>();
         for (Object in : recipe) {
-            if (in instanceof Collection) {
+            // NEOFORGE_PORT (26.3): Forge expanded ONLY NonNullList entries into separate
+            // ingredients; any other Collection goes to getIngredient() as ONE OR-ingredient.
+            if (in instanceof net.minecraft.core.NonNullList) {
                 for (Object o : (Collection<?>) in) {
                     Ingredient ing = ArcaneresearchApiHelper.getIngredient(o);
                     if (ing != null && !ing.isEmpty()) {

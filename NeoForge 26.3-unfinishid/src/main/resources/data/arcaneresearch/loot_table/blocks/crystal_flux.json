@@ -6,109 +6,101 @@
           "type": "minecraft:alternatives",
           "children": [
             {
-              "conditions": [
-                {
-                  "properties": {
-                    "size": "0"
-                  },
-                  "condition": "minecraft:block_state_property",
-                  "block": "arcaneresearch:crystal_flux"
-                }
-              ],
+              "condition": {
+                "type": "minecraft:match_block",
+                "state": {
+                  "size": "0"
+                },
+                "blocks": "arcaneresearch:crystal_flux"
+              },
               "name": "arcaneresearch:crystal_essence",
-              "functions": [
+              "modifier": [
                 {
-                  "function": "minecraft:set_components",
+                  "type": "minecraft:set_components",
                   "components": {
                     "minecraft:custom_data": "{Aspects:[{key:\"vitium\",amount:1}]}"
                   }
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ],
               "type": "minecraft:item"
             },
             {
-              "conditions": [
-                {
-                  "properties": {
-                    "size": "1"
-                  },
-                  "condition": "minecraft:block_state_property",
-                  "block": "arcaneresearch:crystal_flux"
-                }
-              ],
+              "condition": {
+                "type": "minecraft:match_block",
+                "state": {
+                  "size": "1"
+                },
+                "blocks": "arcaneresearch:crystal_flux"
+              },
               "name": "arcaneresearch:crystal_essence",
-              "functions": [
+              "modifier": [
                 {
-                  "function": "minecraft:set_components",
+                  "type": "minecraft:set_components",
                   "components": {
                     "minecraft:custom_data": "{Aspects:[{key:\"vitium\",amount:1}]}"
                   }
                 },
                 {
-                  "function": "minecraft:set_count",
+                  "type": "minecraft:set_count",
                   "count": 2
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ],
               "type": "minecraft:item"
             },
             {
-              "conditions": [
-                {
-                  "properties": {
-                    "size": "2"
-                  },
-                  "condition": "minecraft:block_state_property",
-                  "block": "arcaneresearch:crystal_flux"
-                }
-              ],
+              "condition": {
+                "type": "minecraft:match_block",
+                "state": {
+                  "size": "2"
+                },
+                "blocks": "arcaneresearch:crystal_flux"
+              },
               "name": "arcaneresearch:crystal_essence",
-              "functions": [
+              "modifier": [
                 {
-                  "function": "minecraft:set_components",
+                  "type": "minecraft:set_components",
                   "components": {
                     "minecraft:custom_data": "{Aspects:[{key:\"vitium\",amount:1}]}"
                   }
                 },
                 {
-                  "function": "minecraft:set_count",
+                  "type": "minecraft:set_count",
                   "count": 3
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ],
               "type": "minecraft:item"
             },
             {
-              "conditions": [
-                {
-                  "properties": {
-                    "size": "3"
-                  },
-                  "condition": "minecraft:block_state_property",
-                  "block": "arcaneresearch:crystal_flux"
-                }
-              ],
+              "condition": {
+                "type": "minecraft:match_block",
+                "state": {
+                  "size": "3"
+                },
+                "blocks": "arcaneresearch:crystal_flux"
+              },
               "name": "arcaneresearch:crystal_essence",
-              "functions": [
+              "modifier": [
                 {
-                  "function": "minecraft:set_components",
+                  "type": "minecraft:set_components",
                   "components": {
                     "minecraft:custom_data": "{Aspects:[{key:\"vitium\",amount:1}]}"
                   }
                 },
                 {
-                  "function": "minecraft:set_count",
+                  "type": "minecraft:set_count",
                   "count": 4
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ],
               "type": "minecraft:item"

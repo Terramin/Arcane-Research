@@ -288,11 +288,14 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         return super.hurtServer(serverLevel, source, amount);
     }
 
-    // NEOFORGE_PORT: LivingEntity.knockback gained (DamageSource, damage) in 26.x;
+    // NEOFORGE_PORT: LivingEntity.knockback gained (DamageSource, damage, comesFromEffect) in 26.x;
     // damped-turret behavior kept (1/10th horizontal push + upward clamp).
+    // NEOFORGE_PORT (26.3): override the 6-arg variant -- the 5-arg one delegates to it, but attack
+    // knockback (causeExtraKnockback, Player sprint/enchant) calls the 6-arg one directly; in Forge
+    // every path went through the single 3-arg knockback.
     @Override
-    public void knockback(double strength, double x, double z, DamageSource source, float damage) {
-        super.knockback(strength, x / 10.0, z / 10.0, source, damage);
+    public void knockback(double strength, double x, double z, DamageSource source, float damage, boolean comesFromEffect) {
+        super.knockback(strength, x / 10.0, z / 10.0, source, damage, comesFromEffect);
         Vec3 delta = getDeltaMovement();
         if (delta.y > 0.1) {
             setDeltaMovement(delta.x, 0.1, delta.z);

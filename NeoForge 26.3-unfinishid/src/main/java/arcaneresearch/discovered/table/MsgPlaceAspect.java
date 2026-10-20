@@ -102,7 +102,7 @@ public class MsgPlaceAspect implements CustomPacketPayload {
                 // рефанд только с перками), чернила тратятся всегда.
                 Aspect removed = HexResearchGame.eraseAspect(note, msg.q, msg.r);
                 if (removed != null) {
-                    damageInk(menu);
+                    damageInk(player, menu);
                 }
             } else {
                 Aspect aspect;
@@ -131,7 +131,7 @@ public class MsgPlaceAspect implements CustomPacketPayload {
                         != HexResearchGame.PlaceResult.OK) {
                     return;
                 }
-                damageInk(menu);
+                damageInk(player, menu);
                 // Победа: флаг hex в проектной записке + ровно одна стадия, если
                 // текущая — hex. have/need НЕ трогаем: stage-1 проходит своей
                 // мини-игрой, иначе она пропускается (бывший баг).
@@ -189,17 +189,29 @@ public class MsgPlaceAspect implements CustomPacketPayload {
      * consumeInkFromTable(doit). Вызывается только при наличии чернил
      * (проверка выше уже запретила ход без них).
      */
-    private static void damageInk(HexResearchTableMenu menu) {
+    private static void damageInk(ServerPlayer player, HexResearchTableMenu menu) {
         if (menu == null) {
             return;
         }
         try {
             ItemStack tools = menu.getSlot(0).getItem();
             if (HexResearchTableMenu.isInkStack(tools)) {
-                // NEOFORGE_PORT: ItemStack.hurt(int, RandomSource, ServerPlayer)
-                // удалён; у слотового предмета нет EquipmentSlot для hurtAndBreak —
-                // тот же числовой износ вручную (предел -> shrink, как раньше).
-                tools.setDamageValue(tools.getDamageValue() + 1);
+                // NEOFORGE_PORT (26.3): ItemStack.hurt(int, RandomSource, ServerPlayer)
+                // removed. Replicate its body: isDamageableItem gate, Unbreaking
+                // (EnchantmentHelper.processDurabilityChange), durability criterion,
+                // setDamageValue. hurtAndBreak is not used: it skips creative players,
+                // which the reference hurt() did not.
+                if (tools.isDamageableItem()) {
+                    net.minecraft.server.level.ServerLevel serverLevel = player.level();
+                    int amount = net.minecraft.world.item.enchantment.EnchantmentHelper
+                            .processDurabilityChange(serverLevel, tools, 1);
+                    if (amount > 0) {
+                        int newDamage = tools.getDamageValue() + amount;
+                        net.minecraft.advancements.triggers.CriteriaTriggers.ITEM_DURABILITY_CHANGED
+                                .trigger(player, tools, newDamage);
+                        tools.setDamageValue(newDamage);
+                    }
+                }
                 if (tools.getDamageValue() >= tools.getMaxDamage()) {
                     tools.shrink(1);
                 }

@@ -67,6 +67,7 @@ public class ItemFocusPouch extends Item implements ICurioItem {
         NonNullList<ItemStack> stackList = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
         // NEOFORGE_PORT: ContainerHelper.loadAllItems(CompoundTag, ...) removed in 26.x ->
         // ItemStack.CODEC via NbtOps (same "Items" list + "Slot" entries shape).
+        // NEOFORGE_PORT (26.3): registry-aware ops (RegistryNbt) - plain NbtOps dropped enchanted stacks.
         CompoundTag root = ArcaneresearchInvHelper.getCustomTag(item);
         if (root == null) {
             return stackList;
@@ -76,7 +77,7 @@ public class ItemFocusPouch extends Item implements ICurioItem {
             CompoundTag slotTag = items.getCompoundOrEmpty(i);
             int slot = slotTag.getByteOr("Slot", (byte) 0) & 0xFF;
             if (slot >= 0 && slot < stackList.size()) {
-                ItemStack stack = ItemStack.CODEC.parse(NbtOps.INSTANCE, slotTag)
+                ItemStack stack = ItemStack.CODEC.parse(arcaneresearch.common.lib.utils.RegistryNbt.ops(), slotTag)
                         .result().orElse(ItemStack.EMPTY);
                 stackList.set(slot, stack);
             }
@@ -91,7 +92,7 @@ public class ItemFocusPouch extends Item implements ICurioItem {
             ItemStack stack = stackList.get(i);
             if (!stack.isEmpty()) {
                 final int slot = i;
-                ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack.copy()).result().ifPresent(encoded -> {
+                ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), stack.copy()).result().ifPresent(encoded -> {
                     if (encoded instanceof CompoundTag slotTag) {
                         slotTag.putByte("Slot", (byte) slot);
                         items.add(slotTag);

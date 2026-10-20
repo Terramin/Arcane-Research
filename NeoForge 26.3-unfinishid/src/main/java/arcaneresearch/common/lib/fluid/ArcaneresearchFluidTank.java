@@ -149,16 +149,13 @@ public class ArcaneresearchFluidTank extends FluidStacksResourceHandler {
         clearAndFill(fluid, amount);
     }
 
+    // Loading overwrites the slot directly: extract() rejects an empty resource (NeoForge
+    // transfer preconditions), which crashed every empty-tank sync packet on the client.
     private void clearAndFill(Fluid fluid, int amount) {
-        try (var tx = Transaction.openRoot()) {
-            extract(0, getResource(0), Integer.MAX_VALUE, tx);
-            tx.commit();
-        }
-        if (amount > 0) {
-            try (var tx = Transaction.openRoot()) {
-                insert(0, FluidResource.of(fluid), Math.min(amount, capacity), tx);
-                tx.commit();
-            }
+        if (amount > 0 && fluid != Fluids.EMPTY) {
+            set(0, FluidResource.of(fluid), Math.min(amount, capacity));
+        } else {
+            set(0, FluidResource.EMPTY, 0);
         }
     }
 }

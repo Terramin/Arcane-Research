@@ -67,11 +67,24 @@ public final class BeamEngine {
     private BeamEngine() {
     }
 
+    // NEOFORGE_PORT (26.3): Forge kept these in the vanilla ParticleEngine, which
+    // is cleared on every level change (setLevel); mirror that here.
+    private static net.minecraft.client.multiplayer.ClientLevel trackedLevel;
+
+    private static void syncLevel() {
+        net.minecraft.client.multiplayer.ClientLevel current = Minecraft.getInstance().level;
+        if (current != trackedLevel) {
+            ACTIVE.clear();
+            trackedLevel = current;
+        }
+    }
+
     public static void add(BeamEffect effect) {
         if (effect == null) {
             return;
         }
         synchronized (ACTIVE) {
+            syncLevel();
             ACTIVE.add(effect);
         }
     }
@@ -89,7 +102,14 @@ public final class BeamEngine {
 
         @SubscribeEvent
         public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
+            Minecraft mc = Minecraft.getInstance();
             synchronized (ACTIVE) {
+                syncLevel();
+                // NEOFORGE_PORT (26.3): same gate as vanilla particleEngine.tick()
+                // (frozen while paused or /tick freeze), as in Forge.
+                if (mc.level == null || mc.isPaused() || !mc.level.tickRateManager().runsNormally()) {
+                    return;
+                }
                 Iterator<BeamEffect> it = ACTIVE.iterator();
                 while (it.hasNext()) {
                     boolean alive;

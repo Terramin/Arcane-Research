@@ -41,11 +41,22 @@ public class ItemElementalSword extends Item {
         return ItemUseAnimation.BLOCK;
     }
 
-    // NEOFORGE_PORT: тот же хук, что в Forge (SwordBlockAnimation.HAND_EXTENSION).
-    @OnlyIn(Dist.CLIENT)
-    public void initializeClient(java.util.function.Consumer<net.neoforged.neoforge.client.extensions.common.IClientItemExtensions> consumer) {
-        // NEOFORGE_PORT: пакет neoforged; хук BLOCK-стойки тот же.
-        consumer.accept(arcaneresearch.client.renderers.item.SwordBlockAnimation.HAND_EXTENSION);
+    // NEOFORGE_PORT (26.3): Forge registered SwordBlockAnimation.HAND_EXTENSION in
+    // initializeClient, which no longer exists in 26.x (the dead override kept a client-only
+    // type in this common class and nothing registered the extension -> no block pose).
+    // Registered via RegisterClientExtensionsEvent instead; this nested subscriber is
+    // Dist.CLIENT-only, so the dedicated server never loads it.
+    @net.neoforged.fml.common.EventBusSubscriber(modid = arcaneresearch.Arcaneresearch.MODID, value = Dist.CLIENT)
+    public static final class ClientExtensions {
+        private ClientExtensions() {
+        }
+
+        @net.neoforged.bus.api.SubscribeEvent
+        public static void onRegisterClientExtensions(
+                net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
+            event.registerItem(arcaneresearch.client.renderers.item.SwordBlockAnimation.HAND_EXTENSION,
+                    arcaneresearch.init.ModItems.ELEMENTAL_SWORD.get());
+        }
     }
 
     /**
@@ -118,9 +129,14 @@ public class ItemElementalSword extends Item {
         if (ticks % 20 == 0 && !level.isClientSide()) {
             // Прочность как в оригинале, но без broadcastBreakEvent:
             // свинг руки каждую секунду дёргал BLOCK-стойку в 1 лице.
-            // NEOFORGE_PORT: consumer-хвост hurtAndBreak удалён — пустой пакет
-            // недостижим, рвём напрямую через (amount, entity, hand).
-            stack.hurtAndBreak(1, user, user.getUsedItemHand());
+            // NEOFORGE_PORT (26.3): hurtAndBreak(amount, entity, hand) calls onEquippedItemBroken
+            // (break particles/sound broadcast) that Forge's empty consumer skipped; use the
+            // consumer overload with the same silent break (Forge still awarded ITEM_BROKEN).
+            stack.hurtAndBreak(1, (net.minecraft.server.level.ServerLevel) level, user, broken -> {
+                if (user instanceof ServerPlayer brokenBy) {
+                    brokenBy.awardStat(net.minecraft.stats.Stats.ITEM_BROKEN.get(broken.getItem()));
+                }
+            });
         }
     }
 

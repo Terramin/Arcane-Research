@@ -55,6 +55,18 @@ public class IngredientNBTTC implements ICustomIngredient {
         return Stream.of(stack.typeHolder());
     }
 
+    // NEOFORGE_PORT (26.3): Forge getItems() returned the wrapped stack WITH its NBT (book/JEI
+    // showed e.g. the aspect-specific crystal/phial). The default ICustomIngredient display is
+    // built from items() (bare item) -> show the full stack instead.
+    @Override
+    public net.minecraft.world.item.crafting.display.SlotDisplay display() {
+        if (stack.isEmpty()) {
+            return net.minecraft.world.item.crafting.display.SlotDisplay.Empty.INSTANCE;
+        }
+        return new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(
+                net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(stack));
+    }
+
     @Override
     public boolean isSimple() {
         return false;

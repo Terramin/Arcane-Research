@@ -76,7 +76,9 @@ public class BellowsRenderer implements BlockEntityRenderer<TileBellows, Bellows
         Direction facing = state.facing;
         applyRotation(poseStack, facing);
 
-        model.setInflation(state.inflation);
+        // NEOFORGE_PORT (26.3): geometry is emitted later (deferred) and the model is
+        // shared between all bellows, so the inflation is applied inside the callback.
+        final float inflation = state.inflation;
 
         RenderType type = TCRenderTypes.objSolid(TEXTURE);
         int light = state.lightCoords;
@@ -84,6 +86,7 @@ public class BellowsRenderer implements BlockEntityRenderer<TileBellows, Bellows
             PoseStack work = new PoseStack();
             work.last().pose().set(pose.pose());
             work.last().normal().set(pose.normal());
+            model.setInflation(inflation);
             model.renderToBuffer(work, consumer, light, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
         });
 

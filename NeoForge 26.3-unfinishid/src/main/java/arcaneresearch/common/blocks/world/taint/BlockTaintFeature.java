@@ -147,8 +147,8 @@ public class BlockTaintFeature extends DirectionalBlock implements ITaintBlock {
             if (random.nextFloat() < 0.333f) {
 
                 Entity crawler = new EntityTaintCrawler(level);
-                crawler.teleportTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-                crawler.setYRot(random.nextInt(360)); crawler.setXRot(0.0f);;
+                // NEOFORGE_PORT (26.3): Forge moveTo(x, y, z, yaw, pitch) == snapTo (also sets old pos/rot).
+                crawler.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, random.nextInt(360), 0.0f);
                 level.addFreshEntity(crawler);
             } else {
 
@@ -164,8 +164,9 @@ public class BlockTaintFeature extends DirectionalBlock implements ITaintBlock {
         return player.hasCorrectToolForDrops(state);
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+    // NEOFORGE_PORT: Forge getLightBlock -> 26.x getLightDampening(state).
+    @Override
+    protected int getLightDampening(BlockState state) {
         return 0;
     }
 }

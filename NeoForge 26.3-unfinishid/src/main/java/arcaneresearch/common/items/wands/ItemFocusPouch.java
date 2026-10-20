@@ -98,7 +98,7 @@ public class ItemFocusPouch extends Item implements ICurioItem {
             CompoundTag slotTag = inv.getCompoundOrEmpty(i);
             int slot = slotTag.getByteOr("Slot", (byte) 0) & 0xFF;
             if (slot >= 0 && slot < list.size()) {
-                ItemStack s = ItemStack.CODEC.parse(NbtOps.INSTANCE, slotTag)
+                ItemStack s = ItemStack.CODEC.parse(arcaneresearch.common.lib.utils.RegistryNbt.ops(), slotTag)
                         .result().orElse(ItemStack.EMPTY);
                 list.set(slot, s);
             }
@@ -114,7 +114,7 @@ public class ItemFocusPouch extends Item implements ICurioItem {
             ItemStack slot = list.get(i);
             if (!slot.isEmpty()) {
                 final int slotIndex = i;
-                ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, slot.copy()).result().ifPresent(encoded -> {
+                ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), slot.copy()).result().ifPresent(encoded -> {
                     if (encoded instanceof CompoundTag slotTag) {
                         slotTag.putByte("Slot", (byte) slotIndex);
                         inv.add(slotTag);

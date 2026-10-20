@@ -15,8 +15,8 @@ import arcaneresearch.init.ModEntities;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
-public class EntityFollowingItem extends EntitySpecialItem {
-    // TODO_PORT (packet wave): IEntityAdditionalSpawnData removed in NeoForge; extra spawn data must go through sendPairingData (see Entity base).
+public class EntityFollowingItem extends EntitySpecialItem implements net.neoforged.neoforge.entity.IEntityWithComplexSpawn {
+    // NEOFORGE_PORT: Forge IEntityAdditionalSpawnData -> NeoForge IEntityWithComplexSpawn (same payload).
 
     private static final EntityDataAccessor<Integer> DATA_TYPE =
             SynchedEntityData.defineId(EntityFollowingItem.class, EntityDataSerializers.INT);
@@ -149,5 +149,29 @@ public class EntityFollowingItem extends EntitySpecialItem {
         targetX = tag.getDoubleOr("targetX", 0.0D);
         targetY = tag.getDoubleOr("targetY", 0.0D);
         targetZ = tag.getDoubleOr("targetZ", 0.0D);
+    }
+
+    @Override
+    public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        buffer.writeInt(target != null ? target.getId() : -1);
+        buffer.writeDouble(targetX);
+        buffer.writeDouble(targetY);
+        buffer.writeDouble(targetZ);
+        buffer.writeByte(getFollowType());
+    }
+
+    @Override
+    public void readSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        try {
+            int entityId = buffer.readInt();
+            if (entityId > -1) {
+                target = level().getEntity(entityId);
+            }
+            targetX = buffer.readDouble();
+            targetY = buffer.readDouble();
+            targetZ = buffer.readDouble();
+            setFollowType(buffer.readByte());
+        } catch (Exception ignored) {
+        }
     }
 }

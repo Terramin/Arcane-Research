@@ -84,7 +84,8 @@ public class CrystalClusterFeature implements Feature {
                         }
                         BlockPos target = bp.offset(xx, yy, zz);
                         if (target.getY() < level.getMinY()
-                                || target.getY() >= level.getMaxY()) {
+                                // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+                                || target.getY() > level.getMaxY()) {
                             continue;
                         }
                         BlockState bs = level.getBlockState(target);

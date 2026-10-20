@@ -82,7 +82,7 @@ public class ClientProxy extends CommonProxy {
     public void registerModel(ItemStack stack) {
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+    @Override
     public arcaneresearch.api.golems.parts.PartModel createGolemPartModel(String kind,
                                                                       net.minecraft.resources.Identifier objModel,
                                                                       net.minecraft.resources.Identifier objTexture,

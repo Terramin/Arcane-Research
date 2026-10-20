@@ -334,6 +334,20 @@ public class TileTube extends TileArcaneresearch implements IEssentiaTransport, 
         return 0;
     }
 
+    // NEOFORGE_PORT (26.3): reference BlockTube.onRemove polluted the aura with the tube's
+    // essentia (server side). The port's BlockTube.affectNeighborsAfterRemoval looks the tile
+    // up after LevelChunk removed it, so it never fired. Called only on a block change.
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+        super.preRemoveSideEffects(pos, oldState);
+        if (level != null && !level.isClientSide()) {
+            int amount = getEssentiaAmount(Direction.UP);
+            if (amount > 0) {
+                arcaneresearch.api.aura.AuraHelper.polluteAura(level, pos, (float) amount, true);
+            }
+        }
+    }
+
     @Override
     public boolean triggerEvent(int id, int param) {
         if (id == 0) {

@@ -13,7 +13,9 @@ public class BlockStoneTC extends BlockTC {
     private final boolean canSpawnMobs;
 
     public BlockStoneTC(Properties properties, boolean canSpawnMobs) {
-        super(properties);
+        // NEOFORGE_PORT: Forge isValidSpawn override (returned canSpawnMobs) -> 26.x
+        // Properties.isValidSpawn predicate (the block-level override hook is gone).
+        super(properties.isValidSpawn((state, level, pos, type) -> canSpawnMobs));
         this.canSpawnMobs = canSpawnMobs;
     }
 
@@ -47,13 +49,6 @@ public class BlockStoneTC extends BlockTC {
                         .requiresCorrectToolForDrops(),
                 true
         );
-    }
-
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean isValidSpawn(BlockState state, BlockGetter level, BlockPos pos,
-                                net.minecraft.world.entity.SpawnPlacementType type,
-                                net.minecraft.world.entity.EntityType<?> entityType) {
-        return canSpawnMobs;
     }
 
     @Override

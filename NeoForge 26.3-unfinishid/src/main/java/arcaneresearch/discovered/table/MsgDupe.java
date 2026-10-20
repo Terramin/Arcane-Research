@@ -142,9 +142,10 @@ public class MsgDupe implements CustomPacketPayload {
     }
 
     private static boolean consumeOne(Inventory inv, net.minecraft.world.item.Item item) {
-        // NEOFORGE_PORT: Inventory.items now private -> slot iteration (same stacks).
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack stack = inv.getItem(i);
+        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems()
+        // (the same 36-slot list; getContainerSize() also spans armor/offhand,
+        // which the reference never consumed from).
+        for (ItemStack stack : inv.getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.is(item)) {
                 stack.shrink(1);
                 return true;

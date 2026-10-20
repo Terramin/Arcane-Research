@@ -10,6 +10,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.CharacterEvent;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
 import net.minecraft.util.Mth;
@@ -80,6 +82,7 @@ public class ResearchBrowserScreen extends Screen {
     private ResearchEntry currentHighlight;
     private Player player;
     private EditBox searchField;
+    private int linePass = -1;
 
     public ResearchBrowserScreen() {
         super(Component.translatable("gui.arcaneresearch.thaumonomicon"));
@@ -165,7 +168,8 @@ public class ResearchBrowserScreen extends Screen {
         float cell = 2048.0f / 32.0f;
         float u0 = (frame % 32) * cell;
         float v0 = (frame / 32) * cell;
-        graphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, NODE_TEXTURE,
+        // NEOFORGE_PORT (26.3): Forge blendFunc(SRC_ALPHA, ONE) -> additive GUI pipeline.
+        graphics.blit(arcaneresearch.client.renderers.TCRenderTypes.GUI_TEXTURED_ADDITIVE, NODE_TEXTURE,
                 (int) (x - 45), (int) (y - 45), u0, v0, 90, 90, (int) cell, (int) cell, 2048, 2048, 0xE6540070);
     }
 
@@ -442,6 +446,17 @@ public class ResearchBrowserScreen extends Screen {
         return super.keyPressed(event);
     }
 
+    // NEOFORGE_PORT (26.3): Forge charTyped(char,int) -> charTyped(CharacterEvent). Screen focus
+    // sits on the clicked search button, so chars must be forwarded explicitly (Forge 1:1).
+    @Override
+    public boolean charTyped(CharacterEvent event) {
+        if (searching && searchField.charTyped(event)) {
+            updateSearch();
+            return true;
+        }
+        return super.charTyped(event);
+    }
+
     private void updateSearch() {
         searchResults.clear();
         invisible.clear();
@@ -530,10 +545,10 @@ public class ResearchBrowserScreen extends Screen {
     // NEOFORGE_PORT: Screen.extractBackground is public in 26.x.
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        // NEOFORGE_PORT (26.3): isInGameUi() -> super draws exactly the 1.20.1 in-world
+        // renderBackground gradient (no blur / menu texture, no second gradient).
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
         if (!searching) {
             handleDragging(mouseX, mouseY);
             handleZoom();
@@ -632,7 +647,8 @@ public class ResearchBrowserScreen extends Screen {
     public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         int button = event.button();
 
-        if (button == 0 && !searching) {
+        // NEOFORGE_PORT (26.3): mouse buttons are 1-based (left = MOUSE_BUTTON_LEFT, was 0).
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && !searching) {
             isDragging = true;
             return true;
         }
@@ -642,7 +658,7 @@ public class ResearchBrowserScreen extends Screen {
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
         int button = event.button();
-        if (button == 0) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT) {
             isDragging = false;
         }
         return super.mouseReleased(event);
@@ -653,13 +669,8 @@ public class ResearchBrowserScreen extends Screen {
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();
         double mouseY = event.y();
-        int button = event.button();
-        // NEOFORGE_PORT: arm canvas panning on press. Forge armed isDragging on the
-        // first mouseDragged callback; in 26.x the drag callback is not a reliable
-        // gesture start for an unclaimed press, so arm here too (same condition).
-        if (button == 0 && !searching) {
-            isDragging = true;
-        }
+        // NEOFORGE_PORT (26.3): panning is armed in mouseDragged only (Forge 1:1); MouseHandler
+        // calls mouseDragged on every move while a button is held.
         popuptime = System.currentTimeMillis() - 1L;
 
         if (!searching && currentHighlight != null) {
@@ -795,7 +806,10 @@ public class ResearchBrowserScreen extends Screen {
     private void renderResearchContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, int locX, int locY) {
         if (research.isEmpty()) return;
 
-
+        // NEOFORGE_PORT (26.3): Forge drew each line at translate(0, 0, zMod) under the GUI
+        // depth test, so higher-zMod lines (known parents) covered lower ones; the 2D pose
+        // has no z -> submit lines in ascending zMod passes (drawLine skips other passes).
+        for (linePass = 0; linePass <= 3; linePass++) {
         for (ResearchEntry source : research) {
             if (source.getParents() != null && source.getParents().length > 0) {
                 for (int a = 0; a < source.getParents().length; a++) {
@@ -861,6 +875,8 @@ public class ResearchBrowserScreen extends Screen {
                 }
             }
         }
+        }
+        linePass = -1;
 
         currentHighlight = null;
 
@@ -1028,6 +1044,9 @@ public class ResearchBrowserScreen extends Screen {
     private void drawLine(GuiGraphicsExtractor graphics, int x, int y, int x2, int y2,
                           float r, float g, float b, int locX, int locY,
                           float zMod, boolean arrow, boolean flipped) {
+        if (linePass >= 0 && (int) zMod != linePass) {
+            return;
+        }
         graphics.pose().pushMatrix();
         // NEOFORGE_PORT: 2D pose stack (Matrix3x2fStack) has no z; the Forge
         // zMod translate is covered by submission order (lines submit before icons).
@@ -1177,11 +1196,12 @@ public class ResearchBrowserScreen extends Screen {
                 graphics.pose().popMatrix();
             }
 
-            graphics.text(font, p.getLeft(), 32, 32 + q * 10, color, false);
+            // NEOFORGE_PORT (26.3): Forge drawString(font, s, x, y, color) had a drop shadow.
+            graphics.text(font, p.getLeft(), 32, 32 + q * 10, color, true);
             q++;
 
             if (32 + (q + 1) * 10 > screenY) {
-                graphics.text(font, Component.translatable("tc.search.more").getString(), 22, 34 + q * 10, 0xFFAAAAAA, false);
+                graphics.text(font, Component.translatable("tc.search.more").getString(), 22, 34 + q * 10, 0xFFAAAAAA, true);
                 break;
             }
         }
@@ -1250,6 +1270,11 @@ public class ResearchBrowserScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    @Override
+    public boolean isInGameUi() {
+        return true;
     }
 
     private static class SearchResult {
@@ -1389,18 +1414,19 @@ public class ResearchBrowserScreen extends Screen {
             if (isHovered) {
                 String displayText = getMessage().getString() + " (" + completion + "%)";
                 int textX = isRightSide ? (screenX + 9 - font.width(displayText)) : (getX() + 22);
-                graphics.text(font, displayText, textX, getY() + 4 + addonShift, 0xFFFFFFFF, false);
+                // NEOFORGE_PORT (26.3): Forge drawString(font, s, x, y, color) had a drop shadow.
+                graphics.text(font, displayText, textX, getY() + 4 + addonShift, 0xFFFFFFFF, true);
                 int t = 9;
                 if (catNewResearch) {
                     String line = Component.translatable("tc.research.newresearch").getString();
                     int lx = isRightSide ? (screenX + 9 - font.width(line)) : (getX() + 22);
-                    graphics.text(font, line, lx, getY() + 4 + t + addonShift, 0xFFFFFFFF, false);
+                    graphics.text(font, line, lx, getY() + 4 + t + addonShift, 0xFFFFFFFF, true);
                     t += 9;
                 }
                 if (catNewPage) {
                     String line = Component.translatable("tc.research.newpage").getString();
                     int lx = isRightSide ? (screenX + 9 - font.width(line)) : (getX() + 22);
-                    graphics.text(font, line, lx, getY() + 4 + t + addonShift, 0xFFFFFFFF, false);
+                    graphics.text(font, line, lx, getY() + 4 + t + addonShift, 0xFFFFFFFF, true);
                 }
             }
 

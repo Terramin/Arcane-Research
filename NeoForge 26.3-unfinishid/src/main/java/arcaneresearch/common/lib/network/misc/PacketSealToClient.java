@@ -184,45 +184,66 @@ public class PacketSealToClient implements CustomPacketPayload {
                     return;
                 }
 
+                // NEOFORGE_PORT (26.3): Forge parity — drop the update when no client
+                // level is loaded, and update an existing seal of the same type in place
+                // (applyData) instead of replacing it.
+                net.minecraft.world.level.Level clientLevel = arcaneresearch.proxies.Proxies.get().getClientLevel();
+                if (clientLevel == null) {
+                    Arcaneresearch.LOGGER.warn("Seal packet arrived with no client world loaded, dropping update at {}", msg.pos);
+                    return;
+                }
+                SealPos sealPos = new SealPos(msg.pos, msg.face);
+                ISealEntity existing = SealHandler.getSealEntity(clientLevel.dimension(), sealPos);
+                if (existing instanceof SealEntity existingEntity
+                        && existing.getSeal() != null
+                        && msg.type.equals(existing.getSeal().getKey())) {
+                    applyData(existing.getSeal(), existingEntity, msg);
+                    return;
+                }
+
                 ISeal seal = template.getClass().getDeclaredConstructor().newInstance();
                 SealEntity sealEntity = new SealEntity(
-                arcaneresearch.proxies.Proxies.get().getClientLevel(),
-                new SealPos(msg.pos, msg.face),
+                clientLevel,
+                sealPos,
                 seal
                 );
 
-                if (msg.area != 0L) {
-                    sealEntity.setArea(BlockPos.of(msg.area));
-                }
+                applyData(seal, sealEntity, msg);
 
-                if (msg.props != null && seal instanceof ISealConfigToggles configToggles) {
-                    for (int i = 0; i < msg.props.length; i++) {
-                        configToggles.setToggle(i, msg.props[i]);
-                    }
-                }
-
-                if (seal instanceof ISealConfigFilter configFilter) {
-                    configFilter.setBlacklist(msg.blacklist);
-                    for (int i = 0; i < msg.filterSize; i++) {
-                        configFilter.setFilterSlot(i, msg.filter.get(i));
-                        configFilter.setFilterSlotSize(i, msg.filterStackSize.get(i));
-                    }
-                }
-
-                sealEntity.setPriority(msg.priority);
-                sealEntity.setColor(msg.color);
-                sealEntity.setLocked(msg.locked);
-                sealEntity.setRedstoneSensitive(msg.redstone);
-                sealEntity.setOwner(msg.owner);
-
-                if (!SealHandler.addSealEntity(arcaneresearch.proxies.Proxies.get().getClientLevel(), sealEntity)) {
-                    SealHandler.removeSealEntity(arcaneresearch.proxies.Proxies.get().getClientLevel(),
-                    new SealPos(msg.pos, msg.face), true);
-                    SealHandler.addSealEntity(arcaneresearch.proxies.Proxies.get().getClientLevel(), sealEntity);
+                if (!SealHandler.addSealEntity(clientLevel, sealEntity)) {
+                    SealHandler.removeSealEntity(clientLevel,
+                    sealPos, true);
+                    SealHandler.addSealEntity(clientLevel, sealEntity);
                 }
             }
         } catch (Exception e) {
             Arcaneresearch.LOGGER.error("Error handling seal packet at {}", msg.pos, e);
         }
+    }
+
+    private static void applyData(ISeal seal, SealEntity sealEntity, PacketSealToClient msg) {
+        if (msg.area != 0L) {
+            sealEntity.setArea(BlockPos.of(msg.area));
+        }
+
+        if (msg.props != null && seal instanceof ISealConfigToggles configToggles) {
+            for (int i = 0; i < msg.props.length; i++) {
+                configToggles.setToggle(i, msg.props[i]);
+            }
+        }
+
+        if (seal instanceof ISealConfigFilter configFilter) {
+            configFilter.setBlacklist(msg.blacklist);
+            for (int i = 0; i < msg.filterSize; i++) {
+                configFilter.setFilterSlot(i, msg.filter.get(i));
+                configFilter.setFilterSlotSize(i, msg.filterStackSize.get(i));
+            }
+        }
+
+        sealEntity.setPriority(msg.priority);
+        sealEntity.setColor(msg.color);
+        sealEntity.setLocked(msg.locked);
+        sealEntity.setRedstoneSensitive(msg.redstone);
+        sealEntity.setOwner(msg.owner);
     }
 }

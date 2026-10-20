@@ -145,8 +145,8 @@ public class BlockTaint extends Block implements ITaintBlock {
                         EntityUtils.getEntitiesInRange(
                                 level, pos, 32.0, EntityTaintSwarm.class).isEmpty()) {
                     EntityTaintSwarm swarm = new EntityTaintSwarm(level);
-                    swarm.teleportTo(pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5);
-                    swarm.setYRot(random.nextInt(360)); swarm.setXRot(0.0f);;
+                    // NEOFORGE_PORT (26.3): Forge moveTo(x, y, z, yaw, pitch) == snapTo (also sets old pos/rot).
+                    swarm.snapTo(pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, random.nextInt(360), 0.0f);
                     level.addFreshEntity(swarm);
                 } else if (AuraHandler.getFlux(level, pos) < 2.0f) {
 

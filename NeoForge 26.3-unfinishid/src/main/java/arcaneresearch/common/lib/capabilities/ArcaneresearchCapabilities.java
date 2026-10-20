@@ -73,8 +73,18 @@ public class ArcaneresearchCapabilities {
                     .serialize(arcaneresearch.common.world.aura.AuraChunkHandler.AuraChunkData.CODEC)
                     .build());
 
+    // NEOFORGE_PORT: replaces Forge's per-instance empty curative-item lists (milk immunity),
+    // see common/lib/potions/IncurableEffects.
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<arcaneresearch.common.lib.potions.IncurableEffects.Data>> INCURABLE_EFFECTS =
+            ATTACHMENT_TYPES.register("incurable_effects", () -> AttachmentType
+                    .<arcaneresearch.common.lib.potions.IncurableEffects.Data>builder(
+                            () -> new arcaneresearch.common.lib.potions.IncurableEffects.Data())
+                    .serialize(arcaneresearch.common.lib.potions.IncurableEffects.Data.CODEC)
+                    .build());
+
     public static void register(IEventBus modEventBus) {
         ATTACHMENT_TYPES.register(modEventBus);
+        arcaneresearch.common.lib.potions.IncurableEffects.register();
         // NEOFORGE_PORT: replaces @Mod.EventBusSubscriber (removed in NeoForge) for the
         // PlayerEvent handlers below.
         NeoForge.EVENT_BUS.register(ArcaneresearchCapabilities.class);
@@ -117,6 +127,9 @@ public class ArcaneresearchCapabilities {
 
             IPlayerWarp warp = getWarp(serverPlayer);
             if (warp != null) warp.sync(serverPlayer);
+
+            // NEOFORGE_PORT (26.3): seal resync on respawn was dropped in the port (Forge did it here too).
+            arcaneresearch.common.golems.seals.SealHandler.syncAllSealsToPlayer(serverPlayer);
         }
     }
 

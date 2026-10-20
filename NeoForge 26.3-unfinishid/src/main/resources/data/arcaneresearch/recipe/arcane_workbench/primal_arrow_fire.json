@@ -10,7 +10,7 @@
   ],
   "key": {
     "A": "minecraft:arrow",
-    "S": "arcaneresearch:crystal_fire"
+    "S": {"neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "ignis"}
   },
   "result": {
     "id": "arcaneresearch:primal_arrow_fire",

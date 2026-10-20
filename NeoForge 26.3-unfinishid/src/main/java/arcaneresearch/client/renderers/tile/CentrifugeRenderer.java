@@ -52,7 +52,9 @@ public class CentrifugeRenderer implements BlockEntityRenderer<TileCentrifuge, C
             CameraRenderState cameraState) {
         RenderType type = TCRenderTypes.objSolid(TEXTURE);
         int light = state.lightCoords;
-        model.setSpinRotation(state.spinRotation);
+        // NEOFORGE_PORT (26.3): geometry is emitted later (deferred) and the model is
+        // shared, so the per-tile spin is applied inside the callback.
+        final float spin = state.spinRotation;
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
         poseStack.scale(0.0625f, 0.0625f, 0.0625f);
@@ -60,6 +62,7 @@ public class CentrifugeRenderer implements BlockEntityRenderer<TileCentrifuge, C
             PoseStack work = new PoseStack();
             work.last().pose().set(pose.pose());
             work.last().normal().set(pose.normal());
+            model.setSpinRotation(spin);
             model.renderStaticParts(work, consumer, light, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
             model.renderSpinnyBit(work, consumer, light, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
         });

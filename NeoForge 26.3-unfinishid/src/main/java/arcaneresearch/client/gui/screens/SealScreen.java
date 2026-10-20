@@ -291,8 +291,7 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
     }
 
     // NEOFORGE_PORT: Forge render() tail (filter counts + tag tooltips, drawn
-    // over slots after super.render) rides extractLabels (same order, absolute
-    // leftPos/slot coords 1:1).
+    // over slots after super.render) - called from extractContents (absolute coords).
     private void renderFilterCounts(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 
         if (currentCategory == ISealGui.CAT_FILTER
@@ -320,8 +319,7 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + middleX - 80, topPos + middleY - 80, 96, 0, 160, 160, 256, 256);
 
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos + 143, 0, 167, 176, 89, 256, 256);
@@ -417,7 +415,15 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
 
     @Override
     protected void extractLabels(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    }
 
+    // NEOFORGE_PORT (26.3): filter counts moved out of extractLabels - that pass is
+    // translated by (leftPos, topPos) and runs before slots, so the absolute coords were
+    // offset twice and the counts hidden under items. Drawn after the slots instead
+    // (Forge: after super.render, untranslated).
+    @Override
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractContents(graphics, mouseX, mouseY, partialTick);
         renderFilterCounts(graphics, mouseX, mouseY);
     }
 

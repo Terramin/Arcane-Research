@@ -38,14 +38,14 @@ public class CardMindOverMatter extends TheorycraftCard {
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
-        nbt.put("stack", ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, stack).result().orElseGet(net.minecraft.nbt.CompoundTag::new));
+        nbt.put("stack", arcaneresearch.common.lib.utils.RegistryNbt.saveStack(stack));
         return nbt;
     }
 
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
-        stack = ItemStack.OPTIONAL_CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, nbt.getCompoundOrEmpty("stack")).result().orElse(ItemStack.EMPTY);
+        stack = arcaneresearch.common.lib.utils.RegistryNbt.loadStack(nbt.getCompoundOrEmpty("stack"));
     }
 
     @Override

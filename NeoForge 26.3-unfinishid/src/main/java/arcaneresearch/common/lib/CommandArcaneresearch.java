@@ -43,15 +43,23 @@ public class CommandArcaneresearch {
         return SharedSuggestionProvider.suggest(keys, builder);
     };
 
+    private static final SuggestionProvider<CommandSourceStack> ASPECT_SUGGESTIONS = (context, builder) -> {
+        List<String> tags = new ArrayList<>();
+        tags.add("all");
+        for (arcaneresearch.api.aspects.Aspect aspect : arcaneresearch.api.aspects.Aspect.aspects.values()) {
+            if (aspect != null) {
+                tags.add(aspect.getTag());
+            }
+        }
+        return SharedSuggestionProvider.suggest(tags, builder);
+    };
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("arcaneresearch")
                 // NEOFORGE_PORT: hasPermission(int) removed -> permissions() + COMMANDS_GAMEMASTER
                 // (old level 2, verified in 26.3 jar).
                 .requires(source -> source.permissions().hasPermission(
                         net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER));
-
-        dispatcher.register(Commands.literal("thaum").redirect(builder.build()));
-        dispatcher.register(Commands.literal("tc").redirect(builder.build()));
 
         builder.then(Commands.literal("help")
                 .executes(context -> help(context.getSource())));
@@ -87,6 +95,21 @@ public class CommandArcaneresearch {
                 )
         );
 
+        // NEOFORGE_PORT: Forge "aspect" subcommand (hex-table aspects) was missing in the port.
+        builder.then(Commands.literal("aspect")
+                .then(Commands.argument("player", EntityArgument.player())
+                        .then(Commands.argument("aspect", StringArgumentType.string())
+                                .suggests(ASPECT_SUGGESTIONS)
+                                .executes(context -> giveAspect(context.getSource(),
+                                        EntityArgument.getPlayer(context, "player"),
+                                        StringArgumentType.getString(context, "aspect"), 8))
+                                .then(Commands.argument("amount", IntegerArgumentType.integer(1))
+                                        .executes(context -> giveAspect(context.getSource(),
+                                                EntityArgument.getPlayer(context, "player"),
+                                                StringArgumentType.getString(context, "aspect"),
+                                                IntegerArgumentType.getInteger(context, "amount"))))))
+        );
+
         builder.then(Commands.literal("warp")
                 .then(Commands.argument("player", EntityArgument.player())
                         .then(Commands.literal("add")
@@ -110,7 +133,49 @@ public class CommandArcaneresearch {
                 )
         );
 
-        dispatcher.register(builder);
+        // The aliases must redirect to the registered node: Forge redirected to builder.build()
+        // taken before any subcommand was added, so /thaum and /tc had no subcommands at all.
+        com.mojang.brigadier.tree.LiteralCommandNode<CommandSourceStack> root = dispatcher.register(builder);
+        dispatcher.register(Commands.literal("thaum").requires(builder.getRequirement()).redirect(root));
+        dispatcher.register(Commands.literal("tc").requires(builder.getRequirement()).redirect(root));
+    }
+
+    private static int giveAspect(CommandSourceStack source, ServerPlayer player, String tag, int amount) {
+        List<arcaneresearch.api.aspects.Aspect> targets = new ArrayList<>();
+        if ("all".equalsIgnoreCase(tag)) {
+            for (arcaneresearch.api.aspects.Aspect aspect : arcaneresearch.api.aspects.Aspect.aspects.values()) {
+                if (aspect != null) {
+                    targets.add(aspect);
+                }
+            }
+        } else {
+            arcaneresearch.api.aspects.Aspect aspect = arcaneresearch.api.aspects.Aspect.getAspect(tag);
+            if (aspect == null) {
+                source.sendFailure(Component.literal("§cUnknown aspect: " + tag));
+                return 0;
+            }
+            targets.add(aspect);
+        }
+        arcaneresearch.api.aspects.AspectList granted = new arcaneresearch.api.aspects.AspectList();
+        for (arcaneresearch.api.aspects.Aspect aspect : targets) {
+            try {
+                if (!arcaneresearch.discovered.scan.ScanTargets.known(player, aspect)) {
+                    arcaneresearch.api.ArcaneresearchApi.internalMethods.progressResearch(player, "!" + aspect.getTag());
+                }
+            } catch (Exception ignored) {
+            }
+            arcaneresearch.discovered.scan.ScanWallet.add(player, aspect, amount);
+            granted.add(aspect, amount);
+        }
+        try {
+            arcaneresearch.discovered.scan.MsgWalletRequest.push(player);
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player,
+                    new arcaneresearch.discovered.scan.MsgStudyReward(granted));
+        } catch (Exception ignored) {
+        }
+        source.sendSuccess(() -> Component.literal("§5Gave " + amount + "x " + tag
+                + " aspect to " + player.getName().getString()), true);
+        return 1;
     }
 
     private static int help(CommandSourceStack source) {
@@ -119,6 +184,8 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("  /arcaneresearch research <list|player> <list|all|reset|<research>>"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to remove research from a player."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch research <player> <research> revoke"), false);
+        source.sendSuccess(() -> Component.literal("§3Use this to give hex-table aspects to a player."), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch aspect <player> <tag|all> [amount]"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to set a player's warp level."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch warp <player> <add|set> <amount> [PERM|TEMP]"), false);
         source.sendSuccess(() -> Component.literal("  not specifying perm or temp will just add normal warp"), false);
@@ -265,6 +332,8 @@ public class CommandArcaneresearch {
             revokeRecursiveResearch(player, research);
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {
+                // NEOFORGE_PORT (26.3): Forge also cleared presented discoveries on revoke.
+                knowledge.clearPresentedDiscoveries();
                 knowledge.sync(player);
             }
             source.sendSuccess(() -> Component.literal("§5Revoked research " + research + " from " + player.getName().getString()), true);

@@ -30,19 +30,13 @@ import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
  */
 public class ItemBoneBow extends BowItem {
 
-    // DEBUG: диагностика выстрела (убрать после). Считаем первые спуски.
-    private static int debugShots = 0;
-
     public ItemBoneBow(Item.Properties props) {
         // NEOFORGE_PORT: registerItem passes props; durability + enchantable here
         // (getEnchantmentValue удалён в 26.x -> enchantable(3), то же значение Forge).
-        super(props.durability(512).enchantable(3));
+        // NEOFORGE_PORT: Forge isValidRepairItem (repair.is(Items.BONE); BowItem has no own
+        // repair material) -> REPAIRABLE component.
+        super(props.durability(512).enchantable(3).repairable(net.minecraft.world.item.Items.BONE));
     }
-
-    // NEOFORGE_PORT: isValidRepairItem(ItemStack, ItemStack) REMOVED from Item in 26.x;
-    // repair is data-driven (repairable component / ingredient tag), so the bone-repair
-    // override has no equivalent. TODO(shared-owner): add repairable component or recipe.
-    // (Forge body was: repair.is(Items.BONE) || super.isValidRepairItem(toRepair, repair).)
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
@@ -82,7 +76,6 @@ public class ItemBoneBow extends BowItem {
             return false;
         }
         Holder<Enchantment> infinity = ench(level, Enchantments.INFINITY);
-        Holder<Enchantment> power = ench(level, Enchantments.POWER);
         Holder<Enchantment> punch = ench(level, Enchantments.PUNCH);
         Holder<Enchantment> flame = ench(level, Enchantments.FLAME);
         boolean infinite = player.getAbilities().instabuild
@@ -95,12 +88,6 @@ public class ItemBoneBow extends BowItem {
         }
         float powerF = charge / 10.0F;
         powerF = (powerF * powerF + powerF * 2.0F) / 3.0F;
-        if (debugShots < 5) {
-            debugShots++;
-            arcaneresearch.Arcaneresearch.LOGGER.info(
-                    "[BowRelease] side={} charge={} power={} ammo={}",
-                    level.isClientSide() ? "client" : "server", charge, powerF, ammo);
-        }
         if (powerF < 0.1F) {
             return false;
         }
@@ -118,11 +105,11 @@ public class ItemBoneBow extends BowItem {
             // Панч/огонь ванилла теперь переносит с лука сама (weapon-стек в
             // createArrow) — ручные setKnockback/setSecondsOnFire не нужны;
             // огонь от FLAME даёт сам выстрел через ванильные эффекты.
+            // NEOFORGE_PORT (26.3): no manual Power bonus here - Power is now the enchantment's
+            // minecraft:damage effect (1.0 + 0.5 per level above first = Forge's 0.5*lvl + 0.5),
+            // applied by AbstractArrow on hit from firedFromWeapon (this bow, passed to
+            // createArrow). Adding it here as well counted Power twice.
             double arrowBase = 2.0D + 0.5D;
-            int powerLevel = EnchantmentHelper.getItemEnchantmentLevel(power, stack);
-            if (powerLevel > 0) {
-                arrowBase += (double) powerLevel * 0.5D + 0.5D;
-            }
             arrow.setBaseDamage(arrowBase);
             // NEOFORGE_PORT: broadcastBreakEvent consumer overload REMOVED;
             // hurtAndBreak(int, LivingEntity, InteractionHand) is the replacement.
@@ -132,6 +119,12 @@ public class ItemBoneBow extends BowItem {
                 arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             }
             level.addFreshEntity(arrow);
+            // NEOFORGE_PORT (26.3): Forge set arrow.setSecondsOnFire(100) for Flame; Flame is now a
+            // projectile_spawned enchantment effect (ignite 100 s), which vanilla only runs via
+            // Projectile.spawnProjectile -> applyOnProjectileSpawned. Run the bow's spawn effects.
+            EnchantmentHelper.onProjectileSpawned((net.minecraft.server.level.ServerLevel) level, stack, arrow,
+                    brokenItem -> {
+                    });
         }
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT,
                 SoundSource.PLAYERS, 1.0F,

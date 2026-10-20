@@ -76,8 +76,9 @@ public class EntityAlumentum extends ThrowableProjectile {
         }
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-// GREEN_COMMENT deleted bad override:     protected float getGravity() {
-        // GREEN_COMMENT stubbed
-// GREEN_COMMENT deleted bad override:     }
+    // NEOFORGE_PORT: Forge getGravity() (float) -> 26.x getDefaultGravity() (double), same value.
+    @Override
+    protected double getDefaultGravity() {
+        return 0.03;
+    }
 }

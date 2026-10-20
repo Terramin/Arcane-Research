@@ -29,6 +29,8 @@ public class EntityShockOrb extends ThrowableItemProjectile {
     public EntityShockOrb(EntityType<? extends EntityShockOrb> type, Level level, LivingEntity owner) {
         super(type, level);
         setOwner(owner);
+        // NEOFORGE_PORT (26.3): Forge super(type, owner, level) also placed the projectile at the owner's eyes.
+        setPos(owner.getX(), owner.getEyeY() - 0.1F, owner.getZ());
         setItem(new ItemStack(getDefaultItem()));
     }
 

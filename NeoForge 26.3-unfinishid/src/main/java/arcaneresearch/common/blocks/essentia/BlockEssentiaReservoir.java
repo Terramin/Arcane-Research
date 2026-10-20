@@ -127,7 +127,7 @@ public class BlockEssentiaReservoir extends Block implements EntityBlock {
                                 pos.getX() + level.getRandom().nextDouble(),
                                 pos.getY() + level.getRandom().nextDouble(),
                                 pos.getZ() + level.getRandom().nextDouble(),
-                                (aspect == net.minecraft.core.Holder.direct(Aspect.FLUX)) ? 1.0 : 0.0,
+                                (aspect == Aspect.FLUX) ? 1.0 : 0.0,
                                 level.getRandom().nextDouble() * 0.1,
                                 0.0);
                     }
@@ -142,8 +142,9 @@ public class BlockEssentiaReservoir extends Block implements EntityBlock {
         return true;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof TileEssentiaReservoir reservoir) {
             return (int) (reservoir.getFillPercent() * 15);

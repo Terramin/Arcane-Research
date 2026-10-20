@@ -35,7 +35,12 @@ public class BrainyZombieRenderer extends HumanoidMobRenderer<EntityBrainyZombie
     @Override
     public void extractRenderState(EntityBrainyZombie entity, State state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
-        state.giantScale = entity instanceof EntityGiantBrainyZombie giant ? giant.getScale() : 1.0F;
+        // NEOFORGE_PORT (26.3): Forge giant.getScale() returned the anger; LivingEntity.getScale()
+        // is final now (SCALE attribute, kept at 1), so read the anger directly.
+        state.giantScale = entity instanceof EntityGiantBrainyZombie giant ? giant.getAnger() : 1.0F;
+        // NEOFORGE_PORT (26.3): ZombieModel raises its arms from state.isAggressive, which
+        // only AbstractZombieRenderer fills (Forge read entity.isAggressive() in the model).
+        state.isAggressive = entity.isAggressive();
     }
 
     @Override

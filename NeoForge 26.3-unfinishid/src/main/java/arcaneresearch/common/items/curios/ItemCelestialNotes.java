@@ -75,7 +75,7 @@ public class ItemCelestialNotes extends ItemTCBase {
         return noteType;
     }
 
-    // TODO_PORT (items): Forge overrode getOrCreateDescriptionId() to pin every variant to
+    // NEOFORGE_PORT (items): Forge overrode getOrCreateDescriptionId() to pin every variant to
     // "item.arcaneresearch.celestial_notes", but that method is GONE in 26.x (descriptionId is
     // now final, derived from the item id). Simplest compiling equivalent: pin the display name
     // via getName; revisit when ItemTCBase is ported (Forge ref: getOrCreateDescriptionId).

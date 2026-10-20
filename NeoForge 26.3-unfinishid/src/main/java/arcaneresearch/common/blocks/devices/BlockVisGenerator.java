@@ -66,12 +66,11 @@ public class BlockVisGenerator extends Block implements EntityBlock {
             BlockEntity te = level.getBlockEntity(pos.relative(face));
             if (te != null) {
                 // NEOFORGE_PORT: ForgeCapabilities.ENERGY LazyOptional -> level.getCapability
-                // (Capabilities.Energy.BLOCK, pos, side), @Nullable EnergyHandler (no canReceive();
-                // receivable = spare capacity, same meaning as Forge canReceive()).
+                // (Capabilities.Energy.BLOCK, pos, side), @Nullable EnergyHandler (no canReceive()).
                 var storage = level.getCapability(
                         net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK,
                         pos.relative(face), face.getOpposite());
-                if (storage != null && storage.getCapacityAsLong() > storage.getAmountAsLong()) {
+                if (storage != null && canReceive(storage)) {
                     return this.defaultBlockState()
                             .setValue(FACING, face)
                             .setValue(ENABLED, true);
@@ -92,6 +91,19 @@ public class BlockVisGenerator extends Block implements EntityBlock {
         return this.defaultBlockState()
                 .setValue(FACING, face)
                 .setValue(ENABLED, true);
+    }
+
+    // NEOFORGE_PORT (26.3): Forge IEnergyStorage.canReceive() ("accepts energy at all", independent
+    // of fill level) probed with an aborted transaction. The former "spare capacity" test also
+    // matched non-receiving sources (other generators) and skipped full receivers.
+    private static boolean canReceive(net.neoforged.neoforge.transfer.energy.EnergyHandler storage) {
+        try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            if (storage.insert(1, tx) > 0) {
+                return true;
+            }
+            // full receiver: make room for the probe, still never committed
+            return storage.extract(1, tx) > 0 && storage.insert(1, tx) > 0;
+        }
     }
 
     @Override

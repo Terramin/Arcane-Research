@@ -37,7 +37,16 @@ import java.util.Random;
 public class InfusionEnchantmentRecipe extends InfusionRecipeType {
 
     public static final MapCodec<InfusionEnchantmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            Codec.STRING.fieldOf("enchantment").forGetter(r -> r.enchantment.name()),
+            // NEOFORGE_PORT (26.3): unknown names fail as a DataResult (Forge's fromJson threw,
+            // and the recipe manager skipped that one recipe) instead of throwing from apply().
+            Codec.STRING.validate(name -> {
+                try {
+                    EnumInfusionEnchantment.valueOf(name.toUpperCase());
+                    return com.mojang.serialization.DataResult.success(name);
+                } catch (IllegalArgumentException e) {
+                    return com.mojang.serialization.DataResult.error(() -> "Unknown infusion enchantment '" + name + "'");
+                }
+            }).fieldOf("enchantment").forGetter(r -> r.enchantment.name()),
             Ingredient.CODEC.listOf().optionalFieldOf("components", List.of()).forGetter(r -> r.getComponents()),
             AspectList.MAP_CODEC.codec().optionalFieldOf("aspects", new AspectList()).forGetter(r -> r.getAspects())
     ).apply(inst, (name, components, aspects) -> {
@@ -86,36 +95,62 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
             net.minecraft.world.item.ItemStack centralStack = central;
             boolean cool = false;
 
+            // NEOFORGE_PORT (26.3): Forge read getAttributeModifiers(MAINHAND) (defaults + event);
+            // NeoForge's ItemStack#getAttributeModifiers() is the same computation, filtered to
+            // entries that apply to the main hand.
             net.minecraft.world.item.component.ItemAttributeModifiers itemMods =
-                    centralStack.get(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS);
+                    centralStack.getAttributeModifiers();
             if (itemMods != null && enchantment.toolClasses.contains("weapon")) {
                 for (net.minecraft.world.item.component.ItemAttributeModifiers.Entry entry : itemMods.modifiers()) {
-                    if (entry.attribute().is(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)) {
+                    if (entry.slot().test(EquipmentSlot.MAINHAND)
+                            && entry.attribute().is(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)) {
                         cool = true;
                         break;
                     }
                 }
             }
 
+            // NEOFORGE_PORT (26.3): Forge matched AxeItem/PickaxeItem/... subclasses (incl. this
+            // mod's thaumium/void/elemental tools). Vanilla tools are in the vanilla tags, the
+            // mod's tools in arcaneresearch:tools/* (same members as the Forge subclasses).
             if (!cool) {
-                if (enchantment.toolClasses.contains("axe") && centralStack.is(net.minecraft.tags.ItemTags.AXES))
+                if (enchantment.toolClasses.contains("axe") && isToolClass(centralStack, net.minecraft.tags.ItemTags.AXES, "axes"))
                     cool = true;
-                if (enchantment.toolClasses.contains("pickaxe") && centralStack.is(net.minecraft.tags.ItemTags.PICKAXES))
+                if (enchantment.toolClasses.contains("pickaxe") && isToolClass(centralStack, net.minecraft.tags.ItemTags.PICKAXES, "pickaxes"))
                     cool = true;
-                if (enchantment.toolClasses.contains("shovel") && centralStack.is(net.minecraft.tags.ItemTags.SHOVELS))
+                if (enchantment.toolClasses.contains("shovel") && isToolClass(centralStack, net.minecraft.tags.ItemTags.SHOVELS, "shovels"))
                     cool = true;
-                if (enchantment.toolClasses.contains("sword") && centralStack.is(net.minecraft.tags.ItemTags.SWORDS))
+                if (enchantment.toolClasses.contains("sword") && isToolClass(centralStack, net.minecraft.tags.ItemTags.SWORDS, "swords"))
                     cool = true;
-                if (enchantment.toolClasses.contains("hoe") && centralStack.is(net.minecraft.tags.ItemTags.HOES))
+                if (enchantment.toolClasses.contains("hoe") && isToolClass(centralStack, net.minecraft.tags.ItemTags.HOES, "hoes"))
                     cool = true;
+            }
+            // FIX (Forge parity): 1.20.1 matched DiggerItem via canPerformAction's whole
+            // DEFAULT_DIGGER_ACTIONS set (axe+pickaxe+shovel+hoe at once), so the primal
+            // crusher (Forge DiggerItem) was eligible for every digger-class infusion
+            // enchantment. 26.x has no dig abilities (ItemAbilities dropped *_DIG) and no
+            // DiggerItem class at all (data-driven Tool items), and the port's crusher
+            // extends plain Item without a Tool component, so the tag checks above never
+            // matched it. Restore that eligibility explicitly: the crusher counts for all
+            // four digger classes, as the Forge DiggerItem did.
+            if (!cool) {
+                boolean diggerClass = enchantment.toolClasses.contains("axe")
+                        || enchantment.toolClasses.contains("pickaxe")
+                        || enchantment.toolClasses.contains("shovel")
+                        || enchantment.toolClasses.contains("hoe");
+                if (diggerClass && centralStack.getItem() instanceof arcaneresearch.common.items.tools.ItemPrimalCrusher) {
+                    cool = true;
+                }
             }
 
             // NEOFORGE_PORT: ArmorItem.getType removed; armor slot comes from the EQUIPPABLE
             // component (HEAD/CHEST/LEGS/FEET map to the old helm/chest/legs/boots classes).
+            // Only real armor counts (Forge: instanceof ArmorItem) - humanoid armor always
+            // carries an ARMOR modifier, elytra/pumpkins/heads (equippable, no ARMOR) do not.
             if (!cool) {
                 var equippable = central.get(net.minecraft.core.component.DataComponents.EQUIPPABLE);
                 String at = "none";
-                if (equippable != null) {
+                if (equippable != null && hasArmorModifier(itemMods)) {
                     switch (equippable.slot()) {
                         case HEAD -> at = "helm";
                         case CHEST -> at = "chest";
@@ -163,6 +198,26 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
         }
 
         return RecipeMatcher.findMatches(input, getComponents()) != null;
+    }
+
+    private static boolean isToolClass(ItemStack stack, net.minecraft.tags.TagKey<net.minecraft.world.item.Item> vanillaTag,
+                                       String modToolTag) {
+        return stack.is(vanillaTag) || stack.is(net.minecraft.tags.TagKey.create(
+                net.minecraft.core.registries.Registries.ITEM,
+                net.minecraft.resources.Identifier.fromNamespaceAndPath(arcaneresearch.Arcaneresearch.MODID,
+                        "tools/" + modToolTag)));
+    }
+
+    private static boolean hasArmorModifier(net.minecraft.world.item.component.ItemAttributeModifiers mods) {
+        if (mods == null) {
+            return false;
+        }
+        for (net.minecraft.world.item.component.ItemAttributeModifiers.Entry entry : mods.modifiers()) {
+            if (entry.attribute().is(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

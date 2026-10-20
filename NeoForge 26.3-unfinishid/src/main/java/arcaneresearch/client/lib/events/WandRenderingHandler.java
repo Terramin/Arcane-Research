@@ -118,7 +118,8 @@ public class WandRenderingHandler {
 
                     // NEOFORGE_PORT: Inventory.items РїСЂРёРІР°С‚РЅС‹ РІ 26.x -> Container-API.
                     var inv = player.getInventory();
-                    for (int a = 0; a < inv.getContainerSize(); a++) {
+                    // NEOFORGE_PORT (26.3): Forge iterated inventory.items (36), not armor/offhand.
+                    for (int a = 0; a < inv.getNonEquipmentItems().size(); a++) {
                         ItemStack item = inv.getItem(a);
                         if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
                             putFocus(basic.getSortingHelper(item), item, a);
@@ -304,6 +305,8 @@ public class WandRenderingHandler {
             // NEOFORGE_PORT: renderTooltip(Font,ItemStack,int,int) gone ->
             // setTooltipForNextFrame(Font,ItemStack,int,int).
             graphics.setTooltipForNextFrame(mc.font, tooltipStack, (int) mouseX, (int) mouseY);
+            // NEOFORGE_PORT (26.3): HUD has no deferred-element flush (only Screen does) -> flush now.
+            graphics.extractDeferredElements((int) mouseX, (int) mouseY, partialTicks);
         }
     }
 

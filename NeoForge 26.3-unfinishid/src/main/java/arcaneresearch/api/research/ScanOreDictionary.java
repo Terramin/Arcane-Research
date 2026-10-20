@@ -26,9 +26,9 @@ public class ScanOreDictionary implements IScanThing {
         if (obj != null) {
             if (obj instanceof BlockPos pos) {
                 BlockState state = player.level().getBlockState(pos);
-                // NEOFORGE_PORT: BlockBehaviour.getCloneItemStack is protected in 26.x
-                // (no public accessor); scanning needs item identity -> block item.
-                stack = new ItemStack(state.getBlock().asItem());
+                // NEOFORGE_PORT: Block.getCloneItemStack is protected in 26.x; the public
+                // BlockState accessor is the same pick-block stack (includeData = false).
+                stack = state.getCloneItemStack(player.level(), pos, false);
             } else if (obj instanceof ItemStack) {
                 stack = (ItemStack) obj;
             } else if (obj instanceof ItemEntity itemEntity && !itemEntity.getItem().isEmpty()) {

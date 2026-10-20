@@ -25,9 +25,10 @@ public class PechHeldItemLayer extends RenderLayer<PechRenderer.State, PechModel
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int packedLight,
                        PechRenderer.State state, float limbSwing, float partialTicks) {
-        boolean rightMain = state.mainArm == HumanoidArm.RIGHT;
-        ItemStackRenderState mainHand = rightMain ? state.rightHandItemState : state.leftHandItemState;
-        ItemStackRenderState offHand = rightMain ? state.leftHandItemState : state.rightHandItemState;
+        // NEOFORGE_PORT (26.3): Forge drew the item held by each arm on that arm
+        // (left-handed pechs keep the main-hand item on the left); the states are per arm.
+        ItemStackRenderState mainHand = state.rightHandItemState;
+        ItemStackRenderState offHand = state.leftHandItemState;
         if (mainHand.isEmpty() && offHand.isEmpty()) {
             return;
         }
@@ -52,8 +53,8 @@ public class PechHeldItemLayer extends RenderLayer<PechRenderer.State, PechModel
         poseStack.pushPose();
         getParentModel().translateToHand(state, side, poseStack);
         poseStack.translate(0.0F, -0.1F, 0.0625F);
-        // NEOFORGE_PORT: bow offset applies to the main-hand item (Forge parity).
-        if (side == state.mainArm && state.holdingBow) {
+        // NEOFORGE_PORT (26.3): bow offset applies to whichever arm holds the bow (Forge parity).
+        if (state.getUseItemStackForArm(side).getItem() instanceof BowItem) {
             poseStack.translate(-0.075F, -0.1F, 0.0F);
         }
         if (state.crouching) {

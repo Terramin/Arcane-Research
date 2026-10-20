@@ -75,16 +75,19 @@ public class ConfigRecipes {
                 new AspectList().add(Aspect.LIGHT, 80).add(Aspect.AIR, 20),
                 new ItemStack(ModBlocks.NITOR_YELLOW.get()), new ItemStack(Items.GOLDEN_PICKAXE));
 
-        for (int level = 0; level < 3; level++) {
+        // NEOFORGE_PORT (26.3): Forge parity - levels 0..4, vis = 32 * 2^level, PROTECT/MAGIC vis/2,
+        // ENERGY vis (same as InfusionRunicAugmentRecipe.getAspects), plus the cloth-chest set
+        // (port had levels 0..2 with a different cost and no chest entries).
+        for (int level = 0; level <= 4; level++) {
             ItemStack ring = new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get());
             if (level > 0) {
                 // NEOFORGE_PORT: getOrCreateTag removed -> CustomData.update (same NBT shape).
                 final byte runic = (byte) level;
                 CustomData.update(DataComponents.CUSTOM_DATA, ring, tag -> tag.putByte("TC.RUNIC", runic));
             }
-            int vis = 20 + (int) (20.0 * Math.pow(2.0, level));
-            AspectList runicCost = new AspectList().add(Aspect.PROTECT, vis)
-                    .add(Aspect.CRYSTAL, vis / 2).add(Aspect.ENERGY, vis / 2);
+            int vis = (int) (32.0D * Math.pow(2.0D, level));
+            AspectList runicCost = new AspectList().add(Aspect.PROTECT, vis / 2)
+                    .add(Aspect.MAGIC, vis / 2).add(Aspect.ENERGY, vis);
             Object[] runicComponents =
                     arcaneresearch.common.lib.crafting.InfusionRunicAugmentRecipe
                             .componentsForCharge(level).toArray();
@@ -93,6 +96,24 @@ public class ConfigRecipes {
                     new InfusionRecipe("RUNICSHIELDING", ring, 5 + level / 2, runicCost,
                             new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()),
                             runicComponents));
+        }
+        for (int level = 0; level <= 4; level++) {
+            ItemStack chest = new ItemStack(ModItems.CLOTH_CHEST.get());
+            if (level > 0) {
+                final byte runic = (byte) level;
+                CustomData.update(DataComponents.CUSTOM_DATA, chest, tag -> tag.putByte("TC.RUNIC", runic));
+            }
+            int vis = (int) (32.0D * Math.pow(2.0D, level));
+            AspectList chestCost = new AspectList().add(Aspect.PROTECT, vis / 2)
+                    .add(Aspect.MAGIC, vis / 2).add(Aspect.ENERGY, vis);
+            Object[] chestComponents =
+                    arcaneresearch.common.lib.crafting.InfusionRunicAugmentRecipe
+                            .componentsForCharge(level).toArray();
+            ArcaneresearchApi.addFakeCraftingRecipe(
+                    Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "runic_armor_chest_fake_" + level),
+                    new InfusionRecipe("RUNICSHIELDING", chest, 5 + level / 2, chestCost,
+                            new ItemStack(ModItems.CLOTH_CHEST.get()),
+                            chestComponents));
         }
 
         Arcaneresearch.LOGGER.info("Registered {} fake thaumonomicon recipes",

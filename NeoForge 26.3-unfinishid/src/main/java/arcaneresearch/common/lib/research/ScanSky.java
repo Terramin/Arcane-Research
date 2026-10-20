@@ -38,11 +38,13 @@ public class ScanSky implements IScanThing {
 
         Level level = player.level();
 
-        // NEOFORGE_PORT: LevelData.getDayTime gone in 26.x -> getGameTime
-        // (same 24000-tick day cycle for angle/day/phase math).
+        // NEOFORGE_PORT (26.3): Level.getDayTime gone -> getOverworldClockTime (the
+        // overworld world-clock = old day time: follows /time set and sleep skips,
+        // and drives the vanilla moon-phase timeline). getGameTime never skips, so
+        // angle/day/phase drifted from the visible sky after the first slept night.
         int yaw = (int) (player.getYRot() + 90.0f) % 360;
         int pitch = (int) Math.abs(player.getXRot());
-        int celestialAngle = (int) ((level.getGameTime() / 24000.0 + 0.25) * 360.0) % 360;
+        int celestialAngle = (int) ((level.getOverworldClockTime() / 24000.0 + 0.25) * 360.0) % 360;
         boolean isNight = celestialAngle > 180;
 
         if (isNight) {
@@ -60,12 +62,12 @@ public class ScanSky implements IScanThing {
             inRangePitch = Math.abs(celestialAngle - pitch) < 7;
         }
 
-        long worldDay = level.getGameTime() / 24000L;
+        long worldDay = level.getOverworldClockTime() / 24000L;
         String dayPrefix = "CEL_" + worldDay + "_";
 
         if (inRangeYaw && inRangePitch) {
 
-            int moonPhase = (int) (level.getGameTime() / 24000L % 8L);
+            int moonPhase = (int) (level.getOverworldClockTime() / 24000L % 8L);
             String key = dayPrefix + (isNight ? ("Moon" + moonPhase) : "Sun");
 
             if (ArcaneresearchCapabilities.isResearchKnown(player, key)) {
@@ -76,7 +78,7 @@ public class ScanSky implements IScanThing {
             if (hasScribingTools(player)
                     && InventoryUtils.consumePlayerItem(player, new ItemStack(Items.PAPER), false, true)) {
 
-                giveNote(player, isNight ? 5 + (int) (level.getGameTime() / 24000L % 8L) : 0);
+                giveNote(player, isNight ? 5 + (int) (level.getOverworldClockTime() / 24000L % 8L) : 0);
                 ArcaneresearchApi.internalMethods.progressResearch(player, key);
             } else {
                 player.sendOverlayMessage(Component.translatable("tc.celestial.fail.2"));
@@ -106,9 +108,9 @@ public class ScanSky implements IScanThing {
     }
 
     private boolean hasScribingTools(Player player) {
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access (same iteration order).
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack stack = player.getInventory().getItem(slot);
+        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (the same
+        // 36 main slots; getContainerSize() would also count armor/offhand, unlike Forge).
+        for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.getItem() instanceof IScribeTools) {
                 return true;
             }

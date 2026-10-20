@@ -7,7 +7,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import arcaneresearch.api.ArcaneresearchInvHelper;
 
 public class AspectHelper {
 
@@ -25,9 +24,11 @@ public class AspectHelper {
             return null;
         }
 
-        // NEOFORGE_PORT: hasTag/getTag -> ArcaneresearchInvHelper custom-tag helpers (components).
-        if (ArcaneresearchInvHelper.hasCustomTag(stack)) {
-            AspectList specific = objectTags.get(itemId + "#" + ArcaneresearchInvHelper.getCustomTag(stack));
+        // NEOFORGE_PORT (26.3): 1.20.1 keyed by the whole NBT tag (potions, enchantments, custom
+        // keys...); the component patch is its 26.x equivalent (CUSTOM_DATA alone merged potions).
+        String specificKey = componentKey(stack);
+        if (specificKey != null) {
+            AspectList specific = objectTags.get(itemId + "#" + specificKey);
             if (specific != null) {
                 return specific;
             }
@@ -44,12 +45,24 @@ public class AspectHelper {
 
         Identifier itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (itemId != null) {
-            if (ArcaneresearchInvHelper.hasCustomTag(stack)) {
-                objectTags.put(itemId + "#" + ArcaneresearchInvHelper.getCustomTag(stack), aspects);
+            String specificKey = componentKey(stack);
+            if (specificKey != null) {
+                objectTags.put(itemId + "#" + specificKey, aspects);
             } else {
                 objectTags.put(itemId.toString(), aspects);
             }
         }
+    }
+
+    /** Stable key of the stack's component patch (null when it has none, like !hasTag()). */
+    private static String componentKey(ItemStack stack) {
+        net.minecraft.core.component.DataComponentPatch patch = stack.getComponentsPatch();
+        if (patch.isEmpty()) {
+            return null;
+        }
+        return net.minecraft.core.component.DataComponentPatch.CODEC
+                .encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), patch)
+                .result().map(Object::toString).orElseGet(patch::toString);
     }
 
     public static void registerObjectTag(Identifier itemId, AspectList aspects) {

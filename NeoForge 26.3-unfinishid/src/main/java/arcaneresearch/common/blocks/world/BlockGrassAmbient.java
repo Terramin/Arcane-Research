@@ -31,10 +31,16 @@ public class BlockGrassAmbient extends GrassBlock {
 
         int skyLight = level.getBrightness(LightLayer.SKY, pos.above());
 
-        // NEOFORGE_PORT: Level.getSunAngle(float) removed in 26.x (sun moved to
-        // environment attributes); sky light already encodes time of day, so the
-        // celestial-angle smoothing folds directly into the clamped sky value.
-        int adjustedLight = Mth.clamp(skyLight, 0, 15);
+        // NEOFORGE_PORT (26.3): Level.getSunAngle(1.0f) -> SUN_ANGLE environment attribute
+        // (degrees, same convention; vanilla DaylightDetectorBlock does the same). Raw sky
+        // light does NOT encode time of day, so the cosine factor must stay (night FX).
+        float celestialAngle = level.environmentAttributes().getValue(
+                net.minecraft.world.attribute.EnvironmentAttributes.SUN_ANGLE, pos) * (float) (Math.PI / 180.0);
+        float adjustedAngle = celestialAngle;
+        float targetAngle = (celestialAngle < (float) Math.PI) ? 0.0f : (float) (Math.PI * 2);
+        adjustedAngle += (targetAngle - celestialAngle) * 0.2f;
+        int adjustedLight = Math.round(skyLight * Mth.cos(adjustedAngle));
+        adjustedLight = Mth.clamp(adjustedLight, 0, 15);
 
         if (4 + adjustedLight * 2 < 1 + random.nextInt(13)) {
 

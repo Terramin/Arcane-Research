@@ -285,9 +285,10 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mx, int my, float partialTick) {
+        // NEOFORGE_PORT (26.3): super already draws the 1.20.1 renderBackground dim
+        // (AbstractContainerScreen.isInGameUi -> extractTransparentBackground);
+        // a second fillGradient here doubled the darkening.
         super.extractBackground(graphics, mx, my, partialTick);
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
         draw.drawTableBackground(graphics);
         // Кэш порядка пула на кадр (см. poolView).
         poolCache = poolOrder();

@@ -96,7 +96,10 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
                 net.minecraft.world.phys.BlockHitResult hit = level.clip(
                         new net.minecraft.world.level.ClipContext(v1, v2,
                                 net.minecraft.world.level.ClipContext.Block.OUTLINE,
-                                net.minecraft.world.level.ClipContext.Fluid.ANY, (net.minecraft.world.entity.Entity) null));
+                                net.minecraft.world.level.ClipContext.Fluid.ANY,
+                                // NEOFORGE_PORT (26.3): CollisionContext.of(null) NPEs (type switch);
+                                // 1.20.1 mapped a null entity to CollisionContext.empty().
+                                net.minecraft.world.phys.shapes.CollisionContext.empty()));
                 if (hit != null
                         && hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
                         && hit.getBlockPos().distSqr(pos) < 256.0D
@@ -253,7 +256,10 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
     // still present, so getAspects() is valid.
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState newState) {
-        if (level != null && !level.isClientSide() && !newState.is(getBlockState().getBlock())) {
+        // NEOFORGE_PORT (26.3): LevelChunk passes the OLD state here and only calls this
+        // when the block changed, so the former "!newState.is(own block)" guard was always
+        // false and the drop never ran. Reference ran it from BlockAuraNode.onRemove.
+        if (level != null && !level.isClientSide() && getBlockState().getBlock() instanceof BlockAuraNode) {
             AspectList al = getAspects();
             if (al != null && al.size() > 0) {
                 for (Aspect aspect : al.getAspects()) {
@@ -638,7 +644,10 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
                     worldPosition.getZ() + 0.5D);
             Vec3 v2 = new Vec3(tx + 0.5D, ty + 0.5D, tz + 0.5D);
             BlockHitResult mop = level.clip(new ClipContext(v1, v2,
-                    ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, (net.minecraft.world.entity.Entity) null));
+                    ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE,
+                    // NEOFORGE_PORT (26.3): CollisionContext.of(null) NPEs (type switch) and crashed
+                    // the hungry-node server tick; 1.20.1 mapped a null entity to CollisionContext.empty().
+                    net.minecraft.world.phys.shapes.CollisionContext.empty()));
             if (mop != null && mop.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
                     && mop.getBlockPos().distSqr(worldPosition) < 65536.0D) {
                 tx = mop.getBlockPos().getX();

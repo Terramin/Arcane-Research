@@ -21,10 +21,9 @@ public class ItemCuriosityBand extends Item implements ICurioItem {
             return true;
         }
 
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access via getItem (same order).
-        net.minecraft.world.entity.player.Inventory inv = player.getInventory();
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack stack = inv.getItem(i);
+        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (the 36 main slots only);
+        // getNonEquipmentItems() is that list (getContainerSize() also spans armor/offhand).
+        for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.getItem() instanceof ItemCuriosityBand) {
                 return true;
             }

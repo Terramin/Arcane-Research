@@ -154,10 +154,8 @@ public class FocusRadialHandler {
             }
         });
 
-        List<ItemStack> inv = new java.util.ArrayList<>();
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            inv.add(player.getInventory().getItem(slot));
-        }
+        // NEOFORGE_PORT (26.3): Forge scanned inventory.items only (no armor/offhand slots).
+        List<ItemStack> inv = player.getInventory().getNonEquipmentItems();
         for (int a = 0; a < inv.size(); ++a) {
             ItemStack item = inv.get(a);
             if (item.getItem() instanceof ItemFocus) {
@@ -225,14 +223,17 @@ public class FocusRadialHandler {
         graphics.pose().rotate((float) Math.toRadians(angle));
         graphics.pose().scale(radialHudScale,  radialHudScale);
         int ring = (int) (width * 2.75f);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, R1, -ring / 2, -ring / 2, 0, 0, ring, ring, ring, ring);
+        // NEOFORGE_PORT (26.3): Forge setShaderColor(0.5, 0.5, 0.5, 0.5) covered both rings -> ARGB.
+        graphics.blit(RenderPipelines.GUI_TEXTURED, R1, -ring / 2, -ring / 2, 0, 0, ring, ring, ring, ring,
+                net.minecraft.util.ARGB.colorFromFloat(0.5f, 0.5f, 0.5f, 0.5f));
         graphics.pose().popMatrix();
         graphics.pose().pushMatrix();
         graphics.pose().translate(cx,  cy);
         graphics.pose().rotate((float) Math.toRadians(-angle));
         graphics.pose().scale(radialHudScale,  radialHudScale);
         int ring2 = (int) (width * 2.55f);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, R2, -ring2 / 2, -ring2 / 2, 0, 0, ring2, ring2, ring2, ring2);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, R2, -ring2 / 2, -ring2 / 2, 0, 0, ring2, ring2, ring2, ring2,
+                net.minecraft.util.ARGB.colorFromFloat(0.5f, 0.5f, 0.5f, 0.5f));
         graphics.pose().popMatrix();
         ItemStack currentFocus = caster.getFocusStack(held);
         ItemStack tooltipStack = null;
@@ -289,6 +290,9 @@ public class FocusRadialHandler {
 
         if (tooltipStack != null) {
             graphics.setTooltipForNextFrame(mc.font, tooltipStack, (int) mx, (int) my);
+            // NEOFORGE_PORT (26.3): deferred tooltips are only flushed by Screen rendering; on
+            // the HUD (no screen) it was never drawn. Flush it here (Forge drew it immediately).
+            graphics.extractDeferredElements((int) mx, (int) my, partialTick);
         }
     }
 }

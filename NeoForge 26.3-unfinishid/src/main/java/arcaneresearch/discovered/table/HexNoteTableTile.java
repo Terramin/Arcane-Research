@@ -39,7 +39,7 @@ import arcaneresearch.api.aspects.AspectList;
  * loadAdditional(ValueInput) (items + bonus через те же label); синк на клиент —
  * getUpdateTag(registries) через TagValueOutput (как TileBanner) + getUpdatePacket
  * (onDataPacket/handleUpdateTag удалены); isClientSide-поля -&gt; isClientSide();
- * Level.isDay удалён -&gt; окно LevelData.getGameTime (как CognitionNoteTableTile).
+ * Level.isDay -&gt; Level.isBrightOutside (как CognitionNoteTableTile).
  */
 public class HexNoteTableTile extends BlockEntity implements Container, MenuProvider {
 
@@ -197,8 +197,9 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         BlockPos pos = worldPosition;
         addCapped(Aspect.getAspect("tenebrae"),
                 level.getMaxLocalRawBrightness(pos) < 9 ? 2 : 0);
+        // NEOFORGE_PORT (26.3): Level.isDay() -> isBrightOutside() (same body).
         addCapped(Aspect.getAspect("lux"),
-                level.getLevelData().getGameTime() % 24000L < 12000L && level.canSeeSky(pos.above()) ? 2 : 0);
+                level.isBrightOutside() && level.canSeeSky(pos.above()) ? 2 : 0);
         if (pos.getY() > 100) {
             addCapped(Aspect.getAspect("aer"), 3);
         }
@@ -270,6 +271,10 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
     @Override
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
+        // NEOFORGE_PORT (26.3): reference clears first; loadAllItems only sets present
+        // slots, so a removed item would stay as a ghost on the client (update tag
+        // now reaches here via the default handleUpdateTag/onDataPacket).
+        items.clear();
         ContainerHelper.loadAllItems(tag, items);
         bonusAspects.aspects.clear();
         try {

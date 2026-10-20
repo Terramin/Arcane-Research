@@ -116,7 +116,8 @@ public class EntityFluxRift extends Entity {
             spawnPos = new BlockPos(pos.getX(), 10, pos.getZ());
             while (!level.getBlockState(spawnPos).isAir()) {
                 spawnPos = spawnPos.above(level.getRandom().nextInt(5) + 1);
-                if (spawnPos.getY() > level.getMaxY() - 5) {
+                // NEOFORGE_PORT (26.3): getMaxBuildHeight() (exclusive) == getMaxY() + 1.
+                if (spawnPos.getY() > level.getMaxY() + 1 - 5) {
                     return;
                 }
             }
@@ -124,7 +125,7 @@ public class EntityFluxRift extends Entity {
             spawnPos = level.getHeightmapPos(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, pos);
         }
 
-        if (spawnPos.getY() >= level.getMaxY() - 4) return;
+        if (spawnPos.getY() >= level.getMaxY() + 1 - 4) return;
 
         List<EntityFluxRift> nearbyRifts = level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(EntityFluxRift.class), new AABB(spawnPos).inflate(32.0), e -> true);
         if (!nearbyRifts.isEmpty()) return;
@@ -135,14 +136,16 @@ public class EntityFluxRift extends Entity {
         if (size > 5) {
             EntityFluxRift rift = new EntityFluxRift(level);
             rift.setRiftSeed(level.getRandom().nextInt());
-            rift.teleportTo(spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5);
-            rift.setYRot(level.getRandom().nextFloat() * 360.0f); rift.setXRot(0.0f);;
+            // NEOFORGE_PORT (26.3): Entity.moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+            rift.snapTo(spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5,
+                    level.getRandom().nextFloat() * 360.0f, 0.0f);
 
             if (level.addFreshEntity(rift)) {
                 rift.setRiftSize((int) size);
                 AuraHelper.drainFlux(level, spawnPos, (float) size, false);
 
-                List<Player> targets = level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(Player.class), new AABB(spawnPos).inflate(32.0), e -> true);
+                // NEOFORGE_PORT (26.3): 2-arg getEntitiesOfClass keeps the Forge NO_SPECTATORS filter.
+                List<Player> targets = level.getEntitiesOfClass(Player.class, new AABB(spawnPos).inflate(32.0));
                 for (Player target : targets) {
                     if (!ArcaneresearchCapabilities.isResearchKnown(target, "f_toomuchflux")) {
                         target.sendOverlayMessage(Component.translatable("tc.fluxevent.3")
@@ -446,8 +449,8 @@ public class EntityFluxRift extends Entity {
         switch (ei.event) {
             case 0: {
                 EntityWisp wisp = new EntityWisp(level());
-                wisp.teleportTo(getX() + random.nextGaussian() * 5.0, getY() + random.nextGaussian() * 5.0, getZ() + random.nextGaussian() * 5.0);
-                wisp.setYRot(0.0f); wisp.setXRot(0.0f);;
+                wisp.snapTo(getX() + random.nextGaussian() * 5.0, getY() + random.nextGaussian() * 5.0,
+                        getZ() + random.nextGaussian() * 5.0, 0.0f, 0.0f);
                 if (random.nextInt(5) == 0) {
                     wisp.setWispType(Aspect.FLUX.getTag());
                 }
@@ -459,8 +462,10 @@ public class EntityFluxRift extends Entity {
             }
             case 1: {
                 EntityTaintSeedPrime seed = new EntityTaintSeedPrime(level());
-                seed.teleportTo((int) (getX() + random.nextGaussian() * 5.0) + 0.5, (int) (getY() + random.nextGaussian() * 5.0), (int) (getZ() + random.nextGaussian() * 5.0) + 0.5);
-                seed.setYRot(random.nextFloat() * 360.0f); seed.setXRot(0.0f);;
+                seed.snapTo((int) (getX() + random.nextGaussian() * 5.0) + 0.5,
+                        (int) (getY() + random.nextGaussian() * 5.0),
+                        (int) (getZ() + random.nextGaussian() * 5.0) + 0.5,
+                        random.nextFloat() * 360.0f, 0.0f);
 
                 if (seed.checkSpawnRules(level(), EntitySpawnReason.EVENT) && level().addFreshEntity(seed)) {
                     didit = true;
@@ -472,7 +477,7 @@ public class EntityFluxRift extends Entity {
                 break;
             }
             case 2: {
-                List<LivingEntity> targets = level().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(LivingEntity.class), getBoundingBox().inflate(16.0), e -> true);
+                List<LivingEntity> targets = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(16.0));
                 if (targets != null && !targets.isEmpty()) {
                     for (LivingEntity target : targets) {
                         didit = true;
@@ -482,9 +487,9 @@ public class EntityFluxRift extends Entity {
                         }
                         MobEffectInstance pe = new MobEffectInstance(
                                 ModEffects.INFECTIOUS_VIS_EXHAUST, 3000, 2);
-                        // TODO_PORT: incurable effect (getCurativeItems gone in 26.3); rework deferred.
+                        // NEOFORGE_PORT: Forge cleared the curative items (milk-immune) -> IncurableEffects.
                         try {
-                            target.addEffect(pe);
+                            arcaneresearch.common.lib.potions.IncurableEffects.addIncurable(target, pe);
                         } catch (Exception ignored) {
                         }
                     }
@@ -544,7 +549,7 @@ public class EntityFluxRift extends Entity {
             level().addParticle(ParticleTypes.EXPLOSION_EMITTER, getX(), getY(), getZ(), 0, 0, 0);
         }
 
-        List<LivingEntity> nearby = level().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(LivingEntity.class), getBoundingBox().inflate(32.0), e -> true);
+        List<LivingEntity> nearby = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(32.0));
 
         switch (getStability()) {
             case VERY_UNSTABLE:
@@ -592,8 +597,10 @@ public class EntityFluxRift extends Entity {
 
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public void setSecondsOnFire(int seconds) {
+    // NEOFORGE_PORT: Forge setSecondsOnFire(int) -> 26.x igniteForSeconds is final and
+    // delegates to igniteForTicks, so the no-op moves there.
+    @Override
+    public void igniteForTicks(int ticks) {
 
     }
 

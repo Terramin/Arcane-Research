@@ -103,4 +103,11 @@ public class ThaumatoriumRenderer implements BlockEntityRenderer<TileThaumatoriu
         state.display.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         poseStack.popPose();
     }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileThaumatorium blockEntity) {
+        return blockEntity.getRenderBoundingBox();
+    }
 }

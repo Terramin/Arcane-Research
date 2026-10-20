@@ -162,8 +162,7 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 
         if (selectedSlot >= 0 && selectedSlot < 81) {
@@ -270,7 +269,8 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.key() == 256 && searchField.isFocused()) {
+        // NEOFORGE_PORT (26.3): key values are SDL scancodes now (GLFW 256 never matched) -> isEscape().
+        if (event.isEscape() && searchField.isFocused()) {
             searchField.setFocused(false);
             return super.keyPressed(event);
         }

@@ -52,9 +52,9 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
 
     @Override
     public void setAspects(ItemStack itemstack, AspectList aspects) {
-        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
-        aspects.writeToNBT(tag);
-        CustomData.set(DataComponents.CUSTOM_DATA, itemstack, tag);
+        // NEOFORGE_PORT (26.3): Forge wrote "Aspects" INTO the existing root tag (other keys kept);
+        // CustomData.update merges the same way instead of replacing the whole custom data.
+        CustomData.update(DataComponents.CUSTOM_DATA, itemstack, tag -> aspects.writeToNBT(tag));
     }
 
     @Override

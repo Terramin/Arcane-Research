@@ -27,6 +27,8 @@ import arcaneresearch.compat.jei.JeiResearch;
 import arcaneresearch.compat.jei.ArcaneresearchJEIPlugin;
 import arcaneresearch.init.ModBlocks;
 
+import java.util.Optional;
+
 public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
 
     public static final Identifier UID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_workbench");
@@ -83,18 +85,21 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
         builder.addSlot(RecipeIngredientRole.OUTPUT, OX - 9, OY - 85)
                 .addItemStack(recipe.getResultItem());
 
-        // NEOFORGE_PORT: IArcaneRecipe.getIngredients() is List (not NonNullList) on 26.3.
-        java.util.List<Ingredient> ingredients = recipe.getIngredients();
+        // NEOFORGE_PORT (26.3): IArcaneRecipe.getIngredients() is now the flattened list of
+        // PRESENT ingredients; Forge returned the positional grid with EMPTY gaps, which
+        // drives both slot placement (i % 3, i / 3) and INPUT slot order (recipe transfer).
+        // gridIngredients() restores the Forge positional list.
+        java.util.List<Optional<Ingredient>> ingredients = gridIngredients(recipe);
         for (int i = 0; i < ingredients.size() && i < 9; i++) {
-            Ingredient ingredient = ingredients.get(i);
-            if (ingredient.isEmpty()) {
+            Optional<Ingredient> ingredient = ingredients.get(i);
+            if (ingredient.isEmpty() || ingredient.get().isEmpty()) {
                 continue;
             }
             int gridX = i % 3;
             int gridY = i / 3;
             builder.addSlot(RecipeIngredientRole.INPUT,
                             OX - 41 + gridX * 32, OY - 41 + gridY * 32)
-                    .addIngredients(ingredient);
+                    .addIngredients(ingredient.get());
         }
 
         AspectList crystals = recipe.getCrystals();
@@ -114,21 +119,58 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
         }
     }
 
+    // NEOFORGE_PORT (26.3): Forge cells of ArcaneWandDynamicRecipe.getIngredients()
+    // (wand: caps 2/6, rod 4; sceptre: caps 1/5/6, rod 4, salis mundus 2). The port's
+    // getIngredients() emits the same entries compacted in that order (cap, cap, rod) /
+    // (cap, cap, cap, rod, salis), so they are mapped back onto the Forge cells.
+    private static final int[] WAND_GRID = {2, 6, 4};
+    private static final int[] SCEPTRE_GRID = {1, 5, 6, 4, 2};
+
+    private static java.util.List<Optional<Ingredient>> gridIngredients(IArcaneRecipe recipe) {
+        if (recipe instanceof arcaneresearch.common.lib.crafting.ShapedArcaneRecipe shaped) {
+            return shaped.getOptionalIngredients();
+        }
+        if (recipe instanceof arcaneresearch.api.crafting.ShapedArcaneRecipe shaped) {
+            return shaped.getOptionalIngredients();
+        }
+        java.util.List<Ingredient> flat = recipe.getIngredients();
+        if (recipe instanceof arcaneresearch.common.lib.crafting.ArcaneWandDynamicRecipe) {
+            int[] cells = flat.size() == WAND_GRID.length ? WAND_GRID
+                    : (flat.size() == SCEPTRE_GRID.length ? SCEPTRE_GRID : null);
+            if (cells != null) {
+                java.util.List<Optional<Ingredient>> grid =
+                        new java.util.ArrayList<>(java.util.Collections.nCopies(9, Optional.<Ingredient>empty()));
+                for (int k = 0; k < cells.length; k++) {
+                    grid.set(cells[k], Optional.ofNullable(flat.get(k)));
+                }
+                return grid;
+            }
+        }
+        java.util.List<Optional<Ingredient>> grid = new java.util.ArrayList<>(flat.size());
+        for (Ingredient ingredient : flat) {
+            grid.add(Optional.ofNullable(ingredient));
+        }
+        return grid;
+    }
+
     @Override
     public void draw(IArcaneRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
 
+        // NEOFORGE_PORT (26.3): Forge blit(tex, x, y, u, v, w, h) assumed a 256x256 sheet
+        // (UVs are in 256-space; the 512px overlay is a 2x asset) -> 256, 256 like RecipeRenderer.
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(OX, OY);
         guiGraphics.pose().scale(2f, 2f);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -26, -26, 112, 15, 52, 52, 512, 512);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -8, -46, 20, 3, 16, 16, 512, 512);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -26, -26, 112, 15, 52, 52, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -8, -46, 20, 3, 16, 16, 256, 256);
         guiGraphics.pose().popMatrix();
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(OX, OY);
         guiGraphics.pose().scale(2f, 2f);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -6, 40, 68, 76, 12, 12, 512, 512);
+        // NEOFORGE_PORT (26.3): Forge setShaderColor(1,1,1,0.4) wand glyph -> 40% ARGB.
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -6, 40, 68, 76, 12, 12, 256, 256, 0x66FFFFFF);
         guiGraphics.pose().popMatrix();
 
         int visCost = recipe.getVis();
@@ -142,5 +184,12 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
     @Override
     public void getTooltip(ITooltipBuilder tooltip, IArcaneRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         tooltip.addAll(JeiResearch.tooltip(recipe.getResearch(), mouseX, mouseY, WIDTH));
+    }
+
+    // NEOFORGE_PORT (26.3): JEI 15 default getRegistryName(recipe) was Recipe.getId();
+    // 26.x only reads RecipeHolder ids (see ArcaneresearchJEIPlugin.recipeId).
+    @Override
+    public Identifier getIdentifier(IArcaneRecipe recipe) {
+        return ArcaneresearchJEIPlugin.recipeId(recipe);
     }
 }

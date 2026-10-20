@@ -36,6 +36,8 @@ public class EntityFrostShard extends ThrowableItemProjectile {
     public EntityFrostShard(EntityType<? extends EntityFrostShard> type, Level level, LivingEntity owner, float scatter) {
         super(type, level);
         setOwner(owner);
+        // NEOFORGE_PORT (26.3): Forge super(type, owner, level) also placed the projectile at the owner's eyes.
+        setPos(owner.getX(), owner.getEyeY() - 0.1F, owner.getZ());
         setItem(new ItemStack(getDefaultItem()));
         this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0.0F, 1.6F, scatter);
     }
@@ -105,11 +107,11 @@ public class EntityFrostShard extends ThrowableItemProjectile {
                 double keepX = entityHit.getEntity().getDeltaMovement().x;
                 double keepY = entityHit.getEntity().getDeltaMovement().y;
                 double keepZ = entityHit.getEntity().getDeltaMovement().z;
-                // NEOFORGE_PORT: Entity.invulnerableTime is private in 26.x;
-                // LivingEntity.hurtTime (public) counts down from the same hit (see FocusEngine).
-                if (this.fragile && entityHit.getEntity() instanceof LivingEntity livingHit && livingHit.hurtTime > 0
+                // NEOFORGE_PORT (26.3): Entity.invulnerableTime is private -> get/setInvulnerableTime
+                // (same field, any entity, as in Forge).
+                if (this.fragile && entityHit.getEntity().getInvulnerableTime() > 0
                         && this.getRandom().nextInt(10) < this.tickCount + 3) {
-                    livingHit.setInvulnerableTime(0);
+                    entityHit.getEntity().setInvulnerableTime(0);
                 }
                 Entity owner = this.getOwner();
                 entityHit.getEntity().hurt(this.damageSources().thrown(this, owner != null ? owner : this), getDamage());
@@ -145,11 +147,19 @@ public class EntityFrostShard extends ThrowableItemProjectile {
         }
         this.setDeltaMovement(this.getDeltaMovement().scale(this.bounce));
         double speed = this.getDeltaMovement().length();
+        // NEOFORGE_PORT (26.3): ThrowableProjectile.tick now moves the shard TO the hit point before
+        // onHit and applies no motion afterwards. Forge nudged back from the pre-move position
+        // (== xOld) and then moved by the bounced motion in the same tick; reproduce that end
+        // position (nudging from the hit point lands inside the block and re-hits every tick).
+        double nx = this.xOld + this.getDeltaMovement().x;
+        double ny = this.yOld + this.getDeltaMovement().y;
+        double nz = this.zOld + this.getDeltaMovement().z;
         if (speed > 1.0E-4D) {
-            this.setPos(this.getX() - this.getDeltaMovement().x / speed * 0.05D,
-                    this.getY() - this.getDeltaMovement().y / speed * 0.05D,
-                    this.getZ() - this.getDeltaMovement().z / speed * 0.05D);
+            nx -= this.getDeltaMovement().x / speed * 0.05D;
+            ny -= this.getDeltaMovement().y / speed * 0.05D;
+            nz -= this.getDeltaMovement().z / speed * 0.05D;
         }
+        this.setPos(nx, ny, nz);
         if (this.bounceLimit-- <= 0) {
             destroyed = true;
         }

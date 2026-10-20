@@ -104,6 +104,29 @@ public class BlockSaplingTC extends SaplingBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: no advanceTree override — SaplingBlock.advanceTree grows
-    // through the TreeGrower above (2x2 greatwood -> big_magic_tree mega-tree).
+    // NEOFORGE_PORT (26.3): the TreeGrower above places the 2x2 greatwood mega-tree
+    // (big_magic_tree), but SaplingBlock.advanceTree only reaches it at STAGE 1. The reference
+    // advanceTree grew a complete 2x2 immediately (no stage step), so that shortcut is kept.
+    @Override
+    public void advanceTree(net.minecraft.server.level.ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
+        if (this == arcaneresearch.init.ModBlocks.GREATWOOD_SAPLING.get()) {
+            for (int i = 0; i >= -1; --i) {
+                for (int j = 0; j >= -1; --j) {
+                    if (isTwoByTwoOfType(level, pos, i, j)) {
+                        this.treeGrower.growTree(level, level.getChunkSource().getGenerator(), pos, state, random);
+                        return;
+                    }
+                }
+            }
+        }
+        super.advanceTree(level, pos, state, random);
+    }
+
+    private boolean isTwoByTwoOfType(net.minecraft.world.level.LevelReader level, BlockPos pos, int dx, int dz) {
+        Block block = this;
+        return level.getBlockState(pos.offset(dx, 0, dz)).is(block)
+                && level.getBlockState(pos.offset(dx + 1, 0, dz)).is(block)
+                && level.getBlockState(pos.offset(dx, 0, dz + 1)).is(block)
+                && level.getBlockState(pos.offset(dx + 1, 0, dz + 1)).is(block);
+    }
 }

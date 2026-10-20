@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -151,11 +152,13 @@ public class HexTableDraw {
             graphics.pose().scale(0.5F, 0.5F);
             int tx = 32 - sw;
             int ty = 32 - s.font().lineHeight;
-            graphics.text(s.font(), text, tx - 1, ty, 0x000000, false);
-            graphics.text(s.font(), text, tx + 1, ty, 0x000000, false);
-            graphics.text(s.font(), text, tx, ty - 1, 0x000000, false);
-            graphics.text(s.font(), text, tx, ty + 1, 0x000000, false);
-            graphics.text(s.font(), text, tx, ty, 0xFFFFFF, false);
+            // NEOFORGE_PORT (26.3): ARGB colors — 1.20.1 Font forced alpha 0xFF,
+            // text() skips alpha-0 colors (counts were invisible).
+            graphics.text(s.font(), text, tx - 1, ty, 0xFF000000, false);
+            graphics.text(s.font(), text, tx + 1, ty, 0xFF000000, false);
+            graphics.text(s.font(), text, tx, ty - 1, 0xFF000000, false);
+            graphics.text(s.font(), text, tx, ty + 1, 0xFF000000, false);
+            graphics.text(s.font(), text, tx, ty, 0xFFFFFFFF, false);
             graphics.pose().popMatrix();
         }
         if (bonus > 0) {
@@ -165,8 +168,8 @@ public class HexTableDraw {
             graphics.pose().pushMatrix();
             graphics.pose().translate((float) x, (float) y);
             graphics.pose().scale(0.5F, 0.5F);
-            graphics.text(s.font(), text, 1, 1, 0x000000, false);
-            graphics.text(s.font(), text, 0, 0, 0xFFFF00, false);
+            graphics.text(s.font(), text, 1, 1, 0xFF000000, false);
+            graphics.text(s.font(), text, 0, 0, 0xFFFFFF00, false);
             graphics.pose().popMatrix();
         }
     }
@@ -180,8 +183,7 @@ public class HexTableDraw {
         if (armed && System.nanoTime() - s.lastCombineClick < 200000000L) {
             GuiBlitHelper.blit(graphics, TABLE_BG, bx, by, 184, 168, 32, 16, 256, 256);
         }
-        // Орб на кнопке — тинтом, как светящийся спрайт оригинала
-        // (аддитивный бленд пайплайна недостижим — обычный GUI_TEXTURED).
+        // Орб на кнопке — тинтом, аддитивно (blendFunc 770, 1), см. drawOrbSprite.
         drawOrbSprite(graphics, bx + 8, by, rainbowOrb(orbTick(), bx, by));
         // Стрелки страниц.
         if (s.page < s.lastPage(s.poolView().size())) {
@@ -208,7 +210,11 @@ public class HexTableDraw {
     private void drawOrbSprite(GuiGraphicsExtractor graphics, int x, int y, int rgb) {
         int part = (int) (orbTick() % 8);
         int u = 128 + part * 32;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, ORB, x, y, u, 128, 16, 16, 256, 256, rgb);
+        // NEOFORGE_PORT (26.3): Forge blendFunc(770, 1) + setShaderColor(r, g, b, 1)
+        // -> additive pipeline + opaque tint (aspect colors are 0xRRGGBB, alpha 0
+        // made the drag orb invisible).
+        graphics.blit(HexTablePipelines.GUI_TEXTURED_LIGHTNING, ORB, x, y, u, 128, 16, 16, 256, 256,
+                ARGB.opaque(rgb));
     }
 
     private static int rainbowOrb(long tick, float x, float y) {
@@ -270,7 +276,9 @@ public class HexTableDraw {
                 graphics.blit(RenderPipelines.GUI_TEXTURED, HEX1, hx - 8, hy - 8,
                         0, 0, 16, 16, 16, 16, 0x40FFFFFF);
                 if (hover != null && hover.equals(hex)) {
-                    GuiBlitHelper.blit(graphics, HEX2, hx - 8, hy - 8, 0, 0, 16, 16, 16, 16);
+                    // NEOFORGE_PORT (26.3): Forge blendFunc(770, 1) -> additive pipeline.
+                    graphics.blit(HexTablePipelines.GUI_TEXTURED_LIGHTNING, HEX2, hx - 8, hy - 8,
+                            0, 0, 16, 16, 16, 16);
                 }
             }
         }
@@ -379,7 +387,8 @@ public class HexTableDraw {
         graphics.pose().translate(x1, y1);
         // NEOFORGE_PORT: 2D pose rotate takes radians float (cf. HudHandler).
         graphics.pose().rotate((float) Math.atan2(dy, dx));
-        graphics.fill(0, -1, (int) len, 2, (alpha << 24) | 0x0099CC);
+        // NEOFORGE_PORT (26.3): Forge blendFunc(770, 1) -> additive pipeline.
+        graphics.fill(HexTablePipelines.GUI_LIGHTNING, 0, -1, (int) len, 2, (alpha << 24) | 0x0099CC);
         graphics.pose().popMatrix();
     }
 
@@ -510,7 +519,17 @@ public class HexTableDraw {
         for (Component line : tip) {
             w = Math.max(w, s.font().width(line));
         }
-        graphics.setComponentTooltipForNextFrame(s.font(), tip,
-                s.guiLeft() + 157 - w, s.guiTop() + 84);
+        // NEOFORGE_PORT (26.3): Forge drew this panel immediately every frame
+        // (renderTooltip), independent of hover tooltips. The deferred
+        // setTooltipForNextFrame is first-wins/replaced by slot tooltips, which
+        // hid the warning while hovering the pool/sheet — draw it immediately.
+        int tx = s.guiLeft() + 157 - w;
+        int ty = s.guiTop() + 84;
+        java.util.List<net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent> components =
+                net.neoforged.neoforge.client.ClientHooks.gatherTooltipComponents(
+                        ItemStack.EMPTY, tip, tx, graphics.guiWidth(), graphics.guiHeight(), s.font());
+        graphics.tooltip(s.font(), components, tx, ty,
+                net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner.INSTANCE,
+                null, false);
     }
 }

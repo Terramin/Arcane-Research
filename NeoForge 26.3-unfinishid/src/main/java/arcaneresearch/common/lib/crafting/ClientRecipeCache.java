@@ -30,6 +30,18 @@ public final class ClientRecipeCache {
     @SubscribeEvent
     public static void onRecipesReceived(RecipesReceivedEvent event) {
         map = event.getRecipeMap() != null ? event.getRecipeMap() : RecipeMap.EMPTY;
+        // NEOFORGE_PORT (26.3) FIX: with the synced recipes available, refresh the client's
+        // potion aspects with real brewing reagent data. 1.20.1 Forge had static PotionBrewing
+        // on the client; a remote-server 26.3 client fell back to MAGIC 5 / ALCHEMY 5 for
+        // thaumometer/JEI aspect display. Registration is an idempotent map overwrite keyed
+        // identically to the content-setup pass (AspectHelper.registerObjectTag).
+        if (map.values() != null && !map.values().isEmpty()) {
+            try {
+                arcaneresearch.common.config.ConfigAspects.registerPotionAspects(map.values());
+            } catch (Exception e) {
+                Arcaneresearch.LOGGER.debug("Client potion aspect refresh failed", e);
+            }
+        }
     }
 
     public static Collection<RecipeHolder<?>> values() {

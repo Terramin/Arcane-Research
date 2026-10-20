@@ -161,6 +161,15 @@ public class TileArcaneWorkbench extends TileArcaneresearch implements MenuProvi
         }
     }
 
+    // NEOFORGE_PORT (26.3): reference BlockArcaneWorkbench.onRemove called dropContents();
+    // the port's affectNeighborsAfterRemoval runs after the tile is gone, so the grid and
+    // crystals were lost. LevelChunk calls this only on a block change, with the tile present.
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+        super.preRemoveSideEffects(pos, oldState);
+        dropContents();
+    }
+
     public boolean stillValid(Player player) {
         if (level == null || level.getBlockEntity(worldPosition) != this) {
             return false;

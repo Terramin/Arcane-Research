@@ -36,7 +36,7 @@ import java.util.Optional;
 //     matchesInfusion null/isEmpty-safe.
 //   - placementInfo() -> NOT_PLACEABLE (altar recipes never use the vanilla grid);
 //     recipeBookCategory() -> CRAFTING_MISC (never meaningfully displayed);
-//     showNotification() -> false (research toasts are handled by our own system).
+//     showNotification() kept at the vanilla/Forge default true.
 // Match/aspect/instability logic VERBATIM.
 public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchRecipe {
 
@@ -47,16 +47,21 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
             Ingredient.CODEC.optionalFieldOf("central").forGetter(r -> Optional.ofNullable(r.centralItem)),
             Ingredient.CODEC.optionalFieldOf("center").forGetter(r -> Optional.empty()),
             Ingredient.CODEC.optionalFieldOf("input").forGetter(r -> Optional.empty()),
-            Ingredient.CODEC.listOf().optionalFieldOf("components", List.of()).forGetter(r -> r.components),
-            Ingredient.CODEC.listOf().optionalFieldOf("ingredients", List.of()).forGetter(r -> List.of()),
+            Ingredient.CODEC.listOf().optionalFieldOf("components").forGetter(r -> Optional.of(r.components)),
+            Ingredient.CODEC.listOf().optionalFieldOf("ingredients").forGetter(r -> Optional.empty()),
             AspectList.MAP_CODEC.codec().optionalFieldOf("aspects", new AspectList()).forGetter(r -> r.aspects),
             ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.result)
     ).apply(inst, (group, research, instability, central, center, input, components, ingredients,
                    aspects, result) -> {
         Ingredient centralItem = central.or(() -> center).or(() -> input).orElse(null);
+        // NEOFORGE_PORT (26.3): Forge read "components" if present, otherwise "ingredients"
+        // (never both) - same precedence here instead of concatenating the two keys.
+        // Forge also filtered parsed ingredients with if (!ingredient.isEmpty()) before
+        // storing them: an empty tag entry in JSON is skipped, not kept as an
+        // always-failing component (RecipeMatcher would make the recipe unmatchable).
         NonNullList<Ingredient> merged = NonNullList.create();
-        merged.addAll(components);
-        merged.addAll(ingredients);
+        merged.addAll((components.isPresent() ? components.get() : ingredients.orElse(List.of()))
+                .stream().filter(ingredient -> !ingredient.isEmpty()).toList());
         return new InfusionRecipeType(group, centralItem, merged, aspects, result, research, instability);
     }));
 
@@ -113,7 +118,10 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
             }
         }
 
-        if (centralItem != null && !centralItem.isEmpty() && !centralItem.test(centralItemStack)) {
+        // NEOFORGE_PORT (26.3): only an ABSENT central input (Forge Ingredient.EMPTY, here null)
+        // skips the check. A present ingredient that resolves to nothing (empty tag) must
+        // still be tested (and fail) - Forge never treated it as "no requirement".
+        if (centralItem != null && !centralItem.test(centralItemStack)) {
             return false;
         }
 
@@ -127,7 +135,10 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
 
     @Override
     public boolean showNotification() {
-        return false;
+        // NEOFORGE_PORT (26.3) FIX: Forge never overrode the vanilla default (true).
+        // The recipes are NOT_PLACEABLE and never recipe-booked, so the flag is moot -
+        // kept Forge-identical for behavior parity.
+        return true;
     }
 
     public ItemStack getResultItem() {

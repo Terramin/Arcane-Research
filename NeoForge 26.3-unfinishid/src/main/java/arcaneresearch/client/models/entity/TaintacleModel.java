@@ -158,10 +158,13 @@ public class TaintacleModel extends EntityModel<TaintacleRenderer.State> {
         // NEOFORGE_PORT: base submit renders root() directly (the old recursive
         // renderToBuffer has no submit path); the per-level 0.88 shrink moves
         // into part scales (same compounding as the pose-stack version).
+        // NEOFORGE_PORT (26.3): Forge scaled before each child's translate, so the
+        // offsets shrink by 0.88 too (part scale applies only after the offset).
         for (int i = 0; i < MAX_SEGMENTS; i++) {
             this.segments[i].xScale = 0.88F;
             this.segments[i].yScale = 0.88F;
             this.segments[i].zScale = 0.88F;
+            shrinkOffset(this.segments[i]);
         }
         for (int tip : new int[]{SMALL_TIP, NORMAL_TIP, GIANT_TIP}) {
             this.orbs[tip].xScale = 0.88F;
@@ -170,6 +173,8 @@ public class TaintacleModel extends EntityModel<TaintacleRenderer.State> {
             this.heads[tip].xScale = 0.88F;
             this.heads[tip].yScale = 0.88F;
             this.heads[tip].zScale = 0.88F;
+            shrinkOffset(this.orbs[tip]);
+            shrinkOffset(this.heads[tip]);
         }
         for (int k = 0; k <= tipIndex; k++) {
             this.segments[k].xRot = 0.15f * fi * Mth.sin(ageInTicks * 0.1f * fs - k / 2.0f);
@@ -227,6 +232,12 @@ public class TaintacleModel extends EntityModel<TaintacleRenderer.State> {
             }
         }
         poseStack.popPose();
+    }
+
+    private static void shrinkOffset(ModelPart part) {
+        part.x *= 0.88F;
+        part.y *= 0.88F;
+        part.z *= 0.88F;
     }
 
     public void renderWithAlpha(PoseStack poseStack, VertexConsumer vertexConsumer,

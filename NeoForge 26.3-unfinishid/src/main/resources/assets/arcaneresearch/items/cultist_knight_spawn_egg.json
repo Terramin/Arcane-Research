@@ -1,6 +1,16 @@
-﻿{
+{
   "model": {
     "type": "minecraft:model",
-    "model": "arcaneresearch:item/cultist_knight_spawn_egg"
+    "model": "arcaneresearch:item/spawn_egg_template",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 6165536
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 10134450
+      }
+    ]
   }
 }

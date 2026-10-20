@@ -32,9 +32,11 @@ public class ScanEntity implements IScanThing {
             if (nbtData != null && nbtData.length > 0 && obj instanceof Entity entity) {
                 // NEOFORGE_PORT: saveWithoutId(CompoundTag) removed -> saveWithoutId(ValueOutput);
                 // snapshot into a CompoundTag via TagValueOutput (same NBT shape for the checks below).
+                // NEOFORGE_PORT (26.3): with registry context (as a real entity save) so
+                // registry-backed fields encode instead of being silently dropped.
                 net.minecraft.world.level.storage.TagValueOutput tvo =
-                        net.minecraft.world.level.storage.TagValueOutput.createWithoutContext(
-                                net.minecraft.util.ProblemReporter.DISCARDING);
+                        net.minecraft.world.level.storage.TagValueOutput.createWithContext(
+                                net.minecraft.util.ProblemReporter.DISCARDING, entity.registryAccess());
                 entity.saveWithoutId(tvo);
                 net.minecraft.nbt.CompoundTag tc = tvo.buildResult();
                 for (ArcaneresearchApi.EntityTagsNBT nbt : nbtData) {

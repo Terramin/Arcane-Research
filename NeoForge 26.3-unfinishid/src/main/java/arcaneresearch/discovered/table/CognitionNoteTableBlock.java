@@ -156,10 +156,11 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
         return isPartner(state, neighbour);
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighbourState,
-            LevelAccessor level, BlockPos pos, BlockPos neighbourPos) {
+    // NEOFORGE_PORT: 26.x updateShape(state, level, ticks, pos, dir, neighbourPos, neighbourState, random).
+    @Override
+    protected BlockState updateShape(BlockState state, LevelReader level,
+            net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos pos, Direction direction,
+            BlockPos neighbourPos, BlockState neighbourState, net.minecraft.util.RandomSource random) {
         if (direction == state.getValue(FACING) && !isPartner(state, neighbourState)) {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }

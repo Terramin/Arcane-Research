@@ -83,7 +83,7 @@ public class ItemFocusBasic extends Item {
 
     // NEOFORGE_PORT: appendHoverText(ItemStack,Level,List,TooltipFlag) ->
     // appendHoverText(ItemStack,TooltipContext,TooltipDisplay,Consumer,TooltipFlag).
-    // Level came only from the caller; internals don't use it (null kept for the helper).
+    // Level now comes from TooltipContext.level() (may be null, as on Forge).
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
             net.minecraft.world.item.component.TooltipDisplay display,
@@ -98,7 +98,7 @@ public class ItemFocusBasic extends Item {
                 lines.add(Component.literal(" \u00A7" + aspect.getChatcolor() + aspect.getName() + "\u00A7r x " + amount));
             }
         }
-        addFocusInformation(stack, null, lines, flag);
+        addFocusInformation(stack, context.level(), lines, flag); // NEOFORGE_PORT (26.3): Forge passed the tooltip Level
         lines.forEach(tooltip);
         super.appendHoverText(stack, context, display, tooltip, flag);
     }

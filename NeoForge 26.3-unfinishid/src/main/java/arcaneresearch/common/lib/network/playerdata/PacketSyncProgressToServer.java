@@ -40,7 +40,8 @@ public class PacketSyncProgressToServer implements CustomPacketPayload {
         @Override
         public PacketSyncProgressToServer decode(ByteBuf buf) {
             PacketSyncProgressToServer msg = new PacketSyncProgressToServer();
-            msg.key = ByteBufCodecs.STRING_UTF8.decode(buf);
+            // NEOFORGE_PORT (26.3): Forge decode used readUtf(256) (server-side length cap).
+            msg.key = ByteBufCodecs.stringUtf8(256).decode(buf);
             msg.first = buf.readBoolean();
             msg.checks = buf.readBoolean();
             msg.noFlags = buf.readBoolean();

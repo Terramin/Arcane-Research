@@ -534,8 +534,9 @@ public class EntityPech extends Monster implements RangedAttackMob {
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
 
-        // TODO_PORT: ValueInput.contains gone in 26.3; getByteOr default covers missing keys.
-        setPechType(tag.getByteOr("PechType", (byte) 0));
+        // NEOFORGE_PORT (26.3): ValueInput.contains gone; defaulting to the current type keeps the
+        // Forge "only set when the key exists" behaviour.
+        setPechType(tag.getByteOr("PechType", (byte) getPechType()));
         setAnger(tag.getShortOr("Anger", (short) 0));
         setTamed(tag.getBooleanOr("Tamed", false));
 
@@ -562,8 +563,9 @@ public class EntityPech extends Monster implements RangedAttackMob {
         }
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean canBeLeashed(Player player) {
+    // NEOFORGE_PORT: 26.x canBeLeashed() has no player argument.
+    @Override
+    public boolean canBeLeashed() {
         return false;
     }
 

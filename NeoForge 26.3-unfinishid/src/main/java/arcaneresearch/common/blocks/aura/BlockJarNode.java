@@ -87,16 +87,16 @@ public class BlockJarNode extends BaseEntityBlock {
 
     @Override
     public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        if (includeData) {
-            try {
-                if (level.getBlockEntity(pos) instanceof TileJarNode jar) {
-                    ItemStack stack = ItemJarNode.createStack(jar);
-                    if (!stack.isEmpty()) {
-                        return stack;
-                    }
+        // NEOFORGE_PORT (26.3): no includeData guard - the 1.20.1 override always returned the
+        // filled jar (plain pick block, scanning and thaumometer all saw the node jar).
+        try {
+            if (level.getBlockEntity(pos) instanceof TileJarNode jar) {
+                ItemStack stack = ItemJarNode.createStack(jar);
+                if (!stack.isEmpty()) {
+                    return stack;
                 }
-            } catch (Exception ignored) {
             }
+        } catch (Exception ignored) {
         }
         return super.getCloneItemStack(level, pos, state, includeData);
     }

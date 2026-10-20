@@ -65,16 +65,11 @@ public abstract class TileArcaneresearch extends BlockEntity {
         // affectNeighborsAfterRemoval, tile map removal last). super drops Container
         // contents (was InventoryUtils.dropItems in BlockTCTile.onRemove).
         super.preRemoveSideEffects(pos, newState);
-        // NEOFORGE_PORT: essentia spill moved from BlockTCTile.onRemove (Block.onRemove
-        // removed in 26.x). Same-block guard + server-only + flag preserved 1:1.
-        if (level != null && !level.isClientSide() && !getBlockState().is(newState.getBlock())
-                && this instanceof arcaneresearch.api.aspects.IEssentiaTransport transport
-                && arcaneresearch.common.blocks.BlockTCTile.spillEssentia) {
-            int ess = transport.getEssentiaAmount(net.minecraft.core.Direction.UP);
-            if (ess > 0) {
-                arcaneresearch.api.aura.AuraHelper.polluteAura(level, pos, (float) ess, true);
-            }
-        }
+        // NEOFORGE_PORT (26.3): no generic essentia spill here. In the reference the
+        // spill lived in BlockTCTile.onRemove, but no block extends BlockTCTile there,
+        // so it never ran; blocks that spill (tube, reservoir, smelter) do it themselves.
+        // Note: LevelChunk passes the OLD state as the 2nd arg (it is only called when
+        // the block actually changes), so a "same block" guard on it is always false.
     }
 
     // NEOFORGE_PORT: ValueInput has no contains()/getByteArray()/getList() (26.x).

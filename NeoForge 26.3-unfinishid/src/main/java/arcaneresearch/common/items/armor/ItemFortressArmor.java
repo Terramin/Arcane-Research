@@ -17,7 +17,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchArmorMaterials;
@@ -53,6 +54,10 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
     public ItemFortressArmor(Item.Properties props, ArmorType type) {
         // NEOFORGE_PORT: super(material, type, props) -> super(props.humanoidArmor(material, type)).
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_FORTRESS, type)
+                // NEOFORGE_PORT (26.3): humanoidArmor() uses vanilla per-slot units (11/16/15/13);
+                // Forge indexed {13,15,16,11} by ArmorItem.Type ordinal -> restore Forge durability.
+                .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(
+                        ArcaneresearchArmorMaterials.ARMORMAT_FORTRESS, type))
                 .stacksTo(1)
                 .rarity(Rarity.RARE));
         this.armorType = type;
@@ -167,18 +172,62 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
         return defense / 25.0D;
     }
 
-    // NEOFORGE_PORT: LivingHurtEvent REMOVED in NeoForge (verified via javap on the NeoForge jar) ->
-    // LivingDamageEvent.Pre; getAmount()/setAmount() -> getNewDamage()/setNewDamage().
+    // NEOFORGE_PORT: LivingHurtEvent REMOVED in NeoForge (verified via javap on the NeoForge jar).
+    // NEOFORGE_PORT (26.3): Forge rescaled the PRE-armor amount (LivingHurtEvent, top of
+    // actuallyHurt) and vanilla armor then absorbed the rescaled amount. LivingDamageEvent.Pre runs
+    // after armor/enchant/resistance, so rescaling there applied the factor to an already
+    // armor-reduced amount (armor absorption is not linear in damage). Same approach as
+    // EntityEvents.onEntityHurt: an ARMOR reduction callback, which runs inside actuallyHurt with
+    // container.getNewDamage() == Forge's LivingHurtEvent amount. LOWEST priority appends it after
+    // the EntityEvents (other Forge LivingHurt handlers) callback; their pre-armor result is
+    // recovered from the chained reduction, then this handler's factor is applied on top.
     // NEOFORGE_PORT: CombatRules.getDamageAfterAbsorb(float, float, float) signature changed in 26.x ->
     // getDamageAfterAbsorb(LivingEntity, float, DamageSource, float, float) (verified via javap).
     // NEOFORGE_PORT: ArmorItem.getDefense()/getToughness()/getType() are gone with ArmorItem ->
     // per-piece defense comes from the ARMORMAT_FORTRESS defense map keyed by armorType.
-    @SubscribeEvent
-    public static void onLivingHurt(LivingDamageEvent.Pre event) {
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
+    public static void onLivingHurt(LivingIncomingDamageEvent event) {
         LivingEntity living = event.getEntity();
         if (living.level().isClientSide()) {
             return;
         }
+        event.addReductionModifier(DamageContainer.Reduction.ARMOR,
+                (container, reductionIn) -> applyFortress(living, container, reductionIn));
+    }
+
+    private static float armorAbsorb(LivingEntity living, DamageSource source, float amount) {
+        if (amount <= 0.0F || source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+            return amount;
+        }
+        return CombatRules.getDamageAfterAbsorb(living, amount, source, living.getArmorValue(),
+                (float) living.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
+    }
+
+    /** Pre-armor amount whose vanilla armor result is {@code postArmor} (absorb is strictly increasing). */
+    private static float preArmorAmount(LivingEntity living, DamageSource source, float before, float postArmor) {
+        if (postArmor <= 0.0F || source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+            return Math.max(0.0F, postArmor);
+        }
+        if (Math.abs(armorAbsorb(living, source, before) - postArmor) <= 1.0E-5F * Math.max(1.0F, before)) {
+            return before;
+        }
+        float lo = 0.0F;
+        float hi = Math.max(before, postArmor) * 2.0F + 1.0F;
+        for (int i = 0; i < 64 && armorAbsorb(living, source, hi) < postArmor; i++) {
+            hi *= 2.0F;
+        }
+        for (int i = 0; i < 64; i++) {
+            float mid = (lo + hi) * 0.5F;
+            if (armorAbsorb(living, source, mid) < postArmor) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        return hi;
+    }
+
+    private static float applyFortress(LivingEntity living, DamageContainer container, float reductionIn) {
         List<ItemStack> pieces = new ArrayList<>();
         for (EquipmentSlot armorSlot : ARMOR_SLOTS) {
             ItemStack armor = living.getItemBySlot(armorSlot);
@@ -187,20 +236,22 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
             }
         }
         if (pieces.isEmpty()) {
-            return;
+            return reductionIn;
         }
-        DamageSource source = event.getSource();
+        DamageSource source = container.getSource();
 
         if (source.is(DamageTypeTags.IS_FALL)) {
-            return;
+            return reductionIn;
         }
-        float amount = event.getNewDamage();
+        float before = container.getNewDamage();
+        // Forge LivingHurtEvent amount (after any earlier LivingHurt handler).
+        float amount = preArmorAmount(living, source, before, before - reductionIn);
 
         float armorValue = (float) living.getArmorValue();
         float toughnessValue = (float) living.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
         float vanillaFactor = CombatRules.getDamageAfterAbsorb(living, 1.0F, source, armorValue, toughnessValue);
         if (vanillaFactor <= 1.0E-6F) {
-            return;
+            return reductionIn;
         }
 
         float fortArmor = 0.0F;
@@ -223,10 +274,12 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
             bonusAbsorb = Math.min(0.20D, (getSetBonus(player) + getSetToughness(player)) * 0.04D);
         }
         double specialFactor = otherFactor * remaining * (1.0D - bonusAbsorb);
-        event.setNewDamage((float) (amount * specialFactor / vanillaFactor));
+        float after = Math.max(0.0F, (float) (amount * specialFactor / vanillaFactor));
+        // Vanilla armor (and the later enchant/resistance/absorption steps) then apply to `after`.
+        return before - armorAbsorb(living, source, after);
     }
 
-    // TODO_PORT: Forge isValidRepairItem accepted the thaumium ingot item (or the material match).
+    // NEOFORGE_PORT: Forge isValidRepairItem accepted the thaumium ingot item (or the material match).
     // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
     // via the ArmorMaterial repairIngredient tag); ARMORMAT_FORTRESS maps to the repairs_thaumium
     // data tag (thaumium ingot, as Forge used), so no override is needed (or possible).

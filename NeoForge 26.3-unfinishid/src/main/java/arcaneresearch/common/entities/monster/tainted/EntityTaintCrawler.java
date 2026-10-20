@@ -90,8 +90,8 @@ public class EntityTaintCrawler extends Monster implements ITaintedMob {
         playSound(SoundEvents.SILVERFISH_STEP, 0.15f, 1.0f);
     }
 
-    // NEOFORGE_PORT: MobType override removed (class gone in 26.x); smite/bane
-    // handled inside modifyDamage, undead traits via damage-type tags.
+    // NEOFORGE_PORT: Forge getMobType() == ARTHROPOD -> 26.x #minecraft:arthropod entity tag
+    // (data/minecraft/tags/entity_type/arthropod.json; bane of arthropods etc.).
 
     public boolean isTaintedMob(Entity entity) {
         if (entity instanceof arcaneresearch.api.entities.ITaintedMob) return true;
@@ -148,7 +148,10 @@ public class EntityTaintCrawler extends Monster implements ITaintedMob {
                     || bs.getBlock() instanceof net.minecraft.world.level.block.FlowerBlock
                     // NEOFORGE_PORT: forge IPlantable removed; vanilla flora (flowers, grass,
                     // crops, saplings) now shares VegetationBlock (BushBlock/CropBlock/etc. extend it).
-                    || bs.getBlock() instanceof VegetationBlock)
+                    || bs.getBlock() instanceof VegetationBlock
+                    // NEOFORGE_PORT (26.3): Forge also patched IPlantable onto sugar cane and cactus.
+                    || bs.getBlock() instanceof net.minecraft.world.level.block.SugarCaneBlock
+                    || bs.getBlock() instanceof net.minecraft.world.level.block.CactusBlock)
                     && BlockUtils.isAdjacentToSolidBlock(level(), pos)
                     && !BlockTaintFibre.isOnlyAdjacentToTaint(level(), pos)) {
                 level().setBlockAndUpdate(pos, ModBlocks.TAINT_FIBRE.get().defaultBlockState());

@@ -99,16 +99,6 @@ public class ModSounds {
 
     public static final DeferredHolder<SoundEvent, SoundEvent> CHANT = registerSound("chant");
 
-    // TODO_PORT (deferred SoundTypes — Forge 1:1 source kept for follow-up):
-    //   public static final SoundType GORE_TYPE = new ForgeSoundType(0.5f, 1.0f,
-    //           GORE::get, GORE::get, GORE::get, GORE::get, GORE::get);
-    //   public static final SoundType CRYSTAL_TYPE = new ForgeSoundType(0.5f, 1.0f,
-    //           CRYSTAL::get, CRYSTAL::get, CRYSTAL::get, CRYSTAL::get, CRYSTAL::get);
-    //   public static final SoundType JAR_TYPE = new ForgeSoundType(0.5f, 1.0f,
-    //           JAR::get, JAR::get, JAR::get, JAR::get, JAR::get);
-    //   public static final SoundType URN_TYPE = new ForgeSoundType(0.5f, 1.5f,
-    //           URN_BREAK::get, URN_BREAK::get, URN_BREAK::get, URN_BREAK::get, URN_BREAK::get);
-
     private static DeferredHolder<SoundEvent, SoundEvent> registerSound(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, name)));

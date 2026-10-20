@@ -45,14 +45,15 @@ public class ItemBootsTraveller extends Item implements IRechargable, IRunicArmo
     public ItemBootsTraveller(Item.Properties props) {
         // NEOFORGE_PORT: super(material, Type.BOOTS, props) -> super(props.humanoidArmor(material, ArmorType.BOOTS)).
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_SPECIAL, ArmorType.BOOTS)
+                // Forge isValidRepairItem: leather or the material's enchanted fabric.
+                .repairable(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath(arcaneresearch.Arcaneresearch.MODID, "repairs_traveller_boots")))
                 .stacksTo(1)
                 .durability(350)
                 .rarity(Rarity.RARE));
     }
 
-    // TODO_PORT: Forge isValidRepairItem accepted Items.LEATHER (or the material match).
-    // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
-    // via the ArmorMaterial repairIngredient tag), so manual leather repair no longer applies.
+    // NEOFORGE_PORT: Forge isValidRepairItem (leather || material match) -> REPAIRABLE
+    // component with the repairs_traveller_boots tag (leather + #repairs_enchanted_fabric).
 
     // NEOFORGE_PORT: Forge armor-model/texture parity -> arcaneresearch.client.ArmorClientSetup.
 
@@ -96,10 +97,14 @@ public class ItemBootsTraveller extends Item implements IRechargable, IRunicArmo
             }
         }
 
-        // TODO_PORT (items): Forge ran the movement assist below on both sides every tick; the 26.x
-        // hook is server-only, so client-side responsiveness of the speed boost is reduced until a
-        // client tick driver is added. Logic below is otherwise 1:1.
-        if (worn && hasCharge && !player.getAbilities().flying && player.zza > 0.0F) {
+        applyMovementAssist(player, worn && hasCharge);
+    }
+
+    // NEOFORGE_PORT: Forge ran this movement assist on both sides from inventoryTick. The 26.x
+    // inventoryTick is server-only while player movement is client-authoritative, so the local
+    // player's half is driven from PlayerTickEvent (ClientMotion below). Logic is 1:1.
+    private static void applyMovementAssist(Player player, boolean active) {
+        if (active && !player.getAbilities().flying && player.zza > 0.0F) {
             if (player.onGround()) {
                 float bonus = 0.05F;
                 if (player.isInWater()) {
@@ -118,6 +123,24 @@ public class ItemBootsTraveller extends Item implements IRechargable, IRunicArmo
                     player.setDeltaMovement(motion.add(
                             flat.normalize().scale(player.zza * 0.03D)));
                 }
+            }
+        }
+    }
+
+    @net.neoforged.fml.common.EventBusSubscriber(modid = Arcaneresearch.MODID)
+    public static final class ClientMotion {
+        private ClientMotion() {
+        }
+
+        @net.neoforged.bus.api.SubscribeEvent
+        public static void onPlayerTick(net.neoforged.neoforge.event.tick.PlayerTickEvent.Pre event) {
+            Player player = event.getEntity();
+            if (!player.level().isClientSide() || !player.isLocalPlayer()) {
+                return;
+            }
+            ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
+            if (boots.getItem() instanceof ItemBootsTraveller) {
+                applyMovementAssist(player, RechargeHelper.getCharge(boots) > 0);
             }
         }
     }

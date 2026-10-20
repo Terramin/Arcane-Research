@@ -76,6 +76,13 @@ public final class IsoStructurePip {
         }
     }
 
+    /** Same as {@link #submit} with a fixed GUI-pixels-per-block scale (1.20.1 parity, no box fit). */
+    public static void submitFixedScale(GuiGraphicsExtractor graphics, BlueprintBlockAccess access,
+                                        @Nullable Part[][][] parts, int xSize, int ySize, int zSize,
+                                        int cx, int cy, float scale) {
+        submit(graphics, access, parts, xSize, ySize, zSize, cx, cy, 0.0f, 0.0f, scale);
+    }
+
     @SubscribeEvent
     static void onRegisterPipRenderers(RegisterPictureInPictureRenderersEvent event) {
         event.register(State.class, Renderer::new);
@@ -149,12 +156,18 @@ public final class IsoStructurePip {
             }
             double wu = maxPx - minPx + 1.0;
             double hu = maxPy - minPy + 1.0;
-            float s = (float) Math.min(boxW / wu, boxH / hu);
-            if (s > maxS) {
+            float s;
+            if (boxW <= 0.0f || boxH <= 0.0f) {
+                // NEOFORGE_PORT (26.3): fixed per-block scale (1.20.1 used a fixed scale, no box fit).
                 s = maxS;
-            }
-            if (s < 3.0f) {
-                s = 3.0f;
+            } else {
+                s = (float) Math.min(boxW / wu, boxH / hu);
+                if (s > maxS) {
+                    s = maxS;
+                }
+                if (s < 3.0f) {
+                    s = 3.0f;
+                }
             }
             // translate(-center) remaps the raw projection into the frame
             // translate(-xSize/2, -ySize/2, -zSize/2) produces here.

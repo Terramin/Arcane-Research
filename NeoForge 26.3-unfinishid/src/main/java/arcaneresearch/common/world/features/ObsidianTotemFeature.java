@@ -55,7 +55,8 @@ public class ObsidianTotemFeature implements Feature {
             return false;
         }
         int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
-        if (topY <= level.getMinY() + 1 || topY + 6 >= level.getMaxY()) {
+        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+        if (topY <= level.getMinY() + 1 || topY + 6 > level.getMaxY()) {
             return false;
         }
         BlockPos groundPos = new BlockPos(x, topY, z);
@@ -89,7 +90,8 @@ public class ObsidianTotemFeature implements Feature {
         }
         if (!capped && height > 4) {
             BlockPos capPos = groundPos.above(5);
-            if (capPos.getY() < level.getMaxY() && level.isEmptyBlock(capPos)) {
+            // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+            if (capPos.getY() <= level.getMaxY() && level.isEmptyBlock(capPos)) {
                 placeNode(level, random, capPos);
                 capped = true;
             }

@@ -87,6 +87,47 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         });
     }
 
+    // NEOFORGE_PORT (26.3): shared seal-click handling restored from Forge 1.20.1 (the port had
+    // inlined it into onItemUseFirst/useOn/use and dropped the sneak fallback that picks the
+    // single seal on another face of the clicked block).
+    private static InteractionResult handleSealClick(Player player, Level level, BlockPos pos, Direction side) {
+        ISealEntity seal = SealHandler.getSealEntity(level.dimension(), new SealPos(pos, side));
+        if (seal == null && player.isShiftKeyDown()) {
+            seal = findLoneSealOnBlock(level, pos, side);
+        }
+        if (seal != null) {
+            if (player.isShiftKeyDown()) {
+                SealHandler.removeSealEntity(level, seal.getSealPos(), false);
+                level.playSound(null, pos, ModSounds.ZAP.get(),
+                        SoundSource.BLOCKS, 0.5f, 1.0f);
+            } else {
+                openSealGui(player, seal);
+            }
+            return InteractionResult.SUCCESS;
+        }
+        if (player.isShiftKeyDown()
+                && ArcaneresearchCapabilities.isResearchKnown(player, "GOLEMLOGISTICS")) {
+            openLogisticsGui(player, pos, side);
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.PASS;
+    }
+
+    private static ISealEntity findLoneSealOnBlock(Level level, BlockPos pos, Direction clickedFace) {
+        ISealEntity found = null;
+        for (Direction d : Direction.values()) {
+            if (d == clickedFace) continue;
+            ISealEntity s = SealHandler.getSealEntity(level.dimension(), new SealPos(pos, d));
+            if (s != null) {
+                if (found != null) {
+                    return null;
+                }
+                found = s;
+            }
+        }
+        return found;
+    }
+
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 
@@ -97,23 +138,7 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         }
         player.swing(context.getHand(), net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
         if (!level.isClientSide()) {
-            ISealEntity seal = SealHandler.getSealEntity(level.dimension(),
-                    new SealPos(context.getClickedPos(), context.getClickedFace()));
-            if (seal != null) {
-                if (player.isShiftKeyDown()) {
-                    SealHandler.removeSealEntity(level, seal.getSealPos(), false);
-                    level.playSound(null, context.getClickedPos(), ModSounds.ZAP.get(),
-                            SoundSource.BLOCKS, 0.5f, 1.0f);
-                } else {
-                    openSealGui(player, seal);
-                }
-                return InteractionResult.SUCCESS;
-            }
-            if (player.isShiftKeyDown()
-                    && ArcaneresearchCapabilities.isResearchKnown(player, "GOLEMLOGISTICS")) {
-                openLogisticsGui(player, context.getClickedPos(), context.getClickedFace());
-                return InteractionResult.SUCCESS;
-            }
+            return handleSealClick(player, level, context.getClickedPos(), context.getClickedFace());
         }
         return InteractionResult.PASS;
     }
@@ -132,23 +157,7 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         player.swing(context.getHand(), net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
 
         if (!level.isClientSide()) {
-            ISealEntity sealEntity = SealHandler.getSealEntity(level.dimension(), new SealPos(pos, side));
-
-            if (sealEntity != null) {
-                if (player.isShiftKeyDown()) {
-                    SealHandler.removeSealEntity(level, sealEntity.getSealPos(), false);
-                    level.playSound(null, pos, ModSounds.ZAP.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-                } else {
-                    openSealGui(player, sealEntity);
-                }
-                return InteractionResult.SUCCESS;
-            }
-
-            if (player.isShiftKeyDown()
-                    && ArcaneresearchCapabilities.isResearchKnown(player, "GOLEMLOGISTICS")) {
-                openLogisticsGui(player, pos, side);
-                return InteractionResult.SUCCESS;
-            }
+            return handleSealClick(player, level, pos, side);
         }
 
         return InteractionResult.PASS;
@@ -164,12 +173,8 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
             ISealEntity sealEntity = getSealFromRaytrace(player);
 
             if (sealEntity != null) {
-                if (player.isShiftKeyDown()) {
-                    SealHandler.removeSealEntity(level, sealEntity.getSealPos(), false);
-                    level.playSound(null, sealEntity.getSealPos().pos, ModSounds.ZAP.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-                } else {
-                    openSealGui(player, sealEntity);
-                }
+                handleSealClick(player, level,
+                        sealEntity.getSealPos().pos, sealEntity.getSealPos().face);
                 return InteractionResult.SUCCESS;
             }
 

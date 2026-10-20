@@ -36,7 +36,7 @@ public class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxRiftRen
     }
 
     private static final Identifier RIFT_TEXTURE =
-            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal.png");
+            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal/end_portal.png"); // NEOFORGE_PORT (26.3): moved
 
     private static final java.util.concurrent.ExecutorService MESH_POOL =
             java.util.concurrent.Executors.newFixedThreadPool(

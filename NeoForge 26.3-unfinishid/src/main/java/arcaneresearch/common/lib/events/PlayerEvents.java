@@ -91,8 +91,9 @@ public class PlayerEvents {
     }
 
     @SubscribeEvent
-    // NEOFORGE_PORT: LivingEvent.LivingTickEvent removed -> EntityTickEvent.Post (players only).
-    public static void livingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Post event) {
+    // NEOFORGE_PORT: LivingEvent.LivingTickEvent removed -> EntityTickEvent.Pre (players only).
+    // NEOFORGE_PORT (26.3): Pre, not Post — Forge LivingTickEvent fired at the start of the tick.
+    public static void livingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Pre event) {
         if (event.getEntity() instanceof Player player) {
 
             handleMisc(player);
@@ -280,34 +281,51 @@ public class PlayerEvents {
         knowledge.sync(player);
 
         ItemStack book = new ItemStack(net.minecraft.world.item.Items.WRITTEN_BOOK);
-        CompoundTag contents = new CompoundTag();
-        contents.putInt("generation", 3);
-        contents.putString("title", Component.translatable("book.start.title").getString());
-        net.minecraft.nbt.ListTag pages = new net.minecraft.nbt.ListTag();
-        pages.add(net.minecraft.nbt.StringTag.valueOf(Component.translatable("book.start.1").getString()));
-        pages.add(net.minecraft.nbt.StringTag.valueOf(Component.translatable("book.start.2").getString()));
-        pages.add(net.minecraft.nbt.StringTag.valueOf(Component.translatable("book.start.3").getString()));
-        contents.put("pages", pages);
-        arcaneresearch.api.ArcaneresearchInvHelper.setCustomTag(book, contents);
-        CompoundTag tag = arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(book);
-        tag.putString("author", player.getName().getString());
-        arcaneresearch.api.ArcaneresearchInvHelper.setCustomTag(book, tag);
+        // NEOFORGE_PORT (26.3): written-book root NBT {generation, title, pages, author} ->
+        // WRITTEN_BOOK_CONTENT component (a CUSTOM_DATA tag leaves the book empty/unreadable).
+        // Forge pages were raw JSON strings (the lang values are quoted JSON strings with \n
+        // escapes), parsed by the book screen -> parse them the same way here.
+        java.util.List<net.minecraft.server.network.Filterable<Component>> pages = new java.util.ArrayList<>();
+        pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.1").getString())));
+        pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.2").getString())));
+        pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.3").getString())));
+        String title = Component.translatable("book.start.title").getString();
+        if (title.length() > net.minecraft.world.item.component.WrittenBookContent.TITLE_MAX_LENGTH) {
+            // 26.3 codecs reject titles > 32 chars (would break item sync).
+            title = title.substring(0, net.minecraft.world.item.component.WrittenBookContent.TITLE_MAX_LENGTH);
+        }
+        book.set(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT,
+                new net.minecraft.world.item.component.WrittenBookContent(
+                        net.minecraft.server.network.Filterable.passThrough(title),
+                        player.getName().getString(), 3, pages, false));
         if (!player.getInventory().add(book)) {
             player.drop(book, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
         player.sendSystemMessage(Component.literal("§5" + Component.translatable("got.dream").getString()));
     }
 
+    /** NEOFORGE_PORT (26.3): Forge book page = JSON text (fallback: literal), as BookViewScreen parsed it. */
+    private static Component bookPage(String raw) {
+        try {
+            return net.minecraft.network.chat.ComponentSerialization.CODEC
+                    .parse(com.mojang.serialization.JsonOps.INSTANCE, com.google.gson.JsonParser.parseString(raw))
+                    .getOrThrow();
+        } catch (Exception e) {
+            return Component.literal(raw);
+        }
+    }
+
     @SubscribeEvent
-    // NEOFORGE_PORT: PlayerEvent.ItemPickupEvent removed -> ItemEntityPickupEvent.Pre
-    // (Pre fires before pickup; stack read from the ItemEntity).
-    public static void onItemPickup(net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent.Pre event) {
+    // NEOFORGE_PORT: PlayerEvent.ItemPickupEvent removed -> ItemEntityPickupEvent.Post.
+    // NEOFORGE_PORT (26.3): Post, not Pre — Forge ItemPickupEvent fired only after the stack was
+    // actually added to the inventory; Pre fires on every touch (pickup delay, full inventory).
+    public static void onItemPickup(net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent.Post event) {
         Player player = event.getPlayer();
         if (player == null || player.level().isClientSide()) {
             return;
         }
 
-        ItemStack stack = event.getItemEntity().getItem();
+        ItemStack stack = event.getOriginalStack();
         if (stack.isEmpty()) return;
 
         Item item = stack.getItem();
@@ -384,12 +402,10 @@ public class PlayerEvents {
             return;
         }
         int d = orb.getValue() / 2;
-        // NEOFORGE_PORT: ExperienceOrb.value is private in 26.x (no setter short
-        // of a mixin). Same player-facing behavior: cancel the pickup, grant the
-        // kept half directly, then roll knowledge on it as Forge did.
-        event.setCanceled(true);
-        orb.discard();
-        player.giveExperiencePoints(d);
+        // NEOFORGE_PORT (26.3): Forge `orb.value -= d` -> public setValue (synced entity data).
+        // Pickup is NOT cancelled: vanilla still repairs Mending gear, grants value - d and
+        // decrements the merged-orb count, exactly as in Forge.
+        orb.setValue(orb.getValue() - d);
         float r = player.getRandom().nextFloat();
         String[] cats = arcaneresearch.api.research.ResearchCategories.researchCategories.keySet()
                 .toArray(new String[0]);

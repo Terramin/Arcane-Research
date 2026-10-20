@@ -30,7 +30,8 @@ public class PacketSyncResearchFlagsToServer implements CustomPacketPayload {
         @Override
         public PacketSyncResearchFlagsToServer decode(ByteBuf buf) {
             PacketSyncResearchFlagsToServer msg = new PacketSyncResearchFlagsToServer();
-            msg.key = ByteBufCodecs.STRING_UTF8.decode(buf);
+            // NEOFORGE_PORT (26.3): Forge decode used readUtf(256) (server-side length cap).
+            msg.key = ByteBufCodecs.stringUtf8(256).decode(buf);
             msg.flags = buf.readByte();
             return msg;
         }

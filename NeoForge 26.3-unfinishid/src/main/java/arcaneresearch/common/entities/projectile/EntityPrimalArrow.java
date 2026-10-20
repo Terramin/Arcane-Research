@@ -27,10 +27,6 @@ public class EntityPrimalArrow extends AbstractArrow {
     private static final EntityDataAccessor<Integer> PRIMAL_TYPE =
             SynchedEntityData.defineId(EntityPrimalArrow.class, EntityDataSerializers.INT);
 
-    // NEOFORGE_PORT: AbstractArrow.inGroundTime/inGround visibility changed in 26.x;
-    // own ground-age counter keeps the TC4 100-tick fade 1:1 without touching internals.
-    private int groundTicks = 0;
-
     /** NEOFORGE_PORT: AbstractArrow.setKnockback удалён в 26.x; сила отброса хранится
      * здесь и применяется в onHitEntity (тот же +1 за землю, панч лука — из событий). */
     public int punchLevel = 0;
@@ -41,7 +37,7 @@ public class EntityPrimalArrow extends AbstractArrow {
 
     public EntityPrimalArrow(Level level, LivingEntity owner, float chargeFactor, int type) {
         // NEOFORGE_PORT: AbstractArrow(type, owner, level, pickupStack, firedFrom) — pickup
-        // stack per type (pickup stays DISALLOWED below, same as Forge getPickupItem use).
+        // stack per type; setOwner(player) makes pickup ALLOWED exactly like the Forge ctor did.
         super(ModEntities.PRIMAL_ARROW.get(), owner, level, pickupStackFor(type), null);
         this.setPrimalType(type);
         // Паритет TC4: база 2.1, земля x1.5, порядок/энтропия x0.8.
@@ -49,7 +45,6 @@ public class EntityPrimalArrow extends AbstractArrow {
         this.setBaseDamage(2.1D * damageMult(type));
         // Паритет TC4: скорость f * dam * 1.5 (dam уже в chargeFactor).
         this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0.0F, chargeFactor * 1.5F, 1.0F);
-        this.pickup = AbstractArrow.Pickup.DISALLOWED;
     }
 
     private static ItemStack pickupStackFor(int type) {
@@ -91,14 +86,14 @@ public class EntityPrimalArrow extends AbstractArrow {
 
     /** Тиков в земле (для затухания рендера). */
     public int getTicksInGround() {
-        return this.groundTicks;
+        // NEOFORGE_PORT (26.3): inGroundTime is still protected (counted on both sides, not saved).
+        return this.inGroundTime;
     }
 
     @Override
     protected void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("PrimalType", this.getPrimalType());
-        tag.putInt("GroundTicks", this.groundTicks);
     }
 
     @Override
@@ -108,7 +103,6 @@ public class EntityPrimalArrow extends AbstractArrow {
             this.setPrimalType(tag.getIntOr("PrimalType", 0));
         } catch (Exception ignored) {
         }
-        this.groundTicks = tag.getIntOr("GroundTicks", 0);
     }
 
     @Override
@@ -124,16 +118,9 @@ public class EntityPrimalArrow extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
-        // Паритет TC4: в земле гаснет за 100 тиков (не подбирается).
-        if (!this.level().isClientSide()) {
-            if (this.isInGround()) {
-                this.groundTicks++;
-                if (this.groundTicks >= 100) {
-                    this.discard();
-                }
-            } else {
-                this.groundTicks = 0;
-            }
+        // NEOFORGE_PORT (26.3): inGround field -> isInGround().
+        if (!this.level().isClientSide() && this.isInGround() && this.inGroundTime >= 100) {
+            this.discard();
         }
     }
 
@@ -163,17 +150,23 @@ public class EntityPrimalArrow extends AbstractArrow {
             if (fire > 0 && !(target instanceof Enderman)) {
                 target.igniteForSeconds((float) fire);
             }
-            // NEOFORGE_PORT: отброс панча (setKnockback удалён): толчок по направлению
-            // полёта, 0.6 за уровень — та же формула ванильного AbstractArrow.doKnockback.
-            if (punchLevel > 0) {
-                net.minecraft.world.phys.Vec3 motion = this.getDeltaMovement();
-                double horiz = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
-                if (horiz > 1.0E-4D) {
-                    double strength = 0.6D * (double) punchLevel;
-                    target.push(motion.x / horiz * strength, 0.1D, motion.z / horiz * strength);
-                }
-            }
         }
         super.onHitEntity(result);
+    }
+
+    // NEOFORGE_PORT (26.3): AbstractArrow.setKnockback removed -> punchLevel applied in doKnockback,
+    // which vanilla calls only after the hit dealt damage, with the same Forge formula
+    // (horizontal motion * punch * 0.6 * (1 - knockback resistance), 0.1 up).
+    @Override
+    protected void doKnockback(LivingEntity mob, net.minecraft.world.damagesource.DamageSource damageSource) {
+        super.doKnockback(mob, damageSource);
+        if (punchLevel > 0) {
+            double resist = Math.max(0.0D, 1.0D - mob.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE));
+            net.minecraft.world.phys.Vec3 push = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize()
+                    .scale((double) punchLevel * 0.6D * resist);
+            if (push.lengthSqr() > 0.0D) {
+                mob.push(push.x, 0.1D, push.z);
+            }
+        }
     }
 }

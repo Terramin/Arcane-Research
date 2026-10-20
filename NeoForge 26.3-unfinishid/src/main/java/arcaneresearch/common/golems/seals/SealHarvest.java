@@ -275,7 +275,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
             boolean farmland = tag.getBooleanOr("farmland", false);
             ItemStack seed = ItemStack.EMPTY;
             if (tag.contains("seed")) {
-                seed = ItemStack.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, tag.get("seed"))
+                seed = ItemStack.CODEC.parse(SealHandler.nbtOps(), tag.get("seed"))
                         .result().orElse(ItemStack.EMPTY);
             }
             replantTasks.put(loc, new ReplantInfo(BlockPos.of(loc), Direction.values()[face], 0, seed, farmland));
@@ -293,7 +293,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
                 tag.putByte("taskface", (byte) info.face.ordinal());
                 tag.putBoolean("farmland", info.farmland);
                 // NEOFORGE_PORT: ItemStack.save removed -> CODEC (see readCustomNBT).
-                ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, info.seed)
+                ItemStack.CODEC.encodeStart(SealHandler.nbtOps(), info.seed)
                         .result().ifPresent(encoded -> tag.put("seed", encoded));
                 list.add(tag);
             }

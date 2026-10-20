@@ -122,9 +122,23 @@ public class ArcaneresearchInvHelper {
             return true;
         }
         if (!prime.isEmpty() && !other.isEmpty()) {
-            return getCustomTag(prime) == null || compareTagsRelaxed(getCustomTag(prime), getCustomTag(other));
+            return prime.getComponentsPatch().isEmpty() || compareComponentsRelaxed(prime, other);
         }
         return false;
+    }
+
+    // NEOFORGE_PORT (26.3): 1.20.1 compared every top-level NBT key of prime (custom keys,
+    // Enchantments, display, Damage...). Custom keys live in CUSTOM_DATA (key subset, as before);
+    // every other component prime carries in its patch must be equal on other.
+    private static boolean compareComponentsRelaxed(ItemStack prime, ItemStack other) {
+        for (net.minecraft.core.component.DataComponentType<?> type : prime.getComponentsPatch().keySet()) {
+            if (type == DataComponents.CUSTOM_DATA) {
+                if (!compareTagsRelaxed(getCustomTag(prime), getCustomTag(other))) return false;
+            } else if (!java.util.Objects.equals(prime.get(type), other.get(type))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean compareTagsRelaxed(CompoundTag prime, CompoundTag other) {
@@ -195,12 +209,18 @@ public class ArcaneresearchInvHelper {
         //   -> ItemUtil.insertItemReturnRemaining(handler, stack, simulate, tx):remainder.
         //   Transactions: simulate runs in an uncommitted root tx (auto-rollback = no changes);
         //   real inserts commit. Same observable behavior as Forge.
+        // NEOFORGE_PORT (26.3): insertItemStacked filled slots that already hold the item FIRST,
+        //   then empty slots. ItemUtil.insertItemReturnRemaining uses the handler's default
+        //   insert (plain first-free-slot order) -> ResourceHandlerUtil.insertStacking keeps the
+        //   Forge distribution (non-empty indices first, then empty ones).
         ResourceHandler<ItemResource> inventory = getItemHandlerAt(level, pos, side);
-        if (inventory != null) {
+        if (inventory != null && !stack.isEmpty()) {
             try (var tx = Transaction.openRoot()) {
-                ItemStack result = ItemUtil.insertItemReturnRemaining(inventory, stack, simulate, tx);
+                int inserted = net.neoforged.neoforge.transfer.ResourceHandlerUtil.insertStacking(
+                        inventory, ItemResource.of(stack), stack.getCount(), tx);
                 if (!simulate) tx.commit();
-                return result;
+                int leftover = stack.getCount() - inserted;
+                return leftover == 0 ? ItemStack.EMPTY : stack.copyWithCount(leftover);
             }
         }
         return stack;
@@ -271,8 +291,10 @@ public class ArcaneresearchInvHelper {
             if (filter.relaxedNBT) {
                 nbtMatch = areItemStackTagsEqualRelaxed(stack0, stack1);
             } else {
+                // NEOFORGE_PORT (26.3): 1.20.1 "!hasTag()" meant no NBT at all (enchantments,
+                // name, damage...), i.e. an empty component patch - not just "no CUSTOM_DATA".
                 nbtMatch = ItemStack.isSameItemSameComponents(stack0, stack1) ||
-                           (!hasCustomTag(stack0) && !hasCustomTag(stack1));
+                           (stack0.getComponentsPatch().isEmpty() && stack1.getComponentsPatch().isEmpty());
             }
         }
 

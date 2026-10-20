@@ -72,56 +72,58 @@ public class AuraBlocks {
     public static final DeferredBlock<Block> ELDRITCH_CAP = BLOCKS.registerBlock("eldritch_cap",
             arcaneresearch.common.blocks.aura.EldritchCapBlock::new);
 
+    // NEOFORGE_PORT: 26.x items no longer inherit the block name; useBlockDescriptionPrefix()
+    // keeps the Forge "block.arcaneresearch.*" lang keys (what registerSimpleBlockItem does).
     public static final DeferredItem<Item> JAR_NODE_ITEM = BLOCK_ITEMS.registerItem("jar_node",
-            props -> new ItemJarNode(JAR_NODE.get(), props));
+            props -> new ItemJarNode(JAR_NODE.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> AURA_NODE_ITEM = BLOCK_ITEMS.registerItem("aura_node",
-            props -> new ItemAuraNode(AURA_NODE.get(), props));
+            props -> new ItemAuraNode(AURA_NODE.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> STABILIZER_ITEM = BLOCK_ITEMS.registerItem("node_stabilizer",
-            props -> new arcaneresearch.common.items.aura.ItemNodeDevice(STABILIZER.get(), props,
+            props -> new arcaneresearch.common.items.aura.ItemNodeDevice(STABILIZER.get(), props.useBlockDescriptionPrefix(),
                     arcaneresearch.common.items.aura.ItemNodeDevice.Kind.STABILIZER));
 
     public static final DeferredItem<Item> STABILIZER_ADVANCED_ITEM =
             BLOCK_ITEMS.registerItem("node_stabilizer_advanced",
                     props -> new arcaneresearch.common.items.aura.ItemNodeDevice(STABILIZER_ADVANCED.get(),
-                            props,
+                            props.useBlockDescriptionPrefix(),
                             arcaneresearch.common.items.aura.ItemNodeDevice.Kind.ADVANCED));
 
     public static final DeferredItem<Item> TRANSDUCER_ITEM = BLOCK_ITEMS.registerItem("node_transducer",
-            props -> new arcaneresearch.common.items.aura.ItemNodeDevice(TRANSDUCER.get(), props,
+            props -> new arcaneresearch.common.items.aura.ItemNodeDevice(TRANSDUCER.get(), props.useBlockDescriptionPrefix(),
                     arcaneresearch.common.items.aura.ItemNodeDevice.Kind.TRANSDUCER));
 
     public static final DeferredItem<Item> AURA_TOTEM_ITEM = BLOCK_ITEMS.registerItem("aura_totem",
-            props -> new BlockItem(AURA_TOTEM.get(), props));
+            props -> new BlockItem(AURA_TOTEM.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> OBSIDIAN_TOTEM_ITEM = BLOCK_ITEMS.registerItem("obsidian_totem",
-            props -> new BlockItem(OBSIDIAN_TOTEM.get(), props));
+            props -> new BlockItem(OBSIDIAN_TOTEM.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> ELDRITCH_ALTAR_ITEM = BLOCK_ITEMS.registerItem("eldritch_altar",
-            props -> new BlockItem(ELDRITCH_ALTAR.get(), props));
+            props -> new BlockItem(ELDRITCH_ALTAR.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> NODE_CONVERTER_ITEM = BLOCK_ITEMS.registerItem("node_converter",
-            props -> new arcaneresearch.common.items.aura.ItemNodeDevice(NODE_CONVERTER.get(), props,
+            props -> new arcaneresearch.common.items.aura.ItemNodeDevice(NODE_CONVERTER.get(), props.useBlockDescriptionPrefix(),
                     arcaneresearch.common.items.aura.ItemNodeDevice.Kind.CONVERTER));
 
     public static final DeferredItem<Item> ELDRITCH_PORTAL_ITEM = BLOCK_ITEMS.registerItem("eldritch_portal",
-            props -> new arcaneresearch.common.items.aura.EldritchPortalItem(ELDRITCH_PORTAL.get(), props));
+            props -> new arcaneresearch.common.items.aura.EldritchPortalItem(ELDRITCH_PORTAL.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> ELDRITCH_STAIRS_ITEM = BLOCK_ITEMS.registerItem("eldritch_stairs",
-            props -> new BlockItem(ELDRITCH_STAIRS.get(), props));
+            props -> new BlockItem(ELDRITCH_STAIRS.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> ELDRITCH_TRAP_ITEM = BLOCK_ITEMS.registerItem("eldritch_trap",
-            props -> new BlockItem(ELDRITCH_TRAP.get(), props));
+            props -> new BlockItem(ELDRITCH_TRAP.get(), props.useBlockDescriptionPrefix()));
 
     public static final DeferredItem<Item> ELDRITCH_CRAB_ITEM = BLOCK_ITEMS.registerItem("eldritch_crab",
-            props -> new BlockItem(ELDRITCH_CRAB.get(), props));
+            props -> new BlockItem(ELDRITCH_CRAB.get(), props.useBlockDescriptionPrefix()));
 
     // TC4: обелиск — не BlockItem, а отдельный предмет
     // (ModItems.ELDRITCH_OBELISK_PLACER / ItemEldritchObeliskPlacer).
 
     public static final DeferredItem<Item> ELDRITCH_CAP_ITEM = BLOCK_ITEMS.registerItem("eldritch_cap",
-            props -> new BlockItem(ELDRITCH_CAP.get(), props));
+            props -> new BlockItem(ELDRITCH_CAP.get(), props.useBlockDescriptionPrefix()));
 
     private AuraBlocks() {
     }

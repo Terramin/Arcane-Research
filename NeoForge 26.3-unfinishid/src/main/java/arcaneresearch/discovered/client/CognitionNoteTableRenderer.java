@@ -151,16 +151,17 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         if (state.hasPaper) {
             // Центр SIDE-половины (локальный +x смотрит по FACING):
             // мировая точка — центр второй половины столешницы.
-            RenderType paperType = TCRenderTypes.translucentPortal(PARCHMENT_TEXTURE);
+            // NEOFORGE_PORT (26.3): the same UtilsFX.renderQuadCentered call as Forge
+            // (translucentPortal, blend 0) — the hand-rolled paperQuad had a
+            // different UV orientation / winding than the reference quad.
             for (int a = 0; a < 6; a++) {
                 poseStack.pushPose();
                 poseStack.translate(1.0F, -0.01F - a * 0.015F, 0.0F);
                 poseStack.rotate(Axis.XP.rotationDegrees(-90.0F));
                 poseStack.rotate(Axis.ZP.rotationDegrees(15 + a % 3 * 2));
                 poseStack.scale(0.5F, 0.6F, 0.6F);
-                collector.submitCustomGeometry(poseStack, paperType, (pose, consumer) -> {
-                    paperQuad(consumer, pose, light);
-                });
+                UtilsFX.renderQuadCentered(poseStack, collector, PARCHMENT_TEXTURE,
+                        1.0F, 1.0F, 1.0F, 1.0F, light, 0, 1.0F);
                 poseStack.popPose();
             }
         }

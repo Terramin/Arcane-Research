@@ -25,7 +25,8 @@ public class GuiGolemLockButton extends Button {
     // extractContents(GuiGraphicsExtractor); old setShaderColor tint -> per-blit color arg.
     @Override
     protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        int tint = isHovered() ? 0xFFFFFFFF : 0xE6FFFFFF;
+        // NEOFORGE_PORT (26.3): setShaderColor(c, c, c, c) scaled RGB as well as alpha -> 0xAARRGGBB = c in every channel.
+        int tint = isHovered() ? 0xFFFFFFFF : 0xE6E6E6E6;
         boolean isLocked = locked.getAsBoolean();
         if (isLocked) {
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEX, getX(), getY(), 32, 136, 16, 16, 256, 256, tint);

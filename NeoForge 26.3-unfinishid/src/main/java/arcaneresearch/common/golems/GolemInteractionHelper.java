@@ -102,7 +102,9 @@ public class GolemInteractionHelper {
     }
 
     private static void dropSomeItems(FakePlayer fp, IGolemAPI golem) {
-        for (int i = 0; i < fp.getInventory().getContainerSize(); i++) {
+        // NEOFORGE_PORT (26.3): getContainerSize() now also spans the equipment slots
+        // (armor/offhand/body); 1.20.1 walked Inventory.items only (the 36 main slots).
+        for (int i = 0; i < fp.getInventory().getNonEquipmentItems().size(); i++) {
             ItemStack stack = fp.getInventory().getItem(i);
             if (!stack.isEmpty()) {
                 if (golem.canCarry(stack, true)) {

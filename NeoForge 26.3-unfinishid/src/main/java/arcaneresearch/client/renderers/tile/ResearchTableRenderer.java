@@ -91,7 +91,9 @@ public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTa
         }
 
         if (state.hasScribeTools) {
-            collector.submitCustomGeometry(poseStack, cutoutType, (pose, consumer) -> {
+            // NEOFORGE_PORT (26.3): Forge drew the inkwell with entityTranslucent
+            // (semi-transparent glass pixels in the texture), not cutout.
+            collector.submitCustomGeometry(poseStack, TCRenderTypes.translucentPortal(TEXTURE), (pose, consumer) -> {
                 PoseStack work = bridge(pose);
                 tableModel.renderInkwell(work, consumer, light, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
             });
@@ -113,17 +115,12 @@ public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTa
             // z=-thickness, U-mirrored). A single front-only quad is backface-culled
             // by ENTITY_TRANSLUCENT (cull=true), so the quill vanishes from behind
             // and flickers at grazing/close camera angles. Restore both faces.
+            // NEOFORGE_PORT (26.3): UtilsFX.renderItemIn2D(texture, ...) exists in the
+            // port — same call as Forge (front/back faces + 16+16 edge strips).
             float quillThickness = 0.0625f;
-            collector.submitCustomGeometry(poseStack, quillType, (pose, consumer) -> {
-                quad(consumer, pose, 0, 0, 0, 1, 0, light, 0, 0, 1);
-                quad(consumer, pose, 1, 0, 0, 0, 0, light, 0, 0, 1);
-                quad(consumer, pose, 1, 1, 0, 0, 1, light, 0, 0, 1);
-                quad(consumer, pose, 0, 1, 0, 1, 1, light, 0, 0, 1);
-                quad(consumer, pose, 0, 1, -quillThickness, 1, 1, light, 0, 0, -1);
-                quad(consumer, pose, 1, 1, -quillThickness, 0, 1, light, 0, 0, -1);
-                quad(consumer, pose, 1, 0, -quillThickness, 0, 0, light, 0, 0, -1);
-                quad(consumer, pose, 0, 0, -quillThickness, 1, 0, light, 0, 0, -1);
-            });
+            collector.submitCustomGeometry(poseStack, quillType, (pose, consumer) ->
+                    arcaneresearch.client.lib.UtilsFX.renderItemIn2D(QUILL_TEXTURE, quillThickness,
+                            consumer, bridge(pose), light));
 
             poseStack.popPose();
         }

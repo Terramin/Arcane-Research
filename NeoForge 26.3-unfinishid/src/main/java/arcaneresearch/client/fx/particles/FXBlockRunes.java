@@ -112,15 +112,18 @@ public class FXBlockRunes extends SingleQuadParticle {
 
         org.joml.Quaternionf quaternion = new org.joml.Quaternionf();
         quaternion.rotateY((float) Math.toRadians(rotation));
-        quaternion.rotateZ((float) Math.toRadians(90.0f));
+        // NEOFORGE_PORT (26.3): Forge corners were +-0.5*size with UV corners
+        // (-,+)u1v1 (+,+)u1v0 (+,-)u0v0 (-,-)u0v1; the 26.3 quad (+-1, other UV
+        // order) matches that only with +90 deg extra Z, swapped V and half scale.
+        quaternion.rotateZ((float) Math.toRadians(90.0f + 90.0f));
 
         float ox = (float) this.offsetX;
         float oy = (float) this.offsetY;
 
         state.add(getLayer(), x + ox, y + oy, (float) (z - 0.51),
-                quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w(), size,
+                quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w(), size * 0.5f,
                 (u0), (u1),
-                (v0), (v1),
+                (v1), (v0),
                 net.minecraft.util.ARGB.color((int) ((displayAlpha) * 255.0F), (int) ((this.rCol) * 255.0F), (int) ((this.gCol) * 255.0F), (int) ((this.bCol) * 255.0F)), light);
     }
 

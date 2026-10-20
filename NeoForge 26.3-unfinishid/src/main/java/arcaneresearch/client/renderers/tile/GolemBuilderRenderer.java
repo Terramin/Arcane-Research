@@ -129,7 +129,11 @@ public class GolemBuilderRenderer implements BlockEntityRenderer<TileGolemBuilde
             return;
         }
 
-        RenderType lavaType = TCRenderTypes.translucentPortal(LAVA_STILL);
+        // NEOFORGE_PORT (26.3): sprite UVs are block-atlas UVs, so the BLOCKS atlas must
+        // be bound (Forge entitySolid(LOCATION_BLOCKS)); binding "block/lava_still" as a
+        // standalone texture sampled a missing texture.
+        RenderType lavaType = net.minecraft.client.renderer.rendertype.RenderTypes
+                .entitySolid(TextureAtlas.LOCATION_BLOCKS);
         float size = 0.625f;
         int lavaLight = 200;
         float u0 = lavaSprite.getU0();
@@ -153,5 +157,12 @@ public class GolemBuilderRenderer implements BlockEntityRenderer<TileGolemBuilde
                 .setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light)
                 .setNormal(pose, 0, 0, 1);
+    }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileGolemBuilder blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 }

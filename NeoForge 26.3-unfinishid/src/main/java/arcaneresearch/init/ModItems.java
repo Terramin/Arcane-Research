@@ -221,8 +221,15 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
     public static final DeferredItem<Item> VOID_SEED = ITEMS.registerItem("void_seed",
             props -> new ItemMaterial(props.rarity(Rarity.RARE)));
 
+    // NEOFORGE_PORT (26.3): Forge registers a plain Item here (nutrition 8, saturationMod 1.0,
+    // meat), NOT ItemTripleMeatTreat (6/0.8/alwaysEat/regen is unused in Forge). meat() ->
+    // #minecraft:meat item tag (data/minecraft/tags/item/meat.json).
     public static final DeferredItem<Item> TRIPLE_MEAT_TREAT = ITEMS.registerItem("triple_meat_treat",
-            arcaneresearch.common.items.consumables.ItemTripleMeatTreat::new);
+            props -> new Item(props
+                    .food(new net.minecraft.world.food.FoodProperties.Builder()
+                            .nutrition(8)
+                            .saturationModifier(1.0f)
+                            .build())));
 
     public static final DeferredItem<Item> CHUNKS_BEEF = ITEMS.registerItem("chunks_beef",
             ItemChunksBeef::new);

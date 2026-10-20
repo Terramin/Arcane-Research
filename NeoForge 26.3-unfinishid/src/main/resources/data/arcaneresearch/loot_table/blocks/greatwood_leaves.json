@@ -9,24 +9,22 @@
           "children": [
             {
               "type": "minecraft:item",
-              "conditions": [
-                {
-                  "condition": "minecraft:any_of",
-                  "terms": [
-                    {
-                      "condition": "minecraft:match_tool",
-                      "predicate": {
-                        "items": [
-                          "minecraft:shears"
-                        ]
-                      }
-                    },
-                    {
-                      "condition": "minecraft:match_tool",
-                      "predicate": {
-                        "enchantments": [
+              "condition": {
+                "type": "minecraft:any_of",
+                "terms": [
+                  {
+                    "type": "minecraft:match_tool",
+                    "predicate": {
+                      "items": "minecraft:shears"
+                    }
+                  },
+                  {
+                    "type": "minecraft:match_tool",
+                    "predicate": {
+                      "predicates": {
+                        "minecraft:enchantments": [
                           {
-                            "enchantment": "minecraft:silk_touch",
+                            "enchantments": "minecraft:silk_touch",
                             "levels": {
                               "min": 1
                             }
@@ -34,28 +32,31 @@
                         ]
                       }
                     }
-                  ]
-                }
-              ],
+                  }
+                ]
+              },
               "name": "arcaneresearch:greatwood_leaves"
             },
             {
               "type": "minecraft:item",
-              "conditions": [
-                {
-                  "condition": "minecraft:survives_explosion"
-                },
-                {
-                  "chances": [
-                    0.0133,
-                    0.0141,
-                    0.0149,
-                    0.0169
-                  ],
-                  "condition": "minecraft:table_bonus",
-                  "enchantment": "minecraft:fortune"
-                }
-              ],
+              "condition": {
+                "type": "minecraft:all_of",
+                "terms": [
+                  {
+                    "type": "minecraft:survives_explosion"
+                  },
+                  {
+                    "type": "minecraft:table_bonus",
+                    "chances": [
+                      0.0133,
+                      0.0141,
+                      0.0149,
+                      0.0169
+                    ],
+                    "enchantment": "minecraft:fortune"
+                  }
+                ]
+              },
               "name": "arcaneresearch:greatwood_sapling"
             }
           ]

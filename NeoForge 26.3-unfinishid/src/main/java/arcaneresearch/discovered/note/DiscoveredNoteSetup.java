@@ -59,11 +59,15 @@ public class DiscoveredNoteSetup {
             // item id; set it explicitly.
             Identifier noteId = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, NOTE_ID);
             Identifier discoveryId = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, DISCOVERY_ID);
+            // NEOFORGE_PORT (26.3): default RARITY UNCOMMON = Forge getRarity for a stack
+            // without note data (/give, plain new ItemStack); write()/toDiscovery override it.
             noteItem = new ItemDiscoveredResearchNote(new Item.Properties()
+                    .rarity(net.minecraft.world.item.Rarity.UNCOMMON)
                     .setId(ResourceKey.create(Registries.ITEM, noteId)));
             Item noteForReg = noteItem;
             event.register(Registries.ITEM, noteId, () -> noteForReg);
             discoveryItem = new ItemDiscoveredResearchNote(new Item.Properties()
+                    .rarity(net.minecraft.world.item.Rarity.UNCOMMON)
                     .setId(ResourceKey.create(Registries.ITEM, discoveryId)));
             Item discoveryForReg = discoveryItem;
             event.register(Registries.ITEM, discoveryId, () -> discoveryForReg);

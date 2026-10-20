@@ -1,6 +1,7 @@
 package arcaneresearch.common.menu;
 
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -92,13 +93,14 @@ public class WandPouchInventory implements Container {
         return !stack.isEmpty() && stack.getItem() instanceof ItemFocusBasic;
     }
 
-    // NEOFORGE_PORT: Container no longer declares startOpen/stopOpen in 26.x
-    // (Forge no-op overrides kept as plain no-op methods for parity callers).
-    public void startOpen(Player player) {
+    // NEOFORGE_PORT (26.3): Container.startOpen/stopOpen now take ContainerUser
+    // (the old Player overloads overrode nothing); Forge no-op overrides kept.
+    @Override
+    public void startOpen(ContainerUser containerUser) {
     }
 
-    // NEOFORGE_PORT: see startOpen above.
-    public void stopOpen(Player player) {
+    @Override
+    public void stopOpen(ContainerUser containerUser) {
     }
 
     @Override

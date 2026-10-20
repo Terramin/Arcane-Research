@@ -61,7 +61,10 @@ public class ItemPrimalCrusher extends Item implements IWarpingGear {
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
-        if (stack.isDamaged() && entity != null && entity.tickCount % 20 == 0 && entity instanceof LivingEntity) {
+        if (stack.isDamaged() && entity != null && entity.tickCount % 20 == 0
+                // NEOFORGE_PORT (26.3): Forge only ticked the player inventory (mob gear never
+                // reached inventoryTick); 26.3 EntityEquipment.tick also ticks mob equipment.
+                && entity instanceof Player) {
             stack.setDamageValue(stack.getDamageValue() - 1);
         }
     }

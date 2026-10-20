@@ -93,9 +93,9 @@ public class ArcaneresearchApiHelper {
     // NEOFORGE_PORT (vanilla 26.x ingredients, verified in 26.3.0.23-beta jar):
     //   - Ingredient.of(ItemStack/ItemStack[]/TagKey/Stream<ItemStack>) REMOVED; only
     //     of(ItemLike)/of(ItemLike...)/of(Stream<? extends ItemLike>)/of(HolderSet) remain.
-    //   - All ItemStacks (plain or tagged) go through IngredientNBTTC (now an ICustomIngredient
-    //     with identical item+damage+relaxed-components matching) wrapped via new Ingredient(custom).
-    //   - Arrays/collections OR-combine via NeoForge CompoundIngredient.of(...).
+    //   - Tagged (non-empty component patch) ItemStacks go through IngredientNBTTC (now an
+    //     ICustomIngredient, item+damage+relaxed custom-data matching) via new Ingredient(custom);
+    //     plain stacks / arrays / collections are item-only Ingredient.of(items) as on Forge.
     //   - Tag ids resolve EAGERLY to HolderSet.direct(snapshot of statically-bound tags).
     //     (Forge tag ingredients were lazy; eager snapshot matches at parse/reload time.
     //     Staleness across /reload with changed tags is a documented edge case.)
@@ -104,23 +104,29 @@ public class ArcaneresearchApiHelper {
             return ingredient;
         }
         if (obj instanceof ItemStack stack) {
+            // NEOFORGE_PORT (26.3): Forge used IngredientNBTTC (item + damage + relaxed NBT) only
+            // when stack.hasTag(); a plain stack went to Ingredient.of(stack), which matched by
+            // ITEM ONLY (any damage/NBT). isComponentsPatchEmpty() is the 26.x analog of !hasTag()
+            // (damage/custom data/etc. all live in the patch). Empty stacks keep the NBTTC path
+            // (Ingredient.of(AIR) throws; NBTTC(EMPTY) matches only empty, like Ingredient.EMPTY).
+            if (!stack.isEmpty() && stack.isComponentsPatchEmpty()) {
+                return Ingredient.of(stack.getItem());
+            }
             return new Ingredient(new IngredientNBTTC(stack));
         }
         if (obj instanceof ItemStack[] stacks) {
-            List<Ingredient> parts = new ArrayList<>();
+            // NEOFORGE_PORT (26.3): Forge Ingredient.of(ItemStack...) built ItemValues, which match
+            // by ITEM ONLY (tags/damage of the listed stacks were ignored) -> plain item set.
+            List<Item> items = new ArrayList<>();
             for (ItemStack s : stacks) {
                 if (s != null && !s.isEmpty()) {
-                    parts.add(new Ingredient(new IngredientNBTTC(s)));
+                    items.add(s.getItem());
                 }
             }
-            if (parts.isEmpty()) {
+            if (items.isEmpty()) {
                 return null;
             }
-            if (parts.size() == 1) {
-                return parts.get(0);
-            }
-            return net.neoforged.neoforge.common.crafting.CompoundIngredient.of(
-                    parts.toArray(new Ingredient[0]));
+            return Ingredient.of(items.stream());
         }
         if (obj instanceof net.minecraft.world.level.ItemLike itemLike) {
             return Ingredient.of(itemLike);
@@ -141,22 +147,21 @@ public class ArcaneresearchApiHelper {
             return null;
         }
         if (obj instanceof Collection<?> collection) {
-            List<Ingredient> parts = new ArrayList<>();
+            // NEOFORGE_PORT (26.3): Forge Ingredient.of(Stream<ItemStack>) -> ItemValues, i.e.
+            // ITEM-ONLY matching for every entry (stacks and ItemLikes alike) -> plain item set.
+            List<Item> items = new ArrayList<>();
             for (Object o : collection) {
                 if (o instanceof ItemStack s && !s.isEmpty()) {
-                    parts.add(new Ingredient(new IngredientNBTTC(s)));
-                } else if (o instanceof net.minecraft.world.level.ItemLike il) {
-                    parts.add(Ingredient.of(il));
+                    items.add(s.getItem());
+                } else if (o instanceof net.minecraft.world.level.ItemLike il
+                        && il.asItem() != net.minecraft.world.item.Items.AIR) {
+                    items.add(il.asItem());
                 }
             }
-            if (parts.isEmpty()) {
+            if (items.isEmpty()) {
                 return null;
             }
-            if (parts.size() == 1) {
-                return parts.get(0);
-            }
-            return net.neoforged.neoforge.common.crafting.CompoundIngredient.of(
-                    parts.toArray(new Ingredient[0]));
+            return Ingredient.of(items.stream());
         }
 
         return null;

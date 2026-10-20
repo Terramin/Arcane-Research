@@ -236,8 +236,8 @@ public class EntityTaintSeed extends Monster implements ITaintedMob {
         }
 
         EntityTaintacleSmall tentacle = new EntityTaintacleSmall(level());
-        tentacle.teleportTo(target.getX() + random.nextFloat() - random.nextFloat(), target.getY(), target.getZ() + random.nextFloat() - random.nextFloat());
-        tentacle.setYRot(0.0f); tentacle.setXRot(0.0f);;
+        // NEOFORGE_PORT (26.3): Entity.moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+        tentacle.snapTo(target.getX() + random.nextFloat() - random.nextFloat(), target.getY(), target.getZ() + random.nextFloat() - random.nextFloat(), 0.0f, 0.0f);
         level().addFreshEntity(tentacle);
 
         if (eldritch && level().isEmptyBlock(target.blockPosition())

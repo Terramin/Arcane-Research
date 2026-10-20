@@ -126,7 +126,8 @@ public class EntityHellbat extends EntityFireBat {
         boolean hit = victim.level() instanceof net.minecraft.server.level.ServerLevel _sl ? victim.hurtServer(_sl, this.damageSources().mobAttack(this),
                 (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE)) : false;
         if (hit) {
-            victim.setRemainingFireTicks((getIsSummoned() ? 4 : 2) * 20);
+            // NEOFORGE_PORT (26.3): setSecondsOnFire -> igniteForSeconds (never shortens a longer burn, applies BURNING_TIME).
+            victim.igniteForSeconds(getIsSummoned() ? 4 : 2);
             if (getIsVampire() && this.owner instanceof Player player && !player.isDeadOrDying()) {
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 26, 1));
             }

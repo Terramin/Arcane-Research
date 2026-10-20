@@ -1,93 +1,37 @@
 {
   "model": {
-    "type": "minecraft:composite",
-    "models": [
+    "type": "minecraft:select",
+    "property": "arcaneresearch:focus",
+    "cases": [
       {
-        "type": "minecraft:select",
-        "property": "arcaneresearch:focus",
-        "cases": [
-          {
-            "when": "1",
-            "model": {
-              "type": "minecraft:model",
-              "model": "arcaneresearch:item/caster_basic_focus_model"
-            }
-          }
-        ],
-        "fallback": {
+        "when": "1",
+        "model": {
           "type": "minecraft:model",
-          "model": "arcaneresearch:item/caster_basic_model"
-        }
-      },
-      {
-        "type": "minecraft:select",
-        "property": "minecraft:display_context",
-        "cases": [
-          {
-            "when": "gui",
-            "model": {
-              "type": "minecraft:special",
-              "base": "minecraft:item/handheld",
-              "model": {
-                "type": "arcaneresearch:caster_focus",
-                "preset": "gui"
-              }
+          "model": "arcaneresearch:item/caster_basic_focus_model",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -1
+            },
+            {
+              "type": "arcaneresearch:caster_focus_color"
             }
-          },
-          {
-            "when": "ground",
-            "model": {
-              "type": "minecraft:special",
-              "base": "minecraft:item/handheld",
-              "model": {
-                "type": "arcaneresearch:caster_focus",
-                "preset": "ground"
-              }
-            }
-          },
-          {
-            "when": "fixed",
-            "model": {
-              "type": "minecraft:special",
-              "base": "minecraft:item/handheld",
-              "model": {
-                "type": "arcaneresearch:caster_focus",
-                "preset": "fixed"
-              }
-            }
-          },
-          {
-            "when": ["firstperson_righthand", "firstperson_lefthand"],
-            "model": {
-              "type": "minecraft:special",
-              "base": "minecraft:item/handheld",
-              "model": {
-                "type": "arcaneresearch:caster_focus",
-                "preset": "firstperson"
-              }
-            }
-          },
-          {
-            "when": ["thirdperson_righthand", "thirdperson_lefthand"],
-            "model": {
-              "type": "minecraft:special",
-              "base": "minecraft:item/handheld",
-              "model": {
-                "type": "arcaneresearch:caster_focus",
-                "preset": "thirdperson"
-              }
-            }
-          }
-        ],
-        "fallback": {
-          "type": "minecraft:special",
-          "base": "minecraft:item/handheld",
-          "model": {
-            "type": "arcaneresearch:caster_focus",
-            "preset": "hand"
-          }
+          ]
         }
       }
-    ]
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "arcaneresearch:item/caster_basic_model",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -1
+        },
+        {
+          "type": "arcaneresearch:caster_focus_color"
+        }
+      ]
+    }
   }
 }

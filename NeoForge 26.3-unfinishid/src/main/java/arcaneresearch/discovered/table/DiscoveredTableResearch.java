@@ -347,6 +347,10 @@ public final class DiscoveredTableResearch {
                 }
             }
         }
+        // NEOFORGE_PORT (26.3): restored reference stage-1 close at 100% (was dropped).
+        if (data.getTotalProgress() >= 1.0F) {
+            data.stage1 = true;
+        }
         DiscoveredNoteData.write(note, data);
         return progressed;
     }

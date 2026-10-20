@@ -152,7 +152,7 @@ public class TileThaumatorium extends TileArcaneresearchInventory implements IAs
         // NEOFORGE_PORT: Forge body; getters -> Or-getters / Optional reads.
         super.readSyncNBT(tag);
         essentia.readFromNBT(tag);
-        maxRecipes = tag.getByteOr("maxrec", (byte) 1);
+        maxRecipes = tag.getByteOr("maxrec", (byte) 0); // NEOFORGE_PORT (26.3): reference getByte default 0
         if (maxRecipes < 1) maxRecipes = 1;
         recipeEssentia = new ArrayList<>();
         recipeHash = new ArrayList<>();
@@ -224,7 +224,8 @@ public class TileThaumatorium extends TileArcaneresearchInventory implements IAs
                 || level.getBestNeighborSignal(worldPosition.above()) > 0;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x; the tile's
+    // renderer forwards to this from IBlockEntityRendererExtension.getRenderBoundingBox.
     public AABB getRenderBoundingBox() {
 
         return new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),

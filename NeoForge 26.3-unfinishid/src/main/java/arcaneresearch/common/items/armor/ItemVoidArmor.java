@@ -33,6 +33,10 @@ public class ItemVoidArmor extends Item implements IWarpingGear, IRunicArmor {
     public ItemVoidArmor(Item.Properties props, ArmorType type) {
         // NEOFORGE_PORT: super(material, type, props) -> super(props.humanoidArmor(material, type)).
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_VOID, type)
+                // NEOFORGE_PORT (26.3): humanoidArmor() uses vanilla per-slot units (11/16/15/13);
+                // Forge indexed {13,15,16,11} by ArmorItem.Type ordinal -> restore Forge durability.
+                .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(
+                        ArcaneresearchArmorMaterials.ARMORMAT_VOID, type))
                 .rarity(Rarity.UNCOMMON));
         this.armorType = type;
     }
@@ -57,7 +61,7 @@ public class ItemVoidArmor extends Item implements IWarpingGear, IRunicArmor {
         return armorType;
     }
 
-    // TODO_PORT: Forge isValidRepairItem accepted the void metal ingot item (or the material match).
+    // NEOFORGE_PORT: Forge isValidRepairItem accepted the void metal ingot item (or the material match).
     // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
     // via the ArmorMaterial repairIngredient tag); ARMORMAT_VOID maps to the repairs_void data tag
     // (void metal ingot, as Forge used), so no override is needed (or possible).
@@ -70,7 +74,10 @@ public class ItemVoidArmor extends Item implements IWarpingGear, IRunicArmor {
         super.inventoryTick(stack, level, entity, slot);
 
         if (stack.isDamaged() && entity != null
-                && entity.tickCount % 20 == 0 && entity instanceof LivingEntity) {
+                && entity.tickCount % 20 == 0
+                // NEOFORGE_PORT (26.3): Forge only ticked the player inventory (mob gear never
+                // reached inventoryTick); 26.3 EntityEquipment.tick also ticks mob equipment.
+                && entity instanceof Player) {
             stack.setDamageValue(stack.getDamageValue() - 1);
         }
     }
