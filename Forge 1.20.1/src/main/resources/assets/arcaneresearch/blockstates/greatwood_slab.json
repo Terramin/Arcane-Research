@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "type=bottom": { "model": "arcaneresearch:block/greatwood_slab" },
-    "type=double": { "model": "arcaneresearch:block/greatwood" },
-    "type=top": { "model": "arcaneresearch:block/greatwood_slab_top" }
-  }
-}

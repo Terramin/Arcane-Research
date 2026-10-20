@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "bottom": "arcaneresearch:block/spa_side",
-    "top": "arcaneresearch:block/spa_top",
-    "side": "arcaneresearch:block/spa_side"
-  }
-}

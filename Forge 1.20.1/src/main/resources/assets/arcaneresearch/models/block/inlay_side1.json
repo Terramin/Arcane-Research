@@ -1,6 +1,0 @@
-{
-    "parent": "arcaneresearch:block/inlay_side",
-    "textures": {
-        "over": "arcaneresearch:block/inlay_rune1"
-    }
-}

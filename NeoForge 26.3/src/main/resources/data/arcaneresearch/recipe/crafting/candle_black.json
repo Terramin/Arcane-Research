@@ -1,9 +1,0 @@
-﻿{
-  "type": "minecraft:crafting_shapeless",
-  "group": "arcaneresearch:tallowcandles",
-  "ingredients": [
-    "#arcaneresearch:candles",
-    "minecraft:black_dye"
-  ],
-  "result": {"id": "arcaneresearch:candle_black"}
-}

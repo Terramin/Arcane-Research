@@ -1,7 +1,0 @@
-{
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "arcaneresearch:block/inlay_connect_under",
-        "layer1": "arcaneresearch:block/inlay_connect1"
-    }
-}

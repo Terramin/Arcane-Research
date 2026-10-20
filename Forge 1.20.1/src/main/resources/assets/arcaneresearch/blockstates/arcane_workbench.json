@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "arcaneresearch:block/arcane_workbench" },
-    "facing=south": { "model": "arcaneresearch:block/arcane_workbench", "y": 180 },
-    "facing=east": { "model": "arcaneresearch:block/arcane_workbench", "y": 90 },
-    "facing=west": { "model": "arcaneresearch:block/arcane_workbench", "y": 270 }
-  }
-}

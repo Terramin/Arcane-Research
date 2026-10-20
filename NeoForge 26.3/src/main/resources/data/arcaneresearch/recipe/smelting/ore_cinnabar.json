@@ -1,7 +1,0 @@
-﻿{
-  "type": "minecraft:smelting",
-  "ingredient": "arcaneresearch:cinnabar_ore",
-  "result": {"id": "arcaneresearch:quicksilver"},
-  "experience": 1.0,
-  "cookingtime": 200
-}

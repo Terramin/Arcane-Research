@@ -1,7 +1,0 @@
-{
-  "layers": {
-    "humanoid": [{ "texture": "arcaneresearch:cultist_plate" }],
-    "humanoid_leggings": [{ "texture": "arcaneresearch:cultist_plate" }],
-    "humanoid_baby": [{ "texture": "arcaneresearch:cultist_plate" }]
-  }
-}

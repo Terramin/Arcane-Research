@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "bottom": "arcaneresearch:block/smelter_top",
-    "top": "arcaneresearch:block/smelter_top",
-    "side": "arcaneresearch:block/smelter_basic_side"
-  }
-}

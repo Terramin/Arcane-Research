@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_dye",
-  "dye": "#minecraft:dyes",
-  "group": "dyed_armor",
-  "result": {
-    "id": "arcaneresearch:cloth_legs"
-  },
-  "target": "arcaneresearch:cloth_legs"
-}

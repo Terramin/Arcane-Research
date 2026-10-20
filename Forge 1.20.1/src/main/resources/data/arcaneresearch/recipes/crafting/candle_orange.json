@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "group": "arcaneresearch:tallowcandles",
-  "ingredients": [
-    {"tag": "arcaneresearch:candles"},
-    {"item": "minecraft:orange_dye"}
-  ],
-  "result": {"item": "arcaneresearch:candle_orange"}
-}

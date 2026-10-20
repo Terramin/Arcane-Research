@@ -1,6 +1,0 @@
-{
-    "parent": "arcaneresearch:block/inlay_dot",
-    "textures": {
-        "over": "arcaneresearch:block/inlay_connect1"
-    }
-}

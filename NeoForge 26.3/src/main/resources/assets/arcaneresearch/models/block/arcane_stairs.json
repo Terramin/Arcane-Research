@@ -1,8 +1,0 @@
-{
-    "parent": "block/stairs",
-    "textures": {
-        "bottom": "arcaneresearch:block/arcane_stone_1",
-        "top": "arcaneresearch:block/arcane_stone_2",
-        "side": "arcaneresearch:block/arcane_stone_3"
-    }
-}

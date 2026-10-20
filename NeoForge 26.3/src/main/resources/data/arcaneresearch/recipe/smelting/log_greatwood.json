@@ -1,7 +1,0 @@
-﻿{
-  "type": "minecraft:smelting",
-  "ingredient": "arcaneresearch:greatwood_log",
-  "result": {"id": "minecraft:charcoal"},
-  "experience": 0.5,
-  "cookingtime": 200
-}

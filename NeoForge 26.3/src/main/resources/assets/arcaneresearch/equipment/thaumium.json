@@ -1,7 +1,0 @@
-{
-  "layers": {
-    "humanoid": [{ "texture": "arcaneresearch:thaumium" }],
-    "humanoid_leggings": [{ "texture": "arcaneresearch:thaumium" }],
-    "humanoid_baby": [{ "texture": "arcaneresearch:thaumium" }]
-  }
-}

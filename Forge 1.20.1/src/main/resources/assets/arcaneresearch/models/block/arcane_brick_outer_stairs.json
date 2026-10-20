@@ -1,8 +1,0 @@
-{
-    "parent": "block/outer_stairs",
-    "textures": {
-        "bottom": "arcaneresearch:block/arcane_brick_stone",
-        "top": "arcaneresearch:block/arcane_brick_stone",
-        "side": "arcaneresearch:block/arcane_brick_stone"
-    }
-}

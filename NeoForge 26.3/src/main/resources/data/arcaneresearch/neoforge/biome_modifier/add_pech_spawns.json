@@ -1,7 +1,0 @@
-﻿{
-  "type": "neoforge:add_spawns",
-  "biomes": "#arcaneresearch:is_magical",
-  "spawners": [
-    {"type": "arcaneresearch:pech", "count": 1, "weight": 10}
-  ]
-}

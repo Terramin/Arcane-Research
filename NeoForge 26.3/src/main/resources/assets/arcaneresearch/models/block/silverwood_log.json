@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "side": "arcaneresearch:block/log_silverwood",
-    "end": "arcaneresearch:block/log_silverwood_top"
-  }
-}

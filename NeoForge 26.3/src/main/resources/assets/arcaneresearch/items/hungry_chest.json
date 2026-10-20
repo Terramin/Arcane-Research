@@ -1,9 +1,0 @@
-{
-  "model": {
-    "type": "minecraft:special",
-    "base": "arcaneresearch:item/hungry_chest_base",
-    "model": {
-      "type": "arcaneresearch:hungry_chest"
-    }
-  }
-}

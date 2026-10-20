@@ -1,8 +1,0 @@
-﻿{
-  "type": "minecraft:smelting",
-  "ingredient": "arcaneresearch:cluster_cinnabar",
-  "result": {"id": "arcaneresearch:quicksilver", "count": 2},
-  "experience": 1.0,
-  "cookingtime": 200,
-  "group": "arcaneresearch:cluster_smelting"
-}

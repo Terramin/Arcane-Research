@@ -1,7 +1,0 @@
-{
-  "layers": {
-    "humanoid": [{ "texture": "arcaneresearch:fortress" }],
-    "humanoid_leggings": [{ "texture": "arcaneresearch:fortress" }],
-    "humanoid_baby": [{ "texture": "arcaneresearch:fortress" }]
-  }
-}

@@ -1,9 +1,0 @@
-﻿{
-    "loader": "neoforge:obj",
-    "model": "arcaneresearch:models/block/crabvent.obj",
-    "flip_v": false,
-    "textures": {
-        "texture": "arcaneresearch:block/crabvent",
-        "particle": "arcaneresearch:block/crabvent"
-    }
-}

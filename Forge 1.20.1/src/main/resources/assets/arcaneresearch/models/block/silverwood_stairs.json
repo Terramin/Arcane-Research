@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/stairs",
-  "textures": {
-    "bottom": "arcaneresearch:block/plank_silverwood",
-    "top": "arcaneresearch:block/plank_silverwood",
-    "side": "arcaneresearch:block/plank_silverwood"
-  }
-}

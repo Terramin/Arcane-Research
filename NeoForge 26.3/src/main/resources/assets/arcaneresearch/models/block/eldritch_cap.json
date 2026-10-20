@@ -1,9 +1,0 @@
-﻿{
-    "loader": "neoforge:obj",
-    "model": "arcaneresearch:models/block/eldritch_cap.obj",
-    "flip_v": false,
-    "textures": {
-        "texture": "arcaneresearch:block/obelisk_cap",
-        "particle": "arcaneresearch:block/obsidiantile"
-    }
-}

@@ -1,6 +1,0 @@
-{
-    "variants": {
-        "type=air": { "model": "arcaneresearch:block/airy" },
-        "type=staging": { "model": "arcaneresearch:block/airy" }
-    }
-}

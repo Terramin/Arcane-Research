@@ -1,7 +1,0 @@
-{
-    "parent": "arcaneresearch:block/loot_crate_common",
-    "textures": {
-        "side": "arcaneresearch:block/loot_crate_side_1",
-        "particle": "arcaneresearch:block/loot_crate_side_1"
-    }
-}

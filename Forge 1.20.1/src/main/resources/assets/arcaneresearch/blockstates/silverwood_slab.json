@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "type=bottom": { "model": "arcaneresearch:block/silverwood_slab" },
-    "type=double": { "model": "arcaneresearch:block/silverwood" },
-    "type=top": { "model": "arcaneresearch:block/silverwood_slab_top" }
-  }
-}

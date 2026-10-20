@@ -1,9 +1,0 @@
-{
-    "parent": "arcaneresearch:block/arcane_workbench",
-    "textures": {
-        "particle": "arcaneresearch:block/wand_workbench_side",
-        "top": "arcaneresearch:block/wand_workbench_top",
-        "side": "arcaneresearch:block/wand_workbench_side",
-        "bottom": "arcaneresearch:block/base_stone"
-    }
-}

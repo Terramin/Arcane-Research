@@ -1,8 +1,0 @@
-﻿{
-  "type": "minecraft:smelting",
-  "ingredient": "arcaneresearch:amber_ore",
-  "result": {"id": "arcaneresearch:amber", "count": 1},
-  "experience": 1.0,
-  "cookingtime": 200,
-  "group": "arcaneresearch:ore_smelting"
-}
