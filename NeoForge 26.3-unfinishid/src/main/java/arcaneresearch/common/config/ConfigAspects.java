@@ -156,6 +156,17 @@ public class ConfigAspects {
     }
 
     public static AspectList getPotionAspects(ItemStack itemstack, RecipeManager recipeManager) {
+        return getPotionAspects(itemstack, recipeManager.getRecipes());
+    }
+
+    // NEOFORGE_PORT (26.3) FIX: 1.20.1 Forge had static PotionBrewing on BOTH sides, so a
+    // client of a dedicated/LAN server always resolved real reagent aspects. In 26.x brewing
+    // is datapack-only and a remote client has no RecipeManager -> it fell back to
+    // MAGIC 5 / ALCHEMY 5 (thaumometer scan/JEI aspect display divergence from Forge).
+    // This overload runs on the client with the recipe map synced by RecipesReceivedEvent
+    // (see ClientRecipeCache) - same traversal, same result values as the server.
+    public static AspectList getPotionAspects(ItemStack itemstack,
+            java.util.Collection<RecipeHolder<?>> recipes) {
         AspectList tmp = new AspectList();
         boolean didit = false;
         PotionContents contents = itemstack.get(DataComponents.POTION_CONTENTS);
@@ -163,7 +174,7 @@ public class ConfigAspects {
         if (potion == null || !potion.equals(Potions.WATER)) {
             HashSet<ItemStack> hs = new HashSet<>();
             if (potion != null) {
-                getPotionReagentsRecursive(potion, hs, recipeManager);
+                getPotionReagentsRecursive(potion, hs, recipes);
             }
             for (ItemStack his : hs) {
                 AspectList tmp2 = ArcaneresearchCraftingManager.getObjectTags(his);
@@ -200,11 +211,18 @@ public class ConfigAspects {
 
     public static void getPotionReagentsRecursive(Holder<Potion> potion, HashSet<ItemStack> hashSet,
             RecipeManager recipeManager) {
-        if (potion == null || recipeManager == null) {
+        getPotionReagentsRecursive(potion, hashSet, recipeManager.getRecipes());
+    }
+
+    // NEOFORGE_PORT (26.3) FIX: recipe-map variant for the client (synced RecipeMap) -
+    // same traversal as the server RecipeManager overload.
+    public static void getPotionReagentsRecursive(Holder<Potion> potion, HashSet<ItemStack> hashSet,
+            java.util.Collection<RecipeHolder<?>> recipes) {
+        if (potion == null || recipes == null) {
             return;
         }
         try {
-            for (RecipeHolder<?> holder : recipeManager.getRecipes()) {
+            for (RecipeHolder<?> holder : recipes) {
                 if (!(holder.value() instanceof BrewingRecipe brew)) {
                     continue;
                 }
@@ -230,7 +248,7 @@ public class ConfigAspects {
                             .filter(option -> !option.isEmpty())
                             .ifPresent(hashSet::add);
                     if (!inputPotion.equals(Potions.WATER)) {
-                        getPotionReagentsRecursive(inputPotion, hashSet, recipeManager);
+                        getPotionReagentsRecursive(inputPotion, hashSet, recipes);
                     }
                 }
                 if (foundOther) {
@@ -633,6 +651,25 @@ public class ConfigAspects {
             ArcaneresearchApi.registerObjectTag(stack3, getPotionAspects(stack3).add(Aspect.ENERGY, 5));
             ItemStack stack4 = PotionContents.createItemStack(Items.LINGERING_POTION, holder);
             ArcaneresearchApi.registerObjectTag(stack4, getPotionAspects(stack4).add(Aspect.TRAP, 5));
+        }
+    }
+
+    // NEOFORGE_PORT (26.3) FIX: client half (TilePotionSprayer costs are server-side, but
+    // thaumometer scan tooltips / JEI aspect accessors run on the client). Runs on the client
+    // when the synced recipe map arrives (ClientRecipeCache); a client of an integrated server
+    // already got correct values via the running-server path - re-registering here is an
+    // idempotent map overwrite, so no duplication.
+    public static void registerPotionAspects(java.util.Collection<RecipeHolder<?>> recipes) {
+        for (Potion potion : BuiltInRegistries.POTION) {
+            Holder<Potion> holder = BuiltInRegistries.POTION.wrapAsHolder(potion);
+            ItemStack stack = PotionContents.createItemStack(Items.POTION, holder);
+            ArcaneresearchApi.registerObjectTag(stack, getPotionAspects(stack, recipes).add(Aspect.WATER, 5));
+            ItemStack stack2 = PotionContents.createItemStack(Items.TIPPED_ARROW, holder);
+            ArcaneresearchApi.registerObjectTag(stack2, getPotionAspects(stack2, recipes).add(Aspect.AVERSION, 5));
+            ItemStack stack3 = PotionContents.createItemStack(Items.SPLASH_POTION, holder);
+            ArcaneresearchApi.registerObjectTag(stack3, getPotionAspects(stack3, recipes).add(Aspect.ENERGY, 5));
+            ItemStack stack4 = PotionContents.createItemStack(Items.LINGERING_POTION, holder);
+            ArcaneresearchApi.registerObjectTag(stack4, getPotionAspects(stack4, recipes).add(Aspect.TRAP, 5));
         }
     }
 

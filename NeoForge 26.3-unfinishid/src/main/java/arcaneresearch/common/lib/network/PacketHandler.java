@@ -24,7 +24,7 @@ import arcaneresearch.Arcaneresearch;
 //     + handler(IPayload, IPayloadContext).
 //   Identifier(MODID, path) id -> Identifier.fromNamespaceAndPath(MODID, path) (26.x: Identifier->Identifier).
 //
-// Each packet is ported 1:1 as a CustomPacketPayload, in the SAME order with SAME fields/handlers.
+// Each packet is ported 1:1 as a CustomPacketPayload, with the same fields/handlers.
 //   Packet list (= registration order, must be preserved):
 //   SealToClient, SyncKnowledge, SyncWarp, WarpMessage, AuraToClient, TileToClient, TileToServer,
 //   FXSlash, FXBlockArc, FXBlockBamf, FXZap, FXEssentiaSource, FXShield, FXWispZap, FXFocusEffect,
@@ -74,7 +74,7 @@ public class PacketHandler {
                 arcaneresearch.common.lib.network.misc.PacketMiscEvent.TYPE,
                 arcaneresearch.common.lib.network.misc.PacketMiscEvent.STREAM_CODEC,
                 arcaneresearch.common.lib.network.misc.PacketMiscEvent::handle);
-        // PORTED FX packets (playToClient, Forge order):
+        // PORTED FX packets (playToClient, Forge order; registration order no longer matters - 26.x uses named payload ids):
         registrar.playToClient(
                 arcaneresearch.common.lib.network.fx.PacketFXSlash.TYPE,
                 arcaneresearch.common.lib.network.fx.PacketFXSlash.STREAM_CODEC,
@@ -231,7 +231,8 @@ public class PacketHandler {
                 arcaneresearch.common.lib.network.misc.PacketNote.STREAM_CODEC,
                 arcaneresearch.common.lib.network.misc.PacketNote::handle);
 
-    // NEOFORGE_PORT: all Forge payloads registered above in Forge order
+    // NEOFORGE_PORT: all Forge payloads registered above (Forge's numeric-id ORDER is
+    // irrelevant now - 26.x addresses payloads by type/name)
     // (ids = lowercase path; PacketNote once as bidirectional instead of twice).
     }
 

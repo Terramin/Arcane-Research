@@ -125,6 +125,23 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
                 if (enchantment.toolClasses.contains("hoe") && isToolClass(centralStack, net.minecraft.tags.ItemTags.HOES, "hoes"))
                     cool = true;
             }
+            // FIX (Forge parity): 1.20.1 matched DiggerItem via canPerformAction's whole
+            // DEFAULT_DIGGER_ACTIONS set (axe+pickaxe+shovel+hoe at once), so the primal
+            // crusher (Forge DiggerItem) was eligible for every digger-class infusion
+            // enchantment. 26.x has no dig abilities (ItemAbilities dropped *_DIG) and no
+            // DiggerItem class at all (data-driven Tool items), and the port's crusher
+            // extends plain Item without a Tool component, so the tag checks above never
+            // matched it. Restore that eligibility explicitly: the crusher counts for all
+            // four digger classes, as the Forge DiggerItem did.
+            if (!cool) {
+                boolean diggerClass = enchantment.toolClasses.contains("axe")
+                        || enchantment.toolClasses.contains("pickaxe")
+                        || enchantment.toolClasses.contains("shovel")
+                        || enchantment.toolClasses.contains("hoe");
+                if (diggerClass && centralStack.getItem() instanceof arcaneresearch.common.items.tools.ItemPrimalCrusher) {
+                    cool = true;
+                }
+            }
 
             // NEOFORGE_PORT: ArmorItem.getType removed; armor slot comes from the EQUIPPABLE
             // component (HEAD/CHEST/LEGS/FEET map to the old helm/chest/legs/boots classes).

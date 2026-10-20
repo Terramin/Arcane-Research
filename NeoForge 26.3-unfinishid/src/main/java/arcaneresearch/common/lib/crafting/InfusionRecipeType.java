@@ -36,7 +36,7 @@ import java.util.Optional;
 //     matchesInfusion null/isEmpty-safe.
 //   - placementInfo() -> NOT_PLACEABLE (altar recipes never use the vanilla grid);
 //     recipeBookCategory() -> CRAFTING_MISC (never meaningfully displayed);
-//     showNotification() -> false (research toasts are handled by our own system).
+//     showNotification() kept at the vanilla/Forge default true.
 // Match/aspect/instability logic VERBATIM.
 public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchRecipe {
 
@@ -56,8 +56,12 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         Ingredient centralItem = central.or(() -> center).or(() -> input).orElse(null);
         // NEOFORGE_PORT (26.3): Forge read "components" if present, otherwise "ingredients"
         // (never both) - same precedence here instead of concatenating the two keys.
+        // Forge also filtered parsed ingredients with if (!ingredient.isEmpty()) before
+        // storing them: an empty tag entry in JSON is skipped, not kept as an
+        // always-failing component (RecipeMatcher would make the recipe unmatchable).
         NonNullList<Ingredient> merged = NonNullList.create();
-        merged.addAll(components.isPresent() ? components.get() : ingredients.orElse(List.of()));
+        merged.addAll((components.isPresent() ? components.get() : ingredients.orElse(List.of()))
+                .stream().filter(ingredient -> !ingredient.isEmpty()).toList());
         return new InfusionRecipeType(group, centralItem, merged, aspects, result, research, instability);
     }));
 
@@ -131,7 +135,10 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
 
     @Override
     public boolean showNotification() {
-        return false;
+        // NEOFORGE_PORT (26.3) FIX: Forge never overrode the vanilla default (true).
+        // The recipes are NOT_PLACEABLE and never recipe-booked, so the flag is moot -
+        // kept Forge-identical for behavior parity.
+        return true;
     }
 
     public ItemStack getResultItem() {
