@@ -1,0 +1,11 @@
+{
+  "type": "arcaneresearch:feature",
+  "feature": "arcaneresearch:hilltop_stones",
+  "box_half_width": 4,
+  "box_height_up": 6,
+  "box_height_down": 5,
+  "biomes": "#minecraft:is_overworld",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "none"
+}

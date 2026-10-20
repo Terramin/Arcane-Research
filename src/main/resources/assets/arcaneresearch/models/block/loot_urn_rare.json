@@ -1,0 +1,7 @@
+{
+    "parent": "arcaneresearch:block/loot_urn_common",
+    "textures": {
+        "side": "arcaneresearch:block/loot_urn_side_2",
+        "particle": "arcaneresearch:block/loot_urn_side_2"
+    }
+}

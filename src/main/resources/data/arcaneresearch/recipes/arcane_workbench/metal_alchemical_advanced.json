@@ -1,0 +1,28 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ESSENTIASMELTERVOID@1",
+  "vis": 200,
+  "crystals": {
+    "terra": 1,
+    "ignis": 1
+  },
+  "pattern": [
+    " A ",
+    "VPV",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "arcaneresearch:alchemical_brass_block"
+    },
+    "V": {
+      "item": "arcaneresearch:plate_void"
+    },
+    "P": {
+      "item": "arcaneresearch:primordial_pearl"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:alchemical_brass_advanced_block"
+  }
+}

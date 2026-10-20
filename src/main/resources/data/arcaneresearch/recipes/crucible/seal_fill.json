@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALSTORE",
+  "catalyst": {
+    "item": "arcaneresearch:blank_seal"
+  },
+  "aspects": {
+    "aversio": 10
+  },
+  "result": {
+    "item": "arcaneresearch:seal_fill",
+    "count": 1
+  }
+}

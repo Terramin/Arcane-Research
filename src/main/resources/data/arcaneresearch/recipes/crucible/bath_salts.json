@@ -1,0 +1,16 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "BATHSALTS",
+  "catalyst": {
+    "item": "arcaneresearch:salis_mundus"
+  },
+  "aspects": {
+    "cognitio": 40,
+    "aer": 40,
+    "ordo": 40,
+    "victus": 40
+  },
+  "result": {
+    "item": "arcaneresearch:bath_salts"
+  }
+}

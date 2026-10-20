@@ -1,0 +1,38 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "NODESTABILIZER",
+  "vis": 200,
+  "crystals": {
+    "ordo": 1,
+    "perditio": 1,
+    "praecantatio": 1
+  },
+  "pattern": [
+    "SOS",
+    "BVB",
+    "IMI"
+  ],
+  "key": {
+    "S": {
+      "item": "arcaneresearch:arcane_stone_slab"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "B": {
+      "item": "arcaneresearch:arcane_stone"
+    },
+    "V": {
+      "item": "arcaneresearch:vis_resonator"
+    },
+    "I": {
+      "item": "arcaneresearch:inlay"
+    },
+    "M": {
+      "item": "arcaneresearch:mechanism_complex"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:node_converter"
+  }
+}

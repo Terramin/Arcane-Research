@@ -1,0 +1,15 @@
+{
+    "forge_marker": 1,
+    "defaults":
+    {
+        "model": "arcaneresearch:empty",
+        "textures": {
+            "particle": "arcaneresearch:blocks/nitor",
+            "all": "arcaneresearch:blocks/nitor"
+        },
+        "transform": "forge:default-block"
+    },
+    "variants": {
+        "normal": [{}], "inventory": [{}]
+    }
+}

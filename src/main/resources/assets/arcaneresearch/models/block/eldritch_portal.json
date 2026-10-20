@@ -1,0 +1,7 @@
+{
+    "parent": "minecraft:block/cross",
+    "textures": {
+        "cross": "arcaneresearch:block/eldritch_door",
+        "particle": "arcaneresearch:block/eldritch_stone_1"
+    }
+}

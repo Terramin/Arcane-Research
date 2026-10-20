@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:swamp",
+    "minecraft:mangrove_swamp",
+    "minecraft:dark_forest",
+    "minecraft:pale_garden",
+    "minecraft:mushroom_fields",
+    "minecraft:deep_dark"
+  ]
+}

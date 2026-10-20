@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:nitor_color",
+  "ingredients": [
+    {"item": "minecraft:cyan_dye"},
+    {"tag": "arcaneresearch:nitor"}
+  ],
+  "result": {
+    "item": "arcaneresearch:nitor_cyan",
+    "count": 1
+  }
+}

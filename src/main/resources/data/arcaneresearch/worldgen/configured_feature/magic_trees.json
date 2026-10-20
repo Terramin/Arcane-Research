@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": {
+      "feature": "arcaneresearch:big_magic_tree",
+      "placement": []
+    },
+    "features": [
+      {
+        "chance": 0.0555556,
+        "feature": {
+          "feature": "arcaneresearch:silverwood_tree",
+          "placement": []
+        }
+      },
+      {
+        "chance": 0.0833333,
+        "feature": {
+          "feature": "arcaneresearch:greatwood_tree",
+          "placement": []
+        }
+      },
+      {
+        "chance": 1.0,
+        "feature": {
+          "feature": "arcaneresearch:big_magic_tree",
+          "placement": []
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,546 @@
+{
+    "heartbeat": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "arcaneresearch:heartbeat",
+                "stream": false
+            }
+        ]
+    },
+    "spill": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:spill",
+                "stream": false
+            }
+        ]
+    },
+    "dust": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:dust",
+                "stream": false
+            }
+        ]
+    },
+    "bubble": {
+        "category": "block",
+        "sounds": [
+            "arcaneresearch:bubble1",
+            "arcaneresearch:bubble2",
+            "arcaneresearch:bubble3",
+            "arcaneresearch:bubble4"
+        ]
+    },
+    "creak": {
+        "category": "block",
+        "sounds": [
+            "arcaneresearch:creak1",
+            "arcaneresearch:creak2"
+        ]
+    },
+    "squeek": {
+        "category": "block",
+        "sounds": [
+            "arcaneresearch:squeek1",
+            "arcaneresearch:squeek2"
+        ]
+    },
+    "jar": {
+        "category": "block",
+        "sounds": [
+            "arcaneresearch:jar1",
+            "arcaneresearch:jar2",
+            "arcaneresearch:jar3",
+            "arcaneresearch:jar4"
+        ]
+    },
+    "swarm": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:swarm1",
+            "arcaneresearch:swarm2",
+            "arcaneresearch:swarm3"
+        ]
+    },
+    "swarmattack": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:swarmattack",
+                "stream": false
+            }
+        ]
+    },
+    "fly": {
+        "category": "ambient",
+        "sounds": [
+            "arcaneresearch:fly1",
+            "arcaneresearch:fly2"
+        ]
+    },
+    "key": {
+        "category": "ambient",
+        "sounds": [
+            {
+                "name": "arcaneresearch:key",
+                "stream": false
+            }
+        ]
+    },
+    "ticks": {
+        "category": "ambient",
+        "sounds": [
+            {
+                "name": "arcaneresearch:ticks",
+                "stream": false
+            }
+        ]
+    },
+    "clack": {
+        "category": "ambient",
+        "sounds": [
+            "arcaneresearch:clack1",
+            "arcaneresearch:clack2",
+            "arcaneresearch:clack3"
+        ]
+    },
+    "pump": {
+        "category": "block",
+        "sounds": [
+            "arcaneresearch:pump1",
+            "arcaneresearch:pump2",
+            "arcaneresearch:pump3"
+        ]
+    },
+    "poof": {
+        "category": "ambient",
+        "sounds": [
+            "arcaneresearch:poof1",
+            "arcaneresearch:poof2"
+        ]
+    },
+    "page": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:page1",
+            "arcaneresearch:page2"
+        ]
+    },
+    "pageturn": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:pageturn"
+        ]
+    },
+    "learn": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:learn",
+                "stream": false
+            }
+        ]
+    },
+    "write": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:write1",
+            "arcaneresearch:write2"
+        ]
+    },
+    "erase": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:erase",
+                "stream": false
+            }
+        ]
+    },
+    "brain": {
+        "category": "ambient",
+        "sounds": [
+            "arcaneresearch:brain1",
+            "arcaneresearch:brain2",
+            "arcaneresearch:brain3",
+            "arcaneresearch:brain4"
+        ]
+    },
+    "crystal": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:crystal",
+                "stream": false
+            }
+        ]
+    },
+    "wispdead": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:wispdead",
+                "stream": false
+            }
+        ]
+    },
+    "wisplive": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:wisplive1",
+            "arcaneresearch:wisplive2",
+            "arcaneresearch:wisplive3"
+        ]
+    },
+    "wand": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:wand1",
+            "arcaneresearch:wand2",
+            "arcaneresearch:wand3"
+        ]
+    },
+    "wandfail": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:wandfail",
+                "stream": false
+            }
+        ]
+    },
+    "rumble": {
+        "category": "ambient",
+        "sounds": [
+            {
+                "name": "arcaneresearch:rumble",
+                "stream": false
+            }
+        ]
+    },
+    "ice": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:ice1",
+            "arcaneresearch:ice2",
+            "arcaneresearch:ice3"
+        ]
+    },
+    "jacobs": {
+        "category": "ambient",
+        "sounds": [
+            {
+                "name": "arcaneresearch:jacobs",
+                "stream": false
+            }
+        ]
+    },
+    "hhoff": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:hhoff",
+                "stream": false
+            }
+        ]
+    },
+    "hhon": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:hhon",
+                "stream": false
+            }
+        ]
+    },
+    "pech_idle": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:pech_idle1",
+            "arcaneresearch:pech_idle2",
+            "arcaneresearch:pech_idle3"
+        ]
+    },
+    "pech_trade": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:pech_trade",
+                "stream": false
+            }
+        ]
+    },
+    "pech_dice": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:pech_dice",
+                "stream": false
+            }
+        ]
+    },
+    "pech_hit": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:pech_hit1",
+            "arcaneresearch:pech_hit2"
+        ]
+    },
+    "pech_death": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:pech_death",
+                "stream": false
+            }
+        ]
+    },
+    "pech_charge": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:pech_charge1",
+            "arcaneresearch:pech_charge2"
+        ]
+    },
+    "shock": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:shock1",
+            "arcaneresearch:shock2"
+        ]
+    },
+    "zap": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:zap1",
+            "arcaneresearch:zap2"
+        ]
+    },
+    "craftfail": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:craftfail",
+                "stream": false
+            }
+        ]
+    },
+    "scan": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:scan",
+                "stream": false
+            }
+        ]
+    },
+    "craftstart": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:craftstart",
+                "stream": false
+            }
+        ]
+    },
+    "runicshieldeffect": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "arcaneresearch:runicshieldeffect",
+                "stream": false
+            }
+        ]
+    },
+    "runicshieldcharge": {
+        "category": "player",
+        "sounds": [
+            {
+                "name": "arcaneresearch:runicshieldcharge",
+                "stream": false
+            }
+        ]
+    },
+    "wind": {
+        "category": "ambient",
+        "sounds": [
+            "arcaneresearch:wind1",
+            "arcaneresearch:wind2"
+        ]
+    },
+    "tool": {
+        "category": "master",
+        "sounds": [
+            "arcaneresearch:tool1",
+            "arcaneresearch:tool2"
+        ]
+    },
+    "gore": {
+        "category": "block",
+        "sounds": [
+            "arcaneresearch:gore1",
+            "arcaneresearch:gore2"
+        ]
+    },
+    "tentacle": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:tentacle1",
+            "arcaneresearch:tentacle2",
+            "arcaneresearch:tentacle3"
+        ]
+    },
+    "upgrade": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:upgrade",
+                "stream": false
+            }
+        ]
+    },
+    "whispers": {
+        "category": "ambient",
+        "sounds": [
+            {
+                "name": "arcaneresearch:whispers",
+                "stream": false
+            }
+        ]
+    },
+    "monolith": {
+        "category": "ambient",
+        "sounds": [
+            {
+                "name": "arcaneresearch:monolith",
+                "stream": false
+            }
+        ]
+    },
+    "infuser": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:infuser",
+                "stream": false
+            }
+        ]
+    },
+    "infuserstart": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:infuserstart",
+                "stream": false
+            }
+        ]
+    },
+    "egidle": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:egidle1",
+            "arcaneresearch:egidle2"
+        ]
+    },
+    "egattack": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:egattack",
+                "stream": false
+            }
+        ]
+    },
+    "egdeath": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:egdeath",
+                "stream": false
+            }
+        ]
+    },
+    "egscreech": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:egscreech",
+                "stream": false
+            }
+        ]
+    },
+    "crabclaw": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:crabclaw",
+                "stream": false
+            }
+        ]
+    },
+    "crabdeath": {
+        "category": "hostile",
+        "sounds": [
+            {
+                "name": "arcaneresearch:crabdeath",
+                "stream": false
+            }
+        ]
+    },
+    "crabtalk": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:crabtalk1",
+            "arcaneresearch:crabtalk2",
+            "arcaneresearch:crabtalk3"
+        ]
+    },
+    "chant": {
+        "category": "hostile",
+        "sounds": [
+            "arcaneresearch:chant1",
+            "arcaneresearch:chant2",
+            "arcaneresearch:chant3"
+        ]
+    },
+    "coins": {
+        "category": "master",
+        "sounds": [
+            {
+                "name": "arcaneresearch:coins",
+                "stream": false
+            }
+        ]
+    },
+    "urnbreak": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:urnbreak",
+                "stream": false
+            }
+        ]
+    },
+    "evilportal": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:evilportal",
+                "stream": false
+            }
+        ]
+    },
+    "grind": {
+        "category": "block",
+        "sounds": [
+            {
+                "name": "arcaneresearch:grind",
+                "stream": false
+            }
+        ]
+    }
+}

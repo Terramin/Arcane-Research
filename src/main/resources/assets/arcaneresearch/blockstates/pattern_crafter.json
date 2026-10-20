@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "enabled=false,facing=east":  { "model": "arcaneresearch:block/pattern_crafter", "y": 90 },
+        "enabled=false,facing=west":  { "model": "arcaneresearch:block/pattern_crafter", "y": 270 },
+        "enabled=false,facing=north": { "model": "arcaneresearch:block/pattern_crafter" },
+        "enabled=false,facing=south": { "model": "arcaneresearch:block/pattern_crafter", "y": 180 },
+        "enabled=true,facing=east":   { "model": "arcaneresearch:block/pattern_crafter_on", "y": 90 },
+        "enabled=true,facing=west":   { "model": "arcaneresearch:block/pattern_crafter_on", "y": 270 },
+        "enabled=true,facing=north":  { "model": "arcaneresearch:block/pattern_crafter_on" },
+        "enabled=true,facing=south":  { "model": "arcaneresearch:block/pattern_crafter_on", "y": 180 }
+    }
+}

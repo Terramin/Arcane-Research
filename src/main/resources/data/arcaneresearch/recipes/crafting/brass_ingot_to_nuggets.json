@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:brass_stuff",
+  "ingredients": [
+    {"item": "arcaneresearch:brass_ingot"}
+  ],
+  "result": {
+    "item": "arcaneresearch:brass_nugget",
+    "count": 9
+  }
+}

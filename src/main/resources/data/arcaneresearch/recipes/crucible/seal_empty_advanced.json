@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALEMPTY&&MINDBIOTHAUMIC",
+  "catalyst": {
+    "item": "arcaneresearch:seal_empty"
+  },
+  "aspects": {
+    "sensus": 10,
+    "cognitio": 10
+  },
+  "result": {
+    "item": "arcaneresearch:seal_empty_advanced",
+    "count": 1
+  }
+}

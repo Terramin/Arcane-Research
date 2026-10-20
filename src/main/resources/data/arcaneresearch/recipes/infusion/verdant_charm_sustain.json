@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "VERDANTCHARMS",
+  "instability": 5,
+  "center": {
+    "item": "arcaneresearch:verdant_charm"
+  },
+  "ingredients": [
+    { "item": "arcaneresearch:triple_meat_treat" },
+    { "type": "arcaneresearch:crystal", "aspect": "desiderium" },
+    { "type": "forge:partial_nbt", "item": "minecraft:potion", "nbt": "{Potion:\"minecraft:strong_regeneration\"}" },
+    { "type": "arcaneresearch:crystal", "aspect": "aer" }
+  ],
+  "aspects": {
+    "desiderium": 80,
+    "aer": 80
+  },
+  "result": {
+    "item": "arcaneresearch:verdant_charm_sustain"
+  }
+}

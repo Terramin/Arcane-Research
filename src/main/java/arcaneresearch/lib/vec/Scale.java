@@ -1,0 +1,55 @@
+package arcaneresearch.lib.vec;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+public class Scale extends Transformation {
+    public Vector3 factor;
+    public Scale(Vector3 factor) {
+        this.factor = factor;
+    }
+    public Scale(double factor) {
+        this(new Vector3(factor, factor, factor));
+    }
+    public Scale(double x, double y, double z) {
+        this(new Vector3(x, y, z));
+    }
+    @Override
+    public void apply(Vector3 vec) {
+        vec.multiply(factor);
+    }
+    @Override
+    public void applyN(Vector3 normal) {
+    }
+    @Override
+    public void apply(Matrix4 mat) {
+        mat.scale(factor);
+    }
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public void apply(PoseStack poseStack) {
+        poseStack.scale((float) factor.x, (float) factor.y, (float) factor.z);
+    }
+    @Override
+    public Transformation inverse() {
+        return new Scale(1.0 / factor.x, 1.0 / factor.y, 1.0 / factor.z);
+    }
+    @Override
+    public Transformation merge(Transformation next) {
+        if (next instanceof Scale) {
+            return new Scale(factor.copy().multiply(((Scale) next).factor));
+        }
+        return null;
+    }
+    @Override
+    public boolean isRedundant() {
+        return factor.equalsT(Vector3.one);
+    }
+    @Override
+    public String toString() {
+        MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
+        return "Scale(" + new BigDecimal(factor.x, cont) + ", " + new BigDecimal(factor.y, cont) + ", " + new BigDecimal(factor.z, cont) + ")";
+    }
+}

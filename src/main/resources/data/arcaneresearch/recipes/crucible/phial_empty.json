@@ -1,0 +1,13 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "UNLOCKALCHEMY",
+  "catalyst": {
+    "item": "minecraft:glass_bottle"
+  },
+  "aspects": {
+    "vacuos": 3
+  },
+  "result": {
+    "item": "arcaneresearch:phial_empty"
+  }
+}

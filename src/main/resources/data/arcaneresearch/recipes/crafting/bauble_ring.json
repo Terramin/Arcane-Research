@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:baubles_stuff",
+  "pattern": [
+    "NNN",
+    "N N",
+    "NNN"
+  ],
+  "key": {
+    "N": {"item": "arcaneresearch:brass_nugget"}
+  },
+  "result": {
+    "item": "arcaneresearch:bauble_ring_mundane",
+    "count": 1
+  }
+}

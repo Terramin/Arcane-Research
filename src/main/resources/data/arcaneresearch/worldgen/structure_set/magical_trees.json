@@ -1,0 +1,23 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 10387318,
+    "separation": 40,
+    "spacing": 106,
+    "spread_type": "triangular"
+  },
+  "structures": [
+    {
+      "structure": "arcaneresearch:big_silverwood_tree",
+      "weight": 1
+    },
+    {
+      "structure": "arcaneresearch:big_magic_tree",
+      "weight": 2
+    },
+    {
+      "structure": "arcaneresearch:big_magic_tree_common",
+      "weight": 3
+    }
+  ]
+}

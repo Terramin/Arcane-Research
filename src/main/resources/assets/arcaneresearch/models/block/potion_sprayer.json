@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "arcaneresearch:block/potion_sprayer_bottom",
+    "top": "arcaneresearch:block/potion_sprayer_top",
+    "side": "arcaneresearch:block/potion_sprayer_side"
+  }
+}

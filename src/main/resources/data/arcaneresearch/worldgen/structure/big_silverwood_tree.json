@@ -1,0 +1,11 @@
+{
+  "type": "arcaneresearch:feature",
+  "feature": "arcaneresearch:big_silverwood_tree",
+  "box_half_width": 10,
+  "box_height_up": 30,
+  "box_height_down": 4,
+  "biomes": "#arcaneresearch:is_magical",
+  "spawn_overrides": {},
+  "step": "vegetal_decoration",
+  "terrain_adaptation": "none"
+}

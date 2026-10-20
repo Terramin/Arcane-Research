@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "CRYSTALFARMER",
+  "instability": 0,
+  "aspects": {
+    "perditio": 10,
+    "vitreus": 10,
+    "vinculum": 5
+  },
+  "center": {
+    "type": "arcaneresearch:crystal",
+    "aspect": "perditio"
+  },
+  "ingredients": [
+    {"item": "minecraft:wheat_seeds"},
+    {"item": "arcaneresearch:salis_mundus"}
+  ],
+  "result": {
+    "item": "arcaneresearch:crystal_entropy"
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "variant=base": { "model": "arcaneresearch:block/obsidian_totem_base" },
+        "variant=pillar_1": { "model": "arcaneresearch:block/obsidian_totem_pillar_1" },
+        "variant=pillar_2": { "model": "arcaneresearch:block/obsidian_totem_pillar_2" },
+        "variant=pillar_3": { "model": "arcaneresearch:block/obsidian_totem_pillar_3" },
+        "variant=pillar_4": { "model": "arcaneresearch:block/obsidian_totem_pillar_4" }
+    }
+}

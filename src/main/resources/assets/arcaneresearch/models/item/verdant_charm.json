@@ -1,0 +1,17 @@
+{
+    "parent": "item/generated",
+    "overrides": [
+        {
+            "predicate": { "arcaneresearch:type": 0 },
+            "model": "arcaneresearch:item/verdant_charm_0"
+        },
+        {
+            "predicate": { "arcaneresearch:type": 1 },
+            "model": "arcaneresearch:item/verdant_charm_1"
+        },
+        {
+            "predicate": { "arcaneresearch:type": 2 },
+            "model": "arcaneresearch:item/verdant_charm_2"
+        }
+    ]
+}

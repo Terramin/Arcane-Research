@@ -1,0 +1,17 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "BOTTLETAINT",
+  "catalyst": {
+    "type": "forge:partial_nbt",
+    "item": "arcaneresearch:phial_filled",
+    "nbt": "{Aspects:[{key:\"vitium\",amount:10}]}"
+  },
+  "aspects": {
+    "vitium": 30,
+    "aqua": 30
+  },
+  "result": {
+    "item": "arcaneresearch:bottle_taint",
+    "count": 1
+  }
+}

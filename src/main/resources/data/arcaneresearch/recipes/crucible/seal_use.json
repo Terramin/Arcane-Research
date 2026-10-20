@@ -1,0 +1,16 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALUSE",
+  "catalyst": {
+    "item": "arcaneresearch:blank_seal"
+  },
+  "aspects": {
+    "fabrico": 20,
+    "sensus": 10,
+    "cognitio": 20
+  },
+  "result": {
+    "item": "arcaneresearch:seal_use",
+    "count": 1
+  }
+}

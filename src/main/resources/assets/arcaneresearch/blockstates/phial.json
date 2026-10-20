@@ -1,0 +1,21 @@
+{
+
+    "forge_marker": 1,
+    "variants": {
+        "empty": {
+            "model": "forge:item-layer",
+            "transform": "forge:default-item",
+            "textures": {
+                "layer0": "arcaneresearch:items/phial"
+            }
+        },
+        "filled": {
+            "model": "forge:item-layer",
+            "transform": "forge:default-item",
+            "textures": {
+                "layer0": "arcaneresearch:items/phial",
+                "layer1": "arcaneresearch:items/phial_overlay"
+            }
+        }
+    }
+}

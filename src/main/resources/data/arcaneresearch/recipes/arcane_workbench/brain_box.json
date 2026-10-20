@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "THAUMATORIUM",
+  "vis": 50,
+  "crystals": {
+    "terra": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    "IAI",
+    "ABA",
+    "IAI"
+  ],
+  "key": {
+    "I": {"tag": "forge:plates/iron"},
+    "A": {"tag": "forge:gems/amber"},
+    "B": {"item": "arcaneresearch:brain_clockwork"}
+  },
+  "result": {
+    "item": "arcaneresearch:brain_box"
+  }
+}

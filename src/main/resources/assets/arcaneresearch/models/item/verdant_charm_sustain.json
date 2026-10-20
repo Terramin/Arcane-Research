@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "arcaneresearch:item/verdant_charm",
+    "layer1": "arcaneresearch:item/verdant_charm_over_2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "arcaneresearch:feature",
+  "feature": "arcaneresearch:maze_room",
+  "box_half_width": 7,
+  "box_height_up": 6,
+  "box_height_down": 2,
+  "biomes": "arcaneresearch:outer_lands",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "none"
+}

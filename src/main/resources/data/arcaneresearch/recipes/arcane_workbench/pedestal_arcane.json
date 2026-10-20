@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INFUSION",
+  "vis": 10,
+  "crystals": {},
+  "pattern": [
+    "SSS",
+    " B ",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "arcaneresearch:arcane_stone_slab"
+    },
+    "B": {
+      "item": "arcaneresearch:arcane_stone"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:pedestal_arcane"
+  }
+}

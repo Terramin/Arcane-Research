@@ -1,0 +1,17 @@
+{
+  "type": "arcaneresearch:arcane_workbench_void_jar",
+  "research": "WARDEDJARS",
+  "vis": 50,
+  "crystals": {
+    "perditio": 1
+  },
+  "pattern": [
+    "J"
+  ],
+  "key": {
+    "J": {"item": "arcaneresearch:jar_normal"}
+  },
+  "result": {
+    "item": "arcaneresearch:jar_void"
+  }
+}

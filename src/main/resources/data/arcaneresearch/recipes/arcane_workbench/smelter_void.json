@@ -1,0 +1,30 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ESSENTIASMELTERVOID",
+  "vis": 750,
+  "crystals": {
+    "ignis": 3
+  },
+  "pattern": [
+    "BFB",
+    "IGI",
+    "III"
+  ],
+  "key": {
+    "B": {
+      "item": "arcaneresearch:plate_brass"
+    },
+    "F": {
+      "item": "arcaneresearch:smelter"
+    },
+    "I": {
+      "item": "arcaneresearch:plate_void"
+    },
+    "G": {
+      "item": "arcaneresearch:alchemical_brass_advanced_block"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:smelter_void"
+  }
+}

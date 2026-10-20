@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ELEMENTALTOOLS",
+  "instability": 1,
+  "center": {
+    "item": "arcaneresearch:thaumium_shovel"
+  },
+  "ingredients": [
+    { "type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "item": "arcaneresearch:nugget_rareearth" },
+    { "item": "arcaneresearch:greatwood_planks" }
+  ],
+  "aspects": {
+    "terra": 60,
+    "fabrico": 30
+  },
+  "result": {
+    "item": "arcaneresearch:elemental_shovel",
+    "nbt": "{infench:[{id:1s,lvl:1s}]}"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:thaumium_stuff",
+  "pattern": [
+    "II",
+    "SI",
+    "S "
+  ],
+  "key": {
+    "I": {"item": "arcaneresearch:thaumium_ingot"},
+    "S": {"tag": "forge:rods/wooden"}
+  },
+  "result": {
+    "item": "arcaneresearch:thaumium_axe",
+    "count": 1
+  }
+}
