@@ -708,7 +708,16 @@ public class RecipeRenderer {
         long now = System.currentTimeMillis();
         if (cycleMultiblockLines && now - blueprintLastSlice > 1000L) {
             blueprintLastSlice = now;
-            blueprintAccess.sliceLine++;
+            // NEOFORGE_PORT: Forge никогда не сбрасывал sliceLine — после
+            // первого обхода анимации срез «заживался» навсегда (hidden >
+            // высоты -> 0), а если цикл выключали в середине, слои оставались
+            // срезанными до переоткрытия страницы. Честный цикл: рост
+            // 0..height, один пустой такт, снова 0.
+            blueprintAccess.sliceLine = (blueprintAccess.sliceLine + 1) % (blueprintAccess.getHeight() + 2);
+        } else if (!cycleMultiblockLines) {
+            // Цикл выключен — показывать всю структуру целиком, без
+            // замороженного среза.
+            blueprintAccess.sliceLine = 0;
         }
 
         arcaneresearch.api.crafting.Part[][][] parts = blueprint.getParts();

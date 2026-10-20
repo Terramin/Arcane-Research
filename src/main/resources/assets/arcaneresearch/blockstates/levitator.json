@@ -1,5 +1,30 @@
 {
   "variants": {
-    "": { "model": "arcaneresearch:block/levitator" }
+    "facing=down": {
+      "model": "arcaneresearch:block/levitator",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "arcaneresearch:block/levitator",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "arcaneresearch:block/levitator",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "arcaneresearch:block/levitator",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "arcaneresearch:block/levitator"
+    },
+    "facing=west": {
+      "model": "arcaneresearch:block/levitator",
+      "x": 90,
+      "y": 270
+    }
   }
 }

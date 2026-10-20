@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector3f;
@@ -29,13 +31,31 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
 
     private final BlockState[][][] structure;
 
+    /**
+     * true — клетки аура-ноды показываются стеклом-заглушкой (цвет по типу
+     * ноды); false — нодовая клетка остаётся AIR, сама нода рисуется
+     * светящимся оверлеем {@link IsoStructurePip} (чертёж/книга/JEI).
+     */
+    private final boolean glassForNodes;
+
     public int sliceLine = 0;
 
-    public BlueprintBlockAccess(Part[][][] data) {
-        this(data, false);
+    public BlueprintBlockAccess(Part[][][] parts) {
+        // NEOFORGE_PORT: в основном чертеже нодовая клетка пустая (AIR) —
+        // настоящую ноду рисует светящийся оверлей (order(1), см.
+        // IsoStructurePip). Стекло остаётся только в закладке (target).
+        this(parts, false, false);
     }
 
+    /**
+     * @param target target-режим (закладка): слои повёрнуты, нода — стеклом-заглушкой
+     */
     public BlueprintBlockAccess(Part[][][] data, boolean target) {
+        this(data, target, target);
+    }
+
+    public BlueprintBlockAccess(Part[][][] data, boolean target, boolean glassNodes) {
+        this.glassForNodes = glassNodes;
         int ySize = data.length;
         int xSize = data[0].length;
         int zSize = data[0][0].length;
@@ -56,15 +76,15 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
         }
     }
 
-    private static BlockState convert(@Nullable Part part) {
+    private BlockState convert(@Nullable Part part) {
         if (part == null || part.getSource() == null) {
             return Blocks.AIR.defaultBlockState();
         }
         Object source = part.getSource();
         if (source instanceof Block block) {
-            // Блок аура-ноды невидим (INVISIBLE + пустая модель): в книге/JEI
-            // показываем тонированное стекло в цвет типа ноды, иначе клетка
-            // чертежа пуста. Настоящую ноду поверх рисует рендерер книги.
+            // Блок аура-ноды невидим (INVISIBLE + пустая модель): клетка
+            // чертежа пустая (AIR), светящийся вихрь поверх рисует PiP в
+            // order(1); в закладке (target) вместо неё стекло по типу ноды.
             if (isAuraNode(block)) {
                 return nodeSurrogate(part);
             }
@@ -97,8 +117,16 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
         }
     }
 
-    /** Видимый куб-маркер ноды в цвет её типа (зловещая — чёрное стекло). */
-    private static BlockState nodeSurrogate(@Nullable Part part) {
+    /**
+     * NEOFORGE_PORT: в основном чертеже (glassForNodes == false) нодовая
+     * клетка пустая — ноду рисует {@link IsoStructurePip} светящимся
+     * оверлеем в order(1). Стекло-заглушка остаётся в закладке (target),
+     * где оверлей не вызывается.
+     */
+    private BlockState nodeSurrogate(@Nullable Part part) {
+        if (!glassForNodes) {
+            return Blocks.AIR.defaultBlockState();
+        }
         NodeType type = part == null ? null : part.getNodeType();
         if (type == null) {
             return Blocks.GLASS.defaultBlockState();
@@ -114,7 +142,7 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
         };
     }
 
-    private static BlockState convertTarget(@Nullable Part part) {
+    private BlockState convertTarget(@Nullable Part part) {
         if (part == null) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -141,16 +169,60 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
     private static AspectList blueprintNodeAspects = null;
 
     /**
-     * Настоящая аура-нода поверх маркера в 3D-чертеже (книга, JEI): сам блок
-     * ноды невидим, convert() кладёт тонированное стекло, а здесь рисуем
-     * светящуюся ноду нужного типа — зловещая даёт тёмный вихрь.
+     * Разворачивает источник части в блок (Block или ItemStack).
+     */
+    @Nullable
+    private static Block partBlock(@Nullable Part part) {
+        if (part == null) {
+            return null;
+        }
+        Object source = part.getSource();
+        if (source instanceof Block block) {
+            return block;
+        }
+        if (source instanceof ItemStack stack) {
+            Block byItem = Block.byItem(stack.getItem());
+            if (byItem != null && byItem != Blocks.AIR) {
+                return byItem;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Будет ли для этой клетки рисоваться светящийся оверлей ноды
+     * (используется и в расчёте вписывания PiP, и в самом рендере).
+     */
+    public static boolean hasNodeOverlay(@Nullable Part part) {
+        Block block = partBlock(part);
+        return block != null && isAuraNode(block);
+    }
+
+    /**
+     * Настоящая аура-нода в 3D-чертеже (книга, JEI): нодовый блок невидим
+     * (convert() кладёт AIR вместо стекла-заглушки), здесь рисуем светящуюся
+     * ноду нужного типа — зловещая даёт тёмный вихрь.
      * Поза уже сдвинута в клетку чертежа, её центр — (0.5, 0.5, 0.5).
      */
-    // NEOFORGE_PORT: MultiBufferSource -> SubmitNodeCollector (submit-system); тело 1:1.
+    // NEOFORGE_PORT: MultiBufferSource -> OrderedSubmitNodeCollector
+    // (submit-system; order(1)-коллекторы проходят как SubmitNodeCollector
+    // подтип). Тело 1:1.
     public static void renderNodeOverlay(com.mojang.blaze3d.vertex.PoseStack pose,
-                                         net.minecraft.client.renderer.SubmitNodeCollector buffer,
+                                         net.minecraft.client.renderer.OrderedSubmitNodeCollector buffer,
                                          @Nullable Part part) {
-        if (part == null || !(part.getSource() instanceof Block block) || !isAuraNode(block)) {
+        renderNodeOverlay(pose, buffer, part, null);
+    }
+
+    /**
+     * NEOFORGE_PORT (26.3 pip): перегрузка с явным биллбордом. В мире вихрь
+     * биллбордится на мировую камеру; в изометрическом picture-in-picture
+     * мировой камеры нет, и камера передаётся вызывающим кодом.
+     */
+    public static void renderNodeOverlay(com.mojang.blaze3d.vertex.PoseStack pose,
+                                         net.minecraft.client.renderer.OrderedSubmitNodeCollector buffer,
+                                         @Nullable Part part,
+                                         @Nullable org.joml.Quaternionf billboard) {
+        if (part == null || !isAuraNode(partBlock(part))) {
             return;
         }
         try {
@@ -168,13 +240,38 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
             }
             AuraNodeRenderHelper.renderNode(pose, buffer, blueprintNodeAspects, type, null,
                     BlockPos.ZERO, null, new Vector3f(0.5F, 0.5F, 0.5F), 0.9F,
-                    new AuraNodeRenderHelper.Visibility(true, true, 64.0D), 0.0F);
+                    new AuraNodeRenderHelper.Visibility(true, true, 64.0D), 0.0F, billboard);
         } catch (Exception ignored) {
         }
     }
 
     public int getHeight() {
         return structure.length;
+    }
+
+    /**
+     * NEOFORGE_PORT: в 1.20.1 Forge такие блоки возвращали
+     * RenderShape.ENTITYBLOCK_ANIMATED и рисовались BER-ом; в 26.3 осталось
+     * только MODEL/INVISIBLE, а статус «без статической модели, рендер через
+     * блок-ентити» — это INVISIBLE + {@link EntityBlock}.
+     */
+    public static boolean isBerRendered(BlockState state) {
+        return state.getRenderShape() == RenderShape.INVISIBLE
+                && state.getBlock() instanceof EntityBlock;
+    }
+
+    /**
+     * Скрыта ли клетка на уровне y анимацией слоёв (sliceLine) — та же
+     * логика, что в {@link #getBlockState(BlockPos)}: скрытые слои
+     * возвращают AIR, и оверлей ноды для них рисовать нельзя, чтобы
+     * свечение не оставалось висеть при показе среза.
+     */
+    public boolean isHiddenBySlice(int y) {
+        int hidden = sliceLine;
+        if (hidden > structure.length) {
+            hidden = 0;
+        }
+        return y >= structure.length - hidden;
     }
 
     @Nullable

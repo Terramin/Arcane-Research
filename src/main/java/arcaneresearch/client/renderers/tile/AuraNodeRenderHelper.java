@@ -2,6 +2,7 @@ package arcaneresearch.client.renderers.tile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,8 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import arcaneresearch.Arcaneresearch;
+
+import javax.annotation.Nullable;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.IRevealer;
@@ -86,20 +89,36 @@ public final class AuraNodeRenderHelper {
         return new Visibility(false, false, 64.0D);
     }
 
-    public static void renderNode(PoseStack poseStack, SubmitNodeCollector collector, INode node,
+    public static void renderNode(PoseStack poseStack, OrderedSubmitNodeCollector collector, INode node,
                                   BlockPos pos, LivingEntity viewer, Vector3f center, float size,
                                   Visibility vis, float partialTicks) {
         if (node == null) {
             return;
         }
         renderNode(poseStack, collector, node.getAspects(), node.getNodeType(),
-                node.getNodeModifier(), pos, viewer, center, size, vis, partialTicks);
+                node.getNodeModifier(), pos, viewer, center, size, vis, partialTicks, null);
     }
 
-    public static void renderNode(PoseStack poseStack, SubmitNodeCollector collector, AspectList aspects,
+    public static void renderNode(PoseStack poseStack, OrderedSubmitNodeCollector collector, AspectList aspects,
                                   NodeType type,
                                   NodeModifier mod, BlockPos pos, LivingEntity viewer,
                                   Vector3f center, float size, Visibility vis, float partialTicks) {
+        renderNode(poseStack, collector, aspects, type, mod, pos, viewer, center, size, vis,
+                partialTicks, null);
+    }
+
+    /**
+     * NEOFORGE_PORT (26.3 pip): перегрузка с явным биллбордом для
+     * picture-in-picture. В мире квад биллбордится на мировую камеру
+     * (billboard == null — прежнее поведение), а в изометрическом PiP
+     * мировой камеры нет — вызывающий передаёт кварн, разворачивающий квад
+     * в плоскость вьюера (см. IsoStructurePip).
+     */
+    public static void renderNode(PoseStack poseStack, OrderedSubmitNodeCollector collector, AspectList aspects,
+                                  NodeType type,
+                                  NodeModifier mod, BlockPos pos, LivingEntity viewer,
+                                  Vector3f center, float size, Visibility vis, float partialTicks,
+                                  @Nullable Quaternionf billboard) {
         if (aspects == null) {
             return;
         }
@@ -155,7 +174,8 @@ public final class AuraNodeRenderHelper {
                         / (5000.0F + 500.0F * count) * ((float) Math.PI * 2.0F);
                 submitStrip(poseStack, collector, nodeLayer(aspect.getBlend() != 771,
                                 vis.depthIgnore), center, angle, scale,
-                        a / Math.max(1.0F, aspects.size() / 2.0F), 0, frame, aspect.getColor());
+                        a / Math.max(1.0F, aspects.size() / 2.0F), 0, frame, aspect.getColor(),
+                        billboard);
                 count++;
             }
             average /= Math.max(1, aspects.size());
@@ -193,15 +213,15 @@ public final class AuraNodeRenderHelper {
                 }
             }
             submitStrip(poseStack, collector, nodeLayer(additive, vis.depthIgnore),
-                    center, angle, scale, alpha, strip, frame, 0xFFFFFF);
+                    center, angle, scale, alpha, strip, frame, 0xFFFFFF, billboard);
         } else {
 
             submitStrip(poseStack, collector, nodeLayer(true, false),
-                    center, 0.0F, 0.5F * size, 0.1F, 1, frame, 0xFFFFFF);
+                    center, 0.0F, 0.5F * size, 0.1F, 1, frame, 0xFFFFFF, billboard);
         }
     }
 
-    public static void drawFloatyLine(PoseStack poseStack, SubmitNodeCollector collector,
+    public static void drawFloatyLine(PoseStack poseStack, OrderedSubmitNodeCollector collector,
                                       Vector3f from, Vector3f to, int color, float speed, float distance, float width) {
         float r = ((color >> 16) & 0xFF) / 255.0F;
         float g = ((color >> 8) & 0xFF) / 255.0F;
@@ -264,7 +284,7 @@ public final class AuraNodeRenderHelper {
         }
     }
 
-    public static void drawDrainBeam(PoseStack poseStack, SubmitNodeCollector collector,
+    public static void drawDrainBeam(PoseStack poseStack, OrderedSubmitNodeCollector collector,
                                       BlockPos nodePos, Vector3f center, net.minecraft.world.entity.Entity target,
                                       Aspect aspect, long gameTime, long lastTapGameTime,
                                       float partialTicks) {
@@ -331,9 +351,13 @@ public final class AuraNodeRenderHelper {
 
     // NEOFORGE_PORT: Forge renderStrip math verbatim; emission via one
     // submitCustomGeometry (same quad, same UV/color/light/normal values).
-    private static void submitStrip(PoseStack poseStack, SubmitNodeCollector collector,
+    // NEOFORGE_PORT (26.3): billboard == null — биллборд на мировую камеру
+    // (старое поведение); не-null (PiP) — квад разворачивается этим кварном
+    // в плоскость вьюера picture-in-picture.
+    private static void submitStrip(PoseStack poseStack, OrderedSubmitNodeCollector collector,
                                     RenderType layer, Vector3f center,
-                                    float angle, float scale, float alpha, int strip, int frame, int color) {
+                                    float angle, float scale, float alpha, int strip, int frame, int color,
+                                    @Nullable Quaternionf billboard) {
         float r = ((color >> 16) & 0xFF) / 255.0F;
         float g = ((color >> 8) & 0xFF) / 255.0F;
         float b = (color & 0xFF) / 255.0F;
@@ -342,10 +366,14 @@ public final class AuraNodeRenderHelper {
         float v0 = strip / (float) FRAMES;
         float v1 = (strip + 1.0F) / (float) FRAMES;
         Quaternionf cam = new Quaternionf();
-        try {
-            cam.set(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
-        } catch (Exception ignored) {
-            cam.identity();
+        if (billboard != null) {
+            cam.set(billboard);
+        } else {
+            try {
+                cam.set(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
+            } catch (Exception ignored) {
+                cam.identity();
+            }
         }
 
         float[][] corners = {{-scale, -scale}, {-scale, scale}, {scale, scale}, {scale, -scale}};
@@ -387,7 +415,7 @@ public final class AuraNodeRenderHelper {
      * vertex) as the identical triangle list: same triangles, same winding,
      * same per-vertex values, fullbright, Y-up normals (as in stripVertex).
      */
-    private static void emitStrip(PoseStack poseStack, SubmitNodeCollector collector,
+    private static void emitStrip(PoseStack poseStack, OrderedSubmitNodeCollector collector,
                                   RenderType layer, java.util.List<float[]> strip) {
         if (strip.size() < 3) {
             return;

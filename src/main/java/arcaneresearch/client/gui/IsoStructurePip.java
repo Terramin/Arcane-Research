@@ -7,22 +7,33 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent;
+import org.joml.Quaternionf;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.crafting.Part;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 
 /**
@@ -138,7 +149,15 @@ public final class IsoStructurePip {
                 for (int l = 0; l < xSize; l++) {
                     for (int w = 0; w < zSize; w++) {
                         BlockState state = access.getBlockState(new BlockPos(l, h, w));
-                        if (state.isAir()) {
+                        // NEOFORGE_PORT: клетка аура-ноды чертежа пуста (AIR
+                        // вместо стекла-заглушки), но её светящийся оверлей
+                        // рисуется на этом же месте — учитываем её в
+                        // footprint, иначе PiP-бокс клипает свечение по краям.
+                        // Маппинг слоёв тот же, что в рендере ниже:
+                        // structure[y] ← parts[ySize - 1 - y].
+                        Part part = parts != null ? parts[ySize - 1 - h][l][w] : null;
+                        boolean nodeOverlay = part != null && BlueprintBlockAccess.hasNodeOverlay(part);
+                        if (state.isAir() && !nodeOverlay) {
                             continue;
                         }
                         any = true;
@@ -154,8 +173,15 @@ public final class IsoStructurePip {
             if (!any) {
                 return null;
             }
-            double wu = maxPx - minPx + 1.0;
-            double hu = maxPy - minPy + 1.0;
+            // NEOFORGE_PORT (26.3): PiP-текстура жёстко клипает всё вне бокса.
+            // Раньше бокс считался только по углам клеток с допуском +1, а
+            // проекция куба гексагональна и выходит за углы: по px — ±A, по
+            // py — в сумме на C+2B (≈1.5 высоты клетки в проекции). В
+            // 1.20.1 Forge это не резалось (рисование шло свободно на экран),
+            // в PiP поэтому обрезались низ/верх модели. Бокс расширен
+            // симметрично на полный вылет, прежнее центрирование не тронуто.
+            double wu = (maxPx - minPx + 1.0) + 2 * A;
+            double hu = (maxPy - minPy + 1.0) + C + 2 * B;
             float s;
             if (boxW <= 0.0f || boxH <= 0.0f) {
                 // NEOFORGE_PORT (26.3): fixed per-block scale (1.20.1 used a fixed scale, no box fit).
@@ -295,30 +321,91 @@ public final class IsoStructurePip {
 
             // Loop and gate identical to the 1.20.1 blueprint (slice build-up
             // via access.getBlockState) and to the 1:1 port it replaces.
+            // NEOFORGE_PORT: нода рисуется и в пустой клетке (AIR вместо
+            // стекла-заглушки), но скрытые срезом слои гасятся вместе с
+            // блоками (access.isHiddenBySlice), как в 1.20.1 Forge.
+            // NEOFORGE_PORT (26.3 order): светящийся вихрь ноды в 1.20.1
+            // Forge падал в bufferSource() и флашнулся поверх всего; в
+            // submit-системе всё лежит в order(0), и геометрия, рисуемая
+            // в поздней фазе блоков, затирала вихрь непрозрачными лицами.
+            // order(1) рисуется после order(0).
+            OrderedSubmitNodeCollector nodeCollector = submitNodeCollector.order(1);
+            // NEOFORGE_PORT (26.3 pip): биллборд под камеру PiP. В мире квад
+            // фейчит мировую камеру; в изометрии мировой камеры нет, поэтому
+            // кварн отматывает разворот кадра: (Rx·Ry)⁻¹ = Ry(+45)·Rx(-25), и
+            // квад ложится в плоскость вьюера — как биллборд в 1.20.1 Forge.
+            Quaternionf pipBillboard = new Quaternionf(Axis.YP.rotationDegrees(45.0f))
+                    .mul(new Quaternionf(Axis.XP.rotationDegrees(-25.0f)));
             for (int h = 0; h < state.ySize; h++) {
                 for (int l = 0; l < state.xSize; l++) {
                     for (int w = 0; w < state.zSize; w++) {
                         BlockState blockState = state.access.getBlockState(new BlockPos(l, h, w));
-                        if (blockState.isAir()) {
-                            continue;
+                        // structure cell (l,h,w) comes from
+                        // parts[ySize - 1 - h][l][w] (BlueprintBlockAccess
+                        // constructor mapping); true aura node swirl.
+                        Part part = state.parts != null ? state.parts[state.ySize - 1 - h][l][w] : null;
+                        if (!blockState.isAir()) {
+                            poseStack.pushPose();
+                            poseStack.translate(l, h, w);
+                            if (BlueprintBlockAccess.isBerRendered(blockState)) {
+                                // Блоки без статической модели рендерим как в
+                                // мире — через их блок-ентити рендерер.
+                                this.submitBlockEntity(blockState, poseStack, submitNodeCollector);
+                            } else {
+                                this.blockModelResolver.update(this.blockModel, blockState, DISPLAY_CONTEXT);
+                                // submitMultiLayer: per-quad render types, so the
+                                // translucent node surrogate glass renders like the
+                                // 1.20.1 renderSingleBlock path did.
+                                this.blockModel.submitMultiLayer(poseStack, submitNodeCollector,
+                                        LIGHT_FULLBRIGHT, OverlayTexture.NO_OVERLAY, 0);
+                            }
+                            poseStack.popPose();
                         }
-                        poseStack.pushPose();
-                        poseStack.translate(l, h, w);
-                        this.blockModelResolver.update(this.blockModel, blockState, DISPLAY_CONTEXT);
-                        // submitMultiLayer: per-quad render types, so the
-                        // translucent node surrogate glass renders like the
-                        // 1.20.1 renderSingleBlock path did.
-                        this.blockModel.submitMultiLayer(poseStack, submitNodeCollector,
-                                LIGHT_FULLBRIGHT, OverlayTexture.NO_OVERLAY, 0);
-                        if (state.parts != null) {
-                            // structure cell (l,h,w) comes from
-                            // parts[ySize - 1 - h][l][w] (BlueprintBlockAccess
-                            // constructor mapping); true aura node swirl.
-                            BlueprintBlockAccess.renderNodeOverlay(poseStack, submitNodeCollector,
-                                    state.parts[state.ySize - 1 - h][l][w]);
+                        if (part != null && !state.access.isHiddenBySlice(h)) {
+                            poseStack.pushPose();
+                            poseStack.translate(l, h, w);
+                            BlueprintBlockAccess.renderNodeOverlay(poseStack, nodeCollector, part, pipBillboard);
+                            poseStack.popPose();
                         }
-                        poseStack.popPose();
                     }
+                }
+            }
+        }
+
+        /**
+         * NEOFORGE_PORT: аналог 1.20.1 Forge-пути, где такие блоки рисовались
+         * тем же {@code renderSingleBlock}-пайплайном, но с ALTERNATE-моделью
+         * блок-ентити; в 26.3 берётся сам рендерер блок-ентити (render-state
+         * пайплайн). Блок-ентити создаётся без уровня, поэтому
+         * {@code extractBase} даёт fullbright-свет, а публичный флаг
+         * {@code hasLevel} (все BER-стейты мода гейтят submit по нему)
+         * выставляется рефлексией, как настоящий.
+         */
+        private void submitBlockEntity(BlockState blockState, PoseStack poseStack,
+                                       SubmitNodeCollector submitNodeCollector) {
+            if (blockState.getBlock() instanceof EntityBlock entityBlock) {
+                try {
+                    BlockEntity blockEntity = entityBlock.newBlockEntity(BlockPos.ZERO, blockState);
+                    if (blockEntity == null) {
+                        return;
+                    }
+                    BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer =
+                            Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+                    if (renderer == null) {
+                        return;
+                    }
+                    BlockEntityRenderState renderState = renderer.createRenderState();
+                    renderer.extractRenderState(blockEntity, renderState, 0.0f, Vec3.ZERO, null);
+                    try {
+                        Field hasLevel = renderState.getClass().getField("hasLevel");
+                        if (!Modifier.isStatic(hasLevel.getModifiers())
+                                && hasLevel.getType() == boolean.class) {
+                            hasLevel.setBoolean(renderState, true);
+                        }
+                    } catch (ReflectiveOperationException ignored) {
+                    }
+                    renderer.submit(renderState, poseStack, submitNodeCollector, new CameraRenderState());
+                } catch (Exception ignored) {
                 }
             }
         }

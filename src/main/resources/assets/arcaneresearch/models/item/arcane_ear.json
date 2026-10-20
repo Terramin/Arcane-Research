@@ -1,3 +1,9 @@
 {
-  "parent": "arcaneresearch:block/arcane_ear_off"
+  "parent": "arcaneresearch:block/arcane_ear_off",
+  "display": {
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [0, 3.9, 0]
+    }
+  }
 }

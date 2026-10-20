@@ -17,6 +17,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.crafting.Part;
 import arcaneresearch.client.gui.BlueprintBlockAccess;
+import arcaneresearch.client.gui.IsoStructurePip;
 import arcaneresearch.compat.jei.JeiResearch;
 import arcaneresearch.compat.jei.ArcaneresearchJEIPlugin;
 import arcaneresearch.init.ModItems;
@@ -105,8 +106,7 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     // NEOFORGE_PORT (26.3 render rework, Forge logic preserved): GuiGraphicsExtractor.pose()
     // is now a 2D Matrix3x2f (no pushPose/translate3D/scale3D/mulPose/bufferSource/flush),
     // and BlockRenderer.renderSingleBlock is gone. Slots + slice animation state stay 1:1;
-    // isometric preview is a TODO for the render phase (Thaumaturge uses
-    // addPicturesInPictureState(BlockPreviewRenderState) — own implementation, not copied).
+    // the isometric preview goes through our own PiP renderer (IsoStructurePip).
     @Override
     public void draw(ArcaneresearchApi.BluePrint recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         if (access == null || currentRecipe != recipe) {
@@ -117,7 +117,23 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
         if (access != null) {
             access.sliceLine = (int) ((System.currentTimeMillis() / 1000) % (access.getHeight() + 1));
         }
-        // TODO_PORT (26.x render): submit isometric block preview via render-state API.
+        // NEOFORGE_PORT (26.3): Forge isometric preview (GuiGraphics.pose() 3D
+        // + BlockRenderDispatcher.renderSingleBlock, both removed in 26.x) is
+        // a true picture-in-picture now — same route as the Thaumonomicon
+        // blueprint (see IsoStructurePip). Anchor/scale 1:1 with Forge:
+        // cube-centre projects onto (CX, CY), scale max(6, 26 - 2 * maxDim).
+        if (access != null && recipe.getParts() != null) {
+            Part[][][] parts = recipe.getParts();
+            int ySize = parts.length;
+            int xSize = parts[0].length;
+            int zSize = parts[0][0].length;
+            float scale = Math.max(6f, 26 - Math.max(ySize, Math.max(xSize, zSize)) * 2);
+            IsoStructurePip.submitFixedScale(guiGraphics, access, parts,
+                    xSize, ySize, zSize, CX, CY, scale);
+        }
+        // NEOFORGE_PORT (26.3 render rework, Forge logic preserved): GuiGraphicsExtractor.pose()
+        // is now a 2D Matrix3x2f (no pushPose/translate3D/scale3D/mulPose/bufferSource/flush),
+        // and BlockRenderer.renderSingleBlock is gone. Slots + slice animation state stay 1:1.
         JeiResearch.drawTopRight(guiGraphics, recipe.getResearch(), WIDTH);
     }
 

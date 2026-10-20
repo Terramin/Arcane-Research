@@ -198,22 +198,26 @@ public class NodeSpecialRenderer implements SpecialModelRenderer<NodeSpecialRend
         float v1 = (strip + 1.0F) / (float) FRAMES;
         float[][] corners = {{-scale, -scale}, {-scale, scale}, {scale, scale}, {scale, -scale}};
         float[][] uvs = {{u1, v1}, {u1, v0}, {u0, v0}, {u0, v1}};
-        collector.submitCustomGeometry(poseStack, layer, (pose, consumer) -> {
-            // NEOFORGE_PORT (hand billboard): screen axes come from the FINAL
-            // pose delivered here, not the submit-time stack. First-person
-            // hand transforms are composed after submit, so the old eager
-            // inverse glued the quad to the hand (it rotated with the camera
-            // instead of facing the screen). Where final == submit-time
-            // (GUI/ground/fixed) this is exactly the old math.
+            // NEOFORGE_PORT (26.3, паритет биллборда 1.20.1 Forge):
+            // 1.20.1 Forge инвертировал только позу item-стека, и квад
+            // смотрел на вьювер в любом контексте. В 26.3 вью-поворот камеры
+            // сидит в sink model-view (и в мире, и в руке первого лица:
+            // renderItemInHand делает modelViewStack.mul(viewRotationMatrix),
+            // а cam.rot заходит в poseStack — они взаимно гасятся при чтении
+            // текущего стека на момент submit). Берём базис из инверсии
+            // полной эффективной цепочки (sink · поза)⁻¹: для GUI sink
+            // тождественен и матрица совпадает со старым трюком.
             Vector3f right = new Vector3f(1.0F, 0.0F, 0.0F);
             Vector3f up = new Vector3f(0.0F, 1.0F, 0.0F);
             Vector3f face = new Vector3f(0.0F, 0.0F, 1.0F);
             try {
-                org.joml.Matrix4f inv = new org.joml.Matrix4f(pose.pose());
-                inv.invert();
-                inv.transformDirection(right);
-                inv.transformDirection(up);
-                inv.transformDirection(face);
+                org.joml.Matrix4f eff = new org.joml.Matrix4f(
+                        com.mojang.blaze3d.systems.RenderSystem.getModelViewStack());
+                eff.mul(poseStack.last().pose());
+                eff.invert();
+                eff.transformDirection(right);
+                eff.transformDirection(up);
+                eff.transformDirection(face);
                 right.normalize();
                 up.normalize();
                 face.normalize();
@@ -222,18 +226,22 @@ public class NodeSpecialRenderer implements SpecialModelRenderer<NodeSpecialRend
                 up.set(0.0F, 1.0F, 0.0F);
                 face.set(0.0F, 0.0F, 1.0F);
             }
-            for (int i = 0; i < 4; i++) {
-                float px = center.x() + right.x() * corners[i][0] + up.x() * corners[i][1];
-                float py = center.y() + right.y() * corners[i][0] + up.y() * corners[i][1];
-                float pz = center.z() + right.z() * corners[i][0] + up.z() * corners[i][1];
-                consumer.addVertex(pose, px, py, pz)
-                        .setColor(r, g, b, alpha)
-                        .setUv(uvs[i][0], uvs[i][1])
-                        .setOverlay(OverlayTexture.NO_OVERLAY)
-                        .setLight(FULLBRIGHT)
-                        .setNormal(pose, face.x(), face.y(), face.z());
-            }
-        });
+            final Vector3f fRight = right;
+            final Vector3f fUp = up;
+            final Vector3f fFace = face;
+            collector.submitCustomGeometry(poseStack, layer, (pose, consumer) -> {
+                for (int i = 0; i < 4; i++) {
+                    float px = center.x() + fRight.x() * corners[i][0] + fUp.x() * corners[i][1];
+                    float py = center.y() + fRight.y() * corners[i][0] + fUp.y() * corners[i][1];
+                    float pz = center.z() + fRight.z() * corners[i][0] + fUp.z() * corners[i][1];
+                    consumer.addVertex(pose, px, py, pz)
+                            .setColor(r, g, b, alpha)
+                            .setUv(uvs[i][0], uvs[i][1])
+                            .setOverlay(OverlayTexture.NO_OVERLAY)
+                            .setLight(FULLBRIGHT)
+                            .setNormal(pose, fFace.x(), fFace.y(), fFace.z());
+                }
+            });
     }
 
     public record Unbaked(boolean jar) implements SpecialModelRenderer.Unbaked<NodeData> {
