@@ -156,7 +156,12 @@ public class ConfigAspects {
     }
 
     public static AspectList getPotionAspects(ItemStack itemstack, RecipeManager recipeManager) {
-        return getPotionAspects(itemstack, recipeManager.getRecipes());
+        // NEOFORGE_PORT (26.3) FIX: during world creation (DefaultDataComponentsBound phase
+        // in ReloadableServerResources) server may already be reachable but its RecipeManager
+        // is still null -> NPE-less fallback to empty traversal (MAGIC 5 / ALCHEMY 5), which
+        // is the pre-fix behavior at setup time; the real manager is used once the server
+        // fully starts (ServerStartingEvent path / runtime).
+        return getPotionAspects(itemstack, recipeManager != null ? recipeManager.getRecipes() : java.util.List.of());
     }
 
     // NEOFORGE_PORT (26.3) FIX: 1.20.1 Forge had static PotionBrewing on BOTH sides, so a

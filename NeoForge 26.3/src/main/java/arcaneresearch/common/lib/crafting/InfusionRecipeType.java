@@ -59,9 +59,11 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         // Forge also filtered parsed ingredients with if (!ingredient.isEmpty()) before
         // storing them: an empty tag entry in JSON is skipped, not kept as an
         // always-failing component (RecipeMatcher would make the recipe unmatchable).
+        // 26.3: ingredient.isEmpty() CANNOT be called here - recipe JSONs are decoded
+        // during registry loading where item tags are not bound yet ("Trying to access
+        // unbound tag"); the filter moved to effectiveComponents() (first gameplay use).
         NonNullList<Ingredient> merged = NonNullList.create();
-        merged.addAll((components.isPresent() ? components.get() : ingredients.orElse(List.of()))
-                .stream().filter(ingredient -> !ingredient.isEmpty()).toList());
+        merged.addAll(components.isPresent() ? components.get() : ingredients.orElse(List.of()));
         return new InfusionRecipeType(group, centralItem, merged, aspects, result, research, instability);
     }));
 
@@ -74,6 +76,10 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
     private final String group;
     private final Ingredient centralItem;
     private final NonNullList<Ingredient> components;
+    // NEOFORGE_PORT (26.3): decode-time isEmpty() filter removed (tags unbound during
+    // registry loading); this is the lazily-built filtered list, computed on first
+    // gameplay access when item tags are bound.
+    private NonNullList<Ingredient> boundComponents;
     private final AspectList aspects;
     // NEOFORGE_PORT 26.3: result is a template (vanilla SingleItemRecipe/ShapedRecipe
     // pattern). Null only for InfusionEnchantmentRecipe (no static output).
@@ -125,7 +131,24 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
             return false;
         }
 
-        return net.neoforged.neoforge.common.util.RecipeMatcher.findMatches(pedestalItems, components) != null;
+        return net.neoforged.neoforge.common.util.RecipeMatcher.findMatches(pedestalItems, effectiveComponents()) != null;
+    }
+
+    // NEOFORGE_PORT (26.3): reproduce Forge's decode-time empty-ingredient filter lazily.
+    // Empty tag entries are skipped, not kept (they would make the recipe unmatchable).
+    // Safe to memoize: Ingredient instances are per decoded recipe (no shared mutation).
+    private NonNullList<Ingredient> effectiveComponents() {
+        NonNullList<Ingredient> effective = this.boundComponents;
+        if (effective == null) {
+            effective = NonNullList.create();
+            for (Ingredient ingredient : this.components) {
+                if (!ingredient.isEmpty()) {
+                    effective.add(ingredient);
+                }
+            }
+            this.boundComponents = effective;
+        }
+        return effective;
     }
 
     @Override
@@ -183,7 +206,8 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
     }
 
     public NonNullList<Ingredient> getComponents() {
-        return components;
+        // Gameplay-time accessor (JEI/recipe display/matching): safe to filter here.
+        return effectiveComponents();
     }
 
     public AspectList getAspects() {

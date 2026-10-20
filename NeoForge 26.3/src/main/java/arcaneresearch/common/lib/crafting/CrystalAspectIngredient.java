@@ -1,6 +1,7 @@
 package arcaneresearch.common.lib.crafting;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -102,7 +103,17 @@ public class CrystalAspectIngredient implements ICustomIngredient {
 
     @Override
     public Stream<Holder<Item>> items() {
-        return Stream.of(displayStack(aspect).getItem().builtInRegistryHolder());
+        // NEOFORGE_PORT (26.3): must NOT build an ItemStack here. Vanilla calls items()
+        // via Ingredient.updateCustomIngredientValues() during registry/dataset loading
+        // (Ingredient.isEmpty while decoding recipe JSONs), where item components are
+        // not bound yet -> "Components not bound yet" NPE made every
+        // arcaneresearch:infusion/* recipe fail to parse. Only the holder is needed.
+        Item crystalItem = BuiltInRegistries.ITEM.getValue(
+                Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "crystal_essence"));
+        if (crystalItem == null) {
+            return Stream.empty();
+        }
+        return Stream.of(crystalItem.builtInRegistryHolder());
     }
 
     @Override
