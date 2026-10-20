@@ -182,8 +182,9 @@ public class BlockCrucible extends BlockTCDevice {
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
         // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
         // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Tile map removal runs last
-        // in LevelChunk.setBlockState, so the crucible is still present here.
+        // already in the chunk: level.getBlockState(pos)).
+        // NEOFORGE_PORT (26.3): LevelChunk.setBlockState removes the tile BEFORE this hook, so the
+        // lookup below finds nothing; the spill runs in TileCrucible.preRemoveSideEffects.
         // Spill kept BEFORE super to match Forge onRemove order (spill, then
         // super.onRemove which updates neighbours/comparators).
         if (!state.is(level.getBlockState(pos).getBlock())) {

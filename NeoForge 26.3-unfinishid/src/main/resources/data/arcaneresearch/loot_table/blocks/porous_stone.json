@@ -1,54 +1,548 @@
-{ "type": "minecraft:block", "pools": [ { "rolls": 1, "entries": [ { "type": "minecraft:alternatives", "children": [ { "type": "minecraft:item", "conditions": [{ "condition": "minecraft:match_tool", "predicate": { "enchantments": [{ "enchantment": "minecraft:silk_touch", "levels": { "min": 1 } }] } }], "name": "arcaneresearch:porous_stone" }, { "type": "minecraft:item", "conditions": [{ "condition": "minecraft:inverted", "term": { "condition": "minecraft:table_bonus", "enchantment": "minecraft:fortune", "chances": [0.1333, 0.2, 0.2667, 0.3333] } }], "name": "minecraft:gravel" } ] } ] }, { "rolls": 1, "conditions": [{ "condition": "minecraft:table_bonus", "enchantment": "minecraft:fortune", "chances": [0.1333, 0.2, 0.2667, 0.3333] }], "entries": [
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"aer\",amount:20}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"terra\",amount:20}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"ignis\",amount:20}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"aqua\",amount:20}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"ordo\",amount:20}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"perditio\",amount:20}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"vacuos\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"lux\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"motus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"gelum\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"vitreus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"metallum\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"victus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"mortuus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"potentia\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"permutatio\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"praecantatio\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"auram\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"alkimia\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"tenebrae\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"alienis\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"volatus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"herba\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"instrumentum\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"fabrico\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"machina\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"vinculum\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"spiritus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"cognitio\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"sensus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"aversio\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"praemunio\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"desiderium\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"exanimis\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"bestia\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"humanus\",amount:1}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 1, "functions": [{ "function": "minecraft:set_components", "components": { "minecraft:custom_data": "{Aspects:[{key:\"vitium\",amount:100}]}" } }], "name": "arcaneresearch:crystal_essence" },
-        { "type": "minecraft:item", "weight": 20, "name": "arcaneresearch:amber" },
-        { "type": "minecraft:item", "weight": 20, "name": "arcaneresearch:cluster_iron" },
-        { "type": "minecraft:item", "weight": 10, "name": "arcaneresearch:cluster_gold" },
-        { "type": "minecraft:item", "weight": 10, "name": "arcaneresearch:cluster_cinnabar" },
-        { "type": "minecraft:item", "weight": 10, "name": "arcaneresearch:cluster_copper" },
-        { "type": "minecraft:item", "weight": 10, "name": "arcaneresearch:cluster_tin" },
-        { "type": "minecraft:item", "weight": 8, "name": "arcaneresearch:cluster_silver" },
-        { "type": "minecraft:item", "weight": 10, "name": "arcaneresearch:cluster_lead" },
-        { "type": "minecraft:item", "weight": 30, "name": "minecraft:clay_ball" },
-        { "type": "minecraft:item", "weight": 15, "name": "minecraft:quartz" },
-        { "type": "minecraft:item", "weight": 8, "name": "minecraft:redstone" },
-        { "type": "minecraft:item", "weight": 4, "name": "minecraft:emerald" },
-        { "type": "minecraft:item", "weight": 3, "name": "minecraft:prismarine_shard" },
-        { "type": "minecraft:item", "weight": 3, "name": "minecraft:prismarine_crystals" },
-        { "type": "minecraft:item", "weight": 2, "name": "minecraft:diamond" }
-] } ] }
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:match_tool",
+                "predicate": {
+                  "predicates": {
+                    "minecraft:enchantments": [
+                      {
+                        "enchantments": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "name": "arcaneresearch:porous_stone"
+            },
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:inverted",
+                "term": {
+                  "type": "minecraft:table_bonus",
+                  "enchantment": "minecraft:fortune",
+                  "chances": [
+                    0.1333,
+                    0.2,
+                    0.2667,
+                    0.3333
+                  ]
+                }
+              },
+              "name": "minecraft:gravel"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:table_bonus",
+        "enchantment": "minecraft:fortune",
+        "chances": [
+          0.1333,
+          0.2,
+          0.2667,
+          0.3333
+        ]
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"aer\",amount:20}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"terra\",amount:20}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"ignis\",amount:20}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"aqua\",amount:20}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"ordo\",amount:20}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"perditio\",amount:20}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"vacuos\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"lux\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"motus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"gelum\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"vitreus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"metallum\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"victus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"mortuus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"potentia\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"permutatio\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"praecantatio\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"auram\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"alkimia\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"tenebrae\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"alienis\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"volatus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"herba\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"instrumentum\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"fabrico\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"machina\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"vinculum\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"spiritus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"cognitio\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"sensus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"aversio\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"praemunio\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"desiderium\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"exanimis\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"bestia\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"humanus\",amount:1}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 1,
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "minecraft:custom_data": "{Aspects:[{key:\"vitium\",amount:100}]}"
+            }
+          },
+          "name": "arcaneresearch:crystal_essence"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 20,
+          "name": "arcaneresearch:amber"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 20,
+          "name": "arcaneresearch:cluster_iron"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "arcaneresearch:cluster_gold"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "arcaneresearch:cluster_cinnabar"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "arcaneresearch:cluster_copper"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "arcaneresearch:cluster_tin"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 8,
+          "name": "arcaneresearch:cluster_silver"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "arcaneresearch:cluster_lead"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 30,
+          "name": "minecraft:clay_ball"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 15,
+          "name": "minecraft:quartz"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 8,
+          "name": "minecraft:redstone"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 4,
+          "name": "minecraft:emerald"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:prismarine_shard"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 3,
+          "name": "minecraft:prismarine_crystals"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 2,
+          "name": "minecraft:diamond"
+        }
+      ]
+    }
+  ]
+}

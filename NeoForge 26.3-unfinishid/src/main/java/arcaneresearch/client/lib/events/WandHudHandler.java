@@ -159,8 +159,8 @@ public class WandHudHandler {
         if (this.lastItem == null || !ItemStack.isSameItem(picked, this.lastItem)
                 || time - this.lastTradeSync > 1000L) {
             amount = 0;
-            for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-                ItemStack is = player.getInventory().getItem(slot);
+            // NEOFORGE_PORT (26.3): Forge counted inventory.items only (no armor/offhand).
+            for (ItemStack is : player.getInventory().getNonEquipmentItems()) {
                 if (!is.isEmpty() && ItemStack.isSameItem(is, picked)) {
                     amount += is.getCount();
                 }

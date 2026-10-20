@@ -108,7 +108,9 @@ public class WandManager {
         }
         // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access via getItem (same order).
         net.minecraft.world.entity.player.Inventory inv = player.getInventory();
-        for (int a = inv.getContainerSize() - 1; a >= 0; a--) {
+        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (36 main slots); getContainerSize()
+        // also spans armor/offhand, so bound by the main list (same indices for getItem).
+        for (int a = inv.getNonEquipmentItems().size() - 1; a >= 0; a--) {
             ItemStack stack = inv.getItem(a);
             if (!stack.isEmpty() && stack.getItem() instanceof IWand wand
                     && wand.consumeAllVis(stack, player, cost, false, true)) {
@@ -153,7 +155,8 @@ public class WandManager {
         }
         // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed getItem (same order/indices).
         net.minecraft.world.entity.player.Inventory inv = player.getInventory();
-        for (int a = 0; a < inv.getContainerSize(); a++) {
+        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (36 main slots) only.
+        for (int a = 0; a < inv.getNonEquipmentItems().size(); a++) {
             item = inv.getItem(a);
             if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
                 foci.put(basic.getSortingHelper(item), a);

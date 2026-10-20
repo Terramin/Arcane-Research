@@ -69,6 +69,21 @@ public class ArcaneresearchMaterials {
                         Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, assetPath)));
     }
 
+    // NEOFORGE_PORT (26.3): Forge getDurabilityForType() was DURABILITY[type.ordinal()] * factor
+    // with DURABILITY = {13, 15, 16, 11} and ArmorItem.Type order HELMET, CHESTPLATE, LEGGINGS,
+    // BOOTS (helmet 13x, chest 15x, legs 16x, boots 11x). Properties.humanoidArmor() uses
+    // vanilla ArmorType units (helmet 11x, chest 16x, legs 15x, boots 13x) -> armor items must
+    // re-apply .durability(forgeArmorDurability(material, type)) AFTER humanoidArmor(...).
+    private static final int[] FORGE_ARMOR_DURABILITY = {13, 15, 16, 11};
+
+    public static int forgeArmorDurability(ArmorMaterial material, ArmorType type) {
+        int idx = type.ordinal();
+        if (idx < FORGE_ARMOR_DURABILITY.length) {
+            return FORGE_ARMOR_DURABILITY[idx] * material.durability();
+        }
+        return type.getDurability(material.durability());
+    }
+
     public static final ArmorMaterial ARMORMAT_THAUMIUM = armorMat(
             25, new int[]{2, 5, 6, 2}, 25, SoundEvents.ARMOR_EQUIP_IRON,
             1.0F, 0.0F, repairTag("repairs_thaumium"), "thaumium");

@@ -43,9 +43,9 @@ public class ItemEssentiaContainer extends ItemTC implements IEssentiaContainerI
 
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
-        CompoundTag tag = new CompoundTag();
-        aspects.writeToNBT(tag);
-        CustomData.set(DataComponents.CUSTOM_DATA, stack, tag);
+        // NEOFORGE_PORT (26.3): Forge wrote into the EXISTING root tag (other keys kept);
+        // CustomData.update merges the same way instead of replacing the whole component.
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, aspects::writeToNBT);
     }
 
     @Override

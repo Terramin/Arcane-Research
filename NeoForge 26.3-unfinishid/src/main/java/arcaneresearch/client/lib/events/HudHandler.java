@@ -75,8 +75,13 @@ public class HudHandler {
 
         float b = prevVignetteBrightness
                 * (1.0f + Mth.sin(mc.player.tickCount / 2.0f) * 0.1f);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, VIGNETTE_TEX, 0, 0, 0, 0, 0,
-                screenWidth, screenHeight, screenWidth, screenHeight);
+        // NEOFORGE_PORT (26.3): the old call shifted every arg by one (width 0 -> drew
+        // nothing). Forge: blend ZERO/ONE_MINUS_SRC_COLOR + shader color b = vanilla
+        // RenderPipelines.VIGNETTE with color (b, b, b).
+        float bc = Mth.clamp(b, 0.0f, 1.0f);
+        graphics.blit(RenderPipelines.VIGNETTE, VIGNETTE_TEX, 0, 0, 0.0f, 0.0f,
+                screenWidth, screenHeight, screenWidth, screenHeight,
+                net.minecraft.util.ARGB.colorFromFloat(1.0f, bc, bc, bc));
     };
     public static final GuiLayer ARCANERESEARCH_HUD = (graphics, deltaTracker) -> {
         Minecraft mc = Minecraft.getInstance();
@@ -173,8 +178,9 @@ public class HudHandler {
 
     @SubscribeEvent
     public static void registerOverlays(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcaneresearch_hud"), ARCANERESEARCH_HUD);
-        event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcaneresearch_warp_vignette"), WARP_VIGNETTE);
+        // NEOFORGE_PORT (26.3): Forge registerAboveAll (HUD, then vignette on top of everything).
+        event.registerAboveAll(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcaneresearch_hud"), ARCANERESEARCH_HUD);
+        event.registerAboveAll(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcaneresearch_warp_vignette"), WARP_VIGNETTE);
         Arcaneresearch.LOGGER.info("Registered Arcaneresearch HUD overlay");
     }
 
@@ -184,7 +190,9 @@ public class HudHandler {
 
         // NEOFORGE_PORT: 26.3 blit order is (u, v, screen, src, tex); Forge 11-param
         // order was (screen, u, v, ...) — swapped to match (was invisible 0x0 quad).
-        graphics.blit(RenderPipelines.GUI_TEXTURED, BOOK, ww - 17, hh - 17, 0, 0, 16, 16, 32, 32, 32, 32);
+        // NEOFORGE_PORT (26.3): Forge shader alpha kgFade / 40 (book fades in/out) -> ARGB.
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BOOK, ww - 17, hh - 17, 0, 0, 16, 16, 32, 32, 32, 32,
+                net.minecraft.util.ARGB.white(Mth.clamp(kgFade / 40f, 0f, 1f)));
         int depth = 0;
         for (KnowledgeGainTracker current : knowledgeGainTrackers.toArray(new KnowledgeGainTracker[0])) {
             Random rand = new Random(current.seed);
@@ -280,10 +288,14 @@ public class HudHandler {
             graphics.pose().pushMatrix();
             graphics.pose().translate(5,  start);
             graphics.pose().scale(1f,  vis);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 0, 0, 88, 56, 8, 64, 256, 256);
+            // NEOFORGE_PORT (26.3): Forge tints restored (shader color -> ARGB; additive
+            // SRC_ALPHA/ONE shimmer -> TCRenderTypes.GUI_TEXTURED_ADDITIVE).
+            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 0, 0, 88, 56, 8, 64, 256, 256,
+                    net.minecraft.util.ARGB.colorFromFloat(1f, 0.7f, 0.4f, 0.9f));
             graphics.pose().popMatrix();
 
-            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 5, (int) start, 96, (int) (56 + count % 64), 8, (int) (vis * 64), 256, 256);
+            graphics.blit(arcaneresearch.client.renderers.TCRenderTypes.GUI_TEXTURED_ADDITIVE, HUD_TEXTURE, 5, (int) start, 96, (int) (56 + count % 64), 8, (int) (vis * 64), 256, 256,
+                    net.minecraft.util.ARGB.white(0.5f));
             if (player.isShiftKeyDown()) {
                 graphics.pose().pushMatrix();
                 graphics.pose().translate(16,  start);
@@ -300,10 +312,12 @@ public class HudHandler {
             graphics.pose().pushMatrix();
             graphics.pose().translate(5,  start);
             graphics.pose().scale(1f,  flux);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 0, 0, 88, 56, 8, 64, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 0, 0, 88, 56, 8, 64, 256, 256,
+                    net.minecraft.util.ARGB.colorFromFloat(1f, 0.25f, 0.1f, 0.3f));
             graphics.pose().popMatrix();
 
-            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 5, (int) start, 104, (int) (120 - count2 % 64), 8, (int) (flux * 64), 256, 256);
+            graphics.blit(arcaneresearch.client.renderers.TCRenderTypes.GUI_TEXTURED_ADDITIVE, HUD_TEXTURE, 5, (int) start, 104, (int) (120 - count2 % 64), 8, (int) (flux * 64), 256, 256,
+                    net.minecraft.util.ARGB.colorFromFloat(0.5f, 0.7f, 0.4f, 1f));
             if (player.isShiftKeyDown()) {
                 graphics.pose().pushMatrix();
                 graphics.pose().translate(16,  start - 4);
@@ -382,14 +396,18 @@ public class HudHandler {
 
         graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 1, 1, 152, 0, 20, 76, 256, 256);
 
+        // NEOFORGE_PORT (26.3): Forge per-warp-type shader tints restored as ARGB.
         if (t > 0) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 7, 21 + gap, 200, gap, 8, wt + gap, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 7, 21 + gap, 200, gap, 8, wt + gap, 256, 256,
+                    net.minecraft.util.ARGB.colorFromFloat(1f, 1f, 0.5f, 1f));
         }
         if (s > 0) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 7, 21 + wt + gap, 200, wt + gap, 8, wt + ws + gap, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 7, 21 + wt + gap, 200, wt + gap, 8, wt + ws + gap, 256, 256,
+                    net.minecraft.util.ARGB.colorFromFloat(1f, 0.75f, 0f, 0.75f));
         }
         if (p > 0) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 7, 21 + wt + ws + gap, 200, wt + ws + gap, 8, 48, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 7, 21 + wt + ws + gap, 200, wt + ws + gap, 8, 48, 256, 256,
+                    net.minecraft.util.ARGB.colorFromFloat(1f, 0.5f, 0f, 0.5f));
         }
 
         graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, 1, 1, 176, 0, 20, 76, 256, 256);
@@ -429,7 +447,9 @@ public class HudHandler {
         graphics.pose().pushMatrix();
         graphics.pose().translate(16,  -10);
         graphics.pose().scale(0.5f,  0.5f);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, -4, 35 - loc, 104, 0, 8, loc, 256, 256);
+        // NEOFORGE_PORT (26.3): Forge energy-aspect tint at 0.8 alpha restored as ARGB.
+        graphics.blit(RenderPipelines.GUI_TEXTURED, HUD_TEXTURE, -4, 35 - loc, 104, 0, 8, loc, 256, 256,
+                net.minecraft.util.ARGB.colorFromFloat(0.8f, ac.getRed() / 255f, ac.getGreen() / 255f, ac.getBlue() / 255f));
         graphics.pose().popMatrix();
 
         graphics.pose().pushMatrix();
@@ -482,8 +502,8 @@ public class HudHandler {
         if (lastPickedItem.isEmpty() || !ItemStack.isSameItemSameComponents(picked, lastPickedItem)
                 || gameTime - lastPickedRecountTick > 20) {
             int amount = 0;
-            for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-                ItemStack stack = player.getInventory().getItem(slot);
+            // NEOFORGE_PORT (26.3): Forge counted inventory.items only (no armor/offhand).
+            for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
                 if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, picked)) {
                     amount += stack.getCount();
                 }

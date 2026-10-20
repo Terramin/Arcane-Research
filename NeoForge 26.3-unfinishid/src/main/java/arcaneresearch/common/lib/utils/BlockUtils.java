@@ -36,15 +36,38 @@ public class BlockUtils {
     private static double lastDistance = 0.0;
 
     private static boolean removeBlock(Level level, Player player, BlockPos pos, boolean canHarvest) {
-        // NEOFORGE_PORT: BlockState.onDestroyedByPlayer removed in 26.x; the same
-        // two steps (remove + destroy effect) inline. Drops are spawned by the
-        // caller (harvestBlock) via Block.dropResources, as before.
         BlockState state = level.getBlockState(pos);
-        boolean removed = level.removeBlock(pos, false);
+        // NEOFORGE_PORT (26.3): Forge 1.20.1's IForgeBlock.onDestroyedByPlayer called
+        // playerWillDestroy itself (destroy particles, piglin anger, BLOCK_DESTROY game
+        // event, other half of doors/beds/double plants...). NeoForge 26 moved that call
+        // out to ServerPlayerGameMode.destroyBlock, so make it here, then remove the block
+        // through the (still existing) onDestroyedByPlayer hook like the reference.
+        state.getBlock().playerWillDestroy(level, pos, state, player);
+        boolean removed = state.onDestroyedByPlayer(level, pos, player, player.getMainHandItem().copy(),
+                canHarvest, level.getFluidState(pos));
         if (removed) {
             state.getBlock().destroy(level, pos, state);
         }
         return removed;
+    }
+
+    // NEOFORGE_PORT (26.3): true while harvestBlock runs Block.playerDestroy. In 26.x the
+    // drop path (CommonHooks.handleBlockDrops -> BlockDropsEvent) also pops the block's
+    // XP; in Forge 1.20.1 it dropped none (XP came only from the break event), so
+    // harvestBlock zeroes that XP and pops the reference amount itself.
+    private static boolean suppressDropXp = false;
+
+    @net.neoforged.fml.common.EventBusSubscriber(modid = arcaneresearch.Arcaneresearch.MODID)
+    public static final class HarvestDropXpSuppressor {
+        private HarvestDropXpSuppressor() {
+        }
+
+        @net.neoforged.bus.api.SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
+        public static void onBlockDrops(net.neoforged.neoforge.event.level.BlockDropsEvent event) {
+            if (suppressDropXp) {
+                event.setDroppedExperience(0);
+            }
+        }
     }
 
     public static boolean harvestBlockSkipCheck(Level level, Player player, BlockPos pos) {
@@ -58,27 +81,35 @@ public class BlockUtils {
     public static boolean harvestBlock(Level level, Player player, BlockPos pos,
                                        boolean alwaysDrop, boolean silkOverride, int fortuneOverride, boolean skipEvent) {
 
-        if (level.isClientSide() || !(player instanceof ServerPlayer serverPlayer)) {
+        if (level.isClientSide() || !(player instanceof ServerPlayer serverPlayer)
+                || !(level instanceof ServerLevel serverLevel)) {
             return false;
+        }
+
+        // NEOFORGE_PORT (26.3): ForgeHooks.onBlockBreakEvent -> CommonHooks.fireBlockBreak
+        // (same pre-cancel rules: tool can't destroy block, adventure/spectator). The
+        // NeoForge event no longer carries exp, so compute it as Forge's BreakEvent
+        // constructor did: 0 unless the main-hand tool is correct for drops, else the
+        // block's exp drop for that tool (silk touch -> 0).
+        int exp = 0;
+        if (!skipEvent) {
+            BlockState eventState = level.getBlockState(pos);
+            var breakEvent = net.neoforged.neoforge.common.CommonHooks.fireBlockBreak(
+                    level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos, eventState);
+            if (breakEvent.isCanceled()) {
+                return false;
+            }
+            if (eventState.canHarvestBlock(level, pos, player)) {
+                ItemStack held = player.getMainHandItem();
+                exp = net.minecraft.world.item.enchantment.EnchantmentHelper.processBlockExperience(
+                        serverLevel, held,
+                        eventState.getExpDrop(level, pos, level.getBlockEntity(pos), player, held));
+            }
         }
 
         BlockState state = level.getBlockState(pos);
         BlockEntity blockEntity = level.getBlockEntity(pos);
         Block block = state.getBlock();
-
-        // NEOFORGE_PORT: ForgeHooks.onBlockBreakEvent removed; post BreakBlockEvent
-        // directly (cancel -> abort). It no longer carries exp; compute from the block.
-        int exp = 0;
-        if (!skipEvent) {
-            var breakEvent = new net.neoforged.neoforge.event.level.block.BreakBlockEvent(
-                    level, pos, state, serverPlayer);
-            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(breakEvent);
-            if (breakEvent.isCanceled()) {
-                return false;
-            }
-            exp = block.getExpDrop(state, level, pos, blockEntity, serverPlayer,
-                    player.getMainHandItem());
-        }
 
         if ((block instanceof CommandBlock || block instanceof StructureBlock) && !serverPlayer.canUseGameMasterBlocks()) {
             level.sendBlockUpdated(pos, state, state, 3);
@@ -126,13 +157,19 @@ public class BlockUtils {
                     }
                 }
 
-                // NEOFORGE_PORT: Block.playerDestroy removed in 26.x; drops go
-                // through Block.dropResources (same args, same behavior).
-                Block.dropResources(state, level, pos, blockEntity, player, effectiveTool);
+                // NEOFORGE_PORT (26.3): Block.playerDestroy still exists (BLOCK_MINED stat,
+                // food exhaustion, block overrides like ice -> water); call it as the
+                // reference did, with the drop-path XP suppressed (see suppressDropXp).
+                suppressDropXp = true;
+                try {
+                    block.playerDestroy(serverLevel, serverPlayer, pos, state, blockEntity, effectiveTool);
+                } finally {
+                    suppressDropXp = false;
+                }
             }
         }
 
-        if (!serverPlayer.isCreative() && removed && exp > 0 && level instanceof ServerLevel serverLevel) {
+        if (!serverPlayer.isCreative() && removed && exp > 0) {
             state.getBlock().popExperience(serverLevel, pos, exp);
         }
 
@@ -305,7 +342,9 @@ public class BlockUtils {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
 
-        return block instanceof net.minecraft.world.level.block.BushBlock ||
+        // NEOFORGE_PORT (26.3): 1.20.1 BushBlock (base of flowers, saplings, crops, grass,
+        // mushrooms...) is VegetationBlock now; 26.x BushBlock is only the "bush" block.
+        return block instanceof net.minecraft.world.level.block.VegetationBlock ||
                 block instanceof net.minecraft.world.level.block.CropBlock ||
                 block instanceof net.minecraft.world.level.block.StemBlock ||
                 block instanceof net.minecraft.world.level.block.VineBlock ||
@@ -474,7 +513,10 @@ public class BlockUtils {
 
         BlockHitResult result = level.clip(new ClipContext(
                 sourceVec, targetVec,
-                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, (net.minecraft.world.entity.Entity) null));
+                // NEOFORGE_PORT (26.3): ClipContext(..., Entity) NPEs on null now
+                // (CollisionContext.of switch); 1.20.1 mapped null to the empty context.
+                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE,
+                net.minecraft.world.phys.shapes.CollisionContext.empty()));
 
         if (result.getType() == HitResult.Type.MISS) {
             return true;

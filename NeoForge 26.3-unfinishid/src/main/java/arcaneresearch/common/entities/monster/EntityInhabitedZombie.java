@@ -61,8 +61,9 @@ public class EntityInhabitedZombie extends Zombie {
         return result;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    protected boolean shouldDropLoot() {
+    // NEOFORGE_PORT: 26.x shouldDropLoot takes the server level.
+    @Override
+    protected boolean shouldDropLoot(net.minecraft.server.level.ServerLevel level) {
         return false;
     }
 
@@ -85,9 +86,8 @@ public class EntityInhabitedZombie extends Zombie {
         // getExperienceReward(ServerLevel, attacker) (mirrors vanilla dropExperience gating).
         if (!level().isClientSide()) {
             EntityEldritchCrab crab = new EntityEldritchCrab(level());
-            crab.setPos(getX(), getY() + getEyeHeight(), getZ());
-            crab.setYRot(getYRot());
-            crab.setXRot(getXRot());
+            // NEOFORGE_PORT (26.3): moveTo(x,y,z,yaw,pitch) -> snapTo (same body incl. old pos/rot).
+            crab.snapTo(getX(), getY() + getEyeHeight(), getZ(), getYRot(), getXRot());
             crab.setHelm(true);
             crab.finalizeSpawn((net.minecraft.world.level.ServerLevelAccessor) level(),
                     ((net.minecraft.world.level.ServerLevelAccessor) level()).getCurrentDifficultyAt(blockPosition()),

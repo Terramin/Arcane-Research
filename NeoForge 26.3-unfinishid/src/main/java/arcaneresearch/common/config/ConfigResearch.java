@@ -67,12 +67,20 @@ public class ConfigResearch {
      * Enchantment scans (datapack registry — needs RegistryAccess, so server start,
      * same as pech book trades). Forge enumerated ForgeRegistries.ENCHANTMENTS here.
      */
+    // Enchantments are a datapack registry: scannables are rebuilt per server start
+    // (previous server's holders removed so repeated world loads never duplicate them).
+    private static final java.util.List<ScanEnchantment> enchantmentScans = new java.util.ArrayList<>();
+
     public static void initEnchantmentScans(net.minecraft.core.HolderLookup.Provider registries) {
         try {
+            enchantmentScans.forEach(ScanningManager::removeScannableThing);
+            enchantmentScans.clear();
             for (var holder : registries.lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
                     .listElements().toList()) {
                 if (holder != null && holder.isBound()) {
-                    ScanningManager.addScannableThing(new ScanEnchantment(holder));
+                    ScanEnchantment scan = new ScanEnchantment(holder);
+                    enchantmentScans.add(scan);
+                    ScanningManager.addScannableThing(scan);
                 }
             }
         } catch (Exception e) {
@@ -305,10 +313,12 @@ public class ConfigResearch {
         // NEOFORGE_PORT: ResourceKey.location() -> identifier() in 26.x.
         Identifier dimKey = player.level().dimension().identifier();
 
+        // NEOFORGE_PORT (26.3): Forge displayClientMessage(msg, true) = action-bar overlay ->
+        // sendOverlayMessage (was sendSystemMessage = chat).
         if (!knowledge.isResearchKnown("m_hellandback") && dimKey.getPath().contains("nether")) {
             knowledge.addResearch("m_hellandback");
             knowledge.sync(serverPlayer);
-            player.sendSystemMessage(
+            player.sendOverlayMessage(
                     net.minecraft.network.chat.Component.literal("\u00A75" +
                             net.minecraft.network.chat.Component.translatable("got.hellandback").getString()));
         }
@@ -316,7 +326,7 @@ public class ConfigResearch {
         if (!knowledge.isResearchKnown("m_endoftheworld") && dimKey.getPath().contains("end")) {
             knowledge.addResearch("m_endoftheworld");
             knowledge.sync(serverPlayer);
-            player.sendSystemMessage(
+            player.sendOverlayMessage(
                     net.minecraft.network.chat.Component.literal("\u00A75" +
                             net.minecraft.network.chat.Component.translatable("got.endoftheworld").getString()));
         }
@@ -326,17 +336,18 @@ public class ConfigResearch {
             if (player.getY() < 10 && !knowledge.isResearchKnown("m_deepdown")) {
                 knowledge.addResearch("m_deepdown");
                 knowledge.sync(serverPlayer);
-                player.sendSystemMessage(
+                player.sendOverlayMessage(
                         net.minecraft.network.chat.Component.literal("\u00A75" +
                                 net.minecraft.network.chat.Component.translatable("got.deepdown").getString()));
             }
 
-            // NEOFORGE_PORT: Level.getMaxBuildHeight gone -> dimensionType().height() (same intent: altitude gate).
-        int worldHeight = player.level().dimensionType().height();
+            // NEOFORGE_PORT (26.3): Level.getMaxBuildHeight() (= minY + height, exclusive top, 320 in the
+            // overworld) gone -> getMaxY() + 1 (same value; dimensionType().height() was 384).
+            int worldHeight = player.level().getMaxY() + 1;
             if (player.getY() > worldHeight * 0.4 && !knowledge.isResearchKnown("m_uphigh")) {
                 knowledge.addResearch("m_uphigh");
                 knowledge.sync(serverPlayer);
-                player.sendSystemMessage(
+                player.sendOverlayMessage(
                         net.minecraft.network.chat.Component.literal("\u00A75" +
                                 net.minecraft.network.chat.Component.translatable("got.uphigh").getString()));
             }

@@ -1,1 +1,18 @@
-{ "type": "minecraft:block", "pools": [ { "rolls": 1, "bonus_rolls": 0, "entries": [ { "type": "minecraft:item", "name": "arcaneresearch:potion_sprayer" } ], "conditions": [ {"condition": "minecraft:survives_explosion"} ] } ] }
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "arcaneresearch:potion_sprayer"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
+}

@@ -52,7 +52,9 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
         }
 
         AABB area = GolemHelper.getBoundsForArea(seal);
-        List<ItemEntity> items = level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(ItemEntity.class), area, e -> true);
+        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists (NO_SPECTATORS filter);
+        // the getEntities(..., e -> true) rewrite also returned spectators.
+        List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, area);
 
         if (!items.isEmpty()) {
             for (ItemEntity itemEntity : items) {

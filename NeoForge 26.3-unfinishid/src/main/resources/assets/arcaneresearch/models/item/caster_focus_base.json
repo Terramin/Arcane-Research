@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "particle": "arcaneresearch:item/caster_basic"
+  }
+}

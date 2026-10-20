@@ -36,7 +36,7 @@ public class RiftBlastRenderer extends EntityRenderer<EntityRiftBlast, RiftBlast
     }
 
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal.png");
+            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal/end_portal.png"); // NEOFORGE_PORT (26.3): moved
 
     private static final int TRAIL_LENGTH = 9;
     private static final Map<Integer, Deque<Vec3>> TRAILS = new ConcurrentHashMap<>();

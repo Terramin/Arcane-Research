@@ -119,7 +119,7 @@ public class PacketSealFilterToClient implements CustomPacketPayload {
                 }
             }
         } catch (Exception e) {
-
+            Arcaneresearch.LOGGER.warn("Failed to apply seal filter packet at {}: {}", packet.pos, e.toString());
         }
     }
 }

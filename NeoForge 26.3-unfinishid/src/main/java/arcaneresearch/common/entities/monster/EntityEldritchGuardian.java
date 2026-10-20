@@ -168,7 +168,8 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
 
             int difficulty = level().getDifficulty().getId();
             if (getMainHandItem().isEmpty() && isOnFire() && random.nextFloat() < difficulty * 0.3f) {
-                target.setRemainingFireTicks((2 * difficulty) * 20);
+                // NEOFORGE_PORT (26.3): setSecondsOnFire -> igniteForSeconds (never shortens a longer burn, applies BURNING_TIME).
+                target.igniteForSeconds(2 * difficulty);
             }
         }
         return hit;

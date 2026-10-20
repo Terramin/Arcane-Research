@@ -10,7 +10,7 @@
   ],
   "key": {
     "A": "minecraft:arrow",
-    "S": "arcaneresearch:crystal_entropy"
+    "S": {"neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "perditio"}
   },
   "result": {
     "id": "arcaneresearch:primal_arrow_entropy",

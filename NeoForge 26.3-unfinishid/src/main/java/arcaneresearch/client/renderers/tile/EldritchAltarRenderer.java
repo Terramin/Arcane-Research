@@ -108,4 +108,11 @@ public class EldritchAltarRenderer implements BlockEntityRenderer<EldritchAltarT
             poseStack.popPose();
         }
     }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(EldritchAltarTile blockEntity) {
+        return blockEntity.getRenderBoundingBox();
+    }
 }

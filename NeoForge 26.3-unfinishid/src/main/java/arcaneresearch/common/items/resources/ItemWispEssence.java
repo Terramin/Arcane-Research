@@ -113,9 +113,9 @@ public class ItemWispEssence extends Item implements IEssentiaContainerItem {
     // NEOFORGE_PORT: stack root-tag storage -> DataComponents.CUSTOM_DATA
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
-        CompoundTag tag = new CompoundTag();
-        aspects.writeToNBT(tag);
-        CustomData.set(DataComponents.CUSTOM_DATA, stack, tag);
+        // NEOFORGE_PORT (26.3): Forge wrote into the existing root tag (other keys kept) ->
+        // CustomData.update merges instead of replacing the whole component.
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, aspects::writeToNBT);
     }
 
     @Override

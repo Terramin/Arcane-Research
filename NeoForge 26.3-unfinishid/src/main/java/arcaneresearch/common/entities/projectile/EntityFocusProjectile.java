@@ -132,14 +132,23 @@ public class EntityFocusProjectile extends ThrowableProjectile {
 
                 Vec3 newMotion = getDeltaMovement();
                 double len = newMotion.length();
+                // NEOFORGE_PORT (26.3): ThrowableProjectile.tick now moves the projectile TO the hit point
+                // before onHit and applies no motion afterwards. Forge nudged back from the pre-move
+                // position (== xOld) and then moved by the bounced motion in the same tick; reproduce that
+                // end position (nudging from the hit point lands inside the block and re-hits every tick).
+                double nx = xOld + newMotion.x;
+                double ny = yOld + newMotion.y;
+                double nz = zOld + newMotion.z;
                 if (len > 0) {
-                    setPos(getX() - newMotion.x / len * 0.05,
-                            getY() - newMotion.y / len * 0.05,
-                            getZ() - newMotion.z / len * 0.05);
+                    nx -= newMotion.x / len * 0.05;
+                    ny -= newMotion.y / len * 0.05;
+                    nz -= newMotion.z / len * 0.05;
                 }
+                setPos(nx, ny, nz);
 
                 if (!level().isClientSide()) {
-// GREEN_COMMENT                     playSound(SoundEvents.LEASH_KNOT_PLACE, 0.25f, 1.0f);
+                    // NEOFORGE_PORT: LEASH_KNOT_PLACE was folded into LEAD_TIED in 26.x (vanilla knot uses it).
+                    playSound(net.minecraft.sounds.SoundEvents.LEAD_TIED, 0.25f, 1.0f);
                 }
                 if (newMotion.length() < 0.2) {
                     if (!level().isClientSide()) {

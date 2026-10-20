@@ -100,7 +100,7 @@ public class PlayerWarp {
             );
         }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+        @Override
         public CompoundTag serializeNBT() {
             CompoundTag tag = new CompoundTag();
             tag.putInt("perm", permanentWarp);
@@ -110,7 +110,7 @@ public class PlayerWarp {
             return tag;
         }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+        @Override
         public void deserializeNBT(CompoundTag tag) {
             if (tag == null) {
                 return;

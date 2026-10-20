@@ -1,6 +1,12 @@
-﻿{
+{
   "model": {
     "type": "minecraft:model",
-    "model": "arcaneresearch:item/cloth_boots"
+    "model": "arcaneresearch:item/cloth_boots",
+    "tints": [
+      {
+        "type": "minecraft:dye",
+        "default": -9810944
+      }
+    ]
   }
 }

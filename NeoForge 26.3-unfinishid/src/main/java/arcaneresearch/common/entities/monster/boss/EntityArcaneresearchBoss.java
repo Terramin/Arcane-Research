@@ -177,7 +177,9 @@ public abstract class EntityArcaneresearchBoss extends Monster {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
                                         EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnData) {
 
-        setHomeTo(blockPosition(), 24);
+        // NEOFORGE_PORT (26.3): Forge called setHomePos (stores HomeD/X/Y/Z for hasHome() + save,
+        // then restrictTo == setHomeTo); calling setHomeTo directly skipped the persisted home.
+        setHomePos(blockPosition(), 24);
         generateName();
         this.bossEvent.setName(getDisplayName());
         return spawnData;

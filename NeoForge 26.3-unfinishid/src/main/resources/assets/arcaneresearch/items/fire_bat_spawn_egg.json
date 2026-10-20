@@ -1,6 +1,16 @@
-﻿{
+{
   "model": {
     "type": "minecraft:model",
-    "model": "arcaneresearch:item/fire_bat_spawn_egg"
+    "model": "arcaneresearch:item/spawn_egg_template",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 3806228
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 16743196
+      }
+    ]
   }
 }

@@ -156,7 +156,9 @@ public class MsgStudyComplete implements CustomPacketPayload {
     private static ScanTargets.Target validate(ServerPlayer player, MsgStudyComplete msg) {
         try {
             Level level = player.level();
-            if ((msg.kind == 1 || msg.kind == 3) && msg.pos != 0L) {
+            // NEOFORGE_PORT (26.3): pos is a packed long here; 0L is the valid
+            // BlockPos(0,0,0) (Forge checked pos != null, always set for kinds 1/3).
+            if (msg.kind == 1 || msg.kind == 3) {
                 BlockPos blockPos = BlockPos.of(msg.pos);
                 if (player.getEyePosition().distanceTo(
                         net.minecraft.world.phys.Vec3.atCenterOf(blockPos)) > ScanTargets.RANGE + 1.0D) {

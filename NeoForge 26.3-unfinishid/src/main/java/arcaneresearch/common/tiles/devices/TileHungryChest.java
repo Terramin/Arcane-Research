@@ -212,9 +212,10 @@ public class TileHungryChest extends TileArcaneresearch implements Container {
         setChanged();
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public void startOpen(Player player) {
-        if (!player.isSpectator()) {
+    // NEOFORGE_PORT: 26.x Container.startOpen takes a ContainerUser (the player is one).
+    @Override
+    public void startOpen(net.minecraft.world.entity.ContainerUser user) {
+        if (!user.getLivingEntity().isSpectator()) {
             if (numPlayersUsing < 0) numPlayersUsing = 0;
             numPlayersUsing++;
             level.blockEvent(worldPosition, getBlockState().getBlock(), 1, numPlayersUsing);
@@ -223,9 +224,10 @@ public class TileHungryChest extends TileArcaneresearch implements Container {
         }
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public void stopOpen(Player player) {
-        if (!player.isSpectator()) {
+    // NEOFORGE_PORT: 26.x Container.stopOpen takes a ContainerUser (the player is one).
+    @Override
+    public void stopOpen(net.minecraft.world.entity.ContainerUser user) {
+        if (!user.getLivingEntity().isSpectator()) {
             numPlayersUsing--;
             level.blockEvent(worldPosition, getBlockState().getBlock(), 1, numPlayersUsing);
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());

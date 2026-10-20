@@ -1,5 +1,5 @@
 ﻿{
-  "feature": "minecraft:trees_plains",
+  "feature": "arcaneresearch:trees_birch_and_oak",
   "placement": [
     {
       "type": "minecraft:count",

@@ -31,7 +31,7 @@ public class ItemCultistBoots extends Item implements IVisDiscountGear, IWarping
                 .rarity(Rarity.UNCOMMON));
     }
 
-    // TODO_PORT: Forge isValidRepairItem accepted Items.IRON_INGOT (or the material match).
+    // NEOFORGE_PORT: Forge isValidRepairItem accepted Items.IRON_INGOT (or the material match).
     // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
     // via the ArmorMaterial repairIngredient tag); IRON's vanilla REPAIRS_IRON_ARMOR tag covers
     // iron ingots, so no override is needed (or possible).

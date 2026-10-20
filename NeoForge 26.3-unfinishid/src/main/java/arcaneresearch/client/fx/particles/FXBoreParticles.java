@@ -78,7 +78,7 @@ public class FXBoreParticles extends ArcaneresearchParticle {
         this.blockState = null;
         this.itemStack = item;
 
-        this.setSprite(pickItemSprite(item));
+        this.setSprite(pickItemSprite(item, level, this.random));
 
         this.rCol = 0.6f;
         this.gCol = 0.6f;
@@ -212,7 +212,7 @@ public class FXBoreParticles extends ArcaneresearchParticle {
 
 
     // NEOFORGE_PORT: BlockRenderDispatcher/ItemRenderer particle icons removed; block debris
-    // uses the block particle material sprite, item debris the item-atlas sprite (same visuals).
+    // uses the block particle material sprite, item debris the item model particle material.
     private static net.minecraft.client.renderer.texture.TextureAtlasSprite pickBlockSprite(
             net.minecraft.world.level.block.state.BlockState state) {
         try {
@@ -223,18 +223,38 @@ public class FXBoreParticles extends ArcaneresearchParticle {
         }
     }
 
+    // NEOFORGE_PORT (26.3): Forge getModel(item).getParticleIcon() -> the item model's
+    // particle material (vanilla BreakingItemParticle path); also right for block items.
     private static net.minecraft.client.renderer.texture.TextureAtlasSprite pickItemSprite(
-            net.minecraft.world.item.ItemStack item) {
+            net.minecraft.world.item.ItemStack item, ClientLevel level,
+            net.minecraft.util.RandomSource random) {
         try {
-            net.minecraft.resources.Identifier id =
-                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item.getItem());
-            return net.minecraft.client.Minecraft.getInstance().getAtlasManager().get(
-                    new net.minecraft.client.resources.model.sprite.SpriteId(
-                            net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_ITEMS,
-                            id.withPrefix("item/")));
+            net.minecraft.client.renderer.item.ItemStackRenderState state =
+                    new net.minecraft.client.renderer.item.ItemStackRenderState();
+            Minecraft.getInstance().getItemModelResolver().updateForTopItem(state, item,
+                    net.minecraft.world.item.ItemDisplayContext.GROUND, level, null, 0);
+            net.minecraft.client.resources.model.sprite.Material.Baked material =
+                    state.pickParticleMaterial(random);
+            return material != null ? material.sprite() : null;
         } catch (Exception e) {
             return null; // guarded by getU0..V1/getLayer above
         }
+    }
+
+    // NEOFORGE_PORT (26.3): Forge render() 1:1 — half-size 0.1 * quadSize, alpha
+    // always 1.0 (setTCAlpha ignored), u0/u1 order of the Forge vertex table.
+    @Override
+    public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
+        Vec3 cameraPos = camera.position();
+        float x = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
+        float y = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
+        float z = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
+        Quaternionf quaternion = camera.rotation();
+        state.add(getLayer(), x, y, z,
+                quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w(), 0.1f * this.quadSize,
+                this.getU1(), this.getU0(), this.getV0(), this.getV1(),
+                ARGB.colorFromFloat(1.0f, this.rCol, this.gCol, this.bCol),
+                this.getLightCoords(partialTicks));
     }
 
     @Override

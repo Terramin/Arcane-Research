@@ -271,6 +271,9 @@ public class ModCreativeTabs {
 
                         acceptBlock(output, ModBlocks.BRAIN_BOX.get());
                         acceptBlock(output, ModBlocks.SPA.get());
+                        // NEOFORGE_PORT (26.3): Forge listed GOLEM_BUILDER twice; Forge's tab builder merged the
+                        // duplicate into this FIRST slot, NeoForge throws on duplicates -> kept here only.
+                        acceptBlock(output, ModBlocks.GOLEM_BUILDER.get());
                         acceptBlock(output, ModBlocks.MIRROR_ITEM.get());
                         acceptBlock(output, ModBlocks.MIRROR_ESSENTIA.get());
                         acceptBlock(output, ModBlocks.ESSENTIA_INPUT.get());
@@ -598,6 +601,12 @@ public class ModCreativeTabs {
                                 output.accept(createEnchantedWandStack(rod, cap));
                             }
                         }
+                        // NEOFORGE_PORT (26.3): Forge order - sceptre samples come before the focus items.
+                        // Образцы скипетров (паритет TC4: железо/дерево,
+                        // золото/великое дерево, таумий/дерево серебра).
+                        output.accept(createSceptreStack("wood", "iron"));
+                        output.accept(createSceptreStack("greatwood", "gold"));
+                        output.accept(createSceptreStack("silverwood", "thaumium"));
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_POUCH.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FIRE.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FROST.get());
@@ -611,12 +620,6 @@ public class ModCreativeTabs {
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_PRIMAL.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_HELLBAT.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_PECH.get());
-
-                        // Образцы скипетров (паритет TC4: железо/дерево,
-                        // золото/великое дерево, таумий/дерево серебра).
-                        output.accept(createSceptreStack("wood", "iron"));
-                        output.accept(createSceptreStack("greatwood", "gold"));
-                        output.accept(createSceptreStack("silverwood", "thaumium"));
                         output.accept(ModItems.GOLEM_BELL.get());
                         output.accept(ModItems.GOLEM_PLACER.get());
 
@@ -625,7 +628,7 @@ public class ModCreativeTabs {
                         output.accept(createGolemStackById(1, 1, 2, 0, 0));
                         output.accept(createGolemStackById(4, 1, 3, 0, 0));
 
-                        acceptBlock(output, ModBlocks.GOLEM_BUILDER.get());
+                        // (second Forge GOLEM_BUILDER entry was a no-op duplicate; see after SPA.)
 
                         output.accept(ModItems.SEAL_BLANK.get());
                         output.accept(ModItems.SEAL_PICKUP.get());

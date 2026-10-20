@@ -19,7 +19,7 @@ import arcaneresearch.Arcaneresearch;
 // have no entity access, so champion-13 gating uses the Tainted opt-in flag
 // on the state (our Mob renderers set it in extractRenderState from
 // ChampionModifier); other states render nothing.
-// TODO_PORT: opt our Mob renderer States into Tainted (one line each).
+// States may opt in via Tainted; without it the layer resolves the entity by position.
 public class LayerTainted<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
         extends net.minecraft.client.renderer.entity.layers.RenderLayer<S, M> {
 
@@ -82,7 +82,8 @@ public class LayerTainted<S extends LivingEntityRenderState, M extends EntityMod
         collector.order(1).submitModel(getParentModel(), state, poseStack,
                 RenderTypes.entityTranslucent(TAINT_TEXTURE),
                 invisible ? 0 : packedLight,
-                LivingEntityRenderer.getOverlayCoords(state, 0.0F),
+                // NEOFORGE_PORT (26.3): Forge drew the fibres with NO_OVERLAY (no hurt tint).
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,
                 ARGB.colorFromFloat(invisible ? 0.0F : 0.66F, 1.0F, 1.0F, 1.0F));
     }
 

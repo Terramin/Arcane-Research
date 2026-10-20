@@ -238,14 +238,26 @@ public class EntityFireBat extends Monster {
         setYRot(getYRot() + yawDiff);
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+    // NEOFORGE_PORT: Mob.shouldDespawnInPeaceful() is gone in 26.x (peaceful despawn is the
+    // EntityType notInPeaceful flag). Fire bats depend on the owner, so the type stays allowed
+    // in peaceful and checkDespawn applies the Forge per-instance rule (Hellbat overrides it).
+    @Override
+    public void checkDespawn() {
+        if (this.level().getDifficulty() == net.minecraft.world.Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+            this.discard();
+            return;
+        }
+        super.checkDespawn();
+    }
+
     protected boolean shouldDespawnInPeaceful() {
 
         return this.owner == null;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+    // NEOFORGE_PORT: 26.x causeFallDamage takes a double fall distance.
+    @Override
+    public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return false;
     }
 

@@ -21,6 +21,7 @@ import arcaneresearch.api.aspects.AspectRegistryEvent;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModFluids;
+import arcaneresearch.common.items.wands.WandItems;
 import arcaneresearch.init.ModItems;
 
 import java.lang.reflect.Field;
@@ -46,8 +47,10 @@ public class ConfigAspects {
         ArcaneresearchApi.registerEntityTag("minecraft:giant", new AspectList().add(Aspect.UNDEAD, 25).add(Aspect.MAN, 15).add(Aspect.EARTH, 10));
         ArcaneresearchApi.registerEntityTag("minecraft:skeleton", new AspectList().add(Aspect.UNDEAD, 20).add(Aspect.MAN, 5).add(Aspect.EARTH, 5));
         ArcaneresearchApi.registerEntityTag("minecraft:wither_skeleton", new AspectList().add(Aspect.UNDEAD, 25).add(Aspect.MAN, 5).add(Aspect.ENTROPY, 10));
-        ArcaneresearchApi.registerEntityTag("minecraft:creeper", new AspectList().add(Aspect.PLANT, 15).add(Aspect.FIRE, 15));
+        // NEOFORGE_PORT (26.3): Forge order - NBT variant first (scan takes the first match, so the
+        // generic entry first meant a charged creeper never gave ENERGY).
         ArcaneresearchApi.registerEntityTag("minecraft:creeper", new AspectList().add(Aspect.PLANT, 15).add(Aspect.FIRE, 15).add(Aspect.ENERGY, 15), new ArcaneresearchApi.EntityTagsNBT("powered", (byte) 1));
+        ArcaneresearchApi.registerEntityTag("minecraft:creeper", new AspectList().add(Aspect.PLANT, 15).add(Aspect.FIRE, 15));
         ArcaneresearchApi.registerEntityTag("minecraft:horse", new AspectList().add(Aspect.BEAST, 15).add(Aspect.EARTH, 5).add(Aspect.AIR, 5));
         ArcaneresearchApi.registerEntityTag("minecraft:donkey", new AspectList().add(Aspect.BEAST, 15).add(Aspect.EARTH, 5).add(Aspect.AIR, 5));
         ArcaneresearchApi.registerEntityTag("minecraft:mule", new AspectList().add(Aspect.BEAST, 15).add(Aspect.EARTH, 5).add(Aspect.AIR, 5));
@@ -139,7 +142,17 @@ public class ConfigAspects {
     // The no-manager overload is setup-safe (static potion values only); the manager overload
     // additionally traverses datapack BrewingRecipes for reagent aspects (runtime).
     public static AspectList getPotionAspects(ItemStack itemstack) {
-        return getPotionAspects(itemstack, null);
+        // NEOFORGE_PORT (26.3): Forge read the static PotionBrewing mixes, so reagent aspects were
+        // always available; 26.x brewing is datapack recipes -> use the running server's
+        // RecipeManager when there is one (was always null -> every potion got the
+        // MAGIC 5 / ALCHEMY 5 fallback, incl. TilePotionSprayer costs).
+        RecipeManager recipeManager = null;
+        net.minecraft.server.MinecraftServer server =
+                net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server != null) {
+            recipeManager = server.getRecipeManager();
+        }
+        return getPotionAspects(itemstack, recipeManager);
     }
 
     public static AspectList getPotionAspects(ItemStack itemstack, RecipeManager recipeManager) {
@@ -502,6 +515,13 @@ public class ConfigAspects {
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(Items.ARROW), new AspectList().add(Aspect.AVERSION, 5).add(Aspect.FLIGHT, 3));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Items.SPECTRAL_ARROW), new AspectList().add(Aspect.AVERSION, 5).add(Aspect.FLIGHT, 3).add(Aspect.SENSES, 10).add(Aspect.MAGIC, 5));
+        // NEOFORGE_PORT (26.3): Forge primal-arrow aspects were missing in the port.
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_AIR.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_FIRE.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_WATER.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_EARTH.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_ORDER.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_ENTROPY.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(Items.GOLDEN_APPLE), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 10).add(Aspect.DESIRE, 15).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Items.ENCHANTED_GOLDEN_APPLE), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 15).add(Aspect.PROTECT, 15).add(Aspect.MAGIC, 10).add(Aspect.DESIRE, 20));
@@ -595,6 +615,14 @@ public class ConfigAspects {
         // NEOFORGE_PORT: ForgeRegistries.POTIONS removed; BuiltInRegistries.POTION is Iterable
         // (static values, setup-safe on both sides). Stacks built via PotionContents; reagent
         // aspects resolve at runtime through the manager overload (datapack BrewingRecipes).
+        registerPotionAspects();
+    }
+
+    // NEOFORGE_PORT (26.3): Forge registered these once in registerItemAspects with brewing data
+    // already present. Here the content-setup pass runs before any server exists (fallback
+    // aspects), so Arcaneresearch.onServerStarting calls this again with the server's brewing
+    // recipes available (same stacks/keys -> entries are overwritten with the Forge values).
+    public static void registerPotionAspects() {
         for (Potion potion : BuiltInRegistries.POTION) {
             Holder<Potion> holder = BuiltInRegistries.POTION.wrapAsHolder(potion);
             ItemStack stack = PotionContents.createItemStack(Items.POTION, holder);
@@ -649,8 +677,59 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.THAUMONOMICON.get()), new AspectList().add(Aspect.MIND, 20).add(Aspect.MAGIC, 10).add(Aspect.PLANT, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.THAUMOMETER.get()), new AspectList().add(Aspect.SENSES, 10).add(Aspect.AURA, 10).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SCRIBING_TOOLS.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.CRAFT, 5));
+        // NEOFORGE_PORT (26.3): Forge curio/taint/notes/wand-foci/note aspects were missing in the port.
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOSITY.get()), new AspectList().add(Aspect.MIND, 10).add(Aspect.SENSES, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_ARCANE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.AURA, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_PRESERVED.get()), new AspectList().add(Aspect.LIFE, 10).add(Aspect.DEATH, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_ANCIENT.get()), new AspectList().add(Aspect.EARTH, 10).add(Aspect.ORDER, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_ELDRITCH.get()), new AspectList().add(Aspect.ELDRITCH, 10).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_KNOWLEDGE.get()), new AspectList().add(Aspect.MIND, 15).add(Aspect.SENSES, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_TWISTED.get()), new AspectList().add(Aspect.ENTROPY, 10).add(Aspect.MOTION, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_RITES.get()), new AspectList().add(Aspect.DEATH, 10).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.TAINT_SLIME.get()), new AspectList().add(Aspect.FLUX, 5).add(Aspect.LIFE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.TAINT_TENDRIL.get()), new AspectList().add(Aspect.FLUX, 5).add(Aspect.PLANT, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModFluids.PURIFYING_FLUID_BUCKET.get()), new AspectList().add(Aspect.WATER, 10).add(Aspect.LIFE, 5).add(Aspect.ORDER, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PECH_WAND.get()), new AspectList().add(Aspect.MAN, 5).add(Aspect.MAGIC, 10).add(Aspect.TOOL, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_SUN.get()), new AspectList().add(Aspect.MIND, 10).add(Aspect.LIGHT, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_STARS_1.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_STARS_2.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_STARS_3.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_STARS_4.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_1.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_2.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_3.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_4.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_5.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_6.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_7.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_8.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_CAP.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.CRAFT, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_POUCH.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_FIRE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.FIRE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_FROST.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.COLD, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_SHOCK.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.ENERGY, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_EXCAVATION.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.EARTH, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_BUILDER.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.CRAFT, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_TRADE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.EXCHANGE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_HOLE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.MOTION, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_GRAPPLE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.MOTION, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_SHARD.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.CRYSTAL, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_PRIMAL.get()), new AspectList().add(Aspect.MAGIC, 15).add(Aspect.AURA, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_HELLBAT.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.FIRE, 10).add(Aspect.BEAST, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_PECH.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.EXCHANGE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_PECH_BLAST.get()), new AspectList().add(Aspect.ENERGY, 10).add(Aspect.ENTROPY, 5));
+        try {
+            if (arcaneresearch.discovered.note.DiscoveredNoteSetup.getNoteItem() != null) {
+                ArcaneresearchApi.registerObjectTag(
+                        new ItemStack(arcaneresearch.discovered.note.DiscoveredNoteSetup.getNoteItem()),
+                        new AspectList().add(Aspect.MAGIC, 5).add(Aspect.MIND, 10));
+            }
+        } catch (Exception ignored) {
+        }
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PHIAL_EMPTY.get()), new AspectList().add(Aspect.VOID, 3).add(Aspect.CRYSTAL, 3));
+        // NEOFORGE_PORT (26.3): Forge entry missing in the port.
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.WISP_ESSENCE.get()), new AspectList().add(Aspect.AURA, 2));
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.LOOT_BAG_COMMON.get()), new AspectList().add(Aspect.DESIRE, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.LOOT_BAG_UNCOMMON.get()), new AspectList().add(Aspect.DESIRE, 20));

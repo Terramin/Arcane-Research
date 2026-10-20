@@ -47,7 +47,7 @@ public class ItemCurio extends Item {
         return variant;
     }
 
-    // TODO_PORT (items): Forge overrode getDescriptionId(ItemStack) for the variant key, but
+    // NEOFORGE_PORT (items): Forge overrode getDescriptionId(ItemStack) for the variant key, but
     // per-stack description ids are GONE in 26.x (getDescriptionId() is final). Simplest compiling
     // equivalent: return the same translation key via getName (Forge ref: getDescriptionId).
     @Override

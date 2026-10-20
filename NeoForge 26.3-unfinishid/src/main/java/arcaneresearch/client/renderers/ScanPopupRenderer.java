@@ -33,7 +33,8 @@ public class ScanPopupRenderer {
             if (!state.isAir()) {
                 ItemStack stack = ItemStack.EMPTY;
                 try {
-// GREEN_COMMENT                     stack = state.getBlock().getCloneItemStack(player.level(), thaumBlockTarget, state);
+                    // NEOFORGE_PORT: Block.getCloneItemStack is protected in 26.x -> BlockState accessor.
+                    stack = state.getCloneItemStack(player.level(), thaumBlockTarget, false);
                 } catch (Exception ignored) {
                 }
                 if (stack.isEmpty()) {

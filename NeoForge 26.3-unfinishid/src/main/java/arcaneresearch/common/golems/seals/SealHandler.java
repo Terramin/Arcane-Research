@@ -34,6 +34,17 @@ public class SealHandler {
 
     private static int tickCount = 0;
 
+    // NEOFORGE_PORT (26.3): ItemStack.CODEC needs RegistryOps for dynamic-registry components
+    // (enchantments, trims, ...); with plain NbtOps such stacks failed to encode and silently
+    // vanished from saved seal data (1.20.1 ItemStack.save/of had no such restriction).
+    public static com.mojang.serialization.DynamicOps<net.minecraft.nbt.Tag> nbtOps() {
+        net.minecraft.server.MinecraftServer server =
+                net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        return server != null
+                ? server.registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE)
+                : net.minecraft.nbt.NbtOps.INSTANCE;
+    }
+
     private static String getDimKey(ResourceKey<Level> dim) {
         return dim.identifier().toString();
     }

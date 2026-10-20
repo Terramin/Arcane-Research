@@ -38,10 +38,14 @@ public class EldritchGuardianRenderer extends MobRenderer<EntityEldritchGuardian
         super.extractRenderState(entity, state, partialTicks);
         state.armLiftR = entity.armLiftR;
         state.armLiftL = entity.armLiftL;
-        // NEOFORGE_PORT (Forge 1:1): Forge set the model vertex-alpha multiplier
-        // in render(); in 26.3 the entity-facing render-state hook is the place
-        // for per-entity inputs (model.renderAlpha is read at submit time).
-        this.model.renderAlpha = ghostAlpha(entity, true);
+        // NEOFORGE_PORT (26.3): Forge model.renderAlpha; the 8-float renderToBuffer that
+        // applied it is dead, so the per-entity fade goes through getModelTint.
+        state.ghostAlpha = ghostAlpha(entity, true);
+    }
+
+    @Override
+    protected int getModelTint(State state) {
+        return net.minecraft.util.ARGB.white(state.ghostAlpha);
     }
 
     @Override

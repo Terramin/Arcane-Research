@@ -31,6 +31,8 @@ public class ItemGoggles extends Item implements IVisDiscountGear, IRevealer, IG
     public ItemGoggles(Item.Properties props) {
         // NEOFORGE_PORT: super(material, Type.HELMET, props) -> super(props.humanoidArmor(material, ArmorType.HELMET)).
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_SPECIAL, ArmorType.HELMET)
+                // Forge isValidRepairItem: brass ingot or the material's enchanted fabric.
+                .repairable(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath(arcaneresearch.Arcaneresearch.MODID, "repairs_goggles")))
                 .stacksTo(1)
                 .durability(350)
                 .rarity(Rarity.RARE));
@@ -51,10 +53,8 @@ public class ItemGoggles extends Item implements IVisDiscountGear, IRevealer, IG
         return true;
     }
 
-    // TODO_PORT: Forge isValidRepairItem accepted the brass ingot item (or the material match).
-    // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
-    // via the ArmorMaterial repairIngredient tag); ARMORMAT_SPECIAL maps to the
-    // repairs_enchanted_fabric data tag, so brass-ingot repair needs a data-tag decision.
+    // NEOFORGE_PORT: Forge isValidRepairItem (brass ingot || material match) -> REPAIRABLE
+    // component with the repairs_goggles tag (brass ingot + #repairs_enchanted_fabric).
 
     // NEOFORGE_PORT: Forge armor-model/texture parity -> arcaneresearch.client.ArmorClientSetup.
 

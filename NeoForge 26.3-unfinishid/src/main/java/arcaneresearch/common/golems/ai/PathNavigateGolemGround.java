@@ -36,7 +36,8 @@ public class PathNavigateGolemGround extends GroundPathNavigation {
                 return liftCauldronNodes(super.createPath(ground.above(), accuracy));
             }
             BlockPos top = pos;
-            while (top.getY() < level.getMaxY()
+            // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+            while (top.getY() <= level.getMaxY()
                     && level.getBlockState(top).isAir()) {
                 top = top.above();
             }
@@ -44,7 +45,7 @@ public class PathNavigateGolemGround extends GroundPathNavigation {
         }
         if (level.getBlockState(pos).isSolidRender()) {
             BlockPos up = pos.above();
-            while (up.getY() < level.getMaxY()
+            while (up.getY() <= level.getMaxY()
                     && level.getBlockState(up).isSolidRender()) {
                 up = up.above();
             }

@@ -239,7 +239,8 @@ public class BlockBannerTC extends Block implements EntityBlock {
         ItemStack stack = new ItemStack(this);
         BlockEntity be = level.getBlockEntity(pos);
 
-        if (includeData && be instanceof TileBanner banner && banner.getAspect() != null) {
+        // NEOFORGE_PORT (26.3): no includeData guard - the 1.20.1 override always copied the aspect.
+        if (be instanceof TileBanner banner && banner.getAspect() != null) {
             String aspectTag = banner.getAspect().getTag();
             // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).
             net.minecraft.world.item.component.CustomData.update(

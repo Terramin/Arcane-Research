@@ -39,8 +39,8 @@ import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
-public class EntitySpellBat extends Monster {
-    // TODO_PORT (packet wave): IEntityAdditionalSpawnData removed in NeoForge; extra spawn data must go through sendPairingData (see Entity base).
+public class EntitySpellBat extends Monster implements net.neoforged.neoforge.entity.IEntityWithComplexSpawn {
+    // NEOFORGE_PORT: Forge IEntityAdditionalSpawnData -> NeoForge IEntityWithComplexSpawn (same payload).
 
     private static final EntityDataAccessor<Boolean> DATA_FRIENDLY =
             SynchedEntityData.defineId(EntitySpellBat.class, EntityDataSerializers.BOOLEAN);
@@ -343,13 +343,12 @@ public class EntitySpellBat extends Monster {
         }
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    protected boolean shouldDespawnInPeaceful() {
-        return false;
-    }
+    // NEOFORGE_PORT: Forge shouldDespawnInPeaceful() returned false -> SPELL_BAT type is
+    // registered without notInPeaceful() (26.x peaceful despawn flag).
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+    // NEOFORGE_PORT: 26.x causeFallDamage takes a double fall distance.
+    @Override
+    public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return false;
     }
 
@@ -363,10 +362,10 @@ public class EntitySpellBat extends Monster {
         return true;
     }
 
-    // NEOFORGE_PORT: isAffectedByFluids removed from Entity in 26.x; closest
-    // equivalent is isPushedByFluid (Forge returned false: no fluid push/drag).
+    // NEOFORGE_PORT (26.3): LivingEntity.isAffectedByFluids still exists (now public); Forge
+    // returned false (no fluid travel/drag) while water currents still pushed the bat.
     @Override
-    public boolean isPushedByFluid() {
+    public boolean isAffectedByFluids() {
         return false;
     }
 
@@ -398,5 +397,26 @@ public class EntitySpellBat extends Monster {
     }
 
     // NEOFORGE_PORT: Forge NetworkHooks.getEntitySpawningPacket removed; vanilla
-    // ClientboundAddEntityPacket covers spawning. Extra data -> sendPairingData (packet wave).
+    // ClientboundAddEntityPacket covers spawning, the focus package rides IEntityWithComplexSpawn.
+
+    @Override
+    public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        if (focusPackage != null) {
+            buffer.writeNbt(focusPackage.serialize());
+        } else {
+            buffer.writeNbt(new net.minecraft.nbt.CompoundTag());
+        }
+    }
+
+    @Override
+    public void readSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        try {
+            net.minecraft.nbt.CompoundTag tag = buffer.readNbt();
+            if (tag != null && !tag.isEmpty()) {
+                focusPackage = new FocusPackage();
+                focusPackage.deserialize(tag);
+            }
+        } catch (Exception ignored) {
+        }
+    }
 }

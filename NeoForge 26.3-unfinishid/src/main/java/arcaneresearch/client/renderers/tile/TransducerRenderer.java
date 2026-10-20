@@ -39,7 +39,9 @@ public class TransducerRenderer implements BlockEntityRenderer<TransducerTile, T
             Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
         state.hasLevel = tile.getLevel() != null;
-        state.count = tile.count;
+        // NEOFORGE_PORT (26.3): Forge scaled the transducer count (0..1000) to the
+        // converter's piston range 0..50 before drawing.
+        state.count = Math.max(0, Math.min(50, tile.count * 50 / 1000));
         state.status = tile.status;
     }
 

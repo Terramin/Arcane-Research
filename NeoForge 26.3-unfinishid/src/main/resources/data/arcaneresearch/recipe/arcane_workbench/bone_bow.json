@@ -13,7 +13,7 @@
   "key": {
     "S": "minecraft:string",
     "B": "minecraft:bone",
-    "E": "arcaneresearch:crystal_entropy"
+    "E": {"neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "perditio"}
   },
   "result": {
     "id": "arcaneresearch:bone_bow"

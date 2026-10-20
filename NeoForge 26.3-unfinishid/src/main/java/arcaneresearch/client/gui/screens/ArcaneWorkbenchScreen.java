@@ -42,8 +42,7 @@ public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkben
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
         int x = this.leftPos;
         int y = this.topPos;
 
@@ -83,7 +82,8 @@ public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkben
                     graphics.pose().translate(centerX, centerY);
                     graphics.pose().rotate((float) Math.toRadians(slotIndex * 60 + ticks));
                     graphics.pose().scale(0.5f, 0.5f);
-                    graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, -32, -32,
+                    // NEOFORGE_PORT (26.3): Forge blendFunc(SRC_ALPHA, ONE) -> additive GUI pipeline.
+                    graphics.blit(arcaneresearch.client.renderers.TCRenderTypes.GUI_TEXTURED_ADDITIVE, TEXTURE, -32, -32,
                             192, 0, 64, 64, 256, 256, tint);
                     graphics.pose().popMatrix();
                 }

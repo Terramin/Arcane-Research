@@ -44,7 +44,14 @@ public class ChunkEvents {
 
     @SubscribeEvent
     public static void onChunkLoad(ChunkDataEvent.Load event) {
-        if (event.getLevel() instanceof Level level && !level.isClientSide()) {
+        // NEOFORGE_PORT (26.3): ChunkMap posts ChunkDataEvent.Load with the ImposterProtoChunk
+        // returned by SerializableChunkData.read(); it inherits ChunkAccess.getLevel() == null,
+        // so event.getLevel() is null for every full chunk read from disk and no seal was ever
+        // restored. Forge 1.20.1 posted the bare LevelChunk. Take the level from the wrapped chunk.
+        Level level = event.getLevel() instanceof Level l ? l
+                : event.getChunk() instanceof net.minecraft.world.level.chunk.ImposterProtoChunk imposter
+                ? imposter.getWrapped().getLevel() : null;
+        if (level != null && !level.isClientSide()) {
             SealChunkData data = event.getChunk().getData(
                     arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities.SEAL_DATA.get());
 
@@ -67,8 +74,11 @@ public class ChunkEvents {
         }
     }
 
+    // NEOFORGE_PORT (26.3): Forge 1.20.1 fired ChunkWatchEvent.Watch after the chunk packet was
+    // sent (ChunkMap.playerLoadedChunk). Since chunk send pacing, Watch fires when the chunk is
+    // only queued and Sent is the "after transmission" event, so the seal sync listens to Sent.
     @SubscribeEvent
-    public static void onChunkWatch(ChunkWatchEvent.Watch event) {
+    public static void onChunkWatch(ChunkWatchEvent.Sent event) {
         ServerPlayer player = event.getPlayer();
         Level level = player.level();
         ChunkPos chunkPos = event.getPos();

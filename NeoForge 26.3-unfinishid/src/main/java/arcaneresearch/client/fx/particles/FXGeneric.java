@@ -17,8 +17,7 @@ import arcaneresearch.Arcaneresearch;
 // REQUIRED changes (verified via javap on MC 26.3 + NeoForge docs):
 //   TextureSheetParticle removed -> SingleQuadParticle.
 //   Custom TC_* ParticleRenderTypes removed (record, fixed set) -> getLayer() with
-//     Layer.bySprite (additive now real via TCSprites.ADDITIVE_PARTICLE;
-//     no-depth variants still fall back to translucent, TODO visual).
+//     TCSprites.layerFor (additive + no-depth variants are real pipelines there).
 //   Grid UVs (spriteIndex/gridSize over the raw sheet) remapped into the stitched sheet
 //     sprite bounds (TCSprites); flipped/angled behavior preserved.
 //   level.getDayTime removed -> getGameTime (same wind-direction variety).

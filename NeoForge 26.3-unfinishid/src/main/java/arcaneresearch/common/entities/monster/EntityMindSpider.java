@@ -106,8 +106,9 @@ public class EntityMindSpider extends Spider {
         return false;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    protected boolean shouldDropLoot() {
+    // NEOFORGE_PORT: 26.x shouldDropLoot takes the server level.
+    @Override
+    protected boolean shouldDropLoot(net.minecraft.server.level.ServerLevel level) {
         return false;
     }
 

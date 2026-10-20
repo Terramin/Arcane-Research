@@ -106,10 +106,13 @@ public class ImageButton extends AbstractWidget {
         }
     }
 
+    // NEOFORGE_PORT (26.3): screens hit-test children via isMouseOver (getChildAt) and
+    // swallow the click on the first hit; Forge's mouseClicked ignored hidden buttons,
+    // so a hidden button must not report hover (else it eats clicks meant for slots).
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
 
-        return mouseX >= getX() - width / 2 && mouseX < getX() + width / 2 &&
+        return this.visible && mouseX >= getX() - width / 2 && mouseX < getX() + width / 2 &&
                 mouseY >= getY() - height / 2 && mouseY < getY() + height / 2;
     }
 

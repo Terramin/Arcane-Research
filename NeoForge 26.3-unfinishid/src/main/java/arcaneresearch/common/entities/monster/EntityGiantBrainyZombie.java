@@ -65,10 +65,6 @@ public class EntityGiantBrainyZombie extends EntityBrainyZombie {
 
         if (getAnger() > 1.0f) {
             setAnger(getAnger() - 0.002f);
-            // NEOFORGE_PORT: Forge scaled dimensions on the fly via getDimensions override
-            // (removed: final in LivingEntity). 26.x scales via the SCALE attribute instead.
-            getAttribute(Attributes.SCALE).setBaseValue(getAnger());
-            refreshDimensions();
         }
 
         if (!level().isClientSide()) {
@@ -77,12 +73,19 @@ public class EntityGiantBrainyZombie extends EntityBrainyZombie {
         }
     }
 
-    // NEOFORGE_PORT: LivingEntity.getScale() is final (26.x drive scale through
-    // the SCALE attribute instead); Forge getScale() == getAnger(), inlined above.
-
-    // NEOFORGE_PORT: getDimensions is final in LivingEntity (26.x); dynamic anger
-    // scale is applied through the SCALE attribute (see aiStep) instead.
-    // NEOFORGE_PORT: getStandingEyeHeight removed in 26.3 (eye height via EntityDimensions.withEyeHeight).
+    // NEOFORGE_PORT (26.3): LivingEntity.getScale()/getDimensions() are final. In Forge getScale()
+    // returned the anger (babies included) and LivingEntity.getDimensions already scaled by it, so the
+    // getDimensions override (scale(anger) again) gave type size * anger^2, with eye height from
+    // getStandingEyeHeight = 1.74 * anger (-0.81 baby). Rebuilt via getDefaultDimensions; the SCALE
+    // attribute stays 1 (it would scale a second time and is persisted). As in Forge the box only
+    // follows the anger on refreshDimensions (hurt / pose change), not while it decays.
+    // Renderers must read getAnger() for the old getScale() value.
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        float anger = getAnger();
+        return getType().getDimensions().scale(anger * anger)
+                .withEyeHeight(1.74f * anger - (isBaby() ? 0.81f : 0.0f));
+    }
 
     @Override
     public boolean hurtServer(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, float amount) {

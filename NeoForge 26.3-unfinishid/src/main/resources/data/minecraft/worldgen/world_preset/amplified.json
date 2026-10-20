@@ -13028,7 +13028,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -13058,7 +13058,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -13208,7 +13208,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -13238,7 +13238,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -33428,7 +33428,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -33458,7 +33458,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -33548,7 +33548,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -33578,7 +33578,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -51128,7 +51128,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -51158,7 +51158,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -51248,7 +51248,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -51278,7 +51278,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -69428,7 +69428,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -69458,7 +69458,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -69548,7 +69548,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -69578,7 +69578,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -90008,7 +90008,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -90038,7 +90038,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -90188,7 +90188,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -90218,7 +90218,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -115568,7 +115568,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -115598,7 +115598,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120248,7 +120248,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120278,7 +120278,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120308,7 +120308,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120338,7 +120338,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120368,7 +120368,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120398,7 +120398,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120428,7 +120428,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120458,7 +120458,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120548,7 +120548,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120578,7 +120578,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120608,7 +120608,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120638,7 +120638,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120668,7 +120668,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120698,7 +120698,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120728,7 +120728,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -120758,7 +120758,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -136688,7 +136688,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -136718,7 +136718,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -136808,7 +136808,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -136838,7 +136838,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -136868,7 +136868,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -136898,7 +136898,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -136988,7 +136988,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137018,7 +137018,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137048,7 +137048,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137078,7 +137078,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137108,7 +137108,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137138,7 +137138,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137168,7 +137168,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137198,7 +137198,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137228,7 +137228,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137258,7 +137258,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137348,7 +137348,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -137378,7 +137378,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -143768,7 +143768,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -143798,7 +143798,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -143948,7 +143948,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -143978,7 +143978,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -156128,7 +156128,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156158,7 +156158,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156308,7 +156308,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156338,7 +156338,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156428,7 +156428,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156458,7 +156458,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156548,7 +156548,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156578,7 +156578,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156668,7 +156668,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156698,7 +156698,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156728,7 +156728,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156758,7 +156758,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156848,7 +156848,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -156878,7 +156878,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -163508,7 +163508,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -163538,7 +163538,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -163628,7 +163628,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -163658,7 +163658,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -175088,7 +175088,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175118,7 +175118,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175208,7 +175208,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175238,7 +175238,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175328,7 +175328,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175358,7 +175358,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175448,7 +175448,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175478,7 +175478,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175628,7 +175628,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -175658,7 +175658,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -181208,7 +181208,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -181238,7 +181238,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -181328,7 +181328,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -181358,7 +181358,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -192128,7 +192128,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192158,7 +192158,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192308,7 +192308,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192338,7 +192338,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192428,7 +192428,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192458,7 +192458,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192548,7 +192548,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192578,7 +192578,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192668,7 +192668,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192698,7 +192698,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192728,7 +192728,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192758,7 +192758,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192848,7 +192848,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -192878,7 +192878,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -199508,7 +199508,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -199538,7 +199538,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -199628,7 +199628,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -199658,7 +199658,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -212168,7 +212168,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212198,7 +212198,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212288,7 +212288,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212318,7 +212318,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212348,7 +212348,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212378,7 +212378,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212468,7 +212468,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212498,7 +212498,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212528,7 +212528,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212558,7 +212558,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212588,7 +212588,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212618,7 +212618,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212648,7 +212648,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212678,7 +212678,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212708,7 +212708,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212738,7 +212738,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212828,7 +212828,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -212858,7 +212858,7 @@
               }
             },
             {
-              "biome": "minecraft:plains",
+              "biome": "minecraft:dappled_forest",
               "parameters": {
                 "temperature": {
                   "min": -0.45,
@@ -219248,7 +219248,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -219278,7 +219278,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -219428,7 +219428,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -219458,7 +219458,7 @@
               }
             },
             {
-              "biome": "minecraft:dark_forest",
+              "biome": "minecraft:pale_garden",
               "parameters": {
                 "temperature": {
                   "min": -0.15,
@@ -227763,6 +227763,36 @@
                 "weirdness": {
                   "min": -1.0,
                   "max": 1.0
+                },
+                "offset": 0
+              }
+            },
+            {
+              "biome": "minecraft:sulfur_caves",
+              "parameters": {
+                "temperature": {
+                  "min": -1.0,
+                  "max": 1.0
+                },
+                "humidity": {
+                  "min": -1.0,
+                  "max": 1.0
+                },
+                "continentalness": {
+                  "min": -0.19,
+                  "max": 0.55
+                },
+                "erosion": {
+                  "min": 0.45,
+                  "max": 1.0
+                },
+                "depth": {
+                  "min": 0.2,
+                  "max": 0.9
+                },
+                "weirdness": {
+                  "min": -1.1,
+                  "max": -0.85
                 },
                 "offset": 0
               }

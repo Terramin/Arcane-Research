@@ -151,19 +151,19 @@ public class UtilsFX {
         float f4 = f3 + 1.0f / gridY;
 
         Matrix4f matrix = poseStack.last().pose();
-        builder.addVertex( -scale, -scale, 0.0f)
+        builder.addVertex(matrix, -scale, -scale, 0.0f)
                 .setColor(r, g, b, a).setUv(f2, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0f, 1.0f, 0.0f);
-        builder.addVertex( -scale, scale, 0.0f)
+        builder.addVertex(matrix, -scale, scale, 0.0f)
                 .setColor(r, g, b, a).setUv(f2, f3)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0f, 1.0f, 0.0f);
-        builder.addVertex( scale, scale, 0.0f)
+        builder.addVertex(matrix, scale, scale, 0.0f)
                 .setColor(r, g, b, a).setUv(f1, f3)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0f, 1.0f, 0.0f);
-        builder.addVertex( scale, -scale, 0.0f)
+        builder.addVertex(matrix, scale, -scale, 0.0f)
                 .setColor(r, g, b, a).setUv(f1, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0f, 1.0f, 0.0f);
@@ -234,19 +234,19 @@ public class UtilsFX {
         float b = (color & 0xFF) / 255.0F;
 
         Matrix4f matrix = poseStack.last().pose();
-        builder.addVertex( -scale, -scale, 0.0F)
+        builder.addVertex(matrix, -scale, -scale, 0.0F)
                 .setColor(r, g, b, alpha).setUv(f2, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 1.0F, 0.0F);
-        builder.addVertex( -scale, scale, 0.0F)
+        builder.addVertex(matrix, -scale, scale, 0.0F)
                 .setColor(r, g, b, alpha).setUv(f2, f3)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 1.0F, 0.0F);
-        builder.addVertex( scale, scale, 0.0F)
+        builder.addVertex(matrix, scale, scale, 0.0F)
                 .setColor(r, g, b, alpha).setUv(f1, f3)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 1.0F, 0.0F);
-        builder.addVertex( scale, -scale, 0.0F)
+        builder.addVertex(matrix, scale, -scale, 0.0F)
                 .setColor(r, g, b, alpha).setUv(f1, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 1.0F, 0.0F);
@@ -315,19 +315,20 @@ public class UtilsFX {
         float f4 = f3 + 1.0F / gridY;
         float s = scale * 0.5F;
         Matrix4f matrix = poseStack.last().pose();
-        builder.addVertex( -s, s, 0.0F)
+        // NEOFORGE_PORT (26.3): Forge vertex(matrix, ...) - the pose matrix was dropped (quad ignored the PoseStack).
+        builder.addVertex(matrix, -s, s, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f2, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
-        builder.addVertex( s, s, 0.0F)
+        builder.addVertex(matrix, s, s, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f2, f3)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
-        builder.addVertex( s, -s, 0.0F)
+        builder.addVertex(matrix, s, -s, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f1, f3)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
-        builder.addVertex( -s, -s, 0.0F)
+        builder.addVertex(matrix, -s, -s, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f1, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
@@ -393,19 +394,19 @@ public class UtilsFX {
         poseStack.pushPose();
         poseStack.scale(scale, scale, scale);
         Matrix4f matrix = poseStack.last().pose();
-        builder.addVertex( 0.0F, 0.0F, 0.0F)
+        builder.addVertex(matrix, 0.0F, 0.0F, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f1, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
-        builder.addVertex( 1.0F, 0.0F, 0.0F)
+        builder.addVertex(matrix, 1.0F, 0.0F, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f3, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
-        builder.addVertex( 1.0F, 1.0F, 0.0F)
+        builder.addVertex(matrix, 1.0F, 1.0F, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f3, f2)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
-        builder.addVertex( 0.0F, 1.0F, 0.0F)
+        builder.addVertex(matrix, 0.0F, 1.0F, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f1, f2)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(0.0F, 0.0F, 1.0F);
@@ -566,16 +567,16 @@ public class UtilsFX {
                                float x2, float y2, float z2, float u2, float v2,
                                float x3, float y3, float z3, float u3, float v3,
                                float x4, float y4, float z4, float u4, float v4) {
-        builder.addVertex( x1, y1, z1).setColor(r, g, b, a).setUv(u1, v1)
+        builder.addVertex(matrix, x1, y1, z1).setColor(r, g, b, a).setUv(u1, v1)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(nx, ny, nz);
-        builder.addVertex( x2, y2, z2).setColor(r, g, b, a).setUv(u2, v2)
+        builder.addVertex(matrix, x2, y2, z2).setColor(r, g, b, a).setUv(u2, v2)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(nx, ny, nz);
-        builder.addVertex( x3, y3, z3).setColor(r, g, b, a).setUv(u3, v3)
+        builder.addVertex(matrix, x3, y3, z3).setColor(r, g, b, a).setUv(u3, v3)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(nx, ny, nz);
-        builder.addVertex( x4, y4, z4).setColor(r, g, b, a).setUv(u4, v4)
+        builder.addVertex(matrix, x4, y4, z4).setColor(r, g, b, a).setUv(u4, v4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
                 .setNormal(nx, ny, nz);
     }

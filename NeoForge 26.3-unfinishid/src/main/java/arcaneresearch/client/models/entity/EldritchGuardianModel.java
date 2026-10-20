@@ -21,6 +21,8 @@ public class EldritchGuardianModel extends EntityModel<EldritchGuardianModel.Gua
     public static class GuardianState extends LivingEntityRenderState {
         public float armLiftR;
         public float armLiftL;
+        // NEOFORGE_PORT (26.3): Forge model.renderAlpha (ghost fade), applied as model tint.
+        public float ghostAlpha = 1.0F;
     }
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -90,6 +92,9 @@ public class EldritchGuardianModel extends EntityModel<EldritchGuardianModel.Gua
         this.beltL = root.getChild("belt_l");
         this.chestplate = root.getChild("chestplate");
         this.hoodEye = root.getChild("hood_eye");
+        // NEOFORGE_PORT (26.3): Forge renderToBuffer skipped hood_eye (renderEye unused);
+        // the final root render would draw every root child, so hide it.
+        this.hoodEye.visible = false;
         this.hood1 = root.getChild("hood1");
         this.hood2 = this.hood1.getChild("hood2");
         this.hood3 = this.hood1.getChild("hood3");

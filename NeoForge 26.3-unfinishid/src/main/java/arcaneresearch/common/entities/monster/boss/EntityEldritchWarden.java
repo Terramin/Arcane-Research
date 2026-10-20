@@ -337,7 +337,11 @@ public class EntityEldritchWarden extends EntityArcaneresearchBoss implements Ra
             BlockState below = level().getBlockState(checkPos.below());
             BlockState at = level().getBlockState(checkPos);
 
-            if (below.isSolid() && !at.isSolid()) {
+            // NEOFORGE_PORT (26.3): BlockState.blocksMotion() removed; it was isSolid() minus cobweb/bamboo sapling.
+            if (below.isSolid() && !below.is(net.minecraft.world.level.block.Blocks.COBWEB)
+                    && !below.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING)
+                    && !(at.isSolid() && !at.is(net.minecraft.world.level.block.Blocks.COBWEB)
+                    && !at.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING))) {
 
                 teleportTo(x + 0.5, y + 0.1, z + 0.5);
 

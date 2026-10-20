@@ -23,13 +23,14 @@ public class PacketMiscStringToServer implements CustomPacketPayload {
         @Override
         public void encode(ByteBuf buf, PacketMiscStringToServer packet) {
             buf.writeInt(packet.messageId);
-            ByteBufCodecs.STRING_UTF8.encode(buf, packet.text);
+            // NEOFORGE_PORT (26.3): Forge writeUtf(text, 256)/readUtf(256) -> same 256-char cap.
+            ByteBufCodecs.stringUtf8(256).encode(buf, packet.text);
         }
 
         @Override
         public PacketMiscStringToServer decode(ByteBuf buf) {
             int messageId = buf.readInt();
-            String text = ByteBufCodecs.STRING_UTF8.decode(buf);
+            String text = ByteBufCodecs.stringUtf8(256).decode(buf);
             return new PacketMiscStringToServer(messageId, text);
         }
     };

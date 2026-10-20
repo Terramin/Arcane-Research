@@ -50,8 +50,9 @@ public class FireBatRenderer extends MobRenderer<EntityFireBat, FireBatRenderer.
     @Override
     protected void setupRotations(State state, PoseStack poseStack, float ageInTicks, float rotationYaw) {
         super.setupRotations(state, poseStack, ageInTicks, rotationYaw);
+        // NEOFORGE_PORT (26.3): the 3rd hook arg is bodyRot now, not ageInTicks.
         if (!state.hanging) {
-            poseStack.translate(0.0F, Mth.cos(ageInTicks * 0.3F) * 0.1F, 0.0F);
+            poseStack.translate(0.0F, Mth.cos(state.ageInTicks * 0.3F) * 0.1F, 0.0F);
         } else {
             poseStack.translate(0.0F, -0.1F, 0.0F);
         }

@@ -29,7 +29,8 @@ public class GuiGolemCategoryButton extends Button {
     // extractContents(GuiGraphicsExtractor); old setShaderColor tint -> per-blit color arg.
     @Override
     protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        int tint = active ? 0xFFFFFFFF : (isHovered() ? 0xE6FFFFFF : 0xB3FFFFFF);
+        // NEOFORGE_PORT (26.3): setShaderColor(c, c, c, c) scaled RGB as well as alpha -> 0xAARRGGBB = c in every channel.
+        int tint = active ? 0xFFFFFFFF : (isHovered() ? 0xE6E6E6E6 : 0xB3B3B3B3);
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEX, getX(), getY(), icon * 16, 120, 16, 16, 256, 256, tint);
         if (isHovered()) {
             String s = getMessage().getString();

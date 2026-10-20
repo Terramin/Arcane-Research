@@ -126,7 +126,8 @@ public class TileStabilizer extends TileArcaneresearch {
         return false;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x (bounds live on the
+    // BlockEntityRenderer); this tile has no renderer, so the box is informational only.
     public AABB getRenderBoundingBox() {
         return getCustomRenderBoundingBox();
     }

@@ -29,7 +29,7 @@ public class OuterLandsEffects {
         return Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "outer_lands");
     }
 
-    // TODO_PORT (client/dimension phase): re-register the sky/fog behavior
-    // (dark fog-colored sky, fog 10518688, no weather, bright clouds) against
-    // whatever 26.x dimension-visual hook exists, then delete this stub.
+    // NEOFORGE_PORT: the sky/fog behavior is data-driven in 26.x: environment attributes
+    // (minecraft:visual/sky_color, fog_color, ...) in data/arcaneresearch/dimension_type/
+    // outer_lands.json and worldgen/biome/outer_lands.json replace DimensionSpecialEffects.
 }

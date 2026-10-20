@@ -25,7 +25,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityFocusMine extends ThrowableProjectile {
-    // TODO_PORT (packet wave): IEntityAdditionalSpawnData removed in NeoForge; extra spawn data synced via pairing payload (see below).
+    // NEOFORGE_PORT: IEntityAdditionalSpawnData removed in NeoForge; extra spawn data synced via pairing payload (see below).
 
     private static final EntityDataAccessor<Boolean> DATA_ARMED =
             SynchedEntityData.defineId(EntityFocusMine.class, EntityDataSerializers.BOOLEAN);

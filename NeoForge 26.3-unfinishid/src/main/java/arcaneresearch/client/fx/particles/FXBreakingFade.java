@@ -35,9 +35,8 @@ public class FXBreakingFade extends ArcaneresearchParticle {
 
         this.itemStack = new ItemStack(item);
 
-        // NEOFORGE_PORT: ItemRenderer.getModel().getParticleIcon() removed; item-atlas
-        // sprite via pickItemSprite (same visuals for sheet-based items).
-        this.setSprite(pickItemSprite(this.itemStack));
+        // NEOFORGE_PORT: ItemRenderer.getModel().getParticleIcon() removed; see pickItemSprite.
+        this.setSprite(pickItemSprite(this.itemStack, level, this.random));
 
         this.gravity = 1.0f;
         this.quadSize = 0.1f;
@@ -101,16 +100,19 @@ public class FXBreakingFade extends ArcaneresearchParticle {
 
 
 
-    // NEOFORGE_PORT: ItemRenderer particle icon removed; item-atlas sprite (same visuals).
+    // NEOFORGE_PORT (26.3): Forge getModel(item).getParticleIcon() -> the item model's
+    // particle material (vanilla BreakingItemParticle path); also right for block items.
     private static net.minecraft.client.renderer.texture.TextureAtlasSprite pickItemSprite(
-            net.minecraft.world.item.ItemStack item) {
+            net.minecraft.world.item.ItemStack item, ClientLevel level,
+            net.minecraft.util.RandomSource random) {
         try {
-            net.minecraft.resources.Identifier id =
-                    net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item.getItem());
-            return net.minecraft.client.Minecraft.getInstance().getAtlasManager().get(
-                    new net.minecraft.client.resources.model.sprite.SpriteId(
-                            net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_ITEMS,
-                            id.withPrefix("item/")));
+            net.minecraft.client.renderer.item.ItemStackRenderState state =
+                    new net.minecraft.client.renderer.item.ItemStackRenderState();
+            Minecraft.getInstance().getItemModelResolver().updateForTopItem(state, item,
+                    net.minecraft.world.item.ItemDisplayContext.GROUND, level, null, 0);
+            net.minecraft.client.resources.model.sprite.Material.Baked material =
+                    state.pickParticleMaterial(random);
+            return material != null ? material.sprite() : null;
         } catch (Exception e) {
             return null; // guarded by getU0..V1/getLayer above
         }
@@ -164,8 +166,20 @@ public class FXBreakingFade extends ArcaneresearchParticle {
         return this.sprite != null ? this.sprite.getV1() : 1.0f;
     }
 
+    // NEOFORGE_PORT (26.3): Forge TERRAIN_SHEET was alpha-blended (the 0.5 alpha and
+    // the fade show); bySprite would pick the opaque layer for opaque item sprites.
     @Override
     public SingleQuadParticle.Layer getLayer() {
-        return this.sprite != null ? SingleQuadParticle.Layer.bySprite(this.sprite) : TCSprites.translucent();
+        if (this.sprite == null) {
+            return TCSprites.translucent();
+        }
+        Identifier atlas = this.sprite.atlasLocation();
+        if (atlas.equals(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS)) {
+            return SingleQuadParticle.Layer.TRANSLUCENT_TERRAIN;
+        }
+        if (atlas.equals(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_ITEMS)) {
+            return SingleQuadParticle.Layer.TRANSLUCENT_ITEMS;
+        }
+        return SingleQuadParticle.Layer.TRANSLUCENT;
     }
 }

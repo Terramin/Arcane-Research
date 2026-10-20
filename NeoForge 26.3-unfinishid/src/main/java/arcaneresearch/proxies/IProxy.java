@@ -25,7 +25,7 @@ public interface IProxy {
 
     void checkInterModComs(net.neoforged.fml.event.lifecycle.InterModProcessEvent event);
 
-    // TODO_PORT: client model baking hook (Forge ClientProxy); green-build default keeps data.
+    // Server default keeps the plain data model; ClientProxy returns the renderable part models.
     default arcaneresearch.api.golems.parts.PartModel createGolemPartModel(String name,
             net.minecraft.resources.Identifier objModel, net.minecraft.resources.Identifier objTexture,
             arcaneresearch.api.golems.parts.PartModel.EnumAttachPoint attachPoint) {

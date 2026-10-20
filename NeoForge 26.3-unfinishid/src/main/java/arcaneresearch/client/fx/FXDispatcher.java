@@ -96,15 +96,17 @@ public class FXDispatcher {
         if (mc.level == null) {
             return;
         }
-        if (particle instanceof arcaneresearch.client.fx.BeamEngine.BeamEffect beam) {
-            arcaneresearch.client.fx.BeamEngine.add(beam);
-            return;
-        }
         int ps = mc.options.particles().get().ordinal();
         if (mc.getFps() < 30) {
             ++ps;
         }
         if (mc.level.getRandom().nextInt(3) < ps) {
+            return;
+        }
+        // NEOFORGE_PORT (26.3): Forge gated beams/streams by particle setting too;
+        // route to BeamEngine only after the same check.
+        if (particle instanceof arcaneresearch.client.fx.BeamEngine.BeamEffect beam) {
+            arcaneresearch.client.fx.BeamEngine.add(beam);
             return;
         }
         mc.particleEngine.add(particle);

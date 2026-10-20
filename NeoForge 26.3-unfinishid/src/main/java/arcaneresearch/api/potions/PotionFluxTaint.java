@@ -26,9 +26,12 @@ public class PotionFluxTaint extends MobEffect {
 
     // NEOFORGE_PORT: applyEffectTick(LivingEntity,int) -> applyEffectTick(ServerLevel,LivingEntity,int)
     // returning boolean; hurt(DamageSource,float) -> hurtServer(ServerLevel,DamageSource,float).
+    // NEOFORGE_PORT (26.3): returning false makes MobEffectInstance.tickServer REMOVE the effect.
+    // Forge's void hook never removed it (no damage for undead/1-HP mobs, failed hurt, etc.),
+    // so every path returns true (like vanilla Poison/Wither).
     @Override
     public boolean applyEffectTick(net.minecraft.server.level.ServerLevel level, LivingEntity target, int amplifier) {
-        if (target.level().isClientSide()) return false;
+        if (target.level().isClientSide()) return true;
 
         if (target instanceof ITaintedMob) {
             target.heal(1);
@@ -42,9 +45,9 @@ public class PotionFluxTaint extends MobEffect {
 
         if (!target.isInvertedHealAndHarm()
                 && (target.getMaxHealth() > 1 || target instanceof Player)) {
-            return target.hurtServer(level, DamageSourceArcaneresearch.createTaint(target.level()), 1);
+            target.hurtServer(level, DamageSourceArcaneresearch.createTaint(target.level()), 1);
         }
-        return false;
+        return true;
     }
 
     @Override

@@ -286,7 +286,9 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
     @Override
     public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         ItemStack stack = new ItemStack(this);
-        if (includeData) {
+        // NEOFORGE_PORT (26.3): no includeData guard - the 1.20.1 override always copied the
+        // jar contents/label/xp (plain pick block and scanning saw the filled jar).
+        {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof TileJarBrain brain && brain.xp > 0) {
                 // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).

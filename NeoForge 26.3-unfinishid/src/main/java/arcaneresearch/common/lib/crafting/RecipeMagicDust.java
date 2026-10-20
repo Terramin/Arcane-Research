@@ -49,7 +49,8 @@ public class RecipeMagicDust extends ShapelessRecipe {
             new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     public RecipeMagicDust() {
-        super(new Recipe.CommonInfo(false),
+        // NEOFORGE_PORT (26.3): Forge ShapelessRecipe kept Recipe#showNotification() = true.
+        super(new Recipe.CommonInfo(true),
                 new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
                 // NEOFORGE_PORT: fromStack(new ItemStack(...)) touches holder.components(),
                 // which is unbound during datapack decode ("Components not bound yet").

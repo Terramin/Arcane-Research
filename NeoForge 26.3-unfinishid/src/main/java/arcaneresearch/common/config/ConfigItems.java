@@ -46,16 +46,35 @@ public class ConfigItems {
     public static ItemStack createStartBook() {
         // NEOFORGE_PORT: root-tag book NBT (setTag) removed in 26.x ->
         // WRITTEN_BOOK_CONTENT component (Filterable title + Component pages, same text).
+        // NEOFORGE_PORT (26.3): Forge stored the translated lang strings as raw page JSON (the
+        // lang values are quoted JSON strings with \n escapes, parsed by the book screen) ->
+        // parsed the same way here (mirrors PlayerEvents.bookPage), title capped at 32 chars
+        // (26.3 codec limit), no author (blank author = no "by" line, as Forge had no author).
         ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
         List<net.minecraft.server.network.Filterable<Component>> pages = new ArrayList<>();
-        pages.add(net.minecraft.server.network.Filterable.passThrough(Component.translatable("book.start.1")));
-        pages.add(net.minecraft.server.network.Filterable.passThrough(Component.translatable("book.start.2")));
-        pages.add(net.minecraft.server.network.Filterable.passThrough(Component.translatable("book.start.3")));
+        pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.1").getString())));
+        pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.2").getString())));
+        pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.3").getString())));
+        String title = Component.translatable("book.start.title").getString();
+        if (title.length() > net.minecraft.world.item.component.WrittenBookContent.TITLE_MAX_LENGTH) {
+            title = title.substring(0, net.minecraft.world.item.component.WrittenBookContent.TITLE_MAX_LENGTH);
+        }
         book.set(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT,
                 new net.minecraft.world.item.component.WrittenBookContent(
-                        net.minecraft.server.network.Filterable.passThrough(Component.translatable("book.start.title").getString()),
+                        net.minecraft.server.network.Filterable.passThrough(title),
                         "", 3, pages, false));
         return book;
+    }
+
+    /** NEOFORGE_PORT (26.3): Forge book page = JSON text (fallback: literal), as BookViewScreen parsed it. */
+    private static Component bookPage(String raw) {
+        try {
+            return net.minecraft.network.chat.ComponentSerialization.CODEC
+                    .parse(com.mojang.serialization.JsonOps.INSTANCE, com.google.gson.JsonParser.parseString(raw))
+                    .getOrThrow();
+        } catch (Exception e) {
+            return Component.literal(raw);
+        }
     }
 
     public static void init() {

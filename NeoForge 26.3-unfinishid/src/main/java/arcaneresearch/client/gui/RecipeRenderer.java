@@ -359,6 +359,14 @@ public class RecipeRenderer {
         }
 
         java.util.List<Ingredient> ingredients = recipe.getIngredients();
+        // NEOFORGE_PORT (26.3): shaped getIngredients() drops blank cells; the Forge list kept
+        // EMPTY placeholders, so the grid is laid out from the pattern's optional cells.
+        java.util.List<java.util.Optional<Ingredient>> patternCells = null;
+        if (recipe instanceof arcaneresearch.api.crafting.ShapedArcaneRecipe shapedCells) {
+            patternCells = shapedCells.getOptionalIngredients();
+        } else if (recipe instanceof arcaneresearch.common.lib.crafting.ShapedArcaneRecipe shapedCells2) {
+            patternCells = shapedCells2.getOptionalIngredients();
+        }
         int rw = 3;
         int rh = 3;
         try {
@@ -375,8 +383,14 @@ public class RecipeRenderer {
             for (int i = 0; i < rw; i++) {
                 for (int j = 0; j < rh; j++) {
                     int idx = i + j * rw;
-                    if (idx >= ingredients.size()) continue;
-                    Ingredient ing = ingredients.get(idx);
+                    Ingredient ing;
+                    if (patternCells != null) {
+                        if (idx >= patternCells.size()) continue;
+                        ing = patternCells.get(idx).orElse(null);
+                    } else {
+                        if (idx >= ingredients.size()) continue;
+                        ing = ingredients.get(idx);
+                    }
                     if (ing == null || ing.isEmpty()) continue;
                     int itemX = x - 40 + i * 32;
                     int itemY = y - 40 + j * 32;
@@ -711,8 +725,10 @@ public class RecipeRenderer {
         // now a true picture-in-picture (vanilla entity/banner-preview
         // mechanism): real block models, exact 1.20.1 projection, sliceLine
         // build-up gating and the aura node swirl — see IsoStructurePip.
-        IsoStructurePip.submit(graphics, blueprintAccess, parts,
-                xSize, ySize, zSize, x, y - 10, 124.0f, 104.0f, 32.0f);
+        // NEOFORGE_PORT (26.3): Forge per-block scale max(8, 38 - 2 * maxDim), not a box fit.
+        float scale = Math.max(8f, 38 - Math.max(ySize, Math.max(xSize, zSize)) * 2);
+        IsoStructurePip.submitFixedScale(graphics, blueprintAccess, parts,
+                xSize, ySize, zSize, x, y - 10, scale);
         boolean hoverToggle = mouseX >= x + 80 && mouseY >= y + 100
                 && mouseX < x + 88 && mouseY < y + 108;
         // NEOFORGE_PORT: Forge setShaderColor(1,1,1, hover ? 1 : 0.75) -> ARGB.
@@ -761,7 +777,11 @@ public class RecipeRenderer {
         // draws only the converted states (no node swirl), like Forge did.
         int effX = zSize;
         int effZ = xSize;
-        IsoStructurePip.submit(graphics, ba, null, effX, ySize, effZ, x, y, 56.0f, 56.0f, 16.0f);
+        // NEOFORGE_PORT (26.3): Forge bookmark used a fixed scale(4, -4) with the projected
+        // centre at (x - xSize/2, y - |size|/2), not a 56px box fit centred on (x, y).
+        int cx = Math.round(x - xSize / 2f);
+        int cy = Math.round(y - (float) Math.sqrt(ySize * ySize + xSize * xSize + zSize * zSize) / 2f);
+        IsoStructurePip.submitFixedScale(graphics, ba, null, effX, ySize, effZ, cx, cy, 4.0f);
     }
 
     private static void renderItem(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y) {

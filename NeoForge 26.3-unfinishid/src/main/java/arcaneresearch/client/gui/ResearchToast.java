@@ -45,6 +45,16 @@ public class ResearchToast implements Toast {
         this.description = description;
     }
 
+    // NEOFORGE_PORT: entry points for PacketSyncKnowledge (common class); keeping the
+    // Toast/ToastManager types here stops the server from linking client classes.
+    public static void show(ResearchEntry research) {
+        net.minecraft.client.Minecraft.getInstance().gui.toastManager().addToast(new ResearchToast(research));
+    }
+
+    public static void showDiscovered(ResearchEntry research) {
+        net.minecraft.client.Minecraft.getInstance().gui.toastManager().addToast(discovered(research));
+    }
+
     public static ResearchToast discovered(ResearchEntry research) {
         return new ResearchToast(research,
                 Component.translatable("tc.research.toast.discovered"),

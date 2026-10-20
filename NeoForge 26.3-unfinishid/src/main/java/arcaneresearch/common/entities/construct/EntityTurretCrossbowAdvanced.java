@@ -251,8 +251,9 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        // TODO_PORT: ValueInput.contains gone in 26.3; getByteOr default covers missing keys.
-        setFlags(tag.getByteOr("targets", (byte) 0));
+        // NEOFORGE_PORT (26.3): ValueInput.contains gone; defaulting to the current flags keeps
+        // the Forge "only overwrite when the key exists" behavior (registerGoals sets MOB).
+        setFlags(tag.getByteOr("targets", getFlags()));
     }
 
     protected class AdvancedWatchTargetGoal extends Goal {

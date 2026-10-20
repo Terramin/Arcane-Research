@@ -45,7 +45,8 @@ public class RecipeTripleMeatTreat extends ShapelessRecipe {
             new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     public RecipeTripleMeatTreat() {
-        super(new Recipe.CommonInfo(false),
+        // NEOFORGE_PORT (26.3): Forge ShapelessRecipe kept Recipe#showNotification() = true.
+        super(new Recipe.CommonInfo(true),
                 new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
                 // NEOFORGE_PORT: fromStack(new ItemStack(...)) touches holder.components(),
                 // unbound during datapack decode - wrapAsHolder stores the intrusive

@@ -351,8 +351,7 @@ public class GolemBuilderScreen extends AbstractContainerScreen<GolemBuilderMenu
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
         int x = this.leftPos;
         int y = this.topPos;
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
@@ -425,7 +424,7 @@ public class GolemBuilderScreen extends AbstractContainerScreen<GolemBuilderMenu
 
         @Override
         protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-            int btnTint = (this.active && this.isHovered()) ? 0xFFFFFFFF : 0xFFE5E5E5;
+            int btnTint = (this.active && this.isHovered()) ? 0xFFFFFFFF : 0xE5E5E5E5; // Forge setShaderColor(0.9 x4)
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, this.getX(), this.getY(), 216, 64, 24, 16, 256, 256, btnTint);
             if (!this.active) {
                 graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, this.getX(), this.getY(), 216, 40, 24, 16, 256, 256, btnTint);

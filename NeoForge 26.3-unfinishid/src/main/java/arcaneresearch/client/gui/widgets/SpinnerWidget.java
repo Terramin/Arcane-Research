@@ -50,6 +50,16 @@ public class SpinnerWidget extends AbstractWidget {
         graphics.text(font, valueText, textX, getY() + 1, 0xFFFFFFFF, true);
     }
 
+    // NEOFORGE_PORT (26.3): screens route clicks only to the child whose isMouseOver hits
+    // (getChildAt), not to every child as in 1.20.1; the "+" arrow sits right of the
+    // widget box (x + width .. +10), so widen the hit box or "+" never gets the click.
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return this.visible && this.active
+                && mouseX >= getX() && mouseX < getX() + width + 10
+                && mouseY >= getY() && mouseY < getY() + height;
+    }
+
     // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {

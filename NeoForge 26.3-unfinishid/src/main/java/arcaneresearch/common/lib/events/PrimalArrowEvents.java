@@ -31,8 +31,6 @@ import arcaneresearch.common.items.tools.ItemPrimalArrow;
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class PrimalArrowEvents {
 
-    // DEBUG: диагностика выстрела (убрать после).
-    private static int debugFires = 0;
 
     private static Holder<Enchantment> ench(Level level, ResourceKey<Enchantment> key) {
         return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(key);
@@ -66,11 +64,6 @@ public class PrimalArrowEvents {
         float dam = bonebow ? 2.5F : 2.0F;
 
         EntityPrimalArrow shot = new EntityPrimalArrow(level, player, power * dam, type);
-        if (debugFires < 5) {
-            debugFires++;
-            Arcaneresearch.LOGGER.info("[PrimalFire] side={} type={} power={} dam={}",
-                    level.isClientSide() ? "client" : "server", type, power, dam);
-        }
         // NEOFORGE_PORT: AbstractArrow.getBaseDamage удалён (только setBaseDamage);
         // база после ctor известна: 2.1*mult (см. EntityPrimalArrow). Бонусы считаем
         // от неё же: костяной лук +0.5 (вместо крита), иначе крит при полном заряде.
@@ -99,8 +92,9 @@ public class PrimalArrowEvents {
             shot.punchLevel = punchLevel;
         }
         if (EnchantmentHelper.getItemEnchantmentLevel(flameH, bow) > 0) {
-            // NEOFORGE_PORT: setSecondsOnFire(100 тиков) -> igniteForSeconds(5 c).
-            shot.igniteForSeconds(5.0F);
+            // NEOFORGE_PORT: setSecondsOnFire(100) -> igniteForSeconds(100).
+            // NEOFORGE_PORT (26.3): setSecondsOnFire took SECONDS (100 s = 2000 ticks, vanilla Flame).
+            shot.igniteForSeconds(100.0F);
         }
         // NEOFORGE_PORT: broadcastBreakEvent consumer overload REMOVED.
         bow.hurtAndBreak(1, player, player.getUsedItemHand());
@@ -146,11 +140,34 @@ public class PrimalArrowEvents {
         event.setAction(net.minecraft.world.InteractionResult.CONSUME);
     }
 
+    /**
+     * NEOFORGE_PORT (26.3): BowItem.releaseUsing now returns BEFORE posting ArrowLooseEvent when
+     * player.getProjectile(bow) is empty (Forge 1.20.1 posted it with hasAmmo=false), so with only
+     * primal arrows a vanilla bow would nock (onArrowNock) but never fire. Report the primal stack
+     * as the bow's ammo in that case; onArrowLoose then cancels the vanilla shot exactly as before
+     * (it fires whenever a primal stack exists and power >= 0.1; below that vanilla also aborts).
+     */
+    @SubscribeEvent
+    public static void onGetProjectile(net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent event) {
+        if (!event.getProjectileItemStack().isEmpty()) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Player player)
+                || !(event.getProjectileWeaponItemStack().getItem() instanceof BowItem)) {
+            return;
+        }
+        ItemStack primal = findPrimalArrow(player);
+        if (primal != null) {
+            event.setProjectileItemStack(primal);
+        }
+    }
+
     /** Первый стак первородных стрел: основной инвентарь, затем вторая рука. */
     private static ItemStack findPrimalArrow(Player player) {
         // NEOFORGE_PORT: Inventory.items now private -> slot iteration (same stacks).
+        // NEOFORGE_PORT (26.3): only the 36 main slots (Forge `items`); getContainerSize() also spans armor/offhand.
         net.minecraft.world.entity.player.Inventory inv = player.getInventory();
-        for (int i = 0; i < inv.getContainerSize(); i++) {
+        for (int i = 0; i < net.minecraft.world.entity.player.Inventory.INVENTORY_SIZE; i++) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty() && stack.getItem() instanceof ItemPrimalArrow) {
                 return stack;

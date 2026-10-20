@@ -1,6 +1,11 @@
-﻿{
+{
   "model": {
     "type": "minecraft:model",
-    "model": "arcaneresearch:item/focus_blank"
+    "model": "arcaneresearch:item/focus_blank",
+    "tints": [
+      {
+        "type": "arcaneresearch:focus"
+      }
+    ]
   }
 }

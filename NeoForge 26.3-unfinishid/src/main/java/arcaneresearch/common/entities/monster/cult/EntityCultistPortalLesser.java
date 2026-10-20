@@ -202,8 +202,8 @@ public class EntityCultistPortalLesser extends Monster {
             cultist = new EntityCultistCleric(level());
         }
 
-        cultist.teleportTo(getX() + random.nextFloat() - random.nextFloat(), getY() + 0.25, getZ() + random.nextFloat() - random.nextFloat());
-        cultist.setYRot(random.nextFloat() * 360.0f); cultist.setXRot(0.0f);;
+        // NEOFORGE_PORT (26.3): Entity.moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+        cultist.snapTo(getX() + random.nextFloat() - random.nextFloat(), getY() + 0.25, getZ() + random.nextFloat() - random.nextFloat(), random.nextFloat() * 360.0f, 0.0f);
 
         cultist.finalizeSpawn((net.minecraft.world.level.ServerLevelAccessor) level(), ((net.minecraft.world.level.ServerLevelAccessor) level()).getCurrentDifficultyAt(new BlockPos((int) cultist.getX(), (int) cultist.getY(), (int) cultist.getZ())), net.minecraft.world.entity.EntitySpawnReason.SPAWNER, null);
 

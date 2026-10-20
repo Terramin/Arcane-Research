@@ -182,7 +182,7 @@ public class AINearestValidTarget<T extends LivingEntity> extends TargetGoal {
         if (!isGoodTarget(mob, target, checkSightOnly, mustSee)) {
             return false;
         }
-        // NEOFORGE_PORT: Mob.isWithinRestriction removed in 26.3 -> home check deferred.
-        return true;
+        // NEOFORGE_PORT: Mob.hasRestriction/isWithinRestriction -> 26.x hasHome/isWithinHome.
+        return !mob.hasHome() || mob.isWithinHome(target.blockPosition());
     }
 }

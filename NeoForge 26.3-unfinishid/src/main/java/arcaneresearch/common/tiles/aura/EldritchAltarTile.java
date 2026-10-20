@@ -98,9 +98,11 @@ public class EldritchAltarTile extends TileArcaneresearch {
         }
         knight.teleportTo(x + 0.5D, y, z + 0.5D);
         // TC4: checkNoEntityCollision + getEntitiesWithinAABB(...).isEmpty().
+        // NEOFORGE_PORT (26.3): canBeCollidedWith() gained an Entity param; null = the
+        // reference's parameterless check (was wrongly !isRemoved(): any entity blocked spawns).
         if (!level.noCollision(knight)
                 || !serverLevel.getEntities(knight, knight.getBoundingBox(),
-                        e -> e != knight && !e.isSpectator() && !e.isRemoved()).isEmpty()) {
+                        e -> e != knight && !e.isSpectator() && e.canBeCollidedWith(null)).isEmpty()) {
             return;
         }
         knight.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(at), EntitySpawnReason.EVENT, null);
@@ -141,7 +143,7 @@ public class EldritchAltarTile extends TileArcaneresearch {
         // проверяются (в оригинале — часть вызова).
         if (!level.noCollision(guardian)
                 || !serverLevel.getEntities(guardian, guardian.getBoundingBox(),
-                        e -> e != guardian && !e.isSpectator() && !e.isRemoved()).isEmpty()) {
+                        e -> e != guardian && !e.isSpectator() && e.canBeCollidedWith(null)).isEmpty()) {
             return;
         }
         guardian.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(at), EntitySpawnReason.EVENT, null);
@@ -168,7 +170,7 @@ public class EldritchAltarTile extends TileArcaneresearch {
             cleric.teleportTo(at.getX() + 0.5D, at.getY(), at.getZ() + 0.5D);
             if (!level.noCollision(cleric)
                     || !serverLevel.getEntities(cleric, cleric.getBoundingBox(),
-                            e -> e != cleric && !e.isSpectator() && !e.isRemoved()).isEmpty()) {
+                            e -> e != cleric && !e.isSpectator() && e.canBeCollidedWith(null)).isEmpty()) {
                 continue;
             }
             cleric.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(at), EntitySpawnReason.EVENT, null);

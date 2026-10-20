@@ -81,12 +81,11 @@ ${mod_description}
     side="BOTH"
 
 # NEOFORGE_PORT: Curios (Baubles replacement). Forge 1.20.1: curios mandatory [5.14.0,5.14.1), AFTER, BOTH.
-# TODO_PORT (26.3): pin NeoForge Curios version and flip type to "required" once curio items ported.
-# Foundation keeps it optional so the skeleton boots without Curios 26.3 published.
+# Required: bauble items implement ICurioItem directly (NoClassDefFoundError without Curios).
 [[dependencies.${mod_id}]]
     modId="curios"
-    type="optional"
-    versionRange="[0,)"
+    type="required"
+    versionRange="[17.0.0-beta,)"
     ordering="AFTER"
     side="BOTH"
 

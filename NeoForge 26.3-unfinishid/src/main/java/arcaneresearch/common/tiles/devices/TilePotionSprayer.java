@@ -250,13 +250,21 @@ public class TilePotionSprayer extends TileArcaneresearchInventory implements IA
 
     public int getPotionColor(ItemStack itemstack) {
         // NEOFORGE_PORT: PotionUtils.getPotion/getColor removed ->
-        //   PotionContents (getColor blends base + custom effects, as before).
+        //   PotionContents.
         var contents = itemstack.getOrDefault(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
                 net.minecraft.world.item.alchemy.PotionContents.EMPTY);
+        // NEOFORGE_PORT (26.3): reference PotionUtils.getPotion never returned null (EMPTY ->
+        // getColor(Potions.EMPTY) = 16253176) and PotionUtils.getColor(Potion) blended only the
+        // base potion's effects (no custom colour/effects; none -> 3694022). Same RGB, no alpha.
         if (contents.potion().isEmpty()) {
-            return 0x333333;
+            return 16253176;
         }
-        return contents.getColor();
+        java.util.List<net.minecraft.world.effect.MobEffectInstance> baseEffects =
+                contents.potion().get().value().getEffects();
+        if (baseEffects.isEmpty()) {
+            return 3694022;
+        }
+        return net.minecraft.world.item.alchemy.PotionContents.getColorOptional(baseEffects).orElse(0) & 0xFFFFFF;
     }
 
     @Override

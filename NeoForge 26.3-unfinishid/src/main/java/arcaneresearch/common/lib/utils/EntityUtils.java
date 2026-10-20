@@ -219,7 +219,9 @@ public class EntityUtils {
                 pos.getX() - radius, pos.getY() - radius, pos.getZ() - radius,
                 pos.getX() + radius + 1, pos.getY() + radius + 1, pos.getZ() + radius + 1
         );
-        return level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(type), box, e -> true);
+        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists and, as in
+        // 1.20.1, filters with EntitySelector.NO_SPECTATORS (the e -> true lookup didn't).
+        return level.getEntitiesOfClass(type, box);
     }
 
     public static <T extends Entity> List<T> getEntitiesInRange(Level level, BlockPos pos, double radius,
@@ -293,8 +295,9 @@ public class EntityUtils {
 
         Vec3 direction = entityPos.subtract(center).normalize();
         entity.setDeltaMovement(entity.getDeltaMovement().add(direction.scale(force)));
-        // NEOFORGE_PORT: Entity.hurtMarked removed in 26.x (velocity sync is
-        // automatic on setDeltaMovement).
+        // NEOFORGE_PORT (26.3): Entity.hurtMarked was renamed syncVelocity (still what
+        // makes ServerEntity send the motion packet; setDeltaMovement alone doesn't).
+        entity.syncVelocity = true;
     }
 
     public static void pullToward(Entity entity, BlockPos pos, double force) {
@@ -303,7 +306,8 @@ public class EntityUtils {
 
         Vec3 direction = center.subtract(entityPos).normalize();
         entity.setDeltaMovement(entity.getDeltaMovement().add(direction.scale(force)));
-        // NEOFORGE_PORT: Entity.hurtMarked removed in 26.x (see above).
+        // NEOFORGE_PORT (26.3): hurtMarked -> syncVelocity (see pushAway).
+        entity.syncVelocity = true;
     }
 
     public static double getMaxHealth(LivingEntity entity) {

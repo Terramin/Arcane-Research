@@ -174,8 +174,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
 
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
         int xx = this.leftPos;
         int yy = this.topPos;
 
@@ -660,27 +659,56 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                 }
             }
 
-            int warnY = 0;
-            ItemStack tools = table.getItem(TileResearchTable.SLOT_SCRIBING_TOOLS);
-            if (tools.isEmpty() || tools.getDamageValue() >= tools.getMaxDamage()) {
-                List<Component> tooltip = List.of(
-                        Component.translatable("tile.researchtable.noink.0"),
-                        Component.translatable("tile.researchtable.noink.1")
-                );
-                int warnX = Math.max(font.width(tooltip.get(0)), font.width(tooltip.get(1))) / 2;
-                // NEOFORGE_PORT: List+Optional<TooltipComponent> overload gone ->
-                // setComponentTooltipForNextFrame (was Optional.empty()).
-                graphics.setComponentTooltipForNextFrame(font, tooltip, xx - warnX + 116, yy + 60 + warnY);
-                warnY += 40;
-            }
-
-            ItemStack paper = table.getItem(TileResearchTable.SLOT_PAPER);
-            if (paper.isEmpty()) {
-                Component text = Component.translatable("tile.researchtable.nopaper.0");
-                graphics.setComponentTooltipForNextFrame(font, List.of(text),
-                        xx - font.width(text) / 2 + 116, yy + 60 + warnY);
-            }
+            // NEOFORGE_PORT (26.3): no-ink/no-paper warnings drawn by renderWarnings() after the
+            // slots (Forge drew them after super.render). As deferred tooltips they were
+            // first-set-wins: noink hid nopaper and both hid every slot tooltip.
         }
+    }
+
+    private void renderWarnings(GuiGraphicsExtractor graphics) {
+        if (table.data == null) {
+            return;
+        }
+        int xx = leftPos;
+        int yy = topPos;
+        int warnY = 0;
+        ItemStack tools = table.getItem(TileResearchTable.SLOT_SCRIBING_TOOLS);
+        ItemStack paper = table.getItem(TileResearchTable.SLOT_PAPER);
+        boolean noInk = tools.isEmpty() || tools.getDamageValue() >= tools.getMaxDamage();
+        if (!noInk && !paper.isEmpty()) {
+            return;
+        }
+        graphics.nextStratum();
+        if (noInk) {
+            List<Component> tooltip = List.of(
+                    Component.translatable("tile.researchtable.noink.0"),
+                    Component.translatable("tile.researchtable.noink.1")
+            );
+            int warnX = Math.max(font.width(tooltip.get(0)), font.width(tooltip.get(1))) / 2;
+            drawTooltipNow(graphics, tooltip, xx - warnX + 116, yy + 60 + warnY);
+            warnY += 40;
+        }
+
+        if (paper.isEmpty()) {
+            Component text = Component.translatable("tile.researchtable.nopaper.0");
+            drawTooltipNow(graphics, List.of(text), xx - font.width(text) / 2 + 116, yy + 60 + warnY);
+        }
+    }
+
+    // Immediate (non-deferred) tooltip box, like Forge renderTooltip(font, lines, Optional.empty(), x, y).
+    private void drawTooltipNow(GuiGraphicsExtractor graphics, List<Component> lines, int x, int y) {
+        List<net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent> comps = new ArrayList<>();
+        for (Component line : lines) {
+            comps.add(net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent.create(line.getVisualOrderText()));
+        }
+        graphics.tooltip(font, comps, x, y,
+                net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner.INSTANCE, null, false);
+    }
+
+    @Override
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractContents(graphics, mouseX, mouseY, partialTick);
+        renderWarnings(graphics);
     }
 
     private void drawSheetOverlay(GuiGraphicsExtractor graphics, float x,

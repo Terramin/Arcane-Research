@@ -137,7 +137,10 @@ public class EntityCultistLeader extends EntityArcaneresearchBoss implements Ran
             // NEOFORGE_PORT: enchantItem(RandomSource, ItemStack, int, boolean) removed ->
             // (RandomSource, ItemStack, int, RegistryAccess, Optional<HolderSet>) (empty = all).
             EnchantmentHelper.enchantItem(random, weapon, (int) (7.0f + diff * random.nextInt(22)),
-                    level().registryAccess(), java.util.Optional.empty());
+                    level().registryAccess(),
+                    // NEOFORGE_PORT (26.3): Forge allowTreasure=false -> only #in_enchanting_table (empty = every enchantment incl. treasure/curses).
+                    level().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                            .get(net.minecraft.tags.EnchantmentTags.IN_ENCHANTING_TABLE));
         }
     }
 

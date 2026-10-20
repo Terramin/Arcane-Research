@@ -77,7 +77,7 @@ public class LightMatrix implements CCRenderState.IVertexOperation {
 
             int sky = access.getBrightness(LightLayer.SKY, p);
             int block = Math.max(access.getBrightness(LightLayer.BLOCK, p),
-                    b.getLightEmission());
+                    b.getLightEmission(access, p)); // NEOFORGE_PORT (26.3): position-aware IBlockStateExtension, as Forge
             bSamples[i] = sky << 20 | block << 4;
             aSamples[i] = b.getShadeBrightness(access, p);
         }

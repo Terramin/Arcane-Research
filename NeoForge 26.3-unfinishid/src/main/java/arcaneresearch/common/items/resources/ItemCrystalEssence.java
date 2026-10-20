@@ -65,10 +65,10 @@ public class ItemCrystalEssence extends Item implements IEssentiaContainerItem {
 
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
-        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
-        aspects.writeToNBT(tag);
-        net.minecraft.world.item.component.CustomData.set(
-                net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, tag);
+        // NEOFORGE_PORT (26.3): Forge wrote into the existing root tag (other keys kept) ->
+        // CustomData.update merges instead of replacing the whole component.
+        net.minecraft.world.item.component.CustomData.update(
+                net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, aspects::writeToNBT);
     }
 
     @Override

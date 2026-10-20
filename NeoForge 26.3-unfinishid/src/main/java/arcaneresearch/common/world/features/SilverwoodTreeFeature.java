@@ -46,7 +46,8 @@ public class SilverwoodTreeFeature implements Feature {
         int y = pos.getY();
         int z = pos.getZ();
 
-        if (y < 1 || y + height + 1 > level.getMaxY()) {
+        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+        if (y < 1 || y + height + 1 > level.getMaxY() + 1) {
             return false;
         }
 
@@ -83,7 +84,8 @@ public class SilverwoodTreeFeature implements Feature {
             }
             for (int j1 = x - spread; j1 <= x + spread; ++j1) {
                 for (int k1 = z - spread; k1 <= z + spread; ++k1) {
-                    if (i1 >= level.getMinY() && i1 < level.getMaxY()) {
+                    // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+                    if (i1 >= level.getMinY() && i1 <= level.getMaxY()) {
                         BlockState state = level.getBlockState(new BlockPos(j1, i1, k1));
                         if (state.isAir() || state.is(BlockTags.LEAVES) || state.canBeReplaced()) {
                             continue;

@@ -241,7 +241,9 @@ public class BlockInfernalFurnace extends Block implements EntityBlock {
             } else if (entity instanceof LivingEntity living && !living.fireImmune()) {
                 DamageSources sources = level.damageSources();
                 entity.hurt(sources.lava(), 3.0F);
-                entity.setRemainingFireTicks((10) * 20);
+                // NEOFORGE_PORT (26.3): setSecondsOnFire(10) == igniteForSeconds(10): only raises
+                // the fire timer and applies Fire Protection (BURNING_TIME), unlike setRemainingFireTicks.
+                entity.igniteForSeconds(10.0F);
             }
         }
         super.entityInside(state, level, pos, entity, applier, runningEffects);

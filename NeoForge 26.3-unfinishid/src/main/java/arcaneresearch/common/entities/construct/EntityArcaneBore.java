@@ -241,10 +241,6 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         return EnumInfusionEnchantment.getInfusionEnchantmentLevel(getMainHandItem(), EnumInfusionEnchantment.REFINING);
     }
 
-    private static final com.mojang.authlib.GameProfile BORE_PROFILE = new com.mojang.authlib.GameProfile(
-            java.util.UUID.fromString("D5B9C3A1-2F4E-4B6A-9C1D-8E7F6A5B4C3D"),
-            "[ArcaneBore]");
-
     private boolean dig() {
         if (digTarget == null || level().isEmptyBlock(digTarget)) {
             digTarget = null;
@@ -264,20 +260,24 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             if (silktouch) {
                 fortune = 0;
             }
-            net.neoforged.neoforge.common.util.FakePlayer fakePlayer = FakePlayerFactory.get(serverLevel, BORE_PROFILE);
+            // NEOFORGE_PORT (26.3): same "[Minecraft]" fake player as Forge getMinecraft.
+            net.neoforged.neoforge.common.util.FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(serverLevel);
             fakePlayer.snapTo(getX(), getY(), getZ(), getYRot(), getXRot());
             ItemStack held = getMainHandItem().copy();
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, held);
 
-            var breakEvent = new net.neoforged.neoforge.event.level.block.BreakBlockEvent(
-                    serverLevel, digTarget, digBs, fakePlayer);
-            net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(breakEvent);
+            // NEOFORGE_PORT (26.3): ForgeHooks.onBlockBreakEvent -> CommonHooks.fireBlockBreak (same
+            // pre-cancel checks + event). Forge's BreakEvent exp was 0 unless the player could
+            // harvest the block (isCorrectToolForDrops), else the block's xp for the held tool.
+            var breakEvent = net.neoforged.neoforge.common.CommonHooks.fireBlockBreak(
+                    serverLevel, fakePlayer.gameMode.getGameModeForPlayer(), fakePlayer, digTarget, digBs);
             if (breakEvent.isCanceled()) {
                 digTarget = null;
                 return false;
             }
-            int exp = digBs.getBlock().getExpDrop(digBs, serverLevel, digTarget,
-                    level().getBlockEntity(digTarget), fakePlayer, held);
+            int exp = digBs.canHarvestBlock(serverLevel, digTarget, fakePlayer)
+                    ? digBs.getExpDrop(serverLevel, digTarget, level().getBlockEntity(digTarget), fakePlayer, held)
+                    : 0;
 
             var enchantments = serverLevel.registryAccess()
                     .lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);

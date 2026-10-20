@@ -442,8 +442,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
         int x = leftPos;
         int y = topPos;
 
@@ -2008,7 +2007,9 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
 
 
-                if (button == 1 && tile.data.get(selectedNode).node != null) {
+                // NEOFORGE_PORT (26.3): mouse buttons are 1-based (1 = LEFT); Forge 1 = right click.
+                if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_RIGHT
+                        && tile.data.get(selectedNode).node != null) {
 
                     FocusElementNode fn = tile.data.get(selectedNode);
 
@@ -2213,7 +2214,8 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
     public boolean keyPressed(KeyEvent event) {
 
-        if (nameField != null && nameField.isFocused() && event.key() != 256) {
+        // NEOFORGE_PORT (26.3): key values are SDL scancodes (GLFW 256 never matched) -> isEscape().
+        if (nameField != null && nameField.isFocused() && !event.isEscape()) {
 
             nameField.keyPressed(event);
 

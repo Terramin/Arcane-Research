@@ -67,7 +67,7 @@ public class HexTableInput {
     public boolean mouseClicked(double mx, double my, int button) {
         s.refreshNote();
         // Пул и соединение работают без записки; лист и dupe — по ней.
-        if (button != 0) {
+        if (button != com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT) {
             return false;
         }
         // Кнопка соединения (паритет: click + combine сразу, сервер молчит).
@@ -148,7 +148,7 @@ public class HexTableInput {
     }
 
     public boolean mouseReleased(double mx, double my, int button) {
-        if (!s.dragging || button != 0) {
+        if (!s.dragging || button != com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT) {
             return false;
         }
         s.dragging = false;

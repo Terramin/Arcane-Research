@@ -372,31 +372,51 @@ public class ModBlockEntities {
                     ));
 
     // NEOFORGE_PORT: replaces every tile's getCapability/invalidateCaps/reviveCaps
-    // (removed Forge API). Every tile implementing Container is exposed as
-    // Capabilities.Item.BLOCK via VanillaContainerWrapper/WorldlyContainerWrapper —
-    // the same semantics as the old per-tile InvWrapper/SidedInvWrapper providers
-    // (including the null-side general-view fallback).
-    // Fluid/energy tiles register their own providers alongside (see below).
-    @SubscribeEvent
+    // (removed Forge API) with the same per-tile exposure as Forge:
+    //   - TileArcaneresearchInventory subclasses: item handler on non-null sides only
+    //     (SidedInvWrapper for WorldlyContainer, else InvWrapper; null side -> none);
+    //   - TileHungryChest: InvWrapper on every side (null included);
+    //   - TileCrucible / TileSpa: fluid tank on every side; TileWaterJug: drain-only on UP;
+    //   - TileVisGenerator: energy on the facing side only.
+    // Other Container tiles (e.g. TileSpa) exposed no item handler in Forge.
+    // NEOFORGE_PORT (26.3): this listener was never subscribed (no @EventBusSubscriber) ->
+    // wired explicitly in the Arcaneresearch constructor (mod bus).
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         for (var holder : BLOCK_ENTITIES.getEntries()) {
-            registerContainerCap(event, holder);
+            registerContainerCap(event, holder.get());
         }
+        // AuraTotemTile (TileArcaneresearchInventory) lives in the aura register.
+        for (var holder : arcaneresearch.common.blocks.aura.AuraBlockEntities.BLOCK_ENTITIES.getEntries()) {
+            registerContainerCap(event, holder.get());
+        }
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, CRUCIBLE.get(),
+                (be, side) -> be.getFluidHandler(side));
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, SPA.get(),
+                (be, side) -> be.getFluidHandler(side));
+        event.registerBlockEntity(Capabilities.Fluid.BLOCK, WATER_JUG.get(),
+                (be, side) -> be.getFluidHandler(side));
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, VIS_GENERATOR.get(),
+                (be, side) -> be.getEnergyHandler(side));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static void registerContainerCap(RegisterCapabilitiesEvent event,
-            net.neoforged.neoforge.registries.DeferredHolder<BlockEntityType<?>, ? extends BlockEntityType<?>> holder) {
+    private static void registerContainerCap(RegisterCapabilitiesEvent event, BlockEntityType<?> type) {
         event.registerBlockEntity((net.neoforged.neoforge.capabilities.BlockCapability) Capabilities.Item.BLOCK,
-                (BlockEntityType) holder.get(),
-                (be, side) -> {
-                    if (be instanceof Container container) {
-                        if (side != null && container instanceof WorldlyContainer worldly) {
-                            return new WorldlyContainerWrapper(worldly, (Direction) side);
-                        }
-                        return VanillaContainerWrapper.of(container);
-                    }
-                    return null;
-                });
+                (BlockEntityType) type,
+                (be, side) -> itemHandlerFor((BlockEntity) be, (Direction) side));
+    }
+
+    @javax.annotation.Nullable
+    private static ResourceHandler<ItemResource> itemHandlerFor(BlockEntity be, @javax.annotation.Nullable Direction side) {
+        if (be instanceof TileHungryChest chest) {
+            return VanillaContainerWrapper.of(chest);
+        }
+        if (side != null && be instanceof arcaneresearch.common.tiles.TileArcaneresearchInventory inventory) {
+            if (inventory instanceof WorldlyContainer worldly) {
+                return new WorldlyContainerWrapper(worldly, side);
+            }
+            return VanillaContainerWrapper.of(inventory);
+        }
+        return null;
     }
 }
