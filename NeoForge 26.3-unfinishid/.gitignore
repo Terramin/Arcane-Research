@@ -1,6 +1,0 @@
-# Gradle build cache and outputs
-.gradle/
-build/
-# Dev run directories (ModDevGradle)
-run/
-runs/
