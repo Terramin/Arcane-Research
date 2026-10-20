@@ -1,0 +1,13 @@
+﻿{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALLUMBER",
+  "catalyst": "arcaneresearch:seal_breaker",
+  "aspects": {
+    "herba": 40,
+    "sensus": 20
+  },
+  "result": {
+    "id": "arcaneresearch:seal_lumber",
+    "count": 1
+  }
+}

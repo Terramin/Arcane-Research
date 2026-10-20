@@ -1,0 +1,37 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "arcaneresearch:focus",
+    "cases": [
+      {
+        "when": "1",
+        "model": {
+          "type": "minecraft:model",
+          "model": "arcaneresearch:item/caster_basic_focus_model",
+          "tints": [
+            {
+              "type": "minecraft:constant",
+              "value": -1
+            },
+            {
+              "type": "arcaneresearch:caster_focus_color"
+            }
+          ]
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "arcaneresearch:item/caster_basic_model",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -1
+        },
+        {
+          "type": "arcaneresearch:caster_focus_color"
+        }
+      ]
+    }
+  }
+}

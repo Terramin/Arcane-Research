@@ -1,0 +1,7 @@
+{
+  "layers": {
+    "humanoid": [{ "texture": "arcaneresearch:void" }],
+    "humanoid_leggings": [{ "texture": "arcaneresearch:void" }],
+    "humanoid_baby": [{ "texture": "arcaneresearch:void" }]
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": "gui",
+        "model": {
+          "type": "minecraft:special",
+          "base": "arcaneresearch:item/eldritch_portal_base",
+          "model": {
+            "type": "arcaneresearch:eldritch_portal",
+            "preset": "gui"
+          }
+        }
+      },
+      {
+        "when": "ground",
+        "model": {
+          "type": "minecraft:special",
+          "base": "arcaneresearch:item/eldritch_portal_base",
+          "model": {
+            "type": "arcaneresearch:eldritch_portal",
+            "preset": "ground"
+          }
+        }
+      },
+      {
+        "when": "fixed",
+        "model": {
+          "type": "minecraft:special",
+          "base": "arcaneresearch:item/eldritch_portal_base",
+          "model": {
+            "type": "arcaneresearch:eldritch_portal",
+            "preset": "fixed"
+          }
+        }
+      },
+      {
+        "when": ["firstperson_righthand", "firstperson_lefthand", "thirdperson_righthand", "thirdperson_lefthand"],
+        "model": {
+          "type": "minecraft:special",
+          "base": "arcaneresearch:item/eldritch_portal_base",
+          "model": {
+            "type": "arcaneresearch:eldritch_portal",
+            "preset": "hand"
+          }
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "arcaneresearch:item/eldritch_portal_base",
+      "model": {
+        "type": "arcaneresearch:eldritch_portal",
+        "preset": "hand"
+      }
+    }
+  }
+}

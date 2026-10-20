@@ -1,0 +1,17 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:void_stuff",
+  "pattern": [
+    "II",
+    "S ",
+    "S "
+  ],
+  "key": {
+    "I": "arcaneresearch:void_metal_ingot",
+    "S": "#c:rods/wooden"
+  },
+  "result": {
+    "id": "arcaneresearch:void_hoe",
+    "count": 1
+  }
+}

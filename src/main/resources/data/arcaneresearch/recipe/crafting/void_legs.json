@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:void_stuff",
+  "pattern": [
+    "III",
+    "I I",
+    "I I"
+  ],
+  "key": {
+    "I": "arcaneresearch:void_metal_ingot"
+  },
+  "result": {
+    "id": "arcaneresearch:void_legs",
+    "count": 1
+  }
+}

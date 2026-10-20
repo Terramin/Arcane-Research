@@ -1,0 +1,43 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "glass": "arcaneresearch:block/jar_side",
+        "particle": "arcaneresearch:block/jar_side"
+    },
+    "display": {
+        "gui": {
+            "rotation": [ 30, 135, 0 ],
+            "translation": [ 0, 1, 0],
+            "scale":[ 0.75, 0.75, 0.75 ]
+        },
+        "fixed": {
+            "rotation": [ 0, 90, 0 ],
+            "translation": [ 0, 0, 0],
+            "scale":[ 0.625, 0.625, 0.625 ]
+        },
+        "ground": {
+            "translation": [ 0, 2, 0],
+            "scale": [ 0.625, 0.625, 0.625 ]
+        },
+        "thirdperson_lefthand": {
+            "scale": [ 0.625, 0.625, 0.625 ]
+        },
+        "thirdperson_righthand": {
+            "scale": [ 0.625, 0.625, 0.625 ]
+        }
+    },
+    "elements": [
+        {
+            "from": [5,5,5],
+            "to": [11,11,11],
+            "faces": {
+                "up": { "texture": "#glass" },
+                "down": { "texture": "#glass" },
+                "west": { "texture": "#glass" },
+                "east": { "texture": "#glass" },
+                "north": { "texture": "#glass" },
+                "south": { "texture": "#glass" }
+            }
+        }
+    ]
+}

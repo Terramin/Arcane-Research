@@ -1,0 +1,7 @@
+{
+    "parent": "arcaneresearch:item/caster_gauntlet_focus",
+    "textures": {
+        "particle": "arcaneresearch:item/caster_basic",
+        "skin": "arcaneresearch:item/caster_basic"
+    }
+}

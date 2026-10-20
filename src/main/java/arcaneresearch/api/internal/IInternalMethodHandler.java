@@ -1,0 +1,61 @@
+package arcaneresearch.api.internal;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType;
+import arcaneresearch.api.capabilities.IPlayerWarp.EnumWarpType;
+import arcaneresearch.api.golems.seals.ISeal;
+import arcaneresearch.api.golems.seals.ISealEntity;
+import arcaneresearch.api.golems.seals.SealPos;
+import arcaneresearch.api.golems.tasks.Task;
+import arcaneresearch.api.research.ResearchCategory;
+
+public interface IInternalMethodHandler {
+
+    boolean addKnowledge(Player player, EnumKnowledgeType type, ResearchCategory category, int amount);
+
+    boolean progressResearch(Player player, String researchkey);
+
+    boolean completeResearch(Player player, String researchkey);
+
+    boolean doesPlayerHaveRequisites(Player player, String researchkey);
+
+    void addWarpToPlayer(Player player, int amount, EnumWarpType type);
+
+    int getActualWarp(Player player);
+
+    AspectList getObjectAspects(ItemStack is);
+
+    AspectList generateTags(ItemStack is);
+
+    float drainVis(Level level, BlockPos pos, float amount, boolean simulate);
+
+    float drainFlux(Level level, BlockPos pos, float amount, boolean simulate);
+
+    void addVis(Level level, BlockPos pos, float amount);
+
+    void addFlux(Level level, BlockPos pos, float amount, boolean showEffect);
+
+    float getTotalAura(Level level, BlockPos pos);
+
+    float getVis(Level level, BlockPos pos);
+
+    float getFlux(Level level, BlockPos pos);
+
+    int getAuraBase(Level level, BlockPos pos);
+
+    void registerSeal(ISeal seal);
+
+    ISeal getSeal(String key);
+
+    ISealEntity getSealEntity(String dimension, SealPos pos);
+
+    void addGolemTask(String dimension, Task task);
+
+    boolean shouldPreserveAura(Level level, Player player, BlockPos pos);
+
+    ItemStack getSealStack(String key);
+}

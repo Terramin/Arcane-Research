@@ -1,0 +1,22 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "WARP",
+  "vis": 20,
+  "crystals": {
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "BN ",
+    "M N",
+    "BN "
+  ],
+  "key": {
+    "B": "arcaneresearch:zombie_brain",
+    "N": "#c:nuggets/brass",
+    "M": "arcaneresearch:mirrored_glass"
+  },
+  "result": {
+    "id": "arcaneresearch:sanity_checker"
+  }
+}

@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "VERDANTCHARMS",
+  "instability": 5,
+  "center": "arcaneresearch:bauble_amulet_fancy",
+  "ingredients": [
+    "arcaneresearch:brass_nugget",
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "victus" },
+    "minecraft:milk_bucket",
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "herba" }
+  ],
+  "aspects": {
+    "victus": 60,
+    "ordo": 30,
+    "herba": 60
+  },
+  "result": {
+    "id": "arcaneresearch:verdant_charm"
+  }
+}

@@ -1,0 +1,12 @@
+﻿{
+  "type": "arcaneresearch:infusion_enchantment",
+  "enchantment": "COLLECTOR",
+  "aspects": {
+    "desiderium": 80,
+    "aqua": 100
+  },
+  "components": [
+    "minecraft:enchanted_book",
+    "minecraft:lead"
+  ]
+}

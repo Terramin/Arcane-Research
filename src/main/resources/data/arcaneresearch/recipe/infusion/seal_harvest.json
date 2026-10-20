@@ -1,0 +1,22 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "SEALHARVEST",
+  "instability": 0,
+  "aspects": {
+    "herba": 10,
+    "sensus": 10,
+    "humanus": 10
+  },
+  "center": "arcaneresearch:blank_seal",
+  "ingredients": [
+    "minecraft:wheat_seeds",
+    "minecraft:pumpkin_seeds",
+    "minecraft:melon_seeds",
+    "minecraft:beetroot_seeds",
+    "minecraft:sugar_cane",
+    "minecraft:cactus"
+  ],
+  "result": {
+    "id": "arcaneresearch:seal_harvest"
+  }
+}

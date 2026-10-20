@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "arcaneresearch:block/log_greatwood",
+    "end": "arcaneresearch:block/log_greatwood_top"
+  }
+}

@@ -1,0 +1,21 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "NODESTABILIZER",
+  "vis": 100,
+  "crystals": {
+    "aer": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    " G ",
+    "GVG",
+    " G "
+  ],
+  "key": {
+    "G": "arcaneresearch:greatwood_log",
+    "V": "arcaneresearch:vis_resonator"
+  },
+  "result": {
+    "id": "arcaneresearch:aura_totem"
+  }
+}

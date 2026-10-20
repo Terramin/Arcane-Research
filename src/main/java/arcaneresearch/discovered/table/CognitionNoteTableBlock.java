@@ -1,0 +1,242 @@
+package arcaneresearch.discovered.table;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+/**
+ * Двухблочный стол записок, порт в паритете с:
+ * - TC3 BlockTable: главный блок (TileResearchTable) + соседний обычный стол;
+ *   клик по соседнему открывает GUI главного; разрыв связи чинится/ломается;
+ * - reforged ResearchTableBlock: PART MAIN/SIDE + FACING, BE только на MAIN,
+ *   mainPos(), SIDE без BE, клик с любой половины открывает меню MAIN.
+ *
+ * Схема: MAIN смотрит FACING; SIDE стоит спереди (pos.relative(FACING))
+ * и смотрит назад. Установка ставит обе половины (как кровать).
+ *
+ * NEOFORGE_PORT: NetworkHooks.openScreen -> ServerPlayer.openMenu(tile, pos-buf);
+ * isClientSide-поле -> isClientSide().
+ */
+public class CognitionNoteTableBlock extends Block implements EntityBlock {
+
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
+
+    /**
+     * Хитбоксы 1:1 с JSON-моделью (проверено по элементам):
+     * MAIN (локально x 0..16): верх, 2 ножки, перекладина, чернильница;
+     * SIDE (локально x 0..16 = модели 16..32): верх, 2 ножки, перекладина.
+     * Поворот — та же конвенция, что у blockstate (y=90: +x→+z,
+     * проверено по ванильной лестнице).
+     * Важно: SIDE хранит FACING наоборот (против MAIN), а модель SIDE
+     * не поворачивается в blockstate — поэтому шейп SIDE крутим
+     * по развороту MAIN (facing.getOpposite()), иначе обводка
+     * зеркалится относительно модели на всех разворотах.
+     */
+    private static VoxelShape shapeFor(Part part, Direction facing) {
+        Direction eff = part == Part.SIDE ? facing.getOpposite() : facing;
+        double[][] boxes = part == Part.MAIN
+                ? new double[][]{
+                        {0, 12, 0, 16, 16, 16},
+                        {2, 0, 2, 6, 12, 6},
+                        {2, 0, 10, 6, 12, 14},
+                        {4, 2, 6, 16, 6, 10},
+                        {2, 16, 2, 5, 18, 5}}
+                : new double[][]{
+                        {0, 12, 0, 16, 16, 16},
+                        {10, 0, 2, 14, 12, 6},
+                        {10, 0, 10, 14, 12, 14},
+                        {0, 2, 6, 12, 6, 10}};
+        VoxelShape shape = Shapes.empty();
+        for (double[] b : boxes) {
+            shape = Shapes.or(shape, rotBox(b, eff));
+        }
+        return shape;
+    }
+
+    private static VoxelShape rotBox(double[] b, Direction facing) {
+        double x1 = b[0], y1 = b[1], z1 = b[2], x2 = b[3], y2 = b[4], z2 = b[5];
+        return switch (facing) {
+            case EAST -> Block.box(x1, y1, z1, x2, y2, z2);
+            case SOUTH -> Block.box(16.0 - z2, y1, x1, 16.0 - z1, y2, x2);
+            case WEST -> Block.box(16.0 - x2, y1, 16.0 - z2, 16.0 - x1, y2, 16.0 - z1);
+            case NORTH -> Block.box(z1, y1, 16.0 - x2, z2, y2, 16.0 - x1);
+            default -> Block.box(x1, y1, z1, x2, y2, z2);
+        };
+    }
+
+    public CognitionNoteTableBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties props) {
+        super(props
+                .mapColor(MapColor.WOOD)
+                .strength(2.0F)
+                .sound(SoundType.WOOD)
+                .noOcclusion());
+        registerDefaultState(stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(PART, Part.MAIN));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, PART);
+    }
+
+    /** Позиция главной половины из любой половины. Паритет reforged mainPos. */
+    public static BlockPos mainPos(BlockPos pos, BlockState state) {
+        return state.getValue(PART) == Part.MAIN ? pos : pos.relative(state.getValue(FACING));
+    }
+
+    private static BlockPos partnerPos(BlockPos pos, BlockState state) {
+        return pos.relative(state.getValue(FACING));
+    }
+
+    private static boolean isPartner(BlockState state, BlockState neighbour) {
+        if (!(neighbour.getBlock() instanceof CognitionNoteTableBlock)) {
+            return false;
+        }
+        return neighbour.getValue(PART) != state.getValue(PART)
+                && neighbour.getValue(FACING) == state.getValue(FACING).getOpposite();
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+            @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        Direction facing = state.getValue(FACING);
+        BlockPos sidePos = pos.relative(facing);
+        if (!level.getBlockState(sidePos).canBeReplaced()) {
+            // Занято: сервер сносит MAIN, клиентский призрак SIDE чинится сам
+            // через updateShape (нет партнёра -> воздух).
+            if (!level.isClientSide()) {
+                level.removeBlock(pos, false);
+            }
+            return;
+        }
+        // Как ванильные двери: вторая половина ставится сразу на обеих
+        // сторонах (предсказание клиента), сервер в итоге решает.
+        level.setBlock(sidePos, state.setValue(PART, Part.SIDE)
+                .setValue(FACING, facing.getOpposite()), 3);
+    }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState neighbour = level.getBlockState(partnerPos(pos, state));
+        return isPartner(state, neighbour);
+    }
+
+    // NEOFORGE_PORT: 26.x updateShape(state, level, ticks, pos, dir, neighbourPos, neighbourState, random).
+    @Override
+    protected BlockState updateShape(BlockState state, LevelReader level,
+            net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos pos, Direction direction,
+            BlockPos neighbourPos, BlockState neighbourState, net.minecraft.util.RandomSource random) {
+        if (direction == state.getValue(FACING) && !isPartner(state, neighbourState)) {
+            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        }
+        return state;
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide()) {
+            BlockPos partner = partnerPos(pos, state);
+            if (level.getBlockState(partner).getBlock() instanceof CognitionNoteTableBlock
+                    && DiscoveredTableSetup.getSingleTable() != null) {
+                level.setBlock(partner, DiscoveredTableSetup.getSingleTable().defaultBlockState(), 3);
+            }
+        }
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return shapeFor(state.getValue(PART), state.getValue(FACING));
+    }
+
+    @Override
+    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
+    // -> useWithoutItem (hand unused).
+
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+            Player player, BlockHitResult hit) {
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        BlockPos main = mainPos(pos, state);
+        BlockEntity be = level.getBlockEntity(main);
+        if (be instanceof CognitionNoteTableTile tile && player instanceof ServerPlayer serverPlayer) {
+            // NEOFORGE_PORT: NetworkHooks.openScreen -> ServerPlayer.openMenu (та же
+            // MenuProvider + BlockPos, как BlockResearchTable/BlockArcaneWorkbench).
+            serverPlayer.openMenu(tile, buf -> buf.writeBlockPos(main));
+            return InteractionResult.CONSUME;
+        }
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level,
+                                               BlockPos pos, boolean isMoving) {
+        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
+        // (cf. BlockResearchTable; same PART.MAIN + dropContents logic).
+        super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
+        if (!state.is(level.getBlockState(pos).getBlock())) {
+            if (state.getValue(PART) == Part.MAIN
+                    && level.getBlockEntity(pos) instanceof CognitionNoteTableTile tile) {
+                tile.dropContents();
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(PART) == Part.MAIN ? new CognitionNoteTableTile(pos, state) : null;
+    }
+
+    public enum Part implements StringRepresentable {
+        MAIN("main"),
+        SIDE("side");
+
+        private final String name;
+
+        Part(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
+    }
+}

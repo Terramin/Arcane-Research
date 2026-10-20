@@ -1,0 +1,13 @@
+# Local port notes (not for the repo)
+PORT_NOTES.md
+
+# Gradle build cache and outputs
+.gradle/
+build/
+
+# Dev run directories (ModDevGradle)
+run/
+runs/
+
+# IDE
+.idea/

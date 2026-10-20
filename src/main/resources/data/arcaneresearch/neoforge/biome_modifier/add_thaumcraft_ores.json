@@ -1,0 +1,10 @@
+﻿{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "arcaneresearch:ore_cinnabar",
+    "arcaneresearch:ore_amber",
+    "arcaneresearch:ore_quartz"
+  ],
+  "step": "underground_ores"
+}

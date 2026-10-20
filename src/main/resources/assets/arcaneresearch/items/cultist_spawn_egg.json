@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "arcaneresearch:item/spawn_egg_template",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 9314095
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 14267535
+      }
+    ]
+  }
+}

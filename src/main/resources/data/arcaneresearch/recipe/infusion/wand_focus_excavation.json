@@ -1,0 +1,25 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSEXCAVATION",
+  "instability": 4,
+  "center": "minecraft:glass",
+  "ingredients": [
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "terra" },
+    "minecraft:emerald",
+    "minecraft:emerald",
+    "minecraft:emerald",
+    "minecraft:emerald"
+  ],
+  "aspects": {
+    "terra": 250,
+    "potentia": 25,
+    "instrumentum": 25,
+    "praecantatio": 50
+  },
+  "result": {
+    "id": "arcaneresearch:wand_focus_excavation"
+  }
+}

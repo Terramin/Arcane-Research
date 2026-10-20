@@ -1,0 +1,9 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "arcaneresearch:label_filled"
+  ],
+  "result": {
+    "id": "arcaneresearch:label_blank"
+  }
+}

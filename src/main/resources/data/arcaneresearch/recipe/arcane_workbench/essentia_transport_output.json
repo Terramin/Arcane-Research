@@ -1,0 +1,23 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ESSENTIATRANSPORT",
+  "vis": 100,
+  "crystals": {
+    "aer": 1,
+    "aqua": 1
+  },
+  "pattern": [
+    "   ",
+    "BQB",
+    "IGI"
+  ],
+  "key": {
+    "B": "#c:plates/brass",
+    "Q": "minecraft:hopper",
+    "I": "#c:plates/iron",
+    "G": "arcaneresearch:alchemical_brass_block"
+  },
+  "result": {
+    "id": "arcaneresearch:essentia_output"
+  }
+}

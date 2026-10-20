@@ -1,0 +1,17 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:thaumium_stuff",
+  "pattern": [
+    "III",
+    " S ",
+    " S "
+  ],
+  "key": {
+    "I": "arcaneresearch:thaumium_ingot",
+    "S": "#c:rods/wooden"
+  },
+  "result": {
+    "id": "arcaneresearch:thaumium_pick",
+    "count": 1
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "arcaneresearch:item/focus_advanced",
+    "tints": [
+      {
+        "type": "arcaneresearch:focus"
+      }
+    ]
+  }
+}

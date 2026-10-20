@@ -1,0 +1,20 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUSGREATER@1",
+  "instability": 5,
+  "center": "arcaneresearch:focus_blank",
+  "ingredients": [
+    "arcaneresearch:quicksilver",
+    "arcaneresearch:primordial_pearl",
+    "arcaneresearch:quicksilver",
+    "minecraft:nether_star"
+  ],
+  "aspects": {
+    "praecantatio": 25,
+    "ordo": 50,
+    "vacuos": 100
+  },
+  "result": {
+    "id": "arcaneresearch:focus_advanced"
+  }
+}

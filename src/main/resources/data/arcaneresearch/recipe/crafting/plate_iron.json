@@ -1,0 +1,13 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III"
+  ],
+  "key": {
+    "I": "#c:ingots/iron"
+  },
+  "result": {
+    "id": "arcaneresearch:plate_iron",
+    "count": 3
+  }
+}

@@ -1,0 +1,12 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:glass_bottle",
+    "minecraft:feather",
+    "#c:dyes/black"
+  ],
+  "result": {
+    "id": "arcaneresearch:scribing_tools",
+    "count": 1
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "c:add_features",
+  "biomes": "arcaneresearch:magical_forest",
+  "features": "arcaneresearch:mossy_cobble_blob",
+  "step": "vegetal_decoration"
+}

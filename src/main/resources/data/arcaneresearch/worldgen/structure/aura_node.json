@@ -1,0 +1,11 @@
+{
+  "type": "arcaneresearch:feature",
+  "feature": "arcaneresearch:aura_node",
+  "box_half_width": 1,
+  "box_height_up": 3,
+  "box_height_down": 1,
+  "biomes": "#minecraft:is_overworld",
+  "spawn_overrides": {},
+  "step": "vegetal_decoration",
+  "terrain_adaptation": "none"
+}

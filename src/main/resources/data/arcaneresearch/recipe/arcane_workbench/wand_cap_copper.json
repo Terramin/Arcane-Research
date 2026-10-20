@@ -1,0 +1,12 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shapeless",
+  "research": "",
+  "vis": 3,
+  "ingredients": [
+    "minecraft:copper_ingot"
+  ],
+  "result": {
+    "id": "arcaneresearch:wand_cap",
+    "components": { "minecraft:custom_data": {"cap":"copper"} }
+  }
+}

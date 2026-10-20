@@ -1,0 +1,11 @@
+﻿{
+  "model": {
+    "type": "minecraft:model",
+    "model": "arcaneresearch:item/nitor_blue",
+    "tints": [
+      {
+        "type": "arcaneresearch:nitor"
+      }
+    ]
+  }
+}

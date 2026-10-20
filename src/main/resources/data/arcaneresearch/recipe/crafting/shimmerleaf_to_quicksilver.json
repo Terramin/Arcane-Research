@@ -1,0 +1,11 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:shimmerleaf_to_quicksilver",
+  "ingredients": [
+    "arcaneresearch:shimmerleaf"
+  ],
+  "result": {
+    "id": "arcaneresearch:quicksilver",
+    "count": 1
+  }
+}

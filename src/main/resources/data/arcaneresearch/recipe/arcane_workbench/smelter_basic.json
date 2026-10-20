@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ESSENTIASMELTER@2",
+  "vis": 50,
+  "crystals": {
+    "ignis": 1
+  },
+  "pattern": [
+    "BCB",
+    "SFS",
+    "SSS"
+  ],
+  "key": {
+    "B": "arcaneresearch:plate_brass",
+    "C": "arcaneresearch:crucible",
+    "S": "#c:cobblestones",
+    "F": "minecraft:furnace"
+  },
+  "result": {
+    "id": "arcaneresearch:smelter"
+  }
+}

@@ -1,0 +1,24 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:void_stuff",
+  "research": "VOIDROBEARMOR",
+  "instability": 4,
+  "input": "arcaneresearch:thaumium_helm",
+  "ingredients": [
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_metal_ingot",
+    "arcaneresearch:void_seed",
+    "arcaneresearch:void_seed"
+  ],
+  "aspects": {
+    "alienis": 20,
+    "vacuos": 20,
+    "praemunio": 15,
+    "tenebrae": 10
+  },
+  "result": {
+    "id": "arcaneresearch:void_helm"
+  }
+}

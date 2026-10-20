@@ -1,0 +1,124 @@
+{
+    "entries" :[
+        {
+            "key": "BASEELDRITCH",    
+            "name": "research.BASEELDRITCH.title",
+            "icons": [ "arcaneresearch:void_seed" ],
+            "category": "ELDRITCH", "location": [ 0,0 ], 
+            "parents": [ "METALLURGY", "UNLOCKELDRITCH" ],        
+            "meta": [ "ROUND" ],        
+            "stages": [
+                    {
+                        "text": "research.BASEELDRITCH.stage.1",
+                        "required_knowledge":["THEORY;BASICS;1","THEORY;ALCHEMY;1","THEORY;ELDRITCH;1"],
+                        "warp": 2
+                    },
+                    {
+                        "text": "research.BASEELDRITCH.stage.2",  
+                        "recipes": ["arcaneresearch:crucible/void_ingot","arcaneresearch:void_stuff"]         
+                    }
+                ]
+        },
+        {
+        "key": "ELDRITCHMINOR",    
+        "name": "research.ELDRITCHMINOR.title",
+        "icons": [ "arcaneresearch:textures/research/r_eldritchminor.png" ],
+        "category": "ELDRITCH", "location": [ 1,1 ], 
+        "meta": [ "ROUND", "HIDDEN" ],        
+        "stages": [
+                {
+                    "text": "research.ELDRITCHMINOR.stage.1",  
+                    "recipes": ["arcaneresearch:crucible/void_seed"]
+                }
+            ]
+        },
+        {
+        "key": "ELDRITCHMAJOR",    
+        "name": "research.ELDRITCHMAJOR.title",
+        "icons": [ "arcaneresearch:textures/research/r_eldritchmajor.png" ],
+        "category": "ELDRITCH", "location": [ -1,1 ], 
+        "meta": [ "ROUND", "HIDDEN" ],        
+        "stages": [
+                {
+                    "text": "research.ELDRITCHMAJOR.stage.1"  
+                },
+                {
+                    "text": "research.ELDRITCHMAJOR.stage.2"  
+                }
+            ]
+        },
+        {
+        "key": "VOIDSIPHON",    
+        "name": "research.VOIDSIPHON.title",
+        "icons": [ "arcaneresearch:void_siphon" ],
+        "category": "ELDRITCH", "location": [ 3,0 ], 
+        "parents": [ "BASEELDRITCH", "INFUSION" ],    
+        "stages": [
+                {
+                    "text": "research.VOIDSIPHON.stage.1",  
+                    "required_knowledge":["OBSERVATION;ELDRITCH;1","THEORY;ELDRITCH;1"],
+                    "warp": 1
+                },
+                {
+                    "text": "research.VOIDSIPHON.stage.2",  
+                    "recipes": ["arcaneresearch:infusion/void_siphon"]
+                }
+            ]
+        },
+        {
+        "key": "VOIDSEERPEARL",    
+        "name": "research.VOIDSEERPEARL.title",
+        "icons": [ "arcaneresearch:voidseer_charm" ],
+        "category": "ELDRITCH", "location": [ -3,0 ], 
+        "parents": [ "BASEELDRITCH", "CURIOSITYBAND" ],    
+        "stages": [
+                {
+                    "text": "research.VOIDSEERPEARL.stage.1",  
+                    "required_knowledge":["OBSERVATION;ELDRITCH;1","THEORY;ELDRITCH;1"],
+                    "warp": 3
+                },
+                {
+                    "text": "research.VOIDSEERPEARL.stage.2",  
+                    "recipes": ["arcaneresearch:infusion/voidseer_charm"]
+                }
+            ]
+        },
+        {
+        "key": "VOIDROBEARMOR",    
+        "name": "research.VOIDROBEARMOR.title",
+        "icons": [ "arcaneresearch:void_robe_helm" ],
+        "category": "ELDRITCH", "location": [ 0,3 ], 
+        "parents": [ "BASEELDRITCH", "ARMORFORTRESS" ],    
+        "stages": [
+                {
+                    "text": "research.VOIDROBEARMOR.stage.1",  
+                    "required_knowledge":["OBSERVATION;ELDRITCH;1","THEORY;ELDRITCH;1"],
+                    "warp": 1
+                },
+                {
+                    "text": "research.VOIDROBEARMOR.stage.2",  
+                    "recipes": ["arcaneresearch:infusion/void_robe_helm","arcaneresearch:infusion/void_robe_chest","arcaneresearch:infusion/void_robe_legs"]
+                }
+            ]
+        },
+        {
+        "key": "PRIMALCRUSHER",    
+        "name": "research.PRIMALCRUSHER.title",
+        "icons": [ "arcaneresearch:primal_crusher" ],
+        "category": "ELDRITCH", "location": [ 0,-3 ], 
+        "parents": [ "BASEELDRITCH", "ELEMENTALTOOLS" ],    
+        "stages": [
+                {
+                    "text": "research.PRIMALCRUSHER.stage.1",  
+                    "required_knowledge":["OBSERVATION;ELDRITCH;1","THEORY;ELDRITCH;1"],
+                    "warp": 1
+                },
+                {
+                    "text": "research.PRIMALCRUSHER.stage.2",  
+                    "recipes": ["arcaneresearch:infusion/primal_crusher"]
+                }
+            ]
+        }
+    ]
+}
+    

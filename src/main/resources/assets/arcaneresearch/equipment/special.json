@@ -1,0 +1,16 @@
+{
+  "layers": {
+    "humanoid": [
+      { "texture": "arcaneresearch:special", "dyeable": { "color_when_undyed": 6966272 } },
+      { "texture": "arcaneresearch:special_overlay" }
+    ],
+    "humanoid_leggings": [
+      { "texture": "arcaneresearch:special", "dyeable": { "color_when_undyed": 6966272 } },
+      { "texture": "arcaneresearch:special_overlay" }
+    ],
+    "humanoid_baby": [
+      { "texture": "arcaneresearch:special", "dyeable": { "color_when_undyed": 6966272 } },
+      { "texture": "arcaneresearch:special_overlay" }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+﻿{
+  "model": {
+    "type": "minecraft:model",
+    "model": "arcaneresearch:item/grass_ambient",
+    "tints": [
+      {
+        "type": "arcaneresearch:grass_ambient"
+      }
+    ]
+  }
+}

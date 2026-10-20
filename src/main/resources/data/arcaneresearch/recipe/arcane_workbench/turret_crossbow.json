@@ -1,0 +1,24 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "BASICTURRET",
+  "vis": 100,
+  "crystals": {
+    "aer": 1
+  },
+  "pattern": [
+    "BGI",
+    "WMW",
+    "S S"
+  ],
+  "key": {
+    "B": "minecraft:bow",
+    "G": "arcaneresearch:mechanism_simple",
+    "I": "#c:plates/iron",
+    "W": "arcaneresearch:greatwood_planks",
+    "M": "arcaneresearch:brain_clockwork",
+    "S": "#c:rods/wooden"
+  },
+  "result": {
+    "id": "arcaneresearch:turret_placer_basic"
+  }
+}

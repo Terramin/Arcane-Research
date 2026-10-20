@@ -1,0 +1,11 @@
+﻿{
+  "model": {
+    "type": "minecraft:model",
+    "model": "arcaneresearch:item/crystal_entropy",
+    "tints": [
+      {
+        "type": "arcaneresearch:crystal_aspect"
+      }
+    ]
+  }
+}

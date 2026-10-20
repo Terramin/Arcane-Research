@@ -1,0 +1,11 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "arcaneresearch:item/golem_placer",
+    "tints": [
+      {
+        "type": "arcaneresearch:golem_material"
+      }
+    ]
+  }
+}

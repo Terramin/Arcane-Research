@@ -1,0 +1,23 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FORTRESSMASK",
+  "instability": 8,
+  "center": "arcaneresearch:fortress_helm",
+  "ingredients": [
+    "minecraft:red_dye",
+    "arcaneresearch:plate_iron",
+    "#c:leathers",
+    "minecraft:fermented_spider_eye",
+    "minecraft:milk_bucket",
+    "arcaneresearch:plate_iron"
+  ],
+  "aspects": {
+    "exanimis": 80,
+    "victus": 80,
+    "praemunio": 20
+  },
+  "result": {
+    "id": "arcaneresearch:fortress_helm",
+    "components": { "minecraft:custom_data": {"mask":2} }
+  }
+}

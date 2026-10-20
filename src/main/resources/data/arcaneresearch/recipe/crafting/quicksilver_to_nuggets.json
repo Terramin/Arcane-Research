@@ -1,0 +1,11 @@
+﻿{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:quicksilver_stuff",
+  "ingredients": [
+    "arcaneresearch:quicksilver"
+  ],
+  "result": {
+    "id": "arcaneresearch:quicksilver_nugget",
+    "count": 9
+  }
+}

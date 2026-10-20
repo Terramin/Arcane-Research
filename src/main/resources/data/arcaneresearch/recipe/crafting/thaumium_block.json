@@ -1,0 +1,16 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "group": "arcaneresearch:thaumium_stuff",
+  "pattern": [
+    "III",
+    "III",
+    "III"
+  ],
+  "key": {
+    "I": "arcaneresearch:thaumium_ingot"
+  },
+  "result": {
+    "id": "arcaneresearch:thaumium_block",
+    "count": 1
+  }
+}

@@ -1,0 +1,26 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "ARCANEBORE",
+  "instability": 4,
+  "aspects": {
+    "potentia": 25,
+    "terra": 25,
+    "machina": 100,
+    "vacuos": 25,
+    "motus": 25
+  },
+  "input": "arcaneresearch:turret_placer_basic",
+  "ingredients": [
+    "arcaneresearch:greatwood_planks",
+    "arcaneresearch:greatwood_planks",
+    "arcaneresearch:mechanism_complex",
+    "#c:plates/brass",
+    "minecraft:diamond_pickaxe",
+    "minecraft:diamond_shovel",
+    "arcaneresearch:morphic_resonator",
+    "arcaneresearch:nugget_rareearth"
+  ],
+  "result": {
+    "id": "arcaneresearch:turret_placer_bore"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:pedestal_arcane",
+    "arcaneresearch:pedestal_ancient",
+    "arcaneresearch:pedestal_eldritch"
+  ]
+}

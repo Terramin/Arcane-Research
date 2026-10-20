@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "",
+  "vis": 50,
+  "crystals": {
+    "aer": 1
+  },
+  "pattern": [
+    "SB ",
+    "SEB",
+    "SB "
+  ],
+  "key": {
+    "S": "minecraft:string",
+    "B": "minecraft:bone",
+    "E": {"neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "perditio"}
+  },
+  "result": {
+    "id": "arcaneresearch:bone_bow"
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "parent": "arcaneresearch:block/levitator_on",
+    "textures": {
+        "particle": "arcaneresearch:block/levitator_top_off",
+        "top": "arcaneresearch:block/levitator_top_off",
+        "side": "arcaneresearch:block/levitator_side_off",
+        "bottom": "arcaneresearch:block/levitator_bottom"
+    }
+}

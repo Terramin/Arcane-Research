@@ -1,0 +1,14 @@
+﻿{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "KK",
+    "KK"
+  ],
+  "key": {
+    "K": "arcaneresearch:arcane_stone"
+  },
+  "result": {
+    "id": "arcaneresearch:arcane_stone_brick",
+    "count": 4
+  }
+}
