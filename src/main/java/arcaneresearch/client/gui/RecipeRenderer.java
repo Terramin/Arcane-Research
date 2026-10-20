@@ -568,18 +568,21 @@ public class RecipeRenderer {
         for (int h = 0; h < ySize; ++h) {
             for (int l = 0; l < xSize; ++l) {
                 for (int w = 0; w < zSize; ++w) {
+                    // BlueprintBlockAccess кладёт слои зеркально по Y:
+                    // structure[h] ← parts[ySize - 1 - h], иначе нода не рисуется.
+                    arcaneresearch.api.crafting.Part part = parts[ySize - 1 - h][l][w];
                     net.minecraft.core.BlockPos pos = new net.minecraft.core.BlockPos(l, h, w);
                     net.minecraft.world.level.block.state.BlockState state = blueprintAccess.getBlockState(pos);
-                    if (state.isAir()) {
-                        continue;
-                    }
                     try {
                         graphics.pose().pushPose();
                         graphics.pose().translate(l, h, w);
-                        blockRenderer.renderSingleBlock(state, graphics.pose(), buffer,
-                                15728880, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,
-                                net.minecraftforge.client.model.data.ModelData.EMPTY, null);
-                        BlueprintBlockAccess.renderNodeOverlay(graphics.pose(), buffer, parts[h][l][w]);
+                        // блоки рисуем как в мире: алтарь — через BER
+                        BlueprintBlockAccess.renderBlueprintState(graphics.pose(), buffer, state, 15728880);
+                        // нода рисуется и в пустой клетке (AIR вместо стекла-заглушки),
+                        // но скрытые срезом слои гасятся вместе с блоками
+                        if (!blueprintAccess.isHiddenBySlice(h)) {
+                            BlueprintBlockAccess.renderNodeOverlay(graphics.pose(), buffer, part);
+                        }
                         graphics.pose().popPose();
                     } catch (Exception ignored) {
                     }

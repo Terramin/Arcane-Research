@@ -54,7 +54,10 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile> {
         poseStack.pushPose();
         poseStack.translate(0.5, 0.0, 0.5);
         poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-        VertexConsumer base = buffer.getBuffer(TCRenderTypes.objSolidOpaque(TEXTURE));
+        // NEOFORGE_PORT (26.3 renderDevice 1:1): base/over рисуются одним
+        // objSolid-слоём (ENTITY_CUTOUT c отсечением задних граней = наш
+        // objSolidCulled); двойное внутреннее дублирование граней убрано.
+        VertexConsumer base = buffer.getBuffer(TCRenderTypes.objSolidCulled(TEXTURE));
         model.renderGroup(poseStack, base, "lock", packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
         VertexConsumer over = buffer.getBuffer(TCRenderTypes.objSolidCulled(TEXTURE_OVER));
         for (int a = 0; a < 4; a++) {

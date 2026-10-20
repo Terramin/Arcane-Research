@@ -7,9 +7,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -98,7 +96,6 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
         int xSize = parts[0].length;
         int zSize = parts[0][0].length;
         float scale = Math.max(6f, 26 - Math.max(ySize, Math.max(xSize, zSize)) * 2);
-        var blockRenderer = Minecraft.getInstance().getBlockRenderer();
         var buffer = guiGraphics.bufferSource();
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(CX, CY, 200);
@@ -109,17 +106,21 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
         for (int h = 0; h < ySize; ++h) {
             for (int l = 0; l < xSize; ++l) {
                 for (int w = 0; w < zSize; ++w) {
+                    // BlueprintBlockAccess кладёт слои зеркально по Y:
+                    // structure[у] ← parts[ySize - 1 - у], иначе оверлей ноды
+                    // ищется не в тех клетках и не рисуется.
+                    Part part = parts[ySize - 1 - h][l][w];
                     BlockState state = access.getBlockState(new BlockPos(l, h, w));
-                    if (state.isAir()) {
-                        continue;
-                    }
                     try {
                         guiGraphics.pose().pushPose();
                         guiGraphics.pose().translate(l, h, w);
-                        blockRenderer.renderSingleBlock(state, guiGraphics.pose(), buffer,
-                                15728880, OverlayTexture.NO_OVERLAY,
-                                net.minecraftforge.client.model.data.ModelData.EMPTY, null);
-                        BlueprintBlockAccess.renderNodeOverlay(guiGraphics.pose(), buffer, parts[h][l][w]);
+                        // блоки рисуем как в мире: алтарь — через BER
+                        BlueprintBlockAccess.renderBlueprintState(guiGraphics.pose(), buffer, state, 15728880);
+                        // нода рисуется и в пустой клетке (AIR вместо стекла-заглушки),
+                        // но скрытые срезом слои гасятся вместе с блоками
+                        if (!access.isHiddenBySlice(h)) {
+                            BlueprintBlockAccess.renderNodeOverlay(guiGraphics.pose(), buffer, part);
+                        }
                         guiGraphics.pose().popPose();
                     } catch (Exception ignored) {
                     }

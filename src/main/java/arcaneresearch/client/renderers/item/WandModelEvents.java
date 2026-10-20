@@ -38,8 +38,22 @@ public class WandModelEvents {
         ModelResourceLocation key = new ModelResourceLocation(new ResourceLocation("arcaneresearch", itemName), "inventory");
         ResourceLocation icon = new ResourceLocation("arcaneresearch",
                 staff ? "item/wand/rod_greatwood_mat" : "item/wand/rod_wood_mat");
+        // 26.3-паритет: display-трансформы живут в JSON (models/item/wand.json
+        // / staff.json — дословный порт display-блока 26.3). Забираем их у
+        // запечённого плейсхолдера ДО подмены на мешь-модель; WandTransforms
+        // остаётся fallback-константами (числа совпадают с JSON).
+        ItemTransforms jsonTransforms = null;
+        BakedModel placeholder = models.get(key);
+        if (placeholder != null) {
+            try {
+                jsonTransforms = placeholder.getTransforms();
+            } catch (Exception ignored) {
+            }
+        }
         WandMeshModel wandModel = new WandMeshModel(itemName);
-        wandModel.initialize(staff ? WandTransforms.STAFF : WandTransforms.WAND, icon);
+        ItemTransforms init = jsonTransforms != null
+                ? jsonTransforms : (staff ? WandTransforms.STAFF : WandTransforms.WAND);
+        wandModel.initialize(init, icon);
         models.put(key, wandModel);
         if (staff) {
             WandMeshModel.staffTransforms = wandModel.getTransforms();

@@ -20,15 +20,37 @@ import arcaneresearch.client.renderers.tile.AuraNodeRenderHelper;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.lib.aura.NodeType;
 import arcaneresearch.common.lib.crafting.Matrix;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.client.model.data.ModelData;
 import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class BlueprintBlockAccess implements BlockAndTintGetter {
     private final BlockState[][][] structure;
+    /**
+     * true — клетки аура-ноды показываются стеклом-заглушкой (цвет по типу
+     * ноды); false — нодовый блок билет AIR, сама нода рисуется светящимся
+     * оверлеем {@link #renderNodeOverlay} (чертёж/книга/JEI).
+     */
+    private final boolean glassForNodes;
     public int sliceLine = 0;
     public BlueprintBlockAccess(Part[][][] data) {
-        this(data, false);
+        this(data, false, false);
     }
+    /**
+     * @param target target-режим (закладка): слои повёрнуты, нода — стеклом-заглушкой
+     */
     public BlueprintBlockAccess(Part[][][] data, boolean target) {
+        this(data, target, target);
+    }
+    public BlueprintBlockAccess(Part[][][] data, boolean target, boolean glassNodes) {
+        this.glassForNodes = glassNodes;
         int ySize = data.length;
         int xSize = data[0].length;
         int zSize = data[0][0].length;
@@ -48,7 +70,7 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
             }
         }
     }
-    private static BlockState convert(@Nullable Part part) {
+    private BlockState convert(@Nullable Part part) {
         if (part == null || part.getSource() == null) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -84,7 +106,16 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
             return false;
         }
     }
-    private static BlockState nodeSurrogate(@Nullable Part part) {
+    /**
+     * Раньше здесь была тонированная стеклянная заглушка по типу ноды; теперь
+     * в основном чертеже (glassForNodes == false) клетка ноды пуста — ноду
+     * рисует {@link #renderNodeOverlay} поверх прохода блоков. Стекло остаётся
+     * только в target-режиме закладки, где оверлей не вызывается.
+     */
+    private BlockState nodeSurrogate(@Nullable Part part) {
+        if (!glassForNodes) {
+            return Blocks.AIR.defaultBlockState();
+        }
         NodeType type = part == null ? null : part.getNodeType();
         if (type == null) {
             return Blocks.GLASS.defaultBlockState();
@@ -98,7 +129,7 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
             default -> Blocks.GLASS.defaultBlockState();
         };
     }
-    private static BlockState convertTarget(@Nullable Part part) {
+    private BlockState convertTarget(@Nullable Part part) {
         if (part == null) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -122,10 +153,66 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
         return Blocks.AIR.defaultBlockState();
     }
     private static AspectList blueprintNodeAspects = null;
+    /**
+     * Рисует клетку 3D-чертежа так же, как блок выглядит в мире: обычные
+     * блоки — через renderSingleBlock, а блоки, чья геометрия целиком в
+     * BlockEntityRenderer (Eldritch Altar и прочие EntityBlock с рендером
+     * формы ENTITYBLOCK_ANIMATED) — напрямую через их BER, геометрия
+     * совпадает с мировой. Поза должна быть уже сдвинута в клетку (угол
+     * 0,0,0 — как у BER в мире).
+     */
+    public static void renderBlueprintState(PoseStack pose, MultiBufferSource buffer,
+                                            @Nullable BlockState state, int light) {
+        if (state == null || state.isAir()) {
+            return;
+        }
+        if (state.getRenderShape() == RenderShape.ENTITYBLOCK_ANIMATED
+                && state.getBlock() instanceof EntityBlock entityBlock) {
+            BlockEntity be = null;
+            try {
+                be = entityBlock.newBlockEntity(BlockPos.ZERO, state);
+            } catch (Exception ignored) {
+            }
+            BlockEntityRenderer<BlockEntity> ber = be != null
+                    ? Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(be)
+                    : null;
+            if (ber != null) {
+                try {
+                    ber.render(be, 0.0F, pose, buffer, light, OverlayTexture.NO_OVERLAY);
+                } catch (Exception ignored) {
+                }
+                return;
+            }
+        }
+        try {
+            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, pose, buffer,
+                    light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
+        } catch (Exception ignored) {
+        }
+    }
+    /**
+     * Настоящая аура-нода в 3D-чертеже (книга, JEI): нодовый блок невидим
+     * (convert() кладёт AIR без стекла-заглушки), здесь рисуем светящуюся
+     * ноду нужного типа — зловещая даёт тёмный вихрь.
+     * Поза уже сдвинута в клетку чертежа, её центр — (0.5, 0.5, 0.5).
+     */
     public static void renderNodeOverlay(com.mojang.blaze3d.vertex.PoseStack pose,
                                          net.minecraft.client.renderer.MultiBufferSource buffer,
                                          @Nullable Part part) {
-        if (part == null || !(part.getSource() instanceof Block block) || !isAuraNode(block)) {
+        if (part == null) {
+            return;
+        }
+        Object source = part.getSource();
+        Block block = null;
+        if (source instanceof Block b) {
+            block = b;
+        } else if (source instanceof ItemStack stack) {
+            Block byItem = Block.byItem(stack.getItem());
+            if (byItem != null && byItem != Blocks.AIR) {
+                block = byItem;
+            }
+        }
+        if (block == null || !isAuraNode(block)) {
             return;
         }
         try {
@@ -149,6 +236,19 @@ public class BlueprintBlockAccess implements BlockAndTintGetter {
     }
     public int getHeight() {
         return structure.length;
+    }
+    /**
+     * Скрыта ли клетка на уровне y анимацией слоёв (sliceLine) — та же
+     * логика, что в {@link #getBlockState(BlockPos)}: скрытые слои
+     * возвращают AIR, и оверлей ноды для них рисовать нельзя, чтобы
+     * свечение не оставалось висеть при показе среза.
+     */
+    public boolean isHiddenBySlice(int y) {
+        int hidden = sliceLine;
+        if (hidden > structure.length) {
+            hidden = 0;
+        }
+        return y >= structure.length - hidden;
     }
     @Nullable
     @Override

@@ -120,29 +120,25 @@ public final class WandTipHelper {
                 arcaneresearch.client.renderers.item.WandUseAnimation.applyWaveBlock(
                         ps, st.focusStack(), st.u(), st.tilt());
             }
-            org.joml.Matrix4f preM = new org.joml.Matrix4f(ps.last().pose());
-            float[] preT = new float[]{preM.m30(), preM.m31(), preM.m32()};
             arcaneresearch.api.wands.IWand wand =
                     (arcaneresearch.api.wands.IWand) handStack.getItem();
-            net.minecraft.client.renderer.block.model.ItemTransforms transforms = null;
-            try {
-                net.minecraft.client.Minecraft mc2 = net.minecraft.client.Minecraft.getInstance();
-                net.minecraft.client.resources.model.BakedModel baked = mc2.getItemRenderer()
-                        .getModel(handStack, mc2.level, player, 0);
-                if (baked != null) {
-                    transforms = baked.getTransforms();
-                }
-            } catch (Exception ignored) {
-            }
-            if (transforms == null) {
-                boolean staff = wand.getRod(handStack) != null && wand.getRod(handStack).isStaff();
-                transforms = staff ? arcaneresearch.client.renderers.item.WandTransforms.STAFF
-                        : arcaneresearch.client.renderers.item.WandTransforms.WAND;
-            }
-            transforms.getTransform(arm == HumanoidArm.RIGHT
-                    ? net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
-                    : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
-                    .apply(arm != HumanoidArm.RIGHT, ps);
+            // 26.3-паритет: display-трансформ кончика зафиксирован константами
+            // (26.3 WandTipHelper не читает запечённую модель, а хардкодит
+            // WandTransforms firstperson: rot [0,-90,25],
+            // trans [1.13,3.2,1.13]x0.0625, scale 0.68 — те же числа, что и в
+            // models/item/wand.json). Порядок T-R-S и зеркало левой руки
+            // (translation.x и rotation.y/z в минус) — дословно
+            // ItemTransform.apply, затем translate(-0.5) как
+            // ItemRenderer.render (сверено с 26.3-жезловым решателем: без
+            // -0.5 старт отрывался от кристалла фокуса).
+            boolean right = arm == HumanoidArm.RIGHT;
+            float dtx = (right ? 1.13F : -1.13F) * 0.0625F;
+            float dty = 3.2F * 0.0625F;
+            float dtz = 1.13F * 0.0625F;
+            ps.translate(dtx, dty, dtz);
+            ps.mulPose(com.mojang.math.Axis.YP.rotationDegrees(right ? -90.0F : 90.0F));
+            ps.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(right ? 25.0F : -25.0F));
+            ps.scale(0.68F, 0.68F, 0.68F);
             ps.translate(-0.5F, -0.5F, -0.5F);
             org.joml.Matrix4f m = new org.joml.Matrix4f(ps.last().pose());
             boolean hasFocus = wand.getFocus(handStack) != null;
@@ -151,6 +147,11 @@ public final class WandTipHelper {
             m.transform(p);
             Minecraft mc = Minecraft.getInstance();
             Camera camera = mc.gameRenderer.getMainCamera();
+            // Инверсия x/z ОСТАЁТСЯ (в отличие от 26.3): в 1.20.1
+            // camera.rotation() маппит другую локальную рамку — 26.3-комментарий
+            // это фиксирует («в 1.20.1 инверсия компенсировала, без неё луч
+            // уходил левее жезла»); в 26.3 rotation() маппит стандартное
+            // GL view-пространство, поэтому там без инверсии.
             org.joml.Vector3f v = new org.joml.Vector3f(-p.x, p.y, -p.z);
             v.rotate(camera.rotation());
             Vec3 pos = camera.getPosition();
