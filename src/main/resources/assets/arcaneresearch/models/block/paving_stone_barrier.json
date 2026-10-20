@@ -1,8 +1,9 @@
-{    
-    "parent": "block/farmland",
+{
+    "parent": "minecraft:block/cube_bottom_top",
     "textures": {
         "particle": "arcaneresearch:block/paving_stone_barrier",
-        "dirt": "arcaneresearch:block/arcane_brick_stone",
-        "top": "arcaneresearch:block/paving_stone_barrier"
+        "bottom": "arcaneresearch:block/paving_stone_barrier",
+        "top": "arcaneresearch:block/paving_stone_barrier",
+        "side": "arcaneresearch:block/paving_stone_barrier"
     }
 }

@@ -1,8 +1,9 @@
 {
-    "parent": "block/farmland",
+    "parent": "minecraft:block/cube_bottom_top",
     "textures": {
         "particle": "arcaneresearch:block/paving_stone_travel",
-        "dirt": "arcaneresearch:block/arcane_brick_stone",
-        "top": "arcaneresearch:block/paving_stone_travel"
+        "bottom": "arcaneresearch:block/paving_stone_travel",
+        "top": "arcaneresearch:block/paving_stone_travel",
+        "side": "arcaneresearch:block/paving_stone_travel"
     }
 }
