@@ -14,17 +14,18 @@ Ported version for Minecraft 1.20.1 Forge
 > 
 > The textures were created by Ufoss_xxs. Thanks to him for the help.(The author distributes the textures under a free license, subject to attribution.)
 
-I had a good laugh while browsing the discussions about the port online, so here are some answers to the questions raised:
+## Contributors
 
-1. The repository will be deleted after the release. Gone for good—nobody is getting the code. (I see no reason to compete with Team CoFH, since I’m doing this just for myself and for anyone wanting to satisfy their craving before TC7 comes out.)
-2. There is a lot of information on the Internet (even there are details which ones) that most of the assets were not originally created by Azanor, and so to speak, taken for personal purpose (the assets that were possible by him or for him were replaced)
-3. The mod was created exclusively for home trial use
-4. The mod is called the Thaumcraft port, in fact it is not a port, since the Minecraft (forge/neoforge) API has changed in a significant area (the code created from scratch which corresponds to my views and replacement of assets). What makes the mod something thaumcraft like. And trying to recreate the very experience of the old versions and experience from the custom parts that I would like to see in this fashion. (The mod is similar but not a copy, so cool down and just enjoy this parody until the release of TC7)
-5. This repository is hosted on a separate account on purpose.
-6. This one really cracked me up. Do you seriously think the avatar was AI-generated? To me, it sounds like you’ve got a problem if you see AI where there isn't any. (Source: *You're an Extra in an Adult Webtoon*—I can't give you the exact chapter, but try checking around page 46 or 48.)
-7. And here’s something just as funny. Do you really think someone with four years of commercial development experience—plus two years of creating APK mods back in 2016–2017—wouldn't be able to throw the file into something like Jadx, JD, or Ghidra and manually reconstruct the source code? Are you really that naive? Porting the renderer to the new version's engine actually gave me more trouble than converting Dalvik bytecode into human-readable Java; that part was a relatively new experience for me, as I’d never done anything like it before.
+<a href="https://github.com/Terramin/Arcane-Research/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Terramin/Arcane-Research" alt="Contributors" />
+</a>
 
-(Text translated via Google Translate)
+| | Contributor | Contribution |
+|---|---|---|
+| <img src="https://github.com/Terramin.png?size=64" width="64" alt="Terramin"> | [**Terramin**](https://github.com/Terramin) | mod author, maintainer, textures * |
+| <img src="https://github.com/ClaudeMinecraftLarper.png?size=64" width="64" alt="ClaudeMinecraftLarper"> | [**ClaudeMinecraftLarper**](https://github.com/ClaudeMinecraftLarper) | NeoForge 26.3 port + parity fixes |
+
+<i>* Textures by Ufoss_xxs (free license with attribution).</i>
 
 ## TODO
 
