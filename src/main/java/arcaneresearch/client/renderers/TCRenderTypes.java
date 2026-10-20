@@ -97,6 +97,35 @@ public final class TCRenderTypes {
     private static final Function<Identifier, RenderType> OBJ_SOLID_FLAT = setup(
             "arcaneresearch_obj_solid_flat", OBJ_SOLID_FLAT_PIPE);
 
+    // NEOFORGE_PORT (wand focus alpha parity): Forge 1.20.1 pushed ALL baked wand
+    // quads through ItemRenderer -> RenderType.translucent (fancy graphics), so
+    // the focus texture's soft alpha blended translucently. Same derivation as
+    // OBJ_SOLID_FLAT (ENTITY_SNIPPET + NO_CARDINAL_LIGHTING + NO_OVERLAY, no
+    // cull, GREATER_THAN_OR_EQUAL + depth write) but the color target re-states
+    // the vanilla TRANSLUCENT blend (proven MIRROR_ALPHA pattern; format/write
+    // mask/depth bias are copied from the raw vanilla pipeline untouched).
+    // No EMISSIVE define: the focus stays lightmap-lit like Forge item quads.
+    private static final RenderPipeline OBJ_ALPHA_FLAT_PIPE;
+    static {
+        RenderPipeline base = RenderPipelines.ENTITY_TRANSLUCENT;
+        ColorTargetState baseTarget = base.getColorTargetStates().get(0);
+        DepthStencilState baseDepth = base.getDepthStencilState();
+        OBJ_ALPHA_FLAT_PIPE = track(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
+                .withLocation(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID,
+                        "arcaneresearch_obj_alpha_flat"))
+                .withShaderDefine("NO_CARDINAL_LIGHTING")
+                .withShaderDefine("NO_OVERLAY")
+                .withColorTargetState(0, new ColorTargetState(
+                        java.util.Optional.of(BlendFunction.TRANSLUCENT),
+                        baseTarget.format(), baseTarget.writeMask()))
+                .withCull(false)
+                .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL,
+                        true, baseDepth.depthBiasScaleFactor(), baseDepth.depthBiasConstant()))
+                .build());
+    }
+    private static final Function<Identifier, RenderType> OBJ_ALPHA_FLAT = setup(
+            "arcaneresearch_obj_alpha_flat", OBJ_ALPHA_FLAT_PIPE);
+
     // NEOFORGE_PORT (26.3): GUI blit with Forge blendFunc(SRC_ALPHA, ONE) (HUD bar
     // shimmer overlays). Built like vanilla GUI_NAUSEA_OVERLAY (GUI_TEXTURED_SNIPPET +
     // own ColorTargetState) but with LIGHTNING = SrcAlpha/One; registered via track().
@@ -412,6 +441,10 @@ public final class TCRenderTypes {
 
     public static RenderType objSolidFlat(Identifier texture) {
         return OBJ_SOLID_FLAT.apply(texture);
+    }
+
+    public static RenderType objAlphaFlat(Identifier texture) {
+        return OBJ_ALPHA_FLAT.apply(texture);
     }
 
     public static RenderType golemGhost(Identifier texture) {

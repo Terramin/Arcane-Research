@@ -1,5 +1,4 @@
 {
-    "parent": "minecraft:block/block",
     "textures": {
         "particle": "arcaneresearch:block/jar_side"
     }

@@ -251,7 +251,11 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
                         lightCoords, 1.0F, 1.0F, 1.0F, capTex);
             }
             if (!arg.focusId().isEmpty()) {
-                emitFramed(poseStack, collector, TCRenderTypes.objSolidFlat(focusTex), model, "focus",
+                // NEOFORGE_PORT (26.3): focus drawn with the translucent variant
+                // (TCRenderTypes.objAlphaFlat): Forge item quads went through
+                // RenderType.translucent (soft focus alpha), the cutout variant
+                // clipped the gradient to hard edges.
+                emitFramed(poseStack, collector, TCRenderTypes.objAlphaFlat(focusTex), model, "focus",
                         lightCoords, fr, fg, fb, focusTex);
             }
             // NEOFORGE_PORT: no manual foil re-emission (see header): vanilla

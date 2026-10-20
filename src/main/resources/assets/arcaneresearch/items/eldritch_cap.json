@@ -1,6 +1,6 @@
-﻿{
+{
   "model": {
     "type": "minecraft:model",
-    "model": "arcaneresearch:block/eldritch_cap"
+    "model": "arcaneresearch:item/eldritch_cap"
   }
 }

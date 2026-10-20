@@ -1,6 +1,6 @@
-﻿{
+{
   "model": {
     "type": "minecraft:model",
-    "model": "arcaneresearch:block/eldritch_altar"
+    "model": "arcaneresearch:item/eldritch_altar"
   }
 }

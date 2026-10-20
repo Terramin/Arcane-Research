@@ -2,6 +2,7 @@
     "loader": "neoforge:obj",
     "model": "arcaneresearch:models/item/scanner.obj",
     "flip_v": true,
+    "gui_light": "front",
     "textures": {
         "particle": "arcaneresearch:item/scanner",
         "body": "arcaneresearch:item/scanner",
@@ -9,13 +10,13 @@
     },
     "display": {
         "thirdperson_righthand": {
-            "rotation": [ 90, 90, 0 ],
-            "translation": [ 0, 0, -1.6 ],
+            "rotation": [ -90, 0, -30 ],
+            "translation": [ 0, 5, -1.6 ],
             "scale": [ 0.2, 0.2, 0.2 ]
         },
         "thirdperson_lefthand": {
-            "rotation": [ 90, 90, 0 ],
-            "translation": [ 0, -1.6, 0 ],
+            "rotation": [ -90, 0, -30 ],
+            "translation": [ 0, 3.4, 0 ],
             "scale": [ 0.2, 0.2, 0.2 ]
         },
         "firstperson_righthand": {
