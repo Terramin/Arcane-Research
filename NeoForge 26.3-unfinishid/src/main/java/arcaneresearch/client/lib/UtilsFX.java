@@ -70,6 +70,13 @@ public class UtilsFX {
                 try (var in = resource.get().open()) {
                     com.mojang.blaze3d.platform.NativeImage image =
                             com.mojang.blaze3d.platform.NativeImage.read(in);
+                    // FIX (aspect icons): record the pixel size for both the original
+                    // and (below) the processed texture id. AspectRenderer.renderColoredTexture
+                    // blits with explicit dims and skipped drawing entirely when the map
+                    // was empty -> aspect icons never rendered. The processed image keeps
+                    // the same pixel size, so one read serves both ids.
+                    arcaneresearch.client.lib.AspectRenderer.registerTextureDims(
+                            texture, image.getWidth(), image.getHeight());
                     boolean touched = false;
                     for (int y = 0; y < image.getHeight(); y++) {
                         for (int x = 0; x < image.getWidth(); x++) {
@@ -96,6 +103,8 @@ public class UtilsFX {
                                 prefix + "/" + texture.getPath());
                         Minecraft.getInstance().getTextureManager().register(processed,
                                 new net.minecraft.client.renderer.texture.DynamicTexture(processed::toString, image));
+                        arcaneresearch.client.lib.AspectRenderer.registerTextureDims(
+                                processed, image.getWidth(), image.getHeight());
                         cache.put(texture, processed);
                         return processed;
                     }
