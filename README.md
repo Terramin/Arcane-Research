@@ -14,6 +14,22 @@ Ported version for Minecraft 1.20.1 Forge
 > 
 > The textures were created by Ufoss_xxs. Thanks to him for the help.(The author distributes the textures under a free license, subject to attribution.)
 
+## Branches
+
+The repository sources live in version-specific branches:
+
+| Version | Branch | Source code |
+|---|---|---|
+| Forge 1.20.1 | [`forge/1.20.1`](https://github.com/Terramin/Arcane-Research/tree/forge/1.20.1) | [Browse](https://github.com/Terramin/Arcane-Research/tree/forge/1.20.1/src) |
+| NeoForge 26.3 | [`neoforge/26.3`](https://github.com/Terramin/Arcane-Research/tree/neoforge/26.3) | [Browse](https://github.com/Terramin/Arcane-Research/tree/neoforge/26.3/src) |
+
+Clone a specific branch:
+
+```sh
+git clone -b forge/1.20.1 https://github.com/Terramin/Arcane-Research.git
+git clone -b neoforge/26.3 https://github.com/Terramin/Arcane-Research.git
+```
+
 ## Contributors
 
 <a href="https://github.com/Terramin/Arcane-Research/graphs/contributors">
