@@ -51,6 +51,10 @@ public class ItemVoidRobeArmor extends Item
     public ItemVoidRobeArmor(Item.Properties props, ArmorType type) {
         // NEOFORGE_PORT: super(material, type, props) -> super(props.humanoidArmor(material, type)).
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_VOIDROBE, type)
+                // NEOFORGE_PORT (26.3): humanoidArmor() uses vanilla per-slot units (11/16/15/13);
+                // Forge indexed {13,15,16,11} by ArmorItem.Type ordinal -> restore Forge durability.
+                .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(
+                        ArcaneresearchArmorMaterials.ARMORMAT_VOIDROBE, type))
                 .stacksTo(1)
                 .rarity(Rarity.EPIC));
         this.armorType = type;
@@ -72,7 +76,7 @@ public class ItemVoidRobeArmor extends Item
         return armorType;
     }
 
-    // TODO_PORT: Forge isValidRepairItem accepted the void metal ingot item (or the material match).
+    // NEOFORGE_PORT: Forge isValidRepairItem accepted the void metal ingot item (or the material match).
     // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
     // via the ArmorMaterial repairIngredient tag); ARMORMAT_VOIDROBE maps to the repairs_void data
     // tag (void metal ingot, as Forge used), so no override is needed (or possible).
@@ -88,8 +92,10 @@ public class ItemVoidRobeArmor extends Item
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
+        // NEOFORGE_PORT (26.3): Forge only ticked the player inventory (mob gear never reached
+        // inventoryTick); 26.3 EntityEquipment.tick also ticks mob equipment -> players only.
         if (stack.isDamaged() && entity.tickCount % 20 == 0
-                && entity instanceof LivingEntity living) {
+                && entity instanceof Player living) {
             stack.setDamageValue(stack.getDamageValue() - 1);
             for (EquipmentSlot armorSlot : new EquipmentSlot[]{
                     EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {

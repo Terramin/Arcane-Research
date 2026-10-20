@@ -372,11 +372,13 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
                 {impactSize, impactSize},
                 {impactSize, -impactSize}
         };
+        // NEOFORGE_PORT (26.3): camera.rotation() is now yaw+180 (x flipped vs Forge);
+        // swapped U keeps the Forge sprite orientation (same fix vanilla made).
         float[][] uvs = {
-                {u1, v1},
-                {u1, v0},
+                {u0, v1},
                 {u0, v0},
-                {u0, v1}
+                {u1, v0},
+                {u1, v1}
         };
 
         for (int i = 0; i < 4; i++) {

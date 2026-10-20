@@ -88,4 +88,11 @@ public class RechargePedestalRenderer implements BlockEntityRenderer<TileRecharg
 
         poseStack.popPose();
     }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileRechargePedestal blockEntity) {
+        return blockEntity.getRenderBoundingBox();
+    }
 }

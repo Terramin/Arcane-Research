@@ -26,7 +26,10 @@ import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent; // NEOFORGE_PORT: LivingHurtEvent removed -> LivingDamageEvent.Pre
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent; // NEOFORGE_PORT (26.3): LivingHurtEvent removed -> ARMOR reduction callback (see onEntityHurt)
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -82,7 +85,8 @@ public class EntityEvents {
     }
 
     @SubscribeEvent
-    public static void onLivingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Post event) { // NEOFORGE_PORT: LivingTickEvent removed
+    // NEOFORGE_PORT (26.3): Forge LivingTickEvent fired at the START of LivingEntity.tick() -> EntityTickEvent.Pre.
+    public static void onLivingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Pre event) { // NEOFORGE_PORT: LivingTickEvent removed
         if (!(event.getEntity() instanceof LivingEntity living)) return;
         if (living == null || living.level().isClientSide()) return;
         int t = ChampionModifier.getChampionId(living);
@@ -95,53 +99,103 @@ public class EntityEvents {
         }
     }
 
+    /**
+     * NEOFORGE_PORT (26.3): stand-in for Forge 1.20.1 LivingHurtEvent (mutable amount + cancel flag),
+     * so the handler body below keeps the reference control flow verbatim.
+     */
+    private static final class LivingHurt {
+        private final LivingEntity entity;
+        private final DamageSource source;
+        private float amount;
+        private boolean canceled;
+
+        LivingHurt(LivingEntity entity, DamageSource source, float amount) {
+            this.entity = entity;
+            this.source = source;
+            this.amount = amount;
+        }
+
+        LivingEntity getEntity() { return entity; }
+        DamageSource getSource() { return source; }
+        float getAmount() { return amount; }
+        void setAmount(float amount) { this.amount = amount; }
+        boolean isCanceled() { return canceled; }
+        void setCanceled(boolean canceled) { this.canceled = canceled; }
+    }
+
+    // NEOFORGE_PORT (26.3): Forge LivingHurtEvent fired at the top of actuallyHurt — after
+    // invulnerability frames / shield blocking, BEFORE armor, enchantment, resistance and
+    // absorption reductions. LivingIncomingDamageEvent fires before the i-frame check (would
+    // drain the runic shield on hits vanilla ignores) and LivingDamageEvent.Pre fires after
+    // armor/enchant/resistance (wrong amount for the runic shield, boots, champion mods).
+    // The ARMOR reduction callback runs exactly at the Forge point (inside actuallyHurt, with
+    // container.getNewDamage() == the amount Forge's LivingHurtEvent received), so the
+    // reference handler runs there and the returned reduction makes vanilla armor (and the
+    // following enchant/resistance/absorption steps) apply to the handler's output amount.
     @SubscribeEvent
-    public static void onEntityHurt(LivingDamageEvent.Pre event) { // NEOFORGE_PORT: LivingHurtEvent removed
+    public static void onEntityHurt(LivingIncomingDamageEvent event) {
+        LivingEntity living = event.getEntity();
+        if (living.level().isClientSide()) return;
+        event.addReductionModifier(DamageContainer.Reduction.ARMOR,
+                (container, reductionIn) -> applyLivingHurt(living, container, reductionIn));
+    }
+
+    private static float applyLivingHurt(LivingEntity living, DamageContainer container, float reductionIn) {
+        float before = container.getNewDamage();
+        LivingHurt event = new LivingHurt(living, container.getSource(), before);
+        handleLivingHurt(event);
+        // ForgeHooks.onLivingHurt: canceled -> 0 (actuallyHurt then deals nothing).
+        float after = event.isCanceled() ? 0.0F : Math.max(0.0F, event.getAmount());
+        if (after == before) {
+            return reductionIn;
+        }
+        DamageSource source = container.getSource();
+        float afterArmor = after;
+        if (after > 0.0F && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+            afterArmor = CombatRules.getDamageAfterAbsorb(living, after, source, living.getArmorValue(),
+                    (float) living.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
+        }
+        return before - afterArmor;
+    }
+
+    private static void handleLivingHurt(LivingHurt event) {
         Entity entity = event.getEntity();
         DamageSource source = event.getSource();
 
         if (entity instanceof Player player) {
-            // NEOFORGE_PORT: LivingDamageEvent.Pre carries the mutable amount
-            // (Forge LivingHurtEvent passed the whole event); runic absorb runs
-            // before armor, same as Forge handlePlayerHurt.
-            handlePlayerHurt(event, player, source, event.getNewDamage());
+            handlePlayerHurt(event);
         }
 
         if (entity instanceof Player fallPlayer && !entity.level().isClientSide()
                 && source.is(DamageTypeTags.IS_FALL)) {
-            // NEOFORGE_PORT: LivingDamageEvent.Pre is not cancellable; the Forge
-            // LivingHurtEvent.setCanceled(true) branches become setNewDamage(0),
-            // and !isCanceled() becomes !fallNegated (exact same control flow).
-            boolean fallNegated = false;
             if (fallPlayer.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof ItemBootsTraveller) {
-                float f = Math.max(0.0F, event.getNewDamage() / 2.0F - 1.0F);
+                float f = Math.max(0.0F, event.getAmount() / 2.0F - 1.0F);
                 if (f < 1.0F) {
-// GREEN_COMMENT                     event.setCanceled(true);
-                    event.setNewDamage(0.0F);
-                    fallNegated = true;
+                    event.setCanceled(true);
+                    event.setAmount(0.0F);
                 } else {
-                    event.setNewDamage(f);
+                    event.setAmount(f);
                 }
             }
-            if (!fallNegated
+            if (!event.isCanceled()
                     && CuriosCompat.isEquipped(fallPlayer, ModItems.CLOUD_RING.get())) {
-                float f = Math.max(0.0F, event.getNewDamage() / 3.0F - 2.0F);
+                float f = Math.max(0.0F, event.getAmount() / 3.0F - 2.0F);
                 if (f < 1.0F) {
-// GREEN_COMMENT                     event.setCanceled(true);
-                    event.setNewDamage(0.0F);
-                } else if (f < event.getNewDamage()) {
-                    event.setNewDamage(f);
+                    event.setCanceled(true);
+                    event.setAmount(0.0F);
+                } else if (f < event.getAmount()) {
+                    event.setAmount(f);
                 }
-                if (event.getNewDamage() < 1.0F) {
-// GREEN_COMMENT                     event.setCanceled(true);
-                    event.setNewDamage(0.0F);
+                if (event.getAmount() < 1.0F) {
+                    event.setCanceled(true);
+                    event.setAmount(0.0F);
                 }
             }
         }
 
         Entity attacker = source.getEntity();
         if (attacker instanceof Player attackingPlayer) {
-            handlePlayerAttack(attackingPlayer, event.getEntity(), event.getNewDamage());
+            handlePlayerAttack(attackingPlayer, event.getEntity(), event.getAmount());
         }
 
         if (entity instanceof LivingEntity dying && !(dying instanceof Player)
@@ -171,23 +225,25 @@ public class EntityEvents {
                     PacketHandler.sendToAllTracking(new PacketFXShield(mob.getId(), target2), mob);
                 } else if (t >= 0 && t < ChampionModifier.MODS.length
                         && ChampionModifier.MODS[t].type == 2 && source.getEntity() instanceof LivingEntity attacker2) {
-                    event.setNewDamage(ChampionModifier.MODS[t].effect.performEffect(mob, attacker2, source, event.getNewDamage()));
+                    event.setAmount(ChampionModifier.MODS[t].effect.performEffect(mob, attacker2, source, event.getAmount()));
                 }
             }
 
-            if (event.getNewDamage() > 0.0f && source.getEntity() instanceof Monster attackerMob) {
+            if (event.getAmount() > 0.0f && source.getEntity() instanceof Monster attackerMob) {
                 int at = ChampionModifier.getChampionId(attackerMob);
                 if (at >= 0 && at < ChampionModifier.MODS.length && ChampionModifier.MODS[at].type == 1
                         && entity instanceof LivingEntity victim) {
-                    event.setNewDamage(ChampionModifier.MODS[at].effect.performEffect(attackerMob, victim, source, event.getNewDamage()));
+                    event.setAmount(ChampionModifier.MODS[at].effect.performEffect(attackerMob, victim, source, event.getAmount()));
                 }
             }
         }
     }
 
-    private static void handlePlayerHurt(LivingDamageEvent.Pre event, Player player,
-                                         DamageSource source, float amount) {
+    private static void handlePlayerHurt(LivingHurt event) {
+        Player player = (Player) event.getEntity();
         if (player.level().isClientSide()) return;
+        DamageSource source = event.getSource();
+        float amount = event.getAmount();
 
         if (source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) {
             if (ArcaneresearchCapabilities.knowsResearchStrict(player, "BASEAUROMANCY@2") &&
@@ -249,8 +305,8 @@ public class EntityEvents {
 
         // Паритет TC4 EventHandlerRunic.entityHurt: щит гасит урон до брони,
         // заряд живёт в серверной карте (ванильный абсорб не используется).
-        // NEOFORGE_PORT: LivingDamageEvent.Pre is not cancellable; the Forge
-        // setAmount/setCanceled branches become setNewDamage (same control flow).
+        // NEOFORGE_PORT (26.3): runs inside the ARMOR reduction callback (see onEntityHurt),
+        // i.e. at the Forge LivingHurtEvent point — pre-armor amount, after i-frames.
         if (source.is(net.minecraft.world.damagesource.DamageTypes.FALL)
                 || source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)
                 || source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)
@@ -272,9 +328,9 @@ public class EntityEvents {
         int charge = PlayerEvents.runicCharge.get(pid);
         if (charge > amount) {
             charge = (int) (charge - amount);
-            event.setNewDamage(0.0F);
+            event.setAmount(0.0F);
         } else {
-            event.setNewDamage(amount - charge);
+            event.setAmount(amount - charge);
             charge = 0;
         }
 
@@ -346,15 +402,16 @@ public class EntityEvents {
         }
     }
 
-    // NEOFORGE_PORT: LivingDropsEvent no longer carries lootingLevel (26.x);
-    // same value derived from the killing weapon's LOOTING enchantment.
+    // NEOFORGE_PORT: LivingDropsEvent no longer carries lootingLevel (26.x).
+    // NEOFORGE_PORT (26.3): Forge ForgeHooks.getLootingLevel = EnchantmentHelper.getMobLooting(killer),
+    // i.e. the LOOTING level on the killer's (source.getEntity()) equipment at drop time —
+    // not the projectile's weapon (getWeaponItem() would be the bow for arrow kills).
     private static int getLootingLevel(LivingEntity entity, DamageSource source) {
-        ItemStack weapon = source.getWeaponItem();
-        if (weapon == null || weapon.isEmpty()) {
+        if (!(source.getEntity() instanceof LivingEntity killer)) {
             return 0;
         }
-        return weapon.getEnchantmentLevel(entity.level().registryAccess()
-                .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(net.minecraft.world.item.enchantment.Enchantments.LOOTING));
+        return net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantmentLevel(entity.level().registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(net.minecraft.world.item.enchantment.Enchantments.LOOTING), killer);
     }
 
     @SubscribeEvent

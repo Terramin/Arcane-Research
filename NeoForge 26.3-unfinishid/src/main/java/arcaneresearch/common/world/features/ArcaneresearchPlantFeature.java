@@ -96,7 +96,8 @@ public class ArcaneresearchPlantFeature implements Feature {
     }
 
     private static boolean hasCeiling(WorldGenLevel level, BlockPos pos) {
-        for (int y = pos.getY() + 1; y < pos.getY() + 32 && y < level.getMaxY(); y++) {
+        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+        for (int y = pos.getY() + 1; y < pos.getY() + 32 && y <= level.getMaxY(); y++) {
             BlockState state = level.getBlockState(new BlockPos(pos.getX(), y, pos.getZ()));
             if (!state.isAir() && !state.canBeReplaced()) {
                 return true;

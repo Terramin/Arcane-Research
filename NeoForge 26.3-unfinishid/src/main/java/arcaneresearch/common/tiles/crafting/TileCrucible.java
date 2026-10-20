@@ -313,6 +313,16 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         spillAll();
     }
 
+    // NEOFORGE_PORT (26.3): reference BlockCrucible.onRemove called spillAll() (flux +
+    // drain) before removal. The port's BlockCrucible.affectNeighborsAfterRemoval runs after
+    // LevelChunk already removed this tile, so it never found it. LevelChunk calls this only
+    // when the block actually changes (server side), with the tile still present.
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+        spillAll();
+        super.preRemoveSideEffects(pos, oldState);
+    }
+
     @Override
     public boolean triggerEvent(int id, int param) {
         if (level != null && level.isClientSide() && clientTriggerEvent(id, param)) {

@@ -382,7 +382,8 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         return false;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x (bounds live on the
+    // BlockEntityRenderer); this tile has no renderer, so the box is informational only.
     public AABB getRenderBoundingBox() {
         return new AABB(
                 worldPosition.getX() - 1.3, worldPosition.getY() - 1.3, worldPosition.getZ() - 1.3,

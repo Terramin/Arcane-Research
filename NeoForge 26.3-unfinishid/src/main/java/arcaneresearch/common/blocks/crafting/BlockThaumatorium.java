@@ -94,8 +94,11 @@ public class BlockThaumatorium extends Block implements EntityBlock {
                                 Direction facing, BlockPos facingPos, BlockState facingState,
                                 net.minecraft.util.RandomSource random) {
 
+        // NEOFORGE_PORT (26.3): reverts to a brass block like the reference (was AIR, which
+        // went through Block.updateOrDestroy -> destroyBlock and, with the re-place below,
+        // left a brass block AND dropped a brass item).
         if (facing == Direction.UP && !facingState.is(ModBlocks.THAUMATORIUM_TOP.get())) {
-            return Blocks.AIR.defaultBlockState();
+            return ModBlocks.ALCHEMICAL_BRASS_BLOCK.get().defaultBlockState();
         }
 
         if (facing == Direction.DOWN && !facingState.is(ModBlocks.CRUCIBLE.get())) {
@@ -163,9 +166,8 @@ public class BlockThaumatorium extends Block implements EntityBlock {
         Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
                 new ItemStack(brass));
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
-        if (!level.isClientSide()) {
-            level.setBlock(pos, brass.defaultBlockState(), Block.UPDATE_ALL);
-        }
+        // NEOFORGE_PORT (26.3): no brass re-place here - the reference left the broken
+        // base as air (only the brass item above drops); re-placing duplicated the block.
     }
 
     @Override
@@ -173,8 +175,9 @@ public class BlockThaumatorium extends Block implements EntityBlock {
         return true;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof TileThaumatorium thaumatorium) {
 

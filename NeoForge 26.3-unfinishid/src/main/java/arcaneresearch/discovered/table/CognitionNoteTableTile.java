@@ -128,6 +128,12 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
     public void setChanged() {
         super.setChanged();
         recalc = true;
+        // NEOFORGE_PORT (26.3): restored reference client sync (BER draws paper/note
+        // from the client tile; without it the client copy stays stale/empty).
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
     }
 
     @Override
@@ -161,6 +167,34 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         ContainerHelper.loadAllItems(tag, items);
         safe = tag.getBooleanOr("Safe", true);
         recalc = true;
+    }
+
+    // NEOFORGE_PORT (26.3): restored reference sync trio. Update tag = items only
+    // (as reference); handleUpdateTag/onDataPacket only clear+reload items, so the
+    // client-side Safe flag is not reset by the default loadWithComponents path.
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        net.minecraft.world.level.storage.TagValueOutput out =
+                net.minecraft.world.level.storage.TagValueOutput.createWithContext(
+                        net.minecraft.util.ProblemReporter.DISCARDING, registries);
+        ContainerHelper.saveAllItems(out, items);
+        return out.buildResult();
+    }
+
+    @Override
+    public void handleUpdateTag(ValueInput tag) {
+        items.clear();
+        ContainerHelper.loadAllItems(tag, items);
+    }
+
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(net.minecraft.network.Connection net, ValueInput tag) {
+        handleUpdateTag(tag);
     }
 
     // ------------------------------------------------------------ menu
@@ -316,8 +350,9 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         }
         BlockPos pos = worldPosition;
         addBonus("tenebrae", level.getMaxLocalRawBrightness(pos) < 9 ? 2 : 0);
-        // NEOFORGE_PORT: Level.isDay/getDayTime gone -> LevelData.getGameTime window.
-        addBonus("lux", level.getLevelData().getGameTime() % 24000L < 12000L && level.canSeeSky(pos.above()) ? 2 : 0);
+        // NEOFORGE_PORT (26.3): Level.isDay() -> isBrightOutside() (same body:
+        // !hasFixedTime && skyDarken < 4); game-time window was not day time.
+        addBonus("lux", level.isBrightOutside() && level.canSeeSky(pos.above()) ? 2 : 0);
         if (pos.getY() > 100) {
             addBonus("aer", 3);
         }

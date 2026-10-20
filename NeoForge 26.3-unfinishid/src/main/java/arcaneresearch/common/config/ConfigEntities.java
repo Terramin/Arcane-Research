@@ -112,6 +112,8 @@ public class ConfigEntities {
         forArc.add(entry(4, new ItemStack(Items.ENCHANTED_GOLDEN_APPLE)));
         forInv.add(entry(4, new ItemStack(Items.SPECTRAL_ARROW)));
         forArc.add(entry(5, new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get())));
+        // NEOFORGE_PORT (26.3): Forge forager trade (lesser runic ring, cost 5) was dropped in the port.
+        forArc.add(entry(5, new ItemStack(ModItems.RUNIC_RING_LESSER.get())));
         forArc.add(entry(5, new ItemStack(ModItems.CURIO_KNOWLEDGE.get())));
         tradeInventory.put(2, forArc);
 
@@ -128,15 +130,22 @@ public class ConfigEntities {
     // (power-1 cost 2, flame-1 cost 5, infinity-1 cost 5 — same costs/levels as Forge) are
     // appended at server start via initPechBookTrades; table picks are uniformly random by
     // cost, so append position does not change behavior.
+    // Book trades hold enchantment holders of the running server's registries, so they are
+    // rebuilt on every server start (previous server's entries removed, never duplicated).
+    private static final List<TradeEntry> bookTrades = new ArrayList<>();
+
     public static void initPechBookTrades(HolderLookup.Provider registries) {
         var lookup = registries.lookupOrThrow(Registries.ENCHANTMENT);
         List<TradeEntry> forArc = tradeInventory.get(2);
         if (forArc == null) {
             return;
         }
-        forArc.add(entry(2, enchantedBook(lookup, Enchantments.POWER, 1)));
-        forArc.add(entry(5, enchantedBook(lookup, Enchantments.FLAME, 1)));
-        forArc.add(entry(5, enchantedBook(lookup, Enchantments.INFINITY, 1)));
+        forArc.removeAll(bookTrades);
+        bookTrades.clear();
+        bookTrades.add(entry(2, enchantedBook(lookup, Enchantments.POWER, 1)));
+        bookTrades.add(entry(5, enchantedBook(lookup, Enchantments.FLAME, 1)));
+        bookTrades.add(entry(5, enchantedBook(lookup, Enchantments.INFINITY, 1)));
+        forArc.addAll(bookTrades);
         Arcaneresearch.LOGGER.info("Registered pech enchanted-book trades");
     }
 

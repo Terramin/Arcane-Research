@@ -137,8 +137,10 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(OX, OY + 20);
         guiGraphics.pose().scale(2f, 2f);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -56, 0, 3, 56, 17, 512, 512);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -36, 200, 77, 60, 44, 512, 512);
+        // NEOFORGE_PORT (26.3): Forge blit(tex, x, y, u, v, w, h) assumed a 256x256 sheet
+        // (UVs are in 256-space; the 512px overlay is a 2x asset) -> 256, 256 like RecipeRenderer.
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -56, 0, 3, 56, 17, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -36, 200, 77, 60, 44, 256, 256);
         guiGraphics.pose().popMatrix();
 
         for (AspectSpot spot : layoutAspects(recipe.getAspects())) {
@@ -164,6 +166,13 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
             }
         }
         tooltip.addAll(JeiResearch.tooltip(recipe.getResearch(), mouseX, mouseY, WIDTH));
+    }
+
+    // NEOFORGE_PORT (26.3): JEI 15 default getRegistryName(recipe) was Recipe.getId();
+    // 26.x only reads RecipeHolder ids (see ArcaneresearchJEIPlugin.recipeId).
+    @Override
+    public Identifier getIdentifier(InfusionRecipeType recipe) {
+        return ArcaneresearchJEIPlugin.recipeId(recipe);
     }
 
     private record AspectSpot(Aspect aspect, int amount, int x, int y) {

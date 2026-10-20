@@ -39,7 +39,7 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
             int slot = slotTag.getByteOr("Slot", (byte) 0) & 0xFF;
             if (slot >= 0 && slot < filter.size() && slotTag.contains("Item")) {
                 filter.set(slot, ItemStack.CODEC
-                        .parse(net.minecraft.nbt.NbtOps.INSTANCE, slotTag.get("Item"))
+                        .parse(SealHandler.nbtOps(), slotTag.get("Item"))
                         .result().orElse(ItemStack.EMPTY));
             }
         }
@@ -72,7 +72,7 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
             if (!stack.isEmpty()) {
                 CompoundTag slotTag = new CompoundTag();
                 slotTag.putByte("Slot", (byte) i);
-                ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, stack)
+                ItemStack.CODEC.encodeStart(SealHandler.nbtOps(), stack)
                         .result().ifPresent(encoded -> slotTag.put("Item", encoded));
                 items.add(slotTag);
             }

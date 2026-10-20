@@ -149,9 +149,8 @@ public class ServerEvents {
         chunk.setData(ArcaneresearchCapabilities.SEAL_DATA.get(), new ChunkEvents.SealChunkData(seals));
     }
 
-    // TODO_PORT (client split): ClientTickEvent lives in the client package in 26.x;
-    // referencing it from this common subscriber risks dedicated-server class loading.
-    // Move onClientTick + clientRunList to a @EventBusSubscriber(Dist.CLIENT) client class.
+    // NEOFORGE_PORT: ClientTickEvent ships in the common NeoForge jar, so this subscriber
+    // also loads on a dedicated server (verified with the dev dist cleaner); it never fires there.
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
 
@@ -507,6 +506,26 @@ public class ServerEvents {
     public static void onServerStopping(net.neoforged.neoforge.event.server.ServerStoppingEvent event) {
 
         AuraThreadManager.stopAllThreads();
+
+        // NEOFORGE_PORT (26.3): Forge wrote the live aura/seal NBT from ChunkDataEvent.Save during
+        // the final saveAllChunks() that runs after this event. Here the saved data is the
+        // attachment snapshot taken by the 20-tick flush in onLevelTickPost, so snapshot the
+        // still-pending dirty chunks before the list is cleared; otherwise the last <20 ticks of
+        // changes (e.g. a seal placed right before quitting) never reach the disk.
+        for (ServerLevel level : event.getServer().getAllLevels()) {
+            ResourceKey<Level> dimension = level.dimension();
+            CopyOnWriteArrayList<ChunkPos> dirtyChunks = AuraHandler.dirtyChunks.get(dimension);
+            if (dirtyChunks == null || dirtyChunks.isEmpty()) {
+                continue;
+            }
+            for (ChunkPos pos : dirtyChunks) {
+                ChunkAccess access = level.getChunkSource().getChunk(pos.x(), pos.z(), false);
+                if (access instanceof LevelChunk levelChunk) {
+                    writeChunkAttachments(levelChunk, dimension, pos);
+                    levelChunk.markUnsaved();
+                }
+            }
+        }
 
         AuraHandler.dirtyChunks.clear();
         AuraHandler.riftTrigger.clear();

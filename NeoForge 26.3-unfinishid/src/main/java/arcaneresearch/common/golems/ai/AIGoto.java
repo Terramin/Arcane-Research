@@ -37,6 +37,10 @@ public abstract class AIGoto extends Goal {
 
     @Override
     public boolean canUse() {
+        // NEOFORGE_PORT (26.3): client-side guard from Forge 1.20.1 restored (was dropped).
+        if (golem.level().isClientSide()) {
+            return false;
+        }
         if (cooldown > 0) {
             cooldown--;
             return false;

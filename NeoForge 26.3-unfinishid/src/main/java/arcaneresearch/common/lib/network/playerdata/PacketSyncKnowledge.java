@@ -47,8 +47,8 @@ public class PacketSyncKnowledge implements CustomPacketPayload {
 
             for (String key : knowledge.getResearchList()) {
                 knowledge.clearResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.POPUP);
-                // NEOFORGE_PORT (discovered/*, Forge 1:1): С„Р»Р°Рі DISCOVERY С‚РѕР¶Рµ
-                // РѕРґРЅРѕСЂР°Р·РѕРІС‹Р№ вЂ” С‡РёСЃС‚РёС‚СЃСЏ РїСЂРё РѕС‚РїСЂР°РІРєРµ.
+                // NEOFORGE_PORT (discovered/*, Forge 1:1): флаг DISCOVERY тоже
+                // одноразовый — чистится при отправке.
                 knowledge.clearResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.DISCOVERY);
             }
         } else {
@@ -80,7 +80,7 @@ public class PacketSyncKnowledge implements CustomPacketPayload {
                     }
                     knowledge.clearResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.POPUP);
                 }
-                // NEOFORGE_PORT (discovered/*, Forge 1:1): С‚РѕСЃС‚ РїСЂРµРґСЉСЏРІР»РµРЅРЅРѕРіРѕ РѕС‚РєСЂС‹С‚РёСЏ.
+                // NEOFORGE_PORT (discovered/*, Forge 1:1): тост предъявленного открытия.
                 if (knowledge.hasResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.DISCOVERY)) {
                     ResearchEntry entry = ResearchCategories.getResearch(key);
                     if (entry != null) {
@@ -92,14 +92,13 @@ public class PacketSyncKnowledge implements CustomPacketPayload {
         }
     }
 
+    // NEOFORGE_PORT: toast construction lives in the client class (ResearchToast.show*);
+    // a Toast-typed expression here made the dedicated server fail to link this packet.
     private static void showResearchToast(ResearchEntry entry) {
-        net.minecraft.client.Minecraft.getInstance().gui.toastManager()
-                .addToast(new arcaneresearch.client.gui.ResearchToast(entry));
+        arcaneresearch.client.gui.ResearchToast.show(entry);
     }
 
-    // NEOFORGE_PORT (discovered/*, Forge 1:1): С‚РѕСЃС‚ РїСЂРµРґСЉСЏРІР»РµРЅРЅРѕРіРѕ РѕС‚РєСЂС‹С‚РёСЏ.
     private static void showDiscoveryToast(ResearchEntry entry) {
-        net.minecraft.client.Minecraft.getInstance().gui.toastManager()
-                .addToast(arcaneresearch.client.gui.ResearchToast.discovered(entry));
+        arcaneresearch.client.gui.ResearchToast.showDiscovered(entry);
     }
 }

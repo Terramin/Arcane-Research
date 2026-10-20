@@ -20,7 +20,7 @@ import arcaneresearch.init.ModSounds;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
-public class EntityFallingTaint extends Entity {
+public class EntityFallingTaint extends Entity implements net.neoforged.neoforge.entity.IEntityWithComplexSpawn {
     // NEOFORGE_PORT: Entity.hurtServer abstract in 26.3; this entity is unhurtable (was: no hurt override).
     @Override
     public final boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float damage) {
@@ -30,7 +30,7 @@ public class EntityFallingTaint extends Entity {
         return false;
     }
 
-    // TODO_PORT (packet wave): IEntityAdditionalSpawnData removed in NeoForge; extra spawn data must go through sendPairingData (see Entity base).
+    // NEOFORGE_PORT: Forge IEntityAdditionalSpawnData -> NeoForge IEntityWithComplexSpawn (same payload).
 
     public BlockState fallTile;
     public int fallTime;
@@ -127,8 +127,9 @@ public class EntityFallingTaint extends Entity {
                         level().setBlock(currentPos, fallTile, 3);
                     }
                 }
+            // NEOFORGE_PORT (26.3): getMaxBuildHeight() (exclusive) == getMaxY() + 1.
             } else if ((fallTime > 100 && (currentPos.getY() < level().getMinY() ||
-                    currentPos.getY() > level().getMaxY())) || fallTime > 600) {
+                    currentPos.getY() > level().getMaxY() + 1)) || fallTime > 600) {
                 discard();
             }
         } else {
@@ -160,8 +161,9 @@ public class EntityFallingTaint extends Entity {
                 || currentState.is(ModBlocks.FLUX_GOO.get());
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean causeFallDamage(float distance, float multiplier, net.minecraft.world.damagesource.DamageSource source) {
+    // NEOFORGE_PORT: 26.x causeFallDamage takes a double fall distance.
+    @Override
+    public boolean causeFallDamage(double distance, float multiplier, net.minecraft.world.damagesource.DamageSource source) {
         return false;
     }
 
@@ -217,5 +219,22 @@ public class EntityFallingTaint extends Entity {
     @Override
     public boolean displayFireAnimation() {
         return false;
+    }
+
+    @Override
+    public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        if (fallTile != null) {
+            buffer.writeInt(net.minecraft.world.level.block.Block.getId(fallTile));
+        } else {
+            buffer.writeInt(0);
+        }
+    }
+
+    @Override
+    public void readSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        int stateId = buffer.readInt();
+        if (stateId > 0) {
+            fallTile = net.minecraft.world.level.block.Block.stateById(stateId);
+        }
     }
 }

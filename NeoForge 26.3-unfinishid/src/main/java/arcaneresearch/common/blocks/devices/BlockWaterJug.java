@@ -123,8 +123,9 @@ public class BlockWaterJug extends Block implements EntityBlock {
         return true;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof TileWaterJug tile) {
             return (int) ((float) tile.getWaterLevel() / TileWaterJug.TANK_CAPACITY * 15);

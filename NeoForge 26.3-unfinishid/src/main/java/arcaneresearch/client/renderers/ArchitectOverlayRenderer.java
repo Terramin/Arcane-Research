@@ -180,10 +180,11 @@ public class ArchitectOverlayRenderer {
     private static void drawTexturedQuad(PoseStack poseStack,
                                          net.minecraft.client.renderer.SubmitNodeCollector collector,
                                          Identifier texture, float alpha) {
-        // NEOFORGE_PORT: additive+no-depth+cull-off intent via the additive
-        // layer (no vanilla no-depth pipeline; visual-verify pass).
+        // NEOFORGE_PORT (26.3): Forge additive + disableDepthTest + no cull = the
+        // additive no-cull no-depth layer (same one the world aspect popup uses); the
+        // depth-tested layer hid the frames on/inside the target blocks.
         net.minecraft.client.renderer.rendertype.RenderType type =
-                TCRenderTypes.additiveTexturedNoCull(texture);
+                TCRenderTypes.additiveTexturedNoCullNoDepth(texture);
         int tint = net.minecraft.util.ARGB.colorFromFloat(alpha, 1, 1, 1);
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
             // NEOFORGE_PORT (crash fix): full vertex for ENTITY pipelines

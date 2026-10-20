@@ -38,7 +38,7 @@ public class EntityFocusCloud extends Entity {
         return false;
     }
 
-    // TODO_PORT (packet wave): IEntityAdditionalSpawnData removed in NeoForge; extra spawn data synced via pairing payload (see below).
+    // NEOFORGE_PORT: IEntityAdditionalSpawnData removed in NeoForge; extra spawn data synced via pairing payload (see below).
 
     private static final EntityDataAccessor<Float> DATA_RADIUS =
             SynchedEntityData.defineId(EntityFocusCloud.class, EntityDataSerializers.FLOAT);

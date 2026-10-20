@@ -114,6 +114,9 @@ public class TaintSeedModel extends EntityModel<TaintSeedRenderer.State> {
             this.tents[k].xScale = s + pulse;
             this.tents[k].yScale = s * 0.9f;
             this.tents[k].zScale = s + pulse;
+            // NEOFORGE_PORT (26.3): Forge scaled before the child's translate, so the
+            // segment offset is scaled too (part scale applies only after it).
+            this.tents[k].y *= s * 0.9f;
         }
     }
 

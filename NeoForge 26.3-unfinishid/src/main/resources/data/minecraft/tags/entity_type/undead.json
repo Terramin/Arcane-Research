@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "arcaneresearch:eldritch_guardian"
+    "arcaneresearch:eldritch_guardian",
+    "arcaneresearch:brainy_zombie",
+    "arcaneresearch:giant_brainy_zombie",
+    "arcaneresearch:inhabited_zombie"
   ]
 }

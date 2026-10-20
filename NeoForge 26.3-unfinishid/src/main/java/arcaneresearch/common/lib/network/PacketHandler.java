@@ -7,7 +7,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.server.level.ServerPlayer;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT (foundation stub, 25%):
+// NEOFORGE_PORT (complete: every Forge packet is registered below):
 // Forge 1.20.1 source of truth:
 //   Forge 1.20.1/src/main/java/arcaneresearch/common/lib/network/PacketHandler.java
 //   - SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(Identifier(MODID,"main"), ...)
@@ -24,7 +24,7 @@ import arcaneresearch.Arcaneresearch;
 //     + handler(IPayload, IPayloadContext).
 //   Identifier(MODID, path) id -> Identifier.fromNamespaceAndPath(MODID, path) (26.x: Identifier->Identifier).
 //
-// TODO_PORT: port each packet 1:1 as CustomPacketPayload in the SAME order with SAME ids/fields/handlers.
+// Each packet is ported 1:1 as a CustomPacketPayload, in the SAME order with SAME fields/handlers.
 //   Packet list (= registration order, must be preserved):
 //   SealToClient, SyncKnowledge, SyncWarp, WarpMessage, AuraToClient, TileToClient, TileToServer,
 //   FXSlash, FXBlockArc, FXBlockBamf, FXZap, FXEssentiaSource, FXShield, FXWispZap, FXFocusEffect,

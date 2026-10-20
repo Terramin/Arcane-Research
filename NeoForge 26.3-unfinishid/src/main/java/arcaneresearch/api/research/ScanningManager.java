@@ -119,12 +119,12 @@ public class ScanningManager {
             BlockHitResult hit = rayTrace(player);
             if (hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
                     && hit.getBlockPos().equals(pos)) {
-                // NEOFORGE_PORT: getCloneItemStack protected in 26.x; scanning needs item identity.
-                result = new ItemStack(state.getBlock().asItem());
+                // NEOFORGE_PORT: Forge player-sensitive pick block -> IBlockStateExtension.
+                result = state.getCloneItemStack(pos, level, false, player);
             }
             if (result.isEmpty()) {
-                // NEOFORGE_PORT: getCloneItemStack protected in 26.x; scanning needs item identity.
-                result = new ItemStack(state.getBlock().asItem());
+                // NEOFORGE_PORT: Block.getCloneItemStack is protected in 26.x -> BlockState accessor.
+                result = state.getCloneItemStack(level, pos, false);
             }
 
             if (result.isEmpty()) {

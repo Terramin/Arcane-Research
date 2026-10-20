@@ -71,16 +71,22 @@ public class HungryChestRenderer implements BlockEntityRenderer<TileHungryChest,
         poseStack.rotate(com.mojang.math.Axis.YP.rotationDegrees(-state.facing.toYRot()));
         poseStack.translate(-0.5, -0.5, -0.5);
 
-        lid.xRot = state.lidXRot;
-        lock.xRot = state.lidXRot;
-
+        // NEOFORGE_PORT (26.3): parts are rendered later (deferred, Model.Simple has no
+        // setupAnim) and shared by all chests, so the per-chest lid angle is applied
+        // inside the callback (otherwise every chest shows the last chest's lid).
+        final float lidXRot = state.lidXRot;
+        final int light = state.lightCoords;
         RenderType type = TCRenderTypes.objSolid(TEXTURE);
-        collector.submitModelPart(lid, poseStack, type, state.lightCoords,
-                OverlayTexture.NO_OVERLAY, null, -1, 0);
-        collector.submitModelPart(lock, poseStack, type, state.lightCoords,
-                OverlayTexture.NO_OVERLAY, null, -1, 0);
-        collector.submitModelPart(bottom, poseStack, type, state.lightCoords,
-                OverlayTexture.NO_OVERLAY, null, -1, 0);
+        collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
+            PoseStack work = new PoseStack();
+            work.last().pose().set(pose.pose());
+            work.last().normal().set(pose.normal());
+            lid.xRot = lidXRot;
+            lock.xRot = lidXRot;
+            lid.render(work, consumer, light, OverlayTexture.NO_OVERLAY);
+            lock.render(work, consumer, light, OverlayTexture.NO_OVERLAY);
+            bottom.render(work, consumer, light, OverlayTexture.NO_OVERLAY);
+        });
 
         poseStack.popPose();
     }

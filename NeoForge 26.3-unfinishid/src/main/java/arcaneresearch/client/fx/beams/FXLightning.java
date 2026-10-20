@@ -31,9 +31,7 @@ import java.util.Random;
 // Two passes (LARGE glow + SMALL core) use the multi-texture BeamEffect path
 // (beamRenderTypes + typed emitQuads); pass 1 with type >= 5 keeps the old
 // normal-blend look via normalBeam, otherwise additive like Forge blendFunc.
-// The old camera-look miter vector (Camera#getLookVector, gone) is replaced by
-// the bolt-center-to-camera direction (same cross-with-segment math, symmetric
-// ribbons render identically).
+// The old camera-look miter vector (Camera#getLookVector) is Camera#forwardVector.
 /**
  * Фрактальная молния, точный порт TC4 {@code FXLightningBolt} (+Common):
  * midpoint-displacement с ветвлением, рост по мере возраста, два прохода
@@ -378,7 +376,8 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
     }
 
     private RenderType largeType() {
-        return BeamEngine.additiveBeam(LARGE);
+        // NEOFORGE_PORT (26.3): Forge used blendFunc(770, type >= 5 ? 771 : 1) for BOTH passes.
+        return type >= 5 ? BeamEngine.normalBeam(LARGE) : BeamEngine.additiveBeam(LARGE);
     }
 
     private RenderType smallType() {
@@ -423,19 +422,9 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
         // его меняет) — для точности не применяем и здесь.
         float alphaBase = pass == 0 ? (1.0F - boltage) * 0.4F : 1.0F - boltage * 0.5F;
 
-        // NEOFORGE_PORT: Camera#getLookVector gone; per-frame view direction from
-        // the bolt center to the camera (same cross-with-segment miter math).
-        double vx = (this.x - camPos.x());
-        double vy = (this.y - camPos.y());
-        double vz = (this.z - camPos.z());
-        double vl = Math.sqrt(vx * vx + vy * vy + vz * vz);
-        if (vl < 1.0E-6D) {
-            vx = 0.0D;
-            vy = 0.0D;
-            vz = 1.0D;
-            vl = 1.0D;
-        }
-        V look = new V(vx / vl, vy / vl, vz / vl);
+        // NEOFORGE_PORT (26.3): Camera#getLookVector -> Camera#forwardVector (same vector).
+        org.joml.Vector3fc fwd = camera.forwardVector();
+        V look = new V(fwd.x(), fwd.y(), fwd.z());
 
         for (Segment seg : segments) {
             if (seg.segmentno > renderlength) {

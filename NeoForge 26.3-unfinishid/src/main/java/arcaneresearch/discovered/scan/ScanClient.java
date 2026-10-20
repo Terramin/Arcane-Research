@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -45,7 +46,7 @@ import arcaneresearch.init.ModSounds;
  * удалён -&gt; GuiLayer (как WandClientEvents); GuiGraphics -&gt;
  * GuiGraphicsExtractor (pose pushMatrix/translate/scale 2D, text);
  * RenderSystem-бленд/шейдер-цвет удалены (пайплайны владеют состоянием,
- * альфа строк наград — полным цветом); level.random -&gt; getRandom();
+ * альфа строк наград — ARGB-альфой цвета текста); level.random -&gt; getRandom();
  * Mth — даблы; mc.screen -&gt; mc.gui.screen().
  */
 @OnlyIn(Dist.CLIENT)
@@ -309,7 +310,7 @@ public final class ScanClient {
             }
         }
 
-        /** Порт {@code renderNotifyHUD}: строки справа (затухание к концу — полным цветом). */
+        /** Порт {@code renderNotifyHUD}: строки справа (затухание последние 500 мс). */
         private static void drawLines(GuiGraphicsExtractor graphics, Minecraft mc,
                 int sw, int sh, long now) {
             int i = 0;
@@ -319,9 +320,14 @@ public final class ScanClient {
                 int width = mc.font.width(line.text);
                 int x = sw - width - 12;
                 int y = sh - 64 - i * 12;
-                // NEOFORGE_PORT: setShaderColor удалён — альфа затухания
-                // не применяется, строка рисуется полным цветом до истечения.
-                graphics.text(mc.font, line.text, x, y, 0xFFFFFF, true);
+                float alpha = 1.0F;
+                long left = line.expire - now;
+                if (left < 500L) {
+                    alpha = Math.max(0.0F, left / 500.0F);
+                }
+                // NEOFORGE_PORT (26.3): setShaderColor alpha -> ARGB alpha of the
+                // text color (a 0x00RRGGBB color is skipped entirely by text()).
+                graphics.text(mc.font, line.text, x, y, ARGB.white(alpha), true);
                 i++;
             }
         }

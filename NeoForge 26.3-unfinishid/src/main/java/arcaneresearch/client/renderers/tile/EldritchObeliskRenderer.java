@@ -273,6 +273,10 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
             poseStack.pushPose();
             poseStack.translate(0.5F + x, y, 0.5F + z);
             poseStack.rotate(Axis.YP.rotationDegrees(yaw));
+            // NEOFORGE_PORT (26.3): Forge far quad sits at z = +0.5 (wall face), vquad
+            // emits z = 0 — shift like the in-range branch (else the 4 walls cross
+            // through the obelisk centre).
+            poseStack.translate(0.0F, 0.0F, 0.5F);
             collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
                 vquad(consumer, pose, -0.5F, 0.0F, 1.0F, 1.0F, 0.5F, 0.5F, 0.5F, 0.65F);
                 vquad(consumer, pose, -0.5F, height, 1.0F, 0.0F, 0.5F, 0.5F, 0.5F, 0.65F);
@@ -359,5 +363,12 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
     @Override
     public boolean shouldRenderOffScreen() {
         return true;
+    }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(EldritchObeliskTile blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 }

@@ -148,7 +148,9 @@ public class BlockLamp extends Block implements EntityBlock {
 
         // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
         // (server-side; new state already swapped: level.getBlockState(pos)).
-        // Tile is still present here (map removal happens later in setBlockState).
+        // NEOFORGE_PORT (26.3): the tile is already removed when this hook runs (LevelChunk.setBlockState
+        // removes it first), so the lookup below finds nothing; removeLights() runs in
+        // TileLampArcane.preRemoveSideEffects.
         if (!isMoving && !state.is(level.getBlockState(pos).getBlock()) && lampType == LampType.ARCANE) {
             BlockEntity te = level.getBlockEntity(pos);
             if (te instanceof TileLampArcane arcane) {

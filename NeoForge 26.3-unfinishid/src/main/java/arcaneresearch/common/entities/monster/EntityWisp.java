@@ -112,14 +112,56 @@ public class EntityWisp extends Mob implements Enemy {
         return aspect != null ? aspect.getColor() : 0xFFFFFF;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    protected boolean shouldDespawnInPeaceful() {
-        return true;
-    }
+    // NEOFORGE_PORT: Forge shouldDespawnInPeaceful() returned true -> WISP type is
+    // registered with notInPeaceful() (26.x peaceful despawn flag).
 
     @Override
     public int getMaxAirSupply() {
         return Integer.MAX_VALUE;
+    }
+
+    // NEOFORGE_PORT (26.3): FlyingMob (Forge superclass) was removed; its behaviour is inlined
+    // 1:1 -- no fall damage, never climbing, and the FlyingMob travel (no gravity, ground-friction
+    // acceleration, 0.91 air drag). Vanilla Ghast's travelFlying differs on the ground.
+    @Override
+    public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
+        return false;
+    }
+
+    @Override
+    protected void checkFallDamage(double y, boolean onGround, net.minecraft.world.level.block.state.BlockState state, BlockPos pos) {
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return false;
+    }
+
+    @Override
+    public void travel(Vec3 input) {
+        if (this.isInWater()) {
+            this.moveRelative(0.02F, input);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.8F));
+        } else if (this.isInLava()) {
+            this.moveRelative(0.02F, input);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
+        } else {
+            BlockPos ground = this.getBlockPosBelowThatAffectsMyMovement();
+            float friction = 0.91F;
+            if (this.onGround()) {
+                friction = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
+            }
+            float accel = 0.16277137F / (friction * friction * friction);
+            friction = 0.91F;
+            if (this.onGround()) {
+                friction = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
+            }
+            this.moveRelative(this.onGround() ? 0.1F * accel : 0.02F, input);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(friction));
+        }
     }
 
     @Override

@@ -53,6 +53,23 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
     public static final RecipeType<AspectSourcesCategory.Sources> ASPECT_SOURCES_TYPE =
             RecipeType.create(Arcaneresearch.MODID, "aspect_sources", AspectSourcesCategory.Sources.class);
 
+    // NEOFORGE_PORT (26.3): JEI 15 defaulted IRecipeCategory.getRegistryName(recipe) to
+    // Recipe.getId() (output-slot "Recipe ID" tooltip line). 26.x recipe objects no longer
+    // carry their key and JEI only reads RecipeHolder ids, so the holder keys are kept here
+    // and the arcane/crucible/infusion categories return them from getIdentifier.
+    private static volatile java.util.Map<Object, Identifier> recipeIds = java.util.Map.of();
+
+    public static Identifier recipeId(Object recipe) {
+        if (recipe == null) {
+            return null;
+        }
+        Identifier id = recipeIds.get(recipe);
+        if (id == null && recipe instanceof IArcaneRecipe arcane) {
+            id = arcane.getId();
+        }
+        return id;
+    }
+
     @Override
     public Identifier getPluginUid() {
         return PLUGIN_ID;
@@ -96,6 +113,12 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
         // so recipes come from ClientRecipeCache (RecipesReceivedEvent RecipeMap).
         java.util.Collection<net.minecraft.world.item.crafting.RecipeHolder<?>> holders =
                 arcaneresearch.common.lib.crafting.ClientRecipeCache.values();
+
+        java.util.Map<Object, Identifier> ids = new java.util.IdentityHashMap<>();
+        for (net.minecraft.world.item.crafting.RecipeHolder<?> holder : holders) {
+            ids.put(holder.value(), holder.id().identifier());
+        }
+        recipeIds = ids;
 
         List<IArcaneRecipe> arcaneRecipes = new java.util.ArrayList<>(holders
                 .stream()

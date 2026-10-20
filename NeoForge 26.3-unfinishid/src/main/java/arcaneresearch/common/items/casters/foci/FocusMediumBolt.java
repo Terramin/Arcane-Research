@@ -60,7 +60,9 @@ public class FocusMediumBolt extends FocusMediumTouch {
                     start, end,
                     ClipContext.Block.OUTLINE,
                     ClipContext.Fluid.NONE,
-                    (net.minecraft.world.entity.Entity) null));
+                    // NEOFORGE_PORT (26.3): ClipContext(..., (Entity) null) now NPEs (CollisionContext.of
+                    // is a type switch); 1.20.1 mapped a null entity to CollisionContext.empty().
+                    net.minecraft.world.phys.shapes.CollisionContext.empty()));
 
             if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
                 end = hit.getLocation();

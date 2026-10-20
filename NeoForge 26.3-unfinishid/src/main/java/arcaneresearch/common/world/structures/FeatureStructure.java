@@ -49,7 +49,8 @@ public class FeatureStructure extends Structure {
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
         int min = context.heightAccessor().getMinY();
-        int max = context.heightAccessor().getMaxY();
+        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+        int max = context.heightAccessor().getMaxY() + 1;
         int y = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
                 context.heightAccessor(), context.randomState());
         if (y < min + 2 || y > max - 20) {

@@ -124,18 +124,11 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
         return super.finalizeSpawn(level, difficulty, spawnType, spawnData);
     }
 
-    // NEOFORGE_PORT: Slime.getSize() removed in 26.x (no getter on vanilla side);
-    // track locally (every setSize call in this class funnels through the override).
-    private int slimeSize = 1;
-
-    public int getSize() {
-        return slimeSize;
-    }
-
+    // NEOFORGE_PORT (26.3): size is the synced AbstractCubeMob ID_SIZE (getSize() is inherited, as
+    // in Forge); a local shadow field was never synced to the client and lagged the dimension refresh.
     @Override
     public void setSize(int size, boolean resetHealth) {
         super.setSize(size, resetHealth);
-        this.slimeSize = size;
         this.xpReward = size + 2;
     }
 
@@ -206,8 +199,9 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
 
                 EntityThaumicSlime smallSlime = new EntityThaumicSlime(ModEntities.THAUMIC_SLIME.get(), level());
                 smallSlime.setSize(1, true);
-                smallSlime.teleportTo(getX() + offsetX, getY() + 0.5, getZ() + offsetZ);
-                smallSlime.setYRot(random.nextFloat() * 360.0f); smallSlime.setXRot(0.0f);;
+                // NEOFORGE_PORT (26.3): moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+                smallSlime.snapTo(getX() + offsetX, getY() + 0.5, getZ() + offsetZ,
+                        random.nextFloat() * 360.0f, 0.0f);
                 level().addFreshEntity(smallSlime);
             }
         }
@@ -220,8 +214,9 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
         return getSize() + 1;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    protected boolean isDealsDamage() {
+    // NEOFORGE_PORT: Slime.isDealsDamage -> 26.x AbstractCubeMob.canDealDamage.
+    @Override
+    protected boolean canDealDamage() {
         return true;
     }
 
@@ -233,13 +228,14 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
         if (isAlive() && hasLineOfSight(target) &&
                 distanceToSqr(target) < 0.6 * effectiveSize * 0.6 * effectiveSize) {
 
-            // NEOFORGE_PORT: doEnchantDamageEffects removed in 26.x ->
-            // doPostAttackEffects(ServerLevel, attacker, source).
+            // NEOFORGE_PORT: doEnchantDamageEffects(attacker, target) removed in 26.x ->
+            // doPostAttackEffects(ServerLevel, victim, source) (victim = target, as vanilla cube mobs).
+            DamageSource attackSource = damageSources().mobAttack(this);
             if (target.level() instanceof net.minecraft.server.level.ServerLevel _sl
-                    && target.hurtServer(_sl, damageSources().mobAttack(this), getAttackDamage())) {
+                    && target.hurtServer(_sl, attackSource, getAttackDamage())) {
                 playSound(SoundEvents.SLIME_ATTACK, 1.0f,
                         (random.nextFloat() - random.nextFloat()) * 0.2f + 1.0f);
-                net.minecraft.world.item.enchantment.EnchantmentHelper.doPostAttackEffects(_sl, this, damageSources().mobAttack(this));
+                net.minecraft.world.item.enchantment.EnchantmentHelper.doPostAttackEffects(_sl, target, attackSource);
             }
         }
     }

@@ -30,6 +30,8 @@ public class EntityEmber extends ThrowableItemProjectile {
     public EntityEmber(EntityType<? extends EntityEmber> type, Level level, LivingEntity owner, float scatter) {
         super(type, level);
         setOwner(owner);
+        // NEOFORGE_PORT (26.3): Forge super(type, owner, level) also placed the ember at the owner's eyes.
+        setPos(owner.getX(), owner.getEyeY() - 0.1F, owner.getZ());
         setItem(new ItemStack(getDefaultItem()));
         this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0.0F, this.getGravityVelocity(), scatter);
     }
@@ -83,11 +85,11 @@ public class EntityEmber extends ThrowableItemProjectile {
         }
         if (!this.level().isClientSide()) {
             if (hit instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity living) {
-                // NEOFORGE_PORT: Entity.hurt is void in 26.x (was boolean); the fire-on-hit
-                // follows the damage call as before (dead-check above preserved).
-                if (!living.isDeadOrDying()) {
-                    living.hurt(this.damageSources().indirectMagic(this, this.getOwner() instanceof LivingEntity o ? o : this), this.damage);
-                    living.setRemainingFireTicks((3 + this.firey) * 20);
+                // NEOFORGE_PORT (26.3): Entity.hurt is void -> hurtServer keeps the boolean, so fire is
+                // only applied when the hit landed; setSecondsOnFire -> igniteForSeconds (no shortening).
+                if (!living.isDeadOrDying() && this.level() instanceof net.minecraft.server.level.ServerLevel sl
+                        && living.hurtServer(sl, this.damageSources().indirectMagic(this, this.getOwner() instanceof LivingEntity o ? o : this), this.damage)) {
+                    living.igniteForSeconds(3 + this.firey);
                 }
             } else if (hit instanceof BlockHitResult blockHit) {
                 if (this.getRandom().nextFloat() < 0.025F * this.firey) {
@@ -107,8 +109,9 @@ public class EntityEmber extends ThrowableItemProjectile {
         this.discard();
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean canBeCollidedWith() {
+    // NEOFORGE_PORT: 26.x canBeCollidedWith takes the colliding entity.
+    @Override
+    public boolean canBeCollidedWith(net.minecraft.world.entity.Entity other) {
         return false;
     }
 

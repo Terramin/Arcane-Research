@@ -59,9 +59,11 @@ public class CasterManager {
 
     public static boolean consumeVisFromInventory(Player player, float cost) {
         // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access via getItem (same order).
-        net.minecraft.world.entity.player.Inventory inv = player.getInventory();
-        for (int slot = inv.getContainerSize() - 1; slot >= 0; slot--) {
-            ItemStack item = inv.getItem(slot);
+        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (36 main slots, last first);
+        // getContainerSize() also spans armor/offhand (offhand would be tried first).
+        java.util.List<ItemStack> inv = player.getInventory().getNonEquipmentItems();
+        for (int slot = inv.size() - 1; slot >= 0; slot--) {
+            ItemStack item = inv.get(slot);
             if (!item.isEmpty() && item.getItem() instanceof ICaster caster) {
                 if (caster.consumeVis(item, player, cost, true, false)) {
                     return true;

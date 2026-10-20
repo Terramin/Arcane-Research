@@ -852,10 +852,10 @@ public class ResearchPageScreen extends Screen {
         // NEOFORGE_PORT: Screen.extractBackground is public in 26.x.
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        // NEOFORGE_PORT (26.3): isInGameUi() -> super draws exactly the 1.20.1 in-world
+        // renderBackground gradient (no blur / menu texture, no second gradient).
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
         int sw = (width - PANE_WIDTH) / 2;
         int sh = (height - PANE_HEIGHT) / 2;
 
@@ -1590,7 +1590,9 @@ public class ResearchPageScreen extends Screen {
     @Override
     public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
 
-        if (minecraft != null && (event.key() == 256
+        // NEOFORGE_PORT (26.3): KeyEvent.key() is an InputConstants (SDL scancode) value, not
+        // GLFW: 256/259/262-267 -> KEY_ESCAPE/BACKSPACE/RIGHT/LEFT/DOWN/UP/PAGEUP/PAGEDOWN.
+        if (minecraft != null && (event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_ESCAPE
                 || event.key() == minecraft.options.keyInventory.getKey().getValue())) {
             history.clear();
             if (shownRecipe != null || showingAspects || showingKnowledge) {
@@ -1604,15 +1606,19 @@ public class ResearchPageScreen extends Screen {
             return super.keyPressed(event);
         }
 
-        if (event.key() == 259) {
+        if (event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_BACKSPACE) {
             goBack();
             return true;
         }
 
-        if (event.key() == 263 || event.key() == 265 || event.key() == 266) {
+        if (event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_LEFT
+                || event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_UP
+                || event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_PAGEUP) {
             prevPage();
             return true;
-        } else if (event.key() == 262 || event.key() == 264 || event.key() == 267) {
+        } else if (event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_RIGHT
+                || event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_DOWN
+                || event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_PAGEDOWN) {
             nextPage();
             return true;
         }
@@ -1868,6 +1874,11 @@ public class ResearchPageScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    @Override
+    public boolean isInGameUi() {
+        return true;
     }
 
     private static class Page {

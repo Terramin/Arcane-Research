@@ -65,10 +65,15 @@ public interface IArcaneRecipe extends Recipe<IArcaneWorkbench>, IArcaneresearch
 
     ItemStack getResultItem();
 
+    // NEOFORGE_PORT: Forge inherited vanilla Recipe.getRemainingItems, which returned each
+    // ingredient's crafting remainder (buckets, damaged primordial pearl, ...). Same here via
+    // ItemStack.getCraftingRemainder (stack-sensitive NeoForge hook).
     default List<ItemStack> getRemainingItems(IArcaneWorkbench inv) {
         List<ItemStack> remaining = new ArrayList<>(inv.size());
         for (int i = 0; i < inv.size(); i++) {
-            remaining.add(ItemStack.EMPTY);
+            ItemStack stack = inv.getItem(i);
+            net.minecraft.world.item.ItemStackTemplate remainder = stack.isEmpty() ? null : stack.getCraftingRemainder();
+            remaining.add(remainder != null ? remainder.create() : ItemStack.EMPTY);
         }
         return remaining;
     }

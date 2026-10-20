@@ -192,24 +192,7 @@
                 }
             ]
         },
-        {
-        "key": "RUNICSHIELDING",    
-        "name": "research.RUNICSHIELDING.title",
-        "icons": [ "arcaneresearch:textures/research/r_runicupg.png" ],
-        "category": "INFUSION", "location": [ -6,6 ], 
-        "parents": [ "INFUSIONENCHANTMENT" ],       
-        "stages": [
-                {
-                    "text": "research.RUNICSHIELDING.stage.1",
-                    "required_knowledge":["THEORY;INFUSION;1"],
-                    "required_item":["arcaneresearch:enchanted_placeholder;1;{StoredEnchantments:[{id:'minecraft:protection',lvl:1s}]}","arcaneresearch:amber"]
-                },
-                {
-                    "text": "research.RUNICSHIELDING.stage.2",  
-                    "recipes": ["arcaneresearch:runic_armor_fake_0","arcaneresearch:runic_armor_fake_1","arcaneresearch:runic_armor_fake_2"]
-                }
-            ]
-        },
+
         {
         "key": "ARMORFORTRESS",    
         "name": "research.ARMORFORTRESS.title",

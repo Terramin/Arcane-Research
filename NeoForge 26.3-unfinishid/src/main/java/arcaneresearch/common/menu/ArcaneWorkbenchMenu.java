@@ -129,10 +129,11 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
             boolean hasCrystals = hasRequiredCrystals(craftMatrix, arcaneRecipe.getCrystals());
 
             if ((hasVis && hasCrystals) || player.getAbilities().instabuild) {
-                // NEOFORGE_PORT: ResultContainer.setRecipeUsed takes RecipeHolder<?> in
-                // 26.x (was Recipe<?>); arcane matches are values, not holders, and the
-                // vanilla book doesn't track them -> clear any previous holder.
-                craftResult.setRecipeUsed(null);
+                // NEOFORGE_PORT (26.3): ResultContainer.setRecipeUsed takes RecipeHolder<?>
+                // (was Recipe<?>); look up the matched arcane recipe's holder so the result
+                // slot still awards it (recipe book unlock + RECIPE_UNLOCKED trigger) on take,
+                // exactly like Forge's setRecipeUsed(arcaneRecipe).
+                craftResult.setRecipeUsed(findArcaneHolder(level, arcaneRecipe));
                 result = arcaneRecipe.assemble(craftMatrix);
             }
         } else {
@@ -157,6 +158,19 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
         menu.setRemoteSlot(0, result);
         serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(menu.containerId,
                 menu.incrementStateId(), 0, result));
+    }
+
+    // NEOFORGE_PORT (26.3): holder for a matched arcane recipe value (server side only).
+    private static net.minecraft.world.item.crafting.RecipeHolder<?> findArcaneHolder(
+            Level level, IArcaneRecipe recipe) {
+        if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            for (net.minecraft.world.item.crafting.RecipeHolder<?> holder : serverLevel.recipeAccess().getRecipes()) {
+                if (holder.value() == recipe) {
+                    return holder;
+                }
+            }
+        }
+        return null;
     }
 
     public static net.minecraft.world.inventory.CraftingContainer gridOnlyCopy(

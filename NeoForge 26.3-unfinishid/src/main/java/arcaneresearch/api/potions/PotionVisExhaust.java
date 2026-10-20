@@ -23,7 +23,7 @@ public class PotionVisExhaust extends MobEffect {
     // NEOFORGE_PORT: see PotionFluxTaint (tick hooks renamed + boolean result).
     @Override
     public boolean applyEffectTick(net.minecraft.server.level.ServerLevel level, LivingEntity target, int amplifier) {
-        return false;
+        return true; // NEOFORGE_PORT (26.3): false would remove the effect (Forge hook was a void no-op).
     }
 
     @Override

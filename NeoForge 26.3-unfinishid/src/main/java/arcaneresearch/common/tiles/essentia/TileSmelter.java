@@ -419,6 +419,17 @@ public class TileSmelter extends TileArcaneresearchInventory implements Containe
         return furnaceBurnTime > 0;
     }
 
+    // NEOFORGE_PORT (26.3): reference BlockSmelter.onRemove dropped the slots and then
+    // polluted the aura with the stored vis. The port's affectNeighborsAfterRemoval runs after
+    // the tile is gone, so the pollution never happened. super drops the slots (Container).
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+        super.preRemoveSideEffects(pos, oldState);
+        if (level != null && vis > 0) {
+            AuraHelper.polluteAura(level, pos, vis, true);
+        }
+    }
+
     @Override
     public Component getDisplayName() {
         return Component.translatable("block.arcaneresearch.smelter");

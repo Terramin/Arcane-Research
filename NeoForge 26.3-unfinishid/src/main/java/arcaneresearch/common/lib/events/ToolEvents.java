@@ -151,19 +151,29 @@ public class ToolEvents {
         if (event.getEntity() != null && event.getFace() != null) {
             lastFaceClicked.put(event.getEntity().getId(), event.getFace());
         }
-        // NEOFORGE_PORT: Forge Item.onBlockStartBreak hook is gone in 26.x; the wand
-        // logic lives in ItemWand.onBlockStartBreak (plain method, 1:1). LeftClickBlock
-        // is the equivalent "break started" point -- cancel mirrors Forge's true return.
-        Player player = event.getEntity();
-        if (player != null && !event.isCanceled()) {
-            ItemStack held = player.getItemInHand(event.getHand());
-            if (!held.isEmpty() && held.getItem() instanceof arcaneresearch.common.items.wands.ItemWand wand) {
-                try {
-                    if (wand.onBlockStartBreak(held, event.getPos(), player)) {
-                        event.setCanceled(true);
-                    }
-                } catch (Exception ignored) {
+    }
+
+    // NEOFORGE_PORT (26.3): Forge Item.onBlockStartBreak hook is gone in 26.x; the wand
+    // logic lives in ItemWand.onBlockStartBreak (plain method, 1:1). Forge called it for the
+    // main-hand stack from ServerPlayerGameMode.destroyBlock / MultiPlayerGameMode.destroyBlock,
+    // i.e. when the block is actually about to break and only after a non-cancelled BreakEvent;
+    // a true return aborted the break. BreakBlockEvent is posted at exactly that point on both
+    // sides in 26.x, so the hook runs here at LOWEST priority (skipped when cancelled). It used
+    // to run from LeftClickBlock (every click START/STOP/ABORT), arming the focus cooldown
+    // before any block was broken.
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
+    public static void wandBlockStartBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) return;
+        // Forge's client path returned before the hook for air blocks.
+        if (event.getLevel().isClientSide() && event.getState().isAir()) return;
+        ItemStack held = player.getMainHandItem();
+        if (!held.isEmpty() && held.getItem() instanceof arcaneresearch.common.items.wands.ItemWand wand) {
+            try {
+                if (wand.onBlockStartBreak(held, event.getPos(), player)) {
+                    event.setCanceled(true);
                 }
+            } catch (Exception ignored) {
             }
         }
     }
@@ -187,6 +197,9 @@ public class ToolEvents {
     public static void breakBlockEvent(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) { // NEOFORGE_PORT: BlockEvent.BreakEvent moved
         try {
         if (!(event.getLevel() instanceof Level level)) return;
+        // NEOFORGE_PORT (26.3): BreakBlockEvent also fires on the client
+        // (MultiPlayerGameMode.destroyBlock); Forge's BreakEvent was server-only.
+        if (level.isClientSide()) return;
 
         String dimKey = level.dimension().identifier().toString();
 

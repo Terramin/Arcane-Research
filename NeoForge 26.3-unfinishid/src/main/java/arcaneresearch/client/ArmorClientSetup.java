@@ -1,5 +1,6 @@
 package arcaneresearch.client;
 
+import java.util.EnumMap;
 import java.util.function.Function;
 
 import net.minecraft.client.Minecraft;
@@ -48,15 +49,52 @@ import arcaneresearch.init.ModItems;
 public class ArmorClientSetup {
 
     private interface TextureFn {
-        Identifier get(EquipmentClientInfo.LayerType layerType, EquipmentClientInfo.Layer layer);
+        Identifier get(boolean legs, EquipmentClientInfo.Layer layer);
     }
 
     private static Identifier tex(String path) {
         return Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, path);
     }
 
-    private static boolean isLegs(EquipmentClientInfo.LayerType layerType) {
-        return layerType == EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS;
+    // NEOFORGE_PORT (26.3): Forge chose model/texture by the worn slot (LEGS -> inner);
+    // the slot is the stack's EQUIPPABLE slot (layer type is HUMANOID_BABY for babies).
+    private static EquipmentSlot slotOf(ItemStack stack) {
+        Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
+        return equippable != null ? equippable.slot() : EquipmentSlot.CHEST;
+    }
+
+    // Forge parity (every Item*Armor.initializeClient switch 1:1).
+    // NEOFORGE_PORT: HumanoidModel.setAllVisible removed in 26.x -> explicit flags.
+    private static void applySlotVisibility(HumanoidModel<?> model, EquipmentSlot slot) {
+        model.head.visible = false;
+        model.hat.visible = false;
+        model.body.visible = false;
+        model.rightArm.visible = false;
+        model.leftArm.visible = false;
+        model.rightLeg.visible = false;
+        model.leftLeg.visible = false;
+        switch (slot) {
+            case HEAD -> {
+                model.head.visible = true;
+                model.hat.visible = true;
+            }
+            case CHEST -> {
+                model.body.visible = true;
+                model.rightArm.visible = true;
+                model.leftArm.visible = true;
+            }
+            case LEGS -> {
+                model.body.visible = true;
+                model.rightLeg.visible = true;
+                model.leftLeg.visible = true;
+            }
+            case FEET -> {
+                model.rightLeg.visible = true;
+                model.leftLeg.visible = true;
+            }
+            default -> {
+            }
+        }
     }
 
     private static boolean isOverlay(EquipmentClientInfo.Layer layer) {
@@ -70,8 +108,10 @@ public class ArmorClientSetup {
         private final ModelLayerLocation innerLocation;
         private final TextureFn textureFn;
         private final boolean forceUntinted;
-        private HumanoidModel<?> outerModel;
-        private HumanoidModel<?> innerModel;
+        // NEOFORGE_PORT (26.3): one model per slot. Models are drawn after all submits and
+        // getGenericArmorModel copies the vanilla (all-visible) part flags, so a shared
+        // instance would show the last slot's / every part for each worn piece.
+        private final EnumMap<EquipmentSlot, HumanoidModel<?>> models = new EnumMap<>(EquipmentSlot.class);
 
         /** Custom-model armor (Forge initializeClient parity). */
         ArmorExtension(Function<ModelPart, HumanoidModel<?>> outerFactory,
@@ -100,20 +140,10 @@ public class ArmorClientSetup {
             this(null, null, null, null, textureFn, forceUntinted);
         }
 
-        private HumanoidModel<?> outer() {
-            if (outerModel == null) {
-                outerModel = outerFactory.apply(
-                        Minecraft.getInstance().getEntityModels().bakeLayer(outerLocation));
-            }
-            return outerModel;
-        }
-
-        private HumanoidModel<?> inner() {
-            if (innerModel == null) {
-                innerModel = innerFactory.apply(
-                        Minecraft.getInstance().getEntityModels().bakeLayer(innerLocation));
-            }
-            return innerModel;
+        private HumanoidModel<?> model(EquipmentSlot slot) {
+            return models.computeIfAbsent(slot, s -> s == EquipmentSlot.LEGS
+                    ? innerFactory.apply(Minecraft.getInstance().getEntityModels().bakeLayer(innerLocation))
+                    : outerFactory.apply(Minecraft.getInstance().getEntityModels().bakeLayer(outerLocation)));
         }
 
         @Override
@@ -122,51 +152,31 @@ public class ArmorClientSetup {
             if (outerFactory == null) {
                 return original;
             }
-            // Forge parity: slot == LEGS -> inner model, else outer
-            // (HumanoidArmorLayer maps LEGS to HUMANOID_LEGGINGS).
-            HumanoidModel<?> model = isLegs(layerType) ? inner() : outer();
-            Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
-            EquipmentSlot slot = equippable != null ? equippable.slot() : EquipmentSlot.CHEST;
-            // Forge parity (every Item*Armor.initializeClient switch 1:1).
-            // NEOFORGE_PORT: HumanoidModel.setAllVisible removed in 26.x ->
-            // explicit flags, same effect.
-            model.head.visible = false;
-            model.hat.visible = false;
-            model.body.visible = false;
-            model.rightArm.visible = false;
-            model.leftArm.visible = false;
-            model.rightLeg.visible = false;
-            model.leftLeg.visible = false;
-            switch (slot) {
-                case HEAD -> {
-                    model.head.visible = true;
-                    model.hat.visible = true;
-                }
-                case CHEST -> {
-                    model.body.visible = true;
-                    model.rightArm.visible = true;
-                    model.leftArm.visible = true;
-                }
-                case LEGS -> {
-                    model.body.visible = true;
-                    model.rightLeg.visible = true;
-                    model.leftLeg.visible = true;
-                }
-                case FEET -> {
-                    model.rightLeg.visible = true;
-                    model.leftLeg.visible = true;
-                }
-                default -> {
-                }
-            }
+            EquipmentSlot slot = slotOf(stack);
+            HumanoidModel<?> model = model(slot);
+            applySlotVisibility(model, slot);
             return model;
+        }
+
+        @Override
+        public Model getGenericArmorModel(ItemStack stack,
+                EquipmentClientInfo.LayerType layerType, Model original) {
+            Model replacement = getHumanoidArmorModel(stack, layerType, original);
+            if (replacement != original && original instanceof HumanoidModel<?> originalHumanoid
+                    && replacement instanceof HumanoidModel<?> replacementHumanoid) {
+                // Default behaviour (pose copy), then restore the Forge per-slot visibility
+                // that copyModelProperties overwrote.
+                net.neoforged.neoforge.client.ClientHooks.copyModelProperties(originalHumanoid, replacementHumanoid);
+                applySlotVisibility(replacementHumanoid, slotOf(stack));
+            }
+            return replacement;
         }
 
         @Override
         public Identifier getArmorTexture(ItemStack stack,
                 EquipmentClientInfo.LayerType layerType,
                 EquipmentClientInfo.Layer layer, Identifier fallback) {
-            return textureFn.get(layerType, layer);
+            return textureFn.get(slotOf(stack) == EquipmentSlot.LEGS, layer);
         }
 
         @Override
@@ -182,12 +192,12 @@ public class ArmorClientSetup {
     }
 
     // Forge parity tables (Item*Armor.getArmorTexture 1:1).
-    private static final TextureFn THAUMIUM_TEX = (t, l) -> tex(isLegs(t)
+    private static final TextureFn THAUMIUM_TEX = (legs, l) -> tex(legs
             ? "textures/entity/armor/thaumium_2.png" : "textures/entity/armor/thaumium_1.png");
-    private static final TextureFn VOID_TEX = (t, l) -> tex(isLegs(t)
+    private static final TextureFn VOID_TEX = (legs, l) -> tex(legs
             ? "textures/entity/armor/void_2.png" : "textures/entity/armor/void_1.png");
-    private static final TextureFn ROBE_TEX = (t, l) -> {
-        if (isLegs(t)) {
+    private static final TextureFn ROBE_TEX = (legs, l) -> {
+        if (legs) {
             return tex(isOverlay(l) ? "textures/entity/armor/robes_2_overlay.png"
                     : "textures/entity/armor/robes_2.png");
         }
@@ -196,26 +206,28 @@ public class ArmorClientSetup {
     };
     // Forge parity: ItemVoidRobeArmor quirk — the base call (type == null)
     // returns the *_overlay.png (dyed), the overlay call the plain png.
-    private static final TextureFn VOID_ROBE_TEX = (t, l) -> tex(isOverlay(l)
+    private static final TextureFn VOID_ROBE_TEX = (legs, l) -> tex(isOverlay(l)
             ? "textures/entity/armor/void_robe_armor.png"
             : "textures/entity/armor/void_robe_armor_overlay.png");
     private static final TextureFn FORTRESS_TEX =
-            (t, l) -> tex("textures/entity/armor/fortress_armor.png");
-    // NEOFORGE_PORT: Forge picked zombie_plate_armor.png when worn by
-    // EntityInhabitedZombie; the 26.x hooks carry no entity, so players (and
-    // zombies) use the player texture — documented deviation, player parity.
-    private static final TextureFn CULTIST_PLATE_TEX =
-            (t, l) -> tex("textures/entity/armor/cultist_plate_armor.png");
+            (legs, l) -> tex("textures/entity/armor/fortress_armor.png");
+    // NEOFORGE_PORT (26.3): Forge picked zombie_plate_armor.png when worn by
+    // EntityInhabitedZombie; the 26.x hooks carry no entity, so InhabitedZombieRenderer
+    // raises this flag around its (synchronous) submit, where the texture is resolved.
+    public static boolean inhabitedZombieWearer;
+    private static final TextureFn CULTIST_PLATE_TEX = (legs, l) -> tex(inhabitedZombieWearer
+            ? "textures/entity/armor/zombie_plate_armor.png"
+            : "textures/entity/armor/cultist_plate_armor.png");
     private static final TextureFn CULTIST_ROBE_TEX =
-            (t, l) -> tex("textures/entity/armor/cultist_robe_armor.png");
+            (legs, l) -> tex("textures/entity/armor/cultist_robe_armor.png");
     private static final TextureFn LEADER_TEX =
-            (t, l) -> tex("textures/entity/armor/cultist_leader_armor.png");
+            (legs, l) -> tex("textures/entity/armor/cultist_leader_armor.png");
     private static final TextureFn GOGGLES_TEX =
-            (t, l) -> tex("textures/entity/armor/goggles.png");
+            (legs, l) -> tex("textures/entity/armor/goggles.png");
     private static final TextureFn TRAVELLER_TEX =
-            (t, l) -> tex("textures/entity/armor/bootstraveler.png");
+            (legs, l) -> tex("textures/entity/armor/bootstraveler.png");
     private static final TextureFn CULTIST_BOOTS_TEX =
-            (t, l) -> tex("textures/entity/armor/cultistboots.png");
+            (legs, l) -> tex("textures/entity/armor/cultistboots.png");
 
     private static final ArmorExtension THAUMIUM = new ArmorExtension(
             ThaumiumArmorModel::new, ThaumiumArmorModel.LAYER_LOCATION,

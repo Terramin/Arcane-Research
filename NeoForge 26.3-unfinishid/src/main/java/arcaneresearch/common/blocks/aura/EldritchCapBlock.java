@@ -53,10 +53,11 @@ public class EldritchCapBlock extends BaseEntityBlock {
     }
 
     /** TC4 func_149713_g(0): светопропускание 0 — свет проходит сквозь кап. */
-    // NEOFORGE_PORT: 26.x getLightBlock(state, getter, pos) -> propagatesSkylightDown(state).
+    // NEOFORGE_PORT (26.3): 1.20.1 getLightBlock(state, getter, pos) == 26.x getLightDampening(state).
+    // propagatesSkylightDown stays default (false for this full-cube shape), as in the reference.
     @Override
-    protected boolean propagatesSkylightDown(BlockState state) {
-        return true;
+    protected int getLightDampening(BlockState state) {
+        return 0;
     }
 
     /**

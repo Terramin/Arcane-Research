@@ -144,7 +144,8 @@ public class TilePedestal extends TileArcaneresearchInventory {
         return null;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x; the tile's
+    // renderer forwards to this from IBlockEntityRendererExtension.getRenderBoundingBox.
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 worldPosition.getX() + 1, worldPosition.getY() + 2, worldPosition.getZ() + 1);

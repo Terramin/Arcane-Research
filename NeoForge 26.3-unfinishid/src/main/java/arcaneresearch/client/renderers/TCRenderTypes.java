@@ -97,6 +97,16 @@ public final class TCRenderTypes {
     private static final Function<Identifier, RenderType> OBJ_SOLID_FLAT = setup(
             "arcaneresearch_obj_solid_flat", OBJ_SOLID_FLAT_PIPE);
 
+    // NEOFORGE_PORT (26.3): GUI blit with Forge blendFunc(SRC_ALPHA, ONE) (HUD bar
+    // shimmer overlays). Built like vanilla GUI_NAUSEA_OVERLAY (GUI_TEXTURED_SNIPPET +
+    // own ColorTargetState) but with LIGHTNING = SrcAlpha/One; registered via track().
+    public static final RenderPipeline GUI_TEXTURED_ADDITIVE = track(
+            RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+                    .withLocation(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID,
+                            "pipeline/gui_textured_additive"))
+                    .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
+                    .build());
+
     @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
     public static class PipelineEvents {
         @SubscribeEvent
@@ -108,6 +118,7 @@ public final class TCRenderTypes {
             // beam (e.g. excavation beam). Force orbTendrils init (lazy) first.
             try {
                 orbTendrils();
+                orbTendrilsNoCull();
             } catch (Exception ignored) {
             }
             synchronized (CUSTOM_PIPELINES) {
@@ -148,6 +159,7 @@ public final class TCRenderTypes {
             BlendFunction.TRANSLUCENT, true, true);
 
     private static volatile RenderType orbTendrils;
+    private static volatile RenderType orbTendrilsNoCull;
 
     private TCRenderTypes() {
     }
@@ -360,6 +372,26 @@ public final class TCRenderTypes {
                                     BlendFunction.LIGHTNING, true, false))
                                     .createRenderSetup());
                     orbTendrils = type;
+                }
+            }
+        }
+        return type;
+    }
+
+    // NEOFORGE_PORT (26.3): orbTendrils with culling off - Forge drew the infusion matrix
+    // halo and focal manipulator rays under RenderSystem.disableCull() (both faces).
+    public static RenderType orbTendrilsNoCull() {
+        RenderType type = orbTendrilsNoCull;
+        if (type == null) {
+            synchronized (TCRenderTypes.class) {
+                type = orbTendrilsNoCull;
+                if (type == null) {
+                    type = RenderType.create("arcaneresearch_orb_tendrils_nocull",
+                            RenderSetup.builder(explicit("arcaneresearch_orb_tendrils_nocull",
+                                    RenderPipelines.DEBUG_TRIANGLE_FAN,
+                                    BlendFunction.LIGHTNING, false, false))
+                                    .createRenderSetup());
+                    orbTendrilsNoCull = type;
                 }
             }
         }

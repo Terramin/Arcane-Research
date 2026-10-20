@@ -120,10 +120,11 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
         return isPartner(state, neighbour);
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    @SuppressWarnings("deprecation")
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighbourState,
-            LevelAccessor level, BlockPos pos, BlockPos neighbourPos) {
+    // NEOFORGE_PORT: 26.x updateShape(state, level, ticks, pos, dir, neighbourPos, neighbourState, random).
+    @Override
+    protected BlockState updateShape(BlockState state, LevelReader level,
+            net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos pos, Direction direction,
+            BlockPos neighbourPos, BlockState neighbourState, net.minecraft.util.RandomSource random) {
         if (direction == state.getValue(FACING) && !isPartner(state, neighbourState)) {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }
@@ -156,7 +157,6 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
      * (паритет {@code hasResearchData}). Только MAIN (без дубля).
      */
     @Override
-    @net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
     public void animateTick(BlockState state, Level level, BlockPos pos,
             net.minecraft.util.RandomSource random) {
         if (state.getValue(PART) != Part.MAIN) {
@@ -166,25 +166,8 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof HexNoteTableTile tile && level.isClientSide()
                     && !tile.getItem(HexNoteTableTile.NOTE_SLOT).isEmpty()) {
-                double xx = random.nextGaussian() / 2.0;
-                double zz = random.nextGaussian() / 2.0;
-                double yy = 1.5 + random.nextFloat();
-                int a = 40 + random.nextInt(20);
-                net.minecraft.client.multiplayer.ClientLevel clientLevel =
-                        (net.minecraft.client.multiplayer.ClientLevel) level;
-                arcaneresearch.client.fx.particles.FXGeneric fb =
-                        new arcaneresearch.client.fx.particles.FXGeneric(clientLevel,
-                                pos.getX() + 0.5 + xx, pos.getY() + yy, pos.getZ() + 0.5 + zz,
-                                -xx / a, -(yy - 0.85) / a, -zz / a);
-                fb.setMaxAge(a);
-                fb.setColor(0.5f + random.nextFloat() * 0.5f,
-                        0.5f + random.nextFloat() * 0.5f,
-                        0.5f + random.nextFloat() * 0.5f);
-                fb.setAlphaKeyframes(0.0f, 0.25f, 0.5f, 0.75f, 0.0f);
-                fb.setParticles(384 + random.nextInt(16), 1, 1);
-                fb.setScaleKeyframes((0.8f + random.nextFloat() * 0.3f) * 0.1f, 0.3f * 0.1f);
-                fb.setLayer(0);
-                net.minecraft.client.Minecraft.getInstance().particleEngine.add(fb);
+                // NEOFORGE_PORT: particle body moved to a client class (@OnlyIn no longer strips).
+                arcaneresearch.discovered.client.HexTableClientFX.researchSparkle(level, pos, random);
             }
         }
     }

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "arcaneresearch:item/spawn_egg_base",
+    "layer1": "arcaneresearch:item/spawn_egg_spots"
+  }
+}

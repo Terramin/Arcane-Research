@@ -91,6 +91,12 @@ public class SliderWidget extends AbstractWidget {
         }
     }
 
+    // NEOFORGE_PORT (26.3): AbstractWidget.mouseClicked plays the button click before
+    // onClick; Forge's slider overrode mouseClicked and was silent.
+    @Override
+    public void playDownSound(net.minecraft.client.sounds.SoundManager soundManager) {
+    }
+
     // NEOFORGE_PORT: 26.3 widget input via onClick/onDrag/onRelease (Forge
     // mouseClicked/mouseDragged/mouseReleased 1:1: valid-button + hit guards,
     // dragging reset on release).

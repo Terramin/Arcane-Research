@@ -172,6 +172,8 @@ public class ModConfig {
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), 10, 0);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get()), 10, 0);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), 5, 2);
+        // NEOFORGE_PORT (26.3): Forge loot-bag entry (lesser runic ring) was dropped in the port.
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.RUNIC_RING_LESSER.get()), 5, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), 5, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), 5, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), 5, 1);
@@ -197,7 +199,9 @@ public class ModConfig {
 
         ItemStack[] commonLoot = {new ItemStack(ModItems.LOOT_BAG_COMMON.get()), new ItemStack(ModItems.THAUMIUM_INGOT.get()), new ItemStack(ModItems.AMBER.get())};
         ItemStack[] uncommonLoot = {new ItemStack(ModItems.LOOT_BAG_UNCOMMON.get()), new ItemStack(ModItems.BAUBLE_AMULET_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get())};
-        ItemStack[] rareLoot = {new ItemStack(ModItems.LOOT_BAG_RARE.get()), new ItemStack(ModItems.THAUMONOMICON.get()), new ItemStack(ModItems.THAUMIUM_SWORD.get()), new ItemStack(ModItems.THAUMIUM_AXE.get()), new ItemStack(ModItems.THAUMIUM_HOE.get()), new ItemStack(ModItems.THAUMIUM_PICK.get()), new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), new ItemStack(ModItems.AMULET_VIS_FOUND.get())};
+        ItemStack[] rareLoot = {new ItemStack(ModItems.LOOT_BAG_RARE.get()), new ItemStack(ModItems.THAUMONOMICON.get()), new ItemStack(ModItems.THAUMIUM_SWORD.get()), new ItemStack(ModItems.THAUMIUM_AXE.get()), new ItemStack(ModItems.THAUMIUM_HOE.get()), new ItemStack(ModItems.THAUMIUM_PICK.get()), new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), new ItemStack(ModItems.AMULET_VIS_FOUND.get()),
+                // NEOFORGE_PORT (26.3): Forge rare-loot entry dropped in the port.
+                new ItemStack(ModItems.RUNIC_RING_LESSER.get())};
     }
 
     public static void modCompatibility() {

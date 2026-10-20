@@ -229,9 +229,17 @@ public class Utils {
     }
 
     // NEOFORGE_PORT: EnchantmentHelper.enchantItem(RandomSource, ItemStack, int, boolean)
-    // removed in 26.x -> overload with RegistryAccess + Optional<HolderSet> (empty = all
-    // enchantments; old `false` treasure filter has no equivalent and is dropped).
+    // removed in 26.x -> overload with RegistryAccess + Optional<HolderSet>.
     // RegistryAccess threaded from callers (both have Level).
+    // NEOFORGE_PORT (26.3): Optional.empty() there means ALL enchantments (treasure and
+    // curses too); the reference's treasure=false is the enchanting-table pool, i.e.
+    // #minecraft:in_enchanting_table (= #non_treasure), as EnchantmentMenu uses.
+    private static java.util.Optional<net.minecraft.core.HolderSet.Named<net.minecraft.world.item.enchantment.Enchantment>>
+            nonTreasureEnchantments(net.minecraft.core.RegistryAccess registries) {
+        return registries.lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                .get(net.minecraft.tags.EnchantmentTags.IN_ENCHANTING_TABLE);
+    }
+
     public static ItemStack generateLoot(int rarity, RandomSource rand, net.minecraft.core.RegistryAccess registries) {
         ItemStack result = ItemStack.EMPTY;
 
@@ -259,7 +267,7 @@ public class Utils {
         if (result.is(Items.BOOK)) {
             result = EnchantmentHelper.enchantItem(rand.fork(), result,
                     (int) (5.0f + rarity * 0.75f * rand.nextInt(18)), registries,
-                    java.util.Optional.empty());
+                    nonTreasureEnchantments(registries));
         }
 
         return result;
@@ -287,7 +295,7 @@ public class Utils {
         if (rand.nextInt(4) < rarity) {
             result = EnchantmentHelper.enchantItem(rand.fork(), result,
                     (int) (5.0f + rarity * 0.75f * rand.nextInt(18)), registries,
-                    java.util.Optional.empty());
+                    nonTreasureEnchantments(registries));
         }
 
         return result;

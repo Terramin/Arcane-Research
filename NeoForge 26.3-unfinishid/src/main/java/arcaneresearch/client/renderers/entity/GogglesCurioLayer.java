@@ -75,9 +75,12 @@ public class GogglesCurioLayer extends RenderLayer<AvatarRenderState, PlayerMode
         if (headCurios.isEmpty()) {
             return;
         }
-        this.model.copyHeadPose(getParentModel().head);
+        // NEOFORGE_PORT (26.3): geometry is drawn after all submits, so snapshot this
+        // player's head pose now (the shared models would otherwise hold the last player's).
+        net.minecraft.client.model.geom.PartPose headPose = getParentModel().head.storePose();
         RenderType type = RenderTypes.armorCutoutNoCull(GOGGLES_TEXTURE);
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
+            this.model.loadHeadPose(headPose);
             PoseStack work = new PoseStack();
             work.last().pose().set(pose.pose());
             work.last().normal().set(pose.normal());

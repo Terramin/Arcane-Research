@@ -14,8 +14,6 @@ import arcaneresearch.Arcaneresearch;
 // Fields/ctors/constants preserved verbatim; transport -> CustomPacketPayload.
 // Wire order identical to the old encode/decode: byte type, then int value ONLY if != 0
 // (decode reads the int only when readable bytes remain).
-// TODO_CLIENT: restore handleClient body (HEARTBEAT sound, FogHandler triggers)
-//   when client/lib/events is ported; handler intentionally enqueues nothing for now.
 // Payload id "arcaneresearch:misc_event".
 public class PacketMiscEvent implements CustomPacketPayload {
 

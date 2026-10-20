@@ -1,1 +1,18 @@
-{ "type": "minecraft:block", "pools": [ { "rolls": 1, "bonus_rolls": 0, "entries": [ { "type": "minecraft:item", "name": "arcaneresearch:arcane_stone_brick" } ], "conditions": [ {"condition": "minecraft:survives_explosion"} ] } ] }
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "arcaneresearch:arcane_stone_brick"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      }
+    }
+  ]
+}

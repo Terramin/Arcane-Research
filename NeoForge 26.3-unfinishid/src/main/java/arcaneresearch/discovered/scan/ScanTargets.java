@@ -214,7 +214,9 @@ public final class ScanTargets {
     public static ItemStack pickStack(Level level, BlockPos pos, Player viewer) {
         try {
             BlockState state = level.getBlockState(pos);
-            ItemStack stack = state.getCloneItemStack(level, pos, true);
+            // NEOFORGE_PORT (26.3): player-aware NeoForge hook (parity with Forge
+            // getCloneItemStack(hit, level, pos, viewer) -> IForgeBlock override path).
+            ItemStack stack = state.getCloneItemStack(pos, level, true, viewer);
             if (stack != null && !stack.isEmpty()) {
                 return stack;
             }
@@ -377,9 +379,11 @@ public final class ScanTargets {
                 if (et.nbts == null || et.nbts.length == 0) {
                     return et.aspects;
                 }
+                // NEOFORGE_PORT (26.3): with registry context, so registry-backed fields
+                // (equipment/components) are written like Forge saveWithoutId(CompoundTag).
                 net.minecraft.world.level.storage.TagValueOutput tvo =
-                        net.minecraft.world.level.storage.TagValueOutput.createWithoutContext(
-                                net.minecraft.util.ProblemReporter.DISCARDING);
+                        net.minecraft.world.level.storage.TagValueOutput.createWithContext(
+                                net.minecraft.util.ProblemReporter.DISCARDING, entity.registryAccess());
                 entity.saveWithoutId(tvo);
                 CompoundTag tc = tvo.buildResult();
                 boolean match = true;

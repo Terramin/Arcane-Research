@@ -88,7 +88,7 @@ public class ItemFocusBuilder extends ItemFocusBasic implements IArchitectExtend
             // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same "picked" key);
             // nested stack via ItemStack.CODEC (save(CompoundTag) removed in 26.x).
             CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
-            ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, picked.copy()).result().ifPresent(encoded -> {
+            ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), picked.copy()).result().ifPresent(encoded -> {
                 root.put("picked", encoded);
             });
             ArcaneresearchInvHelper.setCustomTag(stack, root);
@@ -99,7 +99,7 @@ public class ItemFocusBuilder extends ItemFocusBasic implements IArchitectExtend
     public ItemStack getPickedBlock(ItemStack stack) {
         CompoundTag root = ArcaneresearchInvHelper.getCustomTag(stack);
         if (root != null && root.contains("picked")) {
-            ItemStack out = ItemStack.CODEC.parse(NbtOps.INSTANCE, root.get("picked"))
+            ItemStack out = ItemStack.CODEC.parse(arcaneresearch.common.lib.utils.RegistryNbt.ops(), root.get("picked"))
                     .result().orElse(ItemStack.EMPTY);
             if (!out.isEmpty()) {
                 return out;

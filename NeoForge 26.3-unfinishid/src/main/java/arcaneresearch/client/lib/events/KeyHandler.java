@@ -46,21 +46,22 @@ public class KeyHandler {
         keyF = new KeyMapping(
                 "key.arcaneresearch.focus",
                 InputConstants.Type.KEYBOARD,
-                70, // NEOFORGE_PORT: was GLFW.GLFW_KEY_F (LWJGL not on 26.3 compile classpath); F = 70.
+                // NEOFORGE_PORT (26.3): key values are SDL scancodes now (GLFW 70 = PrintScreen).
+                InputConstants.KEY_F,
                 CATEGORY
         );
 
         keyG = new KeyMapping(
                 "key.arcaneresearch.misc",
                 InputConstants.Type.KEYBOARD,
-                71, // NEOFORGE_PORT: was GLFW.GLFW_KEY_G; G = 71.
+                InputConstants.KEY_G, // NEOFORGE_PORT (26.3): was GLFW 71 (= ScrollLock scancode).
                 CATEGORY
         );
 
         keyRemoveFocus = new KeyMapping(
                 "key.arcaneresearch.remove_focus",
                 InputConstants.Type.KEYBOARD,
-                86, // NEOFORGE_PORT: was GLFW.GLFW_KEY_V; V = 86.
+                InputConstants.KEY_V, // NEOFORGE_PORT (26.3): was GLFW 86.
                 CATEGORY
         );
     }
@@ -122,7 +123,8 @@ public class KeyHandler {
             boolean hasCaster = (!mainHand.isEmpty() && mainHand.getItem() instanceof ICaster) ||
                     (!offHand.isEmpty() && offHand.getItem() instanceof ICaster);
 
-            boolean hasWand = !mainHand.isEmpty() && mainHand.getItem() instanceof IWand;
+            // NEOFORGE_PORT (26.3): Forge parity - wand in either hand (heldWand), not main hand only.
+            boolean hasWand = !WandRenderingHandler.heldWand(player).isEmpty();
 
             if (!radialLock && (hasCaster || hasWand)) {
                 if (player.isShiftKeyDown()) {
@@ -162,9 +164,11 @@ public class KeyHandler {
 
                 lastPressG = System.currentTimeMillis();
 
-                // NEOFORGE_PORT: 26.3 isKeyDown(int) uses focused window; GLFW codes inlined.
-                boolean ctrlDown = InputConstants.isKeyDown(341) || InputConstants.isKeyDown(345);
-                boolean shiftDown = InputConstants.isKeyDown(340) || InputConstants.isKeyDown(344);
+                // NEOFORGE_PORT (26.3): isKeyDown takes SDL scancodes (GLFW 340-345 never matched).
+                boolean ctrlDown = InputConstants.isKeyDown(InputConstants.KEY_LCONTROL)
+                        || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
+                boolean shiftDown = InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
+                        || InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
 
                 int modifier = ctrlDown ? 1 : (shiftDown ? 2 : 0);
                 PacketHandler.sendToServer(new PacketItemKeyToServer(1, modifier));

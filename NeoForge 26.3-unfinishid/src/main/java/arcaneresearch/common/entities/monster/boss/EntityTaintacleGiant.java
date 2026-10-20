@@ -204,8 +204,9 @@ public class EntityTaintacleGiant extends EntityTaintacle implements ITaintedMob
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        // TODO_PORT: ValueInput.contains gone in 26.3; getIntOr default covers missing keys.
-        setAnger(tag.getIntOr("Anger", 0));
+        // NEOFORGE_PORT (26.3): ValueInput.contains gone; defaulting to the current value keeps the
+        // Forge "only set when the key exists" behaviour.
+        setAnger(tag.getIntOr("Anger", getAnger()));
 
         if (hasCustomName()) {
             this.bossEvent.setName(getDisplayName());

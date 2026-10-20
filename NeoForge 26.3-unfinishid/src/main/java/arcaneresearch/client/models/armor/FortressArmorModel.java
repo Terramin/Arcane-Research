@@ -422,6 +422,27 @@ public class FortressArmorModel extends HumanoidModel<net.minecraft.client.rende
         float ageInTicks = state.ageInTicks;
         float netHeadYaw = state.yRot;
         float headPitch = state.xRot;
-        
+        // NEOFORGE_PORT (26.3): Forge called applyVariant from getHumanoidArmorModel with the
+        // wearer's armor; the 26.x hook has no entity, so read the worn stacks from the state.
+        int setCount = 0;
+        for (net.minecraft.world.item.ItemStack worn : new net.minecraft.world.item.ItemStack[]{
+                state.headEquipment, state.chestEquipment, state.legsEquipment, state.feetEquipment}) {
+            if (!worn.isEmpty() && worn.getItem() instanceof arcaneresearch.common.items.armor.ItemFortressArmor) {
+                setCount++;
+            }
+        }
+        boolean hasGoggles = false;
+        int maskIndex = -1;
+        net.minecraft.world.item.ItemStack helm = state.headEquipment;
+        if (!helm.isEmpty() && helm.getItem() instanceof arcaneresearch.common.items.armor.ItemFortressArmor) {
+            hasGoggles = arcaneresearch.common.items.armor.ItemFortressArmor.hasGoggles(helm);
+            if (arcaneresearch.common.items.armor.ItemFortressArmor.hasMask(helm)) {
+                int maskType = arcaneresearch.common.items.armor.ItemFortressArmor.getMaskType(helm);
+                if (maskType >= 0 && maskType < 3) {
+                    maskIndex = maskType;
+                }
+            }
+        }
+        applyVariant(setCount, hasGoggles, maskIndex);
     }
 }

@@ -102,8 +102,8 @@ import arcaneresearch.common.lib.utils.EntityUtils;
  * - {@code PoseStack.mulPose} -&gt; {@code rotateDegrees}; {@code Font.
  *   drawInBatch} -&gt; {@code submitText}.
  * - Pick-block: {@code Block.getCloneItemStack} удалён -&gt;
- *   {@code BlockState.getCloneItemStack(level, pos, true)} (тот же вызов, что
- *   {@code ScanTargets.pickStack}).
+ *   {@code BlockState.getCloneItemStack(pos, level, true, player)} (тот же
+ *   вызов, что {@code ScanTargets.pickStack}).
  */
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class ThaumometerHandRenderer {
@@ -416,13 +416,19 @@ public class ThaumometerHandRenderer {
                 if (be instanceof INode n) {
                     node = n;
                 }
-                // NEOFORGE_PORT: Block.getCloneItemStack удалён ->
-                // BlockState.getCloneItemStack(level, pos, true)
-                // (тот же вызов, что ScanTargets.pickStack).
+                // NEOFORGE_PORT (26.3): player-aware NeoForge hook first (parity with
+                // Forge getCloneItemStack(state, hit, level, pos, player); same call as
+                // ScanTargets.pickStack), then the plain state variant as fallback.
                 ItemStack stack = ItemStack.EMPTY;
                 try {
-                    stack = state.getCloneItemStack(level, pos, true);
+                    stack = state.getCloneItemStack(pos, level, true, player);
                 } catch (Exception ignored) {
+                }
+                if (stack.isEmpty()) {
+                    try {
+                        stack = state.getCloneItemStack(level, pos, true);
+                    } catch (Exception ignored) {
+                    }
                 }
                 if (stack.isEmpty()) {
                     stack = new ItemStack(state.getBlock());

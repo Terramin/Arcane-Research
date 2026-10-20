@@ -47,8 +47,10 @@ public class CultistPortalFeature implements Feature {
             }
             EntityCultistPortalLesser portal = new EntityCultistPortalLesser(
                     ModEntities.CULTIST_PORTAL_LESSER.get(), level.getLevel());
-            portal.teleportTo(at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5);
-            portal.setYRot(random.nextFloat() * 360.0f); portal.setXRot(0.0f);;
+            // NEOFORGE_PORT (26.3): Entity.moveTo(x, y, z, yRot, xRot) -> snapTo (same semantics:
+            // position + rotation + old pos/rot); teleportTo + setYRot left yRotO at 0.
+            portal.snapTo(at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5,
+                    random.nextFloat() * 360.0f, 0.0f);
             DifficultyInstance difficulty = level.getCurrentDifficultyAt(at);
             portal.finalizeSpawn(level, difficulty, EntitySpawnReason.CHUNK_GENERATION, null);
             level.addFreshEntityWithPassengers(portal);

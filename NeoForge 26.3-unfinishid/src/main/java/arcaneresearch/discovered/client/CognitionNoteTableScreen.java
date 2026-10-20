@@ -68,9 +68,10 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        // NEOFORGE_PORT (26.3): super already draws the 1.20.1 renderBackground dim
+        // (AbstractContainerScreen.isInGameUi -> extractTransparentBackground);
+        // a second fillGradient here doubled the darkening.
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
         GuiBlitHelper.blit(graphics, BG, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         GuiBlitHelper.blit(graphics, BG, leftPos + 76, topPos + 40, 241, buttonActive() ? 0 : 15, 15, 15, 256, 256);
         GuiBlitHelper.blit(graphics, BG, leftPos + 51, topPos + 130, menu.isSafe() ? 109 : 87, 246, 29, 7, 256, 256);
@@ -85,7 +86,9 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             pose.pushMatrix();
             pose.translate(leftPos + 65.0F, topPos + 142.0F);
             pose.scale(0.65F, 0.65F);
-            graphics.text(font, mode, -font.width(mode) / 2, 0, 0xAEAE5E, false);
+            // NEOFORGE_PORT (26.3): ARGB color — 1.20.1 Font forced alpha 0xFF,
+            // text() skips alpha-0 colors.
+            graphics.text(font, mode, -font.width(mode) / 2, 0, 0xFFAEAE5E, false);
             pose.popMatrix();
         }
 
@@ -264,7 +267,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         double mouseX = event.x();
         double mouseY = event.y();
         int button = event.button();
-        if (button == 0 && minecraft != null && minecraft.gameMode != null) {
+        if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT && minecraft != null && minecraft.gameMode != null) {
             int x = (int) mouseX - leftPos;
             int y = (int) mouseY - topPos;
             if (x >= 76 && x < 91 && y >= 40 && y < 55 && buttonActive()) {

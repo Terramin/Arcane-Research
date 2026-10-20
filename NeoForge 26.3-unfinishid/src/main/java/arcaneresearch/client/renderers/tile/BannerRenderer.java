@@ -133,9 +133,12 @@ public class BannerRenderer implements BlockEntityRenderer<TileBanner, BannerRen
             model.renderTabs(work, consumer, light, OverlayTexture.NO_OVERLAY, fr, fg, fb, 1.0f);
         });
 
-        model.setBannerRotation(state.waveRx);
+        // NEOFORGE_PORT (26.3): geometry is emitted later (deferred) and the model is
+        // shared, so the per-banner wave rotation is applied inside the callback.
+        final float waveRx = state.waveRx;
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
             PoseStack work = bridge(pose);
+            model.setBannerRotation(waveRx);
             model.renderBanner(work, consumer, light, OverlayTexture.NO_OVERLAY, fr, fg, fb, 1.0f);
         });
 
@@ -196,5 +199,12 @@ public class BannerRenderer implements BlockEntityRenderer<TileBanner, BannerRen
                 .setColor(r, g, b, a).setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light)
                 .setNormal(pose, 0, 0, 1);
+    }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileBanner blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 }

@@ -41,7 +41,13 @@ public class EldritchWardenRenderer extends MobRenderer<EntityEldritchWarden, El
         state.bbHeight = entity.getBbHeight();
         // NEOFORGE_PORT (Forge 1:1): прозрачность как у гардиана (запрос
         // пользователя): фейд 0.6→0; во Внешних землях варден непрозрачен.
-        this.model.renderAlpha = EldritchGuardianRenderer.ghostAlpha(entity, true);
+        state.ghostAlpha = EldritchGuardianRenderer.ghostAlpha(entity, true);
+    }
+
+    // NEOFORGE_PORT (26.3): ghost fade via model tint (Forge model.renderAlpha).
+    @Override
+    protected int getModelTint(State state) {
+        return net.minecraft.util.ARGB.white(state.ghostAlpha);
     }
 
     @Override

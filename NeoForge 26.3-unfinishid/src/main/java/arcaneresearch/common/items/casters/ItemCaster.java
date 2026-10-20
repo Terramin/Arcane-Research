@@ -21,10 +21,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 // NEOFORGE_PORT (26.x): Forge net.minecraftforge.api.distmarker.* -> net.neoforged.api.distmarker.*.
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.ArcaneresearchInvHelper;
 import arcaneresearch.api.casters.*;
 import arcaneresearch.api.items.IArchitect;
@@ -56,6 +53,7 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
 
     // NEOFORGE_PORT: ItemStack.save(CompoundTag)/ItemStack.of(CompoundTag) removed in 26.x ->
     // ItemStack.CODEC via NbtOps (same "focus"/"picked" keys; inner shape is codec form).
+    // NEOFORGE_PORT (26.3): registry-aware ops (RegistryNbt) - plain NbtOps dropped enchanted stacks.
     private static ItemStack decodeStack(CompoundTag parent, String key) {
         if (parent == null || !parent.contains(key)) {
             return null;
@@ -64,7 +62,7 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
         if (inner == null) {
             return null;
         }
-        return ItemStack.CODEC.parse(NbtOps.INSTANCE, inner).result().orElse(ItemStack.EMPTY);
+        return ItemStack.CODEC.parse(arcaneresearch.common.lib.utils.RegistryNbt.ops(), inner).result().orElse(ItemStack.EMPTY);
     }
 
     private static void encodeStack(CompoundTag parent, String key, ItemStack stack) {
@@ -72,7 +70,7 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
             parent.remove(key);
             return;
         }
-        ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack.copy()).result().ifPresent(encoded -> {
+        ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), stack.copy()).result().ifPresent(encoded -> {
             parent.put(key, encoded);
         });
     }
@@ -537,13 +535,10 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        // NEOFORGE_PORT: intentionally a no-op. Forge wired CasterItemRenderer
-        // (BEWLR) here via registerClientItemExtensions; in 26.x the same
-        // render (base gauntlet mesh + focus overlay per display context) is
-        // data-driven: assets/arcaneresearch/items/caster_basic.json
-        // (minecraft:composite + arcaneresearch:caster_focus special layer,
-        // see CasterFocusSpecialRenderer + SpecialItemModels).
-    }
+    // NEOFORGE_PORT (26.3): Item.initializeClient(Consumer<IClientItemExtensions>) was removed in
+    // 26.x; the dead no-op (a client-only type in a common class) is gone. Forge wired
+    // CasterItemRenderer (BEWLR) there; in 26.x the same render (base gauntlet mesh + focus
+    // overlay per display context) is data-driven: assets/arcaneresearch/items/caster_basic.json
+    // (minecraft:composite + arcaneresearch:caster_focus special layer, see
+    // CasterFocusSpecialRenderer + SpecialItemModels).
 }

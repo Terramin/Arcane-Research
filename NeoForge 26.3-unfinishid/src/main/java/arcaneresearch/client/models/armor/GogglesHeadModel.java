@@ -47,6 +47,11 @@ public class GogglesHeadModel extends EntityModel<AvatarRenderState> {
         this.head.loadPose(playerHead.storePose());
     }
 
+    // NEOFORGE_PORT (26.3): load a head pose snapshotted at submit time (drawn later).
+    public void loadHeadPose(PartPose pose) {
+        this.head.loadPose(pose);
+    }
+
     @Override
     public void setupAnim(AvatarRenderState state) {
         super.setupAnim(state);

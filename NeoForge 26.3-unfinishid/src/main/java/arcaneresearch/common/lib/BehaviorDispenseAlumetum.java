@@ -1,10 +1,9 @@
 package arcaneresearch.common.lib;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
-import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -12,11 +11,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import arcaneresearch.common.entities.projectile.EntityAlumentum;
 
-// NEOFORGE_PORT: AbstractProjectileDispenseBehavior removed in 26.x; DispenseItemBehavior
-// is now an interface with dispense(BlockSource, ItemStack). The dispense logic below
-// replicates the old base 1:1 (dispense position = center + facing * 0.7, shoot with
-// power 1.1 / uncertainty 6.0, spawn, shrink). getProjectile kept with the same signature.
-public class BehaviorDispenseAlumetum implements DispenseItemBehavior {
+// NEOFORGE_PORT: AbstractProjectileDispenseBehavior removed in 26.x (ProjectileDispenseBehavior now
+// requires a ProjectileItem). The old base is replicated 1:1 on top of DefaultDispenseItemBehavior:
+// execute = dispense position (center + facing * 0.7), shoot with power 1.1 / uncertainty 6.0,
+// spawn, shrink; playSound = level event 1002 (projectile launch); smoke animation (2000) from the base.
+// getProjectile kept with the same signature.
+public class BehaviorDispenseAlumetum extends DefaultDispenseItemBehavior {
     public static void register() {
         DispenserBlock.registerBehavior(arcaneresearch.init.ModItems.ALUMENTUM.get(), new BehaviorDispenseAlumetum());
     }
@@ -26,20 +26,21 @@ public class BehaviorDispenseAlumetum implements DispenseItemBehavior {
     }
 
     @Override
-    public ItemStack dispense(BlockSource source, ItemStack stack) {
+    protected ItemStack execute(BlockSource source, ItemStack stack) {
         ServerLevel level = source.level();
-        BlockPos pos = source.pos();
+        Position dispensePos = DispenserBlock.getDispensePosition(source);
         Direction direction = source.state().getValue(DispenserBlock.FACING);
-        // NEOFORGE_PORT: DispenseItemBehavior.getDispensePosition removed; same math inline.
-        // PositionImpl removed -> Vec3 implements Position.
-        Position dispensePos = new net.minecraft.world.phys.Vec3(
-                pos.getX() + 0.5 + 0.7 * direction.getStepX(),
-                pos.getY() + 0.5 + 0.7 * direction.getStepY(),
-                pos.getZ() + 0.5 + 0.7 * direction.getStepZ());
         Projectile projectile = getProjectile(level, dispensePos, stack);
         projectile.shoot(direction.getStepX(), direction.getStepY() + 0.1F, direction.getStepZ(), 1.1F, 6.0F);
         level.addFreshEntity(projectile);
         stack.shrink(1);
         return stack;
+    }
+
+    // NEOFORGE_PORT (26.3): Forge AbstractProjectileDispenseBehavior.playSound -> level event 1002
+    // (the port's bare DispenseItemBehavior played no sound and no smoke).
+    @Override
+    protected void playSound(BlockSource source) {
+        source.level().levelEvent(1002, source.pos(), 0);
     }
 }

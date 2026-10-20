@@ -100,10 +100,19 @@ public class SealFill extends SealFiltered implements ISealConfigToggles {
                     level.addFreshEntity(ie);
                 } else {
                     // NEOFORGE_PORT: ItemHandlerHelper.insertItemStacked -> ItemUtil in committed tx.
-                    try (var tx = Transaction.openRoot()) {
-                        golem.holdItem(ItemUtil.insertItemReturnRemaining(inv, s, false, tx));
-                        tx.commit();
+                    // NEOFORGE_PORT (26.3): insertItemStacked filled slots already holding the item
+                    // first, then empty ones -> ResourceHandlerUtil.insertStacking (the handler's
+                    // plain insert used first-free-slot order).
+                    ItemStack remaining = s;
+                    if (!s.isEmpty()) {
+                        try (var tx = Transaction.openRoot()) {
+                            int inserted = net.neoforged.neoforge.transfer.ResourceHandlerUtil.insertStacking(
+                                    inv, ItemResource.of(s), s.getCount(), tx);
+                            tx.commit();
+                            remaining = inserted >= s.getCount() ? ItemStack.EMPTY : s.copyWithCount(s.getCount() - inserted);
+                        }
                     }
+                    golem.holdItem(remaining);
                 }
                 ((Entity) golem).playSound(SoundEvents.ITEM_PICKUP, 0.125f,
                         ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7f + 1.0f) * 1.0f);

@@ -125,28 +125,20 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
         float u1 = u0 + 1.0F / grid;
         float v0 = ym / (float) gridH;
         float v1 = v0 + 1.0F / gridH;
-        int light = 0xF000F0;
-        consumer.addVertex(pose, -size, -size, 0.0F)
+        // NEOFORGE_PORT (26.3): Forge UtilsFX.renderBillboardQuad vertex/UV order (front face
+        // under the culling additive type) and light pack(13, 0).
+        int light = 0xD0;
+        glowVertex(pose, consumer, -size, -size, u1, v1, light);
+        glowVertex(pose, consumer, -size, size, u1, v0, light);
+        glowVertex(pose, consumer, size, size, u0, v0, light);
+        glowVertex(pose, consumer, size, -size, u0, v1, light);
+    }
+
+    private static void glowVertex(PoseStack.Pose pose, VertexConsumer consumer,
+                                   float x, float y, float u, float v, int light) {
+        consumer.addVertex(pose, x, y, 0.0F)
                 .setColor(0.0F, 1.0F, 0.4F, 0.8F)
-                .setUv(u1, v1)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 1.0F, 0.0F);
-        consumer.addVertex(pose, size, -size, 0.0F)
-                .setColor(0.0F, 1.0F, 0.4F, 0.8F)
-                .setUv(u0, v1)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 1.0F, 0.0F);
-        consumer.addVertex(pose, size, size, 0.0F)
-                .setColor(0.0F, 1.0F, 0.4F, 0.8F)
-                .setUv(u0, v0)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 1.0F, 0.0F);
-        consumer.addVertex(pose, -size, size, 0.0F)
-                .setColor(0.0F, 1.0F, 0.4F, 0.8F)
-                .setUv(u0, v0)
+                .setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(pose, 0.0F, 1.0F, 0.0F);

@@ -35,8 +35,8 @@ import arcaneresearch.init.ModSounds;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
-public class EntityCultistCleric extends EntityCultist implements RangedAttackMob {
-    // TODO_PORT (packet wave): IEntityAdditionalSpawnData removed in NeoForge; extra spawn data must go through sendPairingData (see Entity base).
+public class EntityCultistCleric extends EntityCultist implements RangedAttackMob, net.neoforged.neoforge.entity.IEntityWithComplexSpawn {
+    // NEOFORGE_PORT: Forge IEntityAdditionalSpawnData -> NeoForge IEntityWithComplexSpawn (same payload).
 
     private static final EntityDataAccessor<Boolean> DATA_RITUALIST =
             SynchedEntityData.defineId(EntityCultistCleric.class, EntityDataSerializers.BOOLEAN);
@@ -231,5 +231,25 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
         setRitualist(tag.getBooleanOr("ritualist", false));
     }
 
+    @Override
+    public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        BlockPos home = getHomePos();
+        if (home != null) {
+            buffer.writeInt(home.getX());
+            buffer.writeInt(home.getY());
+            buffer.writeInt(home.getZ());
+        } else {
+            buffer.writeInt(0);
+            buffer.writeInt(0);
+            buffer.writeInt(0);
+        }
+    }
 
+    @Override
+    public void readSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {
+        BlockPos home = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
+        if (home.getX() != 0 || home.getY() != 0 || home.getZ() != 0) {
+            setHomePos(home, 8);
+        }
+    }
 }

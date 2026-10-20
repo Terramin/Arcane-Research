@@ -44,7 +44,7 @@ public class CardInfuse extends TheorycraftCard {
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
         nbt.putString("aspect", aspect != null ? aspect.getTag() : "");
-        nbt.put("stack", ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, stack).result().orElseGet(net.minecraft.nbt.CompoundTag::new));
+        nbt.put("stack", arcaneresearch.common.lib.utils.RegistryNbt.saveStack(stack));
         return nbt;
     }
 
@@ -52,7 +52,7 @@ public class CardInfuse extends TheorycraftCard {
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         aspect = Aspect.getAspect(nbt.getStringOr("aspect", ""));
-        stack = ItemStack.OPTIONAL_CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, nbt.getCompoundOrEmpty("stack")).result().orElse(ItemStack.EMPTY);
+        stack = arcaneresearch.common.lib.utils.RegistryNbt.loadStack(nbt.getCompoundOrEmpty("stack"));
     }
 
     @Override

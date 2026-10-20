@@ -199,10 +199,11 @@ public class InventoryUtils {
         }
 
         int count = item.getCount();
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access (same order).
-        net.minecraft.world.entity.player.Inventory playerInv = player.getInventory();
-        for (int slot = 0; slot < playerInv.getContainerSize(); slot++) {
-            ItemStack slotStack = playerInv.getItem(slot);
+        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (the
+        // same 36-slot list; getContainerSize() would also walk armor/offhand/body).
+        net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
+        for (int slot = 0; slot < playerItems.size(); slot++) {
+            ItemStack slotStack = playerItems.get(slot);
             ArcaneresearchInvHelper.InvFilter filter = new ArcaneresearchInvHelper.InvFilter(false,
                     !arcaneresearch.api.ArcaneresearchInvHelper.hasCustomTag(item), useTagMatch, false)
                     .setRelaxedNBT();
@@ -213,7 +214,7 @@ public class InventoryUtils {
                     count = 0;
                 } else {
                     count -= slotStack.getCount();
-                    playerInv.setItem(slot, ItemStack.EMPTY);
+                    playerItems.set(slot, ItemStack.EMPTY);
                 }
                 if (count <= 0) {
                     return true;
@@ -229,15 +230,17 @@ public class InventoryUtils {
         }
 
         int remaining = amount;
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack slotStack = player.getInventory().getItem(slot);
+        // NEOFORGE_PORT (26.3): main 36 slots only, as Inventory.items in the reference.
+        net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
+        for (int slot = 0; slot < playerItems.size(); slot++) {
+            ItemStack slotStack = playerItems.get(slot);
             if (slotStack.is(item)) {
                 if (slotStack.getCount() > remaining) {
                     slotStack.shrink(remaining);
                     remaining = 0;
                 } else {
                     remaining -= slotStack.getCount();
-                    player.getInventory().setItem(slot, ItemStack.EMPTY);
+                    playerItems.set(slot, ItemStack.EMPTY);
                 }
                 if (remaining <= 0) {
                     return true;
@@ -258,8 +261,10 @@ public class InventoryUtils {
                 !ArcaneresearchInvHelper.hasCustomTag(stack), useTagMatch, false)
                 .setRelaxedNBT();
 
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack slotStack = player.getInventory().getItem(slot);
+        // NEOFORGE_PORT (26.3): main 36 slots only, as Inventory.items in the reference.
+        net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
+        for (int slot = 0; slot < playerItems.size(); slot++) {
+            ItemStack slotStack = playerItems.get(slot);
             if (checkEnchantedPlaceholder(stack, slotStack) || areItemStacksEqual(slotStack, stack, filter)) {
                 needed -= slotStack.getCount();
                 if (needed <= 0) {
@@ -299,10 +304,11 @@ public class InventoryUtils {
     }
 
     public static int getPlayerSlotFor(Player player, ItemStack stack) {
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access (same order).
-        net.minecraft.world.entity.player.Inventory playerInv = player.getInventory();
-        for (int i = 0; i < playerInv.getContainerSize(); i++) {
-            ItemStack slotStack = playerInv.getItem(i);
+        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (main
+        // 36 slots, same indices; getContainerSize() would also return armor/offhand).
+        net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
+        for (int i = 0; i < playerItems.size(); i++) {
+            ItemStack slotStack = playerItems.get(i);
             if (!slotStack.isEmpty() && ItemStack.isSameItemSameComponents(stack, slotStack)) {
                 return i;
             }
@@ -365,7 +371,11 @@ public class InventoryUtils {
         if (filter.useOre && !stack0.isEmpty()) {
             // NEOFORGE_PORT: ItemStack.getTags() removed; shared-tag check via the
             // item holder's tag stream (same semantics: any common tag matches).
-            return stack0.getItem().builtInRegistryHolder().tags().anyMatch(stack1::is);
+            // NEOFORGE_PORT (26.3): like the reference, a shared tag is an early match
+            // only; without one fall through to the exact item/NBT/damage check.
+            if (stack0.getItem().builtInRegistryHolder().tags().anyMatch(stack1::is)) {
+                return true;
+            }
         }
 
         boolean nbtMatch = true;
@@ -373,9 +383,10 @@ public class InventoryUtils {
             if (filter.relaxedNBT) {
                 nbtMatch = ArcaneresearchInvHelper.areItemStackTagsEqualRelaxed(stack0, stack1);
             } else {
+                // NEOFORGE_PORT (26.3): 1.20.1 "!hasTag()" meant no NBT at all (enchantments,
+                // name, damage...), i.e. an empty component patch - not just "no CUSTOM_DATA".
                 nbtMatch = ItemStack.isSameItemSameComponents(stack0, stack1) ||
-                        (!stack0.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)
-                                && !stack1.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA));
+                        (stack0.getComponentsPatch().isEmpty() && stack1.getComponentsPatch().isEmpty());
             }
         }
 
@@ -558,9 +569,21 @@ public class InventoryUtils {
 
         if (input instanceof Ingredient ingredient) {
             // NEOFORGE_PORT: Ingredient.getItems() removed -> Holder stream (plain stacks).
-            java.util.List<ItemStack> stacks = ingredient.items()
-                    .filter(h -> h.value() != net.minecraft.world.item.Items.AIR)
-                    .map(h -> new ItemStack(h.value())).toList();
+            // NEOFORGE_PORT (26.3): resolve the ingredient's SlotDisplay first so custom
+            // ingredients keep their components (aspect crystals etc.), as getItems() kept
+            // NBT; item/stack/tag displays need no context. Plain holders as fallback.
+            java.util.List<ItemStack> stacks = java.util.List.of();
+            try {
+                stacks = ingredient.display()
+                        .resolveForStacks(net.minecraft.util.context.ContextMap.EMPTY)
+                        .stream().filter(s -> !s.isEmpty()).toList();
+            } catch (Exception ignored) {
+            }
+            if (stacks.isEmpty()) {
+                stacks = ingredient.items()
+                        .filter(h -> h.value() != net.minecraft.world.item.Items.AIR)
+                        .map(h -> new ItemStack(h.value())).toList();
+            }
             if (!stacks.isEmpty()) {
                 int idx = (int) ((counter + System.currentTimeMillis() / 1000L) % stacks.size());
                 result = cycleItemStack(stacks.get(idx), counter + 1);

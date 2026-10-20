@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:cloth_legs",
+    "arcaneresearch:thaumium_legs",
+    "arcaneresearch:void_legs",
+    "arcaneresearch:fortress_legs",
+    "arcaneresearch:void_robe_legs",
+    "arcaneresearch:crimson_robe_legs",
+    "arcaneresearch:crimson_plate_legs",
+    "arcaneresearch:crimson_praetor_legs"
+  ]
+}

@@ -62,7 +62,9 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
         }
 
         AABB area = GolemHelper.getBoundsForArea(seal);
-        List<LivingEntity> entities = level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(LivingEntity.class), area, e -> true);
+        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists (NO_SPECTATORS filter);
+        // the getEntities(..., e -> true) rewrite also returned spectators.
+        List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, area);
 
         if (!entities.isEmpty()) {
             for (LivingEntity target : entities) {

@@ -43,6 +43,10 @@ public class ItemRobeArmor extends Item implements IVisDiscountGear, IRunicArmor
     public ItemRobeArmor(Item.Properties props, ArmorType type) {
         // NEOFORGE_PORT: super(material, type, props) -> super(props.humanoidArmor(material, type)).
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_SPECIAL, type)
+                // NEOFORGE_PORT (26.3): humanoidArmor() uses vanilla per-slot units (11/16/15/13);
+                // Forge indexed {13,15,16,11} by ArmorItem.Type ordinal -> restore Forge durability.
+                .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(
+                        ArcaneresearchArmorMaterials.ARMORMAT_SPECIAL, type))
                 .stacksTo(1)
                 .rarity(Rarity.UNCOMMON));
         this.armorType = type;
@@ -70,7 +74,7 @@ public class ItemRobeArmor extends Item implements IVisDiscountGear, IRunicArmor
         return this.armorType == ArmorType.BOOTS ? 2 : 3;
     }
 
-    // TODO_PORT: Forge isValidRepairItem accepted the enchanted fabric item (or the material match).
+    // NEOFORGE_PORT: Forge isValidRepairItem accepted the enchanted fabric item (or the material match).
     // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
     // via the ArmorMaterial repairIngredient tag); ARMORMAT_SPECIAL maps to the
     // repairs_enchanted_fabric data tag (enchanted fabric, as Forge used), so no override is

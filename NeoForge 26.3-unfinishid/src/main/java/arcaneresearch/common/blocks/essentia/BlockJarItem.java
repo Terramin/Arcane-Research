@@ -74,7 +74,10 @@ public class BlockJarItem extends BlockItem implements IEssentiaContainerItem {
     }
 
     public static void setAspectsStatic(ItemStack itemstack, AspectList aspects) {
-        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        // NEOFORGE_PORT (26.3): merge into the existing CUSTOM_DATA like the reference wrote into
+        // the existing root tag (a fresh tag dropped "AspectFilter" when filling a labelled jar).
+        net.minecraft.nbt.CompoundTag tag =
+                arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(itemstack);
         aspects.writeToNBT(tag);
         arcaneresearch.api.ArcaneresearchInvHelper.setCustomTag(itemstack, tag);
     }

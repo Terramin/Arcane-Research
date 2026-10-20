@@ -106,7 +106,9 @@ public class HexResearchNoteData {
         }
         CompoundTag layer = layer(stack, false);
         HexResearchNoteData data = new HexResearchNoteData();
-        boolean haveField = layer != null && layer.getListOrEmpty("hexgrid").size() > 0;
+        // NEOFORGE_PORT (26.3): reference contains("hexgrid", TAG_LIST) — present even
+        // when empty (size() > 0 sent empty-grid notes down the legacy path -> null).
+        boolean haveField = layer != null && layer.getList("hexgrid").isPresent();
         if (haveField) {
             data.readFromNBT(layer);
         } else {

@@ -50,12 +50,55 @@ public class TileWaterJug extends TileArcaneresearch {
     public final ArcaneresearchFluidTank tank = new ArcaneresearchFluidTank(TANK_CAPACITY,
             stack -> stack.getFluid() == Fluids.WATER);
 
+    // NEOFORGE_PORT (26.3): old WaterJugFluidHandler.drain(EXECUTE) did setChanged() and
+    // syncTile(false) when the jug dropped below full. Restored via a journal whose
+    // root-commit callback receives the pre-transaction "was full" state.
+    private final net.neoforged.neoforge.transfer.transaction.SnapshotJournal<Boolean> drainJournal =
+            new net.neoforged.neoforge.transfer.transaction.SnapshotJournal<>() {
+                @Override
+                protected Boolean createSnapshot() {
+                    return tank.getFluidAmount() >= TANK_CAPACITY;
+                }
+
+                @Override
+                protected void revertToSnapshot(Boolean snapshot) {
+                }
+
+                @Override
+                protected void onRootCommit(Boolean wasFull) {
+                    setChanged();
+                    if (wasFull && tank.getFluidAmount() < TANK_CAPACITY) {
+                        syncTile(false);
+                    }
+                }
+            };
+
     private final ResourceHandler<FluidResource> drainOnlyView =
             new DelegatingResourceHandler<>(tank) {
                 @Override
                 public int insert(int index, FluidResource resource, int amount,
                                   TransactionContext tx) {
                     return 0;
+                }
+
+                // NEOFORGE_PORT (26.3): DelegatingResourceHandler forwards the index-less
+                // overload straight to the tank, which let pipes fill the jug from UP.
+                @Override
+                public int insert(FluidResource resource, int amount, TransactionContext tx) {
+                    return 0;
+                }
+
+                @Override
+                public int extract(int index, FluidResource resource, int amount,
+                                   TransactionContext tx) {
+                    drainJournal.updateSnapshots(tx);
+                    return super.extract(index, resource, amount, tx);
+                }
+
+                @Override
+                public int extract(FluidResource resource, int amount, TransactionContext tx) {
+                    drainJournal.updateSnapshots(tx);
+                    return super.extract(resource, amount, tx);
                 }
             };
 

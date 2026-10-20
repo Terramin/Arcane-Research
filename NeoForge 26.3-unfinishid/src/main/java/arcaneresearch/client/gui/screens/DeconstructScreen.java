@@ -54,8 +54,7 @@ public class DeconstructScreen extends AbstractContainerScreen<DeconstructMenu> 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mx, int my, float partialTick) {
         super.extractBackground(graphics, mx, my, partialTick);
-        // 1.20.1 Screen.renderBackground dim (fillGradient)
-        graphics.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
+        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0,
                 imageWidth, imageHeight, 256, 256);
         if (menu.breaktime() > 0) {

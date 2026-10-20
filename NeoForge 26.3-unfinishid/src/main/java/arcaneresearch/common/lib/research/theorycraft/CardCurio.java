@@ -19,14 +19,14 @@ public class CardCurio extends TheorycraftCard {
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
-        nbt.put("stack", ItemStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, curio).result().orElseGet(net.minecraft.nbt.CompoundTag::new));
+        nbt.put("stack", arcaneresearch.common.lib.utils.RegistryNbt.saveStack(curio));
         return nbt;
     }
 
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
-        curio = ItemStack.OPTIONAL_CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, nbt.getCompoundOrEmpty("stack")).result().orElse(ItemStack.EMPTY);
+        curio = arcaneresearch.common.lib.utils.RegistryNbt.loadStack(nbt.getCompoundOrEmpty("stack"));
     }
 
     @Override
@@ -59,8 +59,9 @@ public class CardCurio extends TheorycraftCard {
         Random r = new Random(getSeed());
         List<ItemStack> curios = new ArrayList<>();
 
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack stack = player.getInventory().getItem(slot);
+        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (the same
+        // 36 main slots as Forge; getContainerSize() would also include armor/offhand).
+        for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.getItem() instanceof arcaneresearch.common.items.curios.ItemCurio) {
                 ItemStack c = stack.copy();
                 c.setCount(1);

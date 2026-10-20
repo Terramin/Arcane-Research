@@ -2,6 +2,7 @@
     "__createdwith": "opl's Model Creator",
     "ambientocclusion": false,
     "textures": {
+        "particle": "arcaneresearch:item/grapple_gun",
         "side": "arcaneresearch:item/grapple_gun"
     },
     "display": {

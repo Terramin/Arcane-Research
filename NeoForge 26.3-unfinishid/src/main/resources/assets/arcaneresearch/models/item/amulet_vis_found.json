@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "arcaneresearch:item/amulet_vis"
+    "layer0": "arcaneresearch:item/amulet_vis_stone"
   }
 }

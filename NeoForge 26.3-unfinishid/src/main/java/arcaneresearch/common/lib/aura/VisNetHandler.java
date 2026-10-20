@@ -191,7 +191,10 @@ public class VisNetHandler {
         Vec3 to = new Vec3(target.getBlockPos().getX() + 0.5D,
                 target.getBlockPos().getY() + 0.5D, target.getBlockPos().getZ() + 0.5D);
         BlockHitResult mop = level.clip(new ClipContext(from, to,
-                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, (net.minecraft.world.entity.Entity) null));
+                // NEOFORGE_PORT (26.3): ClipContext(..., Entity) NPEs on null now
+                // (CollisionContext.of switch); 1.20.1 mapped null to the empty context.
+                ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE,
+                net.minecraft.world.phys.shapes.CollisionContext.empty()));
         return mop == null || mop.getType() == HitResult.Type.MISS
                 || (mop.getType() == HitResult.Type.BLOCK && mop.getBlockPos().equals(target.getBlockPos()));
     }

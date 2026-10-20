@@ -251,4 +251,11 @@ public class DioptraRenderer implements BlockEntityRenderer<TileDioptra, Dioptra
     public boolean shouldRenderOffScreen() {
         return true;
     }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileDioptra blockEntity) {
+        return blockEntity.getRenderBoundingBox();
+    }
 }

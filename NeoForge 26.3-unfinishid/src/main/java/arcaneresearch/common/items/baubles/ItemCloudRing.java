@@ -57,10 +57,9 @@ public class ItemCloudRing extends Item implements ICurioItem {
                         moved.z + Mth.cos(yaw) * 0.2F);
             }
             player.fallDistance = 0.0F;
-            // TODO_PORT (items): PacketPlayerFlagToServer (FLAG_RESET_FALL_DISTANCE) is not ported
-            // yet -- the server-side fall reset sync is skipped until the packet wave lands.
-            // PacketHandler.sendToServer(new PacketPlayerFlagToServer(
-            //         PacketPlayerFlagToServer.FLAG_RESET_FALL_DISTANCE));
+            arcaneresearch.common.lib.network.PacketHandler.sendToServer(
+                    new arcaneresearch.common.lib.network.playerdata.PacketPlayerFlagToServer(
+                            arcaneresearch.common.lib.network.playerdata.PacketPlayerFlagToServer.FLAG_RESET_FALL_DISTANCE));
             // NEOFORGE_PORT: ForgeHooks.onLivingJump -> CommonHooks.onLivingJump.
             CommonHooks.onLivingJump(player);
         }

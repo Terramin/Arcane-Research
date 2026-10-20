@@ -50,6 +50,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     // NEOFORGE_PORT: ItemStack.save(CompoundTag)/ItemStack.of(CompoundTag) removed in 26.x ->
     // ItemStack.CODEC via NbtOps (same "focus" key; inner shape is codec form).
+    // NEOFORGE_PORT (26.3): registry-aware ops (RegistryNbt) - plain NbtOps dropped enchanted stacks.
     private static ItemStack decodeStack(CompoundTag parent, String key) {
         if (parent == null || !parent.contains(key)) {
             return ItemStack.EMPTY;
@@ -58,7 +59,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         if (inner == null) {
             return ItemStack.EMPTY;
         }
-        return ItemStack.CODEC.parse(NbtOps.INSTANCE, inner).result().orElse(ItemStack.EMPTY);
+        return ItemStack.CODEC.parse(arcaneresearch.common.lib.utils.RegistryNbt.ops(), inner).result().orElse(ItemStack.EMPTY);
     }
 
     private static void encodeStack(CompoundTag parent, String key, ItemStack stack) {
@@ -66,7 +67,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
             parent.remove(key);
             return;
         }
-        ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack.copy()).result().ifPresent(encoded -> {
+        ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), stack.copy()).result().ifPresent(encoded -> {
             parent.put(key, encoded);
         });
     }
@@ -371,15 +372,31 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
                 rod.getOnUpdate().onUpdate(stack, player);
             }
             if (player.tickCount % 5 == 0) {
-                // NEOFORGE_PORT: 26.x passes EquipmentSlot (no slot index / selected flag).
-                // MAINHAND ticks only for the held (= selected) stack, so outcomes match
-                // Forge for main hand (incl. hotbar research bonus) and offhand exactly.
-                // NOTE: unselected-hotbar NODETAPPER bonus (slot<9) has no 26.x tick source
-                // (slot index is not provided) and no longer applies.
-                boolean selected = slot == EquipmentSlot.MAINHAND;
-                int slotId = selected ? player.getInventory().getSelectedSlot()
-                        : net.minecraft.world.entity.player.Inventory.SLOT_OFFHAND;
-                int rate = WandManager.getBaseChargeRate(player, selected, slotId);
+                // NEOFORGE_PORT (26.3): 26.x passes an EquipmentSlot instead of Forge's
+                // (compartment index, isSelected). Rebuild Forge's values: main inventory ->
+                // index in Inventory.items (selected only for the held hotbar slot, which 26.x
+                // ticks as MAINHAND); armor -> FEET..HEAD = 0..3; offhand -> 0; Forge's
+                // isSelected was "index == selected hotbar slot" for every compartment. This keeps
+                // the NODETAPPER bonus for wands anywhere in the hotbar (index < 9) and offhand.
+                net.minecraft.world.entity.player.Inventory inv = player.getInventory();
+                int slotId = -1;
+                if (slot == EquipmentSlot.MAINHAND) {
+                    slotId = inv.getSelectedSlot();
+                } else if (slot == null) {
+                    java.util.List<ItemStack> main = inv.getNonEquipmentItems();
+                    for (int i = 0; i < main.size(); i++) {
+                        if (main.get(i) == stack) {
+                            slotId = i;
+                            break;
+                        }
+                    }
+                } else if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                    slotId = slot.getIndex();
+                } else if (slot == EquipmentSlot.OFFHAND) {
+                    slotId = 0;
+                }
+                boolean selected = slotId >= 0 && slotId == inv.getSelectedSlot();
+                int rate = slotId >= 0 ? WandManager.getBaseChargeRate(player, selected, slotId) : 0;
                 if (rate > 0) {
                     handleRecharge(level, stack, player.blockPosition(), player, rate);
                 }
@@ -515,6 +532,11 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
             WandManager.setCooldown(player, focus.getActivationCooldown(getFocusStack(stack)));
             if (focus.onFocusActivation(stack, level, player, hit, 0)) {
                 consumeAllVis(stack, player, focus.getVisCost(stack), level.isClientSide(), false);
+                // NEOFORGE_PORT (26.3): Forge-verbatim cast-pulse hook for the first-person
+                // animation (dropped in the port); ClientRunHelper no-ops on the dedicated
+                // server and the client class is only resolved inside the lambda.
+                arcaneresearch.helper.ClientRunHelper.runOnClient(
+                        () -> arcaneresearch.client.renderers.item.WandUseAnimation.noteCast(hand));
             }
             return InteractionResult.SUCCESS;
         }
@@ -624,7 +646,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
     }
 
     // NEOFORGE_PORT: no @Override (no such method on Item in 26.x; wired via
-    // ToolEvents.playerLeftClickBlock, same body as Forge).
+    // ToolEvents.wandBlockStartBreak - BreakBlockEvent, LOWEST, skips cancelled - same body as Forge).
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
         ItemFocusBasic focus = getFocus(stack);
         if (focus != null && !WandManager.isOnCooldown(player)) {

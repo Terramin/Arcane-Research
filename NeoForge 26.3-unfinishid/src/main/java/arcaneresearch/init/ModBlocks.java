@@ -691,7 +691,8 @@ public class ModBlocks {
             java.util.function.Function<BlockBehaviour.Properties, T> block,
             java.util.function.BiFunction<T, net.minecraft.world.item.Item.Properties, BlockItem> itemFactory) {
         DeferredBlock<T> blockObj = BLOCKS.registerBlock(name, block);
-        BLOCK_ITEMS.registerItem(name, props -> itemFactory.apply(blockObj.get(), props));
+        // NEOFORGE_PORT: keep the block's name/lang key like registerSimpleBlockItem does.
+        BLOCK_ITEMS.registerItem(name, props -> itemFactory.apply(blockObj.get(), props.useBlockDescriptionPrefix()));
         return blockObj;
     }
 

@@ -31,8 +31,8 @@ public class ItemZombieBrain extends Item {
                                 .build()));
     }
 
-    // TODO_PORT (items): Forge .meat() flag dropped - 26.x FoodProperties has no meat flag, so
-    // there is no equivalent to restore (Forge ref: .meat() on the builder).
+    // NEOFORGE_PORT: Forge FoodProperties.meat() (wolves eat/breed with it) -> 26.x
+    // #minecraft:meat item tag (data/minecraft/tags/item/meat.json, part of #wolf_food).
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {

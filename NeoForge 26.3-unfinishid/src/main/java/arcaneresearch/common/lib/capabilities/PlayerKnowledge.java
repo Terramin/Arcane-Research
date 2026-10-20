@@ -137,6 +137,9 @@ public class PlayerKnowledge {
 
             if (isResearchKnown(res)) {
                 research.remove(res);
+                // NEOFORGE_PORT (26.3): Forge also dropped the stage and flags of the removed research.
+                stages.remove(res);
+                flags.remove(res);
                 return true;
             }
             return false;
@@ -213,7 +216,7 @@ public class PlayerKnowledge {
             );
         }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+        @Override
         public CompoundTag serializeNBT() {
             CompoundTag rootTag = new CompoundTag();
 
@@ -268,7 +271,7 @@ public class PlayerKnowledge {
             return rootTag;
         }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
+        @Override
         public void deserializeNBT(CompoundTag rootTag) {
             if (rootTag == null) {
                 return;

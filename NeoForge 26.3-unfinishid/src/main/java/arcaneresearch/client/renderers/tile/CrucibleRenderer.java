@@ -144,4 +144,11 @@ public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible, Cruci
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light)
                 .setNormal(pose, 0, 1, 0);
     }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileCrucible blockEntity) {
+        return blockEntity.getRenderBoundingBox();
+    }
 }

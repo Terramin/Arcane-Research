@@ -171,7 +171,8 @@ public class SealEntity implements ISealEntity {
 
         nbt.putLong("pos", sealPos.pos.asLong());
         nbt.putByte("face", (byte) sealPos.face.ordinal());
-        nbt.putString("type", seal.getKey());
+        // NEOFORGE_PORT (26.3): null-safe like Forge 1.20.1 (seal is null for removal syncs).
+        nbt.putString("type", seal != null ? seal.getKey() : "arcaneresearch:blank");
         nbt.putByte("priority", getPriority());
         nbt.putByte("color", getColor());
         nbt.putBoolean("locked", isLocked());

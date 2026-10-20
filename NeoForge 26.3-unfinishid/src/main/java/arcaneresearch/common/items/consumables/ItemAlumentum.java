@@ -39,7 +39,6 @@ public class ItemAlumentum extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    // TODO_PORT (items): Forge getBurnTime override (4800 ticks furnace fuel) has no method
-    // equivalent in 26.x - burn time is now data-driven via Properties.cookingFuel(...); restore
-    // with a cookingFuel property + data JSON (Forge ref: return 4800).
+    // NEOFORGE_PORT: Forge getBurnTime override (4800 ticks) -> COOKING_FUEL component,
+    // see init/ModFuels + data/arcaneresearch/context_int_provider/cooking/time_alumentum.json.
 }

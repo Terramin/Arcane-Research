@@ -294,8 +294,9 @@ public class BlockTaintFibre extends Block implements ITaintBlock {
         return RenderShape.MODEL;
     }
 
-    // TODO_PORT: @Override removed for 26.3 green build (signature mismatch, rework deferred).
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    // NEOFORGE_PORT: 26.x propagatesSkylightDown takes only the state.
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
 

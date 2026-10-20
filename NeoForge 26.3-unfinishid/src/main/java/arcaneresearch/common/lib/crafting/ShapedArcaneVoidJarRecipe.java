@@ -55,9 +55,12 @@ public class ShapedArcaneVoidJarRecipe extends ShapedArcaneRecipe {
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack in = container.getItem(i);
             if (!in.isEmpty() && Block.byItem(in.getItem()) == ModBlocks.JAR_NORMAL.get()) {
-                net.minecraft.world.item.component.CustomData inData = in.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-                if (inData != null) {
-                    res.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, inData);
+                // NEOFORGE_PORT (26.3): Forge res.setTag(in.getTag().copy()) REPLACED the result's
+                // whole NBT (essentia/label custom data, but also custom name, enchantments...).
+                // Component equivalent: rebuild the result on the jar's full component patch.
+                net.minecraft.core.component.DataComponentPatch inPatch = in.getComponentsPatch();
+                if (!inPatch.isEmpty()) {
+                    res = new ItemStack(res.typeHolder(), res.getCount(), inPatch);
                 }
                 break;
             }

@@ -165,7 +165,10 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
         poseStack.rotate(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
         poseStack.rotate(Axis.YP.rotationDegrees(180.0f));
 
-        RenderType type = TCRenderTypes.additiveTextured(PARTICLE_TEXTURE);
+        // NEOFORGE_PORT (26.3): Forge used entityTranslucentEmissive (alpha blend),
+        // not an additive layer — same vanilla type here.
+        RenderType type = net.minecraft.client.renderer.rendertype.RenderTypes
+                .entityTranslucentEmissive(PARTICLE_TEXTURE);
         int fullLight = 0x00F000F0;
         float half = size / 2.0f;
 
@@ -232,5 +235,12 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
                 .setColor(r, g, b, a).setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light)
                 .setNormal(pose, 0, 0, 1);
+    }
+
+    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
+    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(TileFocalManipulator blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 }

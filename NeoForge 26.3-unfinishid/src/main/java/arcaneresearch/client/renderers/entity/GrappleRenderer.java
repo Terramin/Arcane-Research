@@ -86,6 +86,7 @@ public class GrappleRenderer extends EntityRenderer<EntityGrapple, GrappleRender
         double tx = Mth.lerp(partialTicks, thrower.xo, thrower.getX());
         double ty = Mth.lerp(partialTicks, thrower.yo, thrower.getY());
         double tz = Mth.lerp(partialTicks, thrower.zo, thrower.getZ());
+        boolean tipBound = false;
         if (Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
             double yy = Mth.lerp(partialTicks, thrower.yRotO, thrower.getYRot());
             double px = -Mth.cos((float) ((yy - 0.5) / 180.0 * Math.PI)) * 0.1
@@ -96,13 +97,30 @@ public class GrappleRenderer extends EntityRenderer<EntityGrapple, GrappleRender
             tx += px + look.x / 5.0;
             ty += thrower.getEyeHeight() / 2.6 + look.y / 5.0;
             tz += pz + look.z / 5.0;
+            // NEOFORGE_PORT (26.3): Forge bound the rope end to the held wand's tip.
+            if (thrower instanceof net.minecraft.world.entity.player.Player player
+                    && Minecraft.getInstance().getCameraEntity() == thrower
+                    && player.getItemInHand(grapple.getHand()).getItem()
+                            instanceof arcaneresearch.api.wands.IWand) {
+                try {
+                    Vec3 tip = arcaneresearch.client.lib.events.WandTipHelper.tipWorld(player, partialTicks,
+                            0.0F, 0.0F, arcaneresearch.client.lib.events.WandTipHelper.TIP_DZ_SIDE);
+                    if (tip != null) {
+                        tx = tip.x;
+                        ty = tip.y;
+                        tz = tip.z;
+                        tipBound = true;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
         }
         double gx = Mth.lerp(partialTicks, grapple.xo, grapple.getX());
         double gy = Mth.lerp(partialTicks, grapple.yo, grapple.getY());
         double gz = Mth.lerp(partialTicks, grapple.zo, grapple.getZ());
 
         double ex = tx - gx;
-        double ey = ty - gy + thrower.getBbHeight() / 2.0;
+        double ey = ty - gy + (tipBound ? 0.0 : thrower.getBbHeight() / 2.0);
         double ez = tz - gz;
         float length = (float) (Math.sqrt(ex * ex + ey * ey + ez * ez) * 5.0);
         int steps = (int) length;

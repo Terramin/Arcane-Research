@@ -73,7 +73,8 @@ public class ArcaneresearchOreFeature implements Feature {
                         - random.nextInt(25);
             };
             randPosY = Math.max(level.getMinY(),
-                    Math.min(randPosY, level.getMaxY() - 1));
+                    // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+                    Math.min(randPosY, level.getMaxY()));
             BlockPos pos = new BlockPos(randPosX, randPosY, randPosZ);
 
             BlockState current = level.getBlockState(pos);

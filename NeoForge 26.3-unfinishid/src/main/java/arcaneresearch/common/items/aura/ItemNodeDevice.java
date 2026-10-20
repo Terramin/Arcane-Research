@@ -2,8 +2,6 @@ package arcaneresearch.common.items.aura;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Предмет нод-устройства (стабилизатор/advanced/трансдьюсер/конвертер):
@@ -29,12 +27,8 @@ public class ItemNodeDevice extends BlockItem {
         return kind;
     }
 
-    // NEOFORGE_PORT: Item.initializeClient removed in 26.x; kept as a no-op hook.
-    @OnlyIn(Dist.CLIENT)
-    public void initializeClient(
-            java.util.function.Consumer<net.neoforged.neoforge.client.extensions.common.IClientItemExtensions> consumer) {
-        // NEOFORGE_PORT: BlockEntityWithoutLevelRenderer removed in 26.x; done via
-        // client/renderers/item/NodeDeviceSpecialRenderer (arcaneresearch:node_device),
-        // registered in SpecialItemModels and wired in assets/arcaneresearch/items/node_*.json.
-    }
+    // NEOFORGE_PORT (26.3): Item.initializeClient(Consumer<IClientItemExtensions>) was removed
+    // in 26.x (the old no-op kept a client-only type in this common class). The Forge BEWLR is
+    // done via client/renderers/item/NodeDeviceSpecialRenderer (arcaneresearch:node_device),
+    // registered in SpecialItemModels and wired in assets/arcaneresearch/items/node_*.json.
 }
