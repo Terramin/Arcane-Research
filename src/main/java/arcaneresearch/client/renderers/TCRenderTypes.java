@@ -126,6 +126,42 @@ public final class TCRenderTypes {
     private static final Function<Identifier, RenderType> OBJ_ALPHA_FLAT = setup(
             "arcaneresearch_obj_alpha_flat", OBJ_ALPHA_FLAT_PIPE);
 
+    // NEOFORGE_PORT (GhostItem parity, deconstruction table): Forge 1.20.1 drew
+    // the floating item "ghost" by re-wrapping the item's render types with only
+    // the transparency shard swapped to LIGHTNING (SRC_ALPHA/ONE additive) and
+    // scaling the vertex color/alpha (GhostTypes + ScaledAlphaConsumer). In 26.3
+    // the item model route cannot restyle blending (ItemFeatureRenderer picks
+    // material render types), so DeconstructTileRenderer re-emits the resolved
+    // item quads as custom geometry on THIS layer: ENTITY_SNIPPET + LIGHTNING
+    // blend (proven mirrorAdd/additive family), lightmap kept (no EMISSIVE ==
+    // Forge item lighting), NO_CULL, GREATER_THAN_OR_EQUAL + depth write.
+    // Sampler0 is bound to the atlas the quads were baked against
+    // (blocks/items atlas ids via TextureAtlas.LOCATION_*) - the BakedQuad UVs
+    // are atlas-space, exactly like vanilla item sheets.
+    private static final RenderPipeline GHOST_ITEM_PIPE;
+    static {
+        RenderPipeline base = RenderPipelines.ENTITY_TRANSLUCENT;
+        ColorTargetState baseTarget = base.getColorTargetStates().get(0);
+        DepthStencilState baseDepth = base.getDepthStencilState();
+        GHOST_ITEM_PIPE = track(RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
+                .withLocation(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID,
+                        "arcaneresearch_ghost_item"))
+                .withShaderDefine("NO_OVERLAY")
+                .withColorTargetState(0, new ColorTargetState(
+                        java.util.Optional.of(BlendFunction.LIGHTNING),
+                        baseTarget.format(), baseTarget.writeMask()))
+                .withCull(false)
+                .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL,
+                        true, baseDepth.depthBiasScaleFactor(), baseDepth.depthBiasConstant()))
+                .build());
+    }
+    private static final Function<Identifier, RenderType> GHOST_ITEM_T = setup(
+            "arcaneresearch_ghost_item", GHOST_ITEM_PIPE);
+
+    public static RenderType ghostItem(Identifier texture) {
+        return GHOST_ITEM_T.apply(texture);
+    }
+
     // NEOFORGE_PORT (26.3): GUI blit with Forge blendFunc(SRC_ALPHA, ONE) (HUD bar
     // shimmer overlays). Built like vanilla GUI_NAUSEA_OVERLAY (GUI_TEXTURED_SNIPPET +
     // own ColorTargetState) but with LIGHTNING = SrcAlpha/One; registered via track().

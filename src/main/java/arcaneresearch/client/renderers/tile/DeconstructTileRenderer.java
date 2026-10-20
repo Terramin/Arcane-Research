@@ -39,12 +39,16 @@ import arcaneresearch.init.ModItems;
  * тег аспекта — submitCustomGeometry с TCRenderTypes.translucentPortal
  * (addVertex/setColor/setUv/setOverlay/setLight/setNormal).</p>
  *
- * <p><b>Известное отличие от Forge 1.20.1:</b> парящий предмет в Forge рисуется
- * «призраком» ({@code GhostItem}: GL_BLEND + glBlendFunc(SRC_ALPHA, ONE) + альфа 0.75,
- * паритет TC4 TileDeconstructionTableRenderer 57-59). В 26.3 сборка RenderType из
- * шардов (CompositeState/RenderStateShard) удалена, а предмет рисуется моделью
- * (ItemStackRenderState), поэтому подменить блендинг/масштабировать альфу вершин
- * невозможно — предмет выводится штатным непрозрачным рендером. См. отчёт порта.</p>
+ * <p><b>Ghost-паритет:</b> Forge рисовал парящий предмет «призраком» —
+ * {@code GhostItem.render(..., ghostAlpha = 0.75)} (обёртка MultiBufferSource с
+ * подменой TransparencyStateShard → LIGHTNING + масштабированием цвета вершин
+ * R0.85/G0.72/B1.0 × 0.75, паритет TC4 TileDeconstructionTableRenderer 57-59).
+ * В 26.3 ItemFeatureRenderer сам выбирает материал-render types и классический
+ * перехват невозможен, поэтому квады читаются из разрешённого
+ * ItemStackRenderState и переэмитируются через {@code putBakedQuad} на
+ * ghost-слой (см. {@link arcaneresearch.client.lib.GhostItem} +
+ * TCRenderTypes.ghostItem). Спец-модели (wand и т.п.) в этом случае
+ * рисуются обычным fallback'ом.</p>
  */
 @OnlyIn(Dist.CLIENT)
 public class DeconstructTileRenderer implements BlockEntityRenderer<DeconstructTile, DeconstructTileRenderer.State> {
@@ -131,8 +135,11 @@ public class DeconstructTileRenderer implements BlockEntityRenderer<DeconstructT
             poseStack.pushPose();
             poseStack.translate(0.5F, (float) (1.15F + Mth.sin(state.ticks / 14.0) * 0.1F + 0.1F), 0.5F);
             poseStack.rotate(Axis.YP.rotationDegrees((float) (state.ticks % 360.0)));
-            state.item.submit(poseStack, collector, state.lightCoords,
-                    OverlayTexture.NO_OVERLAY, 0);
+            // NEOFORGE_PORT (GhostItem 1:1): Forge рисовал парящий предмет
+            // GhostItem.render(..., GROUND, GhostItem.GHOST_ALPHA=0.75) — аддитивный
+            // «призрак» с тинтом. Порт рендера: client/lib/GhostItem (переэмиссия
+            // квад'ов на ghost-слой, бо ItemFeatureRenderer не стилизуем).
+            arcaneresearch.client.lib.GhostItem.render(state.item, poseStack, collector, state.lightCoords);
             poseStack.popPose();
         }
 
