@@ -1,0 +1,39 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_FLIGHT",
+  "instability": 3,
+  "aspects": {
+    "aer": 15,
+    "motus": 20,
+    "iter": 10
+  },
+  "input": {
+    "item": "minecraft:ender_pearl"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:feather"
+    },
+    {
+      "item": "minecraft:feather"
+    },
+    {
+      "item": "arcaneresearch:crystal_air"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_flight"
+  }
+}

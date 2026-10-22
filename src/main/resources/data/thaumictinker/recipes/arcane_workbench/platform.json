@@ -1,0 +1,25 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "PLATFORM",
+  "vis": 6,
+  "crystals": {
+    "aer": 2,
+    "perditio": 4
+  },
+  "pattern": [
+    " S ",
+    "G G"
+  ],
+  "key": {
+    "G": {
+      "item": "arcaneresearch:greatwood_planks"
+    },
+    "S": {
+      "item": "arcaneresearch:silverwood_planks"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:ethereal_platform",
+    "count": 2
+  }
+}

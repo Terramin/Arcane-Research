@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "thaumictinker:block/thaumic_restorer"
+    },
+    "facing=south": {
+      "model": "thaumictinker:block/thaumic_restorer"
+    },
+    "facing=west": {
+      "model": "thaumictinker:block/thaumic_restorer"
+    },
+    "facing=east": {
+      "model": "thaumictinker:block/thaumic_restorer"
+    }
+  }
+}

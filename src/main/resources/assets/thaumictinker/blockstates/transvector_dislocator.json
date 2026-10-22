@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=down": { "model": "thaumictinker:block/transvector_dislocator_down" },
+    "facing=up": { "model": "thaumictinker:block/transvector_dislocator_up" },
+    "facing=north": { "model": "thaumictinker:block/transvector_dislocator_north" },
+    "facing=south": { "model": "thaumictinker:block/transvector_dislocator_south" },
+    "facing=west": { "model": "thaumictinker:block/transvector_dislocator_west" },
+    "facing=east": { "model": "thaumictinker:block/transvector_dislocator_east" }
+  }
+}

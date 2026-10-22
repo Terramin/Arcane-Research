@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "Q": {
+      "item": "arcaneresearch:obsidian_totem"
+    }
+  },
+  "pattern": [
+    "QQQ"
+  ],
+  "result": {
+    "item": "thaumictinker:ward_slab",
+    "count": 6
+  }
+}

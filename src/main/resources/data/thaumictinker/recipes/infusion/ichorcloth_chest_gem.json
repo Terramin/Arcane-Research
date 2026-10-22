@@ -1,0 +1,58 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHORCLOTH_CHEST_GEM",
+  "instability": 13,
+  "aspects": {
+    "aer": 50,
+    "tutamen": 32,
+    "volatus": 32,
+    "ordo": 32,
+    "lux": 64,
+    "alienis": 16,
+    "sensus": 16
+  },
+  "input": {
+    "item": "thaumictinker:ichorcloth_robe"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_primal"
+    },
+    {
+      "item": "arcaneresearch:thaumonomicon"
+    },
+    {
+      "item": "minecraft:golden_chestplate"
+    },
+    {
+      "item": "thaumictinker:focus_flight"
+    },
+    {
+      "item": "arcaneresearch:traveller_boots"
+    },
+    {
+      "item": "thaumictinker:focus_deflect"
+    },
+    {
+      "item": "minecraft:feather"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:arrow"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:robes_of_the_stratosphere"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ROD_ICHORCLOTH",
+  "instability": 9,
+  "aspects": {
+    "praecantatio": 100,
+    "lux": 32,
+    "instrumentum": 32
+  },
+  "input": {
+    "item": "arcaneresearch:silverwood_log"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ichor_cloth"
+    },
+    {
+      "item": "arcaneresearch:salis_mundus"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "arcaneresearch:salis_mundus"
+    },
+    {
+      "item": "thaumictinker:ichor_cloth"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:ichorcloth_rod"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_RECALL",
+  "instability": 10,
+  "aspects": {
+    "iter": 100,
+    "alienis": 64,
+    "praecantatio": 50
+  },
+  "input": {
+    "item": "thaumictinker:sky_pearl"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "arcaneresearch:mirror_item"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_hole"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_recall"
+  }
+}

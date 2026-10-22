@@ -1,0 +1,29 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "INFUSED_POTIONS",
+  "instability": 5,
+  "aspects": {
+    "messis": 32,
+    "meto": 32
+  },
+  "input": {
+    "item": "minecraft:wheat_seeds"
+  },
+  "ingredients": [
+    {
+      "item": "arcaneresearch:crystal_earth"
+    },
+    {
+      "item": "arcaneresearch:crystal_earth"
+    },
+    {
+      "item": "arcaneresearch:crystal_earth"
+    },
+    {
+      "item": "arcaneresearch:crystal_earth"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:infused_seeds"
+  }
+}

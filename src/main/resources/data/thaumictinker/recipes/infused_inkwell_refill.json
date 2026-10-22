@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "Q": "minecraft:ink_sac",
+    "C": "thaumictinker:infused_inkwell"
+  },
+  "pattern": [
+    "QQQ",
+    "QCQ",
+    "QQQ"
+  ],
+  "result": {
+    "item": "thaumictinker:infused_inkwell"
+  }
+}

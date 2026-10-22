@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "thaumictinker:block/dark_quartz_pillar"
+    },
+    "axis=z": {
+      "model": "thaumictinker:block/dark_quartz_pillar",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "thaumictinker:block/dark_quartz_pillar",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

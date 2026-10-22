@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "FIRE_TERRA",
+  "catalyst": {
+    "item": "arcaneresearch:crystal_earth"
+  },
+  "aspects": {
+    "ignis": 5,
+    "praecantatio": 5,
+    "terra": 5
+  },
+  "result": {
+    "item": "thaumictinker:terra_imbued_fire"
+  }
+}

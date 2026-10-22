@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "QQQ"
+  ],
+  "key": {
+    "Q": {
+      "item": "thaumictinker:dark_quartz_block"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:dark_quartz_slab",
+    "count": 6
+  }
+}

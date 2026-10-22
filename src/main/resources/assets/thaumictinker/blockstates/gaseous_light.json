@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "thaumictinker:block/gas_empty"
+    }
+  }
+}

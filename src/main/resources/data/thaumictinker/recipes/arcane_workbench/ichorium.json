@@ -1,0 +1,32 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ICHORIUM",
+  "vis": 600,
+  "crystals": {
+    "ignis": 100,
+    "terra": 100,
+    "aqua": 100,
+    "aer": 100,
+    "ordo": 100,
+    "perditio": 100
+  },
+  "pattern": [
+    " T ",
+    "IDI",
+    " I "
+  ],
+  "key": {
+    "T": {
+      "item": "arcaneresearch:thaumium_ingot"
+    },
+    "I": {
+      "item": "thaumictinker:ichor"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:ichorium_ingot"
+  }
+}

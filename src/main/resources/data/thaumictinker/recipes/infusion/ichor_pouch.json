@@ -1,0 +1,38 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHOR_POUCH",
+  "instability": 9,
+  "aspects": {
+    "vacuos": 64,
+    "humanus": 32,
+    "pannus": 32,
+    "alienis": 32,
+    "aer": 64
+  },
+  "input": {
+    "item": "arcaneresearch:focus_pouch"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor_cloth"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_hole"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "thaumictinker:ichor_cloth"
+    },
+    {
+      "item": "arcaneresearch:hungry_chest"
+    },
+    {
+      "item": "arcaneresearch:jar_void"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:ichor_pouch"
+  }
+}

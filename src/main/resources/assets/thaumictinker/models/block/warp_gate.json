@@ -1,0 +1,62 @@
+﻿{
+  "textures": {
+    "particle": "thaumictinker:block/warpgate1",
+    "top": "thaumictinker:block/warpgate0",
+    "side": "thaumictinker:block/warpgate1",
+    "overlay": "thaumictinker:block/warpgate2"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "down": {
+          "texture": "#side",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16.01,
+        0
+      ],
+      "to": [
+        16,
+        16.01,
+        16
+      ],
+      "light_emission": 15,
+      "faces": {
+        "up": {
+          "texture": "#overlay"
+        }
+      }
+    }
+  ]
+}
+

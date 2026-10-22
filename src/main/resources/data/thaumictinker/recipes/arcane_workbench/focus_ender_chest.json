@@ -1,0 +1,28 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "FOCUS_ENDER_CHEST",
+  "vis": 20,
+  "crystals": {
+    "ordo": 10,
+    "perditio": 10
+  },
+  "pattern": [
+    "M",
+    "E",
+    "P"
+  ],
+  "key": {
+    "M": {
+      "item": "arcaneresearch:mirror_item"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "P": {
+      "item": "arcaneresearch:wand_focus_hole"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:focus_ender_chest"
+  }
+}

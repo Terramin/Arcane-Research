@@ -1,0 +1,36 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "CAT_AMULET",
+  "instability": 8,
+  "aspects": {
+    "tenebrae": 16,
+    "ordo": 32,
+    "cognitio": 16
+  },
+  "input": {
+    "item": "minecraft:quartz_block"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:cocoa_beans"
+    },
+    {
+      "item": "minecraft:jungle_leaves"
+    },
+    {
+      "item": "minecraft:cod"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:cat_amulet"
+  }
+}

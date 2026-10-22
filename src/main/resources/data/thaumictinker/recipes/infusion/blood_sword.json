@@ -1,0 +1,37 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "BLOOD_SWORD",
+  "instability": 6,
+  "aspects": {
+    "fames": 20,
+    "tenebrae": 5,
+    "spiritus": 10,
+    "humanus": 6
+  },
+  "input": {
+    "item": "arcaneresearch:thaumium_sword"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:rotten_flesh"
+    },
+    {
+      "item": "minecraft:porkchop"
+    },
+    {
+      "item": "minecraft:beef"
+    },
+    {
+      "item": "minecraft:bone"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:blood_sword"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_fire_side_alt",
+  "textures": {
+    "fire": "thaumictinker:block/fireearth_layer_1"
+  }
+}
+

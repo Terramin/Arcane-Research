@@ -1,0 +1,20 @@
+﻿{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "thaumictinker:item/ichorpickgem0"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 1.0
+      },
+      "model": "thaumictinker:item/awakened_ichorium_pickaxe_1"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 2.0
+      },
+      "model": "thaumictinker:item/awakened_ichorium_pickaxe_2"
+    }
+  ]
+}

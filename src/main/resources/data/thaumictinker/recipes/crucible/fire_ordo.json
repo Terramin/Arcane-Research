@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "FIRE_ORDO",
+  "catalyst": {
+    "item": "arcaneresearch:crystal_order"
+  },
+  "aspects": {
+    "ignis": 5,
+    "praecantatio": 5,
+    "ordo": 5
+  },
+  "result": {
+    "item": "thaumictinker:ordo_imbued_fire"
+  }
+}

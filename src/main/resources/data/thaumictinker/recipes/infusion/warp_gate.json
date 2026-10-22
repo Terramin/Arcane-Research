@@ -1,0 +1,36 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "WARP_GATE",
+  "instability": 8,
+  "aspects": {
+    "iter": 64,
+    "alienis": 50,
+    "volatus": 50
+  },
+  "input": {
+    "item": "arcaneresearch:paving_stone_travel"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ender_shard"
+    },
+    {
+      "item": "thaumictinker:transvector_dislocator"
+    },
+    {
+      "item": "thaumictinker:nether_shard"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:feather"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:warp_gate"
+  }
+}

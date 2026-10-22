@@ -1,0 +1,35 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "LEVITATOR_LOCOMOTIVE",
+  "vis": 40,
+  "crystals": {
+    "aer": 20,
+    "ordo": 5,
+    "terra": 15
+  },
+  "pattern": [
+    "WFW",
+    "SIs",
+    "WFW"
+  ],
+  "key": {
+    "W": {
+      "item": "arcaneresearch:greatwood_log"
+    },
+    "F": {
+      "item": "minecraft:glass"
+    },
+    "S": {
+      "item": "arcaneresearch:crystal_air"
+    },
+    "s": {
+      "item": "arcaneresearch:crystal_earth"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:levitational_locomotive_relay"
+  }
+}

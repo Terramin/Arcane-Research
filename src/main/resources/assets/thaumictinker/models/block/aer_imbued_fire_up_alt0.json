@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_fire_up_alt",
+  "textures": {
+    "fire": "thaumictinker:block/fireair_layer_0"
+  }
+}
+

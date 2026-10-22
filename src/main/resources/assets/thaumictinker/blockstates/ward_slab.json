@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "thaumictinker:block/ward_slab"
+    },
+    "type=top": {
+      "model": "thaumictinker:block/ward_slab_top"
+    },
+    "type=double": {
+      "model": "thaumictinker:block/ward_slab_double"
+    }
+  }
+}

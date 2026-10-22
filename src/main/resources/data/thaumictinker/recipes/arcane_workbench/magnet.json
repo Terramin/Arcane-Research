@@ -1,0 +1,36 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "MAGNETS",
+  "vis": 45,
+  "crystals": {
+    "aer": 20,
+    "ordo": 5,
+    "terra": 15,
+    "perditio": 5
+  },
+  "pattern": [
+    " I ",
+    "SIs",
+    "WFW"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "s": {
+      "item": "arcaneresearch:crystal_earth"
+    },
+    "S": {
+      "item": "arcaneresearch:crystal_air"
+    },
+    "W": {
+      "item": "arcaneresearch:greatwood_log"
+    },
+    "F": {
+      "item": "thaumictinker:focus_telekinesis"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:kinetic_attractor"
+  }
+}

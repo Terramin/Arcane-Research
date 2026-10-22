@@ -1,0 +1,58 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHORCLOTH_BOOTS_GEM",
+  "instability": 13,
+  "aspects": {
+    "terra": 50,
+    "tutamen": 32,
+    "perfodio": 32,
+    "motus": 32,
+    "lux": 64,
+    "herba": 16,
+    "iter": 16
+  },
+  "input": {
+    "item": "thaumictinker:ichorcloth_boots"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "arcaneresearch:thaumonomicon"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_primal"
+    },
+    {
+      "item": "minecraft:golden_boots"
+    },
+    {
+      "item": "minecraft:grass_block"
+    },
+    {
+      "item": "arcaneresearch:turret_placer_bore"
+    },
+    {
+      "item": "arcaneresearch:lamp_growth"
+    },
+    {
+      "item": "minecraft:wheat_seeds"
+    },
+    {
+      "item": "minecraft:white_wool"
+    },
+    {
+      "item": "minecraft:lead"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:boots_of_the_horizontal_shield"
+  }
+}

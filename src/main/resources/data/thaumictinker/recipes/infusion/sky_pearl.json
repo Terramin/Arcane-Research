@@ -1,0 +1,32 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "WARP_GATE",
+  "instability": 6,
+  "aspects": {
+    "iter": 32,
+    "alienis": 32,
+    "volatus": 32,
+    "aer": 16
+  },
+  "input": {
+    "item": "minecraft:ender_pearl"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ender_shard"
+    },
+    {
+      "item": "minecraft:lapis_block"
+    },
+    {
+      "item": "minecraft:diamond"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:sky_pearl",
+    "count": 2
+  }
+}

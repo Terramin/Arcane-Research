@@ -1,0 +1,1 @@
+{ "parent": "minecraft:block/crop", "textures": { "crop": "thaumictinker:block/crop_ordo_3", "particle": "thaumictinker:block/crop_ordo_3" } }

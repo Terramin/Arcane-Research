@@ -1,0 +1,60 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHORCLOTH_LEGS_GEM",
+  "instability": 13,
+  "aspects": {
+    "ignis": 50,
+    "tutamen": 32,
+    "sano": 32,
+    "potentia": 32,
+    "lux": 64,
+    "lucrum": 16,
+    "alienis": 16
+  },
+  "input": {
+    "item": "thaumictinker:ichorcloth_leggings"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_primal"
+    },
+    {
+      "item": "arcaneresearch:thaumonomicon"
+    },
+    {
+      "item": "minecraft:golden_chestplate"
+    },
+    {
+      "type": "forge:partial_nbt",
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:fire_resistance\"}"
+    },
+    {
+      "item": "thaumictinker:focus_smelt"
+    },
+    {
+      "item": "thaumictinker:bright_nitor"
+    },
+    {
+      "item": "minecraft:lava_bucket"
+    },
+    {
+      "item": "minecraft:fire_charge"
+    },
+    {
+      "item": "minecraft:blaze_rod"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:leggings_of_the_burning_mantle"
+  }
+}

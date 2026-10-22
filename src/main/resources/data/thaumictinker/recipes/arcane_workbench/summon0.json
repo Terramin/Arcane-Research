@@ -1,0 +1,24 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "SUMMON",
+  "vis": 100,
+  "crystals": {
+    "ordo": 50,
+    "perditio": 50
+  },
+  "pattern": [
+    "WWW",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "W": {
+      "item": "arcaneresearch:obsidian_tile"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:necromancy_tablet"
+  }
+}

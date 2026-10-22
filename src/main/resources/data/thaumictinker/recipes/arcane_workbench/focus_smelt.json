@@ -1,0 +1,27 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "FOCUS_SMELT",
+  "vis": 21,
+  "crystals": {
+    "ignis": 10,
+    "ordo": 5,
+    "perditio": 6
+  },
+  "pattern": [
+    "FNE"
+  ],
+  "key": {
+    "F": {
+      "item": "arcaneresearch:wand_focus_fire"
+    },
+    "E": {
+      "item": "arcaneresearch:wand_focus_excavation"
+    },
+    "N": {
+      "item": "arcaneresearch:nitor_white"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:focus_smelt"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "PLACEMENT_MIRROR",
+  "instability": 12,
+  "aspects": {
+    "fabrico": 65,
+    "vitreus": 32,
+    "praecantatio": 50,
+    "cognitio": 32
+  },
+  "input": {
+    "item": "thaumictinker:block_talisman"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "minecraft:dropper"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:placement_mirror"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ICHORCLOTH_ARMOR",
+  "vis": 75,
+  "crystals": {
+    "terra": 75
+  },
+  "pattern": [
+    "C C",
+    "C C"
+  ],
+  "key": {
+    "C": {
+      "item": "thaumictinker:ichor_cloth"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:ichorcloth_boots"
+  }
+}

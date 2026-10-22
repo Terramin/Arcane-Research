@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=north,powered=false": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    },
+    "facing=north,powered=true": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    },
+    "facing=south,powered=false": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    },
+    "facing=south,powered=true": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    },
+    "facing=east,powered=false": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    },
+    "facing=east,powered=true": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    },
+    "facing=west,powered=false": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    },
+    "facing=west,powered=true": {
+      "model": "thaumictinker:block/dynamism_tablet"
+    }
+  }
+}
+

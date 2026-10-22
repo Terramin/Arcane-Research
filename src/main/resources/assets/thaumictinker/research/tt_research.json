@@ -1,0 +1,1970 @@
+{
+    "entries": [
+        {
+            "key": "MAGNETS",
+            "name": "tc.research_name.MAGNETS",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:kinetic_attractor"
+            ],
+            "location": [
+                -6,
+                3
+            ],
+            "parents": [
+                "INTERFACE",
+                "~FOCUS_TELEKINESIS"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.MAGNETS.1"
+                },
+                {
+                    "text": "tc.research_page.MAGNETS.2",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/magnet",
+                        "thaumictinker:arcane_workbench/mob_magnet",
+                        "thaumictinker:crucible/magnets"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHORCLOTH_HELM_GEM",
+            "name": "tc.research_name.ICHORCLOTH_HELM_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:cowl_of_the_abyssal_depths"
+            ],
+            "location": [
+                18,
+                3
+            ],
+            "parents": [
+                "ICHORCLOTH_ARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHORCLOTH_HELM_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichorcloth_helm_gem"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHORCLOTH_CHEST_GEM",
+            "name": "tc.research_name.ICHORCLOTH_CHEST_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:robes_of_the_stratosphere"
+            ],
+            "location": [
+                18,
+                7
+            ],
+            "parents": [
+                "ICHORCLOTH_ARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHORCLOTH_CHEST_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichorcloth_chest_gem"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHORCLOTH_LEGS_GEM",
+            "name": "tc.research_name.ICHORCLOTH_LEGS_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:leggings_of_the_burning_mantle"
+            ],
+            "location": [
+                17,
+                9
+            ],
+            "parents": [
+                "ICHORCLOTH_ARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHORCLOTH_LEGS_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichorcloth_legs_gem"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.ICHORCLOTH_LEGS_GEM.2"
+                }
+            ]
+        },
+        {
+            "key": "ICHORCLOTH_BOOTS_GEM",
+            "name": "tc.research_name.ICHORCLOTH_BOOTS_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:boots_of_the_horizontal_shield"
+            ],
+            "location": [
+                15,
+                10
+            ],
+            "parents": [
+                "ICHORCLOTH_ARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHORCLOTH_BOOTS_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichorcloth_boots_gem"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "DARK_QUARTZ",
+            "name": "tc.research_name.DARK_QUARTZ",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:dark_quartz"
+            ],
+            "location": [
+                -2,
+                2
+            ],
+            "meta": [
+                "ROUND",
+                "AUTOUNLOCK"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.DARK_QUARTZ.1",
+                    "recipes": [
+                        "thaumictinker:dark_quartz_from_charcoal",
+                        "thaumictinker:dark_quartz_from_coal",
+                        "thaumictinker:dark_quartz_block",
+                        "thaumictinker:dark_quartz_slab",
+                        "thaumictinker:dark_quartz_pillar",
+                        "thaumictinker:chiseled_dark_quartz_block",
+                        "thaumictinker:dark_quartz_stairs"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FIRE_AER",
+            "name": "tc.research_name.FIRE_AER",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:aer_imbued_fire"
+            ],
+            "location": [
+                3,
+                -7
+            ],
+            "parents": [
+                "BRIGHT_NITOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FIRE_AER.1",
+                    "recipes": [
+                        "thaumictinker:crucible/fire_aer"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FIRE_PERDITIO",
+            "name": "tc.research_name.FIRE_PERDITIO",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:perditio_imbued_fire"
+            ],
+            "location": [
+                2,
+                -8
+            ],
+            "parents": [
+                "BRIGHT_NITOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FIRE_PERDITIO.1",
+                    "recipes": [
+                        "thaumictinker:crucible/fire_perditio"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FIRE_TERRA",
+            "name": "tc.research_name.FIRE_TERRA",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:terra_imbued_fire"
+            ],
+            "location": [
+                4,
+                -6
+            ],
+            "parents": [
+                "BRIGHT_NITOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FIRE_TERRA.1",
+                    "recipes": [
+                        "thaumictinker:crucible/fire_terra"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FIRE_IGNIS",
+            "name": "tc.research_name.FIRE_IGNIS",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ignis_imbued_fire"
+            ],
+            "location": [
+                4,
+                -4
+            ],
+            "parents": [
+                "BRIGHT_NITOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FIRE_IGNIS.1",
+                    "recipes": [
+                        "thaumictinker:crucible/fire_ignis"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FIRE_ORDO",
+            "name": "tc.research_name.FIRE_ORDO",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ordo_imbued_fire"
+            ],
+            "location": [
+                3,
+                -3
+            ],
+            "parents": [
+                "BRIGHT_NITOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FIRE_ORDO.1",
+                    "recipes": [
+                        "thaumictinker:crucible/fire_ordo"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FIRE_AQUA",
+            "name": "tc.research_name.FIRE_AQUA",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:aqua_imbued_fire"
+            ],
+            "location": [
+                2,
+                -2
+            ],
+            "parents": [
+                "BRIGHT_NITOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FIRE_AQUA.1",
+                    "recipes": [
+                        "thaumictinker:crucible/fire_aqua"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "INFUSED_POTIONS",
+            "name": "tc.research_name.INFUSED_POTIONS",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:infused_seeds"
+            ],
+            "location": [
+                7,
+                -5
+            ],
+            "parents": [
+                "FIRE_PERDITIO",
+                "FIRE_ORDO",
+                "FIRE_IGNIS",
+                "FIRE_TERRA",
+                "FIRE_AER",
+                "FIRE_AQUA",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.INFUSED_POTIONS.1",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.INFUSED_POTIONS.2",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.INFUSED_POTIONS.3",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.INFUSED_POTIONS.4",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.INFUSED_POTIONS.5",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.INFUSED_POTIONS.6",
+                    "recipes": [
+                        "thaumictinker:infusion/infused_seeds_terra",
+                        "thaumictinker:infusion/infused_seeds_perditio",
+                        "thaumictinker:infusion/infused_seeds_ordo",
+                        "thaumictinker:infusion/infused_seeds_ignis",
+                        "thaumictinker:infusion/infused_seeds_aqua",
+                        "thaumictinker:infusion/infused_seeds_aer",
+                        "thaumictinker:infusion/infused_potions0",
+                        "thaumictinker:infusion/infused_potions1",
+                        "thaumictinker:infusion/infused_potions2",
+                        "thaumictinker:infusion/infused_potions3",
+                        "thaumictinker:crucible/infused_potionspot0",
+                        "thaumictinker:crucible/infused_potionspot1",
+                        "thaumictinker:crucible/infused_potionspot2",
+                        "thaumictinker:crucible/infused_potionspot3"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "SPELL_CLOTH",
+            "name": "tc.research_name.SPELL_CLOTH",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:spellbinding_cloth"
+            ],
+            "location": [
+                3,
+                2
+            ],
+            "parents": [
+                "~UNLOCKINFUSION"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.SPELL_CLOTH.1",
+                    "recipes": [
+                        "thaumictinker:crucible/spell_cloth"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ENCHANTER",
+            "name": "tc.research_name.ENCHANTER",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:osmotic_enchanter"
+            ],
+            "location": [
+                5,
+                4
+            ],
+            "parents": [
+                "SPELL_CLOTH"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ENCHANTER.1",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.ENCHANTER.2",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.ENCHANTER.3",
+                    "recipes": [
+                        "thaumictinker:infusion/enchanter"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_ASCENT_BOOST",
+            "name": "tc.research_name.TTENCH_ASCENT_BOOST",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/ascentboost.png"
+            ],
+            "location": [
+                6,
+                2
+            ],
+            "parents": [
+                "ENCHANTER"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_ASCENT_BOOST.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_SLOW_FALL",
+            "name": "tc.research_name.TTENCH_SLOW_FALL",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/slowfall.png"
+            ],
+            "location": [
+                7,
+                3
+            ],
+            "parents": [
+                "ENCHANTER"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_SLOW_FALL.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_AUTO_SMELT",
+            "name": "tc.research_name.TTENCH_AUTO_SMELT",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/autosmelt.png"
+            ],
+            "location": [
+                7,
+                5
+            ],
+            "parents": [
+                "ENCHANTER"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_AUTO_SMELT.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_DESINTEGRATE",
+            "name": "tc.research_name.TTENCH_DESINTEGRATE",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/desintegrate.png"
+            ],
+            "location": [
+                6,
+                6
+            ],
+            "parents": [
+                "ENCHANTER"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_DESINTEGRATE.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_QUICK_DRAW",
+            "name": "tc.research_name.TTENCH_QUICK_DRAW",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/quickdraw.png"
+            ],
+            "location": [
+                4,
+                6
+            ],
+            "parents": [
+                "ENCHANTER"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_QUICK_DRAW.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_VAMPIRISM",
+            "name": "tc.research_name.TTENCH_VAMPIRISM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/vamprisim.png"
+            ],
+            "location": [
+                3,
+                5
+            ],
+            "parents": [
+                "ENCHANTER"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_VAMPIRISM.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_FOCUSED",
+            "name": "tc.research_name.TTENCH_FOCUSED",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/focusedstrikes.png"
+            ],
+            "location": [
+                2,
+                7
+            ],
+            "parents": [
+                "TTENCH_VAMPIRISM"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_FOCUSED.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_DISPERSED",
+            "name": "tc.research_name.TTENCH_DISPERSED",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/dispersedstrikes.png"
+            ],
+            "location": [
+                1,
+                6
+            ],
+            "parents": [
+                "TTENCH_VAMPIRISM"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_DISPERSED.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_FINAL",
+            "name": "tc.research_name.TTENCH_FINAL",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/finalstrike.png"
+            ],
+            "location": [
+                0,
+                8
+            ],
+            "parents": [
+                "TTENCH_FOCUSED",
+                "TTENCH_DISPERSED"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_FINAL.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_POUNCE",
+            "name": "tc.research_name.TTENCH_POUNCE",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/pounce.png"
+            ],
+            "location": [
+                7,
+                0
+            ],
+            "parents": [
+                "TTENCH_ASCENT_BOOST"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_POUNCE.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_SHATTER",
+            "name": "tc.research_name.TTENCH_SHATTER",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/shatter.png"
+            ],
+            "location": [
+                5,
+                8
+            ],
+            "parents": [
+                "TTENCH_DESINTEGRATE"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_SHATTER.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_SHOCKWAVE",
+            "name": "tc.research_name.TTENCH_SHOCKWAVE",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/shockwave.png"
+            ],
+            "location": [
+                9,
+                2
+            ],
+            "parents": [
+                "TTENCH_SLOW_FALL"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_SHOCKWAVE.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_TUNNEL",
+            "name": "tc.research_name.TTENCH_TUNNEL",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/tunnel.png"
+            ],
+            "location": [
+                9,
+                6
+            ],
+            "parents": [
+                "TTENCH_AUTO_SMELT"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_TUNNEL.1"
+                }
+            ]
+        },
+        {
+            "key": "TTENCH_VALIANCE",
+            "name": "tc.research_name.TTENCH_VALIANCE",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:textures/enchants/valiance.png"
+            ],
+            "location": [
+                1,
+                4
+            ],
+            "parents": [
+                "TTENCH_VAMPIRISM"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.TTENCH_VALIANCE.1"
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_SMELT",
+            "name": "tc.research_name.FOCUS_SMELT",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_smelt"
+            ],
+            "location": [
+                -2,
+                -2
+            ],
+            "parents": [
+                "LEGACYFOCUSEXCAVATION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_SMELT.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/focus_smelt"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_FLIGHT",
+            "name": "tc.research_name.FOCUS_FLIGHT",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_flight"
+            ],
+            "location": [
+                -3,
+                -4
+            ],
+            "parents": [
+                "FOCUS_SMELT",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_FLIGHT.1",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_flight"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_DISLOCATION",
+            "name": "tc.research_name.FOCUS_DISLOCATION",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_dislocation"
+            ],
+            "location": [
+                -5,
+                -5
+            ],
+            "parents": [
+                "FOCUS_FLIGHT",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_DISLOCATION.1",
+                    "recipes": []
+                },
+                {
+                    "text": "tc.research_page.FOCUS_DISLOCATION.2",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_dislocation"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_TELEKINESIS",
+            "name": "tc.research_name.FOCUS_TELEKINESIS",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_telekinesis"
+            ],
+            "location": [
+                -4,
+                -6
+            ],
+            "parents": [
+                "FOCUS_FLIGHT",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_TELEKINESIS.1",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_telekinesis"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_DEFLECT",
+            "name": "tc.research_name.FOCUS_DEFLECT",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_deflect"
+            ],
+            "location": [
+                -4,
+                -3
+            ],
+            "parents": [
+                "FOCUS_SMELT",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_DEFLECT.1",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_deflect"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_HEAL",
+            "name": "tc.research_name.FOCUS_HEAL",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_heal"
+            ],
+            "location": [
+                -6,
+                -4
+            ],
+            "parents": [
+                "FOCUS_DEFLECT",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_HEAL.1",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_heal"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_ENDER_CHEST",
+            "name": "tc.research_name.FOCUS_ENDER_CHEST",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_ender_chest"
+            ],
+            "location": [
+                -6,
+                -2
+            ],
+            "parents": [
+                "FOCUS_DEFLECT"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_ENDER_CHEST.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/focus_ender_chest"
+                    ],
+                    "warp": 1
+                }
+            ]
+        },
+        {
+            "key": "FUNNEL",
+            "name": "tc.research_name.FUNNEL",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:essentia_funnel"
+            ],
+            "location": [
+                0,
+                -7
+            ],
+            "parents": [
+                "BRIGHT_NITOR",
+                "~ESSENTIASMELTER"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FUNNEL.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/funnel"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "GASEOUS_LIGHT",
+            "name": "tc.research_name.GASEOUS_LIGHT",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:gaseous_illuminae"
+            ],
+            "location": [
+                0,
+                -3
+            ],
+            "parents": [
+                "BASEALCHEMY"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.GASEOUS_LIGHT.1",
+                    "recipes": [
+                        "thaumictinker:crucible/gaseous_light"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "GASEOUS_SHADOW",
+            "name": "tc.research_name.GASEOUS_SHADOW",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:gaseous_tenebrae"
+            ],
+            "location": [
+                -1,
+                -5
+            ],
+            "parents": [
+                "GASEOUS_LIGHT"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.GASEOUS_SHADOW.1",
+                    "recipes": [
+                        "thaumictinker:crucible/gaseous_shadow"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "GAS_REMOVER",
+            "name": "tc.research_name.GAS_REMOVER",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:fume_dissipator"
+            ],
+            "location": [
+                -2,
+                -7
+            ],
+            "parents": [
+                "GASEOUS_SHADOW"
+            ],
+            "meta": [
+                "ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.GAS_REMOVER.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/gas_remover"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "BRIGHT_NITOR",
+            "name": "tc.research_name.BRIGHT_NITOR",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:bright_nitor"
+            ],
+            "location": [
+                1,
+                -5
+            ],
+            "parents": [
+                "GASEOUS_LIGHT"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.BRIGHT_NITOR.1",
+                    "recipes": [
+                        "thaumictinker:crucible/bright_nitor"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "CLEANSING_TALISMAN",
+            "name": "tc.research_name.CLEANSING_TALISMAN",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:cleansing_talisman"
+            ],
+            "location": [
+                -3,
+                4
+            ],
+            "parents": [
+                "DARK_QUARTZ",
+                "~INFUSION"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.CLEANSING_TALISMAN.1",
+                    "recipes": [
+                        "thaumictinker:infusion/cleansing_talisman"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "XP_TALISMAN",
+            "name": "tc.research_name.XP_TALISMAN",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:xp_talisman"
+            ],
+            "location": [
+                4,
+                -1
+            ],
+            "parents": [
+                "JARBRAIN",
+                "SPELL_CLOTH",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.XP_TALISMAN.1",
+                    "recipes": [
+                        "thaumictinker:infusion/xp_talisman"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "BLOOD_SWORD",
+            "name": "tc.research_name.BLOOD_SWORD",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:blood_sword"
+            ],
+            "location": [
+                -4,
+                6
+            ],
+            "parents": [
+                "CLEANSING_TALISMAN",
+                "~INFUSION"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.BLOOD_SWORD.1",
+                    "recipes": [
+                        "thaumictinker:infusion/blood_sword"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.BLOOD_SWORD.2",
+                    "warp": 1
+                }
+            ]
+        },
+        {
+            "key": "REVEALING_HELM",
+            "name": "tc.research_name.REVEALING_HELM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:revealing_helm"
+            ],
+            "location": [
+                0,
+                0
+            ],
+            "parents": [
+                "UNLOCKARTIFICE",
+                "~METALLURGY"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.REVEALING_HELM.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/revealing_helm"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "SHARE_TOME",
+            "name": "tc.research_name.SHARE_TOME",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:share_tome"
+            ],
+            "location": [
+                0,
+                -1
+            ],
+            "meta": [
+                "ROUND",
+                "AUTOUNLOCK"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.SHARE_TOME.1",
+                    "recipes": [
+                        "thaumictinker:share_tome"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "DIMENSION_SHARDS",
+            "name": "tc.research_name.DIMENSION_SHARDS",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ender_shard"
+            ],
+            "location": [
+                7,
+                8
+            ],
+            "meta": [
+                "ROUND",
+                "AUTOUNLOCK",
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.DIMENSION_SHARDS.1"
+                }
+            ]
+        },
+        {
+            "key": "ICHOR",
+            "name": "tc.research_name.ICHOR",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichor"
+            ],
+            "location": [
+                9,
+                8
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichor"
+                    ],
+                    "warp": 5
+                }
+            ]
+        },
+        {
+            "key": "ICHOR_CLOTH",
+            "name": "tc.research_name.ICHOR_CLOTH",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichor_cloth"
+            ],
+            "location": [
+                11,
+                7
+            ],
+            "parents": [
+                "ICHOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR_CLOTH.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/ichor_cloth"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHORIUM",
+            "name": "tc.research_name.ICHORIUM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichorium_ingot"
+            ],
+            "location": [
+                11,
+                9
+            ],
+            "parents": [
+                "ICHOR",
+                "~ICHOR_CLOTH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHORIUM.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/ichorium"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "CAP_ICHOR",
+            "name": "tc.research_name.CAP_ICHOR",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichorium_cap"
+            ],
+            "location": [
+                11,
+                11
+            ],
+            "parents": [
+                "ICHORIUM"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.CAP_ICHOR.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/cap_ichor"
+                    ],
+                    "warp": 2
+                }
+            ]
+        },
+        {
+            "key": "ROD_ICHORCLOTH",
+            "name": "tc.research_name.ROD_ICHORCLOTH",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichorcloth_rod"
+            ],
+            "location": [
+                14,
+                2
+            ],
+            "parents": [
+                "ICHOR_CLOTH",
+                "~CAP_ICHOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ROD_ICHORCLOTH.1",
+                    "recipes": [
+                        "thaumictinker:infusion/rod_ichorcloth"
+                    ],
+                    "warp": 1
+                }
+            ]
+        },
+        {
+            "key": "ICHORCLOTH_ARMOR",
+            "name": "tc.research_name.ICHORCLOTH_ARMOR",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichorcloth_cowl"
+            ],
+            "location": [
+                17,
+                5
+            ],
+            "parents": [
+                "ICHOR_CLOTH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHORCLOTH_ARMOR.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/ichorcloth_helm",
+                        "thaumictinker:arcane_workbench/ichorcloth_chest",
+                        "thaumictinker:arcane_workbench/ichorcloth_legs",
+                        "thaumictinker:arcane_workbench/ichorcloth_boots"
+                    ],
+                    "warp": 4
+                }
+            ]
+        },
+        {
+            "key": "ICHOR_TOOLS",
+            "name": "tc.research_name.ICHOR_TOOLS",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichorium_pickaxe"
+            ],
+            "location": [
+                13,
+                12
+            ],
+            "parents": [
+                "ICHORIUM",
+                "~ROD_ICHORCLOTH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR_TOOLS.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/ichor_pick",
+                        "thaumictinker:arcane_workbench/ichor_shovel",
+                        "thaumictinker:arcane_workbench/ichor_axe",
+                        "thaumictinker:arcane_workbench/ichor_sword"
+                    ],
+                    "warp": 2
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_SHADOWBEAM",
+            "name": "tc.research_name.FOCUS_SHADOWBEAM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_shadowbeam"
+            ],
+            "location": [
+                15,
+                4
+            ],
+            "parents": [
+                "ROD_ICHORCLOTH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_SHADOWBEAM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_shadowbeam"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_XP_DRAIN",
+            "name": "tc.research_name.FOCUS_XP_DRAIN",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_xp_drain"
+            ],
+            "location": [
+                12,
+                3
+            ],
+            "parents": [
+                "ROD_ICHORCLOTH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_XP_DRAIN.1",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_xp_drain"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUS_RECALL",
+            "name": "tc.research_name.FOCUS_RECALL",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:focus_recall"
+            ],
+            "location": [
+                20,
+                8
+            ],
+            "parents": [
+                "WARP_GATE",
+                "~ROD_ICHORCLOTH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.FOCUS_RECALL.1",
+                    "recipes": [
+                        "thaumictinker:infusion/focus_recall"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "WARP_GATE",
+            "name": "tc.research_name.WARP_GATE",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:warp_gate"
+            ],
+            "location": [
+                19,
+                6
+            ],
+            "parents": [
+                "ICHORCLOTH_CHEST_GEM",
+                "~ICHORCLOTH_BOOTS_GEM"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.WARP_GATE.1",
+                    "recipes": [
+                        "thaumictinker:infusion/warp_gate"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.WARP_GATE.2",
+                    "recipes": [
+                        "thaumictinker:infusion/sky_pearl"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHOR_PICK_GEM",
+            "name": "tc.research_name.ICHOR_PICK_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:awakened_ichorium_pickaxe"
+            ],
+            "location": [
+                13,
+                15
+            ],
+            "parents": [
+                "ICHOR_TOOLS"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR_PICK_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichor_pick_gem"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.ICHOR_PICK_GEM.2"
+                }
+            ]
+        },
+        {
+            "key": "ICHOR_SHOVEL_GEM",
+            "name": "tc.research_name.ICHOR_SHOVEL_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:awakened_ichorium_shovel"
+            ],
+            "location": [
+                15,
+                15
+            ],
+            "parents": [
+                "ICHOR_TOOLS"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR_SHOVEL_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichor_shovel_gem"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHOR_AXE_GEM",
+            "name": "tc.research_name.ICHOR_AXE_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:awakened_ichorium_axe"
+            ],
+            "location": [
+                16,
+                14
+            ],
+            "parents": [
+                "ICHOR_TOOLS"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR_AXE_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichor_axe_gem"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHOR_SWORD_GEM",
+            "name": "tc.research_name.ICHOR_SWORD_GEM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:awakened_ichorium_sword"
+            ],
+            "location": [
+                16,
+                12
+            ],
+            "parents": [
+                "ICHOR_TOOLS"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR_SWORD_GEM.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichor_sword_gem"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.ICHOR_SWORD_GEM.2"
+                }
+            ]
+        },
+        {
+            "key": "BLOCK_TALISMAN",
+            "name": "tc.research_name.BLOCK_TALISMAN",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:block_talisman"
+            ],
+            "location": [
+                14,
+                17
+            ],
+            "parents": [
+                "ICHOR_PICK_GEM",
+                "ICHOR_SHOVEL_GEM"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.BLOCK_TALISMAN.1",
+                    "recipes": [
+                        "thaumictinker:infusion/block_talisman"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "PLACEMENT_MIRROR",
+            "name": "tc.research_name.PLACEMENT_MIRROR",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:placement_mirror"
+            ],
+            "location": [
+                17,
+                16
+            ],
+            "parents": [
+                "BLOCK_TALISMAN"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.PLACEMENT_MIRROR.1",
+                    "recipes": [
+                        "thaumictinker:infusion/placement_mirror"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "PROTOCLAY",
+            "name": "tc.research_name.PROTOCLAY",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:protoclay"
+            ],
+            "location": [
+                12,
+                17
+            ],
+            "parents": [
+                "ICHOR_PICK_GEM",
+                "~ICHOR_SHOVEL_GEM"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.PROTOCLAY.1",
+                    "recipes": [
+                        "thaumictinker:infusion/protoclay"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ICHOR_POUCH",
+            "name": "tc.research_name.ICHOR_POUCH",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ichor_pouch"
+            ],
+            "location": [
+                13,
+                6
+            ],
+            "parents": [
+                "ICHOR_CLOTH"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ICHOR_POUCH.1",
+                    "recipes": [
+                        "thaumictinker:infusion/ichor_pouch"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "CAT_AMULET",
+            "name": "tc.research_name.CAT_AMULET",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:cat_amulet"
+            ],
+            "location": [
+                14,
+                10
+            ],
+            "parents": [
+                "ICHORIUM"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.CAT_AMULET.1",
+                    "recipes": [
+                        "thaumictinker:infusion/cat_amulet"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "LEVITATOR_LOCOMOTIVE",
+            "name": "tc.research_name.LEVITATOR_LOCOMOTIVE",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:levitational_locomotive"
+            ],
+            "location": [
+                -7,
+                5
+            ],
+            "parents": [
+                "MAGNETS",
+                "~INFUSION"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.LEVITATOR_LOCOMOTIVE.1",
+                    "recipes": [
+                        "thaumictinker:infusion/levitator_locomotive",
+                        "thaumictinker:arcane_workbench/levitator_relay"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "SUMMON",
+            "name": "tc.research_name.SUMMON",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:necromancy_tablet"
+            ],
+            "location": [
+                -5,
+                8
+            ],
+            "parents": [
+                "BLOOD_SWORD",
+                "~INFUSION"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.SUMMON.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/summon0",
+                        "thaumictinker:condensed_aqua_soul_aspect",
+                        "thaumictinker:condensed_humanus_soul_aspect",
+                        "thaumictinker:condensed_aer_soul_aspect",
+                        "thaumictinker:condensed_volatus_soul_aspect",
+                        "thaumictinker:condensed_ignis_soul_aspect",
+                        "thaumictinker:condensed_praecantatio_soul_aspect",
+                        "thaumictinker:condensed_exanimis_soul_aspect",
+                        "thaumictinker:condensed_victus_soul_aspect",
+                        "thaumictinker:condensed_bestia_soul_aspect",
+                        "thaumictinker:condensed_vitium_soul_aspect",
+                        "thaumictinker:condensed_terra_soul_aspect",
+                        "thaumictinker:condensed_alienis_soul_aspect",
+                        "thaumictinker:condensed_motus_soul_aspect",
+                        "thaumictinker:condensed_metallum_soul_aspect",
+                        "thaumictinker:condensed_gelum_soul_aspect",
+                        "thaumictinker:condensed_tenebrae_soul_aspect",
+                        "thaumictinker:condensed_herba_soul_aspect"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.SUMMON.2",
+                    "recipes": [
+                        "thaumictinker:infusion/summon_infused_aqua",
+                        "thaumictinker:infusion/summon_infused_humanus",
+                        "thaumictinker:infusion/summon_infused_aer",
+                        "thaumictinker:infusion/summon_infused_volatus",
+                        "thaumictinker:infusion/summon_infused_ignis",
+                        "thaumictinker:infusion/summon_infused_praecantatio",
+                        "thaumictinker:infusion/summon_infused_exanimis",
+                        "thaumictinker:infusion/summon_infused_corpus",
+                        "thaumictinker:infusion/summon_infused_bestia",
+                        "thaumictinker:infusion/summon_infused_venenum",
+                        "thaumictinker:infusion/summon_infused_terra",
+                        "thaumictinker:infusion/summon_infused_alienis",
+                        "thaumictinker:infusion/summon_infused_iter",
+                        "thaumictinker:infusion/summon_infused_metallum",
+                        "thaumictinker:infusion/summon_infused_limus",
+                        "thaumictinker:infusion/summon_infused_pannus",
+                        "thaumictinker:infusion/summon_infused_messis"
+                    ],
+                    "warp": 3
+                }
+            ]
+        },
+        {
+            "key": "REPAIRER",
+            "name": "tc.research_name.REPAIRER",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:thaumic_restorer"
+            ],
+            "location": [
+                -1,
+                -9
+            ],
+            "parents": [
+                "FUNNEL",
+                "~METALLURGY",
+                "~UNLOCKINFUSION",
+                "~INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.REPAIRER.1",
+                    "recipes": [
+                        "thaumictinker:infusion/repairer"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ANIMATION_TABLET",
+            "name": "tc.research_name.ANIMATION_TABLET",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:dynamism_tablet"
+            ],
+            "location": [
+                -8,
+                2
+            ],
+            "parents": [
+                "MAGNETS"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.ANIMATION_TABLET.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/animation_tablet"
+                    ],
+                    "warp": 1
+                }
+            ]
+        },
+        {
+            "key": "INTERFACE",
+            "name": "tc.research_name.INTERFACE",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:transvector_interface"
+            ],
+            "location": [
+                -4,
+                2
+            ],
+            "parents": [
+                "DARK_QUARTZ"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.INTERFACE.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/interface"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.INTERFACE.2",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/interface1"
+                    ]
+                },
+                {
+                    "text": "tc.research_page.INTERFACE.3"
+                }
+            ]
+        },
+        {
+            "key": "DISLOCATOR",
+            "name": "tc.research_name.DISLOCATOR",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:transvector_dislocator"
+            ],
+            "location": [
+                -6,
+                1
+            ],
+            "parents": [
+                "INTERFACE",
+                "~MIRROR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.DISLOCATOR.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/dislocator"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "PLATFORM",
+            "name": "tc.research_name.PLATFORM",
+            "category": "TT_CATEGORY",
+            "icons": [
+                "thaumictinker:ethereal_platform"
+            ],
+            "location": [
+                -2,
+                6
+            ],
+            "parents": [
+                "CLEANSING_TALISMAN"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "tc.research_page.PLATFORM.1",
+                    "recipes": [
+                        "thaumictinker:arcane_workbench/platform"
+                    ]
+                }
+            ]
+        }
+    ]
+}

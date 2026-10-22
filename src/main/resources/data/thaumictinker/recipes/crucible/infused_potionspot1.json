@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "INFUSED_POTIONS",
+  "catalyst": {
+    "item": "thaumictinker:ignis_infused_grain"
+  },
+  "aspects": {
+    "auram": 5,
+    "ignis": 5
+  },
+  "result": {
+    "item": "thaumictinker:ignis_infused_potion"
+  }
+}

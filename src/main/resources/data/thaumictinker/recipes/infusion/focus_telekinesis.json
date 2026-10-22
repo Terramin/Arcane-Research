@@ -1,0 +1,40 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_TELEKINESIS",
+  "instability": 5,
+  "aspects": {
+    "motus": 10,
+    "aer": 20,
+    "perditio": 20,
+    "cognitio": 10
+  },
+  "input": {
+    "item": "minecraft:ender_pearl"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "arcaneresearch:crystal_air"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_telekinesis"
+  }
+}

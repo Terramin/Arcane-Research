@@ -1,0 +1,17 @@
+{
+  "type": "thaumictinker:share_tome",
+  "category": "misc",
+  "key": {
+    "S": "arcaneresearch:scribing_tools",
+    "T": "arcaneresearch:thaumonomicon",
+    "P": "minecraft:paper"
+  },
+  "pattern": [
+    " S ",
+    "PTP",
+    " P "
+  ],
+  "result": {
+    "item": "thaumictinker:share_tome"
+  }
+}

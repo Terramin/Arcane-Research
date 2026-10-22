@@ -1,0 +1,23 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "FUNNEL",
+  "vis": 2,
+  "crystals": {
+    "ordo": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "STS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "T": {
+      "item": "arcaneresearch:thaumium_ingot"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:essentia_funnel"
+  }
+}

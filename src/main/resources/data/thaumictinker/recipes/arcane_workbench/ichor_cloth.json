@@ -1,0 +1,33 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ICHOR_CLOTH",
+  "vis": 750,
+  "crystals": {
+    "ignis": 125,
+    "terra": 125,
+    "aqua": 125,
+    "aer": 125,
+    "ordo": 125,
+    "perditio": 125
+  },
+  "pattern": [
+    "CCC",
+    "III",
+    "DDD"
+  ],
+  "key": {
+    "C": {
+      "item": "arcaneresearch:enchanted_fabric"
+    },
+    "I": {
+      "item": "thaumictinker:ichor"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:ichor_cloth",
+    "count": 3
+  }
+}

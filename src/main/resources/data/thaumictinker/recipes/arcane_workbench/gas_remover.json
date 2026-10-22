@@ -1,0 +1,31 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "GAS_REMOVER",
+  "vis": 4,
+  "crystals": {
+    "aer": 2,
+    "ordo": 2
+  },
+  "pattern": [
+    "DDD",
+    "T G",
+    "QQQ"
+  ],
+  "key": {
+    "D": {
+      "item": "thaumictinker:dark_quartz"
+    },
+    "T": {
+      "item": "thaumictinker:gaseous_tenebrae"
+    },
+    "G": {
+      "item": "thaumictinker:gaseous_illuminae"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:fume_dissipator"
+  }
+}

@@ -1,0 +1,1 @@
+{ "parent": "minecraft:block/crop", "textures": { "crop": "thaumictinker:block/crop_aqua_2", "particle": "thaumictinker:block/crop_aqua_2" } }

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "thaumictinker:blocks/infused_farmland",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "thaumictinker:infused_farmland",
+          "functions": [
+            {
+              "function": "minecraft:copy_state",
+              "block": "thaumictinker:infused_farmland",
+              "properties": ["moisture"]
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

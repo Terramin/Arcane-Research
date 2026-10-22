@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "MAGNETS",
+  "catalyst": {
+    "item": "minecraft:ender_pearl"
+  },
+  "aspects": {
+    "bestia": 4,
+    "cognitio": 8,
+    "sensus": 8
+  },
+  "result": {
+    "item": "thaumictinker:soul_mould"
+  }
+}

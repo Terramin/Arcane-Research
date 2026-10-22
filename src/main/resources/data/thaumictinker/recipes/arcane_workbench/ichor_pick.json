@@ -1,0 +1,24 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ICHOR_TOOLS",
+  "vis": 75,
+  "crystals": {
+    "ignis": 75
+  },
+  "pattern": [
+    "III",
+    " R ",
+    " R "
+  ],
+  "key": {
+    "R": {
+      "item": "arcaneresearch:silverwood_log"
+    },
+    "I": {
+      "item": "thaumictinker:ichorium_ingot"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:ichorium_pickaxe"
+  }
+}

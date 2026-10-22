@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "thaumictinker:block/travel_slab"
+    },
+    "type=top": {
+      "model": "thaumictinker:block/travel_slab_top"
+    },
+    "type=double": {
+      "model": "thaumictinker:block/travel_slab_double"
+    }
+  }
+}

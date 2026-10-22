@@ -1,0 +1,30 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "LEVITATOR_LOCOMOTIVE",
+  "instability": 4,
+  "aspects": {
+    "motus": 15,
+    "ordo": 20,
+    "praecantatio": 15
+  },
+  "input": {
+    "item": "arcaneresearch:levitator"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:feather"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "arcaneresearch:obsidian_tile"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:levitational_locomotive"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "XP_TALISMAN",
+  "instability": 6,
+  "aspects": {
+    "lucrum": 20,
+    "permutatio": 10,
+    "bestia": 10,
+    "machina": 5
+  },
+  "input": {
+    "item": "minecraft:gold_ingot"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "arcaneresearch:zombie_brain"
+    },
+    {
+      "item": "minecraft:diamond"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:xp_talisman"
+  }
+}

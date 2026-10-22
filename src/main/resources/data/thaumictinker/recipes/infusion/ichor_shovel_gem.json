@@ -1,0 +1,57 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHOR_SHOVEL_GEM",
+  "instability": 15,
+  "aspects": {
+    "terra": 82,
+    "perfodio": 64,
+    "instrumentum": 32,
+    "meto": 32,
+    "vinculum": 16,
+    "sensus": 16
+  },
+  "input": {
+    "item": "thaumictinker:ichorium_shovel"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichorium_ingot"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "arcaneresearch:elemental_shovel"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_excavation"
+    },
+    {
+      "item": "minecraft:tnt"
+    },
+    {
+      "item": "arcaneresearch:cluster_cinnabar"
+    },
+    {
+      "item": "arcaneresearch:cluster_iron"
+    },
+    {
+      "item": "arcaneresearch:cluster_gold"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_excavation"
+    },
+    {
+      "item": "arcaneresearch:elemental_shovel"
+    },
+    {
+      "item": "thaumictinker:ichor_cloth"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:awakened_ichorium_shovel"
+  }
+}

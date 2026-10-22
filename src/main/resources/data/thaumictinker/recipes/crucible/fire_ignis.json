@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "FIRE_IGNIS",
+  "catalyst": {
+    "item": "arcaneresearch:crystal_fire"
+  },
+  "aspects": {
+    "ignis": 10,
+    "aer": 5
+  },
+  "result": {
+    "item": "thaumictinker:ignis_imbued_fire"
+  }
+}

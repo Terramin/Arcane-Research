@@ -1,0 +1,40 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "SUMMON",
+  "instability": 4,
+  "aspects": {
+    "aqua": 10
+  },
+  "input": {
+    "item": "thaumictinker:condensed_aqua_soul_aspect"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_aqua_soul_aspect"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:infused_aqua_soul_aspect"
+  }
+}

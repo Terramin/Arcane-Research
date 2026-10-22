@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "INFUSED_POTIONS",
+  "catalyst": {
+    "item": "thaumictinker:terra_infused_grain"
+  },
+  "aspects": {
+    "auram": 5,
+    "terra": 5
+  },
+  "result": {
+    "item": "thaumictinker:terra_infused_potion"
+  }
+}

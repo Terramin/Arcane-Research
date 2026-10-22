@@ -1,0 +1,28 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "DISLOCATOR",
+  "vis": 10,
+  "crystals": {
+    "terra": 5,
+    "perditio": 5
+  },
+  "pattern": [
+    " M ",
+    " I ",
+    " C "
+  ],
+  "key": {
+    "M": {
+      "item": "arcaneresearch:mirrored_glass"
+    },
+    "I": {
+      "item": "thaumictinker:transvector_interface"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:transvector_dislocator"
+  }
+}

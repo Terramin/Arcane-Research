@@ -1,0 +1,40 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "SUMMON",
+  "instability": 4,
+  "aspects": {
+    "corpus": 10
+  },
+  "input": {
+    "item": "thaumictinker:condensed_victus_soul_aspect"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_victus_soul_aspect"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:infused_victus_soul_aspect"
+  }
+}

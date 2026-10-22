@@ -1,0 +1,37 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_XP_DRAIN",
+  "instability": 12,
+  "aspects": {
+    "cognitio": 65,
+    "vitium": 16,
+    "praecantatio": 50,
+    "auram": 32
+  },
+  "input": {
+    "item": "minecraft:ender_pearl"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "minecraft:experience_bottle"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "thaumictinker:xp_talisman"
+    },
+    {
+      "item": "minecraft:enchanting_table"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_xp_drain"
+  }
+}

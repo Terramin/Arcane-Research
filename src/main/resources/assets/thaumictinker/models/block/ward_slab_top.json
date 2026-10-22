@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "arcaneresearch:block/paving_stone_barrier",
+    "top": "arcaneresearch:block/paving_stone_barrier",
+    "side": "arcaneresearch:block/paving_stone_barrier"
+  }
+}

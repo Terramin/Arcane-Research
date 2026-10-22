@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "thaumictinker:block/transvector_interface"
+    }
+  }
+}

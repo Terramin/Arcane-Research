@@ -1,0 +1,26 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "INFUSED_INKWELL",
+  "instability": 2,
+  "aspects": {
+    "vacuos": 8,
+    "tenebrae": 8
+  },
+  "input": {
+    "item": "arcaneresearch:scribing_tools"
+  },
+  "ingredients": [
+    {
+      "item": "arcaneresearch:crystal_air"
+    },
+    {
+      "item": "arcaneresearch:jar_normal"
+    },
+    {
+      "item": "arcaneresearch:quicksilver"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:infused_inkwell"
+  }
+}

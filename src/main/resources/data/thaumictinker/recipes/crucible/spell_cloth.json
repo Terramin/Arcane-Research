@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SPELL_CLOTH",
+  "catalyst": {
+    "item": "arcaneresearch:enchanted_fabric"
+  },
+  "aspects": {
+    "praecantatio": 10,
+    "perditio": 6,
+    "permutatio": 4
+  },
+  "result": {
+    "item": "thaumictinker:spellbinding_cloth"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INTERFACE",
+  "vis": 28,
+  "crystals": {
+    "ordo": 12,
+    "perditio": 16
+  },
+  "pattern": [
+    "BRB",
+    "LEL",
+    "BRB"
+  ],
+  "key": {
+    "B": {
+      "item": "arcaneresearch:arcane_stone"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "L": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:transvector_interface"
+  }
+}

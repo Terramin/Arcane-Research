@@ -1,0 +1,31 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHOR",
+  "instability": 7,
+  "aspects": {
+    "humanus": 32,
+    "lux": 32,
+    "spiritus": 64
+  },
+  "input": {
+    "item": "minecraft:nether_star"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "thaumictinker:ender_shard"
+    },
+    {
+      "item": "minecraft:ender_eye"
+    },
+    {
+      "item": "thaumictinker:nether_shard"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:ichor",
+    "count": 8
+  }
+}

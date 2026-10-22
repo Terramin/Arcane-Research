@@ -1,0 +1,37 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_SHADOWBEAM",
+  "instability": 12,
+  "aspects": {
+    "tenebrae": 65,
+    "alienis": 32,
+    "praecantatio": 50,
+    "telum": 32
+  },
+  "input": {
+    "item": "arcaneresearch:wand_focus_shock"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "minecraft:arrow"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_excavation"
+    },
+    {
+      "item": "thaumictinker:focus_deflect"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_shadowbeam"
+  }
+}

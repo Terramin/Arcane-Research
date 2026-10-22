@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "arcaneresearch:block/paving_stone_travel",
+    "top": "arcaneresearch:block/paving_stone_travel",
+    "side": "arcaneresearch:block/paving_stone_travel"
+  }
+}

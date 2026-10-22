@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "thaumictinker:block/dark_quartz_slab"
+    },
+    "type=top": {
+      "model": "thaumictinker:block/dark_quartz_slab_top"
+    },
+    "type=double": {
+      "model": "thaumictinker:block/dark_quartz_block"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "CAP_ICHOR",
+  "vis": 600,
+  "crystals": {
+    "ignis": 100,
+    "terra": 100,
+    "aqua": 100,
+    "aer": 100,
+    "ordo": 100,
+    "perditio": 100
+  },
+  "pattern": [
+    "ICI",
+    " M ",
+    "ICI"
+  ],
+  "key": {
+    "M": {
+      "item": "thaumictinker:ichorium_ingot"
+    },
+    "I": {
+      "item": "thaumictinker:ichor"
+    },
+    "C": {
+      "item": "arcaneresearch:wand_cap",
+      "nbt": "{cap:\"thaumium\"}"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:ichorium_cap",
+    "count": 2
+  }
+}

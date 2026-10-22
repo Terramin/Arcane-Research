@@ -1,0 +1,44 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_DISLOCATION",
+  "instability": 8,
+  "aspects": {
+    "alienis": 20,
+    "tenebrae": 10,
+    "vacuos": 25,
+    "praecantatio": 20,
+    "vitium": 5
+  },
+  "input": {
+    "item": "minecraft:ender_pearl"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "arcaneresearch:amber"
+    },
+    {
+      "item": "arcaneresearch:amber"
+    },
+    {
+      "item": "arcaneresearch:amber"
+    },
+    {
+      "item": "minecraft:diamond"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_dislocation"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "FIRE_AQUA",
+  "catalyst": {
+    "item": "arcaneresearch:crystal_water"
+  },
+  "aspects": {
+    "ignis": 5,
+    "praecantatio": 5,
+    "aqua": 5
+  },
+  "result": {
+    "item": "thaumictinker:aqua_imbued_fire"
+  }
+}

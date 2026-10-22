@@ -1,0 +1,27 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "REVEALING_HELM",
+  "vis": 30,
+  "crystals": {
+    "terra": 5,
+    "ignis": 5,
+    "aqua": 5,
+    "aer": 5,
+    "ordo": 5,
+    "perditio": 5
+  },
+  "pattern": [
+    "GH"
+  ],
+  "key": {
+    "G": {
+      "item": "arcaneresearch:goggles"
+    },
+    "H": {
+      "item": "arcaneresearch:thaumium_helm"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:revealing_helm"
+  }
+}

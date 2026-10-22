@@ -1,0 +1,30 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_DEFLECT",
+  "instability": 5,
+  "aspects": {
+    "aer": 15,
+    "tutamen": 5,
+    "ordo": 20
+  },
+  "input": {
+    "item": "thaumictinker:focus_flight"
+  },
+  "ingredients": [
+    {
+      "item": "arcaneresearch:mirrored_glass"
+    },
+    {
+      "item": "arcaneresearch:mirrored_glass"
+    },
+    {
+      "item": "arcaneresearch:paving_stone_barrier"
+    },
+    {
+      "item": "arcaneresearch:crystal_order"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_deflect"
+  }
+}

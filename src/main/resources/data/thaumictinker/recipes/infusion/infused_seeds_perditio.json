@@ -1,0 +1,31 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "INFUSED_POTIONS",
+  "instability": 5,
+  "aspects": {
+    "herba": 32,
+    "instrumentum": 32
+  },
+  "input": {
+    "item": "minecraft:wheat_seeds"
+  },
+  "ingredients": [
+    {
+      "item": "arcaneresearch:crystal_entropy"
+    },
+    {
+      "item": "arcaneresearch:crystal_entropy"
+    },
+    {
+      "item": "arcaneresearch:crystal_entropy"
+    },
+    {
+      "item": "arcaneresearch:crystal_entropy"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:infused_seeds",
+    "count": 1,
+    "nbt": "{SeedAspect:\"perditio\",CustomModelData:5}"
+  }
+}

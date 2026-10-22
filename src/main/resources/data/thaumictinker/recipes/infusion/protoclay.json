@@ -1,0 +1,29 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "PROTOCLAY",
+  "instability": 4,
+  "aspects": {
+    "perfodio": 16,
+    "instrumentum": 16
+  },
+  "input": {
+    "item": "minecraft:clay_ball"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:dirt"
+    },
+    {
+      "item": "minecraft:stone"
+    },
+    {
+      "item": "minecraft:oak_log"
+    },
+    {
+      "item": "thaumictinker:ender_shard"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:protoclay"
+  }
+}

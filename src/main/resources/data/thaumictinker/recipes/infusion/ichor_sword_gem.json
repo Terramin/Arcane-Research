@@ -1,0 +1,58 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHOR_SWORD_GEM",
+  "instability": 15,
+  "aspects": {
+    "aer": 50,
+    "fames": 64,
+    "spiritus": 32,
+    "telum": 32,
+    "potentia": 32,
+    "ordo": 16,
+    "vitreus": 16
+  },
+  "input": {
+    "item": "thaumictinker:ichorium_sword"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:ichorium_ingot"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "arcaneresearch:elemental_sword"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_frost"
+    },
+    {
+      "item": "minecraft:cactus"
+    },
+    {
+      "item": "arcaneresearch:cluster_cinnabar"
+    },
+    {
+      "item": "arcaneresearch:cluster_iron"
+    },
+    {
+      "item": "arcaneresearch:cluster_gold"
+    },
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_frost"
+    },
+    {
+      "item": "arcaneresearch:elemental_sword"
+    },
+    {
+      "item": "thaumictinker:ichor_cloth"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:awakened_ichorium_sword"
+  }
+}

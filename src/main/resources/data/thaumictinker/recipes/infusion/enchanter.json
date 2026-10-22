@@ -1,0 +1,44 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ENCHANTER",
+  "instability": 15,
+  "aspects": {
+    "praecantatio": 50,
+    "potentia": 20,
+    "alienis": 20,
+    "vacuos": 20,
+    "cognitio": 10
+  },
+  "input": {
+    "item": "minecraft:enchanting_table"
+  },
+  "ingredients": [
+    {
+      "item": "arcaneresearch:obsidian_tile"
+    },
+    {
+      "item": "arcaneresearch:obsidian_tile"
+    },
+    {
+      "item": "arcaneresearch:obsidian_tile"
+    },
+    {
+      "item": "arcaneresearch:obsidian_tile"
+    },
+    {
+      "item": "arcaneresearch:obsidian_tile"
+    },
+    {
+      "item": "arcaneresearch:thaumium_ingot"
+    },
+    {
+      "item": "arcaneresearch:thaumium_ingot"
+    },
+    {
+      "item": "thaumictinker:spellbinding_cloth"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:osmotic_enchanter"
+  }
+}

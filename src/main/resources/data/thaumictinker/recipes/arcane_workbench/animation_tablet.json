@@ -1,0 +1,28 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "ANIMATION_TABLET",
+  "vis": 50,
+  "crystals": {
+    "aer": 25,
+    "ordo": 15,
+    "ignis": 10
+  },
+  "pattern": [
+    "GIG",
+    "ICI"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "arcaneresearch:blank_seal"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:dynamism_tablet"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "ICHORCLOTH_HELM_GEM",
+  "instability": 13,
+  "aspects": {
+    "aqua": 50,
+    "tutamen": 32,
+    "fames": 32,
+    "auram": 32,
+    "lux": 64,
+    "corpus": 16,
+    "cognitio": 16
+  },
+  "input": {
+    "item": "thaumictinker:ichorcloth_cowl"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "thaumictinker:ichor"
+    },
+    {
+      "item": "arcaneresearch:thaumonomicon"
+    },
+    {
+      "item": "arcaneresearch:wand_focus_primal"
+    },
+    {
+      "item": "minecraft:golden_helmet"
+    },
+    {
+      "type": "forge:partial_nbt",
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:night_vision\"}"
+    },
+    {
+      "item": "arcaneresearch:goggles"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:cod"
+    },
+    {
+      "item": "minecraft:cake"
+    },
+    {
+      "item": "minecraft:ender_eye"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:cowl_of_the_abyssal_depths"
+  }
+}

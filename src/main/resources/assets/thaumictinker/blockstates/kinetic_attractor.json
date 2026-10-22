@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "pull=true": {
+      "model": "thaumictinker:block/kinetic_attractor"
+    },
+    "pull=false": {
+      "model": "thaumictinker:block/kinetic_attractor"
+    }
+  }
+}
+

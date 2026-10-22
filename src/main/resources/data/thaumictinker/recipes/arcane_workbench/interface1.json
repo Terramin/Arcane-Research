@@ -1,0 +1,27 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INTERFACE",
+  "vis": 2,
+  "crystals": {
+    "ordo": 2
+  },
+  "pattern": [
+    " I ",
+    " WI",
+    "S  "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "W": {
+      "item": "minecraft:stick"
+    },
+    "S": {
+      "item": "arcaneresearch:crystal_order"
+    }
+  },
+  "result": {
+    "item": "thaumictinker:transvector_binder"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "SUMMON",
+  "instability": 4,
+  "aspects": {
+    "pannus": 10
+  },
+  "input": {
+    "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+  },
+  "ingredients": [
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    },
+    {
+      "item": "thaumictinker:condensed_tenebrae_soul_aspect"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:infused_tenebrae_soul_aspect"
+  }
+}

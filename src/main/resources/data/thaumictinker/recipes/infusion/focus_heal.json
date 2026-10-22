@@ -1,0 +1,30 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUS_HEAL",
+  "instability": 4,
+  "aspects": {
+    "sano": 10,
+    "spiritus": 10,
+    "victus": 15
+  },
+  "input": {
+    "item": "arcaneresearch:wand_focus_pech"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:golden_carrot"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    }
+  ],
+  "result": {
+    "item": "thaumictinker:focus_heal"
+  }
+}
