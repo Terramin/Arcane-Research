@@ -16,10 +16,10 @@ public class AspectList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // NEOFORGE_PORT: codecs for 26.x recipe JSON (MapCodec) + sync (StreamCodec).
-    // JSON form matches the data files 1:1: {"aer": 5, "terra": 2} (aspect tag -> amount).
-    // Unknown aspect tags are skipped on decode (same leniency as the old Gson parsing).
-    // Codec.unboundedMap is a Codec, not a MapCodec -> assumeMapUnsafe keeps the flat shape.
+    
+    
+    
+    
     public static final MapCodec<AspectList> MAP_CODEC =
             MapCodec.assumeMapUnsafe(Codec.unboundedMap(Codec.STRING, Codec.INT)).xmap(
                     map -> {
@@ -40,10 +40,10 @@ public class AspectList implements Serializable {
                         return map;
                     });
 
-    // NEOFORGE_PORT: JEI 26.3 IModIngredientRegistration requires Codec<V> (not MapCodec).
+    
     public static final Codec<AspectList> CODEC = MAP_CODEC.codec();
 
-    // NEOFORGE_PORT: wire form mirrors the old toNetwork order (count, tag, amount)*.
+    
     public static final StreamCodec<RegistryFriendlyByteBuf, AspectList> STREAM_CODEC =
             new StreamCodec<>() {
                 @Override
@@ -247,8 +247,8 @@ public class AspectList implements Serializable {
 
     public void readFromNBT(CompoundTag nbt) {
         aspects.clear();
-        // NEOFORGE_PORT: CompoundTag getters now return Optional (26.x); defaults below
-        // reproduce the old lenient getters ("" / 0 / empty tag).
+        
+        
         ListTag tlist = nbt.getListOrEmpty("Aspects");
         for (int j = 0; j < tlist.size(); j++) {
             CompoundTag rs = tlist.getCompoundOrEmpty(j);
@@ -275,8 +275,8 @@ public class AspectList implements Serializable {
         }
     }
 
-    // NEOFORGE_PORT: ValueOutput/ValueInput overloads for tile persistence (26.x).
-    // NBT shape identical to the CompoundTag versions (list of {key, amount} compounds).
+    
+    
     public void readFromNBT(net.minecraft.world.level.storage.ValueInput in) {
         readFromNBT(in, "Aspects");
     }

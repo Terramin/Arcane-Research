@@ -22,17 +22,17 @@ public class ResearchStage {
 
     private String[] researchIcon;
 
-    /** Ключи открытий temp (required_discovery, '#' срезан при парсинге). */
+      
     private String[] discovery;
 
-    /**
-     * Hex-стадия: проходится мини-игрой исследовательского стола
-     * (JSON-форма {@code ["#KEY", true]} / {@code {"keys": [...], "hex": ...}}),
-     * а не обычными требованиями.
-     */
+     
+
+
+
+ 
     private boolean hex;
 
-    /** Мультиблок-структура: строки "dx,dy,dz:itemId" для схемы в книге. */
+      
     private String[] structure;
 
     private int warp;

@@ -17,16 +17,16 @@ import net.minecraft.world.level.Level;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.proxies.Proxies;
 
-/**
- * Предмет «Записки исследования» (свиток), порт в паритете с:
- * - TC3 {@code thaumcraft.common.research.ItemResearchNotes}:
- *   стак 1, glint, редкость, тултип «имя при прогрессе >= 20% иначе Unknown theory»,
- *   «N% complete» при прогрессе > 1/3, завершение исследования на 100% на сервере;
- * - reforged {@code thaumcraft.item.ResearchNotesItem} (use/appendHoverText).
- *
- * NEOFORGE_PORT: use возвращает InteractionResult (holder удалён);
- * appendHoverText — 26.x-сигнатура (TooltipContext/TooltipDisplay/Consumer).
- */
+ 
+
+
+
+
+
+
+
+
+ 
 public class ItemDiscoveredResearchNote extends Item {
 
     public ItemDiscoveredResearchNote(Properties props) {
@@ -37,8 +37,8 @@ public class ItemDiscoveredResearchNote extends Item {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
-        // Открытие ПКМ только предъявляется (предмет остаётся),
-        // записка идёт подтверждать условия своим путём.
+        
+        
         if (data.key != null && stack.getItem() == DiscoveredNoteSetup.getDiscoveryItem()) {
             if (!level.isClientSide()) {
                 DiscoveredNotes.presentDiscovery(player, data.key);
@@ -54,7 +54,7 @@ public class ItemDiscoveredResearchNote extends Item {
     @Override
     public Component getName(ItemStack stack) {
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
-        // Открытие — готовое доказательство: всегда имя теории, как у записки.
+        
         float progress = data.getTotalProgress();
         if (stack.getItem() == DiscoveredNoteSetup.getDiscoveryItem()) {
             progress = 1.0F;
@@ -89,16 +89,16 @@ public class ItemDiscoveredResearchNote extends Item {
         } else {
             tooltip.accept(Component.translatable("tc.discoveryunknown"));
         }
-        // Паритет reforged: проценты только на самой записке, у открытия их нет.
-        // Порядок: Insight, [Shift: аспекты], Study.
+        
+        
         boolean showStudy = false;
         if (stack.getItem() == DiscoveredNoteSetup.getNoteItem()) {
             int pct1 = (int) (progress * 100.0F);
             tooltip.accept(Component.translatable("tooltip.arcaneresearch.stage1", pct1));
             showStudy = DiscoveredNoteData.requiresHex(data.key);
         }
-        // Аспекты записки — только с зажатым Shift, между стадиями.
-        // Только добытые (got > 0): нулевые строки не показываем.
+        
+        
         if (Proxies.get().isShiftKeyDown()) {
             for (int i = 0; i < data.tags.length; i++) {
                 Aspect aspect = data.tags[i];
@@ -121,12 +121,12 @@ public class ItemDiscoveredResearchNote extends Item {
         }
     }
 
-    /** Паритет TC3: записка всегда с glint; здесь — только готовая светится. */
+      
     @Override
     public boolean isFoil(ItemStack stack) {
         return DiscoveredNoteData.read(stack).isComplete();
     }
 
-    // NEOFORGE_PORT: getRarity(stack) override removed in 26.x -> RARITY data component,
-    // set per completeness in DiscoveredNoteData.write (UNCOMMON) / toDiscovery (RARE).
+    
+    
 }

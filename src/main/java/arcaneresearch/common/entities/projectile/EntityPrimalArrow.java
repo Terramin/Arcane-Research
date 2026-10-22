@@ -17,18 +17,18 @@ import net.minecraft.world.phys.EntityHitResult;
 import arcaneresearch.common.items.tools.ItemPrimalArrow;
 import arcaneresearch.init.ModEntities;
 
-/**
- * Первородная стрела, порт TC4 {@code EntityPrimalArrow}: 6 стихийных видов
- * (0 air, 1 fire, 2 water, 3 earth, 4 order, 5 entropy), подбор запрещён,
- * в земле гаснет за 100 тиков. Тип едет entity data (и в NBT).
- */
+ 
+
+
+
+ 
 public class EntityPrimalArrow extends AbstractArrow {
 
     private static final EntityDataAccessor<Integer> PRIMAL_TYPE =
             SynchedEntityData.defineId(EntityPrimalArrow.class, EntityDataSerializers.INT);
 
-    /** NEOFORGE_PORT: AbstractArrow.setKnockback удалён в 26.x; сила отброса хранится
-     * здесь и применяется в onHitEntity (тот же +1 за землю, панч лука — из событий). */
+     
+ 
     public int punchLevel = 0;
 
     public EntityPrimalArrow(EntityType<? extends EntityPrimalArrow> type, Level level) {
@@ -36,14 +36,14 @@ public class EntityPrimalArrow extends AbstractArrow {
     }
 
     public EntityPrimalArrow(Level level, LivingEntity owner, float chargeFactor, int type) {
-        // NEOFORGE_PORT: AbstractArrow(type, owner, level, pickupStack, firedFrom) — pickup
-        // stack per type; setOwner(player) makes pickup ALLOWED exactly like the Forge ctor did.
+        
+        
         super(ModEntities.PRIMAL_ARROW.get(), owner, level, pickupStackFor(type), null);
         this.setPrimalType(type);
-        // Паритет TC4: база 2.1, земля x1.5, порядок/энтропия x0.8.
-        // Множитель запекается сразу (иначе бонусы лука учлись бы дважды).
+        
+        
         this.setBaseDamage(2.1D * damageMult(type));
-        // Паритет TC4: скорость f * dam * 1.5 (dam уже в chargeFactor).
+        
         this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0.0F, chargeFactor * 1.5F, 1.0F);
     }
 
@@ -84,9 +84,9 @@ public class EntityPrimalArrow extends AbstractArrow {
         this.entityData.set(PRIMAL_TYPE, Math.max(0, Math.min(5, type)));
     }
 
-    /** Тиков в земле (для затухания рендера). */
+      
     public int getTicksInGround() {
-        // NEOFORGE_PORT (26.3): inGroundTime is still protected (counted on both sides, not saved).
+        
         return this.inGroundTime;
     }
 
@@ -118,17 +118,17 @@ public class EntityPrimalArrow extends AbstractArrow {
     @Override
     public void tick() {
         super.tick();
-        // NEOFORGE_PORT (26.3): inGround field -> isInGround().
+        
         if (!this.level().isClientSide() && this.isInGround() && this.inGroundTime >= 100) {
             this.discard();
         }
     }
 
-    /**
-     * Паритет TC4 inflictDamage: огонь (огонь всегда горит, вода immune),
-     * вода — замедление, порядок — слабость, энтропия — иссушение.
-     * Урон считает ванилла (скорость x baseDamage + крит + knockback).
-     */
+     
+
+
+
+ 
     @Override
     protected void onHitEntity(EntityHitResult result) {
         int type = this.getPrimalType();
@@ -146,7 +146,7 @@ public class EntityPrimalArrow extends AbstractArrow {
             } else if (type == ItemPrimalArrow.ENTROPY) {
                 target.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 0));
             }
-            // NEOFORGE_PORT: Entity.setSecondsOnFire удалён -> igniteForSeconds (те же секунды).
+            
             if (fire > 0 && !(target instanceof Enderman)) {
                 target.igniteForSeconds((float) fire);
             }
@@ -154,9 +154,9 @@ public class EntityPrimalArrow extends AbstractArrow {
         super.onHitEntity(result);
     }
 
-    // NEOFORGE_PORT (26.3): AbstractArrow.setKnockback removed -> punchLevel applied in doKnockback,
-    // which vanilla calls only after the hit dealt damage, with the same Forge formula
-    // (horizontal motion * punch * 0.6 * (1 - knockback resistance), 0.1 up).
+    
+    
+    
     @Override
     protected void doKnockback(LivingEntity mob, net.minecraft.world.damagesource.DamageSource damageSource) {
         super.doKnockback(mob, damageSource);

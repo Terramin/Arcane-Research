@@ -9,12 +9,12 @@ import arcaneresearch.common.world.structures.StructureHelper;
 
 import net.minecraft.util.RandomSource;
 
-/**
- * Room builders per maze feature id, mirroring TC5 Gen* rooms with real
- * block placement. Each room occupies one chunk cell (16x16) at height y.
- * Feature ids: 1 portal, 2-5 boss, 6 key, 7 nest, 8 library, 9-10 turret,
- * 11 passage room, else plain passage carved along open walls.
- */
+ 
+
+
+
+
+ 
 public final class MazeRooms {
     private MazeRooms() {
     }
@@ -66,34 +66,34 @@ public final class MazeRooms {
         return StructureHelper.state(MazeRoomCarver.FLOOR);
     }
 
-    /** Облицовка eldritch-камнем: кольцо стен ±7 и плита потолка y+5. */
+      
     static BlockState lining() {
         return StructureHelper.state("arcaneresearch:eldritch_stone_tile");
     }
 
     static void shell(LevelAccessor level, RandomSource random, int cx, int cz, int y) {
         BlockPos c = cellFloor(cx, cz, y);
-        // Снаружи — bedrock (как TC4 id 1), пол — ancient.
+        
         MazeRoomCarver.fill(level, c.getX() - 8, y - 1, c.getZ() - 8, c.getX() + 8, y + 6, c.getZ() + 8,
                 Blocks.BEDROCK.defaultBlockState());
         MazeRoomCarver.air(level, c.getX() - 7, y + 1, c.getZ() - 7, c.getX() + 7, y + 5, c.getZ() + 7);
         MazeRoomCarver.fill(level, c.getX() - 7, y, c.getZ() - 7, c.getX() + 7, y, c.getZ() + 7,
                 floor());
-        // Внутри — eldritch-камень: стены ±7 и потолок y+5, воздух ±6 y+1..y+4.
-        // Ровно стыкуется с коридорами (воздух y+1..y+4, потолок y+5).
+        
+        
         MazeRoomCarver.fill(level, c.getX() - 7, y + 1, c.getZ() - 7, c.getX() + 7, y + 5, c.getZ() + 7,
                 lining());
         MazeRoomCarver.air(level, c.getX() - 6, y + 1, c.getZ() - 6, c.getX() + 6, y + 4, c.getZ() + 6);
     }
 
-    /**
-     * Портальная комната, порт TC4 GenPortal.generatePortal (детально):
-     * bedrock-корка, каменные кольца, пирамиды пола/потолка, ряды ступеней,
-     * угловые ниши, крышка + портал + обелиск в центре. База y-1 чтобы пол
-     * (y+1 → feet 51) совпал с коридорами. Легенда id: 1 bedrock по воздуху,
-     * 8 стена, 2/19 пол, 9 воздух, 10/11 ступени. После узора — центр-зал
-     * для прохода, алтарь и коридоры.
-     */
+     
+
+
+
+
+
+
+ 
     static void portalRoom(LevelAccessor level, RandomSource random, int cx, int cz, int y, Cell cell) {
         int yy = y - 1;
         int x = cx * 16;
@@ -166,11 +166,11 @@ public final class MazeRooms {
             MazeRoomCarver.stairs(level, new BlockPos(x + 4, yy + 2, z + 6 + g),
                     net.minecraft.core.Direction.WEST, false);
         }
-        // Позиция вызова соединений как в TC4/reforged: между ободными ступенями
-        // и угловыми нишами. Устьевые штампы PAT_CONNECT перекрывают bedrock
-        // скорлупы (ряд 1) и проём кольца (ряд 2) камнем — то, что у TC4 делает
-        // generateConnections(3, true), а наши коридоры-трубы затем stitching
-        // граничный ряд (d 0) сами.
+        
+        
+        
+        
+        
         mouthGallery(level, cx, cz, y, cell);
         connect(level, random, cx, cz, y, cell);
         for (int a = 3; a <= 13; a++) {
@@ -232,10 +232,10 @@ public final class MazeRooms {
                 net.minecraft.core.Direction.SOUTH, true);
         MazeRoomCarver.stairs(level, new BlockPos(x + 11, yy + 8, z + 12),
                 net.minecraft.core.Direction.EAST, true);
-        // Центр-зал для прохода (пол yy+1 цел).
+        
         MazeRoomCarver.air(level, x + 5, yy + 2, z + 5, x + 11, yy + 7, z + 11);
-        // Центр: крышка, портал, обелиск. Рама портала держится
-        // (крышка снизу, обелиск сверху — см. isFrame).
+        
+        
         StructureHelper.set(level, new BlockPos(x + 8, yy + 2, z + 8),
                 StructureHelper.state("arcaneresearch:eldritch_cap"));
         StructureHelper.set(level, new BlockPos(x + 8, yy + 3, z + 8),
@@ -244,7 +244,7 @@ public final class MazeRooms {
         MazeRoomCarver.altar(level, c.offset(0, 1, 4), true, (byte) 1);
     }
 
-    /** id 1 TC4: bedrock только по воздуху (не трогает построенное). */
+      
     static void bedrockIfAir(LevelAccessor level, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         if (level.getBlockState(pos).isAir()) {
@@ -252,11 +252,11 @@ public final class MazeRooms {
         }
     }
 
-    /** Срезы PAT_CONNECT TC4/reforged GenCommon, строка = высота h
-     * (h 0 — потолочный бандаж). Идентификаторы: 1 bedrock-по-воздуху,
-     * 2 ancient_stone (пол/панели), 8 «ничто» (у нас видимый
-     * eldritch_stone_tile), 9 воздух, 3/4/5/6 ступени (низ/верх у окна),
-     * 0 — пропуск. */
+     
+
+
+
+ 
     private static final int[][] PAT_CONNECT = {
             {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
             {1, 8, 8, 8, 8, 8, 8, 8, 8, 8, 1},
@@ -271,21 +271,21 @@ public final class MazeRooms {
             {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}
     };
 
-    /**
-     * Устьевые галереи PAT_CONNECT у порт-зала: порт вызова
-     * TC4/reforged generateConnections(3, true), которым GenPortal
-     * перекрывает bedrock-скорлупу (ряд 1) и проём каменного кольца
-     * (ряд 2) камнем, оставляя окно-устье у рамы (ряд 3 — открытый
-     * пролёт без id 8). Именно из-за отсутствия этого штампа bedrock
-     * корлупы «заезжал» в устье наших коридоров и над окном оставался
-     * 8-широкий провал кольца.
-     *
-     * Отличия от TC4: только Своя половина стыка — d 1..3 (ряды скорлупа/
-     * кольцо/рама): граничный ряд (d 0) пишут наши коридоры-трубы, соседа
-     * не трогаем. Вертикаль y+8-h (сдвиг -2 от TC4 y+10-h), чтобы пол
-     * штампа (строка h 8) лег на пол наших коридоров (y). Штампы
-     * идемпотентны, порядок постройки не важен.
-     */
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
     static void mouthGallery(LevelAccessor level, int cx, int cz, int y, Cell cell) {
         int x = cx * 16;
         int z = cz * 16;
@@ -297,9 +297,9 @@ public final class MazeRooms {
             }
             boolean alongZ = side < 2;
             for (int d = 1; d <= 3; d++) {
-                // Сужение окна, как в TC4 justthetip: ряд перед рамой 1..9,
-                // ряд рамы 2..8 и без id 8 (пролёт прочистили, камень
-                // оставляем — так и вышел открытый воронок).
+                
+                
+                
                 int w0 = d <= 1 ? 0 : d == 2 ? 1 : 2;
                 int w1 = d <= 1 ? 10 : d == 2 ? 9 : 8;
                 boolean skipEight = d == 3;
@@ -320,12 +320,12 @@ public final class MazeRooms {
         }
     }
 
-    /**
-     * Блок непосредственно штампов (порт TC4 placeBlock): 1 bedrock по
-     * воздуху, 2 ancient_stone, 8 стена-облицовка, 9 воздух, 3..6 ступени
-     * eldritch_stairs (низ/верх, поворот — направление стыка: NS → W/E,
-     * EW → N/S, как меты 1.7.10).
-     */
+     
+
+
+
+
+ 
     static void patBlock(LevelAccessor level, int px, int py, int pz, int id,
                          boolean alongZ) {
         BlockPos pos = new BlockPos(px, py, pz);
@@ -373,11 +373,11 @@ public final class MazeRooms {
         connectFellows(level, cx, cz, y);
     }
 
-    /**
-     * Сокровищница боссов (северо-западный квадрант арены 2x2, feature 2):
-     * спавнеры голема и надзирателя, замок цикла и шесть сундуков.
-     * Всё содержимое — в углах и центре, вне полос коридоров.
-     */
+     
+
+
+
+ 
     static void bossVaultRoom(LevelAccessor level, RandomSource random, int cx, int cz, int y, Cell cell) {
         shell(level, random, cx, cz, y);
         BlockPos c = cellFloor(cx, cz, y);
@@ -427,8 +427,8 @@ public final class MazeRooms {
     static void libraryRoom(LevelAccessor level, RandomSource random, int cx, int cz, int y, Cell cell) {
         shell(level, random, cx, cz, y);
         BlockPos c = cellFloor(cx, cz, y);
-        // Шкафы только по углам: полосы во всю ширину перекрывали
-        // створы коридоров (|x|<=3 и |z|<=3 — зона проходов).
+        
+        
         BlockState shelf = Blocks.BOOKSHELF.defaultBlockState();
         for (int sx = -1; sx <= 1; sx += 2) {
             for (int sz = -1; sz <= 1; sz += 2) {
@@ -460,7 +460,7 @@ public final class MazeRooms {
 
     static void chamber(LevelAccessor level, RandomSource random, int cx, int cz, int y, Cell cell) {
         shell(level, random, cx, cz, y);
-        // Столбы убраны из генерации измерения по требованию.
+        
         BlockPos c = cellFloor(cx, cz, y);
         MazeRoomCarver.decorate(level, random, c.getX() - 6, y, c.getZ() - 6,
                 c.getX() + 6, c.getZ() + 6, false);
@@ -469,8 +469,8 @@ public final class MazeRooms {
 
     static void passage(LevelAccessor level, RandomSource random, int cx, int cz, int y, Cell cell) {
         BlockPos c = cellFloor(cx, cz, y);
-        // Мини-зал 7x7: снаружи bedrock, внутри eldritch-камень
-        // (стены ±3, потолок y+5), воздух ±2 y+1..y+4 — как у больших комнат.
+        
+        
         MazeRoomCarver.fill(level, c.getX() - 4, y - 1, c.getZ() - 4, c.getX() + 4, y + 6, c.getZ() + 4,
                 Blocks.BEDROCK.defaultBlockState());
         MazeRoomCarver.air(level, c.getX() - 3, y + 1, c.getZ() - 3, c.getX() + 3, y + 4, c.getZ() + 3);
@@ -481,10 +481,10 @@ public final class MazeRooms {
         connect(level, random, cx, cz, y, cell);
     }
 
-    /**
-     * Полуразмер комнаты: оболочка ±8, мини-зал пустышки ±4.
-     * Пустышки — feature 0 и 21..24 (все идут в passage()).
-     */
+     
+
+
+ 
     static int roomSpan(Cell cell) {
         if (cell == null) {
             return -1;
@@ -496,12 +496,12 @@ public final class MazeRooms {
         return 8;
     }
 
-    /**
-     * Позиция внутренней облицовки: ±7 у оболочек, ±3 у пустышек.
-     * Коридор обязан пробить ОБЕ облицовки (внешнюю bedrock-стену
-     * и внутреннюю каменную), иначе комнаты остаются запечатанными:
-     * интервал только по внешним стенам [8..8] оставлял облицовку целой.
-     */
+     
+
+
+
+
+ 
     static int roomLining(Cell cell) {
         if (cell == null) {
             return -1;
@@ -513,12 +513,12 @@ public final class MazeRooms {
         return 7;
     }
 
-    /**
-     * Проёмы между квадрантами арены 2x2 (features 2-5). Генератор не ставит
-     * флаги между квадрантами — без этого каждая четверть замурована наглухо
-     * и соседние комнаты арены не соединены. Квадранты — оболочки (±8),
-     * общий интервал — одна общая стена.
-     */
+     
+
+
+
+
+ 
     static void connectFellows(LevelAccessor level, int cx, int cz, int y) {
         BlockPos c = cellFloor(cx, cz, y);
         if (isFellow(cx, cz - 1)) {
@@ -540,16 +540,16 @@ public final class MazeRooms {
         return cell != null && cell.feature >= 2 && cell.feature <= 5;
     }
 
-    /**
-     * Коридоры между комнатами, порт TC4 GenCommon.generateConnections.
-     * Длина НЕ статична: коридор идёт ровно от своей облицовки до облицовки
-     * соседа (±7 у оболочек, ±3 у пустышек): пробиваются оба слоя стен
-     * с обеих сторон. Внутрь комнат коридор не заезжает. Оба соседа пишут
-     * одни и те же клетки — результат не зависит от порядка постройки.
-     * Сечение по высоте совпадает с комнатами (пол y, воздух y+1..y+4,
-     * потолок y+5, крыша y+6), ступеней нет. Материалы как в TC4: снаружи
-     * bedrock (id 1), внутри eldritch-камень (id 8), пол — ancient (id 2).
-     */
+     
+
+
+
+
+
+
+
+
+ 
     static void connect(LevelAccessor level, RandomSource random, int cx, int cz, int y, Cell cell) {
         BlockPos c = cellFloor(cx, cz, y);
         if (cell.north) {
@@ -566,11 +566,11 @@ public final class MazeRooms {
         }
     }
 
-    /**
-     * Коридор на одну сторону: от своей облицовки (inclusive) до облицовки
-     * соседа. Пробиваются оба слоя стен с обеих сторон; оба соседа пишут
-     * одни клетки — идемпотентно.
-     */
+     
+
+
+
+ 
     static void carveSideNS(LevelAccessor level, BlockPos c, int y, int dir, Cell own, Cell other) {
         int ownLining = roomLining(own);
         int otherLining = roomLining(other);
@@ -611,12 +611,12 @@ public final class MazeRooms {
         }
     }
 
-    /**
-     * Срез коридора. Внутри комнат — ТОЛЬКО воздух прохода: пол
-     * и основание там уже есть от комнаты, перезапись камнем портила
-     * bedrock-основание. Снаружи — полный закрытый тюбик: дно bedrock,
-     * пол с bedrock-краями, крыша y+6 bedrock целиком.
-     */
+     
+
+
+
+
+ 
     static void corridorSlice(LevelAccessor level, int x, int z, int floorY, boolean alongZ,
                               boolean structural) {
         BlockState floor = floor();

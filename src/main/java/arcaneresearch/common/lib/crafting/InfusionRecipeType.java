@@ -20,24 +20,24 @@ import arcaneresearch.init.ModRecipeTypes;
 import java.util.List;
 import java.util.Optional;
 
-// NEOFORGE_PORT: 1:1 logic port from Forge common/lib/crafting/InfusionRecipeType.java.
-// REQUIRED changes (vanilla 26.x recipe rework, verified in 26.3.0.23-beta jar):
-//   - Recipe<Container> -> Recipe<RecipeInput> (Container is not a RecipeInput).
-//     matches(Container, Level) -> matches(RecipeInput, Level) (still returns false;
-//     real matching is matchesInfusion, called by the altar tile).
-//   - assemble(Container, RegistryAccess) -> assemble(RecipeInput); canCraftInDimensions,
-//     getResultItem(RegistryAccess), getIngredients, getId removed from the interface
-//     (kept only where our code needs them: getResultItem()/getComponents()/getId()).
-//   - RecipeSerializer interface (fromJson/fromNetwork/toNetwork) -> RecipeSerializer RECORD
-//     (MapCodec + StreamCodec); see SERIALIZER below.
-//   - MapCodec accepts the legacy JSON key aliases (central|center|input,
-//     components|ingredients) so existing data files parse unchanged.
-//   - Ingredient.EMPTY removed -> central input is @Nullable (absent = no requirement);
-//     matchesInfusion null/isEmpty-safe.
-//   - placementInfo() -> NOT_PLACEABLE (altar recipes never use the vanilla grid);
-//     recipeBookCategory() -> CRAFTING_MISC (never meaningfully displayed);
-//     showNotification() kept at the vanilla/Forge default true.
-// Match/aspect/instability logic VERBATIM.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchRecipe {
 
     public static final MapCodec<InfusionRecipeType> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -54,14 +54,14 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
     ).apply(inst, (group, research, instability, central, center, input, components, ingredients,
                    aspects, result) -> {
         Ingredient centralItem = central.or(() -> center).or(() -> input).orElse(null);
-        // NEOFORGE_PORT (26.3): Forge read "components" if present, otherwise "ingredients"
-        // (never both) - same precedence here instead of concatenating the two keys.
-        // Forge also filtered parsed ingredients with if (!ingredient.isEmpty()) before
-        // storing them: an empty tag entry in JSON is skipped, not kept as an
-        // always-failing component (RecipeMatcher would make the recipe unmatchable).
-        // 26.3: ingredient.isEmpty() CANNOT be called here - recipe JSONs are decoded
-        // during registry loading where item tags are not bound yet ("Trying to access
-        // unbound tag"); the filter moved to effectiveComponents() (first gameplay use).
+        
+        
+        
+        
+        
+        
+        
+        
         NonNullList<Ingredient> merged = NonNullList.create();
         merged.addAll(components.isPresent() ? components.get() : ingredients.orElse(List.of()));
         return new InfusionRecipeType(group, centralItem, merged, aspects, result, research, instability);
@@ -76,19 +76,19 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
     private final String group;
     private final Ingredient centralItem;
     private final NonNullList<Ingredient> components;
-    // NEOFORGE_PORT (26.3): decode-time isEmpty() filter removed (tags unbound during
-    // registry loading); this is the lazily-built filtered list, computed on first
-    // gameplay access when item tags are bound.
+    
+    
+    
     private NonNullList<Ingredient> boundComponents;
     private final AspectList aspects;
-    // NEOFORGE_PORT 26.3: result is a template (vanilla SingleItemRecipe/ShapedRecipe
-    // pattern). Null only for InfusionEnchantmentRecipe (no static output).
+    
+    
     private final ItemStackTemplate result;
     private final String research;
     private final int instability;
 
-    // NEOFORGE_PORT: id removed from the ctor chain (vanilla recipes are Holder-keyed now).
-    // Kept out of the serialized form; runtime-only uses (research display) pass ids separately.
+    
+    
     public InfusionRecipeType(String group, Ingredient centralItem,
                               NonNullList<Ingredient> components, AspectList aspects,
                               ItemStackTemplate result, String research, int instability) {
@@ -101,7 +101,7 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         this.instability = instability;
     }
 
-    // NEOFORGE_PORT: Forge-era legacy helper (id is holder-keyed in 26.x).
+    
     public java.util.List<Ingredient> getIngredients() {
         java.util.List<Ingredient> all = new java.util.ArrayList<>(1 + components.size());
         all.add(centralItem);
@@ -124,9 +124,9 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
             }
         }
 
-        // NEOFORGE_PORT (26.3): only an ABSENT central input (Forge Ingredient.EMPTY, here null)
-        // skips the check. A present ingredient that resolves to nothing (empty tag) must
-        // still be tested (and fail) - Forge never treated it as "no requirement".
+        
+        
+        
         if (centralItem != null && !centralItem.test(centralItemStack)) {
             return false;
         }
@@ -134,9 +134,9 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         return net.neoforged.neoforge.common.util.RecipeMatcher.findMatches(pedestalItems, effectiveComponents()) != null;
     }
 
-    // NEOFORGE_PORT (26.3): reproduce Forge's decode-time empty-ingredient filter lazily.
-    // Empty tag entries are skipped, not kept (they would make the recipe unmatchable).
-    // Safe to memoize: Ingredient instances are per decoded recipe (no shared mutation).
+    
+    
+    
     private NonNullList<Ingredient> effectiveComponents() {
         NonNullList<Ingredient> effective = this.boundComponents;
         if (effective == null) {
@@ -158,9 +158,9 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
 
     @Override
     public boolean showNotification() {
-        // NEOFORGE_PORT (26.3) FIX: Forge never overrode the vanilla default (true).
-        // The recipes are NOT_PLACEABLE and never recipe-booked, so the flag is moot -
-        // kept Forge-identical for behavior parity.
+        
+        
+        
         return true;
     }
 
@@ -172,9 +172,9 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         return result;
     }
 
-    // NEOFORGE_PORT: wildcard bound (parameterized types are invariant, so the
-    // concrete RecipeSerializer<InfusionRecipeType> would block covariant
-    // overrides in subclasses like InfusionEnchantmentRecipe).
+    
+    
+    
     @Override
     public RecipeSerializer<? extends Recipe<RecipeInput>> getSerializer() {
         return SERIALIZER;
@@ -190,7 +190,7 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         return group;
     }
 
-    // NEOFORGE_PORT: Recipe.group() abstract in 26.3.
+    
     @Override
     public String group() {
         return group;
@@ -206,7 +206,7 @@ public class InfusionRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
     }
 
     public NonNullList<Ingredient> getComponents() {
-        // Gameplay-time accessor (JEI/recipe display/matching): safe to filter here.
+        
         return effectiveComponents();
     }
 

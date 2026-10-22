@@ -157,7 +157,7 @@ public class SealEntity implements ISealEntity {
             if (seal instanceof ISealConfigToggles toggleSeal) {
                 for (ISealConfigToggles.SealToggle toggle : toggleSeal.getToggles()) {
                     if (nbt.contains(toggle.getKey())) {
-                        // NEOFORGE_PORT: getBoolean removed -> getBooleanOr.
+                        
                         toggle.setValue(nbt.getBooleanOr(toggle.getKey(), false));
                     }
                 }
@@ -171,7 +171,7 @@ public class SealEntity implements ISealEntity {
 
         nbt.putLong("pos", sealPos.pos.asLong());
         nbt.putByte("face", (byte) sealPos.face.ordinal());
-        // NEOFORGE_PORT (26.3): null-safe like Forge 1.20.1 (seal is null for removal syncs).
+        
         nbt.putString("type", seal != null ? seal.getKey() : "arcaneresearch:blank");
         nbt.putByte("priority", getPriority());
         nbt.putByte("color", getColor());
@@ -198,8 +198,8 @@ public class SealEntity implements ISealEntity {
 
     @Override
     public void syncToClient(Level level) {
-        // NEOFORGE_PORT: PacketHandler.sendToDimension(packet, dimension) ->
-        // PacketDistributor.sendToPlayersInDimension(ServerLevel, payload).
+        
+        
         if (!level.isClientSide() && level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             net.neoforged.neoforge.network.PacketDistributor.sendToPlayersInDimension(
                     serverLevel, new arcaneresearch.common.lib.network.misc.PacketSealToClient(this));

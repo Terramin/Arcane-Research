@@ -3,7 +3,7 @@ package arcaneresearch.compat.jei.aspect;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.subtypes.UidContext;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -51,14 +51,14 @@ public final class AspectIngredient {
         }
 
         @Override
-        // NEOFORGE_PORT: IIngredientHelper.getUniqueId -> getUid (JEI 26.3).
+        
         public Object getUid(AspectList ingredient, UidContext context) {
             Aspect aspect = first(ingredient);
             return aspect != null ? aspect.getTag() : "empty";
         }
 
-        // NEOFORGE_PORT: JEI 26.3 IIngredientHelper.getResourceLocation removed ->
-        // getIdentifier (same logic, Forge 1:1).
+        
+        
         @Override
         public Identifier getIdentifier(AspectList ingredient) {
             Aspect aspect = first(ingredient);

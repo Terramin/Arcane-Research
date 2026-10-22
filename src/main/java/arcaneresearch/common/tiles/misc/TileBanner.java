@@ -85,8 +85,8 @@ public class TileBanner extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
-        // NEOFORGE_PORT: saveAdditional(CompoundTag) -> ValueOutput; wrap via
-        // TagValueOutput (cf. TileArcaneresearch.getUpdateTag).
+        
+        
         net.minecraft.world.level.storage.TagValueOutput out =
                 net.minecraft.world.level.storage.TagValueOutput.createWithContext(
                         net.minecraft.util.ProblemReporter.DISCARDING, registries);
@@ -100,8 +100,8 @@ public class TileBanner extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x; the tile's
-    // renderer forwards to this from IBlockEntityRendererExtension.getRenderBoundingBox.
+    
+    
     public AABB getRenderBoundingBox() {
         return new AABB(
                 worldPosition.getX(), worldPosition.getY() - 1, worldPosition.getZ(),

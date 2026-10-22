@@ -6,11 +6,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Персистентность лабиринта, порт TC4 MazeHandler.loadMaze/saveMaze.
- * Без этого раскладка жила только в памяти до рестарта сервера.
- * Лежит в arcaneresearch.arcaneresearch.common.world.maze по просьбе портирования.
- */
+ 
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public final class MazePersistence {
     private MazePersistence() {
@@ -45,8 +45,8 @@ public final class MazePersistence {
             return;
         }
         MazeHandler.saveMaze(level);
-        // Чистим статичную карту: иначе новый мир в той же сессии строил бы
-        // лабиринт по чужому сиду (ensureMaze видит непустую карту и молчит).
+        
+        
         MazeHandler.clear();
     }
 }

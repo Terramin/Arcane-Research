@@ -108,10 +108,10 @@ public class AuraThread implements Runnable {
     }
 
     private void updateMoonPhaseModifiers(ServerLevel level) {
-        // NEOFORGE_PORT: ServerLevel.getMoonPhase gone in 26.x -> vanilla formula
-        // (dayTime / 24000 % 8).
-        // NEOFORGE_PORT (26.3): 1.20.1 derived the phase from the day time, not the game time;
-        // the 26.x day time is the overworld clock (it also drives the MOON_PHASE timeline).
+        
+        
+        
+        
         int moonPhase = (int) (level.getOverworldClockTime() / 24000L % 8L + 8L) % 8;
         phaseVis = PHASE_VIS_TABLE[moonPhase];
         phaseMax = 1.0f + PHASE_MAX_TABLE[moonPhase];

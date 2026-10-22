@@ -18,10 +18,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketNote.java (BIDIRECTIONAL).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:note".
+
+
+
+
 public class PacketNote implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketNote> TYPE =
@@ -88,8 +88,8 @@ public class PacketNote implements CustomPacketPayload {
     }
 
     public static void handle(PacketNote msg, IPayloadContext ctx) {
-        // NEOFORGE_PORT: Forge branched on context.getDirection().getReceptionSide().isClient();
-        // NeoForge equivalent is ctx.flow() (CLIENTBOUND on the client, SERVERBOUND on the server).
+        
+        
         if (ctx.flow() == PacketFlow.CLIENTBOUND) {
             ctx.enqueueWork(() -> handleOnClient(msg, ctx.player()));
         } else {
@@ -97,8 +97,8 @@ public class PacketNote implements CustomPacketPayload {
         }
     }
 
-    // Level comes from the packet context player (server-safe types only):
-    // no Minecraft/ClientLevel refs, so dedicated-server verification stays clean.
+    
+    
     private static void handleOnClient(PacketNote message, net.minecraft.world.entity.player.Player player) {
         if (message.note < 0 || player == null) {
             return;

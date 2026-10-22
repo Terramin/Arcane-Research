@@ -10,14 +10,14 @@ public class ItemChunksRabbit extends Item {
     public ItemChunksRabbit(Item.Properties props) {
 
         super(props
-                // NEOFORGE_PORT: FoodProperties.Builder saturationMod -> saturationModifier.
+                
                 .food(new FoodProperties.Builder()
                         .nutrition(1)
                         .saturationModifier(0.3f)
                         .build()));
     }
 
-    // NEOFORGE_PORT: getUseDuration now takes (ItemStack, LivingEntity).
+    
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity user) {
 

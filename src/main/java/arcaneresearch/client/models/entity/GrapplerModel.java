@@ -8,12 +8,12 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT (26.3): Model is generic; base EntityRenderState covers both
-// users (FocusMine/Grapple states extend it).
+
+
 public class GrapplerModel extends Model<net.minecraft.client.renderer.entity.state.EntityRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -25,7 +25,7 @@ public class GrapplerModel extends Model<net.minecraft.client.renderer.entity.st
     private final ModelPart prong3;
 
     public GrapplerModel(ModelPart root) {
-        // NEOFORGE_PORT: Model has no 1-arg ctor (only EntityModel does).
+        
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
         this.core = root.getChild("core");
         this.prong1 = root.getChild("prong1");
@@ -64,7 +64,7 @@ public class GrapplerModel extends Model<net.minecraft.client.renderer.entity.st
         return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {

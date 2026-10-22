@@ -28,11 +28,11 @@ import arcaneresearch.common.blocks.aura.AuraBlockEntities;
 
 import javax.annotation.Nullable;
 
-/**
- * Aura totem block, ported from TC5 BlockAuraTotem.
- * One block with five states: pull/push heads and three pole segments.
- * Pole counting lives in AuraTotemTile.checkPoles.
- */
+ 
+
+
+
+ 
 public class AuraTotemBlock extends BlockTCDevice {
     public static final EnumProperty<TotemType> TYPE = EnumProperty.create("type", TotemType.class);
     private static final VoxelShape POLE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
@@ -114,13 +114,13 @@ public class AuraTotemBlock extends BlockTCDevice {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
-        // 1:1 with TC5: holding the totem itself passes through so poles can
-        // be built by clicking totem-on-totem; poles delegate to the block above.
+        
+        
         if (!player.getItemInHand(hand).isEmpty()
                 && player.getItemInHand(hand).is(this.asItem())) {
             return InteractionResult.PASS;
@@ -132,7 +132,7 @@ public class AuraTotemBlock extends BlockTCDevice {
             }
             return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
         }
-        // Port addition: sneak-click cycles head/pole variants in survival.
+        
         if (player.isCrouching()) {
             if (!level.isClientSide()) {
                 TotemType[] variants = TotemType.values();

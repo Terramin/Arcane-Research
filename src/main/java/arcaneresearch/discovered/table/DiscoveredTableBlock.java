@@ -25,20 +25,20 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import arcaneresearch.api.items.IScribeTools;
 
-/**
- * Одиночный стол, порт reforged TableBlock (без wand-части:
- * превращение в верстак требует ArcaneWorktable из другого этапа).
- * Ось вдоль взгляда.
- *
- * Создание стола записок — паритет TC3 (research.xml: "The Research table
- * is created by placing two tables next to each other and then clicking
- * on them with Scribing tools"): ПКМ письменными принадлежностями по столу,
- * у которого есть соседний одиночный стол, превращает пару в двухблочный
- * note_table (кликнутый = MAIN, сосед = SIDE). Чернила тратятся (-1 прочность).
- *
- * NEOFORGE_PORT: isClientSide-поле -> isClientSide(); sidedSuccess удалён ->
- * SUCCESS/CONSUME; hurtAndBreak(int, LivingEntity, InteractionHand).
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class DiscoveredTableBlock extends Block {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
@@ -62,10 +62,10 @@ public class DiscoveredTableBlock extends Block {
         return defaultBlockState().setValue(AXIS, context.getHorizontalDirection().getAxis());
     }
 
-    /**
-     * Хитбокс 1:1 с JSON-моделью (верх + 2 ножки + перекладина);
-     * при AXIS=X та же y=90-конвенция, что у blockstate.
-     */
+     
+
+
+ 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         double[][] boxes = {
@@ -85,8 +85,8 @@ public class DiscoveredTableBlock extends Block {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
@@ -119,7 +119,7 @@ public class DiscoveredTableBlock extends Block {
         return InteractionResult.CONSUME;
     }
 
-    /** Соседний одиночный стол по горизонтали (первый найденный). */
+      
     private static Direction findNeighbourTable(Level level, BlockPos pos) {
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos neighbour = pos.relative(dir);

@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
 
-// NEOFORGE_PORT (26.3): EntityRenderer<T, EntityRenderState>; invisible by
-// design (Forge render() was an empty no-op).
+
+
 public class NoProjectileRenderer<T extends Entity> extends EntityRenderer<T, EntityRenderState> {
 
     public NoProjectileRenderer(EntityRendererProvider.Context context) {

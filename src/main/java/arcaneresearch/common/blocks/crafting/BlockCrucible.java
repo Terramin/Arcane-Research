@@ -29,8 +29,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.fluids.FluidStack; // NEOFORGE_PORT: package move (fluids -> NeoForge transfer era)
-import net.neoforged.neoforge.transfer.fluid.FluidUtil; // NEOFORGE_PORT: package move
+import net.neoforged.neoforge.fluids.FluidStack; 
+import net.neoforged.neoforge.transfer.fluid.FluidUtil; 
 import arcaneresearch.common.blocks.BlockTCDevice;
 import arcaneresearch.common.tiles.crafting.TileCrucible;
 import arcaneresearch.init.ModBlockEntities;
@@ -114,8 +114,8 @@ public class BlockCrucible extends BlockTCDevice {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
@@ -142,9 +142,9 @@ public class BlockCrucible extends BlockTCDevice {
         FluidStack heldFluid = FluidUtil.getFirstStackContained(heldItem);
         if (!heldFluid.isEmpty() && heldFluid.getFluid() == Fluids.WATER) {
             if (crucible.getTank().getFluidAmount() < crucible.getTank().getCapacity()) {
-                // NEOFORGE_PORT: transfer-era overload needs a caller-owned transaction
-                // (same BlockSpa pattern); a null TransactionContext would NPE.
-                // Forge interact -> markDirtyAndSync + sound logic kept 1:1.
+                
+                
+                
                 try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
                     if (FluidUtil.interactWithFluidHandler(player, hand, pos, crucible.getTank(), tx)) {
                         tx.commit();
@@ -180,13 +180,13 @@ public class BlockCrucible extends BlockTCDevice {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)).
-        // NEOFORGE_PORT (26.3): LevelChunk.setBlockState removes the tile BEFORE this hook, so the
-        // lookup below finds nothing; the spill runs in TileCrucible.preRemoveSideEffects.
-        // Spill kept BEFORE super to match Forge onRemove order (spill, then
-        // super.onRemove which updates neighbours/comparators).
+        
+        
+        
+        
+        
+        
+        
         if (!state.is(level.getBlockState(pos).getBlock())) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof TileCrucible crucible) {
@@ -202,8 +202,8 @@ public class BlockCrucible extends BlockTCDevice {
     }
 
     @Override
-    // NEOFORGE_PORT: 26.x getAnalogOutputSignal gained a Direction param (same
-    // pattern as BlockJar); visSize -> signal logic kept 1:1 with Forge.
+    
+    
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof TileCrucible crucible) {

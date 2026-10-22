@@ -2,20 +2,20 @@ package arcaneresearch.init;
 import arcaneresearch.common.menu.AuraTotemMenu;
 
 import net.minecraft.world.inventory.MenuType;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension; // NEOFORGE_PORT: same create(factory) shape
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension; 
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries; // NEOFORGE_PORT: was ForgeRegistries
-// NEOFORGE_PORT: RegistryObject<MenuType<X>> -> DeferredHolder<MenuType<?>, MenuType<X>> below.
+import net.minecraft.core.registries.Registries; 
+
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.menu.*;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModMenuTypes.java (PORTED 90%).
-// REQUIRED changes:
-//   DeferredRegister.create(ForgeRegistries.MENU_TYPES, ...) -> create(Registries.MENU, ...)
-//   RegistryObject -> DeferredHolder; IForgeMenuType.create -> IMenuTypeExtension.create
-//   (identical (windowId, inv, data) factory shape; data is RegistryFriendlyByteBuf now).
-// All 19 entries ported in ORIGINAL ORDER with IDENTICAL registry names.
+
+
+
+
+
+
 public class ModMenuTypes {
 
     public static final DeferredRegister<MenuType<?>> MENU_TYPES =

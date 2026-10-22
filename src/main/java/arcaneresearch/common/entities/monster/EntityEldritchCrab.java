@@ -101,11 +101,11 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
         this.entityData.set(DATA_RIDING, entityId);
     }
 
-    // NEOFORGE_PORT: Forge getMyRidingOffset() (isPassenger() ? 0.5 : 0.0) ->
-    // 26.x getVehicleAttachmentPoint (passenger-side hook: vehicle
-    // positionRider places the rider at ridingPos - attachment, so lowering
-    // the attachment by 0.5 lifts the crab by exactly 0.5, deterministic for
-    // arbitrary vehicles).
+    
+    
+    
+    
+    
     @Override
     public net.minecraft.world.phys.Vec3 getVehicleAttachmentPoint(net.minecraft.world.entity.Entity vehicle) {
         net.minecraft.world.phys.Vec3 base = super.getVehicleAttachmentPoint(vehicle);
@@ -214,8 +214,8 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int lootingLevel = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
 
@@ -249,9 +249,9 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
         playSound(SoundEvents.SPIDER_STEP, 0.15f, 1.0f);
     }
 
-    // NEOFORGE_PORT: Forge MobType.ARTHROPOD (Bane of Arthropods bonus) has no
-    // 26.x class; behavior carried by data/minecraft/tags/entity_type/arthropod.json
-    // (vanilla sensitive_to_bane_of_arthropods references #minecraft:arthropod).
+    
+    
+    
 
     @Override
     public boolean canBeAffected(MobEffectInstance effect) {
@@ -263,7 +263,7 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
     }
 
     @Override
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     protected boolean considersEntityAsAlly(Entity entity) {
 
         if (entity instanceof EntityEldritchCrab) {

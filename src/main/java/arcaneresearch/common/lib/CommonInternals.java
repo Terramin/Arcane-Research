@@ -1,6 +1,6 @@
 package arcaneresearch.common.lib;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import arcaneresearch.api.aspects.Aspect;

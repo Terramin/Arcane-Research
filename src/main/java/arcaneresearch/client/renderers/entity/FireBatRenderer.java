@@ -4,15 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.entity.FireBatModel;
 import arcaneresearch.common.entities.monster.EntityFireBat;
 
-// NEOFORGE_PORT (26.3): MobRenderer<T, S, M>; old scale()/setupRotations()
-// overrides map 1:1 onto the state-based hooks; hanging flag via State.
+
+
 public class FireBatRenderer extends MobRenderer<EntityFireBat, FireBatRenderer.State, FireBatModel> {
 
     public static class State extends LivingEntityRenderState {
@@ -50,7 +50,7 @@ public class FireBatRenderer extends MobRenderer<EntityFireBat, FireBatRenderer.
     @Override
     protected void setupRotations(State state, PoseStack poseStack, float ageInTicks, float rotationYaw) {
         super.setupRotations(state, poseStack, ageInTicks, rotationYaw);
-        // NEOFORGE_PORT (26.3): the 3rd hook arg is bodyRot now, not ageInTicks.
+        
         if (!state.hanging) {
             poseStack.translate(0.0F, Mth.cos(state.ageInTicks * 0.3F) * 0.1F, 0.0F);
         } else {

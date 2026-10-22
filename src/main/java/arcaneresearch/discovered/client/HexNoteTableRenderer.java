@@ -32,18 +32,18 @@ import arcaneresearch.discovered.table.HexNoteTableTile;
 import arcaneresearch.helper.IDsHelper;
 import arcaneresearch.init.ModItems;
 
-/**
- * Объёмное перо hex-стола (стол 2) — та же цепочка, что перо
- * {@code ResearchTableRenderer}: плоское перо из модели убрано, вместо него
- * крест-квады quill.png. Паритет условия: только при инструментах писца
- * в слоте (тайл есть только на MAIN-половине).
- *
- * NEOFORGE_PORT (26.3 render-state, паритет ResearchTableRenderer +
- * DeconstructTileRenderer): render(...) -&gt; createRenderState/
- * extractRenderState/submit; PoseStack.mulPose -&gt; rotate; модель/квады —
- * через submitCustomGeometry + bridge(); таумометр — ItemModelResolver +
- * ItemStackRenderState.submit (getItemRenderer().renderStatic удалён).
- */
+ 
+
+
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTile, HexNoteTableRenderer.State> {
 
@@ -115,14 +115,14 @@ public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTil
         poseStack.rotate(Axis.XP.rotationDegrees(180));
         applyRotation(poseStack, state.facing);
 
-        // Свиток research_table (трубка + лента) слева на столешнице
-        // (модель x 0..8, z 6..8 — чисто от чернильницы и таумометра):
-        // пока в столе лежит записка (паритет hasResearchData).
+        
+        
+        
         if (state.hasNote) {
             poseStack.pushPose();
             poseStack.translate(0.125, 0.0, -0.125);
             RenderType scrollType = TCRenderTypes.objSolid(SCROLL_TEXTURE);
-            // Цвет ленты — как у research_table (тинт алхимии).
+            
             int alchemy = Aspect.ALCHEMY.getColor();
             float r = ((alchemy >> 16) & 0xFF) / 255.0F;
             float g = ((alchemy >> 8) & 0xFF) / 255.0F;
@@ -135,16 +135,16 @@ public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTil
             poseStack.popPose();
         }
 
-        // Таумометр вместо пергамента: по центру SIDE-половины
-        // (мировая x=1.5, z=0.5 rel MAIN; в кадре (1.0, ~0, 0.0)),
-        // лежит на столешнице, slight поворот.
+        
+        
+        
         if (state.hasThaumometer) {
             poseStack.pushPose();
             poseStack.rotate(Axis.XP.rotationDegrees(180));
-            // Центр SIDE (мировая x=1.5, z=0.5 rel MAIN), база над
-            // столешницей с запасом от z-fighting (модель ±0.1 -> ±0.021).
-            // Центр SIDE (мировая x=1.5, z=0.5 rel MAIN). Видна только
-            // верхняя рамка — тело ещё в столе: ещё выше.
+            
+            
+            
+            
             poseStack.translate(1.0, 0.15, 0.0);
             poseStack.rotate(Axis.YP.rotationDegrees(-22.5F));
             poseStack.scale(0.6F, 0.6F, 0.6F);
@@ -156,17 +156,17 @@ public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTil
         poseStack.pushPose();
         poseStack.rotate(Axis.XP.rotationDegrees(180));
         if (state.hasTools) {
-            // Чернильница — до транслейта/скейла пера (иначе уполовинивается
-            // и тонет): тот же бокс (2..5, 16..18, 2..5) и UV, что был в JSON.
+            
+            
             RenderType inkwellType = TCRenderTypes.translucentPortal(INKWELL_TEXTURE);
             collector.submitCustomGeometry(poseStack, inkwellType, (pose, consumer) -> {
                 PoseStack work = bridge(pose);
                 drawInkwell(work, consumer, light);
             });
         }
-        // Перо стоит в чернильнице модели (2..5, 16..18, 2..5).
-        // Транслейт — между двумя RX(180), поэтому локальный z идёт
-        // в ту же сторону, что мировой (без зеркала): (-0.28, 0.05, -0.28).
+        
+        
+        
         poseStack.translate(-0.28, 0.05, -0.28);
         poseStack.rotate(Axis.YP.rotationDegrees(60));
         poseStack.translate(0.25f, 0.25f, 0.0f);
@@ -193,19 +193,19 @@ public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTil
         return work;
     }
 
-    /**
-     * Чернильница боксом с UV из модели (текстура 128x64).
-     * Кадр тот же, что у пера (двойной RX): центр (-0.28125, 0.0625,
-     * -0.28125), размер 3x2x3/16.
-     */
+     
+
+
+
+ 
     private static void drawInkwell(PoseStack pose, VertexConsumer vc, int light) {
         double cx = -0.28125, cy = 0.0625, cz = -0.28125;
         double x0 = cx - 0.09375, x1 = cx + 0.09375;
         double y0 = cy - 0.0625, y1 = cy + 0.0625;
         double z0 = cz - 0.09375, z1 = cz + 0.09375;
-        // Грани: верх получает v1 (v растёт вниз, как в FaceBakery);
-        // у верхней грани v1 — на min z. Порядок обхода — против часовой
-        // снаружи (иначе translucent-куллинг съест верх и низ).
+        
+        
+        
         face(vc, pose, light, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0,
                 0.375, 11.0, 0.75, 11.75, 0, 1, 0);
         face(vc, pose, light, x0, y0, z1, x0, y0, z0, x1, y0, z0, x1, y0, z1,
@@ -225,7 +225,7 @@ public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTil
             double x3, double y3, double z3, double x4, double y4, double z4,
             double u1, double v1, double u2, double v2,
             float nx, float ny, float nz) {
-        // UV модели блока — в юнитах 0..16 на всю текстуру (не в пикселях).
+        
         PoseStack.Pose p = pose.last();
         float uu1 = (float) (u1 / 16.0);
         float vv1 = (float) (v1 / 16.0);
@@ -249,11 +249,11 @@ public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTil
                 .setNormal(p, nx, ny, nz);
     }
 
-    /**
-     * Разворот за FACING пары. База модели — east; локальный +x должен
-     * смотреть по FACING (кадр: RX(180) затем YP): east 0, south 90,
-     * west 180, north 270 — те же числа, что {@code y} в blockstate.
-     */
+     
+
+
+
+ 
     private static void applyRotation(PoseStack poseStack, Direction facing) {
         switch (facing) {
             case SOUTH -> poseStack.rotate(Axis.YP.rotationDegrees(90));

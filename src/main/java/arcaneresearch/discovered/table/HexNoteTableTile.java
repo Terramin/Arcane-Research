@@ -30,35 +30,35 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
 
-/**
- * Тайл hex-стола (MAIN-половина): 2 слота (0 — инструменты писца,
- * 1 — записка), зеркало слотов {@code CognitionNoteTableTile} в миниатюре.
- * Инвентарь персистентен (в отличие от меню-прототипа на SimpleContainer).
- *
- * NEOFORGE_PORT: saveAdditional/load(CompoundTag) -&gt; saveAdditional(ValueOutput) /
- * loadAdditional(ValueInput) (items + bonus через те же label); синк на клиент —
- * getUpdateTag(registries) через TagValueOutput (как TileBanner) + getUpdatePacket
- * (onDataPacket/handleUpdateTag удалены); isClientSide-поля -&gt; isClientSide();
- * Level.isDay -&gt; Level.isBrightOutside (как CognitionNoteTableTile).
- */
+ 
+
+
+
+
+
+
+
+
+
+ 
 public class HexNoteTableTile extends BlockEntity implements Container, MenuProvider {
 
     public static final int INK_SLOT = 0;
     public static final int NOTE_SLOT = 1;
     public static final int SIZE = 2;
 
-    /** Пересчёт бонуса окружения каждые N тиков (паритет nextRecalc). */
+      
     private static final int BONUS_RECALC_TICKS = 600;
-    /** Кап бонусных очков на аспект. */
+      
     private static final int BONUS_CAP = 5;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
-    /**
-     * Бонусные очки окружения (паритет {@code TileResearchTable.bonusAspects}):
-     * тратятся после кошелька игрока, персистентны, пересчитываются
-     * периодически (см. {@link #recalculateBonus}).
-     */
+     
+
+
+
+ 
     private final AspectList bonusAspects = new AspectList();
     private int ticks;
 
@@ -66,7 +66,7 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         super(HexTableRegistry.TILE, pos, state);
     }
 
-    // ---- Container ----
+    
 
     @Override
     public int getContainerSize() {
@@ -113,9 +113,9 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
     @Override
     public void setChanged() {
         super.setChanged();
-        // BER читает клиентский тайл: без явного апдейта после перезахода
-        // он пустой (предметы есть только на сервере) и перо/свиток/
-        // таумометр не рисуются, пока что-то не дёрнет синк.
+        
+        
+        
         Level level = getLevel();
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
@@ -157,13 +157,13 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         }
     }
 
-    // ---- бонус окружения ----
+    
 
     public AspectList getBonus() {
         return bonusAspects;
     }
 
-    /** Списать бонусное очко (после кошелька). Возвращает снятое (0/1). */
+      
     public int takeBonus(Aspect aspect) {
         if (aspect == null || bonusAspects.getAmount(aspect) <= 0) {
             return 0;
@@ -183,11 +183,11 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         }
     }
 
-    /**
-     * Пересчёт бонуса (подмножество recalculateBonus стола 1:
-     * свет/небо/высота/погода/сущности + семпл блоков 21³ через
-     * {@code AspectHelper.getObjectAspects}, кап на аспект).
-     */
+     
+
+
+
+ 
     public void recalculateBonus() {
         Level level = getLevel();
         if (level == null || level.isClientSide()) {
@@ -197,7 +197,7 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         BlockPos pos = worldPosition;
         addCapped(Aspect.getAspect("tenebrae"),
                 level.getMaxLocalRawBrightness(pos) < 9 ? 2 : 0);
-        // NEOFORGE_PORT (26.3): Level.isDay() -> isBrightOutside() (same body).
+        
         addCapped(Aspect.getAspect("lux"),
                 level.isBrightOutside() && level.canSeeSky(pos.above()) ? 2 : 0);
         if (pos.getY() > 100) {
@@ -259,7 +259,7 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         }
     }
 
-    // ---- NBT ----
+    
 
     @Override
     protected void saveAdditional(ValueOutput tag) {
@@ -271,9 +271,9 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
     @Override
     protected void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
-        // NEOFORGE_PORT (26.3): reference clears first; loadAllItems only sets present
-        // slots, so a removed item would stay as a ghost on the client (update tag
-        // now reaches here via the default handleUpdateTag/onDataPacket).
+        
+        
+        
         items.clear();
         ContainerHelper.loadAllItems(tag, items);
         bonusAspects.aspects.clear();
@@ -283,13 +283,13 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         }
     }
 
-    // ---- синк на клиент (инвентарь + бонус для BER) ----
+    
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
-        // NEOFORGE_PORT: saveAdditional(CompoundTag) удалён -> ValueOutput;
-        // обёртка через TagValueOutput (как TileBanner.getUpdateTag).
+        
+        
         net.minecraft.world.level.storage.TagValueOutput out =
                 net.minecraft.world.level.storage.TagValueOutput.createWithContext(
                         net.minecraft.util.ProblemReporter.DISCARDING, registries);
@@ -303,7 +303,7 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    // ---- MenuProvider ----
+    
 
     @Override
     public Component getDisplayName() {

@@ -17,8 +17,8 @@ import arcaneresearch.client.renderers.TCRenderTypes;
 
 import java.util.function.Consumer;
 
-// NEOFORGE_PORT (26.3): HungryChestItemRenderer (BEWLR) -> SpecialModelRenderer.
-// Forge renderByItem() body 1:1 (closed chest parts).
+
+
 public class HungryChestSpecialRenderer implements SpecialModelRenderer<Void> {
 
     private static final Identifier TEXTURE =

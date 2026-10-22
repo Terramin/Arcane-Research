@@ -14,8 +14,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-// NEOFORGE_PORT: Forge capability plumbing (Capability/LazyOptional/InvWrapper) removed;
-//   item access is exposed centrally via RegisterCapabilitiesEvent (see ModBlockEntities).
+
+
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 
@@ -111,9 +111,9 @@ public class TileHungryChest extends TileArcaneresearch implements Container {
             }
         }
         if (absorbed) {
-            // Паритет TC4 (BlockChestHungry.onEntityCollidedWithBlock):
-            // щелчок крышкой при поглощении — клиент доводит lidAngle
-            // минимум до param/10 и гасит обратно за пару тиков.
+            
+            
+            
             level.blockEvent(worldPosition, getBlockState().getBlock(), 2, 2);
         }
     }
@@ -212,7 +212,7 @@ public class TileHungryChest extends TileArcaneresearch implements Container {
         setChanged();
     }
 
-    // NEOFORGE_PORT: 26.x Container.startOpen takes a ContainerUser (the player is one).
+    
     @Override
     public void startOpen(net.minecraft.world.entity.ContainerUser user) {
         if (!user.getLivingEntity().isSpectator()) {
@@ -224,7 +224,7 @@ public class TileHungryChest extends TileArcaneresearch implements Container {
         }
     }
 
-    // NEOFORGE_PORT: 26.x Container.stopOpen takes a ContainerUser (the player is one).
+    
     @Override
     public void stopOpen(net.minecraft.world.entity.ContainerUser user) {
         if (!user.getLivingEntity().isSpectator()) {
@@ -241,8 +241,8 @@ public class TileHungryChest extends TileArcaneresearch implements Container {
             numPlayersUsing = param;
             return true;
         }
-        // Паритет TC4 (TileChestHungry.receiveClientEvent id 2):
-        // щелчок крышкой при поглощении предмета.
+        
+        
         if (id == 2) {
             if (lidAngle < param / 10.0F) lidAngle = param / 10.0F;
             return true;

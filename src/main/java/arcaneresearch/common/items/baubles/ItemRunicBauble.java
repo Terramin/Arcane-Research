@@ -8,14 +8,14 @@ import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.common.items.baubles.ItemBauble.BaubleSlot;
 import top.theillusivec4.curios.api.SlotContext;
 
-// NEOFORGE_PORT: 1:1 from Forge common/items/baubles/ItemRunicBauble.java.
-// 26.x changes only: ctor takes Item.Properties (registration passes props,
-// same as ItemBauble); getOrCreateDescriptionId (removed) -> getName(stack).
-/**
- * Рунная бижутерия, порт TC4 {@code ItemAmuletRunic} / {@code ItemRingRunic} /
- * {@code ItemGirdleRunic}: фиксированный заряд щита + прок на разрядку.
- * Метадату 1.7.10 заменяют отдельные предметы.
- */
+
+
+
+ 
+
+
+
+ 
 public class ItemRunicBauble extends ItemBauble implements IRunicArmor {
 
     public enum Proc {

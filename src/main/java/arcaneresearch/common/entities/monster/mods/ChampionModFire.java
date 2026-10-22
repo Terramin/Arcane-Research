@@ -11,7 +11,7 @@ public class ChampionModFire implements IChampionModifierEffect {
     public float performEffect(LivingEntity champion, LivingEntity target, DamageSource source, float amount) {
 
         if (target != null && !target.fireImmune()) {
-            // NEOFORGE_PORT (26.3): setSecondsOnFire -> igniteForSeconds (never shortens a longer burn, applies BURNING_TIME).
+            
             target.igniteForSeconds(5);
         }
         return amount;

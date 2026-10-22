@@ -16,22 +16,22 @@ import arcaneresearch.api.items.IWarpingGear;
 public class ItemVoidPickaxe extends Item implements IWarpingGear {
 
     public ItemVoidPickaxe(Item.Properties props) {
-        // NEOFORGE_PORT: PickaxeItem REMOVED in 26.x -> plain Item with .pickaxe(material, damage, speed).
+        
         super(props
                 .pickaxe(ArcaneresearchMaterials.TOOLMAT_VOID, 1, -2.8F));
     }
 
-    // NEOFORGE_PORT: isValidRepairItem(ItemStack, ItemStack) REMOVED from Item in 26.x;
-    // repair is now data-driven via the ToolMaterial repairItems tag (repairs_void)
-    // -> REPAIRABLE component, so no override is needed (or possible).
+    
+    
+    
 
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
         if (stack.isDamaged() && entity != null && entity.tickCount % 20 == 0
-                // NEOFORGE_PORT (26.3): Forge only ticked the player inventory (mob gear never
-                // reached inventoryTick); 26.3 EntityEquipment.tick also ticks mob equipment.
+                
+                
                 && entity instanceof Player) {
             stack.setDamageValue(stack.getDamageValue() - 1);
         }
@@ -48,8 +48,8 @@ public class ItemVoidPickaxe extends Item implements IWarpingGear {
     }
 
     private boolean isPvPEnabled(Level level) {
-        // NEOFORGE_PORT: MinecraftServer.isPvpAllowed moved to ServerLevel.isPvpAllowed in 26.x.
-        // Non-server levels keep the old getServer() == null -> true default.
+        
+        
         if (!(level instanceof net.minecraft.server.level.ServerLevel pvpLevel)) {
             return true;
         }

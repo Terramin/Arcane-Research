@@ -8,7 +8,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
@@ -20,7 +20,7 @@ public class BellowsNozzleModel extends Model<net.minecraft.client.renderer.bloc
     private final ModelPart root;
 
     public BellowsNozzleModel(ModelPart root) {
-        // NEOFORGE_PORT: Model has no 1-arg ctor (only EntityModel does).
+        
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
         this.root = root;
     }
@@ -48,7 +48,7 @@ public class BellowsNozzleModel extends Model<net.minecraft.client.renderer.bloc
         return LayerDefinition.create(meshdefinition, 128, 64);
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {

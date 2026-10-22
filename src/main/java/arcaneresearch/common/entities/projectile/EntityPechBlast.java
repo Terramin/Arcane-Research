@@ -31,7 +31,7 @@ public class EntityPechBlast extends ThrowableItemProjectile {
     public EntityPechBlast(EntityType<? extends EntityPechBlast> type, Level level, LivingEntity owner, int strength, int duration, boolean nightshade) {
         super(type, level);
         setOwner(owner);
-        // NEOFORGE_PORT (26.3): Forge super(type, owner, level) also placed the projectile at the owner's eyes.
+        
         setPos(owner.getX(), owner.getEyeY() - 0.1F, owner.getZ());
         setItem(new ItemStack(getDefaultItem()));
         this.strength = strength;

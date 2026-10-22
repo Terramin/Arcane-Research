@@ -2,7 +2,7 @@ package arcaneresearch.compat.jei;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
 import net.minecraft.network.chat.Component;
 
 import java.util.List;

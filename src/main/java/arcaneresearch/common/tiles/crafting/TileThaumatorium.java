@@ -141,7 +141,7 @@ public class TileThaumatorium extends TileArcaneresearchInventory implements IAs
         int[] hashes = new int[recipeHash.size()];
         for (int a = 0; a < recipeHash.size(); a++) hashes[a] = recipeHash.get(a);
         tag.putIntArray("recipes", hashes);
-        // NEOFORGE_PORT: put(String, ListTag) removed -> store with Codec.STRING.listOf (same key/shape).
+        
         java.util.List<String> playerNames = new java.util.ArrayList<>(recipePlayer.size());
         for (String s : recipePlayer) playerNames.add(s == null ? "" : s);
         tag.store("OutputPlayer", com.mojang.serialization.Codec.STRING.listOf(), playerNames);
@@ -149,10 +149,10 @@ public class TileThaumatorium extends TileArcaneresearchInventory implements IAs
 
     @Override
     protected void readSyncNBT(ValueInput tag) {
-        // NEOFORGE_PORT: Forge body; getters -> Or-getters / Optional reads.
+        
         super.readSyncNBT(tag);
         essentia.readFromNBT(tag);
-        maxRecipes = tag.getByteOr("maxrec", (byte) 0); // NEOFORGE_PORT (26.3): reference getByte default 0
+        maxRecipes = tag.getByteOr("maxrec", (byte) 0); 
         if (maxRecipes < 1) maxRecipes = 1;
         recipeEssentia = new ArrayList<>();
         recipeHash = new ArrayList<>();
@@ -224,8 +224,8 @@ public class TileThaumatorium extends TileArcaneresearchInventory implements IAs
                 || level.getBestNeighborSignal(worldPosition.above()) > 0;
     }
 
-    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x; the tile's
-    // renderer forwards to this from IBlockEntityRendererExtension.getRenderBoundingBox.
+    
+    
     public AABB getRenderBoundingBox() {
 
         return new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),

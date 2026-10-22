@@ -16,8 +16,8 @@ public class ItemAlumentum extends Item {
         super(props.stacksTo(64));
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.sidedSuccess(stack, client) -> InteractionResult.SUCCESS.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -39,6 +39,6 @@ public class ItemAlumentum extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    // NEOFORGE_PORT: Forge getBurnTime override (4800 ticks) -> COOKING_FUEL component,
-    // see init/ModFuels + data/arcaneresearch/context_int_provider/cooking/time_alumentum.json.
+    
+    
 }

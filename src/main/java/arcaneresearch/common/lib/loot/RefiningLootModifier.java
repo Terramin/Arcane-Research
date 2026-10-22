@@ -23,9 +23,9 @@ import java.util.function.Supplier;
 
 public class RefiningLootModifier extends LootModifier {
 
-    // NEOFORGE_PORT: 26.x loot-modifier registry holds MapCodec (was Codec in Forge);
-    // LootModifier ctor is now (Optional<Holder<LootItemCondition>> condition, int priority).
-    // Behavior (refining transmute) unchanged.
+    
+    
+    
     public static final Supplier<MapCodec<RefiningLootModifier>> CODEC = Suppliers.memoize(() ->
             RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, RefiningLootModifier::new)));
 
@@ -39,7 +39,7 @@ public class RefiningLootModifier extends LootModifier {
         if (!context.hasParameter(LootContextParams.BLOCK_STATE)) {
             return generatedLoot;
         }
-        // NEOFORGE_PORT: TOOL is now ContextKey<ItemInstance> (implemented by ItemStack at runtime).
+        
         net.minecraft.world.item.ItemInstance toolInstance = context.getOptional(LootContextParams.TOOL);
         if (!(toolInstance instanceof ItemStack tool) || tool.isEmpty()) {
             return generatedLoot;

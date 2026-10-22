@@ -130,8 +130,8 @@ public class CropUtils {
         if (block instanceof BonemealableBlock bonemealable) {
 
             if (!(block instanceof StemBlock)) {
-                // NEOFORGE_PORT: isClient flag -> BonemealSource (maturity probe,
-                // no actual bonemeal applied; INTERACTION matches player use).
+                
+                
                 if (!bonemealable.isValidBonemealTarget(level, pos, state,
                         net.minecraft.world.level.block.BonemealSource.INTERACTION)) {
                     return true;

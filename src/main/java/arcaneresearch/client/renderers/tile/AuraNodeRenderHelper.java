@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,10 +28,10 @@ import arcaneresearch.common.lib.aura.INode;
 import arcaneresearch.common.lib.aura.NodeModifier;
 import arcaneresearch.common.lib.aura.NodeType;
 
-// NEOFORGE_PORT (26.3 render-state rework): node visuals return in the render
-// phase (Forge strip/floaty math preserved in Forge sources). This file keeps
-// the pure-logic surface (resolve/wandTip/Visibility) plus converted layer
-// types; emission goes through submitCustomGeometry (new vertex chain).
+
+
+
+
 public final class AuraNodeRenderHelper {
     private static final Identifier NODETEX =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/nodes.png");
@@ -46,10 +46,10 @@ public final class AuraNodeRenderHelper {
     }
 
     private static RenderType nodeLayer(boolean additive, boolean depthIgnore) {
-        // NEOFORGE_PORT: Forge createNodeLayer/createFloatyLayer 1:1 — explicit
-        // pipelines in TCRenderTypes (LIGHTNING/TRANSLUCENT blend, NO_CULL, no
-        // depth write, GREATER_THAN_OR_EQUAL = reversed-Z 1:1 of Forge LEQUAL;
-        // ALWAYS_PASS/no-write for xray).
+        
+        
+        
+        
         if (additive) {
             return depthIgnore
                     ? arcaneresearch.client.renderers.TCRenderTypes.nodeAddXray(NODETEX)
@@ -66,13 +66,13 @@ public final class AuraNodeRenderHelper {
         }
         if (player != null) {
             try {
-                // NEOFORGE_PORT: Inventory.armor list gone -> HEAD slot read.
+                
                 ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
                 if (!head.isEmpty() && head.getItem() instanceof IRevealer
                         && ((IRevealer) head.getItem()).showNodes(head, player)) {
                     return new Visibility(true, true, 64.0D);
                 }
-                // Очки в curio-слоте головы работают как в шлеме.
+                
                 for (ItemStack curio : arcaneresearch.common.lib.compat.CuriosCompat.findHeadSlotItems(player,
                         s -> !s.isEmpty() && s.getItem() instanceof IRevealer)) {
                     if (((IRevealer) curio.getItem()).showNodes(curio, player)) {
@@ -107,13 +107,13 @@ public final class AuraNodeRenderHelper {
                 partialTicks, null);
     }
 
-    /**
-     * NEOFORGE_PORT (26.3 pip): перегрузка с явным биллбордом для
-     * picture-in-picture. В мире квад биллбордится на мировую камеру
-     * (billboard == null — прежнее поведение), а в изометрическом PiP
-     * мировой камеры нет — вызывающий передаёт кварн, разворачивающий квад
-     * в плоскость вьюера (см. IsoStructurePip).
-     */
+     
+
+
+
+
+
+ 
     public static void renderNode(PoseStack poseStack, OrderedSubmitNodeCollector collector, AspectList aspects,
                                   NodeType type,
                                   NodeModifier mod, BlockPos pos, LivingEntity viewer,
@@ -239,8 +239,8 @@ public final class AuraNodeRenderHelper {
         float time = System.nanoTime() / 30000000L;
         int steps = (int) (length * distance);
 
-        // NEOFORGE_PORT: same strip math as Forge; verts collected per pass and
-        // replayed as the identical triangle list (same winding/values, one submit).
+        
+        
         java.util.List<float[]> strip = new java.util.ArrayList<>();
         float[] last = new float[3];
         for (int pass = 0; pass < 2; pass++) {
@@ -248,8 +248,8 @@ public final class AuraNodeRenderHelper {
             for (int i = 0; i <= steps; i++) {
                 float f2 = i / length;
 
-                // NEOFORGE_PORT (Forge 1:1): TC4-паритет: f3 = 1 - |i - length/2| / length / 2
-                // (порядок деления важен, итоговая яркость 0.75..1.0 — луч не гаснет на концах).
+                
+                
                 float envelope = 1.0F - Math.abs(i - length / 2.0F) / length / 2.0F;
                 float wobble = envelope * 0.5F;
                 float dx = dx0 + (float) Math.sin((to.z() % 16.0F
@@ -320,7 +320,7 @@ public final class AuraNodeRenderHelper {
         }
         boolean first = false;
         try {
-            // NEOFORGE_PORT: Minecraft.cameraEntity gone -> getCameraEntity (same viewer check).
+            
             first = Minecraft.getInstance().options.getCameraType().isFirstPerson()
                     && Minecraft.getInstance().getCameraEntity() == player;
         } catch (Exception ignored) {
@@ -349,11 +349,11 @@ public final class AuraNodeRenderHelper {
         return WandTipHelper.tipWorld(player, partialTicks);
     }
 
-    // NEOFORGE_PORT: Forge renderStrip math verbatim; emission via one
-    // submitCustomGeometry (same quad, same UV/color/light/normal values).
-    // NEOFORGE_PORT (26.3): billboard == null — биллборд на мировую камеру
-    // (старое поведение); не-null (PiP) — квад разворачивается этим кварном
-    // в плоскость вьюера picture-in-picture.
+    
+    
+    
+    
+    
     private static void submitStrip(PoseStack poseStack, OrderedSubmitNodeCollector collector,
                                     RenderType layer, Vector3f center,
                                     float angle, float scale, float alpha, int strip, int frame, int color,
@@ -410,11 +410,11 @@ public final class AuraNodeRenderHelper {
         });
     }
 
-    /**
-     * Replays a Forge triangle-strip vertex stream ({x,y,z,u,v,r,g,b,a} per
-     * vertex) as the identical triangle list: same triangles, same winding,
-     * same per-vertex values, fullbright, Y-up normals (as in stripVertex).
-     */
+     
+
+
+
+ 
     private static void emitStrip(PoseStack poseStack, OrderedSubmitNodeCollector collector,
                                   RenderType layer, java.util.List<float[]> strip) {
         if (strip.size() < 3) {
@@ -424,12 +424,12 @@ public final class AuraNodeRenderHelper {
         for (int i = 0; i < strip.size(); i++) {
             System.arraycopy(strip.get(i), 0, flat, i * 9, 9);
         }
-        // NEOFORGE_PORT: count snapshotted (the source list is reused per pass).
+        
         final int count = strip.size();
         collector.submitCustomGeometry(poseStack, layer, (pose, consumer) -> {
-            // NEOFORGE_PORT: 26.x pipelines are QUADS-topology: each strip
-            // triangle is emitted as a degenerate quad (4th vertex duplicates
-            // the 3rd), 1:1 visuals with Forge.
+            
+            
+            
             for (int i = 0; i + 2 < count; i++) {
                 int a = i;
                 int b = i + 1;

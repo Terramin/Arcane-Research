@@ -7,11 +7,11 @@ import arcaneresearch.common.blocks.basic.BlockStairsTC;
 
 import java.util.function.Supplier;
 
-/**
- * Элдритч-ступени, порт TC4 blockStairsEldritch.
- * Используются в GenPortal, дверных проёмах босс-арены и пьедесталах.
- * Лежат в arcaneresearch.arcaneresearch.common.blocks.aura.
- */
+ 
+
+
+
+ 
 public class EldritchStairsBlock extends BlockStairsTC {
     public EldritchStairsBlock(BlockBehaviour.Properties props, Supplier<BlockState> baseState) {
         super(baseState,

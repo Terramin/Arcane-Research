@@ -55,11 +55,11 @@ public class StabilizerTile extends TileArcaneresearch {
         return this.lock;
     }
 
-    /**
-     * Паритет TC4 TileNodeStabilizer.getRenderBoundingBox: пузырь рендерится
-     * на 1.5 выше — без расширенного бокса его вырезает frustum-culling.
-     */
-    // NEOFORGE_PORT: без @Override (BlockEntity.getRenderBoundingBox убран в 26.x).
+     
+
+
+ 
+    
     public net.minecraft.world.phys.AABB getRenderBoundingBox() {
         return new net.minecraft.world.phys.AABB(worldPosition.getX(), worldPosition.getY(),
                 worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 2,

@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.util.RecipeMatcher; // NEOFORGE_PORT: package move
+import net.neoforged.neoforge.common.util.RecipeMatcher; 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.IRechargable;
@@ -29,16 +29,16 @@ import arcaneresearch.init.ModRecipeSerializers;
 import java.util.List;
 import java.util.Random;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/crafting/InfusionEnchantmentRecipe.java.
-// 26.x changes only: super() follows the ported InfusionRecipeType ctor (no id, nullable
-// central input — enchantments have no central requirement); MAP_CODEC/STREAM_CODEC added
-// (same JSON keys as the old serializer: "enchantment", "components", "aspects").
-// Matching/enchanting/warp logic VERBATIM.
+
+
+
+
+
 public class InfusionEnchantmentRecipe extends InfusionRecipeType {
 
     public static final MapCodec<InfusionEnchantmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-            // NEOFORGE_PORT (26.3): unknown names fail as a DataResult (Forge's fromJson threw,
-            // and the recipe manager skipped that one recipe) instead of throwing from apply().
+            
+            
             Codec.STRING.validate(name -> {
                 try {
                     EnumInfusionEnchantment.valueOf(name.toUpperCase());
@@ -89,15 +89,15 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
         }
 
         if (!enchantment.toolClasses.contains("all")) {
-            // NEOFORGE_PORT: ToolAction system removed in 26.x; tool classes map to
-            // vanilla item tags (axe/pickaxe/shovel/sword/hoe). The old attack-damage
-            // "weapon" check reads the ATTRIBUTE_MODIFIERS component instead.
+            
+            
+            
             net.minecraft.world.item.ItemStack centralStack = central;
             boolean cool = false;
 
-            // NEOFORGE_PORT (26.3): Forge read getAttributeModifiers(MAINHAND) (defaults + event);
-            // NeoForge's ItemStack#getAttributeModifiers() is the same computation, filtered to
-            // entries that apply to the main hand.
+            
+            
+            
             net.minecraft.world.item.component.ItemAttributeModifiers itemMods =
                     centralStack.getAttributeModifiers();
             if (itemMods != null && enchantment.toolClasses.contains("weapon")) {
@@ -110,9 +110,9 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
                 }
             }
 
-            // NEOFORGE_PORT (26.3): Forge matched AxeItem/PickaxeItem/... subclasses (incl. this
-            // mod's thaumium/void/elemental tools). Vanilla tools are in the vanilla tags, the
-            // mod's tools in arcaneresearch:tools/* (same members as the Forge subclasses).
+            
+            
+            
             if (!cool) {
                 if (enchantment.toolClasses.contains("axe") && isToolClass(centralStack, net.minecraft.tags.ItemTags.AXES, "axes"))
                     cool = true;
@@ -125,14 +125,14 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
                 if (enchantment.toolClasses.contains("hoe") && isToolClass(centralStack, net.minecraft.tags.ItemTags.HOES, "hoes"))
                     cool = true;
             }
-            // FIX (Forge parity): 1.20.1 matched DiggerItem via canPerformAction's whole
-            // DEFAULT_DIGGER_ACTIONS set (axe+pickaxe+shovel+hoe at once), so the primal
-            // crusher (Forge DiggerItem) was eligible for every digger-class infusion
-            // enchantment. 26.x has no dig abilities (ItemAbilities dropped *_DIG) and no
-            // DiggerItem class at all (data-driven Tool items), and the port's crusher
-            // extends plain Item without a Tool component, so the tag checks above never
-            // matched it. Restore that eligibility explicitly: the crusher counts for all
-            // four digger classes, as the Forge DiggerItem did.
+            
+            
+            
+            
+            
+            
+            
+            
             if (!cool) {
                 boolean diggerClass = enchantment.toolClasses.contains("axe")
                         || enchantment.toolClasses.contains("pickaxe")
@@ -143,10 +143,10 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
                 }
             }
 
-            // NEOFORGE_PORT: ArmorItem.getType removed; armor slot comes from the EQUIPPABLE
-            // component (HEAD/CHEST/LEGS/FEET map to the old helm/chest/legs/boots classes).
-            // Only real armor counts (Forge: instanceof ArmorItem) - humanoid armor always
-            // carries an ARMOR modifier, elytra/pumpkins/heads (equippable, no ARMOR) do not.
+            
+            
+            
+            
             if (!cool) {
                 var equippable = central.get(net.minecraft.core.component.DataComponents.EQUIPPABLE);
                 String at = "none";

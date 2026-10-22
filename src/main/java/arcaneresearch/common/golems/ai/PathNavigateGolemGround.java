@@ -13,8 +13,8 @@ public class PathNavigateGolemGround extends GroundPathNavigation {
 
     public PathNavigateGolemGround(Mob mob, Level level) {
         super(mob, level);
-        // NEOFORGE_PORT: GroundPathNavigation.setCanPassDoors moved to NodeEvaluator
-        // in 26.x; GolemNodeProcessor ctor already defaults it true (same as Forge).
+        
+        
         setCanFloat(true);
     }
 
@@ -36,7 +36,7 @@ public class PathNavigateGolemGround extends GroundPathNavigation {
                 return liftCauldronNodes(super.createPath(ground.above(), accuracy));
             }
             BlockPos top = pos;
-            // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+            
             while (top.getY() <= level.getMaxY()
                     && level.getBlockState(top).isAir()) {
                 top = top.above();
@@ -66,8 +66,8 @@ public class PathNavigateGolemGround extends GroundPathNavigation {
 
     public void setEnterDoors(boolean enterDoors) {
         this.enterDoors = enterDoors;
-        // NEOFORGE_PORT: see ctor — door flag lives on the fresh per-path evaluators
-        // (default true); no per-navigation toggle exists anymore.
+        
+        
     }
 
     public void setAvoidSun(boolean avoidSun) {

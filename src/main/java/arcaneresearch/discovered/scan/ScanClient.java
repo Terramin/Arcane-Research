@@ -31,40 +31,40 @@ import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.init.ModSounds;
 
-/**
- * Клиент изучения таумометром. Порт {@code ItemThaumometer.onUsingTick} +
- * {@code PlayerNotifications} + {@code REHNotifyHandler.renderAspectHUD /
- * renderNotifyHUD} (TC 4.2.3.5).
- *
- * Удержание ПКМ с таумометром (~20 тиков на одной цели, тикающий звук
- * каждый 2-й тик) — затем {@link MsgStudyComplete} серверу. Награда —
- * иконки аспектов летят по квадратичному Безье вправо вверх
- * + строки «+N аспект» + звук подбора.
- *
- * NEOFORGE_PORT: TickEvent.ClientTickEvent(Phase.END) -&gt; ClientTickEvent.Post
- * (стреляет в конце тика); FORGE-bus -&gt; default bus; RenderGuiEvent.Post
- * удалён -&gt; GuiLayer (как WandClientEvents); GuiGraphics -&gt;
- * GuiGraphicsExtractor (pose pushMatrix/translate/scale 2D, text);
- * RenderSystem-бленд/шейдер-цвет удалены (пайплайны владеют состоянием,
- * альфа строк наград — ARGB-альфой цвета текста); level.random -&gt; getRandom();
- * Mth — даблы; mc.screen -&gt; mc.gui.screen().
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public final class ScanClient {
 
-    /** Тиков удержания до завершения (оригинал: 25-5). */
+      
     private static final int STUDY_TICKS = 20;
 
     private ScanClient() {
     }
 
-    // ---- изучение: трекер удержания ----
+    
 
     private static String studyingKey;
     private static ScanTargets.Target studyingTarget;
     private static int studyingTicks;
     private static boolean released = true;
-    /** Отправка уже была: новый заход только после отпускания ПКМ. */
+      
     private static boolean sentCooldown;
 
     private static boolean holdingThaumometer(Player player) {
@@ -77,9 +77,9 @@ public final class ScanClient {
         studyingTicks = 0;
     }
 
-    // ---- уведомления: летящие иконки + строки ----
+    
 
-    /** Порт {@code PlayerNotifications.AspectNotification}. */
+      
     private static final class Orb {
         Aspect aspect;
         float startX;
@@ -96,7 +96,7 @@ public final class ScanClient {
     private static final List<Orb> orbs = new ArrayList<>();
     private static final List<Line> lines = new ArrayList<>();
 
-    /** Награда с сервера: очередь иконок + строки + звук (паритет пакетов пула). */
+      
     public static void notifyReward(AspectList granted) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || granted == null) {
@@ -129,13 +129,13 @@ public final class ScanClient {
         }
         Player player = mc.player;
         if (player != null) {
-            // Паритет "random.orb".
+            
             player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
                     SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.5F, 1.0F, false);
         }
     }
 
-    // ---- события ----
+    
 
     @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
     public static class ClientEvents {
@@ -171,7 +171,7 @@ public final class ScanClient {
             }
             String key = target.steadyKey();
             if (!key.equals(studyingKey)) {
-                // Новая цель: фиолетовые руны (паритет doScan blockRunes).
+                
                 studyingKey = key;
                 studyingTarget = target;
                 studyingTicks = 0;
@@ -180,7 +180,7 @@ public final class ScanClient {
             }
             studyingTicks++;
             if (studyingTicks % 2 == 0) {
-                // Паритет cameraticks каждый 2-й тик (0.45 + rand * 0.1).
+                
                 try {
                     player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
                             ModSounds.TICKS.get(), SoundSource.PLAYERS, 0.2F,
@@ -204,7 +204,7 @@ public final class ScanClient {
                                 0.3F + mc.level.getRandom().nextFloat() * 0.7F, 15, 0.03F);
                     }
                 } else if (target.kind == ScanTargets.Kind.NODE && target.pos != null) {
-                    // Узел: те же руны со сдвигом +0.25 (паритет ветки INode).
+                    
                     for (int a = 0; a < 10; a++) {
                         FXDispatcher.INSTANCE.blockRunes(target.pos.getX(), target.pos.getY() + 0.25D,
                                 target.pos.getZ(), 0.3F + mc.level.getRandom().nextFloat() * 0.7F, 0.0F,
@@ -226,8 +226,8 @@ public final class ScanClient {
 
         @SubscribeEvent
         public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-            // Мгновенная сборка hex-пары кликом таумометра (как стол 1
-            // чернилами). Только клиентская отправка; сервер всё проверяет.
+            
+            
             try {
                 if (event.getLevel().isClientSide()) {
                     Player player = event.getEntity();
@@ -265,13 +265,13 @@ public final class ScanClient {
                     Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "scan_notifications"), SCAN_LAYER);
         }
 
-        /**
-         * Порт {@code renderAspectHUD}: квадратичное Безье
-         * start -&gt; control -&gt; end(ширина, -8), альфа 0-0.3 появление,
-         * 0.66-1 исчезновение, масштаб 0.075*alpha от 256 (у нас иконка 16:
-         * 1.2*alpha), тинт цветом аспекта alpha*0.66, маркер финиша —
-         * главный alpha.
-         */
+         
+
+
+
+
+
+ 
         private static void drawOrbs(GuiGraphicsExtractor graphics, int sw, int sh, long now) {
             for (Orb orb : orbs) {
                 if (orb.created > now) {
@@ -310,7 +310,7 @@ public final class ScanClient {
             }
         }
 
-        /** Порт {@code renderNotifyHUD}: строки справа (затухание последние 500 мс). */
+          
         private static void drawLines(GuiGraphicsExtractor graphics, Minecraft mc,
                 int sw, int sh, long now) {
             int i = 0;
@@ -325,8 +325,8 @@ public final class ScanClient {
                 if (left < 500L) {
                     alpha = Math.max(0.0F, left / 500.0F);
                 }
-                // NEOFORGE_PORT (26.3): setShaderColor alpha -> ARGB alpha of the
-                // text color (a 0x00RRGGBB color is skipped entirely by text()).
+                
+                
                 graphics.text(mc.font, line.text, x, y, ARGB.white(alpha), true);
                 i++;
             }

@@ -26,7 +26,7 @@ public class ItemFocusPouch extends Item implements ICurioItem {
     public static final int SLOTS = 18;
 
     public ItemFocusPouch(Properties props) {
-        // NEOFORGE_PORT: getRarity(stack) override removed in 26.x -> rarity in Properties.
+        
         super(props.stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
@@ -35,8 +35,8 @@ public class ItemFocusPouch extends Item implements ICurioItem {
         return true;
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // NetworkHooks.openScreen REMOVED -> ServerPlayer.openMenu(provider, extraDataWriter).
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -87,8 +87,8 @@ public class ItemFocusPouch extends Item implements ICurioItem {
 
     public NonNullList<ItemStack> getInventory(ItemStack stack) {
         NonNullList<ItemStack> list = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same "Inventory" list + "Slot" entries shape);
-        // nested stacks decoded via ItemStack.CODEC (save/of(CompoundTag) removed in 26.x).
+        
+        
         CompoundTag root = ArcaneresearchInvHelper.getCustomTag(stack);
         if (root == null) {
             return list;
@@ -126,10 +126,10 @@ public class ItemFocusPouch extends Item implements ICurioItem {
         ArcaneresearchInvHelper.setCustomTag(stack, root);
     }
 
-    // NEOFORGE_PORT: getShareTag REMOVED in 26.x; component sync (CUSTOM_DATA included)
-    // is automatic, so no override is needed.
+    
+    
 
-    // NEOFORGE_PORT: appendHoverText 5-arg (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

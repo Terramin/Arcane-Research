@@ -19,10 +19,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/playerdata/PacketSyncProgressToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:sync_progress_to_server".
+
+
+
+
 public class PacketSyncProgressToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketSyncProgressToServer> TYPE =
@@ -40,7 +40,7 @@ public class PacketSyncProgressToServer implements CustomPacketPayload {
         @Override
         public PacketSyncProgressToServer decode(ByteBuf buf) {
             PacketSyncProgressToServer msg = new PacketSyncProgressToServer();
-            // NEOFORGE_PORT (26.3): Forge decode used readUtf(256) (server-side length cap).
+            
             msg.key = ByteBufCodecs.stringUtf8(256).decode(buf);
             msg.first = buf.readBoolean();
             msg.checks = buf.readBoolean();
@@ -94,8 +94,8 @@ public class PacketSyncProgressToServer implements CustomPacketPayload {
         });
     }
 
-    // NEOFORGE_PORT: package-visible in Forge; public for DiscoveredNotes.tryCompleteFromNote.
-    // getKnowledge returns @Nullable IPlayerKnowledge directly in 26.x (no Optional).
+    
+    
     public static boolean checkRequisites(ServerPlayer player, String key) {
         ResearchEntry research = ResearchCategories.getResearch(key);
         if (research == null || research.getStages() == null) {
@@ -181,8 +181,8 @@ public class PacketSyncProgressToServer implements CustomPacketPayload {
             }
         }
 
-        // NEOFORGE_PORT: required_discovery stages (discovered/* package): the player must
-        // have presented each discovery (PKM), consumed on success — Forge 1:1.
+        
+        
         String[] discoveryReqs = stage.getDiscovery();
         if (discoveryReqs != null) {
             for (String req : discoveryReqs) {
@@ -215,7 +215,7 @@ public class PacketSyncProgressToServer implements CustomPacketPayload {
             return null;
         }
         try {
-            // NEOFORGE_PORT: Registry.getTag removed -> getTagOrEmpty (same holders).
+            
             java.util.Iterator<net.minecraft.core.Holder<Item>> it = player.level().registryAccess()
                     .lookupOrThrow(Registries.ITEM).getTagOrEmpty(tag).iterator();
             if (it.hasNext()) {

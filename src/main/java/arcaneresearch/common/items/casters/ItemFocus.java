@@ -28,7 +28,7 @@ public class ItemFocus extends Item {
     }
 
     public static void setPackage(ItemStack focusStack, FocusPackage core) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same "package" compound shape).
+        
         CompoundTag tag = core.serialize();
         CompoundTag root = arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(focusStack);
         root.put("package", tag);
@@ -120,14 +120,14 @@ public class ItemFocus extends Item {
         return focusStack.getHoverName().getString() + sh;
     }
 
-    // NEOFORGE_PORT: Forge appendHoverText(ItemStack, Level, List, Flag) 1:1 logic kept
-    // below (plain method); 26.x vanilla calls the 5-arg variant, which delegates to it.
+    
+    
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         addFocusInformation(stack, level, tooltip, flag);
     }
 
-    // NEOFORGE_PORT: 26.x tooltip signature (TooltipContext/TooltipDisplay/Consumer).
-    // Same content as Forge (vis cost + node tree via addFocusInformation).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display,
                                 java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {

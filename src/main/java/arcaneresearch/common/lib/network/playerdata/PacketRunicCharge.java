@@ -9,11 +9,11 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge .../playerdata/PacketRunicCharge.java (PLAY_TO_CLIENT).
-// Fields/ctors preserved verbatim (playerId, charge, max); transport ->
-// CustomPacketPayload with manual StreamCodec (wire order identical to old
-// encode/decode: 3 ints). Handler applies the sync to RunicShieldHud.
-// Payload id "arcaneresearch:runic_charge".
+
+
+
+
+
 public class PacketRunicCharge implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketRunicCharge> TYPE =

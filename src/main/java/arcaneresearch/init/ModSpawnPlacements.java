@@ -22,12 +22,12 @@ import arcaneresearch.common.entities.monster.EntityWisp;
 
 import java.util.function.BooleanSupplier;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModSpawnPlacements.java (same order, same placements).
-// REQUIRED changes only:
-//   SpawnPlacementRegisterEvent (forge) -> RegisterSpawnPlacementsEvent (neo, MOD bus)
-//   SpawnPlacements.Type.ON_GROUND/NO_RESTRICTIONS -> SpawnPlacementTypes.ON_GROUND/NO_RESTRICTIONS
-//   MobSpawnType -> EntitySpawnReason (MobSpawnType.NATURAL -> EntitySpawnReason.NATURAL)
-// Entity types, heightmaps, config toggles and inner predicates preserved verbatim.
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class ModSpawnPlacements {
 

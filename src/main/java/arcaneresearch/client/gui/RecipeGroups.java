@@ -1,7 +1,7 @@
 package arcaneresearch.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.api.distmarker.Dist;
@@ -46,7 +46,7 @@ public class RecipeGroups {
         if (mc.level == null) {
             return;
         }
-        // NEOFORGE_PORT: ClientLevel.getRecipeManager gone in 26.3 -> ClientRecipeCache (RecipesReceivedEvent).
+        
         Collection<RecipeHolder<?>> holders = ClientRecipeCache.values();
         int count = holders.size();
         if (count == lastRecipeCount && !groups.isEmpty()) {

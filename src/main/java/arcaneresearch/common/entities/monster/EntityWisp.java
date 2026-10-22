@@ -37,8 +37,8 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
-// NEOFORGE_PORT: FlyingMob removed in 26.x (flying mobs extend Mob directly now,
-// e.g. Ghast); movement is fully custom here (see constructor move control).
+
+
 public class EntityWisp extends Mob implements Enemy {
 
     private static final EntityDataAccessor<String> DATA_TYPE =
@@ -112,17 +112,17 @@ public class EntityWisp extends Mob implements Enemy {
         return aspect != null ? aspect.getColor() : 0xFFFFFF;
     }
 
-    // NEOFORGE_PORT: Forge shouldDespawnInPeaceful() returned true -> WISP type is
-    // registered with notInPeaceful() (26.x peaceful despawn flag).
+    
+    
 
     @Override
     public int getMaxAirSupply() {
         return Integer.MAX_VALUE;
     }
 
-    // NEOFORGE_PORT (26.3): FlyingMob (Forge superclass) was removed; its behaviour is inlined
-    // 1:1 -- no fall damage, never climbing, and the FlyingMob travel (no gravity, ground-friction
-    // acceleration, 0.91 air drag). Vanilla Ghast's travelFlying differs on the ground.
+    
+    
+    
     @Override
     public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return false;
@@ -359,13 +359,13 @@ public class EntityWisp extends Mob implements Enemy {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int lootingLevel = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
 
-        // 1.7.10 парити (EntityWisp.func_70628_a): мудр всегда дропает одну висп-эссенцию
-        // (2 эссенции) своего аспекта — вместо кристалла из тех-линии forge 1.12.
+        
+        
         Aspect aspect = getAspect();
         if (aspect != null) {
             spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), ItemWispEssence.createStack(ModItems.WISP_ESSENCE.get(), aspect, 1));

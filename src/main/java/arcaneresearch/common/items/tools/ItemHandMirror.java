@@ -40,7 +40,7 @@ public class ItemHandMirror extends Item {
     }
 
     public static boolean transport(ItemStack mirror, ItemStack items, Player player, Level level) {
-        // NEOFORGE_PORT: mirror root tag -> CUSTOM_DATA via ArcaneresearchInvHelper (COPY semantics).
+        
         if (!ArcaneresearchInvHelper.hasCustomTag(mirror)) {
             return false;
         }
@@ -74,7 +74,7 @@ public class ItemHandMirror extends Item {
 
         if (te == null || !(te instanceof TileMirror tileMirror)) {
 
-            // NEOFORGE_PORT: ItemStack.setTag(null) REMOVED -> remove the CUSTOM_DATA component.
+            
             mirror.remove(DataComponents.CUSTOM_DATA);
             player.playSound(ModSounds.ZAP.get(), 1.0f, 0.8f);
             player.sendSystemMessage(Component.translatable("tc.handmirrorerror"));
@@ -101,14 +101,14 @@ public class ItemHandMirror extends Item {
         }
 
         if (level.isClientSide()) {
-            // NEOFORGE_PORT: 1-arg LivingEntity.swing REMOVED -> swing(hand, animation, serverAware).
+            
             player.swing(context.getHand(), SwingAnimation.DEFAULT, false);
             return InteractionResult.SUCCESS;
         }
 
         BlockEntity te = level.getBlockEntity(pos);
         if (te instanceof TileMirror) {
-            // NEOFORGE_PORT: getOrCreateTag() REMOVED -> get copy, mutate, write back.
+            
             CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
             tag.putInt("linkX", pos.getX());
             tag.putInt("linkY", pos.getY());
@@ -155,7 +155,7 @@ public class ItemHandMirror extends Item {
 
                 if (te == null || !targetLevel.getBlockState(targetPos).is(ModBlocks.MIRROR_ITEM.get())) {
 
-                    // NEOFORGE_PORT: ItemStack.setTag(null) REMOVED -> remove the CUSTOM_DATA component.
+                    
                     stack.remove(DataComponents.CUSTOM_DATA);
                     player.playSound(ModSounds.ZAP.get(), 1.0f, 0.8f);
                     player.sendSystemMessage(Component.translatable("tc.handmirrorerror"));
@@ -164,9 +164,9 @@ public class ItemHandMirror extends Item {
 
                 if (player instanceof ServerPlayer serverPlayer) {
                     final InteractionHand usedHand = hand;
-                    // NEOFORGE_PORT: NetworkHooks.openScreen REMOVED ->
-                    // ServerPlayer.openMenu(provider, extraDataWriter); the already-ported
-                    // HandMirrorMenu reads the hand back via readEnum(InteractionHand.class).
+                    
+                    
+                    
                     serverPlayer.openMenu(new MenuProvider() {
                         @Override
                         public Component getDisplayName() {
@@ -194,8 +194,8 @@ public class ItemHandMirror extends Item {
         return ArcaneresearchInvHelper.hasCustomTag(stack);
     }
 
-    // NEOFORGE_PORT: getShareTag REMOVED in 26.x; component sync (CUSTOM_DATA included)
-    // is automatic, so no override is needed.
+    
+    
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,

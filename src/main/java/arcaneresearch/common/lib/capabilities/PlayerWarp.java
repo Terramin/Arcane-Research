@@ -10,10 +10,10 @@ import arcaneresearch.api.capabilities.IPlayerWarp;
 
 import javax.annotation.Nonnull;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/lib/capabilities/PlayerWarp.java.
-// DefaultImpl logic preserved VERBATIM (clamp 0..500, legacy int[] "warp" migration, NBT keys).
-// REQUIRED changes: removed inner Provider class (Forge ICapabilitySerializable + LazyOptional);
-//   storage now via AttachmentType in ArcaneresearchCapabilities (common).
+
+
+
+
 public class PlayerWarp {
 
     public static final Identifier ID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "warp");
@@ -131,8 +131,8 @@ public class PlayerWarp {
             counter = tag.getIntOr("counter", 0);
         }
 
-        // NEOFORGE_PORT: ValueIOSerializable persistence (see PlayerKnowledge.DefaultImpl javadoc).
-        // Keys identical to NBT ("perm"/"norm"/"temp"/"counter"), incl. legacy int[] "warp" path.
+        
+        
         @Override
         public void serialize(ValueOutput output) {
             output.putInt("perm", permanentWarp);

@@ -16,10 +16,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXInfusionSource.java (PLAY_TO_CLIENT).
-// Fields/ctors/handleClient logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:fx_infusion_source".
+
+
+
+
 public class PacketFXInfusionSource implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXInfusionSource> TYPE =

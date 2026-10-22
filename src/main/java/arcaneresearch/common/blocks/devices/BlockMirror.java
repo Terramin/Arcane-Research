@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -117,8 +117,8 @@ public class BlockMirror extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -159,7 +159,7 @@ public class BlockMirror extends Block implements EntityBlock {
         ItemStack drop = new ItemStack(this);
         if (be instanceof TileMirror mirror && mirror.linked) {
 
-            // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same keys).
+            
             net.minecraft.nbt.CompoundTag linkTag =
                     arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(drop);
             linkTag.putInt("linkX", mirror.linkX);

@@ -14,11 +14,11 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import arcaneresearch.common.entities.monster.cult.EntityCultistPortalLesser;
 import arcaneresearch.init.ModEntities;
 
-// NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-// NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-// WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-// features are placed from code with fixed params (never deserialized from datapacks),
-// registry-id dispatch resolves the registered instance on load.
+
+
+
+
+
 public class CultistPortalFeature implements Feature {
 
     public static final MapCodec<CultistPortalFeature> CODEC =
@@ -47,8 +47,8 @@ public class CultistPortalFeature implements Feature {
             }
             EntityCultistPortalLesser portal = new EntityCultistPortalLesser(
                     ModEntities.CULTIST_PORTAL_LESSER.get(), level.getLevel());
-            // NEOFORGE_PORT (26.3): Entity.moveTo(x, y, z, yRot, xRot) -> snapTo (same semantics:
-            // position + rotation + old pos/rot); teleportTo + setYRot left yRotO at 0.
+            
+            
             portal.snapTo(at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5,
                     random.nextFloat() * 360.0f, 0.0f);
             DifficultyInstance difficulty = level.getCurrentDifficultyAt(at);

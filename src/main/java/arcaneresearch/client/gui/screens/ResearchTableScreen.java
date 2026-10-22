@@ -1,10 +1,10 @@
 package arcaneresearch.client.gui.screens;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -60,7 +60,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
     private ResearchTableData.CardChoice lastDraw = null;
 
     public ResearchTableScreen(ResearchTableMenu menu, Inventory playerInventory, Component title) {
-        // NEOFORGE_PORT: imageWidth/imageHeight final in 26.x -> super ctor with size.
+        
         super(menu, playerInventory, title, 255, 255);
         this.inventoryLabelY = this.imageHeight - 94;
         this.table = menu.getBlockEntity();
@@ -82,17 +82,17 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
     }
 
     private static void drawTexturedQuadFull(GuiGraphicsExtractor graphics, Identifier texture, float x, float y) {
-        // NEOFORGE_PORT: immediate POSITION_TEX quad -> pipeline blit (16x16 full-image tile).
-        // Sample the whole file: paper is 256x256, question/aspect icons bigger
-        // than 16x16 (16-texel sampling showed only the top-left corner).
+        
+        
+        
         int[] dims = arcaneresearch.client.lib.AspectRenderer.textureDims(texture);
         int sw = dims != null ? dims[0] : 16;
         int sh = dims != null ? dims[1] : 16;
         graphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, (int) x, (int) y, 0, 0, 16, 16, sw, sh, sw, sh, 0xFFFFFFFF);
     }
 
-    // NEOFORGE_PORT: Forge setShaderColor tint before the same full-tile draw
-    // -> trailing ARGB color on the pipeline blit.
+    
+    
     private static void drawTexturedQuadFull(GuiGraphicsExtractor graphics, Identifier texture, float x, float y, int color) {
         int[] dims = arcaneresearch.client.lib.AspectRenderer.textureDims(texture);
         int sw = dims != null ? dims[0] : 16;
@@ -168,13 +168,13 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                 table.data != null && !table.data.isComplete());
     }
 
-        // NEOFORGE_PORT: Screen.extractBackground is public in 26.x.
+        
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
 
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int xx = this.leftPos;
         int yy = this.topPos;
 
@@ -188,7 +188,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
             renderActiveGameState(graphics, mouseX, mouseY, partialTick);
         }
 
-        // NEOFORGE_PORT: per-frame customs from old render() (update + overlay draw).
+        
         updateButtonStates();
         renderOverlay(graphics, mouseX, mouseY, partialTick);
     }
@@ -203,7 +203,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
             nextAidCheck = player.tickCount + 100;
         }
 
-        var pose = graphics.pose(); // NEOFORGE_PORT: 2D pose stack
+        var pose = graphics.pose(); 
         pose.pushMatrix();
         pose.translate(xx + 128 - dummyInspirationStart * 5, yy + 55);
         pose.scale(0.5f, 0.5f);
@@ -253,7 +253,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
 
         checkCards();
 
-        var pose = graphics.pose(); // NEOFORGE_PORT: 2D pose stack
+        var pose = graphics.pose(); 
         pose.pushMatrix();
         pose.translate(xx + 15, yy + 150);
         for (int a = 0; a < data.bonusDraws; a++) {
@@ -294,7 +294,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                     pose.translate(xx + 65, yy + 100);
             float scale = highlight ? 1.75f : 1.5f;
             pose.scale(scale, scale);
-            // NEOFORGE_PORT: Forge alpha (highlight ? 1 : 0.5) on the "?" -> ARGB.
+            
             drawTexturedQuadFull(graphics, TX_QUESTION, -8, -8, highlight ? 0xFFFFFFFF : 0x80FFFFFF);
                 pose.popMatrix();
         }
@@ -319,7 +319,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
     private void drawSheet(GuiGraphicsExtractor graphics, float x, float y, float scale, Random r,
                            float alpha, float tilt, ResearchTableData.CardChoice cardChoice,
                            float partialTick) {
-        var pose = graphics.pose(); // NEOFORGE_PORT: 2D pose stack
+        var pose = graphics.pose(); 
         pose.pushMatrix();
 
 
@@ -327,8 +327,8 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         pose.scale(scale, scale);
 
         float rotation = (float) (r.nextGaussian() * tilt);
-        // NEOFORGE_PORT: 2D pose (mulPose/Quaternionf gone) -> rotate(radians);
-        // YP-flip (mirror) -> scale(-1, 1).
+        
+        
         pose.rotate((float) Math.toRadians(rotation));
 
         pose.pushMatrix();
@@ -355,7 +355,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
 
     private void drawCardContent(GuiGraphicsExtractor graphics, ResearchTableData.CardChoice cardChoice,
                                  float partialTick) {
-        var pose = graphics.pose(); // NEOFORGE_PORT: 2D pose stack
+        var pose = graphics.pose(); 
         TheorycraftCard card = cardChoice.card;
 
         if (card.getResearchCategory() != null) {
@@ -363,7 +363,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
             if (rc != null && rc.icon != null) {
                         pose.pushMatrix();
                 pose.scale(0.5f, 0.5f);
-                // NEOFORGE_PORT: Forge 1/6-alpha category watermark -> ARGB.
+                
                 drawTexturedQuadFull(graphics, rc.icon, -8, -8, 0x2AFFFFFF);
                 pose.popMatrix();
             }
@@ -401,7 +401,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                 if (items[a] == null || items[a].isEmpty()) {
 
                                 pose.translate(-9 * items.length + 18 * a, 35);
-                    // NEOFORGE_PORT: Forge 0.75-gray unknown-item "?" -> ARGB.
+                    
                     drawTexturedQuadFull(graphics, TX_QUESTION, 0, 0, 0xFFBFBFBF);
                 } else {
 
@@ -413,7 +413,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                             float bob = (float) Math.sin((player.tickCount + a * 2 + partialTick) / 2.0f) * 0.03f;
                             pose.translate(-2 - 9 * items.length + 18 * a, 45.0f + bob * 10.0f);
                             pose.scale(0.5f, 0.5f + bob);
-                            // NEOFORGE_PORT: GL depth-state toggles gone (pipelines own state).
+                            
                             graphics.blit(RenderPipelines.GUI_TEXTURED, TX_BASE, 0, 0, 64, 120, 16, 16, 256, 256);
                             pose.popMatrix();
                         }
@@ -491,7 +491,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
             String cat = entry.getKey();
             int total = entry.getValue();
 
-            var pose = graphics.pose(); // NEOFORGE_PORT: 2D pose stack
+            var pose = graphics.pose(); 
             pose.pushMatrix();
 
                 pose.translate(xx + 253, yy + 16 + i * 18 + (i > 0 ? 4 : 0));
@@ -530,8 +530,8 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
             int var9 = mouseX - (xx + 256);
             int var10 = mouseY - (yy + 16 + i * 18 + (i > data.penaltyStart ? 4 : 0));
             if (var9 >= 0 && var10 >= 0 && var9 < 16 && var10 < 16) {
-                // NEOFORGE_PORT: renderTooltip(Font,Component,int,int) gone ->
-                // setTooltipForNextFrame.
+                
+                
                 graphics.setTooltipForNextFrame(font, ResearchCategories.getCategoryName(cat), mouseX, mouseY);
             }
 
@@ -627,7 +627,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                     int y = yy + 85 + 35 * r;
 
                     if (isHovering(x - xx, y - yy, 16, 16, mouseX, mouseY) && !selectedAids.contains(key)) {
-                        // NEOFORGE_PORT: Forge 0.2-alpha hover highlight -> ARGB.
+                        
                         graphics.blit(RenderPipelines.GUI_TEXTURED, TX_BASE, x, y, 0, 96, 16, 16, 256, 256, 0x33FFFFFF);
                     }
 
@@ -659,9 +659,9 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                 }
             }
 
-            // NEOFORGE_PORT (26.3): no-ink/no-paper warnings drawn by renderWarnings() after the
-            // slots (Forge drew them after super.render). As deferred tooltips they were
-            // first-set-wins: noink hid nopaper and both hid every slot tooltip.
+            
+            
+            
         }
     }
 
@@ -695,7 +695,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         }
     }
 
-    // Immediate (non-deferred) tooltip box, like Forge renderTooltip(font, lines, Optional.empty(), x, y).
+    
     private void drawTooltipNow(GuiGraphicsExtractor graphics, List<Component> lines, int x, int y) {
         List<net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent> comps = new ArrayList<>();
         for (Component line : lines) {
@@ -724,7 +724,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                 if (items[a] == null || items[a].isEmpty()) {
                     graphics.setTooltipForNextFrame(font, Component.translatable("tc.card.unknown"), mouseX, mouseY);
                 } else {
-                    // NEOFORGE_PORT: (Font,ItemStack,Optional,int,int) gone -> (Font,ItemStack,int,int).
+                    
                     graphics.setTooltipForNextFrame(font, items[a], mouseX, mouseY);
                 }
             }
@@ -736,7 +736,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
 
     }
 
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();

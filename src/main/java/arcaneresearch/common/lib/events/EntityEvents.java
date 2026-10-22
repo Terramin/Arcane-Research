@@ -26,7 +26,7 @@ import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent; // NEOFORGE_PORT (26.3): LivingHurtEvent removed -> ARMOR reduction callback (see onEntityHurt)
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent; 
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.minecraft.world.damagesource.CombatRules;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -85,8 +85,8 @@ public class EntityEvents {
     }
 
     @SubscribeEvent
-    // NEOFORGE_PORT (26.3): Forge LivingTickEvent fired at the START of LivingEntity.tick() -> EntityTickEvent.Pre.
-    public static void onLivingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Pre event) { // NEOFORGE_PORT: LivingTickEvent removed
+    
+    public static void onLivingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Pre event) { 
         if (!(event.getEntity() instanceof LivingEntity living)) return;
         if (living == null || living.level().isClientSide()) return;
         int t = ChampionModifier.getChampionId(living);
@@ -99,10 +99,10 @@ public class EntityEvents {
         }
     }
 
-    /**
-     * NEOFORGE_PORT (26.3): stand-in for Forge 1.20.1 LivingHurtEvent (mutable amount + cancel flag),
-     * so the handler body below keeps the reference control flow verbatim.
-     */
+     
+
+
+ 
     private static final class LivingHurt {
         private final LivingEntity entity;
         private final DamageSource source;
@@ -123,15 +123,15 @@ public class EntityEvents {
         void setCanceled(boolean canceled) { this.canceled = canceled; }
     }
 
-    // NEOFORGE_PORT (26.3): Forge LivingHurtEvent fired at the top of actuallyHurt — after
-    // invulnerability frames / shield blocking, BEFORE armor, enchantment, resistance and
-    // absorption reductions. LivingIncomingDamageEvent fires before the i-frame check (would
-    // drain the runic shield on hits vanilla ignores) and LivingDamageEvent.Pre fires after
-    // armor/enchant/resistance (wrong amount for the runic shield, boots, champion mods).
-    // The ARMOR reduction callback runs exactly at the Forge point (inside actuallyHurt, with
-    // container.getNewDamage() == the amount Forge's LivingHurtEvent received), so the
-    // reference handler runs there and the returned reduction makes vanilla armor (and the
-    // following enchant/resistance/absorption steps) apply to the handler's output amount.
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @SubscribeEvent
     public static void onEntityHurt(LivingIncomingDamageEvent event) {
         LivingEntity living = event.getEntity();
@@ -144,7 +144,7 @@ public class EntityEvents {
         float before = container.getNewDamage();
         LivingHurt event = new LivingHurt(living, container.getSource(), before);
         handleLivingHurt(event);
-        // ForgeHooks.onLivingHurt: canceled -> 0 (actuallyHurt then deals nothing).
+        
         float after = event.isCanceled() ? 0.0F : Math.max(0.0F, event.getAmount());
         if (after == before) {
             return reductionIn;
@@ -290,7 +290,7 @@ public class EntityEvents {
 
         Entity trueSource = source.getEntity();
         if (trueSource instanceof LivingEntity attacker) {
-            // NEOFORGE_PORT: Inventory.getArmor(i) removed -> getItemBySlot(HEAD) (old index 3 = helmet).
+            
             ItemStack helm = player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD);
             if (!helm.isEmpty() && helm.getItem() instanceof ItemFortressArmor
                     && ItemFortressArmor.hasMask(helm) && ItemFortressArmor.getMaskType(helm) == 1
@@ -303,10 +303,10 @@ public class EntityEvents {
             }
         }
 
-        // Паритет TC4 EventHandlerRunic.entityHurt: щит гасит урон до брони,
-        // заряд живёт в серверной карте (ванильный абсорб не используется).
-        // NEOFORGE_PORT (26.3): runs inside the ARMOR reduction callback (see onEntityHurt),
-        // i.e. at the Forge LivingHurtEvent point — pre-armor amount, after i-frames.
+        
+        
+        
+        
         if (source.is(net.minecraft.world.damagesource.DamageTypes.FALL)
                 || source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)
                 || source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)
@@ -369,7 +369,7 @@ public class EntityEvents {
         }
 
         if (charge <= 0) {
-            // TC4 rechargeDelay тикает раз в тик; конфиг в мс -> тики (50 мс).
+            
             PlayerEvents.rechargeDelay =
                     Math.max(1, arcaneresearch.common.config.ModConfig.shieldWait / 50);
         }
@@ -393,8 +393,8 @@ public class EntityEvents {
     }
 
     @SubscribeEvent
-    // NEOFORGE_PORT: PlayerEvent.ItemPickupEvent removed -> ItemEntityPickupEvent.Pre
-    // (denied via setCanPickup(FALSE) instead of setCanceled).
+    
+    
     public static void onItemPickup(net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent.Pre event) {
         Player player = event.getPlayer();
         if (player != null && player.getName().getString().startsWith("FakeArcaneresearch")) {
@@ -402,10 +402,10 @@ public class EntityEvents {
         }
     }
 
-    // NEOFORGE_PORT: LivingDropsEvent no longer carries lootingLevel (26.x).
-    // NEOFORGE_PORT (26.3): Forge ForgeHooks.getLootingLevel = EnchantmentHelper.getMobLooting(killer),
-    // i.e. the LOOTING level on the killer's (source.getEntity()) equipment at drop time —
-    // not the projectile's weapon (getWeaponItem() would be the bow for arrow kills).
+    
+    
+    
+    
     private static int getLootingLevel(LivingEntity entity, DamageSource source) {
         if (!(source.getEntity() instanceof LivingEntity killer)) {
             return 0;

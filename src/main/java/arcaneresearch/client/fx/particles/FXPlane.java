@@ -13,13 +13,13 @@ import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import net.minecraft.util.ARGB;
 import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Matrix4f;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXPlane extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier PARTICLE_TEXTURE = Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
@@ -33,7 +33,7 @@ public class FXPlane extends SingleQuadParticle implements BeamEngine.BeamEffect
 
     public FXPlane(ClientLevel level, double x, double y, double z,
                    double targetX, double targetY, double targetZ, int lifetime) {
-        super(level, x, y, z, 0, 0, 0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, x, y, z, 0, 0, 0, null); 
 
         this.rCol = 1.0f;
         this.gCol = 1.0f;
@@ -113,7 +113,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;
@@ -125,8 +125,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
     }
 
     protected void renderPlane(VertexConsumer consumer, Camera camera, float partialTicks) {
-        // NEOFORGE_PORT: same math as Forge render(); Tesselator/RenderSystem begin/end
-        // replaced by the BeamEngine consumer (normalBeam type bound by beamRenderType).
+        
+        
         Vec3 camPos = camera.position();
         float px = (float) (Mth.lerp(partialTicks, xo, x) - camPos.x());
         float py = (float) (Mth.lerp(partialTicks, yo, y) - camPos.y());

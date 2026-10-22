@@ -14,8 +14,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import arcaneresearch.common.tiles.aura.AuraNodeTile;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1 via a custom
-// State (node visuals delegate to AuraNodeRenderHelper submit emission).
+
+
 public class AuraNodeRenderer implements BlockEntityRenderer<AuraNodeTile, AuraNodeRenderer.State> {
 
     public static class State extends BlockEntityRenderState {

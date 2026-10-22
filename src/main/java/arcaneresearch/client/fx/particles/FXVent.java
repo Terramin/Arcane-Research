@@ -16,10 +16,10 @@ import org.joml.Quaternionf;
 
 import java.awt.Color;
 
-// NEOFORGE_PORT: custom per-frame math -> extract() override (same math).
+
 public class FXVent extends SingleQuadParticle {
 
-    // NEOFORGE_PORT: Forge targetScale -> endScale (26.3 Particle has no such field).
+    
     protected float endScale;
     protected static final int GRID_SIZE = 64;
 
@@ -112,7 +112,7 @@ public class FXVent extends SingleQuadParticle {
     }
 
 
-    // NEOFORGE_PORT: same math as the old render(); immediate verts -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         Vec3 cameraPos = camera.position();

@@ -32,16 +32,16 @@ import arcaneresearch.discovered.scan.ScanWallet;
 import arcaneresearch.helper.RegsHelper;
 import arcaneresearch.init.ModSounds;
 
-/**
- * Port of Thaumic Inventory Scanning (BlayTheNinth, MIT) client logic:
- * hold a Thaumometer on the cursor and hover items in any container (or
- * yourself in the inventory screen) to scan them after a short hold.
- *
- * NEOFORGE_PORT: TickEvent.ClientTickEvent(Phase.END) -&gt; ClientTickEvent.Post;
- * ScreenEvent.Render.Post leaves GuiGraphics -&gt; GuiGraphicsExtractor
- * (drawString -&gt; text); mc.screen -&gt; mc.gui.screen(); Forge bus -&gt;
- * default bus; player.getRandom() -&gt; mc.level.getRandom() (как ScanClient).
- */
+ 
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public final class InvScanClient {
 
@@ -89,9 +89,9 @@ public final class InvScanClient {
     }
 
     private static boolean hoveringSelf(AbstractContainerScreen<?> screen, Player player) {
-        // Разрешаем любые экраны с родным инвентарным меню (в т.ч. заменённые
-        // модами); зона игрока в верстаке слотов не содержит, поэтому
-        // hoveredSlot не проверяем.
+        
+        
+        
         if (screen.getMenu() != player.inventoryMenu) {
             return false;
         }
@@ -133,7 +133,7 @@ public final class InvScanClient {
                 && !hasBeenScanned(player, scanKey);
     }
 
-    // ---- события ----
+    
 
     @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
     public static class ClientEvents {
@@ -204,7 +204,7 @@ public final class InvScanClient {
             }
         }
 
-        /** Прогресс сканирования у курсора («Сканирование.», «..», «...»). */
+          
         private static void drawProgress(GuiGraphicsExtractor graphics, Minecraft minecraft) {
             float progress = scanTicks / (float) SCAN_TICKS;
             StringBuilder text = new StringBuilder(
@@ -220,7 +220,7 @@ public final class InvScanClient {
                     mouseX, mouseY - 30, 0xFFFFAA00, true);
         }
 
-        /** Иконки аспектов игрока над курсором (после скана себя). */
+          
         private static void drawSelfAspects(GuiGraphicsExtractor graphics, Player player) {
             if (!hasBeenScanned(player, InvScanServer.SELF_KEY)) {
                 return;

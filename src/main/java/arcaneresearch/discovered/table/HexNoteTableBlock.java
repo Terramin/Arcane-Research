@@ -30,26 +30,26 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/**
- * Двухблочный hex-стол (стол 2), зеркало
- * {@code CognitionNoteTableBlock} (стол 1): MAIN смотрит FACING, SIDE
- * спереди ({@code pos.relative(FACING)}) и смотрит назад, BE только на MAIN,
- * клик с любой половины открывает меню MAIN. Разница: ставится не руками и
- * не чернилами, а сборкой двух одиночных столов через salis mundus
- *
- * NEOFORGE_PORT (как CognitionNoteTableBlock): конструктор — Properties
- * (setId при регистрации); Block.use удалён -&gt; useWithoutItem;
- * NetworkHooks.openScreen -&gt; ServerPlayer.openMenu(tile, pos-buf);
- * onRemove удалён -&gt; affectNeighborsAfterRemoval; playerWillDestroy
- * возвращает BlockState; updateShape без @Override (сигнатура 26.3);
- * isClientSide-поля -&gt; isClientSide(); RandomSource -&gt; getRandom().
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class HexNoteTableBlock extends Block implements EntityBlock {
 
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
 
-    /** Хитбоксы 1:1 со столом 1 (та же модель). */
+      
     private static VoxelShape shapeFor(Part part, Direction facing) {
         Direction eff = part == Part.SIDE ? facing.getOpposite() : facing;
         double[][] boxes = part == Part.MAIN
@@ -97,7 +97,7 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
         builder.add(FACING, PART);
     }
 
-    /** Позиция главной половины из любой половины. */
+      
     public static BlockPos mainPos(BlockPos pos, BlockState state) {
         return state.getValue(PART) == Part.MAIN ? pos : pos.relative(state.getValue(FACING));
     }
@@ -120,7 +120,7 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
         return isPartner(state, neighbour);
     }
 
-    // NEOFORGE_PORT: 26.x updateShape(state, level, ticks, pos, dir, neighbourPos, neighbourState, random).
+    
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level,
             net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos pos, Direction direction,
@@ -134,8 +134,8 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide()) {
-            // Вторая половина не исчезает, а становится проектным одиночным
-            // столом (как у стола 1).
+            
+            
             BlockPos partner = partnerPos(pos, state);
             Block single = arcaneresearch.discovered.table.DiscoveredTableSetup.getSingleTable();
             if (level.getBlockState(partner).getBlock() instanceof HexNoteTableBlock
@@ -151,11 +151,11 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
         return shapeFor(state.getValue(PART), state.getValue(FACING));
     }
 
-    /**
-     * Порт частиц {@code BlockResearchTable.animateTick}: шанс 1/5,
-     * пастельные спарклы дрейфуют к столу — пока лежит записка
-     * (паритет {@code hasResearchData}). Только MAIN (без дубля).
-     */
+     
+
+
+
+ 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos,
             net.minecraft.util.RandomSource random) {
@@ -166,15 +166,15 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof HexNoteTableTile tile && level.isClientSide()
                     && !tile.getItem(HexNoteTableTile.NOTE_SLOT).isEmpty()) {
-                // NEOFORGE_PORT: particle body moved to a client class (@OnlyIn no longer strips).
+                
                 arcaneresearch.discovered.client.HexTableClientFX.researchSparkle(level, pos, random);
             }
         }
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
         if (level.isClientSide()) {
@@ -183,8 +183,8 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
         BlockPos main = mainPos(pos, state);
         BlockEntity be = level.getBlockEntity(main);
         if (be instanceof HexNoteTableTile tile && player instanceof ServerPlayer serverPlayer) {
-            // NEOFORGE_PORT: NetworkHooks.openScreen -> ServerPlayer.openMenu (та же
-            // MenuProvider + BlockPos, как CognitionNoteTableBlock).
+            
+            
             serverPlayer.openMenu(tile, buf -> buf.writeBlockPos(main));
             return InteractionResult.CONSUME;
         }
@@ -194,8 +194,8 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level,
             BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (cf. CognitionNoteTableBlock; same PART.MAIN + dropContents logic).
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         if (!state.is(level.getBlockState(pos).getBlock())) {
             if (state.getValue(PART) == Part.MAIN

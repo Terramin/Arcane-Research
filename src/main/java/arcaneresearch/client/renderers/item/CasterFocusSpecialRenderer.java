@@ -18,10 +18,10 @@ import arcaneresearch.common.items.casters.ItemCaster;
 
 import java.util.function.Consumer;
 
-// NEOFORGE_PORT (26.3): CasterItemRenderer (BEWLR) -> SpecialModelRenderer.
-// Used as an overlay in a composite item model (base gauntlet mesh + focus).
-// Forge renderFocusOnGauntlet() offsets 1:1; per-context branch via the
-// "preset" param (submit has no display context): gui / ground / fixed / hand.
+
+
+
+
 public class CasterFocusSpecialRenderer implements SpecialModelRenderer<ItemStackRenderState> {
 
     private final String preset;
@@ -69,8 +69,8 @@ public class CasterFocusSpecialRenderer implements SpecialModelRenderer<ItemStac
         }
         poseStack.pushPose();
 
-        // NEOFORGE_PORT: Forge per-displayContext branches (verbatim numbers);
-        // preset wired per-context in the item JSON (display_context select).
+        
+        
         switch (preset) {
             case "firstperson" -> {
                 poseStack.translate(0.0625f, -0.125f, 0.0625f);
@@ -97,7 +97,7 @@ public class CasterFocusSpecialRenderer implements SpecialModelRenderer<ItemStac
                 poseStack.scale(0.75f, 0.75f, 0.75f);
             }
             default -> {
-                // NEOFORGE_PORT: Forge default branch (HEAD and others).
+                
                 float cx = 8.0f / 16.0f;
                 float cy = 4.5f / 16.0f;
                 float cz = 10.25f / 16.0f;

@@ -24,8 +24,8 @@ import arcaneresearch.client.renderers.entity.TurretObjModel;
 import arcaneresearch.common.blocks.BlockTCDevice;
 import arcaneresearch.common.tiles.crafting.TileGolemBuilder;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (OBJ groups + press animation + lava pool quad).
+
+
 public class GolemBuilderRenderer implements BlockEntityRenderer<TileGolemBuilder, GolemBuilderRenderer.State> {
 
     private static final Identifier MODEL =
@@ -129,9 +129,9 @@ public class GolemBuilderRenderer implements BlockEntityRenderer<TileGolemBuilde
             return;
         }
 
-        // NEOFORGE_PORT (26.3): sprite UVs are block-atlas UVs, so the BLOCKS atlas must
-        // be bound (Forge entitySolid(LOCATION_BLOCKS)); binding "block/lava_still" as a
-        // standalone texture sampled a missing texture.
+        
+        
+        
         RenderType lavaType = net.minecraft.client.renderer.rendertype.RenderTypes
                 .entitySolid(TextureAtlas.LOCATION_BLOCKS);
         float size = 0.625f;
@@ -159,8 +159,8 @@ public class GolemBuilderRenderer implements BlockEntityRenderer<TileGolemBuilde
                 .setNormal(pose, 0, 0, 1);
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TileGolemBuilder blockEntity) {
         return blockEntity.getRenderBoundingBox();

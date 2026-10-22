@@ -2,13 +2,13 @@ package arcaneresearch.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.Toast.Visibility;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -45,8 +45,8 @@ public class ResearchToast implements Toast {
         this.description = description;
     }
 
-    // NEOFORGE_PORT: entry points for PacketSyncKnowledge (common class); keeping the
-    // Toast/ToastManager types here stops the server from linking client classes.
+    
+    
     public static void show(ResearchEntry research) {
         net.minecraft.client.Minecraft.getInstance().gui.toastManager().addToast(new ResearchToast(research));
     }
@@ -104,9 +104,9 @@ public class ResearchToast implements Toast {
         }
     }
 
-    // NEOFORGE_PORT: Toast.render(GuiGraphics, ToastComponent, long) ->
-    // extractRenderState(GuiGraphicsExtractor, Font, long); width()/height() removed
-    // (not in 26.x Toast); blit takes pipeline + sheet size (hud.png is 256x256).
+    
+    
+    
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, Font font, long timeSinceLastVisible) {
         if (firstDrawTime == 0) {
@@ -146,8 +146,8 @@ public class ResearchToast implements Toast {
         return wantedVisibility;
     }
 
-    // NEOFORGE_PORT: Forge getToken() (title|description dedup) kept verbatim;
-    // without it all research toasts share NO_TOKEN and coalesce wrongly.
+    
+    
     @Override
     public Object getToken() {
         return title.getString() + "|" + description.getString();
@@ -155,7 +155,7 @@ public class ResearchToast implements Toast {
 
     @Override
     public void update(net.minecraft.client.gui.components.toasts.ToastManager manager, long visibleTime) {
-        // NEOFORGE_PORT: same DISPLAY_TIME hide logic (visibleTime clock, as in Forge elapsed).
+        
         this.wantedVisibility = visibleTime >= DISPLAY_TIME ? Visibility.HIDE : Visibility.SHOW;
     }
 }

@@ -145,7 +145,7 @@ public class BlockTaint extends Block implements ITaintBlock {
                         EntityUtils.getEntitiesInRange(
                                 level, pos, 32.0, EntityTaintSwarm.class).isEmpty()) {
                     EntityTaintSwarm swarm = new EntityTaintSwarm(level);
-                    // NEOFORGE_PORT (26.3): Forge moveTo(x, y, z, yaw, pitch) == snapTo (also sets old pos/rot).
+                    
                     swarm.snapTo(pos.getX() + 0.5, pos.getY() + 1.25, pos.getZ() + 0.5, random.nextInt(360), 0.0f);
                     level.addFreshEntity(swarm);
                 } else if (AuraHandler.getFlux(level, pos) < 2.0f) {
@@ -190,8 +190,8 @@ public class BlockTaint extends Block implements ITaintBlock {
         if (type == TaintType.ROCK) {
             RandomSource random = builder.getLevel().getRandom();
             int fortune = 0;
-            // NEOFORGE_PORT: TOOL is ContextKey<ItemInstance> now (implemented by
-            // ItemStack at runtime); FORTUNE resolved via holder (BLOCK_FORTUNE gone).
+            
+            
             net.minecraft.world.item.ItemInstance toolInstance = builder.getOptionalParameter(
                     net.minecraft.world.level.storage.loot.parameters.LootContextParams.TOOL);
             if (toolInstance instanceof ItemStack tool && !tool.isEmpty()) {

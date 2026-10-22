@@ -85,11 +85,11 @@ public class EntityCultistKnight extends EntityCultist {
         float f = difficulty.getSpecialMultiplier();
         ItemStack weapon = getMainHandItem();
         if (!weapon.isEmpty() && random.nextFloat() < 0.25f * f) {
-            // NEOFORGE_PORT: enchantItem(RandomSource, ItemStack, int, boolean) removed ->
-            // (RandomSource, ItemStack, int, RegistryAccess, Optional<HolderSet>) (empty = all).
+            
+            
             EnchantmentHelper.enchantItem(random, weapon, (int) (5.0f + f * random.nextInt(18)),
                     level().registryAccess(),
-                    // NEOFORGE_PORT (26.3): Forge allowTreasure=false -> only #in_enchanting_table (empty = every enchantment incl. treasure/curses).
+                    
                     level().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
                             .get(net.minecraft.tags.EnchantmentTags.IN_ENCHANTING_TABLE));
         }

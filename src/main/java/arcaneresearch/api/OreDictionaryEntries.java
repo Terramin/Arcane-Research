@@ -11,7 +11,7 @@ public class OreDictionaryEntries {
     public static final Map<String, Identifier> ORE_TAGS;
 
     static {
-        // NEOFORGE_PORT: Forge "forge:" tags -> NeoForge "c:" (TagConvention); paths 1:1.
+        
         Map<String, Identifier> tags = new LinkedHashMap<>();
         tags.put("oreAmber", Identifier.fromNamespaceAndPath("c", "ores/amber"));
         tags.put("oreCinnabar", Identifier.fromNamespaceAndPath("c", "ores/cinnabar"));

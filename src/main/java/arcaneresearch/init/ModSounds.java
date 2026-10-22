@@ -9,13 +9,13 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.core.registries.Registries;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModSounds.java (PORTED 90%).
-// REQUIRED changes:
-//   DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, ...) -> create(Registries.SOUND_EVENT, ...)
-//   RegistryObject<SoundEvent> -> DeferredHolder<SoundEvent, SoundEvent> (same .get() API).
-// All 70 sound entries ported in ORIGINAL ORDER with IDENTICAL registry names.
-// DONE: GORE_TYPE / CRYSTAL_TYPE / JAR_TYPE / URN_TYPE restored below as
-// LazySoundType (same volume/pitch/suppliers as Forge ForgeSoundType).
+
+
+
+
+
+
+
 public class ModSounds {
 
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
@@ -104,8 +104,8 @@ public class ModSounds {
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, name)));
     }
 
-    // NEOFORGE_PORT: 1:1 from Forge ModSounds (was ForgeSoundType, same volume/pitch/suppliers).
-    // LazySoundType resolves the DeferredHolders at play time (post-registration).
+    
+    
     public static final SoundType GORE_TYPE = new LazySoundType(0.5f, 1.0f,
             GORE::get, GORE::get, GORE::get, GORE::get, GORE::get);
     public static final SoundType CRYSTAL_TYPE = new LazySoundType(0.5f, 1.0f,

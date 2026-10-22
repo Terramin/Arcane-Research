@@ -50,7 +50,7 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
     protected BlockHitResult getMovingObjectPositionFromPlayer(Level level, Player player) {
         double reach = 5.0D;
         try {
-            // NEOFORGE_PORT: ForgeMod.BLOCK_REACH removed -> vanilla BLOCK_INTERACTION_RANGE (Holder).
+            
             reach = player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.BLOCK_INTERACTION_RANGE);
         } catch (Exception ignored) {
         }
@@ -134,8 +134,8 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
         return false;
     }
 
-    // NEOFORGE_PORT: onEntitySwing moved to IItemExtension with (stack, entity, hand); the old
-    // 2-arg Item hook is gone, so super.onEntitySwing(...) becomes "no custom swing" (false).
+    
+    
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
         if (entity.level().isClientSide() || !(entity instanceof Player player)) {
@@ -154,8 +154,8 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
 
     public void storePickedBlock(ItemStack stack, ItemStack picked) {
         if (!stack.isEmpty() && picked != null && !picked.isEmpty()) {
-            // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same "picked" key);
-            // nested stack via ItemStack.CODEC (save(CompoundTag) removed in 26.x).
+            
+            
             CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
             ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), picked.copy()).result().ifPresent(encoded -> {
                 root.put("picked", encoded);

@@ -202,7 +202,7 @@ public class EntityCultistPortalLesser extends Monster {
             cultist = new EntityCultistCleric(level());
         }
 
-        // NEOFORGE_PORT (26.3): Entity.moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+        
         cultist.snapTo(getX() + random.nextFloat() - random.nextFloat(), getY() + 0.25, getZ() + random.nextFloat() - random.nextFloat(), random.nextFloat() * 360.0f, 0.0f);
 
         cultist.finalizeSpawn((net.minecraft.world.level.ServerLevelAccessor) level(), ((net.minecraft.world.level.ServerLevelAccessor) level()).getCurrentDifficultyAt(new BlockPos((int) cultist.getX(), (int) cultist.getY(), (int) cultist.getZ())), net.minecraft.world.entity.EntitySpawnReason.SPAWNER, null);
@@ -252,8 +252,8 @@ public class EntityCultistPortalLesser extends Monster {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
 
     }
@@ -282,7 +282,7 @@ public class EntityCultistPortalLesser extends Monster {
         return false;
     }
 
-    // NEOFORGE_PORT: 26.x hook takes double distance (was float); @Override kept.
+    
     @Override
     public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
 

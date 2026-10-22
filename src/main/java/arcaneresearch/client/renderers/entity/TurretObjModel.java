@@ -3,7 +3,7 @@ package arcaneresearch.client.renderers.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.server.packs.resources.Resource;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
@@ -23,11 +23,11 @@ public class TurretObjModel {
         return load(loc, true);
     }
 
-    // NEOFORGE_PORT: flipV=false reproduces the Forge WandMeshModel UV mapping
-    // 1:1. Forge MeshLoader stored raw vt and bakeQuad sampled
-    // sprite.getV(vt * 16) with no mirror, so wand/staff textures render
-    // vertically mirrored vs the authored PNG; the default flipV=true keeps
-    // the authored-side-up sampling for all other (tile/entity) models.
+    
+    
+    
+    
+    
     public static TurretObjModel load(Identifier loc, boolean flipV) {
         return CACHE.computeIfAbsent(loc + "|flipV=" + flipV, k -> parse(loc, flipV));
     }
@@ -146,16 +146,16 @@ public class TurretObjModel {
         renderGroup(poseStack, consumer, group, packedLight, packedOverlay, r, g, b, a, 0.0F, 1.0F);
     }
 
-    /**
-     * NEOFORGE_PORT (wand parity): Forge sampled wand part textures through the
-     * block atlas (TextureAtlasSprite per part, animation-aware: UVs address the
-     * CURRENT 16x16 frame). Direct raw-texture sampling addresses the whole
-     * strip (rod_blaze_mat 16x320, rod_primal 32x640, caps/foci strips), so
-     * animated parts rendered vertically squashed. vOffset/vScale crop the
-     * emission to one frame: v' = vOffset + v * vScale, frame f of n ->
-     * (f/n, 1/n). Orientation kept as-is (same vt mapping as the working
-     * single-frame path).
-     */
+     
+
+
+
+
+
+
+
+
+ 
     public void renderGroup(PoseStack poseStack, VertexConsumer consumer, String group,
                             int packedLight, int packedOverlay,
                             float r, float g, float b, float a,
@@ -164,9 +164,9 @@ public class TurretObjModel {
         if (tris == null || tris.isEmpty()) {
             return;
         }
-        // NEOFORGE_PORT: new VertexConsumer chain (no endVertex).
-        // 26.x pipelines are QUADS-topology: emit each triangle as a degenerate
-        // quad (4th vertex duplicates the 3rd), 1:1 visuals with Forge.
+        
+        
+        
         PoseStack.Pose pose = poseStack.last();
         for (Tri tri : tris) {
             float[] d = tri.data;

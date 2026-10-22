@@ -22,25 +22,25 @@ import arcaneresearch.api.research.ScanResult;
 import arcaneresearch.common.lib.aura.INode;
 import arcaneresearch.common.lib.utils.EntityUtils;
 
-/**
- * Цели изучения и их аспекты. Порт {@code ItemThaumometer.doScan} +
- * {@code ScanManager.getScanAspects/generateEntityAspects/validScan}
- * (TC 4.2.3.5) на API проекта (только чтение, без правок).
- *
- * Порядок: сущность (9 блоков) -&gt; узел ауры -&gt; блок (9 блоков) -&gt;
- * явления аддонов. Дальность 9 — как у проектного таумометра
- * (линза показывает то же самое).
- *
- * NEOFORGE_PORT: ResourceLocation -&gt; Identifier; BlockState
- * getCloneItemStack(hit, level, pos, viewer) удалён -&gt;
- * state.getCloneItemStack(level, pos, true) (тот же вызов, что
- * TileResearchTable); saveWithoutId(CompoundTag) удалён -&gt;
- * saveWithoutId(TagValueOutput) со снапшотом в CompoundTag (та же shape,
- * что ScanEntity.checkThing); getTagType(name) -&gt; get(name).getId().
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public final class ScanTargets {
 
-    /** Дальность изучения (паритет проектного SCAN_RANGE). */
+      
     public static final double RANGE = 9.0D;
 
     private ScanTargets() {
@@ -50,12 +50,12 @@ public final class ScanTargets {
         NONE, BLOCK, ENTITY, NODE
     }
 
-    /** Цель под прицелом: позиция блока/узла, сущность или явление. */
+      
     public static final class Target {
         public final Kind kind;
         public final BlockPos pos;
         public final Entity entity;
-        /** Узел: {@code "NODE"+id} (паритет {@code ScanResult.phenomena}). */
+          
         public final String phenomena;
 
         public Target(Kind kind, BlockPos pos, Entity entity, String phenomena) {
@@ -65,7 +65,7 @@ public final class ScanTargets {
             this.phenomena = phenomena;
         }
 
-        /** Ключ стабильности цели (срыв изучения при смене — паритет startScan). */
+          
         public String steadyKey() {
             switch (kind) {
                 case BLOCK:
@@ -80,7 +80,7 @@ public final class ScanTargets {
         }
     }
 
-    /** Прицел: сущность важнее узла, узел важнее блока (паритет {@code ItemThaumometer.doScan}). */
+      
     public static Target resolve(Level level, Player player) {
         Entity pointed = EntityUtils.getPointedEntity(level, player, 1.0D, RANGE, 0.0F, true);
         if (pointed != null) {
@@ -88,7 +88,7 @@ public final class ScanTargets {
         }
         BlockHitResult hit = blockRay(level, player, RANGE);
         if (hit.getType() == HitResult.Type.BLOCK && !level.isEmptyBlock(hit.getBlockPos())) {
-            // Узел ауры — явление, а не блок (паритет ветки INode).
+            
             try {
                 if (level.getBlockEntity(hit.getBlockPos()) instanceof INode node) {
                     String id = "";
@@ -101,8 +101,8 @@ public final class ScanTargets {
                 }
             } catch (Exception ignored) {
             }
-            // Собранная пара — мебель без предмета-подбора: не изучаем
-            // (иначе каждое удержание спамило бы "Unknown object").
+            
+            
             try {
                 if (level.getBlockState(hit.getBlockPos()).getBlock()
                         instanceof arcaneresearch.discovered.table.HexNoteTableBlock) {
@@ -112,7 +112,7 @@ public final class ScanTargets {
             }
             return new Target(Kind.BLOCK, hit.getBlockPos(), null, "");
         }
-        // Явления аддонов — только когда прицел пуст (паритет doScan:252-256).
+        
         Target phenomena = scanPhenomena(level, player);
         if (phenomena != null) {
             return phenomena;
@@ -120,11 +120,11 @@ public final class ScanTargets {
         return new Target(Kind.NONE, null, null, "");
     }
 
-    /**
-     * Явления аддонов ({@code ArcaneresearchApi.scanEventhandlers}).
-     * Адаптация {@code ScanResult}: сущность — прямо, узел по id
-     * без реестра координат неразрешим (ядро узлы находит само).
-     */
+     
+
+
+
+ 
     private static Target scanPhenomena(Level level, Player player) {
         ItemStack held;
         try {
@@ -162,12 +162,12 @@ public final class ScanTargets {
         return EntityUtils.blockRay(level, player, range);
     }
 
-    /**
-     * Ключ «уже изучено» (паритет {@code generateItemHash} + хэш сущности).
-     * Блок — по предмету-подбору, узел — измерение+позиция, лежащий
-     * предмет — как объект (общий список со scannedObjects, паритет
-     * ветки EntityItem), сущность — по id типа.
-     */
+     
+
+
+
+
+ 
     public static String scannedKey(Level level, Target target, Player viewer) {
         if (target.kind == Kind.BLOCK) {
             ItemStack pick = pickStack(level, target.pos, viewer);
@@ -210,12 +210,12 @@ public final class ScanTargets {
         return "";
     }
 
-    /** Предмет-подбор блока (паритет {@code getPickBlock/createStackedBlock}). */
+      
     public static ItemStack pickStack(Level level, BlockPos pos, Player viewer) {
         try {
             BlockState state = level.getBlockState(pos);
-            // NEOFORGE_PORT (26.3): player-aware NeoForge hook (parity with Forge
-            // getCloneItemStack(hit, level, pos, viewer) -> IForgeBlock override path).
+            
+            
             ItemStack stack = state.getCloneItemStack(pos, level, true, viewer);
             if (stack != null && !stack.isEmpty()) {
                 return stack;
@@ -229,12 +229,12 @@ public final class ScanTargets {
         }
     }
 
-    /**
-     * Аспекты цели (паритет {@code ScanManager.getScanAspects}):
-     * блок — теги объекта, узел — {@link #nodeAspects}, лежащий предмет —
-     * теги стака (паритет ветки EntityItem), сущность — реестр
-     * {@code scanEntities} + NBT.
-     */
+     
+
+
+
+
+ 
     public static AspectList aspectsFor(Level level, Target target, Player viewer) {
         if (target.kind == Kind.BLOCK) {
             try {
@@ -275,12 +275,12 @@ public final class ScanTargets {
         return null;
     }
 
-    /**
-     * Порт {@code ScanManager.generateNodeAspects}: каждый аспект узла —
-     * {@code max(4, amount/10)} + бонус по типу узла. Подстановки набора
-     * TC6 (нет HUNGER/TAINT/HEAL): голод и порча — FLUX 4, чистота —
-     * LIFE 2 + ORDER 2.
-     */
+     
+
+
+
+
+ 
     public static AspectList nodeAspects(Level level, BlockPos pos) {
         if (level == null || pos == null) {
             return null;
@@ -351,13 +351,13 @@ public final class ScanTargets {
         }
     }
 
-    /**
-     * Порт {@code ScanManager.generateEntityAspects}: реестр
-     * {@code CommonInternals.scanEntities} ({@code entityName} — id типа),
-     * NBT-совпадение — как {@code ScanEntity.checkThing}.
-     * Пасхалки с никами и случайные аспекты игрокам не портированы:
-     * игрок даёт MAN 4 (паритет ветки EntityPlayer без особых ников — ядро).
-     */
+     
+
+
+
+
+
+ 
     public static AspectList entityAspects(Entity entity) {
         if (entity == null) {
             return null;
@@ -379,8 +379,8 @@ public final class ScanTargets {
                 if (et.nbts == null || et.nbts.length == 0) {
                     return et.aspects;
                 }
-                // NEOFORGE_PORT (26.3): with registry context, so registry-backed fields
-                // (equipment/components) are written like Forge saveWithoutId(CompoundTag).
+                
+                
                 net.minecraft.world.level.storage.TagValueOutput tvo =
                         net.minecraft.world.level.storage.TagValueOutput.createWithContext(
                                 net.minecraft.util.ProblemReporter.DISCARDING, entity.registryAccess());
@@ -403,11 +403,11 @@ public final class ScanTargets {
         return null;
     }
 
-    /**
-     * Можно ли выдать (паритет {@code ScanManager.validScan}): у всех
-     * составных открыты оба родителя. Иначе клиент получил бы
-     * {@code tc.discoveryerror}.
-     */
+     
+
+
+
+ 
     public static boolean validScan(Player player, AspectList aspects) {
         if (player == null || aspects == null) {
             return false;
@@ -431,7 +431,7 @@ public final class ScanTargets {
         return true;
     }
 
-    /** Проверка знания аспекта (делегировано — единый гейт мини-игр). */
+      
     public static boolean known(Player player, Aspect aspect) {
         try {
             return arcaneresearch.discovered.table.HexResearchGame.isKnown(player, aspect);
@@ -440,7 +440,7 @@ public final class ScanTargets {
         }
     }
 
-    /** Таумометр в руках (главная или вторая рука). Общая проверка клиента и сервера. */
+      
     public static boolean holdingThaumometer(Player player) {
         if (player == null) {
             return false;

@@ -197,8 +197,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         super.saveAdditional(tag);
 
         if (recipeIngredients != null && !recipeIngredients.isEmpty()) {
-            // NEOFORGE_PORT: ItemStack.save(CompoundTag)/ItemStack.of(CompoundTag) removed in 26.x
-            // -> ItemStack.CODEC via store/read (same keys, list-of-stacks shape preserved).
+            
+            
             java.util.List<ItemStack> stacks = new java.util.ArrayList<>();
             for (ItemStack stack : recipeIngredients) {
                 if (!stack.isEmpty()) {
@@ -582,7 +582,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
     }
 
     private void craftCycle() {
-        // NEOFORGE_PORT: Forge body; random()/getGameTime()/EVENT_BUS/remaining-item migrated.
+        
         if (level == null) {
             cancelCrafting();
             return;
@@ -669,8 +669,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                                 }
 
                             } else if (itemCount-- <= 1) {
-                                // NEOFORGE_PORT: Item.getCraftingRemainingItem gone ->
-                                // CraftingEvents.getCraftingRemainingItem helper.
+                                
+                                
                                 ItemStack container = arcaneresearch.common.lib.events.CraftingEvents
                                         .getCraftingRemainingItem(ped.getItem(0));
                                 ped.setItem(0, container == null || container.isEmpty() ? ItemStack.EMPTY : container.copy());
@@ -717,8 +717,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
     }
 
     private void craftingFinish() {
-        // NEOFORGE_PORT: Forge body; root-tag write -> CUSTOM_DATA write-back;
-        // enchantment Map store -> ItemEnchantments mutable (holder resolved via registry).
+        
+        
         BlockEntity te = level.getBlockEntity(worldPosition.below(2));
         if (te instanceof TilePedestal pedestal) {
             float dmg = 1.0f;
@@ -843,7 +843,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
 
                 if (ModEffects.VIS_EXHAUST != null) {
                     MobEffectInstance pe = new MobEffectInstance(ModEffects.VIS_EXHAUST, 2400, 0, true, true);
-                    // NEOFORGE_PORT: Forge cleared the curative items (milk-immune) -> IncurableEffects.
+                    
                     arcaneresearch.common.lib.potions.IncurableEffects.addIncurable(target, pe);
                 }
             }
@@ -972,10 +972,10 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                                 bi == Blocks.ZOMBIE_HEAD || bi == Blocks.CREEPER_HEAD || bi == Blocks.PLAYER_HEAD ||
                                 bi == Blocks.DRAGON_HEAD ||
                                 bi == Blocks.CANDLE || bi == Blocks.CANDLE_CAKE ||
-                                // NEOFORGE_PORT: vanilla colored candles consolidated into
-                                // Blocks.DYED_CANDLE ColorCollection in 26.x.
-                                // NEOFORGE_PORT (26.3): reference lists only the plain CANDLE_CAKE,
-                                // so dyed candle cakes are NOT stabilizers (DYED_CANDLE_CAKE removed).
+                                
+                                
+                                
+                                
                                 Blocks.DYED_CANDLE.asList().contains(bi)) {
                             stuff.add(bp.asLong());
                         }

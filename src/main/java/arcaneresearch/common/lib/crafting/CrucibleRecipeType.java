@@ -19,11 +19,11 @@ import arcaneresearch.init.ModRecipeTypes;
 import java.util.List;
 import java.util.Optional;
 
-// NEOFORGE_PORT: 1:1 logic port from Forge common/lib/crafting/CrucibleRecipeType.java.
-// Same 26.x recipe-system adaptation as InfusionRecipeType (see its javadoc):
-// Recipe<RecipeInput>, codec/streamCodec SERIALIZER, legacy "ingredient" key alias,
-// placementInfo NOT_PLACEABLE, CRAFTING_MISC book category, no-book notification.
-// matchesCrucible/catalystMatches/removeMatchingAspects logic VERBATIM.
+
+
+
+
+
 public class CrucibleRecipeType implements Recipe<RecipeInput>, IArcaneresearchRecipe {
 
     public static final MapCodec<CrucibleRecipeType> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -59,10 +59,10 @@ public class CrucibleRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         this.research = research;
     }
 
-    // NEOFORGE_PORT: Forge-era legacy helper (id is holder-keyed in 26.x, so no
-    // getId(); ingredients kept for JEI/display callers).
-    // Null-safe: absent catalyst (neither "catalyst" nor legacy "ingredient" key)
-    // decodes to null (no Ingredient.EMPTY in 26.x); List.of(null) would NPE.
+    
+    
+    
+    
     public java.util.List<Ingredient> getIngredients() {
         return catalyst == null ? java.util.List.of() : java.util.List.of(catalyst);
     }
@@ -115,8 +115,8 @@ public class CrucibleRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         return result;
     }
 
-    // NEOFORGE_PORT: concrete generic bounds (Recipe<RecipeInput> requires
-    // RecipeType/Serializer<? extends Recipe<RecipeInput>>).
+    
+    
     @Override
     public RecipeSerializer<CrucibleRecipeType> getSerializer() {
         return SERIALIZER;
@@ -132,7 +132,7 @@ public class CrucibleRecipeType implements Recipe<RecipeInput>, IArcaneresearchR
         return group;
     }
 
-    // NEOFORGE_PORT: Recipe.group() abstract in 26.3.
+    
     @Override
     public String group() {
         return group;

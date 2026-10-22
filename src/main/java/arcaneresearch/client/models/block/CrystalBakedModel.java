@@ -21,11 +21,11 @@ import arcaneresearch.common.blocks.world.ore.BlockCrystalTC;
 
 import java.util.List;
 
-// NEOFORGE_PORT (26.3 BlockStateModel rework, Thaumaturge CrystalBakedModel
-// pattern): Forge swapped per-variant baked models in ModifyBakingResult; here
-// the custom model type "arcaneresearch:crystal" is declared in the blockstate
-// JSON and baked through Unbaked below. Shard selection/rotation math lives in
-// CrystalModel (Forge getQuads 1:1).
+
+
+
+
+
 public class CrystalBakedModel implements DynamicBlockStateModel {
 
     private final MeshModel mesh;

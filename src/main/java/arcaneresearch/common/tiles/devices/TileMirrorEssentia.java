@@ -88,8 +88,8 @@ public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSou
         instability = tag.getIntOr("Instability", tag.getIntOr("instability", 0));
     }
 
-    // NEOFORGE_PORT: ValueInput has no contains(); legacy "linkDim" may be an INT
-    // (dim id) or a STRING (dim location) — Forge tag.contains caught both, so check both.
+    
+    
     private static boolean hasLegacyLinkDim(net.minecraft.world.level.storage.ValueInput tag) {
         if (tag.read("linkDim", com.mojang.serialization.Codec.INT).isPresent()) return true;
         return !tag.getStringOr("linkDim", "").isEmpty();

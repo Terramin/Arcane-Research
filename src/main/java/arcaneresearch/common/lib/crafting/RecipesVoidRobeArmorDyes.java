@@ -14,14 +14,14 @@ import arcaneresearch.common.items.armor.ItemVoidRobeArmor;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/crafting/RecipesVoidRobeArmorDyes.java.
-// 26.x changes: same as RecipesRobeArmorDyes (no-arg CustomRecipe, CraftingInput
-// signatures, own unit serializer registered as void_robe_dye; ARMOR_DYE is gone).
-// Dye-blending logic VERBATIM.
+
+
+
+
 public class RecipesVoidRobeArmorDyes extends CustomRecipe {
 
-    // Unit codecs sharing one memoized instance (recipe sync encodes with the
-    // stream codec and rejects any instance but the expected one).
+    
+    
     private static final java.util.function.Supplier<RecipesVoidRobeArmorDyes> INSTANCE =
             com.google.common.base.Suppliers.memoize(RecipesVoidRobeArmorDyes::new);
     public static final MapCodec<RecipesVoidRobeArmorDyes> MAP_CODEC = LazyCodecs.lazyUnit(INSTANCE);
@@ -42,7 +42,7 @@ public class RecipesVoidRobeArmorDyes extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            // NEOFORGE_PORT: ArmorItem removed; void robes are plain Items now.
+            
             if (stack.getItem() instanceof ItemVoidRobeArmor) {
                 if (!armor.isEmpty()) {
                     return false;
@@ -92,8 +92,8 @@ public class RecipesVoidRobeArmorDyes extends CustomRecipe {
                 if (!(stack.getItem() instanceof DyeItem)) {
                     return ItemStack.EMPTY;
                 }
-                // NEOFORGE_PORT: DyeItem.getDyeColor removed; dye color is the DYE
-                // component; diffuse colors are a packed int now (was float[3]).
+                
+                
                 net.minecraft.world.item.DyeColor dyeColor = stack.get(
                         net.minecraft.core.component.DataComponents.DYE);
                 if (dyeColor == null) {

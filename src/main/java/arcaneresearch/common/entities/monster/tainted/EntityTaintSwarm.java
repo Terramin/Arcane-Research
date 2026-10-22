@@ -84,7 +84,7 @@ public class EntityTaintSwarm extends Monster implements ITaintedMob {
         return super.canAttack(target);
     }
 
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     @Override
     public boolean considersEntityAsAlly(Entity other) {
         if (isTaintedMob(other)) {
@@ -219,8 +219,8 @@ public class EntityTaintSwarm extends Monster implements ITaintedMob {
                     }
 
                     target.setDeltaMovement(targetMotion);
-                    // NEOFORGE_PORT (26.3): Entity.hurtMarked renamed to syncVelocity; clearing it keeps the
-                    // knockback motion packet from being sent (players would still be knocked back).
+                    
+                    
                     target.syncVelocity = false;
 
                     playSound(ModSounds.SWARM_ATTACK.get(), 0.3f, 0.9f + random.nextFloat() * 0.2f);
@@ -252,7 +252,7 @@ public class EntityTaintSwarm extends Monster implements ITaintedMob {
         setYRot(getYRot() + yawDiff);
     }
 
-    // NEOFORGE_PORT: 26.x causeFallDamage takes a double fall distance.
+    
     @Override
     public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return false;
@@ -273,8 +273,8 @@ public class EntityTaintSwarm extends Monster implements ITaintedMob {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int lootingLevel = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
 

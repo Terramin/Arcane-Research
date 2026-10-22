@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import arcaneresearch.common.tiles.aura.TileNodeEnergized;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1 via a custom State.
+
 public class EnergizedNodeRenderer implements BlockEntityRenderer<TileNodeEnergized, EnergizedNodeRenderer.State> {
 
     public static class State extends BlockEntityRenderState {

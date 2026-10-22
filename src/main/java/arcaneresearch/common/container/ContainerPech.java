@@ -54,7 +54,7 @@ public class ContainerPech extends AbstractContainerMenu {
         return inventory;
     }
 
-    // NEOFORGE_PORT: ContainerListener removed; plain callback kept.
+    
     public void containerChanged(Container invBasic) {
 
     }

@@ -6,13 +6,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 
-/**
- * Линии нестабильности диаграммы, порт reforged GuiLines
- * (unstable/line) на GuiGraphics Forge 1.20.1.
- * Цвет собирается вручную (в 1.20.1 нет ARGB.colorFromFloat).
- *
- * NEOFORGE_PORT: GuiGraphics -> GuiGraphicsExtractor (fill(x1,y1,x2,y2,color) тот же).
- */
+ 
+
+
+
+
+
+ 
 public final class DiscoveredGuiLines {
 
     private static final Random RANDOM = new Random();

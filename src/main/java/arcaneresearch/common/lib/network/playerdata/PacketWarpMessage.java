@@ -11,10 +11,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/playerdata/PacketWarpMessage.java (PLAY_TO_CLIENT).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:warp_message".
+
+
+
+
 public class PacketWarpMessage implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketWarpMessage> TYPE =

@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -39,10 +39,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge renderSeals() body 1:1,
-// emitted at submit time (SubmitCustomGeometryEvent) with camera-relative
-// coords. Kept: dist fade, redstone-inactive flicker sparks, animated seal
-// quads, rotating area disc, area corner frames.
+
+
+
+
 public class SealRenderer {
 
     private static final Identifier DEFAULT_SEAL_TEXTURE =
@@ -96,8 +96,8 @@ public class SealRenderer {
     }
 
     public static void renderSeals(PoseStack poseStack, float partialTick, Player player) {
-        // NEOFORGE_PORT: kept for API parity (ClientRenderEvents); emission now
-        // happens in Events.onSubmitGeometry (submit-system, no immediate draws).
+        
+        
     }
 
     private static void renderSeals(SubmitNodeCollector collector, float partialTick, Player player) {
@@ -110,8 +110,8 @@ public class SealRenderer {
 
         Vec3 cameraPos = Minecraft.getInstance().gameRenderer.mainCamera().position();
 
-        // NEOFORGE_PORT: sneak X-ray (depth test off) has no vanilla pipeline
-        // equivalent; seals always depth-test now (visual-verify pass).
+        
+        
         PoseStack poseStack = new PoseStack();
         poseStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
         try {
@@ -141,7 +141,7 @@ public class SealRenderer {
                 }
             }
         } finally {
-            // PoseStack is submit-local; nothing to restore.
+            
         }
     }
 
@@ -181,7 +181,7 @@ public class SealRenderer {
         float g;
         float b;
         if (seal.getColor() > 0) {
-            // NEOFORGE_PORT: getTextureDiffuseColors() float[] -> getTextureDiffuseColor() int.
+            
             int diffuse = DyeColor.byId(seal.getColor() - 1).getTextureDiffuseColor();
             r = ((diffuse >> 16) & 0xFF) / 255.0f;
             g = ((diffuse >> 8) & 0xFF) / 255.0f;
@@ -207,8 +207,8 @@ public class SealRenderer {
         poseStack.popPose();
 
         if (seal.getSeal() instanceof ISealConfigArea) {
-            // Use the same box the working logic uses (GolemHelper.getBoundsForArea),
-            // so the rendered frame always matches the actual seal area on every face.
+            
+            
             net.minecraft.world.phys.AABB areaBox =
                     arcaneresearch.api.golems.GolemHelper.getBoundsForArea(seal);
             double minX = areaBox.minX;

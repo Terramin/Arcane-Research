@@ -20,10 +20,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXScanSource.java (PLAY_TO_CLIENT).
-// Fields/ctors/handleClient logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:fx_scan_source".
+
+
+
+
 public class PacketFXScanSource implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXScanSource> TYPE =

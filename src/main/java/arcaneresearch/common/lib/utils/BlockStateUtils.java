@@ -19,8 +19,8 @@ public class BlockStateUtils {
         if (state == null) {
             return Direction.NORTH;
         }
-        // NEOFORGE_PORT: DirectionProperty class removed; direction props are
-        // EnumProperty<Direction> now (FACING/HORIZONTAL_FACING/FACING_HOPPER unchanged).
+        
+        
         for (EnumProperty<Direction> prop : new EnumProperty[]{
                 BlockStateProperties.FACING, BlockStateProperties.HORIZONTAL_FACING,
                 BlockStateProperties.FACING_HOPPER}) {

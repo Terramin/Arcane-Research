@@ -21,8 +21,8 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.devices.TileMirror;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge renderMirror() body 1:1
-// (frame, active tunnel portal, inactive pane) via submitCustomGeometry.
+
+
 public class MirrorRenderer implements BlockEntityRenderer<TileMirror, MirrorRenderer.State> {
 
     private static final Identifier TUNNEL_TEXTURE =
@@ -98,34 +98,34 @@ public class MirrorRenderer implements BlockEntityRenderer<TileMirror, MirrorRen
         poseStack.popPose();
     }
 
-    /** Глубина рамки: выдавливание наружу, к зрителю (передняя грань ближе стекла). */
+      
     private static final float FRAME_THICKNESS = 0.1f;
 
     private static void renderFrame(PoseStack poseStack, SubmitNodeCollector collector,
                                     Identifier texture, int packedLight) {
         poseStack.pushPose();
-        // Та же конструкция 3D-модели из плоской текстуры, что у печатей
-        // (SealRenderer) и пера стола (renderItemIn2D): передняя и задняя
-        // грани + потэксельные стенки по периметру. Рисует в пространстве
-        // 0..1, поэтому сдвигаем центр блока в угол, а переднюю грань
-        // выносим наружу к зрителю (к стеклу).
-        // Хитбокс блока — плита 2/16 у опорной стороны (локально z -0.5..-0.375).
-        // Рамка целиком внутри плиты: задняя грань почти вровень с опорой
-        // (-0.499, запас от z-fighting со стеной), передняя на -0.399.
-        // Альфа текстур чистая 0/255, поэтому cutout: прозрачная середина
-        // отбрасывается и не пишет глубину — стекло и портал за рамкой
-        // (z -0.4375/-0.4475) остаются видны, а золото корректно их перекрывает.
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         poseStack.translate(-0.5f, -0.5f, -0.499f + FRAME_THICKNESS);
 
-        // Forge entityCutout(texture) 1:1 -> raw ENTITY_CUTOUT (memoized per
-        // texture, RenderType identity kept for batching; raw vanilla
-        // pipelines need no RegisterRenderPipelinesEvent registration).
+        
+        
+        
         RenderType type = TCRenderTypes.objSolid(texture);
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
-            // Forge UtilsFX.renderTextureIn3D(poseStack, vc, 1, 1, 0, 0,
-            // 16, 16, FRAME_THICKNESS, packedLight) 1:1, inlined: UtilsFX
-            // takes a pose-less VertexConsumer, so it cannot run inside the
-            // submitCustomGeometry lambda (pose transform would be lost).
+            
+            
+            
+            
             renderFrameGeometry(pose, consumer, packedLight);
         });
 
@@ -233,7 +233,7 @@ public class MirrorRenderer implements BlockEntityRenderer<TileMirror, MirrorRen
                 mc.gameRenderer.mainCamera().position();
         net.minecraft.world.entity.Entity view = mc.getCameraEntity();
         net.minecraft.world.phys.Vec3 playPos =
-                // NEOFORGE_PORT: Entity.position(float) removed -> position().
+                
                 view != null ? view.position() : camPos;
 
         double[] camLocal = toLocal(facing, pos,
@@ -341,7 +341,7 @@ public class MirrorRenderer implements BlockEntityRenderer<TileMirror, MirrorRen
     private static void renderOverlay(PoseStack poseStack, SubmitNodeCollector collector,
                                       Identifier texture, int packedLight) {
         poseStack.pushPose();
-        // Стекло ровно на половине хитбокса (-0.4375).
+        
         poseStack.translate(0, 0, -0.4375f);
 
         RenderType type = TCRenderTypes.translucentPortal(texture);

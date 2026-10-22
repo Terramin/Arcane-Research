@@ -11,10 +11,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.fx.FXDispatcher;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXPollute.java (PLAY_TO_CLIENT).
-// Fields/ctor/clamp logic preserved verbatim; transport -> CustomPacketPayload
-// (same pattern as PacketSyncKnowledge; see its javadoc).
-// Payload id "arcaneresearch:fx_pollute".
+
+
+
+
 public class PacketFXPollute implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXPollute> TYPE =

@@ -6,7 +6,7 @@ import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.util.Mth;
 import arcaneresearch.client.fx.particles.TCSprites;
 
-// NEOFORGE_PORT: camera quad -> base SingleQuadParticle.extract.
+
 public class FXCrucibleBubble extends SingleQuadParticle {
 
     private float wobblePhase;
@@ -65,7 +65,7 @@ public class FXCrucibleBubble extends SingleQuadParticle {
         }
     }
 
-    // NEOFORGE_PORT: Forge getRenderType TC_ADDITIVE -> additive sheet Layer (same SRC_ALPHA/ONE blend, see TCSprites).
+    
     @Override
     public ParticleRenderType getGroup() {
         return ParticleRenderType.SINGLE_QUADS;

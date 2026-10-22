@@ -76,7 +76,7 @@ public class EntityAlumentum extends ThrowableProjectile {
         }
     }
 
-    // NEOFORGE_PORT: Forge getGravity() (float) -> 26.x getDefaultGravity() (double), same value.
+    
     @Override
     protected double getDefaultGravity() {
         return 0.03;

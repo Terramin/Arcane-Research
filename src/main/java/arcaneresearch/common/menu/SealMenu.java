@@ -321,8 +321,8 @@ public class SealMenu extends AbstractContainerMenu {
         syncSeal(player);
     }
 
-    // NEOFORGE_PORT (Forge 1:1): broadcastChanges syncs menu DataSlots only;
-    // the SealEntity itself must be pushed to tracking clients + chunk dirtied.
+    
+    
     private void syncSeal(Player player) {
         net.minecraft.world.level.Level level = player.level();
         seal.syncToClient(level);

@@ -17,15 +17,15 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import arcaneresearch.common.blocks.aura.AuraBlockEntities;
 
 import javax.annotation.Nullable;
 
-/**
- * Крабовый спавнер, порт TC4 blockEldritch meta 9 (TileEldritchCrabSpawner).
- * Нерушимый, смотрит в сторону размещения. Лежит в arcaneresearch.arcaneresearch.common.blocks.aura.
- */
+ 
+
+
+ 
 public class EldritchCrabBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = EnumProperty.create("facing", Direction.class, 
             Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);

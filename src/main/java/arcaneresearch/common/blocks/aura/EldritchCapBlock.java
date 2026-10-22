@@ -17,11 +17,11 @@ import arcaneresearch.common.blocks.aura.AuraBlockEntities;
 
 import javax.annotation.Nullable;
 
-/**
- * Крышка обелиска, порт TC4 blockEldritch meta 3 (TileEldritchCap).
- * Очень прочная (50/20000 как в TC4), светится. Тайл — маркер без тика.
- * Лежит в arcaneresearch.arcaneresearch.common.blocks.aura.
- */
+ 
+
+
+
+ 
 public class EldritchCapBlock extends BaseEntityBlock {
     public EldritchCapBlock(BlockBehaviour.Properties props) {
         super(props
@@ -30,41 +30,41 @@ public class EldritchCapBlock extends BaseEntityBlock {
                 .lightLevel(state -> 8)
                 .noLootTable()
                 .noOcclusion()
-                // TC4 BlockEldritch: func_149713_g(0) — светопропускание 0
-                // (свет проходит сквозь кап), canCreatureSpawn=false,
-                // func_149662_c/func_149686_d=false (не opaque, не
-                // conducts redstone).
+                
+                
+                
+                
                 .isValidSpawn((state, level, pos, type) -> false)
                 .isRedstoneConductor((state, level, pos) -> false)
-                // NEOFORGE_PORT: 26.x isViewBlocking lambda takes (state, level, pos, nearPlaneBox).
+                
                 .isViewBlocking((state, level, pos, nearPlaneBox) -> false));
     }
 
-    /**
-     * TC4: meta 3 не рисовалась ISBRH (BlockEldritchRenderer рисовал
-     * только меты 4-10) — модель капа рисовалась TESR
-     * (TileEldritchCapRenderer). Так же и здесь: блок невидим, модель
-     * obelisk_cap.obj рисует EldritchCapRenderer.
-     */
+     
+
+
+
+
+ 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        // NEOFORGE_PORT: 26.x RenderShape only has INVISIBLE/MODEL; the cap is drawn by EldritchCapRenderer.
+        
         return RenderShape.INVISIBLE;
     }
 
-    /** TC4 func_149713_g(0): светопропускание 0 — свет проходит сквозь кап. */
-    // NEOFORGE_PORT (26.3): 1.20.1 getLightBlock(state, getter, pos) == 26.x getLightDampening(state).
-    // propagatesSkylightDown stays default (false for this full-cube shape), as in the reference.
+      
+    
+    
     @Override
     protected int getLightDampening(BlockState state) {
         return 0;
     }
 
-    /**
-     * TC4 BlockEldritch.func_149749_a (breakBlock, meta < 4): снос любого
-     * из алтарь/база/тело/кап в радиусе 7x5x7 цепно рушит прочие меты < 4
-     * и заканчивается взрывом (power 1, без огня). Сюда попадает и кап.
-     */
+     
+
+
+
+ 
     @Override
     public void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean moving) {
         super.affectNeighborsAfterRemoval(state, level, pos, moving);
@@ -94,11 +94,11 @@ public class EldritchCapBlock extends BaseEntityBlock {
         }
     }
 
-    /**
-     * Крышка меньше куба: грани с соседями не отсекаем, иначе рядом
-     * с блоками в модели появляются прозрачные дыры. Как TC4
-     * (BlockEldritch не был opaque-кубом).
-     */
+     
+
+
+
+ 
     @Override
     public boolean skipRendering(BlockState state, BlockState adjacentState, Direction side) {
         return false;

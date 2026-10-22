@@ -21,23 +21,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-// NEOFORGE_PORT: 1:1 logic from Forge client/fx/beams/FXLightning.java (fractal
-// midpoint-displacement + branching, growth with age, two passes wide-glow +
-// bright-core, distance-based width). REQUIRED changes: TextureSheetParticle
-// removed -> SingleQuadParticle + BeamEngine.BeamEffect (same as FXBolt);
-// immediate-mode render (Tesselator/BufferBuilder/RenderSystem/GameRenderer)
-// removed -> emitQuads() submits world-space ribbon quads through BeamEngine
-// (addVertex/setUv/setColor(ARGB); no endVertex; state via RenderType).
-// Two passes (LARGE glow + SMALL core) use the multi-texture BeamEffect path
-// (beamRenderTypes + typed emitQuads); pass 1 with type >= 5 keeps the old
-// normal-blend look via normalBeam, otherwise additive like Forge blendFunc.
-// The old camera-look miter vector (Camera#getLookVector) is Camera#forwardVector.
-/**
- * Фрактальная молния, точный порт TC4 {@code FXLightningBolt} (+Common):
- * midpoint-displacement с ветвлением, рост по мере возраста, два прохода
- * (широкое свечение + яркое ядро), ширина от дистанции. Нодовый разряд
- * TC4 ({@code nodeBolt}, type 0) идёт через неё, а не через простой зигзаг.
- */
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
@@ -46,7 +46,7 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
     private static final Identifier SMALL =
             Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/p_small.png");
 
-    /** Цвета проходов по типам TC4: {outer}, {core}. */
+      
     private static final float[][] OUTER = {
             {0.6F, 0.3F, 0.6F}, {0.6F, 0.6F, 0.1F}, {0.1F, 0.1F, 0.6F}, {0.1F, 1.0F, 0.1F},
             {0.6F, 0.1F, 0.1F}, {0.6F, 0.2F, 0.6F}, {0.75F, 1.0F, 1.0F},
@@ -110,13 +110,13 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
             return new V(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
         }
 
-        /** Угол между (считаются уже нормированными). */
+          
         static double anglePreNorm(V a, V b) {
             double d = Math.max(-1.0D, Math.min(1.0D, a.dot(b)));
             return Math.acos(d);
         }
 
-        /** Любой перпендикуляр. */
+          
         static V perpendicular(V v) {
             double ax = Math.abs(v.x), ay = Math.abs(v.y);
             V ref = (ax < 0.9D || ay < 0.9D)
@@ -125,7 +125,7 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
             return cross(v, ref).normalize();
         }
 
-        /** Поворот вектора на угол (градусы) вокруг оси (Родриг). */
+          
         V rotate(double deg, V axis) {
             double rad = Math.toRadians(deg);
             double c = Math.cos(rad);
@@ -240,7 +240,7 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
         this.type = Math.max(0, Math.min(6, type));
     }
 
-    /** TC4 defaultFractal дословно. */
+      
     public void defaultFractal() {
         fractal(2, length * multiplier / 8.0F, 0.7F, 0.1F, 45.0F);
         fractal(2, length * multiplier / 12.0F, 0.5F, 0.1F, 50.0F);
@@ -305,7 +305,7 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
         numsegments0 *= splits;
     }
 
-    /** TC4 finalizeBolt дословно (обрезка ветвей + сортировка по свету). */
+      
     public void finalizeBolt() {
         if (finalized) {
             return;
@@ -359,7 +359,7 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
         }
     }
 
-    // NEOFORGE_PORT: engine must NOT submit this (BeamEngine does); NO_RENDER skips grouping.
+    
     @Override
     public void extract(net.minecraft.client.renderer.state.level.QuadParticleRenderState state,
                         Camera camera, float partialTicks) {
@@ -376,7 +376,7 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
     }
 
     private RenderType largeType() {
-        // NEOFORGE_PORT (26.3): Forge used blendFunc(770, type >= 5 ? 771 : 1) for BOTH passes.
+        
         return type >= 5 ? BeamEngine.normalBeam(LARGE) : BeamEngine.additiveBeam(LARGE);
     }
 
@@ -418,11 +418,11 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
         float renderlength = (boltAge + partialTicks + length * 3.0F) / (length * 3.0F) * numsegments0;
 
         float[] col = (pass == 0 ? OUTER : CORE)[Math.min(6, type)];
-        // TC4: ma существует, но нигде не применяется (только type 6
-        // его меняет) — для точности не применяем и здесь.
+        
+        
         float alphaBase = pass == 0 ? (1.0F - boltage) * 0.4F : 1.0F - boltage * 0.5F;
 
-        // NEOFORGE_PORT (26.3): Camera#getLookVector -> Camera#forwardVector (same vector).
+        
         org.joml.Vector3fc fwd = camera.forwardVector();
         V look = new V(fwd.x(), fwd.y(), fwd.z());
 
@@ -437,7 +437,7 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
             double dz = end.z - camPos.z();
             double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
             float width = 0.03F * (float) (dist / 5.0D + 1.0D) * (1.0F + seg.light) * 0.5F;
-            // Майтер-стыки дословно TC4 (cross с направлением взгляда).
+            
             V d1 = V.cross(look, seg.prevdiff)
                     .scale(width / Math.max(1.0E-4F, seg.sinprev));
             V d2 = V.cross(look, seg.nextdiff)
@@ -489,11 +489,11 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
             double x1, double y1, double z1, float u1, float v1, int argb1,
             double x2, double y2, double z2, float u2, float v2, int argb2,
             double x3, double y3, double z3, float u3, float v3, int argb3) {
-        // NEOFORGE_PORT (crash fix): ENTITY pipelines require the full vertex
-        // (cf. AuraNodeRenderHelper: overlay + fullbright + normal); pos+uv+color
-        // alone dies in world submits with "Missing elements in vertex".
-        // Beams are unlit glow -> fullbright; ribbons face the camera, Y-up normal
-        // matches the other billboard emitters.
+        
+        
+        
+        
+        
         consumer.addVertex((float) x0, (float) y0, (float) z0).setUv(u0, v0).setColor(argb)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(0.0F, 1.0F, 0.0F);
         consumer.addVertex((float) x1, (float) y1, (float) z1).setUv(u1, v1).setColor(argb1)
@@ -504,8 +504,8 @@ public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEf
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(0.0F, 1.0F, 0.0F);
     }
 
-    // NEOFORGE_PORT: Particle.shouldCull убран вместе с движком частиц;
-    // BeamEngine не отсекает (тот же no-cull, что Forge disableCull в FXLightning).
+    
+    
     public boolean shouldCull() {
         return false;
     }

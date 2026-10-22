@@ -2,8 +2,8 @@ package arcaneresearch.client.gui.screens;
 import arcaneresearch.common.world.maze.Cell;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,7 +13,7 @@ import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.CharacterEvent;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -94,8 +94,8 @@ public class ResearchBrowserScreen extends Screen {
         initPositions(x, y);
     }
 
-    // NEOFORGE_PORT: side-split bridge for ItemThaumonomicon. Server-safe
-    // signature (no client types in descriptor); body only ever links on the client.
+    
+    
     public static void open() {
         java.util.Objects.requireNonNull(net.minecraft.client.Minecraft.getInstance())
                 .setScreenAndShow(new ResearchBrowserScreen());
@@ -103,15 +103,15 @@ public class ResearchBrowserScreen extends Screen {
 
     public static void drawFullTexture(GuiGraphicsExtractor graphics, Identifier texture,
                                        int x, int y, int w, int h) {
-        // NEOFORGE_PORT: immediate POSITION_TEX quad -> pipeline blit (same full-image sampling).
-        // Sample the whole file (research/category icons are bigger than w x h;
-        // w/h as sheet size showed only the top-left corner).
+        
+        
+        
         int[] size = getTextureSize(texture);
         graphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, x, y, 0, 0, w, h, size[0], size[1], size[0], size[1], 0xFFFFFFFF);
     }
 
-    // NEOFORGE_PORT: Forge RenderSystem.setShaderColor tint before the same
-    // full-image draw -> trailing ARGB color on the pipeline blit.
+    
+    
     public static void drawFullTexture(GuiGraphicsExtractor graphics, Identifier texture,
                                        int x, int y, int w, int h, int color) {
         int[] size = getTextureSize(texture);
@@ -142,12 +142,12 @@ public class ResearchBrowserScreen extends Screen {
 
     public static void drawTextureRegion(GuiGraphicsExtractor graphics, Identifier texture,
                                          int x, int y, int u, int v, int w, int h, int texW, int texH) {
-        // NEOFORGE_PORT: immediate POSITION_TEX quad -> pipeline blit (same UV fractions).
+        
         graphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, w, h, texW, texH);
     }
 
-    // NEOFORGE_PORT: Forge RenderSystem.setShaderColor tint before the same
-    // region draw -> trailing ARGB color on the pipeline blit.
+    
+    
     public static void drawTextureRegion(GuiGraphicsExtractor graphics, Identifier texture,
                                          int x, int y, int u, int v, int w, int h, int texW, int texH, int color) {
         graphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, w, h, texW, texH, color);
@@ -157,18 +157,18 @@ public class ResearchBrowserScreen extends Screen {
         if (Minecraft.getInstance().player == null) {
             return;
         }
-        // NEOFORGE_PORT: immediate POSITION_TEX quad (Tesselator/BufferUploader gone)
-        // -> 13-arg pipeline blit (verified args: x, y, u, v texels, screen w/h,
-        // sample w/h texels, tex w/h, color; same animated atlas cell as Forge).
-        // NOTE: u/v are TEXELS here, not normalized (the old /2048 normalization
-        // sampled ~the top-left texel, freezing the animation on the wrong cell).
-        // Additive blend not expressible here; alpha 0.9 baked into the color.
+        
+        
+        
+        
+        
+        
         int count = Minecraft.getInstance().player.tickCount;
         int frame = 160 + count % 32;
         float cell = 2048.0f / 32.0f;
         float u0 = (frame % 32) * cell;
         float v0 = (frame / 32) * cell;
-        // NEOFORGE_PORT (26.3): Forge blendFunc(SRC_ALPHA, ONE) -> additive GUI pipeline.
+        
         graphics.blit(arcaneresearch.client.renderers.TCRenderTypes.GUI_TEXTURED_ADDITIVE, NODE_TEXTURE,
                 (int) (x - 45), (int) (y - 45), u0, v0, 90, 90, (int) cell, (int) cell, 2048, 2048, 0xE6540070);
     }
@@ -218,10 +218,10 @@ public class ResearchBrowserScreen extends Screen {
                 }));
 
         searchField = new EditBox(font, 20, 20, 89, font.lineHeight, Component.empty());
-        // NEOFORGE_PORT: Screen has no charTyped hook in 26.x; refresh on text change instead.
+        
         searchField.setResponder(v -> updateSearch());
         searchField.setMaxLength(15);
-        // NEOFORGE_PORT: EditBox.render() removed вЂ” framework renders widgets.
+        
         addRenderableWidget(searchField);
 
         searchField.setBordered(false);
@@ -302,8 +302,8 @@ public class ResearchBrowserScreen extends Screen {
             addRenderableWidget(new IconButton(width - 14, 20, 10, 11, Component.empty(),
                     () -> scrollCategories(-1),
                     (g, btn, mx, my) -> {
-                                        // NEOFORGE_PORT: Forge dimmed via setShaderColor(c,c,c);
-                                        // 26.x equivalent is the tinted blit (same 0.7f/1f gray).
+                                        
+                                        
                                         float c = btn.isHovered() ? 1f : 0.7f;
                                         int b = (int) (c * 255f);
                                         g.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, btn.getX(), btn.getY(), 51, 55, 10, 11, 256, 256,
@@ -312,7 +312,7 @@ public class ResearchBrowserScreen extends Screen {
             addRenderableWidget(new IconButton(width - 14, screenY + 1, 10, 11, Component.empty(),
                     () -> scrollCategories(1),
                     (g, btn, mx, my) -> {
-                                        // NEOFORGE_PORT: same hover dimming as above.
+                                        
                                         float c = btn.isHovered() ? 1f : 0.7f;
                                         int b = (int) (c * 255f);
                                         g.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, btn.getX(), btn.getY(), 51, 71, 10, 11, 256, 256,
@@ -446,8 +446,8 @@ public class ResearchBrowserScreen extends Screen {
         return super.keyPressed(event);
     }
 
-    // NEOFORGE_PORT (26.3): Forge charTyped(char,int) -> charTyped(CharacterEvent). Screen focus
-    // sits on the clicked search button, so chars must be forwarded explicitly (Forge 1:1).
+    
+    
     @Override
     public boolean charTyped(CharacterEvent event) {
         if (searching && searchField.charTyped(event)) {
@@ -476,7 +476,7 @@ public class ResearchBrowserScreen extends Screen {
             }
         }
 
-        // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+        
         arcaneresearch.api.capabilities.IPlayerKnowledge knowledge =
                 ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null) {
@@ -505,9 +505,9 @@ public class ResearchBrowserScreen extends Screen {
                                 if (recipeObject == null) {
                                     recipeObject = CommonInternals.getCatalogRecipeFake(rec);
                                 }
-                                // NEOFORGE_PORT: Recipe.getResultItem(RegistryAccess) + client
-                                // getRecipeManager gone in 26.x -> displayResultStack (display
-                                // API) + ClientRecipeCache.byKey.
+                                
+                                
+                                
                                 ItemStack ro = null;
                                 if (recipeObject instanceof net.minecraft.world.item.crafting.Recipe<?> vanilla) {
                                     ro = arcaneresearch.common.lib.crafting.ClientRecipeCache
@@ -539,14 +539,14 @@ public class ResearchBrowserScreen extends Screen {
         searchResults.sort(Comparator.comparing(Pair::getLeft));
     }
 
-    // NEOFORGE_PORT: plain-Screen drawing lives in extractBackground (Thaumaturge browser
-    // pattern); renderBackground/super.render/flush/tooltip-immediate calls removed (base handles
-    // background/widgets/deferred tooltips).
-    // NEOFORGE_PORT: Screen.extractBackground is public in 26.x.
+    
+    
+    
+    
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        // NEOFORGE_PORT (26.3): isInGameUi() -> super draws exactly the 1.20.1 in-world
-        // renderBackground gradient (no blur / menu texture, no second gradient).
+        
+        
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
         if (!searching) {
@@ -627,8 +627,8 @@ public class ResearchBrowserScreen extends Screen {
 
     }
 
-    // NEOFORGE_PORT: mouseScrolled(double,double,double) -> (double,double,double,double)
-    // (scrollX/scrollY; vertical delta = scrollY).
+    
+    
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (!searching) {
@@ -647,7 +647,7 @@ public class ResearchBrowserScreen extends Screen {
     public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
         int button = event.button();
 
-        // NEOFORGE_PORT (26.3): mouse buttons are 1-based (left = MOUSE_BUTTON_LEFT, was 0).
+        
         if (button == InputConstants.MOUSE_BUTTON_LEFT && !searching) {
             isDragging = true;
             return true;
@@ -664,13 +664,13 @@ public class ResearchBrowserScreen extends Screen {
         return super.mouseReleased(event);
     }
 
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();
         double mouseY = event.y();
-        // NEOFORGE_PORT (26.3): panning is armed in mouseDragged only (Forge 1:1); MouseHandler
-        // calls mouseDragged on every move while a button is held.
+        
+        
         popuptime = System.currentTimeMillis() - 1L;
 
         if (!searching && currentHighlight != null) {
@@ -680,14 +680,14 @@ public class ResearchBrowserScreen extends Screen {
 
                 updateResearch();
                 PacketHandler.sendToServer(new PacketSyncProgressToServer(currentHighlight.getKey(), true));
-                // NEOFORGE_PORT: Minecraft.setScreen removed -> setScreenAndShow.
+                
                 Objects.requireNonNull(minecraft).setScreenAndShow(new ResearchPageScreen(currentHighlight, null, guiMapX, guiMapY));
                 popuptime = System.currentTimeMillis() + 3000L;
                 popupmessage = Component.translatable("tc.research.popup", currentHighlight.getLocalizedName()).getString();
                 return true;
             } else if (ArcaneresearchCapabilities.isResearchKnown(player, currentHighlight.getKey())) {
 
-                // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+                
                 arcaneresearch.api.capabilities.IPlayerKnowledge knowledge =
                         ArcaneresearchCapabilities.getKnowledge(player);
                 if (knowledge != null) {
@@ -782,8 +782,8 @@ public class ResearchBrowserScreen extends Screen {
     }
 
     private void drawScrollingTexture(GuiGraphicsExtractor graphics, net.minecraft.resources.Identifier tex, float width, float height, float scrollX, float scrollY) {
-        // NEOFORGE_PORT: scrolling wrap via tiled pipeline blits (256x256 sheet, was immediate UV quads). Texture
-        // is passed explicitly (Forge bound it via RenderSystem.setShaderTexture at the call site).
+        
+        
         int ox = ((int) scrollX) % 256;
         if (ox < 0) ox += 256;
         int oy = ((int) scrollY) % 256;
@@ -806,9 +806,9 @@ public class ResearchBrowserScreen extends Screen {
     private void renderResearchContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, int locX, int locY) {
         if (research.isEmpty()) return;
 
-        // NEOFORGE_PORT (26.3): Forge drew each line at translate(0, 0, zMod) under the GUI
-        // depth test, so higher-zMod lines (known parents) covered lower ones; the 2D pose
-        // has no z -> submit lines in ascending zMod passes (drawLine skips other passes).
+        
+        
+        
         for (linePass = 0; linePass <= 3; linePass++) {
         for (ResearchEntry source : research) {
             if (source.getParents() != null && source.getParents().length > 0) {
@@ -904,9 +904,9 @@ public class ResearchBrowserScreen extends Screen {
                     brightness = (float) Math.sin(System.currentTimeMillis() % 600L / 600.0 * Math.PI * 2.0) * 0.25f + 0.75f;
                 }
 
-                // NEOFORGE_PORT: Forge setShaderColor(brightness...) tint on the
-                // frame blits -> ARGB color (frame only; knowledge flags below
-                // were reset to white in Forge, item icons drawn untinted).
+                
+                
+                
                 int frameTint = 0xFF000000 | ((int) (brightness * 255.0f) << 16)
                         | ((int) (brightness * 255.0f) << 8) | (int) (brightness * 255.0f);
                         int frameU = 80;
@@ -927,8 +927,8 @@ public class ResearchBrowserScreen extends Screen {
                             48 + (iconResearch.hasMeta(ResearchEntry.EnumResearchMeta.HIDDEN) ? 32 : 0), 32, 32, 256, 256, frameTint);
                 }
 
-                // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional);
-                // pose 2D (translate/scale 2-arg).
+                
+                
                 arcaneresearch.api.capabilities.IPlayerKnowledge knowledge =
                         ArcaneresearchCapabilities.getKnowledge(player);
                 if (knowledge != null) {
@@ -974,9 +974,9 @@ public class ResearchBrowserScreen extends Screen {
             int[] size = getTextureSize(rl);
             int w = Math.max(size[0], 1);
             int h = Math.max(size[1], 1);
-            // NEOFORGE_PORT: Forge setShaderColor(canUnlock ? 1 : 0.1) tint on
-            // the icon -> ARGB color on the texture blits (item icons have no
-            // tint path in graphics.item, drawn untinted as in practice).
+            
+            
+            
             int tint = 0xFF000000 | ((int) (dim * 255.0f) << 16)
                     | ((int) (dim * 255.0f) << 8) | (int) (dim * 255.0f);
             if (h > w && h % w == 0) {
@@ -1048,10 +1048,10 @@ public class ResearchBrowserScreen extends Screen {
             return;
         }
         graphics.pose().pushMatrix();
-        // NEOFORGE_PORT: 2D pose stack (Matrix3x2fStack) has no z; the Forge
-        // zMod translate is covered by submission order (lines submit before icons).
-        // NEOFORGE_PORT: Forge setShaderColor(r, g, b) tint on every line blit
-        // -> ARGB lineColor appended below.
+        
+        
+        
+        
         int lineColor = 0xFF000000 | ((int) (r * 255.0f) << 16)
                 | ((int) (g * 255.0f) << 8) | (int) (b * 255.0f);
 
@@ -1176,8 +1176,8 @@ public class ResearchBrowserScreen extends Screen {
 
     private void renderSearchResults(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 
-        // NEOFORGE_PORT: EditBox.render() removed in 26.x вЂ” the field is a widget
-        // (addRenderableWidget in updateResearch) and renders via the framework.
+        
+        
 
         int q = 0;
         for (Pair<String, SearchResult> p : searchResults) {
@@ -1196,7 +1196,7 @@ public class ResearchBrowserScreen extends Screen {
                 graphics.pose().popMatrix();
             }
 
-            // NEOFORGE_PORT (26.3): Forge drawString(font, s, x, y, color) had a drop shadow.
+            
             graphics.text(font, p.getLeft(), 32, 32 + q * 10, color, true);
             q++;
 
@@ -1214,7 +1214,7 @@ public class ResearchBrowserScreen extends Screen {
         if (canUnlockResearch(currentHighlight)) {
             if (!ArcaneresearchCapabilities.isResearchComplete(player, currentHighlight.getKey())
                     && currentHighlight.getStages() != null) {
-                // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+                
                 arcaneresearch.api.capabilities.IPlayerKnowledge knowledge =
                         ArcaneresearchCapabilities.getKnowledge(player);
                 if (knowledge != null) {
@@ -1250,7 +1250,7 @@ public class ResearchBrowserScreen extends Screen {
             }
         }
 
-        // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+        
         arcaneresearch.api.capabilities.IPlayerKnowledge tooltipKnowledge =
                 ArcaneresearchCapabilities.getKnowledge(player);
         if (tooltipKnowledge != null) {
@@ -1262,8 +1262,8 @@ public class ResearchBrowserScreen extends Screen {
             }
         }
 
-        // NEOFORGE_PORT: setTooltipForNextFrame(Font,List,Optional<TooltipComponent>,int,int)
-        // gone -> setComponentTooltipForNextFrame (no image part; was Optional.empty()).
+        
+        
         graphics.setComponentTooltipForNextFrame(font, lines, mouseX + 3, mouseY - 3);
     }
 
@@ -1297,7 +1297,7 @@ public class ResearchBrowserScreen extends Screen {
             this.renderer = renderer;
         }
 
-        // NEOFORGE_PORT: Button.renderWidget removed -> AbstractButton.extractContents.
+        
         @Override
         protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY()
@@ -1337,7 +1337,7 @@ public class ResearchBrowserScreen extends Screen {
                     && mouseY < (double) (this.getY() + addonShift + this.getHeight());
         }
 
-        // NEOFORGE_PORT: AbstractButton.onPress() removed -> onPress(InputWithModifiers).
+        
         @Override
         public void onPress(InputWithModifiers input) {
             searching = false;
@@ -1354,20 +1354,20 @@ public class ResearchBrowserScreen extends Screen {
             guiMapY = centerY;
         }
 
-        // NEOFORGE_PORT: Button.renderWidget removed -> AbstractButton.extractContents.
+        
         @Override
         protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
 
-                // NEOFORGE_PORT: Forge setShaderColor(frameColor, 1, 1, 1) tint on
-                // the frame blit -> ARGB color (selected category glows cyan-ish).
+                
+                
                 float frameColor = selectedCategory != null && selectedCategory.equals(catKey) ? 0.6f : 1.0f;
                 int frameTint = 0xFF000000 | ((int) (frameColor * 255.0f) << 16) | 0x00FFFF;
                 graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, getX() - 3, getY() - 3 + addonShift, 13, 13, 22, 22, 256, 256, frameTint);
 
             if (category.icon != null) {
-                // NEOFORGE_PORT: Forge setShaderColor(iconBrightness x3, hover ? 1 : 0.8 alpha)
-                // -> ARGB color on the icon blit. BASICS shows the book item
-                // (Forge 1:1); item icons have no tint path, drawn untinted.
+                
+                
+                
                 float iconBrightness = (selectedCategory != null && selectedCategory.equals(catKey)) || isHovered ? 1.0f : 0.66f;
                 if ("BASICS".equals(catKey)) {
                     arcaneresearch.client.gui.GuiRenderHelper.renderItem(graphics,
@@ -1414,7 +1414,7 @@ public class ResearchBrowserScreen extends Screen {
             if (isHovered) {
                 String displayText = getMessage().getString() + " (" + completion + "%)";
                 int textX = isRightSide ? (screenX + 9 - font.width(displayText)) : (getX() + 22);
-                // NEOFORGE_PORT (26.3): Forge drawString(font, s, x, y, color) had a drop shadow.
+                
                 graphics.text(font, displayText, textX, getY() + 4 + addonShift, 0xFFFFFFFF, true);
                 int t = 9;
                 if (catNewResearch) {
@@ -1434,7 +1434,7 @@ public class ResearchBrowserScreen extends Screen {
 
         private boolean[] getCategoryFlags(String researchKey) {
             boolean[] out = new boolean[2];
-            // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+            
             arcaneresearch.api.capabilities.IPlayerKnowledge knowledge =
                     ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {

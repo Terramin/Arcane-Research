@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -79,7 +79,7 @@ public class WandHudHandler {
             int loc = max > 0 ? (int) (30.0F * amt / max) : 0;
 
             int color = aspect.getColor();
-            // NEOFORGE_PORT: setColor gone in 26.3 -> per-blit tint (alpha 0.8 baked).
+            
             int tint = (0xCC << 24) | (color & 0x00FFFFFF);
             graphics.blit(RenderPipelines.GUI_TEXTURED, this.hudTex, -4, 35 - loc, 104, 0, 8, loc, 256, 256, tint);
 
@@ -159,7 +159,7 @@ public class WandHudHandler {
         if (this.lastItem == null || !ItemStack.isSameItem(picked, this.lastItem)
                 || time - this.lastTradeSync > 1000L) {
             amount = 0;
-            // NEOFORGE_PORT (26.3): Forge counted inventory.items only (no armor/offhand).
+            
             for (ItemStack is : player.getInventory().getNonEquipmentItems()) {
                 if (!is.isEmpty() && ItemStack.isSameItem(is, picked)) {
                     amount += is.getCount();

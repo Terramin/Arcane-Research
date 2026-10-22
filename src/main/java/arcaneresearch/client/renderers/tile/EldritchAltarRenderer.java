@@ -19,14 +19,14 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.init.ModItems;
 
-/**
- * Рендер алтаря, порт TC4 ClientProxy-регистрации
- * TileEldritchCapRenderer("obelisk_cap_altar.png") на TileEldritchAltar:
- * модель капа (сиденье алтаря) + плавающие глаза (по одному за каждый
- * вставленный, кругом). Лежит в arcaneresearch.arcaneresearch.client.renderers.tile.
- * NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
- * (cap via ObeliskCapModels.renderCapSubmit, eye items via ItemStackRenderState.submit).
- */
+ 
+
+
+
+
+
+
+ 
 public class EldritchAltarRenderer implements BlockEntityRenderer<EldritchAltarTile, EldritchAltarRenderer.State> {
 
     private static final Identifier CAP_ALTAR =
@@ -84,9 +84,9 @@ public class EldritchAltarRenderer implements BlockEntityRenderer<EldritchAltarT
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
             CameraRenderState cameraState) {
-        // TC4: алтарь = TileEldritchCapRenderer с obelisk_cap_altar.png
-        // (модель капа, сиденье алтаря 0..0.8 по высоте блока).
-        // Рефадж: во Внешних землях алтарь рисуется cap_2 (без altar-варианта).
+        
+        
+        
         Identifier capTexture = state.capOuter ? CAP_OUTER : CAP_ALTAR;
         ObeliskCapModels.renderCapSubmit(poseStack, collector, capTexture,
                 state.lightCoords, OverlayTexture.NO_OVERLAY);
@@ -101,16 +101,16 @@ public class EldritchAltarRenderer implements BlockEntityRenderer<EldritchAltarT
             poseStack.translate(0.46D, 0.2D, 0.0D);
             poseStack.rotate(Axis.YP.rotationDegrees(90.0F));
             poseStack.rotate(Axis.XP.rotationDegrees(-18.0F));
-            // Глаз TC4 (EntityItem) — полблока; целый предмет в блок
-            // проваливается сквозь крышку.
+            
+            
             poseStack.scale(0.5F, 0.5F, 0.5F);
             state.eye.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             poseStack.popPose();
         }
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(EldritchAltarTile blockEntity) {
         return blockEntity.getRenderBoundingBox();

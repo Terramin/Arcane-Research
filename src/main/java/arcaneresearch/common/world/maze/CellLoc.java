@@ -1,7 +1,7 @@
 package arcaneresearch.common.world.maze;
 
-// Pure-java chunk-coordinate key for the labyrinth map. No Minecraft dependencies;
-// ported verbatim from 1.8.9.
+
+
 public class CellLoc implements Comparable<CellLoc> {
     public int x;
     public int z;

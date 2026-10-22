@@ -16,8 +16,8 @@ import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.devices.TileHungryChest;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (facing rotation + lid animation via submitModelPart).
+
+
 public class HungryChestRenderer implements BlockEntityRenderer<TileHungryChest, HungryChestRenderer.State> {
 
     private static final net.minecraft.resources.Identifier TEXTURE =
@@ -71,9 +71,9 @@ public class HungryChestRenderer implements BlockEntityRenderer<TileHungryChest,
         poseStack.rotate(com.mojang.math.Axis.YP.rotationDegrees(-state.facing.toYRot()));
         poseStack.translate(-0.5, -0.5, -0.5);
 
-        // NEOFORGE_PORT (26.3): parts are rendered later (deferred, Model.Simple has no
-        // setupAnim) and shared by all chests, so the per-chest lid angle is applied
-        // inside the callback (otherwise every chest shows the last chest's lid).
+        
+        
+        
         final float lidXRot = state.lidXRot;
         final int light = state.lightCoords;
         RenderType type = TCRenderTypes.objSolid(TEXTURE);

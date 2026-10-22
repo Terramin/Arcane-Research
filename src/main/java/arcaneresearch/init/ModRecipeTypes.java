@@ -11,11 +11,11 @@ import arcaneresearch.api.crafting.IArcaneRecipe;
 import arcaneresearch.common.lib.crafting.CrucibleRecipeType;
 import arcaneresearch.common.lib.crafting.InfusionRecipeType;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModRecipeTypes.java (PORTED 90%).
-// REQUIRED changes:
-//   DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ...) -> create(Registries.RECIPE_TYPE, ...)
-//   RegistryObject -> DeferredHolder (same .get() API).
-// All 3 entries ported in ORIGINAL ORDER with IDENTICAL registry names.
+
+
+
+
+
 public class ModRecipeTypes {
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, Arcaneresearch.MODID);
@@ -32,7 +32,7 @@ public class ModRecipeTypes {
                 }
             });
 
-    // Forge order slots 2-3 — PORTED (need common/lib/crafting — ported this phase).
+    
     public static final DeferredHolder<RecipeType<?>, RecipeType<CrucibleRecipeType>> CRUCIBLE =
             RECIPE_TYPES.register("crucible", () -> new RecipeType<CrucibleRecipeType>() {
                 @Override

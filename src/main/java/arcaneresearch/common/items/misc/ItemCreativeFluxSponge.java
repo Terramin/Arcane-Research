@@ -26,8 +26,8 @@ public class ItemCreativeFluxSponge extends Item {
         super(properties.stacksTo(1).rarity(Rarity.EPIC));
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x (verified via javap on Item):
-    // (ItemStack, Level, List<Component>, TooltipFlag) -> (ItemStack, TooltipContext, TooltipDisplay, Consumer<Component>, TooltipFlag); tooltip.add -> accept.
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, display, tooltip, flag);
@@ -38,13 +38,13 @@ public class ItemCreativeFluxSponge extends Item {
         tooltip.accept(Component.literal("Creative only").withStyle(ChatFormatting.DARK_PURPLE));
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed, verified via javap on Item).
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
         if (level.isClientSide()) {
-            // NEOFORGE_PORT: swing(hand) -> swing(hand, SwingAnimation.DEFAULT, false) (verified via javap on LivingEntity).
+            
             player.swing(hand, SwingAnimation.DEFAULT, false);
             level.playLocalSound(player.getX(), player.getY(), player.getZ(),
                     ModSounds.CRAFT_START.get(), SoundSource.PLAYERS, 0.15f, 1.0f, false);
@@ -75,8 +75,8 @@ public class ItemCreativeFluxSponge extends Item {
             }
         }
 
-        // NEOFORGE_PORT: InteractionResultHolder.sidedSuccess(stack, isClient) removed with the holder (verified: no sidedSuccess in 26.3 jar);
-        // project convention (BlockAlembic etc.): client SUCCESS, server CONSUME.
+        
+        
         return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
     }
 }

@@ -294,7 +294,7 @@ public class BlockTaintFibre extends Block implements ITaintBlock {
         return RenderShape.MODEL;
     }
 
-    // NEOFORGE_PORT: 26.x propagatesSkylightDown takes only the state.
+    
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;

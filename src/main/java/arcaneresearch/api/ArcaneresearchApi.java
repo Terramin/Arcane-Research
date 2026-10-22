@@ -178,8 +178,8 @@ public class ArcaneresearchApi {
         try {
             Identifier tagLoc = Identifier.parse(tagName);
             net.minecraft.tags.TagKey<Item> tagKey = net.minecraft.tags.ItemTags.create(tagLoc);
-            // NEOFORGE_PORT: Forge ForgeRegistries.ITEMS.tags().getTag(tagKey):HolderSet{isBound,Iterable<Item>}
-            //   -> vanilla BuiltInRegistries.ITEM.getTagOrEmpty(tagKey):Iterable<Holder<Item>>. Items via holder.value().
+            
+            
             for (var holder : net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(tagKey)) {
                 registerObjectTag(new ItemStack(holder.value()), aspects.copy());
             }
@@ -212,7 +212,7 @@ public class ArcaneresearchApi {
         try {
             Identifier tagLoc = Identifier.parse(tagName);
             net.minecraft.tags.TagKey<Item> tagKey = net.minecraft.tags.ItemTags.create(tagLoc);
-            // NEOFORGE_PORT: same as above (Forge tag manager -> BuiltInRegistries).
+            
             for (var holder : net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(tagKey)) {
                 registerComplexObjectTag(new ItemStack(holder.value()), aspects.copy());
             }
@@ -250,7 +250,7 @@ public class ArcaneresearchApi {
         }
     }
 
-    /** Явления для таумометра (порт {@code ThaumcraftApi.scanEventhandlers}). */
+      
     public static final java.util.List<IScanEventHandler> scanEventhandlers = new java.util.ArrayList<>();
 
     public static void registerScanEventHandler(IScanEventHandler handler) {

@@ -22,24 +22,24 @@ import arcaneresearch.init.ModItems;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/crafting/RecipeMagicDust.java.
-// 26.x changes only: vanilla ShapelessRecipe ctor is now (CommonInfo, CraftingBookInfo,
-// ItemStackTemplate, List<Ingredient>); matches/assemble/getRemainingItems take
-// CraftingInput; canCraftInDimensions is gone from the vanilla interface; old
-// fromJson/fromNetwork/toNetwork serializer replaced by unit MAP_CODEC/STREAM_CODEC +
-// `new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC)` (mirrors RepairItemRecipe — the
-// recipe carries no data, its inputs are fixed).
-// CrystalAspectIngredient is an ICustomIngredient in 26.x (Ingredient is final), so the
-// three crystal entries wrap via `new Ingredient(custom)`; test() semantics unchanged.
-// Bowl/flint/redstone + 3 distinct crystals logic VERBATIM (remainder override kept).
+
+
+
+
+
+
+
+
+
+
 public class RecipeMagicDust extends ShapelessRecipe {
 
-    // NEOFORGE_PORT: unit codecs (no data); the instance touches ModItems holders, so
-    // it is built lazily via LazyCodecs - serializers register before items are bound
-    // (same timing as data-pack recipe load).
-    // The single memoized instance is SHARED by MAP_CODEC and STREAM_CODEC:
-    // recipe sync (neoforge:recipe_content) encodes with the stream codec and
-    // rejects any instance but the expected one.
+    
+    
+    
+    
+    
+    
     private static final java.util.function.Supplier<RecipeMagicDust> INSTANCE =
             com.google.common.base.Suppliers.memoize(RecipeMagicDust::new);
     public static final MapCodec<RecipeMagicDust> MAP_CODEC = LazyCodecs.lazyUnit(INSTANCE);
@@ -49,13 +49,13 @@ public class RecipeMagicDust extends ShapelessRecipe {
             new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     public RecipeMagicDust() {
-        // NEOFORGE_PORT (26.3): Forge ShapelessRecipe kept Recipe#showNotification() = true.
+        
         super(new Recipe.CommonInfo(true),
                 new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
-                // NEOFORGE_PORT: fromStack(new ItemStack(...)) touches holder.components(),
-                // which is unbound during datapack decode ("Components not bound yet").
-                // wrapAsHolder only stores the intrusive reference (bound at freeze) -
-                // identical semantics to vanilla ItemStackTemplate handling.
+                
+                
+                
+                
                 new ItemStackTemplate(
                         net.minecraft.core.registries.BuiltInRegistries.ITEM
                                 .wrapAsHolder(ModItems.SALIS_MUNDUS.get()),
@@ -74,7 +74,7 @@ public class RecipeMagicDust extends ShapelessRecipe {
         return ingredients;
     }
 
-    // NEOFORGE_PORT: Forge-era legacy helper (fixed inputs, same content).
+    
     public List<Ingredient> getIngredients() {
         return salisIngredients();
     }
@@ -136,9 +136,9 @@ public class RecipeMagicDust extends ShapelessRecipe {
     @Override
     @SuppressWarnings("unchecked")
     public RecipeSerializer<ShapelessRecipe> getSerializer() {
-        // NEOFORGE_PORT: parameterized types are invariant, so the custom
-        // SERIALIZER (Forge returned Serializer.INSTANCE verbatim) goes out
-        // through a wildcard cast — same instance, same behavior.
+        
+        
+        
         return (RecipeSerializer<ShapelessRecipe>) (RecipeSerializer<?>) SERIALIZER;
     }
 }

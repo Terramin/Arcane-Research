@@ -3,8 +3,8 @@ package arcaneresearch.init;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries; // NEOFORGE_PORT: was ForgeRegistries
-// NEOFORGE_PORT: RegistryObject<BlockEntityType<X>> -> DeferredHolder<BlockEntityType<?>, BlockEntityType<X>> below.
+import net.minecraft.core.registries.Registries; 
+
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.tiles.crafting.*;
 import arcaneresearch.common.tiles.devices.*;
@@ -371,21 +371,21 @@ public class ModBlockEntities {
                             ModBlocks.BANNER_CRIMSON_CULT.get()
                     ));
 
-    // NEOFORGE_PORT: replaces every tile's getCapability/invalidateCaps/reviveCaps
-    // (removed Forge API) with the same per-tile exposure as Forge:
-    //   - TileArcaneresearchInventory subclasses: item handler on non-null sides only
-    //     (SidedInvWrapper for WorldlyContainer, else InvWrapper; null side -> none);
-    //   - TileHungryChest: InvWrapper on every side (null included);
-    //   - TileCrucible / TileSpa: fluid tank on every side; TileWaterJug: drain-only on UP;
-    //   - TileVisGenerator: energy on the facing side only.
-    // Other Container tiles (e.g. TileSpa) exposed no item handler in Forge.
-    // NEOFORGE_PORT (26.3): this listener was never subscribed (no @EventBusSubscriber) ->
-    // wired explicitly in the Arcaneresearch constructor (mod bus).
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         for (var holder : BLOCK_ENTITIES.getEntries()) {
             registerContainerCap(event, holder.get());
         }
-        // AuraTotemTile (TileArcaneresearchInventory) lives in the aura register.
+        
         for (var holder : arcaneresearch.common.blocks.aura.AuraBlockEntities.BLOCK_ENTITIES.getEntries()) {
             registerContainerCap(event, holder.get());
         }

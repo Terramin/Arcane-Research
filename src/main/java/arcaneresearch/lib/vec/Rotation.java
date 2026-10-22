@@ -227,7 +227,7 @@ public class Rotation extends Transformation {
         if (len == 0.0) {
             return;
         }
-        // NEOFORGE_PORT: PoseStack.rotate(Quaternionf) removed -> rotate(Quaternionfc).
+        
         poseStack.rotate(new Quaternionf().setAngleAxis((float) angle,
                 (float) (axis.x / len), (float) (axis.y / len), (float) (axis.z / len)));
     }

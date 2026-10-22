@@ -8,13 +8,13 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Клиент -&gt; сервер: «сканирую себя» (таумометр на курсоре, зона игрока
- * в родном инвентарном меню). Пустое тело.
- *
- * NEOFORGE_PORT: Forge FriendlyByteBuf-«пустышка» -&gt; CustomPacketPayload
- * (пустой StreamCodec). Payload id "arcaneresearch:invscan_self".
- */
+ 
+
+
+
+
+
+ 
 public class MsgScanSelf implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgScanSelf> TYPE =

@@ -54,7 +54,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityFluxRift extends Entity {
-    // NEOFORGE_PORT: Entity.hurtServer abstract in 26.3; this entity is unhurtable (was: no hurt override).
+    
     @Override
     public final boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float damage) {
         if (!isInvulnerableToBase(source)) {
@@ -85,13 +85,13 @@ public class EntityFluxRift extends Entity {
 
     public ArrayList<Vec3> points = new ArrayList<>();
     public ArrayList<Float> pointsWidth = new ArrayList<>();
-    /**
-     * РђС‚РѕРјР°СЂРЅС‹Р№ СЃРЅР°РїС€РѕС‚ С„РѕСЂРјС‹: РїРµСЂРµСЃС‡С‘С‚ СЃРѕР±РёСЂР°РµС‚ РќРћР’Р«Р• СЃРїРёСЃРєРё Рё РїСѓР±Р»РёРєСѓРµС‚
-     * РёС… РѕРґРЅРѕР№ volatile-Р·Р°РїРёСЃСЊСЋ. Р РµРЅРґРµСЂ (РІ С‚.С‡. РІРѕСЂРєРµСЂС‹ РјРµС€РёРЅРіР°) Р±РµСЂС‘С‚
-     * СЃСЃС‹Р»РєСѓ РѕРґРёРЅ СЂР°Р· Р·Р° РєР°РґСЂ Рё РІРёРґРёС‚ РІСЃРµРіРґР° С†РµР»СЊРЅС‹Р№ РЅР°Р±РѕСЂ вЂ” РЅРёРєР°РєРёС…
-     * ConcurrentModification Рё СЂРІР°РЅС‹С… С‚РѕС‡РµРє. In-place clear/add Р±РѕР»СЊС€Рµ
-     * РЅРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ.
-     */
+     
+
+
+
+
+
+ 
     public volatile List<Vec3> pointsView = List.of();
     public volatile List<Float> pointsWidthView = List.of();
     private int maxSize = 0;
@@ -116,7 +116,7 @@ public class EntityFluxRift extends Entity {
             spawnPos = new BlockPos(pos.getX(), 10, pos.getZ());
             while (!level.getBlockState(spawnPos).isAir()) {
                 spawnPos = spawnPos.above(level.getRandom().nextInt(5) + 1);
-                // NEOFORGE_PORT (26.3): getMaxBuildHeight() (exclusive) == getMaxY() + 1.
+                
                 if (spawnPos.getY() > level.getMaxY() + 1 - 5) {
                     return;
                 }
@@ -136,7 +136,7 @@ public class EntityFluxRift extends Entity {
         if (size > 5) {
             EntityFluxRift rift = new EntityFluxRift(level);
             rift.setRiftSeed(level.getRandom().nextInt());
-            // NEOFORGE_PORT (26.3): Entity.moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+            
             rift.snapTo(spawnPos.getX() + 0.5, spawnPos.getY() + 0.5, spawnPos.getZ() + 0.5,
                     level.getRandom().nextFloat() * 360.0f, 0.0f);
 
@@ -144,7 +144,7 @@ public class EntityFluxRift extends Entity {
                 rift.setRiftSize((int) size);
                 AuraHelper.drainFlux(level, spawnPos, (float) size, false);
 
-                // NEOFORGE_PORT (26.3): 2-arg getEntitiesOfClass keeps the Forge NO_SPECTATORS filter.
+                
                 List<Player> targets = level.getEntitiesOfClass(Player.class, new AABB(spawnPos).inflate(32.0));
                 for (Player target : targets) {
                     if (!ArcaneresearchCapabilities.isResearchKnown(target, "f_toomuchflux")) {
@@ -222,8 +222,8 @@ public class EntityFluxRift extends Entity {
     }
 
     private void recalculateShape() {
-        // РЎС‚СЂРѕРёРј РІ Р»РѕРєР°Р»СЊРЅС‹Рµ СЃРїРёСЃРєРё Рё РїСѓР±Р»РёРєСѓРµРј Р°С‚РѕРјР°СЂРЅРѕ: С‡РёС‚Р°С‚РµР»Рё РІСЃРµРіРґР°
-        // РІРёРґСЏС‚ Р»РёР±Рѕ СЃС‚Р°СЂС‹Р№, Р»РёР±Рѕ РЅРѕРІС‹Р№ РЅР°Р±РѕСЂ С†РµР»РёРєРѕРј, РЅРѕ РЅРµ РїРѕР»СѓСЃРѕР±СЂР°РЅРЅС‹Р№.
+        
+        
         ArrayList<Vec3> np = new ArrayList<>();
         ArrayList<Float> nw = new ArrayList<>();
         calcSteps(np, nw, new Random(getRiftSeed()));
@@ -487,7 +487,7 @@ public class EntityFluxRift extends Entity {
                         }
                         MobEffectInstance pe = new MobEffectInstance(
                                 ModEffects.INFECTIOUS_VIS_EXHAUST, 3000, 2);
-                        // NEOFORGE_PORT: Forge cleared the curative items (milk-immune) -> IncurableEffects.
+                        
                         try {
                             arcaneresearch.common.lib.potions.IncurableEffects.addIncurable(target, pe);
                         } catch (Exception ignored) {
@@ -597,8 +597,8 @@ public class EntityFluxRift extends Entity {
 
     }
 
-    // NEOFORGE_PORT: Forge setSecondsOnFire(int) -> 26.x igniteForSeconds is final and
-    // delegates to igniteForTicks, so the no-op moves there.
+    
+    
     @Override
     public void igniteForTicks(int ticks) {
 
@@ -621,7 +621,7 @@ public class EntityFluxRift extends Entity {
         setRiftSeed(tag.getIntOr("RiftSeed", 0));
         setRiftStability(tag.getFloatOr("Stability", 0.0F));
 
-        // TODO_PORT: ValueInput.contains gone in 26.3; nested default covers legacy key.
+        
         setCollapsing(tag.getBooleanOr("collapse", tag.getBooleanOr("Collapse", false)));
     }
 

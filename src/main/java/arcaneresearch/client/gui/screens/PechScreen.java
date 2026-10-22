@@ -1,11 +1,11 @@
 package arcaneresearch.client.gui.screens;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -40,7 +40,7 @@ public class PechScreen extends AbstractContainerScreen<PechMenu> {
         return true;
     }
 
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();
@@ -69,7 +69,7 @@ public class PechScreen extends AbstractContainerScreen<PechMenu> {
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int x = this.leftPos;
         int y = this.topPos;
 

@@ -22,22 +22,22 @@ import arcaneresearch.init.ModItems;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/crafting/RecipeLabelFill.java.
-// 26.x changes only: vanilla ShapelessRecipe ctor is now (CommonInfo, CraftingBookInfo,
-// ItemStackTemplate, List<Ingredient>); matches/assemble take CraftingInput;
-// canCraftInDimensions is gone from the vanilla interface; old fromJson/fromNetwork/
-// toNetwork serializer replaced by unit MAP_CODEC/STREAM_CODEC + new
-// RecipeSerializer<>(MAP_CODEC, STREAM_CODEC) (mirrors RepairItemRecipe — the recipe
-// carries no data, its inputs are fixed).
-// Label+phial matching/filling logic VERBATIM.
+
+
+
+
+
+
+
+
 public class RecipeLabelFill extends ShapelessRecipe {
 
-    // NEOFORGE_PORT: unit codecs (no data); the instance touches ModItems holders, so
-    // it is built lazily via LazyCodecs - serializers register before items are bound
-    // (same timing as data-pack recipe load).
-    // The single memoized instance is SHARED by MAP_CODEC and STREAM_CODEC:
-    // recipe sync (neoforge:recipe_content) encodes with the stream codec and
-    // rejects any instance but the expected one.
+    
+    
+    
+    
+    
+    
     private static final java.util.function.Supplier<RecipeLabelFill> INSTANCE =
             com.google.common.base.Suppliers.memoize(RecipeLabelFill::new);
     public static final MapCodec<RecipeLabelFill> MAP_CODEC = LazyCodecs.lazyUnit(INSTANCE);
@@ -47,12 +47,12 @@ public class RecipeLabelFill extends ShapelessRecipe {
             new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     public RecipeLabelFill() {
-        // NEOFORGE_PORT (26.3): Forge ShapelessRecipe kept Recipe#showNotification() = true.
+        
         super(new Recipe.CommonInfo(true),
                 new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
-                // NEOFORGE_PORT: fromStack(new ItemStack(...)) touches holder.components(),
-                // unbound during datapack decode - wrapAsHolder stores the intrusive
-                // reference instead (bound at freeze; vanilla ItemStackTemplate semantics).
+                
+                
+                
                 new ItemStackTemplate(
                         net.minecraft.core.registries.BuiltInRegistries.ITEM
                                 .wrapAsHolder(ModItems.LABEL_FILLED.get()),
@@ -118,9 +118,9 @@ public class RecipeLabelFill extends ShapelessRecipe {
     @Override
     @SuppressWarnings("unchecked")
     public RecipeSerializer<ShapelessRecipe> getSerializer() {
-        // NEOFORGE_PORT: parameterized types are invariant, so the custom
-        // SERIALIZER (Forge returned Serializer.INSTANCE verbatim) goes out
-        // through a wildcard cast — same instance, same behavior.
+        
+        
+        
         return (RecipeSerializer<ShapelessRecipe>) (RecipeSerializer<?>) SERIALIZER;
     }
 }

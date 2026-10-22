@@ -10,11 +10,11 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketMiscEvent.java (PLAY_TO_CLIENT).
-// Fields/ctors/constants preserved verbatim; transport -> CustomPacketPayload.
-// Wire order identical to the old encode/decode: byte type, then int value ONLY if != 0
-// (decode reads the int only when readable bytes remain).
-// Payload id "arcaneresearch:misc_event".
+
+
+
+
+
 public class PacketMiscEvent implements CustomPacketPayload {
 
     public static final byte WARP_EVENT = 0;
@@ -66,8 +66,8 @@ public class PacketMiscEvent implements CustomPacketPayload {
         ctx.enqueueWork(() -> handleClient(msg, ctx.player()));
     }
 
-    // Player/Level from the packet context (server-safe types only).
-    // FogHandler/ModSounds calls use safe signatures — PLAY_TO_CLIENT, client flow only.
+    
+    
     private static void handleClient(PacketMiscEvent packet, Player player) {
         if (player == null) return;
         Level level = player.level();

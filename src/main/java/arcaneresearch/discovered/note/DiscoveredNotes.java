@@ -23,23 +23,23 @@ import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.init.ModSounds;
 
-/**
- * Хелперы записки, порт в паритете с reforged
- * {@code thaumcraft.research.ResearchManager} (createNote/getData/updateData,
- * getResearchSlot, completeResearch) и TC3 {@code ResearchManager}
- * (createResearchNoteForPlayer/getData/updateData).
- *
- * NEOFORGE_PORT: getKnowledge возвращает @Nullable IPlayerKnowledge напрямую
- * (без Optional); Inventory.items приватны -> Container-API;
- * InteractionResultHolder.sidedSuccess удалён -> InteractionResult;
- * копирование NBT -> CUSTOM_DATA.
- */
+ 
+
+
+
+
+
+
+
+
+
+ 
 public final class DiscoveredNotes {
 
     private DiscoveredNotes() {
     }
 
-    /** Создать стак записки под ключ с требуемыми аспектами (паритет createNote). */
+      
     public static ItemStack createNote(String key, AspectList required) {
         ItemStack stack = new ItemStack(DiscoveredNoteSetup.getNoteItem());
         DiscoveredNoteData.write(stack, DiscoveredNoteData.create(key, required));
@@ -51,18 +51,18 @@ public final class DiscoveredNotes {
                 && stack.getItem() instanceof ItemDiscoveredResearchNote;
     }
 
-    /**
-     * Слот инвентаря игрока с запиской под ключ (паритет reforged getResearchSlot).
-     * Возвращает индекс в инвентаре или -1.
-     *
-     * @deprecated стол работает со своим слотом напрямую; никем не вызывается.
-     */
+     
+
+
+
+
+ 
     @Deprecated
     public static int findNoteSlot(Player player, String key) {
         if (key == null) {
             return -1;
         }
-        // NEOFORGE_PORT: Inventory.items приватны в 26.x -> Container-API.
+        
         var inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             if (isNoteFor(inventory.getItem(slot), key)) {
@@ -72,14 +72,14 @@ public final class DiscoveredNotes {
         return -1;
     }
 
-    /**
-     * Подтверждение условий ПКМ готовой (100%) запиской: НЕ мгновенное
-     * завершение, а один gated-шаг как кнопка книги — реквизиты родителей
-     * + проверка текущей стадии (предметы/крафты/знания/открытия, со
-     * списанием) + {@code progressResearch} один раз. Готовая записка
-     * сама засчитывается открытием под свой ключ.
-     * Сиблинги каскадит сам {@code progressResearch}.
-     */
+     
+
+
+
+
+
+
+ 
     public static InteractionResult tryCompleteFromNote(Level level, Player player, ItemStack stack) {
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
         if (data.key == null || !data.isComplete()
@@ -87,7 +87,7 @@ public final class DiscoveredNotes {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
-            // Готовая записка сама предъявляет своё открытие.
+            
             presentDiscovery(player, data.key);
             boolean ok = player instanceof net.minecraft.server.level.ServerPlayer serverPlayer
                     && ResearchManager.doesPlayerHaveRequisites(player, data.key)
@@ -105,7 +105,7 @@ public final class DiscoveredNotes {
         return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
-    /** Локализованное имя исследования или null, если записи нет. */
+      
     public static Component researchName(String key) {
         if (key == null) {
             return null;
@@ -117,10 +117,10 @@ public final class DiscoveredNotes {
         return Component.translatable("tempnote." + key + ".name");
     }
 
-    /**
-     * Описание на пергамент: склейка stage-текстов; нет записи в проекте —
-     * longText оригинала из lang (tempnote.KEY.text, порт reforged research.xml).
-     */
+     
+
+
+ 
     public static Component researchText(String key) {
         if (key == null) {
             return null;
@@ -147,10 +147,10 @@ public final class DiscoveredNotes {
         return Component.translatable("tempnote." + key + ".text");
     }
 
-    /**
-     * Короткое описание (popupText оригинала из lang).
-     * Возвращает null, если перевода нет (чистые project-ключи без записи в xml).
-     */
+     
+
+
+ 
     public static Component researchPopup(String key) {
         if (key == null) {
             return null;
@@ -163,26 +163,26 @@ public final class DiscoveredNotes {
         return Component.translatable(langKey);
     }
 
-    /**
-     * Превращение готовой записки в открытие (паритет reforged toDiscovery
-     * через transmuteCopy: тот же класс, другой id, NBT сохраняется).
-     */
+     
+
+
+ 
     public static ItemStack toDiscovery(ItemStack note) {
         if (DiscoveredNoteSetup.getDiscoveryItem() == null) {
             return note;
         }
         ItemStack out = new ItemStack(DiscoveredNoteSetup.getDiscoveryItem(), note.getCount());
-        // NEOFORGE_PORT: hasTag/setTag удалены -> CUSTOM_DATA целиком.
+        
         CompoundTag custom = ArcaneresearchInvHelper.getCustomTag(note);
         if (custom != null && !custom.isEmpty()) {
             ArcaneresearchInvHelper.setCustomTag(out, custom.copy());
         }
-        // NEOFORGE_PORT: открытие всегда RARE (см. getRarity-порт в write).
+        
         out.set(net.minecraft.core.component.DataComponents.RARITY, net.minecraft.world.item.Rarity.RARE);
         return out;
     }
 
-    /** Открытие temp с ключом (предмет discovery + NBT-ключ). */
+      
     public static boolean isDiscoveryFor(ItemStack stack, String key) {
         if (stack == null || stack.isEmpty() || key == null
                 || DiscoveredNoteSetup.getDiscoveryItem() == null) {
@@ -194,10 +194,10 @@ public final class DiscoveredNotes {
         return key.equals(DiscoveredNoteData.read(stack).key);
     }
 
-    /**
-     * Есть ли у игрока открытие под ключ (для required_discovery).
-     * Только предъявленное ПКМ (метка); держать в руках/инвентаре мало.
-     */
+     
+
+
+ 
     public static boolean hasDiscovery(Player player, String key) {
         if (player == null || key == null) {
             return false;
@@ -206,11 +206,11 @@ public final class DiscoveredNotes {
         return knowledge != null && knowledge.hasPresentedDiscovery(key);
     }
 
-    /**
-     * Предъявить открытие ПКМ (предмет остаётся в инвентаре).
-     * Принимаются открытие и готовая (100%) записка под ключ.
-     * Сразу тост (флаг DISCOVERY) + синк, чтобы книга видела метку.
-     */
+     
+
+
+
+ 
     public static boolean presentDiscovery(Player player, String key) {
         if (player == null || key == null) {
             return false;
@@ -238,11 +238,11 @@ public final class DiscoveredNotes {
         return added;
     }
 
-    /**
-     * Готовая (100%) записка под ключ — тоже доказательство открытия.
-     *
-     * @deprecated проверка идёт по метке предъявления, не по рукам; никем не вызывается.
-     */
+     
+
+
+
+ 
     @Deprecated
     public static boolean isCompleteNoteFor(ItemStack stack, String key) {
         if (stack == null || stack.isEmpty() || key == null
@@ -256,7 +256,7 @@ public final class DiscoveredNotes {
         return key.equals(data.key) && data.isComplete();
     }
 
-    /** Списать предъявленное открытие (предмет не трогаем). */
+      
     public static boolean consumeDiscovery(Player player, String key) {
         if (player == null || key == null) {
             return false;
@@ -265,7 +265,7 @@ public final class DiscoveredNotes {
         return knowledge != null && knowledge.consumePresentedDiscovery(key);
     }
 
-    /** Стак для отображения требования (пустое открытие с ключом). */
+      
     public static ItemStack discoveryStack(String key) {
         if (DiscoveredNoteSetup.getDiscoveryItem() == null || key == null) {
             return ItemStack.EMPTY;
@@ -275,19 +275,19 @@ public final class DiscoveredNotes {
         return stack;
     }
 
-    /**
-     * Убрать у игрока все записки и открытия temp.
-     *
-     * @deprecated сброс командой чистит только книгу, предметы остаются;
-     *             никем не вызывается.
-     */
+     
+
+
+
+
+ 
     @Deprecated
     public static int clearNotes(Player player) {
         if (player == null) {
             return 0;
         }
         int removed = 0;
-        // NEOFORGE_PORT: Inventory.items приватны в 26.x -> Container-API.
+        
         var inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
@@ -304,15 +304,15 @@ public final class DiscoveredNotes {
         return removed;
     }
 
-    /**
-     * Чернила для записки (паритет reforged consumeInk): первый IScribeTools
-     * с прочностью в основном инвентаре. doIt=false — только проверка.
-     *
-     * @deprecated стол бумагу/чернила не тратит из инвентаря; никем не вызывается.
-     */
+     
+
+
+
+
+ 
     @Deprecated
     public static boolean consumeInk(Player player, boolean doIt) {
-        // NEOFORGE_PORT: итерация по Container-API (items приватны в 26.x).
+        
         var inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
@@ -327,14 +327,14 @@ public final class DiscoveredNotes {
         return false;
     }
 
-    /**
-     * Бумага для записки (паритет reforged consumePaper).
-     *
-     * @deprecated стол берёт бумагу из своего слота; никем не вызывается.
-     */
+     
+
+
+
+ 
     @Deprecated
     public static boolean consumePaper(Player player) {
-        // NEOFORGE_PORT: итерация по Container-API (items приватны в 26.x).
+        
         var inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
@@ -346,12 +346,12 @@ public final class DiscoveredNotes {
         return false;
     }
 
-    /**
-     * Создать записку из припасов игрока (паритет reforged createNoteFromSupplies):
-     * проверка чернил → трата бумаги → трата чернил → записка.
-     *
-     * @deprecated записки создают стол и вкладка креатива; никем не вызывается.
-     */
+     
+
+
+
+
+ 
     @Deprecated
     public static ItemStack createNoteFromSupplies(Player player, String key, AspectList required) {
         if (consumeInk(player, false) && consumePaper(player)) {

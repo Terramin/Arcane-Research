@@ -70,7 +70,7 @@ public class EntityMindSpider extends Spider {
         }
         this.entityData.set(DATA_HARMLESS, harmless);
     }
-    // NEOFORGE_PORT: getStandingEyeHeight removed in 26.3 (eye height via EntityDimensions.withEyeHeight).
+    
 
     @Override
     protected float getSoundVolume() {
@@ -86,8 +86,8 @@ public class EntityMindSpider extends Spider {
         }
     }
 
-    // NEOFORGE_PORT: getExperienceReward() is final in 26.x; harmless zero-XP
-    // goes through the protected getBaseExperienceReward hook instead.
+    
+    
     @Override
     protected int getBaseExperienceReward(net.minecraft.server.level.ServerLevel level) {
         return isHarmless() ? 0 : super.getBaseExperienceReward(level);
@@ -106,7 +106,7 @@ public class EntityMindSpider extends Spider {
         return false;
     }
 
-    // NEOFORGE_PORT: 26.x shouldDropLoot takes the server level.
+    
     @Override
     protected boolean shouldDropLoot(net.minecraft.server.level.ServerLevel level) {
         return false;

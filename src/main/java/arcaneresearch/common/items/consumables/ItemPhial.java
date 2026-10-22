@@ -66,9 +66,9 @@ public class ItemPhial extends ItemEssentiaContainer {
         return super.getName(stack);
     }
 
-    // NEOFORGE_PORT: Forge appendHoverText(ItemStack, Level, List, Flag) 1:1 logic kept
-    // below (plain method); 26.x vanilla calls the 5-arg variant, which delegates to it
-    // (same pattern as ItemFocus).
+    
+    
+    
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         if (filled) {
             AspectList aspects = getAspects(stack);
@@ -81,8 +81,8 @@ public class ItemPhial extends ItemEssentiaContainer {
         }
     }
 
-    // NEOFORGE_PORT: 26.x tooltip signature (TooltipContext/TooltipDisplay/Consumer).
-    // Same content as Forge (aspect name + amount for filled phials).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display,
                                 java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
@@ -172,8 +172,8 @@ public class ItemPhial extends ItemEssentiaContainer {
         return InteractionResult.PASS;
     }
 
-    // NEOFORGE_PORT: Forge verbatim (IItemExtension keeps the 4-arg form in 26.x,
-    // verified in the NeoForge jar; same always-true behavior).
+    
+    
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.level.LevelReader level,
                                       BlockPos pos, Player player) {
@@ -181,8 +181,8 @@ public class ItemPhial extends ItemEssentiaContainer {
         return true;
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.pass(stack) -> InteractionResult.PASS.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         return InteractionResult.PASS;

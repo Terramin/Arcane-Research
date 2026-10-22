@@ -24,8 +24,8 @@ import java.awt.*;
 
 import java.awt.*;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (vis wave grid + side panels).
+
+
 public class DioptraRenderer implements BlockEntityRenderer<TileDioptra, DioptraRenderer.State> {
 
     private static final Identifier GRID_TEXTURE =
@@ -37,7 +37,7 @@ public class DioptraRenderer implements BlockEntityRenderer<TileDioptra, Dioptra
         public boolean hasLevel;
         public boolean showingVis;
         public float ticks;
-        // NEOFORGE_PORT: 13x13 grid stashed (level reads forbidden in submit).
+        
         public int[] grid = new int[13 * 13];
         public int counter;
     }
@@ -106,7 +106,7 @@ public class DioptraRenderer implements BlockEntityRenderer<TileDioptra, Dioptra
 
         RenderType type = TCRenderTypes.additiveTextured(GRID_TEXTURE);
 
-        // NEOFORGE_PORT: same 12x12 quads + skirts as Forge, one submit per quad.
+        
         for (int a = 0; a < 12; a++) {
             for (int bb = 0; bb < 12; bb++) {
 
@@ -173,7 +173,7 @@ public class DioptraRenderer implements BlockEntityRenderer<TileDioptra, Dioptra
         return state.grid[a * 13 + b];
     }
 
-    // NEOFORGE_PORT: LightTexture removed in 26.x; same packing (block << 4 | sky << 20).
+    
     private static int packLight(int blockLight, int skyLight) {
         return (blockLight & 0xF) << 4 | (skyLight & 0xF) << 20;
     }
@@ -252,8 +252,8 @@ public class DioptraRenderer implements BlockEntityRenderer<TileDioptra, Dioptra
         return true;
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TileDioptra blockEntity) {
         return blockEntity.getRenderBoundingBox();

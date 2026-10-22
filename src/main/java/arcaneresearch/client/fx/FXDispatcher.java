@@ -41,11 +41,11 @@ public class FXDispatcher {
     private static final int CLOCK_WINDOW = 8;
     public static FXDispatcher INSTANCE = new FXDispatcher();
 
-    /**
-     * РЎСѓС‰РЅРѕСЃС‚СЊ вЂ” Р»РѕРєР°Р»СЊРЅС‹Р№ РёРіСЂРѕРє СЃ РІРёРґРѕРј РѕС‚ РїРµСЂРІРѕРіРѕ Р»РёС†Р°.
-     * Р­С„С„РµРєС‚С‹ РІРѕРєСЂСѓРі Р»РёС†Р° (СЃРїРёСЂР°Р»СЊ РјРµС‡Р°) РІ СЌС‚РѕРј СЃР»СѓС‡Р°Рµ СЃР»РµРїСЏС‚ РєР°РјРµСЂСѓ,
-     * РѕС‚ 3 Р»РёС†Р° Рё РґР»СЏ РЅР°Р±Р»СЋРґР°С‚РµР»РµР№ РІСЃС‘ РєР°Рє РѕР±С‹С‡РЅРѕ.
-     */
+     
+
+
+
+ 
     public static boolean isLocalFirstPerson(net.minecraft.world.entity.Entity entity) {
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
         return mc.player != null && entity == mc.player
@@ -86,8 +86,8 @@ public class FXDispatcher {
         return Minecraft.getInstance().level;
     }
 
-    // NEOFORGE_PORT: BeamEngine.BeamEffect instances (custom geometry: beams, streams,
-    // runes, planes) submit through BeamEngine; sprite particles use the vanilla engine.
+    
+    
     private void addParticle(net.minecraft.client.particle.Particle particle) {
         if (particle == null) {
             return;
@@ -103,8 +103,8 @@ public class FXDispatcher {
         if (mc.level.getRandom().nextInt(3) < ps) {
             return;
         }
-        // NEOFORGE_PORT (26.3): Forge gated beams/streams by particle setting too;
-        // route to BeamEngine only after the same check.
+        
+        
         if (particle instanceof arcaneresearch.client.fx.BeamEngine.BeamEffect beam) {
             arcaneresearch.client.fx.BeamEngine.add(beam);
             return;
@@ -966,10 +966,10 @@ public class FXDispatcher {
         }
     }
 
-    /**
-     * Дуга разряда ноды, порт TC4 {@code nodeBolt}: фрактальная молния
-     * (seed с сервера, duration 10, multi 4.0, type 0), а не простой зигзаг.
-     */
+     
+
+
+ 
     public void nodeBolt(double x1, double y1, double z1, double x2, double y2, double z2,
                          long seed) {
         ClientLevel level = getClientLevel();
@@ -1444,10 +1444,10 @@ public class FXDispatcher {
         }
     }
 
-    // NEOFORGE_PORT: side-split bridges. Called from common code behind
-    // isClientSide()/CLIENTBOUND-flow guards. Signatures use only server-safe
-    // types, so dedicated-server verification of the CALLERS never loads client
-    // classes (the bodies below only ever link on the client).
+    
+    
+    
+    
     public void spawnResearchTableSparkle(Level level, BlockPos pos, net.minecraft.util.RandomSource random) {
         ClientLevel clientLevel = getClientLevel();
         if (clientLevel == null) return;

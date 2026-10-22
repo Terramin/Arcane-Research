@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
-import net.neoforged.neoforge.capabilities.Capabilities; // NEOFORGE_PORT: was ForgeCapabilities
+import net.neoforged.neoforge.capabilities.Capabilities; 
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
@@ -58,11 +58,11 @@ public class ArcaneresearchInvHelper {
         return false;
     }
 
-    // NEOFORGE_PORT (transfer rework 21.9+, verified in 26.3.0.23-beta jar + NeoForge docs):
-    //   IItemHandler (net.neoforged.neoforge.items) REMOVED -> ResourceHandler<ItemResource>.
-    //   ForgeCapabilities.ITEM_HANDLER -> Capabilities.Item.BLOCK (BlockCapability<..., Direction>).
-    //   Query form: level.getCapability(Capabilities.Item.BLOCK, pos, side) (docs example).
-    //   All read/insert/count helpers below keep Forge semantics; only handler type + calls changed.
+    
+    
+    
+    
+    
     @Nullable
     public static ResourceHandler<ItemResource> getItemHandlerAt(Level level, BlockPos pos, Direction side) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -80,21 +80,21 @@ public class ArcaneresearchInvHelper {
     }
 
     public static ResourceHandler<ItemResource> wrapInventory(Container inventory, Direction side) {
-        // NEOFORGE_PORT: InvWrapper/SidedInvWrapper (removed with neoforge.items package)
-        //   -> VanillaContainerWrapper.of / WorldlyContainerWrapper (transfer/item).
-        //   Null side falls back to the plain wrapper (general-view semantics, as before).
+        
+        
+        
         if (side != null && inventory instanceof WorldlyContainer worldly) {
             return new WorldlyContainerWrapper(worldly, side);
         }
         return VanillaContainerWrapper.of(inventory);
     }
 
-    // NEOFORGE_PORT (vanilla components, verified in 26.3.0.23-beta jar):
-    //   ItemStack NBT (hasTag/getTag/getAllKeys/isSameItemSameComponents) removed in 26.x.
-    //   Mod custom NBT lives in DataComponents.CUSTOM_DATA (writers must use
-    //   CustomData.update — see ItemPhial etc. when ported).
-    //   getCustomTag() preserves the old @Nullable getTag() contract exactly
-    //   (null when absent); hasCustomTag() mirrors hasTag().
+    
+    
+    
+    
+    
+    
     @Nullable
     public static CompoundTag getCustomTag(ItemStack stack) {
         if (stack.isEmpty()) return null;
@@ -106,8 +106,8 @@ public class ArcaneresearchInvHelper {
         return stack.has(DataComponents.CUSTOM_DATA);
     }
 
-    // NEOFORGE_PORT: mutation counterpart to getCustomTag (which returns a copy).
-    // Replaces the removed ItemStack.getOrCreateTag()/setTag pair; NBT shape unchanged.
+    
+    
     public static CompoundTag getOrCreateCustomTag(ItemStack stack) {
         CompoundTag tag = getCustomTag(stack);
         return tag != null ? tag : new CompoundTag();
@@ -127,9 +127,9 @@ public class ArcaneresearchInvHelper {
         return false;
     }
 
-    // NEOFORGE_PORT (26.3): 1.20.1 compared every top-level NBT key of prime (custom keys,
-    // Enchantments, display, Damage...). Custom keys live in CUSTOM_DATA (key subset, as before);
-    // every other component prime carries in its patch must be equal on other.
+    
+    
+    
     private static boolean compareComponentsRelaxed(ItemStack prime, ItemStack other) {
         for (net.minecraft.core.component.DataComponentType<?> type : prime.getComponentsPatch().keySet()) {
             if (type == DataComponents.CUSTOM_DATA) {
@@ -171,7 +171,7 @@ public class ArcaneresearchInvHelper {
     }
 
     public static boolean containsTagMatch(ItemStack input, ItemStack target) {
-        // NEOFORGE_PORT: ItemStack.getTags() removed -> Holder.tags() via typeHolder().
+        
         for (var tag : input.typeHolder().tags().toList()) {
             if (target.is(tag)) {
                 return true;
@@ -205,14 +205,14 @@ public class ArcaneresearchInvHelper {
     }
 
     public static ItemStack insertStackAt(Level level, BlockPos pos, Direction side, ItemStack stack, boolean simulate) {
-        // NEOFORGE_PORT: ItemHandlerHelper.insertItemStacked(handler, stack, simulate):remainder
-        //   -> ItemUtil.insertItemReturnRemaining(handler, stack, simulate, tx):remainder.
-        //   Transactions: simulate runs in an uncommitted root tx (auto-rollback = no changes);
-        //   real inserts commit. Same observable behavior as Forge.
-        // NEOFORGE_PORT (26.3): insertItemStacked filled slots that already hold the item FIRST,
-        //   then empty slots. ItemUtil.insertItemReturnRemaining uses the handler's default
-        //   insert (plain first-free-slot order) -> ResourceHandlerUtil.insertStacking keeps the
-        //   Forge distribution (non-empty indices first, then empty ones).
+        
+        
+        
+        
+        
+        
+        
+        
         ResourceHandler<ItemResource> inventory = getItemHandlerAt(level, pos, side);
         if (inventory != null && !stack.isEmpty()) {
             try (var tx = Transaction.openRoot()) {
@@ -249,7 +249,7 @@ public class ArcaneresearchInvHelper {
         int count = 0;
         if (inventory != null) {
             for (int slot = 0; slot < inventory.size(); slot++) {
-                // NEOFORGE_PORT: handler.getStackInSlot(slot) -> ItemUtil.getStack(handler, slot).
+                
                 ItemStack slotStack = ItemUtil.getStack(inventory, slot);
                 if (areItemStacksEqualWithFilter(stack, slotStack, filter)) {
                     count += slotStack.getCount();
@@ -273,8 +273,8 @@ public class ArcaneresearchInvHelper {
         if (stack0.isEmpty()) return true;
 
         if (filter.useMod) {
-            // NEOFORGE_PORT: Item.builtInRegistryHolder().key().identifier() removed ->
-            //   vanilla BuiltInRegistries.ITEM.getKey(item).getNamespace().
+            
+            
             String mod0 = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack0.getItem()).getNamespace();
             String mod1 = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack1.getItem()).getNamespace();
             return mod0.equals(mod1);
@@ -291,8 +291,8 @@ public class ArcaneresearchInvHelper {
             if (filter.relaxedNBT) {
                 nbtMatch = areItemStackTagsEqualRelaxed(stack0, stack1);
             } else {
-                // NEOFORGE_PORT (26.3): 1.20.1 "!hasTag()" meant no NBT at all (enchantments,
-                // name, damage...), i.e. an empty component patch - not just "no CUSTOM_DATA".
+                
+                
                 nbtMatch = ItemStack.isSameItemSameComponents(stack0, stack1) ||
                            (stack0.getComponentsPatch().isEmpty() && stack1.getComponentsPatch().isEmpty());
             }

@@ -18,8 +18,8 @@ import arcaneresearch.client.models.block.BrainModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.essentia.TileJarBrain;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (rotating brain + brine fittings).
+
+
 public class JarBrainRenderer implements BlockEntityRenderer<TileJarBrain, JarBrainRenderer.State> {
 
     private static final Identifier BRAIN_TEXTURE =

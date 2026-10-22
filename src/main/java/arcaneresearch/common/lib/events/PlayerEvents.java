@@ -34,20 +34,20 @@ import java.util.Map;
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class PlayerEvents {
 
-    /**
-     * Рунный щит, паритет TC4 {@code EventHandlerRunic}: заряд живёт в
-     * серверной карте (ванильный абсорб не используется), урон гасится
-     * до брони в {@code EntityEvents}. runicInfo = {max, charged, kinetic,
-     * healing, emergency}.
-     */
+     
+
+
+
+
+ 
     static final Map<Integer, Integer> runicCharge = new HashMap<>();
     static final Map<Integer, Integer[]> runicInfo = new HashMap<>();
     private static final Map<Integer, Integer> lastCharge = new HashMap<>();
     private static final Map<Integer, Long> nextCycle = new HashMap<>();
-    /** Кулдауны проков, паритет TC4 upgradeCooldown (ключи "id:код"). */
+      
     static final Map<String, Long> upgradeCooldown = new HashMap<>();
     static boolean runicDirty = true;
-    /** Простой после пробоя, паритет TC4 rechargeDelay (глобальный). */
+      
     static int rechargeDelay = 0;
 
     @SubscribeEvent
@@ -91,8 +91,8 @@ public class PlayerEvents {
     }
 
     @SubscribeEvent
-    // NEOFORGE_PORT: LivingEvent.LivingTickEvent removed -> EntityTickEvent.Pre (players only).
-    // NEOFORGE_PORT (26.3): Pre, not Post — Forge LivingTickEvent fired at the start of the tick.
+    
+    
     public static void livingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Pre event) {
         if (event.getEntity() instanceof Player player) {
 
@@ -125,8 +125,8 @@ public class PlayerEvents {
                     WarpEvents.checkDeathGaze(player);
                 }
 
-                // NEOFORGE_PORT: 26.3 post effects are server-driven
-                // (TCShaderHandler.tickServer adds/removes player post effects).
+                
+                
                 if (player.tickCount % 20 == 0 && player instanceof ServerPlayer shaderPlayer) {
                     arcaneresearch.client.lib.events.TCShaderHandler.tickServer(shaderPlayer);
                 }
@@ -188,7 +188,7 @@ public class PlayerEvents {
             int emergency = 0;
             runicDirty = false;
 
-            // NEOFORGE_PORT: Inventory.armor removed -> HEAD/CHEST/LEGS/FEET loop.
+            
             for (net.minecraft.world.entity.EquipmentSlot armorSlot : new net.minecraft.world.entity.EquipmentSlot[]{
                     net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
                     net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) {
@@ -199,7 +199,7 @@ public class PlayerEvents {
             arcaneresearch.common.lib.compat.CuriosCompat.forEachCuriosItem(player,
                     stack -> curiosMax[0] += getRunicCharge(stack));
             max += curiosMax[0];
-            // Порядок TC4 runicInfo: {max, charged, kinetic, healing, emergency}.
+            
             int[] procs = countRunicProcs(player);
             charged = procs[0];
             kinetic = procs[1];
@@ -281,17 +281,17 @@ public class PlayerEvents {
         knowledge.sync(player);
 
         ItemStack book = new ItemStack(net.minecraft.world.item.Items.WRITTEN_BOOK);
-        // NEOFORGE_PORT (26.3): written-book root NBT {generation, title, pages, author} ->
-        // WRITTEN_BOOK_CONTENT component (a CUSTOM_DATA tag leaves the book empty/unreadable).
-        // Forge pages were raw JSON strings (the lang values are quoted JSON strings with \n
-        // escapes), parsed by the book screen -> parse them the same way here.
+        
+        
+        
+        
         java.util.List<net.minecraft.server.network.Filterable<Component>> pages = new java.util.ArrayList<>();
         pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.1").getString())));
         pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.2").getString())));
         pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.3").getString())));
         String title = Component.translatable("book.start.title").getString();
         if (title.length() > net.minecraft.world.item.component.WrittenBookContent.TITLE_MAX_LENGTH) {
-            // 26.3 codecs reject titles > 32 chars (would break item sync).
+            
             title = title.substring(0, net.minecraft.world.item.component.WrittenBookContent.TITLE_MAX_LENGTH);
         }
         book.set(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT,
@@ -304,7 +304,7 @@ public class PlayerEvents {
         player.sendSystemMessage(Component.literal("§5" + Component.translatable("got.dream").getString()));
     }
 
-    /** NEOFORGE_PORT (26.3): Forge book page = JSON text (fallback: literal), as BookViewScreen parsed it. */
+      
     private static Component bookPage(String raw) {
         try {
             return net.minecraft.network.chat.ComponentSerialization.CODEC
@@ -316,9 +316,9 @@ public class PlayerEvents {
     }
 
     @SubscribeEvent
-    // NEOFORGE_PORT: PlayerEvent.ItemPickupEvent removed -> ItemEntityPickupEvent.Post.
-    // NEOFORGE_PORT (26.3): Post, not Pre — Forge ItemPickupEvent fired only after the stack was
-    // actually added to the inventory; Pre fires on every touch (pickup delay, full inventory).
+    
+    
+    
     public static void onItemPickup(net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent.Post event) {
         Player player = event.getPlayer();
         if (player == null || player.level().isClientSide()) {
@@ -402,9 +402,9 @@ public class PlayerEvents {
             return;
         }
         int d = orb.getValue() / 2;
-        // NEOFORGE_PORT (26.3): Forge `orb.value -= d` -> public setValue (synced entity data).
-        // Pickup is NOT cancelled: vanilla still repairs Mending gear, grants value - d and
-        // decrements the merged-orb count, exactly as in Forge.
+        
+        
+        
         orb.setValue(orb.getValue() - d);
         float r = player.getRandom().nextFloat();
         String[] cats = arcaneresearch.api.research.ResearchCategories.researchCategories.keySet()
@@ -448,7 +448,7 @@ public class PlayerEvents {
         }
         int amp = active.getAmplifier() - 1;
         int duration = active.getDuration() - 600;
-        player.removeEffect(effectHolder); // NEOFORGE_PORT: removeEffect takes Holder in 26.x
+        player.removeEffect(effectHolder); 
         if (duration > 0 && amp >= 0) {
             player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     effectHolder, duration, amp, true, false));
@@ -456,10 +456,10 @@ public class PlayerEvents {
         player.sendSystemMessage(Component.translatable("warp.text.hunger.2"));
     }
 
-    /**
-     * Подсчёт проков рунной бижутерии в порядке TC4 runicInfo:
-     * {charged, kinetic, healing, emergency}.
-     */
+     
+
+
+ 
     private static int[] countRunicProcs(Player player) {
         int[] out = new int[4];
         try {
@@ -486,7 +486,7 @@ public class PlayerEvents {
     }
 
     public static int getRunicCharge(net.minecraft.world.item.ItemStack stack) {
-        // Паритет TC4 getFinalCharge: заряд только у IRunicArmor.
+        
         if (stack.isEmpty() || !(stack.getItem() instanceof arcaneresearch.api.items.IRunicArmor armor)) {
             return 0;
         }

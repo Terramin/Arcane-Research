@@ -5,7 +5,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.registries.Registries; // NEOFORGE_PORT: was ForgeRegistries
+import net.minecraft.core.registries.Registries; 
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,8 +26,8 @@ public class ScanOreDictionary implements IScanThing {
         if (obj != null) {
             if (obj instanceof BlockPos pos) {
                 BlockState state = player.level().getBlockState(pos);
-                // NEOFORGE_PORT: Block.getCloneItemStack is protected in 26.x; the public
-                // BlockState accessor is the same pick-block stack (includeData = false).
+                
+                
                 stack = state.getCloneItemStack(player.level(), pos, false);
             } else if (obj instanceof ItemStack) {
                 stack = (ItemStack) obj;
@@ -43,8 +43,8 @@ public class ScanOreDictionary implements IScanThing {
             }
 
             for (String entry : entries) {
-                // NEOFORGE_PORT: Forge TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), RL)
-                //   -> vanilla TagKey.create(Registries.ITEM, RL). stack.is(tagKey) unchanged.
+                
+                
                 var tagKey = net.minecraft.tags.TagKey.create(Registries.ITEM,
                     net.minecraft.resources.Identifier.parse(translateEntry(entry)));
                 if (stack.is(tagKey)) {

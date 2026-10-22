@@ -76,7 +76,7 @@ public class BlockFluxScrubber extends Block implements EntityBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity be = level.getBlockEntity(pos);

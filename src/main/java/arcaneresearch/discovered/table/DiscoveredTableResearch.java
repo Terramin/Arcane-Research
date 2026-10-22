@@ -21,31 +21,31 @@ import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 
-/**
- * Логика стола записок, порт в паритете с:
- * - reforged ResearchManager: progressTableResearch, findLostResearch,
- *   findMatchingResearch, researchIterations, createResearchNoteForTable;
- * - TC3 ResearchManager + TileResearchTable: те же + failed cap 100,
- *   маркер готовности, замена битой записки.
- *
- * Адаптация: требуемые аспекты исследования (need) берутся из формулы
- * категории ({@code ResearchCategory.formula}) — у ResearchEntry проекта
- * нет аспект-стоимости, как в reforged ResearchItem.tags.
- * HIDDEN-исследования считаются «потерянными» (lost) — их находит только стол.
- *
- * NEOFORGE_PORT: getKnowledge возвращает @Nullable IPlayerKnowledge напрямую
- * (без Optional) — проверки через null.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public final class DiscoveredTableResearch {
 
     private DiscoveredTableResearch() {
     }
 
-    // ------------------------------------------------------------ aspects
+    
 
     private static List<String> orderedTags;
 
-    /** Детерминированный порядок тегов (по алфавиту) для ContainerData-индексов. */
+      
     public static synchronized List<String> orderedTags() {
         if (orderedTags == null) {
             orderedTags = new ArrayList<>(new TreeSet<>(Aspect.aspects.keySet()));
@@ -53,7 +53,7 @@ public final class DiscoveredTableResearch {
         return orderedTags;
     }
 
-    /** Индекс тега +1 (0 = пусто), паритет слотам ContainerData. */
+      
     public static int aspectIndex(Aspect aspect) {
         if (aspect == null) {
             return 0;
@@ -70,12 +70,12 @@ public final class DiscoveredTableResearch {
         return Aspect.getAspect(order.get(index - 1));
     }
 
-    /**
-     * Требуемые аспекты исследования: сначала точный набор
-     * ({@link DiscoveredResearchAspects}, паритет reforged ResearchItem.tags),
-     * иначе формула его категории. Ключ-открытие без своего исследования —
-     * формула категории требующего исследования.
-     */
+     
+
+
+
+
+ 
     public static AspectList requiredAspects(String key) {
         AspectList exact = DiscoveredResearchAspects.get(key);
         if (exact != null && exact.size() > 0) {
@@ -95,7 +95,7 @@ public final class DiscoveredTableResearch {
         return category.formula.copy();
     }
 
-    /** Первое исследование, чья стадия требует это открытие. */
+      
     public static ResearchEntry requiringResearch(String discoveryKey) {
         if (discoveryKey == null) {
             return null;
@@ -118,10 +118,10 @@ public final class DiscoveredTableResearch {
         return null;
     }
 
-    /**
-     * Есть ли у исследования стадии с required_discovery.
-     * Стол создаёт записки только под такие (иначе открытия не нужны).
-     */
+     
+
+
+ 
     public static boolean hasDiscoveryRequirement(ResearchEntry entry) {
         if (entry == null || entry.getStages() == null) {
             return false;
@@ -134,10 +134,10 @@ public final class DiscoveredTableResearch {
         return false;
     }
 
-    /**
-     * Открытие уже потрачено или предъявлено: все стадии, требующие #key,
-     * пройдены, либо ключ предъявлен ПКМ. Такие записки стол больше не создаёт.
-     */
+     
+
+
+ 
     public static boolean isDiscoverySpent(Player player, String discoveryKey) {
         if (player == null || discoveryKey == null) {
             return false;
@@ -170,10 +170,10 @@ public final class DiscoveredTableResearch {
         return needed;
     }
 
-    /**
-     * Все ключи открытий, требуемые стадиями загруженных исследований
-     * (union для вкладки: новые required_discovery подхватываются сами).
-     */
+     
+
+
+ 
     public static List<String> discoveryKeys() {
         LinkedHashSet<String> out = new LinkedHashSet<>();
         for (ResearchEntry entry : allEntries()) {
@@ -204,14 +204,14 @@ public final class DiscoveredTableResearch {
         return out;
     }
 
-    // ------------------------------------------------------------ finders
+    
 
-    /**
-     * Паритет reforged findMatchingResearch: лучший скор совпадений
-     * входных тегов с требуемыми (первые 5 слотов).
-     * HIDDEN пропускаются (это lost-пул); без discovery-требований,
-     * готовые, потраченные и недоступные — тоже мимо.
-     */
+     
+
+
+
+
+ 
     public static String findMatchingResearch(Player player, Aspect[] tags, int[] amounts) {
         int bestMatch = 0;
         String best = null;
@@ -249,11 +249,11 @@ public final class DiscoveredTableResearch {
         return best;
     }
 
-    /**
-     * Паритет reforged/TC3 findLostResearch: случайное HIDDEN-исследование
-     * с выполненными реквизитами. Маппинг lost -> HIDDEN (у проекта нет флага lost).
-     * Только discovery-исследования; готовые/потраченные мимо.
-     */
+     
+
+
+
+ 
     public static String findLostResearch(Player player) {
         List<String> choices = new ArrayList<>();
         for (ResearchEntry entry : allEntries()) {
@@ -280,18 +280,18 @@ public final class DiscoveredTableResearch {
         return choices.get(player.getRandom().nextInt(choices.size()));
     }
 
-    // ------------------------------------------------------------ progress
+    
 
     public static int researchIterations(int amount) {
         return 1 + amount / 2;
     }
 
-    /**
-     * Паритет reforged progressTableResearch + TC3 progressTableResearch.
-     * Пустая записка начинает lost-исследование; чужие теги копят failed
-     * (cap 100); свои — шанс baseChance/100 за researchIterations попыток,
-     * затухание chance*=0.9. Возвращает, был ли прогресс.
-     */
+     
+
+
+
+
+ 
     public static boolean progressTableResearch(Level level, Player researcher, ItemStack note,
             int baseChance, int baseLoss, Aspect[] inTags, int[] inAmounts) {
         if (baseLoss <= 0) {
@@ -347,7 +347,7 @@ public final class DiscoveredTableResearch {
                 }
             }
         }
-        // NEOFORGE_PORT (26.3): restored reference stage-1 close at 100% (was dropped).
+        
         if (data.getTotalProgress() >= 1.0F) {
             data.stage1 = true;
         }

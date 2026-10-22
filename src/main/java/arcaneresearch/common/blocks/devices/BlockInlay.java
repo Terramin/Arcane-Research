@@ -343,9 +343,9 @@ public class BlockInlay extends Block implements IInfusionStabiliserExt {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side; new state already swapped: level.getBlockState(pos)).
-        // isMoving had no per-call equivalent here; the old guard was same-block only.
+        
+        
+        
         if (!state.is(level.getBlockState(pos).getBlock())) {
             super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
             for (Direction dir : Direction.Plane.HORIZONTAL) {
@@ -415,7 +415,7 @@ public class BlockInlay extends Block implements IInfusionStabiliserExt {
     @Override
     @net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        // NEOFORGE_PORT: @OnlyIn(Dist.CLIENT) preserved from Forge 1.20.1.
+        
         int charge = state.getValue(CHARGE);
         if (charge > 0 && random.nextInt(20 - charge) == 0) {
 

@@ -126,8 +126,8 @@ public class TileStabilizer extends TileArcaneresearch {
         return false;
     }
 
-    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x (bounds live on the
-    // BlockEntityRenderer); this tile has no renderer, so the box is informational only.
+    
+    
     public AABB getRenderBoundingBox() {
         return getCustomRenderBoundingBox();
     }

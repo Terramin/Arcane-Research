@@ -16,17 +16,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
 
-/**
- * Меню стола записок, порт TC3 ContainerResearchTable:
- * слоты 0-4 входы, 5 записка, 6 бумага, игрок 3x9 + хотбар;
- * кнопки clickMenuButton 0 (исследовать) / 1 (safe), shift-merge.
- * Данные экрана — 18 ContainerData + NBT записки из слота 5 (слот-синк).
- *
- * NEOFORGE_PORT: FriendlyByteBuf -> RegistryFriendlyByteBuf (readBlockPos тот же).
- */
+ 
+
+
+
+
+
+
+ 
 public class CognitionNoteTableMenu extends AbstractContainerMenu {
 
-    /** 0-4 tagIdx, 5-9 amount, 10-14 bonus*100, 15 safe, 16 chance, 17 loss. */
+      
     public static final int DATA_COUNT = 18;
     public static final int BUTTON_RESEARCH = 0;
     public static final int BUTTON_TOGGLE_SAFE = 1;
@@ -64,8 +64,8 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
         for (int col = 0; col < 9; col++) {
             addSlot(new Slot(playerInventory, col, 40 + col * 18, 218));
         }
-        // Немедленный пересчёт при открытии: иначе показываются аспекты
-        // прошлооткрытийного снэпшота, не текущие входы стола.
+        
+        
         try {
             if (tile.getLevel() != null && !tile.getLevel().isClientSide()) {
                 tile.recalcIfNeeded();

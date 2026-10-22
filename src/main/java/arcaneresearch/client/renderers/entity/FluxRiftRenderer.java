@@ -20,11 +20,11 @@ import arcaneresearch.common.lib.utils.EntityUtils;
 
 import java.util.List;
 
-// NEOFORGE_PORT (26.3): tube mesh math (buildTube + worker pool) 1:1 from
-// Forge; emission via submitCustomGeometry with the new vertex chain. Custom
-// GL types replaced: halo glow -> ENTITY_TRANSLUCENT_EMISSIVE, core ->
-// ENTITY_TRANSLUCENT (both with the end-portal texture, fullbright).
-// TODO_PORT: tune types (old halo was additive, no-depth variant lost).
+
+
+
+
+
 public class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxRiftRenderer.State> {
 
     public static class State extends EntityRenderState {
@@ -36,7 +36,7 @@ public class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxRiftRen
     }
 
     private static final Identifier RIFT_TEXTURE =
-            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal/end_portal.png"); // NEOFORGE_PORT (26.3): moved
+            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal/end_portal.png"); 
 
     private static final java.util.concurrent.ExecutorService MESH_POOL =
             java.util.concurrent.Executors.newFixedThreadPool(

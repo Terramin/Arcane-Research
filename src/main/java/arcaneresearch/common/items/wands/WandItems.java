@@ -9,8 +9,8 @@ import arcaneresearch.common.items.wands.foci.*;
 import arcaneresearch.common.lib.wands.WandRegistry;
 
 public class WandItems {
-    // NEOFORGE_PORT: DeferredRegister.create(ForgeRegistries.ITEMS, MODID) ->
-    // DeferredRegister.createItems(MODID); RegistryObject<Item> -> DeferredItem<Item> (same .get()).
+    
+    
     public static final DeferredRegister.Items ITEMS =
             DeferredRegister.createItems(Arcaneresearch.MODID);
 

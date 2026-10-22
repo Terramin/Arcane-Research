@@ -6,7 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -29,7 +29,7 @@ import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
 import net.minecraft.util.ARGB;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXEssentiaStream extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier ESSENTIA_TEX = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/essentia.png");
@@ -105,9 +105,9 @@ public class FXEssentiaStream extends SingleQuadParticle implements BeamEngine.B
         this.startY = y;
         this.startZ = z;
 
-        // NEOFORGE_PORT: Forge set noClip = true (ArcaneresearchParticle field);
-        // this class extends SingleQuadParticle directly and its tick() already
-        // integrates position without collision, i.e. noClip behavior.
+        
+        
+        
     }
 
     @Override
@@ -243,7 +243,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;

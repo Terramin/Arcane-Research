@@ -34,23 +34,23 @@ import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
 
-/**
- * Записка в руке «как карта», порт в паритете с:
- * - TC3 {@code HandheldItemRenderer.renderResearchNotes} (пергамент, заголовок
- *   галактическим при прогрессе <0.2, сетка иконок {@code ss_tags_2.png},
- *   проценты при >=0.333332, longText шифром при <0.5);
- * - reforged {@code HandheldItemRenderer.renderNotes} (та же раскладка:
- *   фон -7..135, имя (10,10), иконки 15+(i%4)*30 / 28+(i/4)*13,
- *   пороги 0.2/0.3/0.333332/0.5).
- *
- * NEOFORGE_PORT (26.3 render-state): RenderHandEvent несёт PoseStack +
- * SubmitNodeCollector + PlayerRenderState (MultiBufferSource/endBatch удалены):
- * квады — submitCustomGeometry(RenderTypes.text) как ванильная карта
- * ({@code FirstPersonHandsAndItemsRenderer.renderMap}), текст —
- * submitText вместо Font.drawInBatch; руки — AvatarRenderer.renderRight/LeftHand
- * (skin из AvatarRenderState). Порядок слоёв (пергамент &lt; иконки &lt; текст)
- * задан order(), как имена на ванильной карте. Геометрия/пороги 1:1 с Forge.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class DiscoveredNoteHandRenderer {
 
@@ -155,7 +155,7 @@ public class DiscoveredNoteHandRenderer {
     private static void renderNotes(Minecraft mc, ItemStack stack, PoseStack pose,
             SubmitNodeCollector collector, int light) {
         Font font = mc.font;
-        // Слои: пергамент (order 0) < иконки (order 1) < текст (order 2).
+        
         OrderedSubmitNodeCollector icons = collector.order(1);
         OrderedSubmitNodeCollector texts = collector.order(2);
         pose.scale(0.0078125F, 0.0078125F, 0.0078125F);

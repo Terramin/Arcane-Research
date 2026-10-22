@@ -8,7 +8,7 @@ import arcaneresearch.api.aspects.AspectList;
 import java.util.List;
 import java.util.Optional;
 
-// NEOFORGE_PORT: parent ctor takes List<Optional<Ingredient>> (26.x, no Ingredient.EMPTY).
+
 @Deprecated
 public class ShapedArcaneVoidJar extends ShapedArcaneVoidJarRecipe {
     public ShapedArcaneVoidJar(Identifier id, String group, int width, int height,

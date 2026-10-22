@@ -33,22 +33,22 @@ import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 
-/**
- * Стол записок (tile), порт в паритете с:
- * - TC3 {@code TileResearchTable}: слоты 0-4 входы / 5 записка / 6 бумага,
- *   doResearch/startResearch/toggleSafe, recalculateTags (топ-5),
- *   recalculateBonus (окружение), recalcBaseChance, gatherResults;
- * - reforged {@code ResearchTableBlockEntity}: NOTE_SLOT=5/PAPER_SLOT=6,
- *   canResearch, doResearch/progress, автопревращение в discovery при 100%.
- *
- * Шансы TC3-стиля: SAFE 60/1, THOROUGH 100/3 (константы, как Config).
- * Бонусы окружения смаплены на теги проекта
- * (tenebrae/lux/aer/aqua+potentia+motus/bestia/humanus + скан блоков).
- *
- * NEOFORGE_PORT: saveAdditional/load(CompoundTag) -> writeSyncNBT(ValueOutput) /
- * readSyncNBT(ValueInput) (формат 1:1: items + Safe); isClientSide-поле ->
- * isClientSide(); SoundEvents-холдеры напрямую.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class CognitionNoteTableTile extends BlockEntity implements Container, MenuProvider {
 
     public static final int INPUT_COUNT = 5;
@@ -71,7 +71,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
     private final Aspect[] tags = new Aspect[INPUT_COUNT];
     private final int[] tagAmounts = new int[INPUT_COUNT];
     private final float[] tagBonus = new float[INPUT_COUNT];
-    /** Последняя неудачная попытка пересчёта (не чаще раза в 500 мс). */
+      
     private long lastRecalcAttempt;
     private boolean recalcFailed;
 
@@ -79,7 +79,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         super(DiscoveredTableSetup.getEntityType(), pos, state);
     }
 
-    // ------------------------------------------------------------ inventory
+    
 
     @Override
     public int getContainerSize() {
@@ -128,8 +128,8 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
     public void setChanged() {
         super.setChanged();
         recalc = true;
-        // NEOFORGE_PORT (26.3): restored reference client sync (BER draws paper/note
-        // from the client tile; without it the client copy stays stale/empty).
+        
+        
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
                     net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
@@ -152,8 +152,8 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         }
     }
 
-    // NEOFORGE_PORT: 26.x persistence is saveAdditional(ValueOutput)/
-    // loadAdditional(ValueInput) (формат 1:1: items + Safe).
+    
+    
     @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
@@ -169,9 +169,9 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         recalc = true;
     }
 
-    // NEOFORGE_PORT (26.3): restored reference sync trio. Update tag = items only
-    // (as reference); handleUpdateTag/onDataPacket only clear+reload items, so the
-    // client-side Safe flag is not reset by the default loadWithComponents path.
+    
+    
+    
     @Override
     public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
         net.minecraft.world.level.storage.TagValueOutput out =
@@ -197,7 +197,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         handleUpdateTag(tag);
     }
 
-    // ------------------------------------------------------------ menu
+    
 
     @Override
     public Component getDisplayName() {
@@ -210,7 +210,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         return new CognitionNoteTableMenu(id, playerInventory, this);
     }
 
-    // ------------------------------------------------------------ research
+    
 
     public boolean isSafe() {
         return safe;
@@ -249,8 +249,8 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         if (!recalc) {
             return;
         }
-        // Один упавший пересчёт (пустой аспект, гонка слотов) не должен
-        // ронять все последующие тики: троттлим повторы до 500 мс.
+        
+        
         long now = System.currentTimeMillis();
         if (recalcFailed && now - lastRecalcAttempt < 500L) {
             return;
@@ -278,7 +278,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         }
     }
 
-    /** Паритет TC3 recalculateTags: merge аспектов входов, топ-5 по убыванию. */
+      
     private void recalculateTags() {
         AspectList merged = new AspectList();
         for (int i = 0; i < INPUT_COUNT; i++) {
@@ -291,8 +291,8 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
             }
         }
         Aspect[] sorted = merged.getAspectsSortedByAmount();
-        // Теги записки — наверх (попавшие в стол, нужные ей аспекты
-        // должны оказаться видимыми).
+        
+        
         java.util.ArrayList<Aspect> ordered = new java.util.ArrayList<>();
         java.util.HashSet<Aspect> required = noteRequiredTags();
         for (Aspect aspect : sorted) {
@@ -317,7 +317,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         }
     }
 
-    /** Теги аспектов в NOTE-слоте (для сортировки таблицы наверх). */
+      
     private java.util.HashSet<Aspect> noteRequiredTags() {
         java.util.HashSet<Aspect> out = new java.util.HashSet<>();
         try {
@@ -339,19 +339,19 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         return out;
     }
 
-    /**
-     * Паритет TC3 recalculateBonus, теги смаплены на проект:
-     * темнота→tenebrae, день→lux, высота→aer, дождь→aqua+potentia+motus,
-     * сущности→bestia/humanus, блоки 21³→их аспекты. Кап MAX_TAG_BONUS.
-     */
+     
+
+
+
+ 
     private void recalculateBonus() {
         if (level == null) {
             return;
         }
         BlockPos pos = worldPosition;
         addBonus("tenebrae", level.getMaxLocalRawBrightness(pos) < 9 ? 2 : 0);
-        // NEOFORGE_PORT (26.3): Level.isDay() -> isBrightOutside() (same body:
-        // !hasFixedTime && skyDarken < 4); game-time window was not day time.
+        
+        
         addBonus("lux", level.isBrightOutside() && level.canSeeSky(pos.above()) ? 2 : 0);
         if (pos.getY() > 100) {
             addBonus("aer", 3);
@@ -406,7 +406,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         }
     }
 
-    /** Паритет TC3 canResearch: есть тег и (бумага под новую / записка в слоте). */
+      
     public boolean canResearch() {
         recalcIfNeeded();
         if (tags[0] == null) {
@@ -419,12 +419,12 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         return note.getItem() instanceof ItemDiscoveredResearchNote;
     }
 
-    /** Паритет TC3 startResearch: звук, doResearch, расход входов — только если был прогресс. */
+      
     public void startResearch(Player player) {
         if (level == null || level.isClientSide()) {
             return;
         }
-        // NEOFORGE_PORT: uncommented; vanilla SoundEvents are Holders now -> .value().
+        
         level.playSound(null, worldPosition, SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.BLOCKS, 0.4F, 1.0F);
         boolean progressed = doResearch(player);
         if (progressed) {
@@ -438,12 +438,12 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         setChanged();
     }
 
-    /**
-     * Паритет TC3 doResearch + reforged progress:
-     * amounts+bonus, пустой NOTE → findMatching → создать → progress,
-     * иначе progress существующей; 100% → открытие прямо в столе.
-     * Возвращает, было ли создание/продвижение (иначе входы не тратятся).
-     */
+     
+
+
+
+
+ 
     public boolean doResearch(Player player) {
         if (level == null || level.isClientSide()) {
             return false;
@@ -469,9 +469,9 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
             progressed = DiscoveredTableResearch.progressTableResearch(level, player, note,
                     baseChance, baseLoss, tags.clone(), amounts);
         }
-        // Bulk-добавление с тратой входов: по каждому недописанному тегу
-        // съедаем предметы целиком, пока не закроем need (шанс-роллы выше
-        // остаются как медленный путь без входов).
+        
+        
+        
         if (bulkFillFromInputs(note)) {
             progressed = true;
         }
@@ -485,7 +485,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         return progressed;
     }
 
-    /** Паритет TC3/reforged createResearchNoteForTable: бумага-1 → записка в NOTE. */
+      
     private boolean createResearchNoteForTable(String key, AspectList required) {
         if (!items.get(NOTE_SLOT).isEmpty() || !items.get(PAPER_SLOT).is(Items.PAPER)) {
             return false;
@@ -495,11 +495,11 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         return true;
     }
 
-    /**
-     * Bulk-заполнение записки входами: каждый съеденный предмет даёт весь
-     * свой запас тега (но не больше остатка need). Достигли 100% —
-     * закрываем stage-1, как progressTableResearch.
-     */
+     
+
+
+
+ 
     private boolean bulkFillFromInputs(ItemStack note) {
         if (note == null || note.isEmpty()
                 || !(note.getItem() instanceof ItemDiscoveredResearchNote)) {

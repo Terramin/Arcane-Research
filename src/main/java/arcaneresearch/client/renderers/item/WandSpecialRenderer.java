@@ -17,66 +17,66 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-// NEOFORGE_PORT (26.3): Forge WandMeshModel (baked composite rod+cap+sceptre+focus
-// from wand.obj/staff.obj) + WandModelEvents (bakeWandModels, registerWandColors)
-// -> SpecialModelRenderer. BakedModel/ItemOverrides item baking is gone in 26.3;
-// geometry submits as custom quads, display comes from the minecraft:special base
-// (models/item/wand.json, models/item/staff.json carry the full 8-context display
-// 1:1 from WandTransforms.java — see below).
-//
-// Forge display authority (read the original fully):
-// WandModelEvents.bakeWandModels REPLACES the baked model with WandMeshModel and
-// calls initialize(WandTransforms.WAND/STAFF) — the JSON display block NEVER
-// applied (neither the old "thirdperson"/"firstperson" keys nor anything else).
-// Effective Forge hand transform = WandTransforms firstperson values
-// (rot [0,-90,25], trans [1.13,3.2,1.13]x0.0625, scale 0.68 — the same numbers
-// vanilla item/generated uses, confirmed by the model docs).
-//
-// Display math, VERIFIED against 26.3 sources
-// (minecraft-patched-*-sources.jar: ItemTransform.apply, ItemTransforms,
-// ItemStackRenderState.LayerRenderState, SpecialModelWrapper, ModelRenderProperties):
-// - Forge 1.20.1 final matrix on baked quads q (raw OBJ corner-space coords —
-//   MeshModel.bakeQuad emits positions verbatim, no +-0.5) was
-//   Display(T*R*S) then ItemRenderer.translate(-0.5): F = D*C*q, C = T(-0.5).
-// - Neo 26.3 folds that trailing C INTO ItemTransform.apply
-//   (NO_TRANSFORM -> C; listed context -> T*R*S*rightRot*C, rotation as a single
-//   rotationXYZ quat, rightRotation zero here), and LayerRenderState.submit
-//   applies the base display (ModelRenderProperties from the special "base"
-//   model) BEFORE special submit. So the pose entering submit() is already
-//   D*C — emitting the same raw corner-space q gives D*C*q = F EXACTLY, in
-//   every context. NO extra translate in submit: a T(+0.5) here would yield
-//   D*C*P*q = D*q, shifting the wand +0.5 model units (~0.34 blocks in hand),
-//   and would disagree with WandTipHelper (which replicates D*C and matches
-//   the live render matrix — beam would detach from the crystal).
-// Docs (docs.neoforged.net/docs/resources/client/models/items): the special
-// "base" is "the parent model to read the particle texture and display
-// transformation from" — the 8 WandTransforms slots verbatim in the base
-// (left/right hand identical, as in the constants; staff differs only in gui).
-// Dead unsplit "thirdperson"/"firstperson" keys stay absent (1.20.1
-// deserializer ignored them too). NOTE for the JSON owner: 26.3 adds a 9th
-// slot, fixedFromBottom (ON_SHELF); absent -> NO_TRANSFORM (= bare C), so
-// wands on shelves render shifted -0.5. Recommend mirroring "fixed" there;
-// java cannot fix that (report only).
-//
-// Forge part-index -> OBJ group mapping (verified group order in both files:
-// wand.obj = rod, cap1, cap2, focus, crossbar; staff.obj = rod, cap1, cap2, focus):
-//   rod ctor     -> parts[0] (rod) with rod texture (+drop crossbar if !staff)
-//   cap ctor     -> parts[1]+parts[2] (cap1, cap2) with cap texture
-//   sceptre ctor -> parts[4] (crossbar) with cap texture (wand.obj only)
-//   focus ctor   -> parts[3] (focus) with focus texture
-// Per-part textures come from WandRod/WandCap/ItemFocusBasic 1:1 (item-style ids
-// "arcaneresearch:item/wand/*" -> raw texture path "arcaneresearch:textures/...png").
-// The Forge focus tint (registerWandColors, tintIndex 1) is applied here as the
-// focus-group vertex color (custom geometry has no tintIndex pipeline).
-// Emission uses TCRenderTypes.objSolidFlat (Thaumaturge ENTITY_CUTOUT_FLAT
-// pattern: NO_CARDINAL_LIGHTING + no cull): Forge baked wand quads with
-// shade=false, so the raw ENTITY_CUTOUT graded side faces by normal and culled
-// backfaces, visibly diverging from Forge. hasFoil is intentionally ignored
-// (Thaumaturge WandItemSpecialRenderer also ignores it; every other mod
-// special renderer does the same): re-emitting the same UV geometry with a
-// glint RenderType double-draws over the base and is the prime suspect for the
-// "Missing elements in vertex" render-frame crash (foil is always true:
-// ItemWand.isFoil() returns true unconditionally).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRenderer.WandData> {
 
     private static final Identifier WAND_MODEL =
@@ -84,7 +84,7 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
     private static final Identifier STAFF_MODEL =
             Identifier.fromNamespaceAndPath("arcaneresearch", "models/obj/staff.obj");
 
-    // Forge WandModelEvents.registerWandMesh icon defaults, kept as raw-texture fallbacks.
+    
     private static final Identifier FALLBACK_ROD =
             Identifier.fromNamespaceAndPath("arcaneresearch", "item/wand/rod_wood_mat");
     private static final Identifier FALLBACK_CAP =
@@ -92,15 +92,15 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
     private static final Identifier FALLBACK_FOCUS =
             Identifier.fromNamespaceAndPath("arcaneresearch", "item/wand/focus");
 
-    // Immutable snapshot for model-identity caching (SpecialModelWrapper appends
-    // the argument as an identity element; records give equals/hashCode).
+    
+    
     public record WandData(String rodTag, boolean staff, String capTag, boolean sceptre,
                            String focusId, int focusColor) {
     }
 
-    // NEOFORGE_PORT: staff routing is static per item-model branch (items/wand.json
-    // select on arcaneresearch:staff); the baked renderer draws its fixed mesh, so
-    // staff rods get Forge staffTransforms (staff.json display) 1:1.
+    
+    
+    
     private final boolean staff;
 
     public WandSpecialRenderer() {
@@ -111,8 +111,8 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
         this.staff = staff;
     }
 
-    // Cache: TurretObjModel.load on a failed resource retries (and log-spams)
-    // every frame without a TRIED guard.
+    
+    
     private static volatile TurretObjModel WAND_OBJ = null;
     private static volatile boolean WAND_TRIED = false;
     private static volatile TurretObjModel STAFF_OBJ = null;
@@ -124,8 +124,8 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
                 if (!WAND_TRIED) {
                     WAND_TRIED = true;
                     try {
-                        // Forge parity: WandMeshModel sampled raw vt with no mirror
-                        // (sprite.getV(vt * 16)), so load flipV=false.
+                        
+                        
                         WAND_OBJ = TurretObjModel.load(WAND_MODEL, false);
                     } catch (Throwable ignored) {
                         WAND_OBJ = null;
@@ -160,9 +160,9 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
         WandRod rod = wand.getRod(stack);
         WandCap cap = wand.getCap(stack);
         if (rod == null || cap == null) {
-            // Forge resolveStack fell back to the base flat model when rod/cap
-            // were missing; the special layer has no such fallback, so emit the
-            // default wood/iron wand instead of rendering nothing.
+            
+            
+            
             return new WandData("wood", false, "iron", false, "", -1);
         }
         ItemFocusBasic focus = null;
@@ -189,8 +189,8 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
 
     @Override
     public void getExtents(Consumer<org.joml.Vector3fc> output) {
-        // Measured OBJ bounds (wand y -0.125..1.263, staff y -0.625..1.263,
-        // x/z 0.4..0.6); covers both variants so the layer never mis-culls.
+        
+        
         output.accept(new org.joml.Vector3f(0.4F, -0.63F, 0.4F));
         output.accept(new org.joml.Vector3f(0.6F, 1.27F, 0.6F));
     }
@@ -214,7 +214,7 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
         }
         Identifier rodTex = rawTexture(rod != null ? rod.getTexture() : null, FALLBACK_ROD);
         Identifier capTex = rawTexture(cap != null ? cap.getTexture() : null, FALLBACK_CAP);
-        // Focus tint (Forge registerWandColors, tintIndex 1).
+        
         float fr = 1.0F, fg = 1.0F, fb = 1.0F;
         ItemFocusBasic focus = null;
         if (!arg.focusId().isEmpty()) {
@@ -230,13 +230,13 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
             fb = (arg.focusColor() & 0xFF) / 255.0F;
         }
         poseStack.pushPose();
-        // NEOFORGE_PORT (display-convention change, VERIFIED against 26.3 sources:
-        // ItemTransform.apply ends with T(-0.5) — the old ItemRenderer.translate(-0.5)
-        // folded in — and LayerRenderState.submit applies the base display BEFORE
-        // special submit): the entering pose is already D*C on raw corner-space OBJ
-        // coords = Forge final exactly. Emit with NO extra shift (a T(+0.5) here
-        // would give D*q, +0.5 model units off Forge and off the WandTipHelper
-        // solution, detaching the beam from the crystal).
+        
+        
+        
+        
+        
+        
+        
         try {
             emitFramed(poseStack, collector, TCRenderTypes.objSolidFlat(rodTex), model, "rod",
                     lightCoords, 1.0F, 1.0F, 1.0F, rodTex);
@@ -245,39 +245,39 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
             emitFramed(poseStack, collector, TCRenderTypes.objSolidFlat(capTex), model, "cap2",
                     lightCoords, 1.0F, 1.0F, 1.0F, capTex);
             if (arg.sceptre()) {
-                // Forge built the sceptre part only for non-staff wands; staff.obj
-                // has no "crossbar" group so the hasGroup guard no-ops there too.
+                
+                
                 emitFramed(poseStack, collector, TCRenderTypes.objSolidFlat(capTex), model, "crossbar",
                         lightCoords, 1.0F, 1.0F, 1.0F, capTex);
             }
             if (!arg.focusId().isEmpty()) {
-                // NEOFORGE_PORT (26.3): focus drawn with the translucent variant
-                // (TCRenderTypes.objAlphaFlat): Forge item quads went through
-                // RenderType.translucent (soft focus alpha), the cutout variant
-                // clipped the gradient to hard edges.
+                
+                
+                
+                
                 emitFramed(poseStack, collector, TCRenderTypes.objAlphaFlat(focusTex), model, "focus",
                         lightCoords, fr, fg, fb, focusTex);
             }
-            // NEOFORGE_PORT: no manual foil re-emission (see header): vanilla
-            // Shield/Trident handle foil via submitModel glint, never by
-            // re-emitting custom geometry; Thaumaturge ignores hasFoil too.
+            
+            
+            
         } finally {
             poseStack.popPose();
         }
     }
 
-    // Forge cap/rod/focus texture ids are item-style ("arcaneresearch:item/...",
-    // resolved via the stitched atlas at bake); direct RenderType textures need
-    // the raw path ("arcaneresearch:textures/...png").
+    
+    
+    
     private static Identifier rawTexture(@Nullable Identifier id, Identifier fallback) {
         Identifier src = id != null ? id : fallback;
         return Identifier.fromNamespaceAndPath(src.getNamespace(), "textures/" + src.getPath() + ".png");
     }
 
-    // NEOFORGE_PORT (animated strip parity): Forge atlas sprites showed one
-    // 16x16 frame (mcmeta animation); raw sampling shows the whole strip
-    // squashed (rod_blaze_mat 16x320, rod_primal 32x640, thaumium/void caps,
-    // animated foci). Crop emission to the live frame (f/n, 1/n).
+    
+    
+    
+    
     private record Anim(int frames, int frametime, int[] seq) {
     }
 
@@ -384,8 +384,8 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
         if (!model.hasGroup(group)) {
             return;
         }
-        // Capture the frame window as lambda finals (the geometry callback
-        // runs at feature-render time, after emit returns).
+        
+        
         final float off = vOffset;
         final float scale = vScale;
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {

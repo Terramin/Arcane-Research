@@ -22,15 +22,15 @@ import java.util.List;
 public class ItemElementalAxe extends Item {
 
     public ItemElementalAxe(Item.Properties props) {
-        // NEOFORGE_PORT: AxeItem REMOVED in 26.x -> plain Item with .axe(material, damage, speed).
+        
         super(props
                 .rarity(Rarity.RARE)
                 .axe(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 5.0F, -3.0F));
     }
 
-    // NEOFORGE_PORT: isValidRepairItem(ItemStack, ItemStack) REMOVED from Item in 26.x;
-    // repair is now data-driven via the ToolMaterial repairItems tag (repairs_thaumium)
-    // -> REPAIRABLE component, so no override is needed (or possible).
+    
+    
+    
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {

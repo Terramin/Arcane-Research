@@ -52,8 +52,8 @@ public class ItemBauble extends Item implements ICurioItem, IVisDiscountGear, IR
         return new ItemBauble(props, "girdle_fancy", BaubleSlot.BELT, Rarity.UNCOMMON, 0);
     }
 
-    // NEOFORGE_PORT: getOrCreateDescriptionId() REMOVED in 26.x (getDescriptionId() is final) ->
-    // override getName(stack) with the same translation key (same displayed name).
+    
+    
     @Override
     public Component getName(ItemStack stack) {
         return Component.translatable("item.arcaneresearch.baubles." + variant);
@@ -82,9 +82,9 @@ public class ItemBauble extends Item implements ICurioItem, IVisDiscountGear, IR
         return visDiscount;
     }
 
-    /**
-     * Паритет TC4 (ItemBaubleBlanks): заготовки — IRunicArmor с нулевым зарядом.
-     */
+     
+
+ 
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;

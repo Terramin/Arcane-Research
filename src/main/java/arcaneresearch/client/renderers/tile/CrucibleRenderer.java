@@ -16,14 +16,14 @@ import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn; // NEOFORGE_PORT: was net.minecraftforge.api.distmarker.OnlyIn
+import net.neoforged.api.distmarker.OnlyIn; 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.crafting.TileCrucible;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (aspect-tinted water top quad; biome water color fallback).
-@OnlyIn(Dist.CLIENT) // NEOFORGE_PORT: kept Forge class annotation (was forge OnlyIn)
+
+
+@OnlyIn(Dist.CLIENT) 
 public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible, CrucibleRenderer.State> {
 
     private static final Identifier WATER_STILL =
@@ -76,7 +76,7 @@ public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible, Cruci
             int waterColor = 0x3F76E4;
             if (tile.getLevel() != null) {
                 waterColor = tile.getLevel().getBiome(tile.getBlockPos()).value()
-                        .getSpecialEffects().waterColor(); // NEOFORGE_PORT: record accessor, was getWaterColor()
+                        .getSpecialEffects().waterColor(); 
             }
             r = ((waterColor >> 16) & 0xFF) / 255.0f;
             g = ((waterColor >> 8) & 0xFF) / 255.0f;
@@ -104,8 +104,8 @@ public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible, Cruci
         }
         TextureAtlasSprite sprite;
         try {
-            // NEOFORGE_PORT: was getTextureAtlas(LOCATION_BLOCKS).apply(stillTexture);
-            // atlas lookup is now AtlasManager.get(SpriteId). LOCATION_BLOCKS still valid (deprecated only).
+            
+            
             sprite = Minecraft.getInstance().getAtlasManager().get(
                     new SpriteId(TextureAtlas.LOCATION_BLOCKS, WATER_STILL));
         } catch (Exception e) {
@@ -120,11 +120,11 @@ public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible, Cruci
         float g = state.g;
         float b = state.b;
         float a = state.alpha;
-        int light = state.lightCoords; // NEOFORGE_PORT: was packedLight param; filled by extractBase
-        // NEOFORGE_PORT: bind the BLOCKS atlas, not WATER_STILL. Forge RenderType.translucent()
-        // sampled the block atlas with sprite UVs (vanilla SpriteId.renderType applies the fn to
-        // the atlasLocation); binding the still texture directly would sample atlas-space UVs
-        // from a standalone texture (wrong crop, no animation).
+        int light = state.lightCoords; 
+        
+        
+        
+        
         RenderType type = TCRenderTypes.translucentPortal(TextureAtlas.LOCATION_BLOCKS);
         poseStack.pushPose();
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
@@ -145,8 +145,8 @@ public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible, Cruci
                 .setNormal(pose, 0, 1, 0);
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TileCrucible blockEntity) {
         return blockEntity.getRenderBoundingBox();

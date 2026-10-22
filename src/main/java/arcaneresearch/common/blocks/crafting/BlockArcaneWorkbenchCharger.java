@@ -100,8 +100,8 @@ public class BlockArcaneWorkbenchCharger extends Block {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {

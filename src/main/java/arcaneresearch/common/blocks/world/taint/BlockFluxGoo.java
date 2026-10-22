@@ -105,7 +105,7 @@ public class BlockFluxGoo extends Block implements ITaintBlock {
                     true,
                     true
             );
-            // NEOFORGE_PORT: Forge cleared the curative items (milk-immune) -> IncurableEffects.
+            
             arcaneresearch.common.lib.potions.IncurableEffects.addIncurable(living, effect);
         }
     }

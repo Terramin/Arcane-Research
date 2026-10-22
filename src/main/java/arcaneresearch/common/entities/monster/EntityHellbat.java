@@ -126,7 +126,7 @@ public class EntityHellbat extends EntityFireBat {
         boolean hit = victim.level() instanceof net.minecraft.server.level.ServerLevel _sl ? victim.hurtServer(_sl, this.damageSources().mobAttack(this),
                 (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE)) : false;
         if (hit) {
-            // NEOFORGE_PORT (26.3): setSecondsOnFire -> igniteForSeconds (never shortens a longer burn, applies BURNING_TIME).
+            
             victim.igniteForSeconds(getIsSummoned() ? 4 : 2);
             if (getIsVampire() && this.owner instanceof Player player && !player.isDeadOrDying()) {
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 26, 1));
@@ -148,8 +148,8 @@ public class EntityHellbat extends EntityFireBat {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean recentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, recentlyHit);
         if (!getIsSummoned()) {

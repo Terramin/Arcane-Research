@@ -7,10 +7,10 @@ import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import net.minecraft.network.codec.StreamCodec;
 
-// NEOFORGE_PORT: recipe serializers register before items are bound, so unit codecs
-// must not instantiate their recipe (which builds ItemStacks from DeferredHolders)
-// at class-init time. These delegates build the unit codec on first actual use,
-// which always happens after registries are bound (datapack load / network sync).
+
+
+
+
 public final class LazyCodecs {
 
     private LazyCodecs() {

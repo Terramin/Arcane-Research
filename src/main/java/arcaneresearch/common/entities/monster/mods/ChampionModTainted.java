@@ -26,8 +26,8 @@ public class ChampionModTainted implements IChampionModifierEffect {
                 critter.goalSelector.addGoal(2, new arcaneresearch.common.entities.ai.combat.EntityCritterAIAttackMelee(pathfinder, 1.2, false));
                 critter.goalSelector.addGoal(5, new net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal(pathfinder, 1.0));
                 critter.goalSelector.addGoal(7, new net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal(pathfinder, 1.0));
-                // NEOFORGE_PORT: HurtByTargetGoal(Mob, Class...) varargs kept (see EntityTaintCrawler).
-                // NEOFORGE_PORT (26.3): ZombifiedPiglin moved to monster.zombie (same class Forge ignored).
+                
+                
                 critter.targetSelector.addGoal(1, new net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal(pathfinder,
                         net.minecraft.world.entity.monster.zombie.ZombifiedPiglin.class));
                 critter.targetSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal<>(

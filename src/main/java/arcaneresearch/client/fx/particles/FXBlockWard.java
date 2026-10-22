@@ -12,7 +12,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -20,7 +20,7 @@ import org.joml.Matrix4f;
 import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import arcaneresearch.client.fx.BeamEngine;
 
-// NEOFORGE_PORT: pose-driven wall quad -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXBlockWard extends SingleQuadParticle implements arcaneresearch.client.fx.BeamEngine.BeamEffect {
 
     private static final Identifier[] TEXTURES = new Identifier[15];
@@ -39,7 +39,7 @@ public class FXBlockWard extends SingleQuadParticle implements arcaneresearch.cl
 
     public FXBlockWard(ClientLevel level, double x, double y, double z,
                        Direction side, float hitX, float hitY, float hitZ) {
-        super(level, x, y, z, 0, 0, 0, null); // NEOFORGE_PORT: sprite unused (BeamEngine path)
+        super(level, x, y, z, 0, 0, 0, null); 
 
         this.side = side;
 
@@ -105,8 +105,8 @@ public void extract(net.minecraft.client.renderer.state.level.QuadParticleRender
         return TCSprites.translucent();
     }
 
-    // NEOFORGE_PORT: Forge computed the frame once from age+partialTicks and used
-    // it for both texture bind and emission; the bind rides beamRenderTypes(partialTicks).
+    
+    
     public net.minecraft.resources.Identifier currentTexture(float partialTicks) {
         float fade = (age + partialTicks) / lifetime;
         int frame = Math.min(14, (int) (15.0f * fade));
@@ -130,7 +130,7 @@ public void extract(net.minecraft.client.renderer.state.level.QuadParticleRender
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;

@@ -63,7 +63,7 @@ public class EntityBottleTaint extends ThrowableProjectile {
         if (!level().isClientSide()) {
 
             AABB searchBox = new AABB(getX(), getY(), getZ(), getX(), getY(), getZ()).inflate(5.0, 5.0, 5.0);
-            // NEOFORGE_PORT (26.3): 2-arg getEntitiesOfClass keeps the Forge NO_SPECTATORS filter.
+            
             List<LivingEntity> entities = level().getEntitiesOfClass(LivingEntity.class, searchBox);
 
             for (LivingEntity entity : entities) {
@@ -109,7 +109,7 @@ public class EntityBottleTaint extends ThrowableProjectile {
         level().setBlockAndUpdate(pos, ModBlocks.FLUX_GOO.get().defaultBlockState());
     }
 
-    // NEOFORGE_PORT: Forge getGravity() (float) -> 26.x getDefaultGravity() (double), same value.
+    
     @Override
     protected double getDefaultGravity() {
         return 0.03;

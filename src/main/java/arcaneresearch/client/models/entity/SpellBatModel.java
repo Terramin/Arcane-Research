@@ -7,14 +7,14 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.SpellBatRenderer;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>. Body tint moved to the renderer
-// getModelTint hook; tintR/G/B fields removed.
+
+
 public class SpellBatModel extends EntityModel<SpellBatRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -113,6 +113,6 @@ public class SpellBatModel extends EntityModel<SpellBatRenderer.State> {
         this.batOuterLeftWing.yRot = -this.batRightWing.yRot * 0.5F;
     }
 
-    // NEOFORGE_PORT: tint via renderer getModelTint hook; base
-    // Model.renderToBuffer (final, root part) draws head + body.
+    
+    
 }

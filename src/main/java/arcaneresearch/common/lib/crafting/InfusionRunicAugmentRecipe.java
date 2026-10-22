@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.util.RecipeMatcher; // NEOFORGE_PORT: package move
+import net.neoforged.neoforge.common.util.RecipeMatcher; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -24,9 +24,9 @@ public class InfusionRunicAugmentRecipe extends InfusionRecipeType {
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "runic_augment");
 
     public InfusionRunicAugmentRecipe() {
-        // NEOFORGE_PORT: ported InfusionRecipeType ctor takes (group, centralItem,
-        // components, aspects, result, research, instability) — no id (holder-keyed),
-        // nullable central input (null = no requirement, Ingredient.EMPTY is gone).
+        
+        
+        
         super("", null, baseComponents(), new AspectList(),
                 null, "RUNICSHIELDING", 5);
     }
@@ -42,9 +42,9 @@ public class InfusionRunicAugmentRecipe extends InfusionRecipeType {
         return comps;
     }
 
-    /**
-     * Паритет TC4: слиток золота + salis mundus × (1 + заряд).
-     */
+     
+
+ 
     public static NonNullList<Ingredient> componentsForCharge(int charge) {
         NonNullList<Ingredient> comps = NonNullList.create();
         comps.add(Ingredient.of(net.minecraft.world.item.Items.GOLD_INGOT));
@@ -58,7 +58,7 @@ public class InfusionRunicAugmentRecipe extends InfusionRecipeType {
         if (stack.isEmpty()) {
             return false;
         }
-        // Паритет TC4: только IRunicArmor (таум-броня и рунная бижа).
+        
         return stack.getItem() instanceof arcaneresearch.api.items.IRunicArmor;
     }
 
@@ -95,7 +95,7 @@ public class InfusionRunicAugmentRecipe extends InfusionRecipeType {
         if (input == null || input.isEmpty()) {
             return out;
         }
-        // Паритет TC4: vis = 32 * 2^charge; ARMOR и MAGIC по половине, ENERGY полностью.
+        
         int vis = (int) (32.0D * Math.pow(2.0D, PlayerEvents.getRunicCharge(input)));
         if (vis > 0) {
             out.add(Aspect.PROTECT, vis / 2);

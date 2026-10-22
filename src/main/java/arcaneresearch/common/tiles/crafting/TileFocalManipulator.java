@@ -362,8 +362,8 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
                 worldPosition.getX(), worldPosition.getY() + 1, worldPosition.getZ(), param);
     }
 
-    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x; the tile's
-    // renderer forwards to this from IBlockEntityRendererExtension.getRenderBoundingBox.
+    
+    
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1);

@@ -6,11 +6,11 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ZombieRenderer;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT (26.3): vanilla ZombieRenderer; texture hook now takes State.
+
 public class InhabitedZombieRenderer extends ZombieRenderer {
 
     private static final Identifier TEXTURE =
@@ -25,8 +25,8 @@ public class InhabitedZombieRenderer extends ZombieRenderer {
         return TEXTURE;
     }
 
-    // NEOFORGE_PORT (26.3): Forge ItemCultistPlateArmor.getArmorTexture returned the zombie
-    // plate texture for this entity; the armor layer resolves textures during this submit.
+    
+    
     @Override
     public void submit(ZombieRenderState state, PoseStack poseStack, SubmitNodeCollector collector,
                        CameraRenderState camera) {

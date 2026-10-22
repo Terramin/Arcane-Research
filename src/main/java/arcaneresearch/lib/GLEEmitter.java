@@ -226,9 +226,9 @@ public class GLEEmitter {
         normalMatrix.transform(nrm);
         nrm.normalize();
 
-        // NEOFORGE_PORT: VertexConsumer chaining reworked in 26.x (addVertex/setColor/setUv/
-        // setOverlay/setLight/setNormal; no terminal endVertex). overlayCoords(int)->setOverlay,
-        // uv2(packed)->setLight(packed).
+        
+        
+        
         builder.addVertex(pos.x(), pos.y(), pos.z())
                 .setColor((float) v[6], (float) v[7], (float) v[8], (float) v[9])
                 .setUv((float) v[10], (float) v[11])

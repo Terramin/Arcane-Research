@@ -135,9 +135,9 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
     private ItemStack getSmeltingResult(ItemStack input) {
         if (input.isEmpty() || level == null) return ItemStack.EMPTY;
 
-        // NEOFORGE_PORT: Level.getRecipeManager removed -> server RecipeManager; 26.x
-        // getRecipeFor returns Optional<RecipeHolder<T>>, cooking input is SingleRecipeInput,
-        // result via assemble(input) (getResultItem(RegistryAccess) gone).
+        
+        
+        
         RecipeManager recipeManager = level.getServer().getRecipeManager();
         var recipe = recipeManager.getRecipeFor(
                 RecipeType.SMELTING,
@@ -155,8 +155,8 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
     private float getSmeltingExperience(ItemStack result) {
         if (level == null) return 0;
 
-        // NEOFORGE_PORT: getAllRecipesFor gone -> getRecipes() + holder.value() filter;
-        // result via assemble(SingleRecipeInput), xp via experience() (was getExperience()).
+        
+        
         RecipeManager recipeManager = level.getServer().getRecipeManager();
         for (var holder : recipeManager.getRecipes()) {
             if (holder.value() instanceof SmeltingRecipe smelting) {
@@ -382,8 +382,8 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         return false;
     }
 
-    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox is gone in 26.x (bounds live on the
-    // BlockEntityRenderer); this tile has no renderer, so the box is informational only.
+    
+    
     public AABB getRenderBoundingBox() {
         return new AABB(
                 worldPosition.getX() - 1.3, worldPosition.getY() - 1.3, worldPosition.getZ() - 1.3,

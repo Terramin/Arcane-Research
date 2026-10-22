@@ -2,7 +2,7 @@ package arcaneresearch.client.fx;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.client.lib.events.handler.ParticleHandler;
@@ -15,7 +15,7 @@ public class ParticleEngine {
         if (level == null || !level.isClientSide() || fx == null) {
             return;
         }
-        // NEOFORGE_PORT: same BeamEngine routing as FXDispatcher (custom geometry).
+        
         if (fx instanceof BeamEngine.BeamEffect beam) {
             BeamEngine.add(beam);
             return;

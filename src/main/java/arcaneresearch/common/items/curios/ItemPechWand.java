@@ -30,8 +30,8 @@ public class ItemPechWand extends Item {
                 .rarity(Rarity.RARE));
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.pass(stack) -> InteractionResult.PASS.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -87,9 +87,9 @@ public class ItemPechWand extends Item {
         return InteractionResult.PASS;
     }
 
-    // NEOFORGE_PORT: OnlyIn/Dist moved to net.neoforged.api.distmarker; appendHoverText signature
-    // changed in 26.x (ItemStack, Level, List) -> (ItemStack, TooltipContext, TooltipDisplay,
-    // Consumer, TooltipFlag).
+    
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

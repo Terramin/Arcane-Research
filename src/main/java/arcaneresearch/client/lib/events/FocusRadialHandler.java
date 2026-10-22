@@ -3,7 +3,7 @@ package arcaneresearch.client.lib.events;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber; // NEOFORGE_PORT: was Mod
+import net.neoforged.fml.common.EventBusSubscriber; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.casters.ICaster;
 import arcaneresearch.common.items.casters.ItemFocus;
@@ -39,15 +39,15 @@ public class FocusRadialHandler {
     private static float radialHudScale = 0f;
     private static long lastTime = 0L;
     private static boolean lastState = false;
-    // РЎРЅСЏС‚РёРµ С„РѕРєСѓСЃР° РЅР°РІРµРґРµРЅРёРµРј РЅР° С†РµРЅС‚СЂ (Р±РµР· РєР»РёРєР°, РєР°Рє РЅР°РґРµРІР°РЅРёРµ):
-    // РєСѓСЂСЃРѕСЂ РґРѕР»Р¶РµРЅ С…РѕС‚СЊ СЂР°Р· РїРѕРєРёРЅСѓС‚СЊ С†РµРЅС‚СЂ РїРѕСЃР»Рµ РѕС‚РєСЂС‹С‚РёСЏ РјРµРЅСЋ,
-    // РёРЅР°С‡Рµ С„РѕРєСѓСЃ СЃР»РµС‚Р°Р» Р±С‹ РїСЂРё РєР°Р¶РґРѕРј РѕС‚РєСЂС‹С‚РёРё (РєСѓСЂСЃРѕСЂ СѓР¶Рµ РІ С†РµРЅС‚СЂРµ).
+    
+    
+    
     private static boolean centerArmed = false;
     private static boolean centerRemoveHover = false;
 
     private static boolean mouseReleased = false;
 
-    // NEOFORGE_PORT: RenderGuiOverlayEvent removed in 26.x -> GuiLayer.
+    
     public static final GuiLayer RADIAL_LAYER = (graphics, deltaTracker) -> {
         onRenderRadial(graphics, deltaTracker.getGameTimeDeltaPartialTick(false));
     };
@@ -117,7 +117,7 @@ public class FocusRadialHandler {
                         fociScale.getOrDefault(key, 1f) - getRadialChange(time, lastTime, 250L)));
             }
         }
-        // РћС‚РїСѓСЃРєР°РЅРёРµ СЃ РєСѓСЂСЃРѕСЂРѕРј РЅР° РѕРґРµС‚РѕРј С„РѕРєСѓСЃРµ вЂ” СЃРЅСЏС‚СЊ РµРіРѕ (Р±РµР· РєР»РёРєР°).
+        
         if (centerRemoveHover && !KeyHandler.radialActive && !KeyHandler.radialLock) {
             centerRemoveHover = false;
             centerArmed = false;
@@ -154,7 +154,7 @@ public class FocusRadialHandler {
             }
         });
 
-        // NEOFORGE_PORT (26.3): Forge scanned inventory.items only (no armor/offhand slots).
+        
         List<ItemStack> inv = player.getInventory().getNonEquipmentItems();
         for (int a = 0; a < inv.size(); ++a) {
             ItemStack item = inv.get(a);
@@ -198,8 +198,8 @@ public class FocusRadialHandler {
         if (!(held.getItem() instanceof ICaster caster)) {
             return;
         }
-        // Р¦РµРЅС‚СЂ СЃ РѕРґРµС‚С‹Рј С„РѕРєСѓСЃРѕРј РїРѕРєР°Р·С‹РІР°РµРј, РґР°Р¶Рµ РµСЃР»Рё Р·Р°РїР°СЃРЅС‹С… С„РѕРєСѓСЃРѕРІ РЅРµС‚:
-        // РёРЅР°С‡Рµ РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ С„РѕРєСѓСЃ РЅРµР»СЊР·СЏ СЃРЅСЏС‚СЊ РєР»РёРєРѕРј.
+        
+        
         ItemStack equipped = caster.getFocusStack(held);
         if (fociItem.isEmpty() && (equipped == null || equipped.isEmpty())) {
             return;
@@ -209,8 +209,8 @@ public class FocusRadialHandler {
         int sh = mc.getWindow().getGuiScaledHeight();
         double mx = mc.mouseHandler.xpos() * sw / (double) mc.getWindow().getScreenWidth();
         double my = mc.mouseHandler.ypos() * sh / (double) mc.getWindow().getScreenHeight();
-        // NEOFORGE_PORT: LWJGL not on the mod compile classpath in 26.3;
-        // MouseHandler tracks the same button state.
+        
+        
         boolean mouseDown = mc.mouseHandler.isLeftPressed();
 
         int cx = sw / 2;
@@ -223,7 +223,7 @@ public class FocusRadialHandler {
         graphics.pose().rotate((float) Math.toRadians(angle));
         graphics.pose().scale(radialHudScale,  radialHudScale);
         int ring = (int) (width * 2.75f);
-        // NEOFORGE_PORT (26.3): Forge setShaderColor(0.5, 0.5, 0.5, 0.5) covered both rings -> ARGB.
+        
         graphics.blit(RenderPipelines.GUI_TEXTURED, R1, -ring / 2, -ring / 2, 0, 0, ring, ring, ring, ring,
                 net.minecraft.util.ARGB.colorFromFloat(0.5f, 0.5f, 0.5f, 0.5f));
         graphics.pose().popMatrix();
@@ -243,8 +243,8 @@ public class FocusRadialHandler {
             if (centerHover) {
                 tooltipStack = currentFocus;
             }
-            // РќР°РІРµРґРµРЅРёРµ РЅР° РѕРґРµС‚С‹Р№ С„РѕРєСѓСЃ РІ С†РµРЅС‚СЂРµ вЂ” СЃРЅСЏС‚СЊ РµРіРѕ РїСЂРё РѕС‚РїСѓСЃРєР°РЅРёРё,
-            // РєР°Рє РЅР°РґРµРІР°РЅРёРµ РЅР°РІРµРґРµРЅРёРµРј (РєР»РёРєР° РЅРµ РЅСѓР¶РЅРѕ).
+            
+            
             if (!centerHover) {
                 centerArmed = true;
             }
@@ -290,8 +290,8 @@ public class FocusRadialHandler {
 
         if (tooltipStack != null) {
             graphics.setTooltipForNextFrame(mc.font, tooltipStack, (int) mx, (int) my);
-            // NEOFORGE_PORT (26.3): deferred tooltips are only flushed by Screen rendering; on
-            // the HUD (no screen) it was never drawn. Flush it here (Forge drew it immediately).
+            
+            
             graphics.extractDeferredElements((int) mx, (int) my, partialTick);
         }
     }

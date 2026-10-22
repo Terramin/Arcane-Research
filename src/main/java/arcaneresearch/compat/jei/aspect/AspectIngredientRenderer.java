@@ -2,7 +2,7 @@ package arcaneresearch.compat.jei.aspect;
 
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
 import arcaneresearch.api.aspects.Aspect;

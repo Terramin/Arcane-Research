@@ -3,7 +3,7 @@ package arcaneresearch.common.lib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -99,7 +99,7 @@ public class InternalMethodHandler implements IInternalMethodHandler {
                 && ArcaneresearchCapabilities.knowsResearchStrict(player, "FIRSTSTEPS")
                 && !ArcaneresearchCapabilities.knowsResearchStrict(player, "WARP")) {
             completeResearch(player, "WARP");
-            // NEOFORGE_PORT: displayClientMessage(msg, true) = action bar -> sendOverlayMessage.
+            
             player.sendOverlayMessage(Component.translatable("research.WARP.warn"));
         }
 

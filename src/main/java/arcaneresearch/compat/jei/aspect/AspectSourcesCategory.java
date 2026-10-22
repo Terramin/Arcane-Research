@@ -8,10 +8,10 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.registries.BuiltInRegistries; // NEOFORGE_PORT: was ForgeRegistries
+import net.minecraft.core.registries.BuiltInRegistries; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectHelper;
@@ -52,7 +52,7 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
             byTag.put(aspect.getTag(), aspect);
         }
         Map<Aspect, List<ItemStack>> index = new LinkedHashMap<>();
-        // NEOFORGE_PORT: Registry extends IdMap extends Iterable (same iteration).
+        
         for (Item item : BuiltInRegistries.ITEM) {
             ItemStack stack;
             try {
@@ -101,8 +101,8 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
         return title;
     }
 
-    // NEOFORGE_PORT: IRecipeCategory.getBackground removed in JEI 26.3;
-    // getWidth/getHeight are mandatory instead (background field kept unused).
+    
+    
     @Override
     public int getWidth() {
         return WIDTH;

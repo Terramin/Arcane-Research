@@ -1,6 +1,6 @@
 package arcaneresearch.client.renderers.entity.golem;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.api.golems.IGolemAPI;
@@ -26,7 +26,7 @@ public class PartModelBreakers extends PartModel {
             lastSpeed = ani.get(entity.getId())[0];
             lastRot = ani.get(entity.getId())[1];
         }
-        // NEOFORGE_PORT: LivingEntity.getAttackAnim gone -> golem swing phase.
+        
         float swing = entity instanceof arcaneresearch.common.golems.EntityArcaneresearchGolem golemEntity
                 ? golemEntity.getArmSwingPhase(partialTicks) : 0.0F;
         float f = Math.max(lastSpeed, swing * 20.0f);

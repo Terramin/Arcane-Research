@@ -66,8 +66,8 @@ public class ArcaneWorkbenchResultSlot extends Slot {
         }
 
         Container container = this.container;
-        // NEOFORGE_PORT: ResultContainer exposes the used recipe via RecipeCraftingHolder
-        // (holders, not values); awardRecipes takes Collection<RecipeHolder<?>>.
+        
+        
         if (container instanceof net.minecraft.world.inventory.RecipeCraftingHolder recipeHolder) {
             var recipe = recipeHolder.getRecipeUsed();
             if (recipe != null && !recipe.value().isSpecial()) {
@@ -87,9 +87,9 @@ public class ArcaneWorkbenchResultSlot extends Slot {
 
         CommonHooks.setCraftingPlayer(thePlayer);
 
-        // NEOFORGE_PORT: IArcaneRecipe#getRemainingItems returns List<ItemStack> in
-        // 26.x; vanilla getRecipeFor returns Optional<RecipeHolder<CraftingRecipe>>
-        // (holder access via .value()) and takes CraftingInput, not CraftingContainer.
+        
+        
+        
         java.util.List<ItemStack> remainingItems;
         if (arcaneRecipe != null && craftMatrix instanceof IArcaneWorkbench workbench) {
 
@@ -114,7 +114,7 @@ public class ArcaneWorkbenchResultSlot extends Slot {
             var gridCopy = ArcaneWorkbenchMenu.gridOnlyCopy(
                     (AbstractContainerMenu) thePlayer.containerMenu, craftMatrix);
             var gridInput = gridCopy.asCraftInput();
-            // NEOFORGE_PORT: Level.getRecipeManager removed in 26.3 -> server RecipeManager.
+            
             var recipeOpt = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING,
                     gridInput, level);
 

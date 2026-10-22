@@ -30,7 +30,7 @@ public class ItemFocusBasic extends Item {
     private final int focusColor;
 
     public ItemFocusBasic(String id, Identifier texture, int renderColor, Properties properties) {
-        // NEOFORGE_PORT: getRarity(stack) override removed in 26.x -> rarity in Properties (was RARE for all foci).
+        
         super(properties.stacksTo(1).rarity(Rarity.RARE));
         this.id = id;
         this.texture = texture;
@@ -46,8 +46,8 @@ public class ItemFocusBasic extends Item {
         this(id, Identifier.fromNamespaceAndPath("arcaneresearch", "item/wand/focus"), renderColor, new Properties());
     }
 
-    // NEOFORGE_PORT (26.3): props-carrying overload for registration (id-less
-    // Properties crash at runtime); legacy overloads above are API-only.
+    
+    
     public ItemFocusBasic(String id, int renderColor, Properties properties) {
         this(id, Identifier.fromNamespaceAndPath("arcaneresearch", "item/wand/focus"), renderColor, properties);
     }
@@ -81,9 +81,9 @@ public class ItemFocusBasic extends Item {
         return 32.0F;
     }
 
-    // NEOFORGE_PORT: appendHoverText(ItemStack,Level,List,TooltipFlag) ->
-    // appendHoverText(ItemStack,TooltipContext,TooltipDisplay,Consumer,TooltipFlag).
-    // Level now comes from TooltipContext.level() (may be null, as on Forge).
+    
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
             net.minecraft.world.item.component.TooltipDisplay display,
@@ -98,7 +98,7 @@ public class ItemFocusBasic extends Item {
                 lines.add(Component.literal(" \u00A7" + aspect.getChatcolor() + aspect.getName() + "\u00A7r x " + amount));
             }
         }
-        addFocusInformation(stack, context.level(), lines, flag); // NEOFORGE_PORT (26.3): Forge passed the tooltip Level
+        addFocusInformation(stack, context.level(), lines, flag); 
         lines.forEach(tooltip);
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
@@ -140,7 +140,7 @@ public class ItemFocusBasic extends Item {
         return false;
     }
 
-    // NEOFORGE_PORT: kept as plain helper (base Item.getRarity removed); rarity now in Properties.
+    
     public Rarity getRarity(ItemStack focusstack) {
         return Rarity.RARE;
     }
@@ -236,7 +236,7 @@ public class ItemFocusBasic extends Item {
     }
 
     private ListTag getFocusUpgradeTagList(ItemStack focusstack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same "upgrade" list shape).
+        
         if (focusstack.isEmpty()
                 || !arcaneresearch.api.ArcaneresearchInvHelper.hasCustomTag(focusstack)) {
             return null;

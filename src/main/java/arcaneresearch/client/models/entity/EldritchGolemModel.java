@@ -7,13 +7,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.EldritchGolemRenderer;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>; spawn/headless/attack via State.
+
 public class EldritchGolemModel extends EntityModel<EldritchGolemRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -249,7 +249,7 @@ public class EldritchGolemModel extends EntityModel<EldritchGolemRenderer.State>
         return (Math.abs(value % range - range * 0.5F) - range * 0.25F) / (range * 0.25F);
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {

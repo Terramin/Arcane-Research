@@ -17,10 +17,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXBoreDig.java (PLAY_TO_CLIENT).
-// Fields/ctors/handleClient logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:fx_bore_dig".
+
+
+
+
 public class PacketFXBoreDig implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXBoreDig> TYPE =

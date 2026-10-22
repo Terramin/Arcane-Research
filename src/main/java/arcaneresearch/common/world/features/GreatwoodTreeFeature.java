@@ -18,11 +18,11 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import arcaneresearch.init.ModBlocks;
 
-// NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-// NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-// WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-// features are placed from code with fixed params (never deserialized from datapacks),
-// registry-id dispatch resolves the registered instance on load.
+
+
+
+
+
 public class GreatwoodTreeFeature implements Feature {
 
     public static final MapCodec<GreatwoodTreeFeature> CODEC =
@@ -399,7 +399,7 @@ public class GreatwoodTreeFeature implements Feature {
         level.setBlock(spawnerPos, Blocks.SPAWNER.defaultBlockState(), 2);
 
         if (level.getBlockEntity(spawnerPos) instanceof SpawnerBlockEntity spawner) {
-            // NEOFORGE_PORT: vanilla EntityType statics removed in 26.x -> BuiltInRegistries lookup.
+            
             net.minecraft.world.entity.EntityType<?> caveSpider =
                     net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getValue(
                             net.minecraft.resources.Identifier.fromNamespaceAndPath("minecraft", "cave_spider"));

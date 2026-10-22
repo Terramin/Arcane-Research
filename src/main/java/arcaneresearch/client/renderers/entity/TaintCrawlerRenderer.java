@@ -6,13 +6,13 @@ import net.minecraft.client.model.monster.silverfish.SilverfishModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintCrawler;
 
-// NEOFORGE_PORT (26.3): vanilla SilverfishModel (moved, non-generic) +
-// LivingEntityRenderState; flip via no-arg getFlipDegrees hook.
+
+
 public class TaintCrawlerRenderer extends MobRenderer<EntityTaintCrawler, LivingEntityRenderState, SilverfishModel> {
 
     private static final Identifier TEXTURE =

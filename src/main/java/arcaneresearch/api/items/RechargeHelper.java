@@ -19,7 +19,7 @@ public class RechargeHelper {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable)) {
             return -1;
         }
-        // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).
+        
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
         return data != null ? data.copyTag().getIntOr(CHARGE_KEY, 0) : 0;
     }
@@ -48,7 +48,7 @@ public class RechargeHelper {
         }
         int max = rechargable.getMaxCharge(stack, entity);
         final int clamped = Math.max(0, Math.min(charge, max));
-        // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).
+        
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(CHARGE_KEY, clamped));
     }
 

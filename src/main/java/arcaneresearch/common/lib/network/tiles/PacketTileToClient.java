@@ -15,12 +15,12 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/tiles/PacketTileToClient.java (PLAY_TO_CLIENT).
-// Fields/ctors/handle logic preserved verbatim; transport -> CustomPacketPayload
-// (same pattern as PacketSyncKnowledge; see its javadoc).
-// Null-tag normalization added in ctors (old FriendlyByteBuf.writeNbt was null-safe;
-// ByteBufCodecs.COMPOUND_TAG expects non-null).
-// Payload id "arcaneresearch:tile_to_client".
+
+
+
+
+
+
 public class PacketTileToClient implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketTileToClient> TYPE =

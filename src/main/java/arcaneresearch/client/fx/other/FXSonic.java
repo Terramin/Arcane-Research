@@ -7,7 +7,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXSonic extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier[] RIPPLE_TEXTURES = new Identifier[15];
@@ -91,8 +91,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
         return TCSprites.translucent();
     }
 
-    // NEOFORGE_PORT: Forge computed the frame once from age+partialTicks and used
-    // it for both texture bind and emission; the bind rides beamRenderTypes(partialTicks).
+    
+    
     public Identifier currentTexture(float partialTicks) {
         float fade = (this.age + partialTicks) / this.lifetime;
         int frame = Math.min(15, (int) (14.0f * fade) + 1);
@@ -115,7 +115,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;
@@ -137,8 +137,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
 
         com.mojang.blaze3d.vertex.PoseStack poseStack = new com.mojang.blaze3d.vertex.PoseStack();
         poseStack.translate(px, py, pz);
-        // NEOFORGE_PORT: Forge mulPose(Axis.rotationDegrees) 1:1 (yaw/pitch are
-        // degrees; the two-arg rotate(Axis, float) takes radians).
+        
+        
         poseStack.rotate(Axis.YP.rotationDegrees(-this.yaw));
         poseStack.rotate(Axis.XP.rotationDegrees(this.pitch));
         poseStack.translate(0.0, 0.0, 2.0f * h + w / 2.0f);

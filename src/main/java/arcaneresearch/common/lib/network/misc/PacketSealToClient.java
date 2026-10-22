@@ -15,14 +15,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketSealToClient.java (PLAY_TO_CLIENT).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Codec buffer is RegistryFriendlyByteBuf (REQUIRED: ItemStack.OPTIONAL_STREAM_CODEC
-// is StreamCodec<RegistryFriendlyByteBuf, ItemStack>; registrar accepts
-// StreamCodec<? super RegistryFriendlyByteBuf, T>). Wire format is the NeoForge-native
-// ItemStack codec on both ends (same mod version), replacing FriendlyByteBuf.writeItem/readItem.
-// Payload id "arcaneresearch:seal_to_client".
+
+
+
+
+
+
+
+
 public class PacketSealToClient implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketSealToClient> TYPE =
@@ -184,9 +184,9 @@ public class PacketSealToClient implements CustomPacketPayload {
                     return;
                 }
 
-                // NEOFORGE_PORT (26.3): Forge parity — drop the update when no client
-                // level is loaded, and update an existing seal of the same type in place
-                // (applyData) instead of replacing it.
+                
+                
+                
                 net.minecraft.world.level.Level clientLevel = arcaneresearch.proxies.Proxies.get().getClientLevel();
                 if (clientLevel == null) {
                     Arcaneresearch.LOGGER.warn("Seal packet arrived with no client world loaded, dropping update at {}", msg.pos);

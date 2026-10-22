@@ -14,12 +14,12 @@ public class Part {
 
     private boolean applyPlayerFacing;
 
-    /**
-     * Тип аура-ноды для отображения в книге/JEI: сам блок ноды невидим
-     * (RenderShape.INVISIBLE), поэтому BlueprintBlockAccess показывает
-     * суррогат, а рендерер книги рисует настоящую ноду этого типа.
-     * null — обычная нода.
-     */
+     
+
+
+
+
+ 
     private NodeType nodeType;
 
     public Part(Object source, Object target, boolean opp, int priority) {

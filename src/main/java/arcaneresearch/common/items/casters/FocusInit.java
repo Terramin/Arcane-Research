@@ -9,7 +9,7 @@ public class FocusInit {
 
     public static void registerFoci() {
 
-        // NEOFORGE_PORT: Identifier(ns, path) -> Identifier.fromNamespaceAndPath(ns, path).
+        
         FocusEngine.registerElement(FocusMediumRoot.class,
                 Identifier.fromNamespaceAndPath("arcaneresearch", "textures/foci/root.png"), 0x999999);
 

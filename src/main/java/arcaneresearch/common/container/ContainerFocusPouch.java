@@ -5,7 +5,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput; // NEOFORGE_PORT: ContainerInput removed
+import net.minecraft.world.inventory.ContainerInput; 
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -57,7 +57,7 @@ public class ContainerFocusPouch extends AbstractContainerMenu {
         return inv.player.containerMenu.containerId;
     }
 
-    // NEOFORGE_PORT: ContainerListener removed; plain callback kept.
+    
     public void containerChanged(Container container) {
         broadcastChanges();
     }

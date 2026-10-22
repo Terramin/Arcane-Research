@@ -14,20 +14,20 @@ import arcaneresearch.common.items.armor.ItemRobeArmor;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/crafting/RecipesRobeArmorDyes.java.
-// 26.x changes:
-//   - CustomRecipe no longer takes (id, category) (recipes are holder-keyed; category
-//     defaults to MISC, isSpecial/showNotification/group/placementInfo inherited).
-//   - matches/assemble take CraftingInput; canCraftInDimensions is gone from vanilla.
-//   - RecipeSerializer.ARMOR_DYE is gone (verified: RecipeSerializers is now only a
-//     bootstrap class) -> own unit MAP_CODEC/STREAM_CODEC + new
-//     RecipeSerializer<>(MAP_CODEC, STREAM_CODEC), registered in ModRecipeSerializers
-//     as robe_dye (Forge order has no dye entries — they rode on ARMOR_DYE).
-// Dye-blending logic VERBATIM.
+
+
+
+
+
+
+
+
+
+
 public class RecipesRobeArmorDyes extends CustomRecipe {
 
-    // Unit codecs sharing one memoized instance (recipe sync encodes with the
-    // stream codec and rejects any instance but the expected one).
+    
+    
     private static final java.util.function.Supplier<RecipesRobeArmorDyes> INSTANCE =
             com.google.common.base.Suppliers.memoize(RecipesRobeArmorDyes::new);
     public static final MapCodec<RecipesRobeArmorDyes> MAP_CODEC = LazyCodecs.lazyUnit(INSTANCE);
@@ -48,7 +48,7 @@ public class RecipesRobeArmorDyes extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            // NEOFORGE_PORT: ArmorItem removed; robes are plain Items now.
+            
             if (stack.getItem() instanceof ItemRobeArmor) {
                 if (!armor.isEmpty()) {
                     return false;
@@ -98,8 +98,8 @@ public class RecipesRobeArmorDyes extends CustomRecipe {
                 if (!(stack.getItem() instanceof DyeItem)) {
                     return ItemStack.EMPTY;
                 }
-                // NEOFORGE_PORT: DyeItem.getDyeColor removed; dye color is the DYE
-                // component; diffuse colors are a packed int now (was float[3]).
+                
+                
                 net.minecraft.world.item.DyeColor dyeColor = stack.get(
                         net.minecraft.core.component.DataComponents.DYE);
                 if (dyeColor == null) {

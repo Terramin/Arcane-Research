@@ -16,16 +16,16 @@ import arcaneresearch.common.entities.projectile.EntityFocusCloud;
 import arcaneresearch.common.entities.projectile.EntityFocusMine;
 import arcaneresearch.common.entities.projectile.EntityFocusProjectile;
 
-// NEOFORGE_PORT (variant B spawn sync, PLAY_TO_CLIENT): replaces Forge
-// IEntityAdditionalSpawnData writeSpawnData/readSpawnData of EntityFocusProjectile,
-// EntityFocusCloud and EntityFocusMine. Each Forge original synced only the
-// FocusPackage.serialize() NBT 1:1; this payload carries the same (entityId, pack NBT)
-// and is bundled with the spawn packet via Entity.sendPairingData (see the three
-// entities). EntityDataSerializers has no NBT serializer in 26.3, so SynchedEntityData
-// (variant A) is impossible. Fields/handle logic mirror the Forge readSpawnData
-// (deserialize + focusPackage.world = level()); transport -> CustomPacketPayload
-// (same pattern as PacketTileToClient).
-// Payload id "arcaneresearch:focus_pack_to_client".
+
+
+
+
+
+
+
+
+
+
 public class PacketFocusPackToClient implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFocusPackToClient> TYPE =

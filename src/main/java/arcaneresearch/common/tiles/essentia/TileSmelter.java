@@ -60,8 +60,8 @@ public class TileSmelter extends TileArcaneresearchInventory implements Containe
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileSmelter tile) {
-        // NEOFORGE_PORT: Forge body; ForgeHooks.getBurnTime -> CraftingEvents helpers;
-        // ItemStack.getCraftingRemainingItem() -> same helper (same semantics).
+        
+        
         boolean wasBurning = tile.furnaceBurnTime > 0;
         boolean changed = false;
 
@@ -419,9 +419,9 @@ public class TileSmelter extends TileArcaneresearchInventory implements Containe
         return furnaceBurnTime > 0;
     }
 
-    // NEOFORGE_PORT (26.3): reference BlockSmelter.onRemove dropped the slots and then
-    // polluted the aura with the stored vis. The port's affectNeighborsAfterRemoval runs after
-    // the tile is gone, so the pollution never happened. super drops the slots (Container).
+    
+    
+    
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
         super.preRemoveSideEffects(pos, oldState);

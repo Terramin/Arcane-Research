@@ -1,10 +1,10 @@
 package arcaneresearch.client.gui.screens;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +65,7 @@ public class TurretScreen extends AbstractContainerScreen<TurretMenu> {
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int x = this.leftPos;
         int y = this.topPos;
 

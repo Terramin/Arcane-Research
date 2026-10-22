@@ -3,16 +3,16 @@ package arcaneresearch.invscan;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
 
-/**
- * Access to AbstractContainerScreen internals keyed by hover/layout state.
- *
- * NEOFORGE_PORT: Forge ObfuscationReflectionHelper + SRG-поля не нужны —
- * NeoForge 26.3 добавляет публичные геттеры
- * getHoveredSlot/getLeftPos/getTopPos/getImageWidth/getImageHeight.
- * If the screen is still animating, leftPos/topPos are the real values
- * (vanilla always sets them in init()). API-shape kept 1:1 with Forge so
- * the client logic does not change.
- */
+ 
+
+
+
+
+
+
+
+
+ 
 public final class ScreenAccess {
 
     private ScreenAccess() {

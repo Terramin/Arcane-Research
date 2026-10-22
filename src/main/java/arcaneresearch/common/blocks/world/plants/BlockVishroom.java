@@ -22,7 +22,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.client.fx.FXDispatcher;
 
-// NEOFORGE_PORT (26.3): 1.20.1 BushBlock == 26.x VegetationBlock; 26.x BushBlock is the bonemeal-spreading bush.
+
 public class BlockVishroom extends VegetationBlock {
 
     protected static final VoxelShape SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 10.0, 13.0);

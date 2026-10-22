@@ -21,17 +21,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * NEOFORGE_PORT: Forge {@code MobEffectInstance.getCurativeItems().clear()} made an effect immune
- * to milk. NeoForge 26.3 dropped curative items; milk is the {@code clear_all_effects} consume
- * effect, which removes each effect through a cancellable {@link MobEffectEvent.Remove}.
- * Effects applied through {@link #addIncurable} are remembered on the entity and that removal
- * is cancelled while the entity is drinking such an item. Other removals (expiry, /effect clear)
- * still work, as with Forge's empty curative list.
- */
+ 
+
+
+
+
+
+
+ 
 public final class IncurableEffects {
 
-    /** Effect ids currently applied as incurable on this entity. */
+      
     public static final class Data {
         public static final MapCodec<Data> CODEC = Identifier.CODEC.listOf()
                 .optionalFieldOf("effects", List.of())
@@ -55,7 +55,7 @@ public final class IncurableEffects {
         NeoForge.EVENT_BUS.register(IncurableEffects.class);
     }
 
-    /** Same as {@code target.addEffect(effect)}, but milk will not remove the resulting effect. */
+      
     public static boolean addIncurable(LivingEntity target, MobEffectInstance effect) {
         boolean added = target.addEffect(effect);
         if (target.hasEffect(effect.getEffect())) {

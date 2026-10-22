@@ -174,13 +174,13 @@ public class ItemFocusExcavation extends ItemFocusBasic {
             return false;
         }
         ServerLevel server = serverPlayer.level();
-        // NEOFORGE_PORT: ForgeHooks.onBlockBreakEvent removed; post BreakBlockEvent
-        // directly (cancel -> abort), like BlockUtils.harvestBlock.
+        
+        
         var breakEvent = new net.neoforged.neoforge.event.level.block.BreakBlockEvent(
                 server, pos, bs, serverPlayer);
-        // NEOFORGE_PORT (26.3): Forge's onBlockBreakEvent pre-canceled the event for spectators and
-        // adventure players without a can_break match; same pre-cancel as CommonHooks.fireBlockBreak
-        // (its canDestroyBlock(main hand) part is skipped: Forge's canAttackBlock was true for wands).
+        
+        
+        
         breakEvent.setCanceled(serverPlayer.blockActionRestricted(server, pos,
                 serverPlayer.gameMode.getGameModeForPlayer()));
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(breakEvent);

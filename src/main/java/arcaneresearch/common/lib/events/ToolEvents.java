@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent; // NEOFORGE_PORT: BreakEvent moved to level.block.BreakBlockEvent
+import net.neoforged.neoforge.event.level.BlockEvent; 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import arcaneresearch.Arcaneresearch;
@@ -153,19 +153,19 @@ public class ToolEvents {
         }
     }
 
-    // NEOFORGE_PORT (26.3): Forge Item.onBlockStartBreak hook is gone in 26.x; the wand
-    // logic lives in ItemWand.onBlockStartBreak (plain method, 1:1). Forge called it for the
-    // main-hand stack from ServerPlayerGameMode.destroyBlock / MultiPlayerGameMode.destroyBlock,
-    // i.e. when the block is actually about to break and only after a non-cancelled BreakEvent;
-    // a true return aborted the break. BreakBlockEvent is posted at exactly that point on both
-    // sides in 26.x, so the hook runs here at LOWEST priority (skipped when cancelled). It used
-    // to run from LeftClickBlock (every click START/STOP/ABORT), arming the focus cooldown
-    // before any block was broken.
+    
+    
+    
+    
+    
+    
+    
+    
     @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
     public static void wandBlockStartBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) {
         Player player = event.getPlayer();
         if (player == null) return;
-        // Forge's client path returned before the hook for air blocks.
+        
         if (event.getLevel().isClientSide() && event.getState().isAir()) return;
         ItemStack held = player.getMainHandItem();
         if (!held.isEmpty() && held.getItem() instanceof arcaneresearch.common.items.wands.ItemWand wand) {
@@ -194,11 +194,11 @@ public class ToolEvents {
     }
 
     @SubscribeEvent
-    public static void breakBlockEvent(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) { // NEOFORGE_PORT: BlockEvent.BreakEvent moved
+    public static void breakBlockEvent(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) { 
         try {
         if (!(event.getLevel() instanceof Level level)) return;
-        // NEOFORGE_PORT (26.3): BreakBlockEvent also fires on the client
-        // (MultiPlayerGameMode.destroyBlock); Forge's BreakEvent was server-only.
+        
+        
         if (level.isClientSide()) return;
 
         String dimKey = level.dimension().identifier().toString();
@@ -243,10 +243,10 @@ public class ToolEvents {
             }
         }
         } catch (Exception e) {
-            // Исключение здесь раньше уходило в EventBus.handleException,
-            // где падало с LinkageError log4j (MessageSupplier) и крашило сервер
-            // (crash-2026-10-15_17.37.20-server.txt, onBlockBreakEvent).
-            // Глушим, чтобы ломание блока никогда не роняло тик-луп.
+            
+            
+            
+            
             Arcaneresearch.LOGGER.error("Error in breakBlockEvent at {}", event.getPos(), e);
         }
     }
@@ -312,7 +312,7 @@ public class ToolEvents {
     }
 
     @SubscribeEvent
-    public static void onBlockBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) { // NEOFORGE_PORT: BlockEvent.BreakEvent moved
+    public static void onBlockBreak(net.neoforged.neoforge.event.level.block.BreakBlockEvent event) { 
         try {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
         if (event.getPlayer() == null) return;
@@ -407,8 +407,8 @@ public class ToolEvents {
         event.getTable().addPool(net.minecraft.world.level.storage.loot.LootPool.lootPool()
                 .add(net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem(
                         ModItems.RAREEARTH_NUGGET.get()))
-                // NEOFORGE_PORT: 26.x loot builders take Holders (rolls) and
-                // Builders (conditions); same pool shape as Forge.
+                
+                
                 .setRolls(net.minecraft.core.Holder.direct(
                         new net.minecraft.world.level.storage.loot.providers.number.ints.ConstantValue(1)))
                 .when(net.minecraft.world.level.storage.loot.predicates.MatchTool.toolMatches(
@@ -418,10 +418,10 @@ public class ToolEvents {
                 .build());
     }
 
-    // NEOFORGE_PORT: ItemPredicate.Builder.hasEnchantment removed in 26.x; enchantment
-    // matching moved to components (DataComponentMatchers + EnchantmentsPredicate).
-    // Same semantics: tool without silk touch (any level >= 1 inverts the pool away).
-    // Returns the Builder: MatchTool.toolMatches takes a Builder in 26.x.
+    
+    
+    
+    
     private static net.minecraft.advancements.predicates.ItemPredicate.Builder silkTouchPredicate(
             net.neoforged.neoforge.event.LootTableLoadEvent event) {
         net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> silkTouch =
@@ -589,8 +589,8 @@ public class ToolEvents {
 
         BlockState state = level.getBlockState(pos);
 
-        // NEOFORGE_PORT: DiggerItem class removed; isCorrectToolForDrops/getDestroySpeed
-        // live on Item directly now (same behavior for all tools).
+        
+        
         return tool.getItem().isCorrectToolForDrops(tool, state) ||
                 tool.getDestroySpeed(state) > 1.0f;
     }

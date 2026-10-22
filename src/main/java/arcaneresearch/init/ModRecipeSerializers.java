@@ -18,15 +18,15 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModRecipeSerializers.java.
-// REQUIRED changes:
-//   DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ...) -> create(Registries.RECIPE_SERIALIZER, ...)
-//   RegistryObject -> DeferredHolder (same .get() API).
-//   26.x: RecipeSerializer is a record (MapCodec + StreamCodec); entries reference each
-//   recipe class's SERIALIZER field.
-// All 9 Forge entries ported in ORIGINAL ORDER with IDENTICAL registry names, plus 2
-// dye serializers (Forge rode on vanilla ARMOR_DYE, which is gone in 26.x — verified:
-// RecipeSerializers is now only a bootstrap class).
+
+
+
+
+
+
+
+
+
 public class ModRecipeSerializers {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, Arcaneresearch.MODID);

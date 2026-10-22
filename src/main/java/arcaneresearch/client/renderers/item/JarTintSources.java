@@ -15,14 +15,14 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.blocks.essentia.BlockJarItem;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors jar entries 1:1.
-// Forge bound one lambda to JAR_NORMAL + JAR_VOID: tintIndex 1 + BlockJarItem ->
-// aspects[0] color, else white. 26.x item tints are positional (array index =
-// tintIndex, verified NeoForge docs pattern, same as BannerTintSources): the jar
-// item JSONs declare "tints": [constant white, arcaneresearch:jar_aspect] on every
-// fill-variant model (liquid faces carry tintindex 1, same as Forge).
-// Opaque OR (0xFF000000 |): Forge ItemColors ignored alpha (RGB only); 26.3 tint
-// layers are ARGB, so alpha is forced for the same visible result.
+
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class JarTintSources {
 

@@ -9,10 +9,10 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModEffects.java (all 9 entries, original order).
-// REQUIRED changes:
-//   DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ...) -> create(Registries.MOB_EFFECT, ...)
-//   RegistryObject<MobEffect> -> DeferredHolder<MobEffect, MobEffect>.
+
+
+
+
 public class ModEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS =
             DeferredRegister.create(Registries.MOB_EFFECT, Arcaneresearch.MODID);

@@ -87,7 +87,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
         super.defineSynchedData(builder);
         builder.define(DATA_FLAGS, (byte) 0);
     }
-    // NEOFORGE_PORT: getStandingEyeHeight removed in 26.3 (eye height via EntityDimensions.withEyeHeight).
+    
 
     private byte getFlags() {
         return this.entityData.get(DATA_FLAGS);
@@ -159,7 +159,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
                 return false;
             }
 
-            // NEOFORGE_PORT: MinecraftServer.isPvpAllowed moved to ServerLevel in 26.x.
+            
             if (level() instanceof net.minecraft.server.level.ServerLevel pvpLevel && !pvpLevel.isPvpAllowed()) {
                 setTargetPlayer(false);
                 return false;
@@ -174,8 +174,8 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     public void tick() {
         super.tick();
 
-        // NEOFORGE_PORT: 1:1 from Forge; MinecraftServer.isPvpAllowed moved to
-        // ServerLevel.isPvpAllowed in 26.x (same pattern as below in this file).
+        
+        
         if (!level().isClientSide() && level() instanceof net.minecraft.server.level.ServerLevel pvpLevel
                 && !pvpLevel.isPvpAllowed() && getTarget() instanceof Player && getTarget() != getOwner()) {
             setTarget(null);
@@ -228,8 +228,8 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean recentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         float bonus = looting * 0.15f;
 
@@ -251,8 +251,8 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        // NEOFORGE_PORT (26.3): ValueInput.contains gone; defaulting to the current flags keeps
-        // the Forge "only overwrite when the key exists" behavior (registerGoals sets MOB).
+        
+        
         setFlags(tag.getByteOr("targets", getFlags()));
     }
 
@@ -361,7 +361,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
                             }
 
                             if (entity instanceof OwnableEntity owned) {
-                                // TODO_PORT: OwnableEntity.getOwnerUUID gone in 26.3 -> owner reference UUID.
+                                
                                 UUID theirOwner = owned.getOwnerReference() == null ? null : owned.getOwnerReference().getUUID();
                                 if (ownerUUID != null && ownerUUID.equals(theirOwner) && !turret.getTargetFriendly()) {
                                     return false;

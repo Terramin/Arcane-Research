@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.client.fx.FXDispatcher;
 
-// NEOFORGE_PORT (26.3): 1.20.1 BushBlock == 26.x VegetationBlock; 26.x BushBlock is the bonemeal-spreading bush.
+
 public class BlockShimmerleaf extends VegetationBlock {
 
     protected static final VoxelShape SHAPE = Block.box(5.0, 0.0, 5.0, 11.0, 10.0, 11.0);
@@ -42,8 +42,8 @@ public class BlockShimmerleaf extends VegetationBlock {
         return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT) ||
                 state.is(Blocks.COARSE_DIRT) || state.is(Blocks.PODZOL) ||
                 state.is(BlockTags.DIRT) ||
-                // NEOFORGE_PORT (26.3): Forge PlantType.PLAINS (getPlantType, gone in 26.x) also let
-                // the reference survive on farmland via IForgeBlock.canSustainPlant.
+                
+                
                 state.is(Blocks.FARMLAND);
     }
 

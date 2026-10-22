@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.core.registries.BuiltInRegistries; // NEOFORGE_PORT: was ForgeRegistries
+import net.minecraft.core.registries.BuiltInRegistries; 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IEssentiaContainerItem;
@@ -54,7 +54,7 @@ public class ArcaneresearchApiHelper {
         return ArcaneresearchInvHelper.areItemStackTagsEqualForCrafting(slotItem, recipeItem);
     }
 
-    // NEOFORGE_PORT: delegates now expose ResourceHandler<ItemResource> (transfer rework).
+    
     public static ResourceHandler<ItemResource> getItemHandlerAt(Level level, BlockPos pos, Direction side) {
         return ArcaneresearchInvHelper.getItemHandlerAt(level, pos, side);
     }
@@ -90,33 +90,33 @@ public class ArcaneresearchApiHelper {
         return null;
     }
 
-    // NEOFORGE_PORT (vanilla 26.x ingredients, verified in 26.3.0.23-beta jar):
-    //   - Ingredient.of(ItemStack/ItemStack[]/TagKey/Stream<ItemStack>) REMOVED; only
-    //     of(ItemLike)/of(ItemLike...)/of(Stream<? extends ItemLike>)/of(HolderSet) remain.
-    //   - Tagged (non-empty component patch) ItemStacks go through IngredientNBTTC (now an
-    //     ICustomIngredient, item+damage+relaxed custom-data matching) via new Ingredient(custom);
-    //     plain stacks / arrays / collections are item-only Ingredient.of(items) as on Forge.
-    //   - Tag ids resolve EAGERLY to HolderSet.direct(snapshot of statically-bound tags).
-    //     (Forge tag ingredients were lazy; eager snapshot matches at parse/reload time.
-    //     Staleness across /reload with changed tags is a documented edge case.)
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static Ingredient getIngredient(Object obj) {
         if (obj instanceof Ingredient ingredient) {
             return ingredient;
         }
         if (obj instanceof ItemStack stack) {
-            // NEOFORGE_PORT (26.3): Forge used IngredientNBTTC (item + damage + relaxed NBT) only
-            // when stack.hasTag(); a plain stack went to Ingredient.of(stack), which matched by
-            // ITEM ONLY (any damage/NBT). isComponentsPatchEmpty() is the 26.x analog of !hasTag()
-            // (damage/custom data/etc. all live in the patch). Empty stacks keep the NBTTC path
-            // (Ingredient.of(AIR) throws; NBTTC(EMPTY) matches only empty, like Ingredient.EMPTY).
+            
+            
+            
+            
+            
             if (!stack.isEmpty() && stack.isComponentsPatchEmpty()) {
                 return Ingredient.of(stack.getItem());
             }
             return new Ingredient(new IngredientNBTTC(stack));
         }
         if (obj instanceof ItemStack[] stacks) {
-            // NEOFORGE_PORT (26.3): Forge Ingredient.of(ItemStack...) built ItemValues, which match
-            // by ITEM ONLY (tags/damage of the listed stacks were ignored) -> plain item set.
+            
+            
             List<Item> items = new ArrayList<>();
             for (ItemStack s : stacks) {
                 if (s != null && !s.isEmpty()) {
@@ -137,8 +137,8 @@ public class ArcaneresearchApiHelper {
                 var key = TagKey.create(Registries.ITEM, id);
                 List<net.minecraft.core.Holder<Item>> holders = new ArrayList<>();
                 BuiltInRegistries.ITEM.getTagOrEmpty(key).forEach(holders::add);
-                // 26.x Ingredient.of(empty) throws (was silently empty on Forge),
-                // so missing/empty tags yield null like the other paths below.
+                
+                
                 if (holders.isEmpty()) {
                     return null;
                 }
@@ -147,8 +147,8 @@ public class ArcaneresearchApiHelper {
             return null;
         }
         if (obj instanceof Collection<?> collection) {
-            // NEOFORGE_PORT (26.3): Forge Ingredient.of(Stream<ItemStack>) -> ItemValues, i.e.
-            // ITEM-ONLY matching for every entry (stacks and ItemLikes alike) -> plain item set.
+            
+            
             List<Item> items = new ArrayList<>();
             for (Object o : collection) {
                 if (o instanceof ItemStack s && !s.isEmpty()) {
@@ -179,7 +179,7 @@ public class ArcaneresearchApiHelper {
             if (mapped != null) {
                 return mapped;
             }
-            return Identifier.fromNamespaceAndPath("c", name); // NEOFORGE_PORT: forge: -> c:
+            return Identifier.fromNamespaceAndPath("c", name); 
         } catch (Exception e) {
             return null;
         }
@@ -189,8 +189,8 @@ public class ArcaneresearchApiHelper {
         List<ItemStack> out = new ArrayList<>();
         String s = oreDict.trim();
         try {
-            // NEOFORGE_PORT: Registry.getTagNames() removed -> getTags() (Stream<Named>)
-            //   + Named.key(). getTagOrEmpty(TagKey) kept as-is.
+            
+            
             if (s.endsWith("*")) {
                 String prefix = s.substring(0, s.length() - 1).toLowerCase(Locale.ROOT);
                 BuiltInRegistries.ITEM.getTags()
@@ -356,8 +356,8 @@ public class ArcaneresearchApiHelper {
     public static ItemStack makeCrystal(Aspect aspect, int stackSize) {
         if (aspect == null) return ItemStack.EMPTY;
 
-        // NEOFORGE_PORT: Registry.get(Identifier) now returns Optional<Holder.Reference>
-        //   -> getValue(Identifier) keeps the old direct-or-null contract.
+        
+        
         Item crystalItem = BuiltInRegistries.ITEM.getValue(
                 Identifier.fromNamespaceAndPath("arcaneresearch", "crystal_essence"));
 
@@ -375,8 +375,8 @@ public class ArcaneresearchApiHelper {
     }
 
     public static Object getNBTDataFromId(net.minecraft.nbt.CompoundTag nbt, byte id, String key) {
-        // NEOFORGE_PORT: CompoundTag getters now return Optional (26.x); Or-defaults below
-        // reproduce the old lenient getters (0 / "" / empty array / empty tag / empty list).
+        
+        
         return switch (id) {
             case 1 -> nbt.getByteOr(key, (byte) 0);
             case 2 -> (short) nbt.getShortOr(key, (short) 0);

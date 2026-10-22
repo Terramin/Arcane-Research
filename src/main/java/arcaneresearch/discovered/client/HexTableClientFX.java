@@ -7,13 +7,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import arcaneresearch.client.fx.particles.FXGeneric;
 
-/**
- * Client half of {@code HexNoteTableBlock.animateTick} (TC4 BlockResearchTable sparkles).
- *
- * NEOFORGE_PORT: @OnlyIn no longer strips members in NeoForge 26, so the particle code
- * (FXGeneric -> Particle) lives here; the common block only calls in on the client side
- * and never links client classes on a dedicated server.
- */
+ 
+
+
+
+
+
+ 
 public final class HexTableClientFX {
     private HexTableClientFX() {
     }

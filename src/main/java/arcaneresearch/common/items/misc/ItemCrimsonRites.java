@@ -18,7 +18,7 @@ public class ItemCrimsonRites extends Item {
         super(props.stacksTo(1).rarity(net.minecraft.world.item.Rarity.RARE));
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed, verified via javap on Item).
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -40,8 +40,8 @@ public class ItemCrimsonRites extends Item {
             }
         }
 
-        // NEOFORGE_PORT: InteractionResultHolder.sidedSuccess(stack, isClient) removed with the holder (verified: no sidedSuccess in 26.3 jar);
-        // project convention (BlockAlembic etc.): client SUCCESS, server CONSUME.
+        
+        
         return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
     }
 }

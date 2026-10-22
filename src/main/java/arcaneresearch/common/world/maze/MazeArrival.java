@@ -9,20 +9,20 @@ import org.slf4j.Logger;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.world.structures.StructureHelper;
 
-/**
- * Каноническая портальная комната Внешних земель.
- *
- * ЕДИНСТВЕННОЕ место, где строится комната прибытия: телепорт игрока
- * идёт сюда. Раньше комната прибытия
- * строилась тремя разными способами (плоская площадка 5x5, ручной
- * generateEldritch, аварийная bedrock-коробка при неудачной проверке),
- * поэтому при первом заходе после ритуала игрок видел одну комнату,
- * а при повторных переходах — другую, а коридоры упирались в стены:
- * соседние комнаты вообще никто не строил. Теперь всегда один и тот же
- * портал-зал TC4 (feature 1) + комнаты четырёх соседей, коридоры
- * сходятся в настоящие комнаты. Расходящейся геометрии больше нет:
- * при неудаче — повтор канонического билда и лог, а не другая комната.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public final class MazeArrival {
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -37,19 +37,19 @@ public final class MazeArrival {
         return TeleporterArcaneresearch.ARRIVAL_CHUNK_Z;
     }
 
-    /**
-     * Гарантирует комнату прибытия и возвращает точку спавна внутри неё.
-     * Раскладка — из сида мира (детерминирована), build — идемпотентен:
-     * повторные заходы видят ту же комнату.
-     */
+     
+
+
+
+ 
     public static BlockPos ensureArrivalRoom(ServerLevel level) {
         long t0 = System.nanoTime();
         MazeFeature.ensureMaze(level);
         LOGGER.info("[Arcaneresearch] ensureMaze done in {}ms, cells={}",
                 (System.nanoTime() - t0) / 1_000_000L, MazeHandler.labyrinth.size());
         t0 = System.nanoTime();
-        // Чанки прибытия и соседей — в FULL до стройки, иначе записи
-        // лягут в недогруженные чанки и коридоры оборвутся.
+        
+        
         forceLoad(level, arrivalChunkX(), arrivalChunkZ(), 1);
         buildNeighborhood(level);
         LOGGER.info("[Arcaneresearch] arrival neighborhood built in {}ms",
@@ -62,8 +62,8 @@ public final class MazeArrival {
             LOGGER.error("[Arcaneresearch] arrival room FAILED, using minimal pad spawn");
             return fallbackPad(level);
         }
-        // Раскладка первого захода сразу в labyrinth.dat: иначе выход
-        // в обычном мире до автосейва + рестарт теряли карту.
+        
+        
         try {
             MazeHandler.saveMaze(level);
         } catch (Exception e) {
@@ -78,11 +78,11 @@ public final class MazeArrival {
         return spawn;
     }
 
-    /**
-     * Комната прибытия + комнаты четырёх соседей: коридоры из портального
-     * зала ведут в настоящие комнаты, а не в пустоту. Повторный прогон
-     * кладёт те же блоки (идемпотентно).
-     */
+     
+
+
+
+ 
     public static void buildNeighborhood(ServerLevel level) {
         int ax = arrivalChunkX();
         int az = arrivalChunkZ();
@@ -101,7 +101,7 @@ public final class MazeArrival {
         }
     }
 
-    /** Синхронно догружает квадрат чанков (мирная генерация вне тика — ок). */
+      
     public static void forceLoad(ServerLevel level, int cx, int cz, int radius) {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
@@ -115,10 +115,10 @@ public final class MazeArrival {
         }
     }
 
-    /**
-     * Комната прибытия на месте: пол под спавном и оболочка по углам.
-     * Координаты комнаты фиксированы (чанк прибытия, пол y=50).
-     */
+     
+
+
+ 
     public static boolean isArrivalRoomReady(ServerLevel level) {
         int y = WorldProviderOuter.MAZE_LEVEL;
         int cx = arrivalChunkX() * 16 + 8;
@@ -129,7 +129,7 @@ public final class MazeArrival {
         if (!level.getBlockState(new BlockPos(cx + 2, y, cz)).isSolid()) {
             return false;
         }
-        // Углы оболочки должны быть стеной, а не пустотой.
+        
         for (int dx = -8; dx <= 8; dx += 16) {
             for (int dz = -8; dz <= 8; dz += 16) {
                 if (!level.getBlockState(new BlockPos(cx + dx, y + 2, cz + dz)).isSolid()) {
@@ -140,11 +140,11 @@ public final class MazeArrival {
         return isPortal(level, TeleporterArcaneresearch.arrivalPortalSlot());
     }
 
-    /**
-     * Ищет место спавна ВНУТРИ комнаты: пол + воздух в ногах/голове
-     * + потолок над головой (твёрдый блок в 2..5 выше ног). Потолок
-     * исключает появление на крыше структуры или под открытым небом.
-     */
+     
+
+
+
+ 
     public static BlockPos findRoomSpawn(ServerLevel level) {
         BlockPos slot = TeleporterArcaneresearch.arrivalPortalSlot();
         int floorY = WorldProviderOuter.MAZE_LEVEL + 1;
@@ -179,7 +179,7 @@ public final class MazeArrival {
         return best;
     }
 
-    /** Над головой (2..5 блока выше ног) должен быть потолок структуры. */
+      
     public static boolean hasCeiling(ServerLevel level, BlockPos feet) {
         for (int dy = 2; dy <= 5; dy++) {
             if (level.getBlockState(feet.above(dy)).isSolid()) {
@@ -197,10 +197,10 @@ public final class MazeArrival {
         }
     }
 
-    /**
-     * Последний шанс: 1 клетка пола + воздух. Только страховка спавна,
-     * никакой отдельной «комнаты» — расходящейся геометрии больше нет.
-     */
+     
+
+
+ 
     private static BlockPos fallbackPad(ServerLevel level) {
         BlockPos at = TeleporterArcaneresearch.arrival().offset(2, 0, 0);
         try {

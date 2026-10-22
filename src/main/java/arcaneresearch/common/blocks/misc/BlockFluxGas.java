@@ -21,11 +21,11 @@ import arcaneresearch.init.ModEffects;
 
 import java.util.function.Supplier;
 
-/**
- * Flux gas, ported from TC4 BlockFluxGas. A rising finite fluid: it floats
- * upward, dissipates, and afflicts living things it touches with vis
- * exhaustion or hunger. No bucket (TC4 had none either).
- */
+ 
+
+
+
+ 
 public class BlockFluxGas extends LiquidBlock {
 
     public BlockFluxGas(BlockBehaviour.Properties props, Supplier<FlowingFluid> fluid) {

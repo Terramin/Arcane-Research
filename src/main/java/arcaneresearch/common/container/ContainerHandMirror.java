@@ -23,8 +23,8 @@ public class ContainerHandMirror extends AbstractContainerMenu {
 
     public ContainerHandMirror(Inventory playerInventory, Level world, int x, int y, int z) {
         super(ModMenuTypes.HAND_MIRROR.get(), containerIdOf(playerInventory));
-        // NEOFORGE_PORT: ContainerListener removed; Forge new InventoryHandMirror(this)
-        // + addListener parity via setChanged callback so slotsChanged fires on change.
+        
+        
         input = new InventoryHandMirror(this::slotsChanged);
         mirror = ItemStack.EMPTY;
         player = null;
@@ -54,7 +54,7 @@ public class ContainerHandMirror extends AbstractContainerMenu {
         }
     }
 
-    // NEOFORGE_PORT: ContainerListener removed; plain callback kept.
+    
     public void containerChanged(Container container) {
         slotsChanged(container);
     }

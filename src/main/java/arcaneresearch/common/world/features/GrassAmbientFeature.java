@@ -10,11 +10,11 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import arcaneresearch.init.ModBlocks;
 
-// NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-// NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-// WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-// features are placed from code with fixed params (never deserialized from datapacks),
-// registry-id dispatch resolves the registered instance on load.
+
+
+
+
+
 public class GrassAmbientFeature implements Feature {
 
     public static final MapCodec<GrassAmbientFeature> CODEC =

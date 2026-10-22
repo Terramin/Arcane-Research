@@ -37,9 +37,9 @@ public class ItemAmuletVis extends Item implements ICurioItem, arcaneresearch.ap
         return new ItemAmuletVis(props, true);
     }
 
-    /**
-     * Паритет TC4: вис-амулет — IRunicArmor с нулевым зарядом.
-     */
+     
+
+ 
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
@@ -66,16 +66,16 @@ public class ItemAmuletVis extends Item implements ICurioItem, arcaneresearch.ap
 
     public void tickWorn(Player player, ItemStack stack) {
 
-        // Паритет TC4 onWornTick: каждые 5 тиков для обоих вариантов
-        // (разница found/crafted только в ёмкости).
+        
+        
         if (player.tickCount % 5 != 0) {
             return;
         }
 
-        // Паритет TC4 onWornTick: подпитка жезла в руке из запасов амулета.
-        // Единицы — санти (сырой NBT), как в TC4: до 5 санти за тик.
-        // IWand считает в вис-единицах, поэтому перенос идёт напрямую
-        // через NBT (формат хранения жезла тот же: тег аспекта -> int).
+        
+        
+        
+        
         try {
             ItemStack held = player.getMainHandItem();
             if (!held.isEmpty() && held.getItem() instanceof IWand wand) {
@@ -103,11 +103,11 @@ public class ItemAmuletVis extends Item implements ICurioItem, arcaneresearch.ap
         } catch (Exception ignored) {
         }
 
-        // TC4 здесь заряжает сам амулет от TileVisRelay рядом (<26 блоков,
-        // по 5 санти + triggerConsumeEffect). Реле в порте нет — пропуск.
+        
+        
     }
 
-    // NEOFORGE_PORT: appendHoverText 5-arg (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
@@ -119,7 +119,7 @@ public class ItemAmuletVis extends Item implements ICurioItem, arcaneresearch.ap
                     .withStyle(ChatFormatting.GRAY));
         }
 
-        // Паритет TC4: ёмкость и запасы по аспектам.
+        
         try {
             java.text.DecimalFormat fmt = new java.text.DecimalFormat("#######.##");
             tooltip.accept(Component.translatable("item.capacity.text")
@@ -140,12 +140,12 @@ public class ItemAmuletVis extends Item implements ICurioItem, arcaneresearch.ap
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
 
-    // ---- батарея вис, порт TC4 (хранение в санти-единицах, как у жезла) ----
-    // NEOFORGE_PORT: hasTag/getTag/getOrCreateTag -> ArcaneresearchInvHelper
-    // CustomData (getCustomTag возвращает копию — запись через
-    // getOrCreateCustomTag + setCustomTag, как в ItemWand).
+    
+    
+    
+    
 
-    /** Ёмкость в санти-единицах: 2500 найденный / 25000 созданный (TC4). */
+      
     public int getMaxVis(ItemStack stack) {
         return isCrafted ? 25000 : 2500;
     }
@@ -226,7 +226,7 @@ public class ItemAmuletVis extends Item implements ICurioItem, arcaneresearch.ap
         return true;
     }
 
-    /** Приём вис (единицы вис) с переполнением, только праймал (TC4). */
+      
     public int addVis(ItemStack stack, Aspect aspect, int amount, boolean simulate) {
         if (aspect == null || !aspect.isPrimal()) {
             return amount;

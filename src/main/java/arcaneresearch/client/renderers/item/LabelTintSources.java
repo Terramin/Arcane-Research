@@ -15,13 +15,13 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.common.items.consumables.ItemLabel;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors label entry 1:1.
-// Forge bound LABEL_FILLED: tintIndex 1 + ItemLabel -> getAspect(stack) color,
-// else white. 26.x item tints are positional (array index = tintIndex, verified
-// NeoForge docs pattern, same as JarTintSources): label_filled.json declares
-// "tints": [constant white (base layer0), arcaneresearch:label (overlay layer1)].
-// Opaque OR (0xFF000000 |): Forge ItemColors ignored alpha (RGB only); 26.3 tint
-// layers are ARGB, so alpha is forced for the same visible result.
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class LabelTintSources {
 

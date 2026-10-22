@@ -10,9 +10,9 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-// NEOFORGE_PORT: IItemHandler removed with the transfer rework (see
-// api/ArcaneresearchInvHelper: ResourceHandler<ItemResource> + ItemUtil.getStack).
-// This legacy @Deprecated container keeps its logic; only the handler type changed.
+
+
+
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
@@ -93,7 +93,7 @@ public class ContainerLogistics extends AbstractContainerMenu {
                                 continue;
                             }
                             String key = stack.getHoverName().getString() + "_" + stack.getDamageValue() + "_"
-                                    // NEOFORGE_PORT: hasTag/getTag removed -> custom-data helpers (see ArcaneresearchInvHelper).
+                                    
                                     + (ArcaneresearchInvHelper.hasCustomTag(stack) ? ArcaneresearchInvHelper.getCustomTag(stack).hashCode() : 0);
                             if (ti.containsKey(key)) {
                                 ti.get(key).grow(stack.getCount());
@@ -211,7 +211,7 @@ public class ContainerLogistics extends AbstractContainerMenu {
         return true;
     }
 
-    // NEOFORGE_PORT: ContainerListener removed; plain callback kept.
+    
     public void containerChanged(Container invBasic) {
         broadcastChanges();
     }

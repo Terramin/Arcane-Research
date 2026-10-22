@@ -6,7 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +22,10 @@ import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
 import net.minecraft.util.ARGB;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXVoidStream extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
-    // NEOFORGE_PORT (26.3): vanilla moved the texture to entity/end_portal/ (old path = missing texture).
+    
     private static final Identifier VOID_TEX = Identifier.parse("textures/entity/end_portal/end_portal.png");
 
     private final double targetX, targetY, targetZ;
@@ -81,9 +81,9 @@ public class FXVoidStream extends SingleQuadParticle implements BeamEngine.BeamE
         this.startY = y;
         this.startZ = z;
 
-        // NEOFORGE_PORT: Forge set noClip = true (TextureSheetParticle field);
-        // this class extends SingleQuadParticle directly and its tick() already
-        // integrates position without collision, i.e. noClip behavior.
+        
+        
+        
     }
 
     @Override
@@ -168,12 +168,12 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
 
     @Override
     public RenderType beamRenderType() {
-        // NEOFORGE_PORT: Forge defaultBlendFunc + depthMask(false), cull off 1:1.
+        
         return BeamEngine.normalBeamNoDepth(VOID_TEX);
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;

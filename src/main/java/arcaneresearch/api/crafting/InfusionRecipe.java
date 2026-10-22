@@ -64,8 +64,8 @@ public class InfusionRecipe implements IArcaneresearchRecipe {
             return false;
         }
 
-        // NEOFORGE_PORT: Ingredient.EMPTY singleton removed -> isEmpty() check (same meaning:
-        //   recipe has no central item requirement).
+        
+        
         boolean centralMatches = getRecipeInput() == null || getRecipeInput().isEmpty() ||
                                  getRecipeInput().test(centralItem);
         boolean componentsMatch = RecipeMatcher.findMatches(pedestalItems, getComponents()) != null;

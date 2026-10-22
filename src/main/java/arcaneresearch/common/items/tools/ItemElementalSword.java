@@ -24,28 +24,28 @@ import java.util.List;
 public class ItemElementalSword extends Item {
 
     public ItemElementalSword(Item.Properties props) {
-        // NEOFORGE_PORT: SwordItem REMOVED in 26.x -> plain Item with .sword(material, damage, speed).
+        
         super(props
                 .rarity(Rarity.RARE)
                 .sword(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 3, -2.4F));
     }
 
-    // NEOFORGE_PORT: isValidRepairItem(ItemStack, ItemStack) REMOVED from Item in 26.x;
-    // repair is now data-driven via the ToolMaterial repairItems tag (repairs_thaumium)
-    // -> REPAIRABLE component, so no override is needed (or possible).
-    // (Forge body was: repair.is(ModItems.THAUMIUM_INGOT.get()) || super...)
+    
+    
+    
+    
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        // NEOFORGE_PORT: UseAnim -> ItemUseAnimation (BLOCK kept 1:1).
+        
         return ItemUseAnimation.BLOCK;
     }
 
-    // NEOFORGE_PORT (26.3): Forge registered SwordBlockAnimation.HAND_EXTENSION in
-    // initializeClient, which no longer exists in 26.x (the dead override kept a client-only
-    // type in this common class and nothing registered the extension -> no block pose).
-    // Registered via RegisterClientExtensionsEvent instead; this nested subscriber is
-    // Dist.CLIENT-only, so the dedicated server never loads it.
+    
+    
+    
+    
+    
     @net.neoforged.fml.common.EventBusSubscriber(modid = arcaneresearch.Arcaneresearch.MODID, value = Dist.CLIENT)
     public static final class ClientExtensions {
         private ClientExtensions() {
@@ -59,11 +59,11 @@ public class ItemElementalSword extends Item {
         }
     }
 
-    /**
-     * Урон от удержания (каждую секунду) меняет NBT — дефолт считает это
-     * сменой предмета и роняет руку (re-equip) каждую секунду: дёрганье
-     * только от 1 лица, от 3 не видно. Игнорим урон, смотрим смену слота/предмета.
-     */
+     
+
+
+
+ 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack,
             boolean slotChanged) {
@@ -72,17 +72,17 @@ public class ItemElementalSword extends Item {
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity user) {
-        // NEOFORGE_PORT: getUseDuration now takes the using entity.
+        
         return 72000;
     }
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        // NEOFORGE_PORT: InteractionResultHolder removed -> InteractionResult.
+        
         player.startUsingItem(hand);
-        // Точный паритет reforged: CONSUME. SUCCESS на клиенте давал взмах
-        // на каждый тик удержания ПКМ — от 3 лица читалось как анимация,
-        // от 1 лица — бесконечное дёрганье. Удержание показывает BLOCK-стойку.
+        
+        
+        
         return InteractionResult.CONSUME;
     }
 
@@ -127,11 +127,11 @@ public class ItemElementalSword extends Item {
                     SoundSource.PLAYERS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         }
         if (ticks % 20 == 0 && !level.isClientSide()) {
-            // Прочность как в оригинале, но без broadcastBreakEvent:
-            // свинг руки каждую секунду дёргал BLOCK-стойку в 1 лице.
-            // NEOFORGE_PORT (26.3): hurtAndBreak(amount, entity, hand) calls onEquippedItemBroken
-            // (break particles/sound broadcast) that Forge's empty consumer skipped; use the
-            // consumer overload with the same silent break (Forge still awarded ITEM_BROKEN).
+            
+            
+            
+            
+            
             stack.hurtAndBreak(1, (net.minecraft.server.level.ServerLevel) level, user, broken -> {
                 if (user instanceof ServerPlayer brokenBy) {
                     brokenBy.awardStat(net.minecraft.stats.Stats.ITEM_BROKEN.get(broken.getItem()));
@@ -146,9 +146,9 @@ public class ItemElementalSword extends Item {
         if (user.onGround()) {
             miny = Mth.floor(user.getBoundingBox().minY);
         }
-        // От 1 лица спираль на уровне тела проходит сквозь камеру
-        // (~150 квадов) — мерцание; опускаем её к ногам и уже.
-        // От 3 лица и для наблюдателей — как в оригинале.
+        
+        
+        
         double spiralY = user.getBoundingBox().minY + user.getBbHeight() / 2.0F;
         float spiralRad = 1.5F;
         if (FXDispatcher.isLocalFirstPerson(user)) {

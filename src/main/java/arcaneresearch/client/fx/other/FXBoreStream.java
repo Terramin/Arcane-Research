@@ -14,7 +14,7 @@ import net.minecraft.util.ARGB;
 import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -25,7 +25,7 @@ import arcaneresearch.lib.vec.Quat;
 import java.awt.*;
 import java.util.ArrayList;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXBoreStream extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier TEX0 =
@@ -48,7 +48,7 @@ public class FXBoreStream extends SingleQuadParticle implements BeamEngine.BeamE
 
     public FXBoreStream(ClientLevel level, double x, double y, double z,
                         Entity target, int count, int color, float scale, int extend, double my) {
-        super(level, x, y, z, 0.0, 0.0, 0.0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, x, y, z, 0.0, 0.0, 0.0, null); 
         this.count = 0;
         this.length = 5;
         String key = "";
@@ -186,7 +186,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;
@@ -208,7 +208,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
                 (growing < 0) ? 0.0f : (0.075f * (this.age - growing + partialTicks)));
     }
 
-    // NEOFORGE_PORT: getLightColor -> getLightCoords (same fullbright contract).
+    
     @Override
     protected int getLightCoords(float partialTick) {
         return 0xF000F0;

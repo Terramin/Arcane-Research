@@ -17,10 +17,10 @@ import arcaneresearch.client.renderers.TCRenderTypes;
 
 import java.util.function.Consumer;
 
-// NEOFORGE_PORT (26.3): EldritchPortalItemRenderer (BEWLR) -> SpecialModelRenderer.
-// Forge renderByItem() body 1:1 (billboard portal + core). Context scale via
-// the "preset" param (submit has no display context): gui 0.9 / ground 0.7 /
-// fixed 0.9 / hand 1.0, wired per-context in the item JSON (display_context select).
+
+
+
+
 public class EldritchPortalSpecialRenderer implements SpecialModelRenderer<Void> {
     private static final Identifier PORTAL_TEX =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/eldritch_portal.png");
@@ -47,7 +47,7 @@ public class EldritchPortalSpecialRenderer implements SpecialModelRenderer<Void>
     @Override
     public void submit(@Nullable Void arg, PoseStack poseStack, SubmitNodeCollector collector,
                        int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
-        // Центр слота 0..1, как у NodeItemRenderer (не-банка ветка).
+        
         poseStack.pushPose();
         poseStack.translate(0.5D, 0.5D, 0.5D);
 
@@ -59,13 +59,13 @@ public class EldritchPortalSpecialRenderer implements SpecialModelRenderer<Void>
         float u1 = u0 + 1.0F / FRAMES;
         Vector3f center = new Vector3f(0.0F, 0.0F, 0.0F);
 
-        // Полностью открытый портал (как opencount=30 в мире).
+        
         float half = 0.5F * scale;
         emitQuad(poseStack, collector, TCRenderTypes.translucentPortal(PORTAL_TEX),
                 center, half, half,
                 1.0F, 0.0F, 1.0F, 1.0F, u0, u1, overlayCoords);
 
-        // Слабое светлое ядро поверх для читаемости в GUI.
+        
         float core = 0.18F * scale;
         emitQuad(poseStack, collector, TCRenderTypes.additiveTexturedNoCull(PORTAL_TEX),
                 center, core, core,
@@ -83,9 +83,9 @@ public class EldritchPortalSpecialRenderer implements SpecialModelRenderer<Void>
         float[][] corners = {{-halfX, -halfY}, {-halfX, halfY}, {halfX, halfY}, {halfX, -halfY}};
         float[][] uvs = {{u1, 1.0F}, {u1, 0.0F}, {u0, 0.0F}, {u0, 1.0F}};
         collector.submitCustomGeometry(poseStack, layer, (pose, consumer) -> {
-            // NEOFORGE_PORT (hand billboard): оси экрана — из ФИНАЛЬНОЙ позы,
-            // пришедшей сюда, а не из стека на момент submit (см. NodeSpecialRenderer:
-            // иначе в руке квад приклеен к руке и вращается вместе с камерой).
+            
+            
+            
             Vector3f right = new Vector3f(1.0F, 0.0F, 0.0F);
             Vector3f up = new Vector3f(0.0F, 1.0F, 0.0F);
             Vector3f face = new Vector3f(0.0F, 0.0F, 1.0F);
@@ -130,7 +130,7 @@ public class EldritchPortalSpecialRenderer implements SpecialModelRenderer<Void>
 
         @Override
         public SpecialModelRenderer<Void> bake(SpecialModelRenderer.BakingContext context) {
-            // NEOFORGE_PORT: Forge ctxScale (GUI/FIXED 0.9, GROUND 0.7, hands 1.0).
+            
             float scale = switch (preset) {
                 case "ground" -> 0.7F;
                 case "gui", "fixed" -> 0.9F;

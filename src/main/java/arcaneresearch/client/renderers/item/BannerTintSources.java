@@ -18,16 +18,16 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.common.blocks.basic.BlockBannerTC;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors banner entries 1:1.
-// Forge bound one lambda to all 17 banner items with per-tintIndex branches:
-//   tintIndex 1 -> dye firework color (null dye, i.e. crimson cult, -> COLOR_RED map color);
-//   tintIndex 2 -> aspect color from the "aspect" tag if present, else the dye color;
-//   else -> white.
-// 26.x item tints are positional (array index = tintIndex, verified NeoForge docs
-// pattern, same as CrystalTintSources): banner item JSONs declare
-// "tints": [constant white, arcaneresearch:banner_dye, arcaneresearch:banner_aspect].
-// Aspect tag reads go through CUSTOM_DATA (same NBT shape as Forge root tag;
-// cf. BannerBlockItem.appendHoverText). Opaque OR: same ARGB transport adaptation.
+
+
+
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class BannerTintSources {
 

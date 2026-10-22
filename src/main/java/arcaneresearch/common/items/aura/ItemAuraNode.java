@@ -48,13 +48,13 @@ public class ItemAuraNode extends BlockItem implements IEssentiaContainerItem {
         }
     }
 
-    // NEOFORGE_PORT: BlockItem.updateCustomBlockEntityTag is now a static helper
-    // (Level, Player, pos, stack); custom post-place tile init moves to the NeoForge
-    // BlockItem.onBlockPlacedBy callback.
-    // NEOFORGE_PORT (26.3): it must NOT run after super.place(): place() ends with
-    // itemStack.consume(1, player), which empties a 1-count survival stack, and an empty
-    // stack reports no CUSTOM_DATA -> the node data was dropped. onBlockPlacedBy runs on
-    // both sides before consume, i.e. at the same point as Forge updateCustomBlockEntityTag.
+    
+    
+    
+    
+    
+    
+    
     @Override
     public void onBlockPlacedBy(BlockPlaceContext context, Level level, BlockPos pos, BlockState state,
                                 @Nullable Player placer, ItemStack stack) {
@@ -70,8 +70,8 @@ public class ItemAuraNode extends BlockItem implements IEssentiaContainerItem {
         }
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (Level+List) -> (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
@@ -89,7 +89,7 @@ public class ItemAuraNode extends BlockItem implements IEssentiaContainerItem {
     @Override
     public void setAspects(ItemStack itemstack, AspectList aspects) {
         try {
-            // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).
+            
             CustomData.update(DataComponents.CUSTOM_DATA, itemstack, tag -> aspects.writeToNBT(tag, "Aspects"));
         } catch (Exception ignored) {
         }
@@ -100,8 +100,8 @@ public class ItemAuraNode extends BlockItem implements IEssentiaContainerItem {
         return false;
     }
 
-    // NEOFORGE_PORT (26.3): Item.initializeClient(Consumer<IClientItemExtensions>) was removed
-    // in 26.x (the old no-op kept a client-only type in this common class). The Forge BEWLR
-    // is done via client/renderers/item/NodeSpecialRenderer (arcaneresearch:node), registered
-    // in SpecialItemModels and wired in assets/arcaneresearch/items/{aura_node,jar_node}.json.
+    
+    
+    
+    
 }

@@ -75,8 +75,8 @@ public class BlockVoidSiphon extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -133,12 +133,12 @@ public class BlockVoidSiphon extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
-        // NEOFORGE_PORT: siphon item dropped by preRemoveSideEffects default; nothing else to tear down.
+        
     }
 
     @Nullable

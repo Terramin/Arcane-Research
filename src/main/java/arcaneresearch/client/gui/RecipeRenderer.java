@@ -6,7 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -149,8 +149,8 @@ public class RecipeRenderer {
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null) {
-            // NEOFORGE_PORT: client has no RecipeManager (RecipeAccess only);
-            // ClientRecipeCache (RecipesReceivedEvent RecipeMap) is the source.
+            
+            
             var cached = arcaneresearch.common.lib.crafting.ClientRecipeCache.byKey(id);
             if (cached.isPresent()) {
                 return cached.get().value();
@@ -199,9 +199,9 @@ public class RecipeRenderer {
         }
     }
 
-    // NEOFORGE_PORT: Ingredient.getItems() gone in 26.x; options resolve via the
-    // recipe display (SlotDisplay.resolveForStacks keeps NBT/components, as
-    // getItems() did); plain-holder mapping is the offline fallback.
+    
+    
+    
     private static ItemStack cycleIngredient(Ingredient ingredient, int slotIndex) {
         java.util.List<ItemStack> options = resolveOptions(ingredient);
         if (options.isEmpty()) return ItemStack.EMPTY;
@@ -243,8 +243,8 @@ public class RecipeRenderer {
 
         drawGridBackdrop(graphics, x, y, 60, 15, 51, 52);
 
-        // NEOFORGE_PORT: getResultItem() gone in 26.x; result comes from the
-        // recipe display (same stack Forge returned).
+        
+        
         ItemStack output = ItemStack.EMPTY;
         java.util.List<net.minecraft.world.item.crafting.display.RecipeDisplay> displays = recipe.display();
         if (!displays.isEmpty() && Minecraft.getInstance().level != null) {
@@ -254,8 +254,8 @@ public class RecipeRenderer {
         renderItem(graphics, output, x - 8, y - 84);
         tooltip = checkItemTooltip(output, x - 8, y - 84, mouseX, mouseY, false, tooltip);
 
-        // NEOFORGE_PORT: getIngredients() gone from CraftingRecipe in 26.x;
-        // grid comes from the recipe display (same slots Forge iterated).
+        
+        
         int width = 3;
         int height = 3;
         java.util.List<net.minecraft.world.item.crafting.display.SlotDisplay> displayIngredients = java.util.List.of();
@@ -326,7 +326,7 @@ public class RecipeRenderer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(2f, 2f);
-        // NEOFORGE_PORT: Forge setShaderColor(1,1,1,0.4) wand glyph -> 40% ARGB.
+        
         graphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -6, 40, 68, 76, 12, 12, 256, 256, 0x66FFFFFF);
         graphics.pose().popMatrix();
 
@@ -359,8 +359,8 @@ public class RecipeRenderer {
         }
 
         java.util.List<Ingredient> ingredients = recipe.getIngredients();
-        // NEOFORGE_PORT (26.3): shaped getIngredients() drops blank cells; the Forge list kept
-        // EMPTY placeholders, so the grid is laid out from the pattern's optional cells.
+        
+        
         java.util.List<java.util.Optional<Ingredient>> patternCells = null;
         if (recipe instanceof arcaneresearch.api.crafting.ShapedArcaneRecipe shapedCells) {
             patternCells = shapedCells.getOptionalIngredients();
@@ -708,15 +708,15 @@ public class RecipeRenderer {
         long now = System.currentTimeMillis();
         if (cycleMultiblockLines && now - blueprintLastSlice > 1000L) {
             blueprintLastSlice = now;
-            // NEOFORGE_PORT: Forge никогда не сбрасывал sliceLine — после
-            // первого обхода анимации срез «заживался» навсегда (hidden >
-            // высоты -> 0), а если цикл выключали в середине, слои оставались
-            // срезанными до переоткрытия страницы. Честный цикл: рост
-            // 0..height, один пустой такт, снова 0.
+            
+            
+            
+            
+            
             blueprintAccess.sliceLine = (blueprintAccess.sliceLine + 1) % (blueprintAccess.getHeight() + 2);
         } else if (!cycleMultiblockLines) {
-            // Цикл выключен — показывать всю структуру целиком, без
-            // замороженного среза.
+            
+            
             blueprintAccess.sliceLine = 0;
         }
 
@@ -729,18 +729,18 @@ public class RecipeRenderer {
                 net.minecraft.network.chat.Component.translatable("recipe.type.construct").getString(),
                 x, y - 104, 0xFF505050);
 
-        // NEOFORGE_PORT: Forge isometric 3D preview (GUI MultiBufferSource +
-        // BlockRenderDispatcher.renderSingleBlock, both removed in 26.x) is
-        // now a true picture-in-picture (vanilla entity/banner-preview
-        // mechanism): real block models, exact 1.20.1 projection, sliceLine
-        // build-up gating and the aura node swirl — see IsoStructurePip.
-        // NEOFORGE_PORT (26.3): Forge per-block scale max(8, 38 - 2 * maxDim), not a box fit.
+        
+        
+        
+        
+        
+        
         float scale = Math.max(8f, 38 - Math.max(ySize, Math.max(xSize, zSize)) * 2);
         IsoStructurePip.submitFixedScale(graphics, blueprintAccess, parts,
                 xSize, ySize, zSize, x, y - 10, scale);
         boolean hoverToggle = mouseX >= x + 80 && mouseY >= y + 100
                 && mouseX < x + 88 && mouseY < y + 108;
-        // NEOFORGE_PORT: Forge setShaderColor(1,1,1, hover ? 1 : 0.75) -> ARGB.
+        
         int toggleTint = hoverToggle ? 0xFFFFFFFF : 0xBFFFFFFF;
         graphics.blit(RenderPipelines.GUI_TEXTURED, BOOK_TEXTURE, x + 80, y + 100, cycleMultiblockLines ? 168 : 160, 224, 8, 8, 256, 256, toggleTint);
 
@@ -776,18 +776,18 @@ public class RecipeRenderer {
         if (ySize <= 0 || xSize <= 0 || zSize <= 0) {
             return;
         }
-        // NEOFORGE_PORT: the Forge mini isometric 3D bookmark (same removed
-        // renderSingleBlock path) is a true picture-in-picture now (see
-        // IsoStructurePip), centred on (x, y), max ~56px box. Target-преобразование
-        // поворачивает каждый слой (Rotate90DegRight(3)), поэтому размеры
-        // footprint в структуре ba: x<->z от исходных parts (для всех
-        // квадратных чертежей совпадает, для неквадратных иначе часть клеток
-        // терялась бы, а центрирование съезжало). The bookmark
-        // draws only the converted states (no node swirl), like Forge did.
+        
+        
+        
+        
+        
+        
+        
+        
         int effX = zSize;
         int effZ = xSize;
-        // NEOFORGE_PORT (26.3): Forge bookmark used a fixed scale(4, -4) with the projected
-        // centre at (x - xSize/2, y - |size|/2), not a 56px box fit centred on (x, y).
+        
+        
         int cx = Math.round(x - xSize / 2f);
         int cy = Math.round(y - (float) Math.sqrt(ySize * ySize + xSize * xSize + zSize * zSize) / 2f);
         IsoStructurePip.submitFixedScale(graphics, ba, null, effX, ySize, effZ, cx, cy, 4.0f);

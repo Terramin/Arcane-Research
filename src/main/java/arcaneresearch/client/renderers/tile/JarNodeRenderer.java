@@ -21,8 +21,8 @@ import arcaneresearch.client.models.block.JarNodeModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.aura.TileJarNode;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (node visuals + animated jar lid/core).
+
+
 public class JarNodeRenderer implements BlockEntityRenderer<TileJarNode, JarNodeRenderer.State> {
     private static final Identifier JAR_TEX =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/jar.png");

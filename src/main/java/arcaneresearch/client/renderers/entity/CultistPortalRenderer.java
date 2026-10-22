@@ -9,15 +9,15 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.monster.cult.EntityCultistPortalLesser;
 
-// NEOFORGE_PORT (26.3): portal quad via submitCustomGeometry (billboarded to
-// the camera); wobble math 1:1 from Forge (nanoTime phase kept).
+
+
 public class CultistPortalRenderer extends EntityRenderer<EntityCultistPortalLesser, CultistPortalRenderer.State> {
 
     public static class State extends EntityRenderState {
@@ -109,7 +109,7 @@ public class CultistPortalRenderer extends EntityRenderer<EntityCultistPortalLes
         quad(consumer, pose, scale, -scaley, 0, minU, 0.0F, alpha, light);
     }
 
-    // NEOFORGE_PORT: shared with CultistPortalGreaterRenderer (same quad shape).
+    
     static void quad(VertexConsumer consumer, PoseStack.Pose pose,
                      float x, float y, float z, float u, float v, float alpha, int light) {
         consumer.addVertex(pose, x, y, z)

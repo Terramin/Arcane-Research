@@ -161,8 +161,8 @@ public class ItemSealPlacer extends Item implements ISealDisplayer {
         return InteractionResult.SUCCESS;
     }
 
-    // NEOFORGE_PORT: Forge override only forwarded to super (no custom lines);
-    // dead override deleted (Item default behaves identically).
+    
+    
 
     @Override
     public Component getName(ItemStack stack) {

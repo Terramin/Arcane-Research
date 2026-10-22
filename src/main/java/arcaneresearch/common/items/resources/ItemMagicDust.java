@@ -26,7 +26,7 @@ import arcaneresearch.init.ModSounds;
 
 import java.util.List;
 
-// NEOFORGE_PORT: @Mod.EventBusSubscriber(modid, bus = FORGE) -> @EventBusSubscriber(modid) (bus param removed in NeoForge; game-bus subscriber auto-registers, same as MazePersistence).
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class ItemMagicDust extends ItemTCBase {
 
@@ -52,7 +52,7 @@ public class ItemMagicDust extends ItemTCBase {
         }
         for (IDustTrigger trigger : IDustTrigger.triggers) {
             if (trigger.getValidFace(level, player, pos, face) != null) {
-                // NEOFORGE_PORT: Event.Result.DENY -> TriState.FALSE (NeoForge event uses TriState for useBlock/useItem, verified via javap).
+                
                 event.setUseBlock(TriState.FALSE);
                 return;
             }
@@ -78,7 +78,7 @@ public class ItemMagicDust extends ItemTCBase {
             return InteractionResult.PASS;
         }
 
-        // NEOFORGE_PORT: swing(hand) -> swing(hand, SwingAnimation.DEFAULT, false) (verified via javap on LivingEntity).
+        
         player.swing(hand, SwingAnimation.DEFAULT, false);
 
         for (IDustTrigger trigger : IDustTrigger.triggers) {
@@ -119,7 +119,7 @@ public class ItemMagicDust extends ItemTCBase {
         for (int cnt = 50, a = 0; a < cnt; ++a) {
             boolean floaty = a < cnt / 3;
             float r = 1.0f;
-            // NEOFORGE_PORT: level.random -> level.getRandom() (field removed in 26.x, verified via javap on Level).
+            
             float g = (189 + level.getRandom().nextInt(67)) / 255.0f;
             float b = (64 + level.getRandom().nextInt(192)) / 255.0f;
             FXDispatcher.INSTANCE.drawSimpleSparkle(rand, v1.x, v1.y, v1.z,

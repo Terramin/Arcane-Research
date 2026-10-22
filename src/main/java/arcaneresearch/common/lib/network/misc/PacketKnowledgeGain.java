@@ -13,10 +13,10 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.client.lib.events.HudHandler;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketKnowledgeGain.java (PLAY_TO_CLIENT).
-// Fields/ctors preserved verbatim; transport -> CustomPacketPayload.
-// Wire order identical to the old encode/decode (byte, utf).
-// Payload id "arcaneresearch:knowledge_gain".
+
+
+
+
 public class PacketKnowledgeGain implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketKnowledgeGain> TYPE =
@@ -49,8 +49,8 @@ public class PacketKnowledgeGain implements CustomPacketPayload {
         ctx.enqueueWork(() -> handleClient(msg, ctx.player()));
     }
 
-    // Player/Level from the packet context; HUD tracker via client bridge.
-    // Server-safe types only — PLAY_TO_CLIENT payload, never runs on server.
+    
+    
     private static void handleClient(PacketKnowledgeGain packet, Player player) {
         if (player == null) return;
         Level level = player.level();

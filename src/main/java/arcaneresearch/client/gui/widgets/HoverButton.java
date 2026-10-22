@@ -1,13 +1,13 @@
 package arcaneresearch.client.gui.widgets;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphicsExtractor
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
-import net.minecraft.util.ARGB; // NEOFORGE_PORT: tint via blit color
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
+import net.minecraft.util.ARGB; 
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.api.aspects.Aspect;
@@ -43,7 +43,7 @@ public class HoverButton extends AbstractWidget {
         return content;
     }
 
-    // NEOFORGE_PORT: renderWidget -> extractWidgetRenderState.
+    
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
@@ -54,7 +54,7 @@ public class HoverButton extends AbstractWidget {
         float brightness = hovered ? 1.0f : 0.9f;
         float alpha = hovered ? 1.0f : 0.9f;
 
-        // NEOFORGE_PORT: shader tinting removed; tint baked into blit color (same values).
+        
         int drawX = getX() - width / 2;
         int drawY = getY() - height / 2;
 
@@ -73,8 +73,8 @@ public class HoverButton extends AbstractWidget {
                         aspectColor.getGreen() / 290.0f,
                         aspectColor.getBlue() / 290.0f);
             }
-            // Full-file sampling: aspect art (400x400) and tag icons (32x32) are
-            // bigger than 16x16; sampling 16 texels showed only the top-left corner.
+            
+            
             Identifier stripped = UtilsFX.strippedAspectTexture(aspect.getImage());
             int[] dims = AspectRenderer.textureDims(stripped);
             int sw = dims != null ? dims[0] : 16;
@@ -109,7 +109,7 @@ public class HoverButton extends AbstractWidget {
         List<Component> tooltip = new ArrayList<>();
 
         if (content instanceof ItemStack stack) {
-            // NEOFORGE_PORT: getTooltipLines(player, flag) -> (TooltipContext, player, flag).
+            
             tooltip.addAll(stack.getTooltipLines(net.minecraft.world.item.Item.TooltipContext.of(
                             Minecraft.getInstance().level),
                     Minecraft.getInstance().player,
@@ -128,7 +128,7 @@ public class HoverButton extends AbstractWidget {
         }
 
         if (!tooltip.isEmpty()) {
-            // NEOFORGE_PORT: renderComponentTooltip -> deferred setComponentTooltipForNextFrame.
+            
             graphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
         }
     }
@@ -140,7 +140,7 @@ public class HoverButton extends AbstractWidget {
                 mouseY >= getY() - height / 2 && mouseY < getY() + height / 2;
     }
 
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();

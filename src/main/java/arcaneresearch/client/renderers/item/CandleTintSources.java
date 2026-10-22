@@ -15,14 +15,14 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.blocks.basic.BlockCandle;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors candle entries 1:1.
-// Forge registered one lambda per CANDLE_* block item returning
-// candle.getColor().getMapColor().col (any tintIndex). 26.x item tints are
-// data-driven ItemTintSource records wired per item via the "tints" array in
-// assets/arcaneresearch/items/candle_*.json (index = tintIndex, same verified
-// pattern as NitorTintSources). One source covers all 16 with identical values.
-// Opaque OR (0xFF000000 |): Forge ItemColors ignored alpha (RGB only); 26.3 tint
-// layers are ARGB, so alpha is forced for the same visible result.
+
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class CandleTintSources {
 

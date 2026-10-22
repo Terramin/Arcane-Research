@@ -15,11 +15,11 @@ import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.world.biomes.BiomeHandler;
 import arcaneresearch.init.ModBlocks;
 
-// NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-// NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-// WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-// features are placed from code with fixed params (never deserialized from datapacks),
-// registry-id dispatch resolves the registered instance on load.
+
+
+
+
+
 public class ArcaneresearchOreFeature implements Feature {
 
     public static final MapCodec<ArcaneresearchOreFeature> CODEC =
@@ -42,9 +42,9 @@ public class ArcaneresearchOreFeature implements Feature {
         if (!isEnabled()) {
             return false;
         }
-        // NEOFORGE_PORT: ChunkPos(BlockPos) ctor removed (record) -> containing().
+        
         ChunkPos chunkPos = ChunkPos.containing(origin);
-        // NEOFORGE_PORT: ChunkPos record accessors x()/z().
+        
         int chunkX = chunkPos.x();
         int chunkZ = chunkPos.z();
 
@@ -73,7 +73,7 @@ public class ArcaneresearchOreFeature implements Feature {
                         - random.nextInt(25);
             };
             randPosY = Math.max(level.getMinY(),
-                    // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+                    
                     Math.min(randPosY, level.getMaxY()));
             BlockPos pos = new BlockPos(randPosX, randPosY, randPosZ);
 

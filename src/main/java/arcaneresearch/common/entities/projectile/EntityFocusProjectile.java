@@ -28,7 +28,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 public class EntityFocusProjectile extends ThrowableProjectile {
-    // (spawn sync: see sendPairingData below)
+    
 
     public static final int SPECIAL_NONE = 0;
 
@@ -132,10 +132,10 @@ public class EntityFocusProjectile extends ThrowableProjectile {
 
                 Vec3 newMotion = getDeltaMovement();
                 double len = newMotion.length();
-                // NEOFORGE_PORT (26.3): ThrowableProjectile.tick now moves the projectile TO the hit point
-                // before onHit and applies no motion afterwards. Forge nudged back from the pre-move
-                // position (== xOld) and then moved by the bounced motion in the same tick; reproduce that
-                // end position (nudging from the hit point lands inside the block and re-hits every tick).
+                
+                
+                
+                
                 double nx = xOld + newMotion.x;
                 double ny = yOld + newMotion.y;
                 double nz = zOld + newMotion.z;
@@ -147,7 +147,7 @@ public class EntityFocusProjectile extends ThrowableProjectile {
                 setPos(nx, ny, nz);
 
                 if (!level().isClientSide()) {
-                    // NEOFORGE_PORT: LEASH_KNOT_PLACE was folded into LEAD_TIED in 26.x (vanilla knot uses it).
+                    
                     playSound(net.minecraft.sounds.SoundEvents.LEAD_TIED, 0.25f, 1.0f);
                 }
                 if (newMotion.length() < 0.2) {
@@ -354,10 +354,10 @@ public class EntityFocusProjectile extends ThrowableProjectile {
         }
     }
 
-    // NEOFORGE_PORT (26.3-native spawn sync, variant B): Forge IEntityAdditionalSpawnData
-    // (FocusPackage NBT via writeSpawnData/readSpawnData) ported 1:1 to a pairing payload
-    // (PacketFocusPackToClient, bundled with spawn); EntityDataSerializers has no NBT
-    // serializer in 26.3, so variant A (SynchedEntityData) is impossible.
+    
+    
+    
+    
     @Override
     public void sendPairingData(net.minecraft.server.level.ServerPlayer player,
                                 java.util.function.Consumer<net.minecraft.network.protocol.common.custom.CustomPacketPayload> bundle) {

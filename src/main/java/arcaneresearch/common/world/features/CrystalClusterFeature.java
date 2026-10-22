@@ -16,11 +16,11 @@ import arcaneresearch.common.blocks.world.ore.ShardType;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.world.biomes.BiomeHandler;
 
-// NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-// NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-// WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-// features are placed from code with fixed params (never deserialized from datapacks),
-// registry-id dispatch resolves the registered instance on load.
+
+
+
+
+
 public class CrystalClusterFeature implements Feature {
 
     public static final MapCodec<CrystalClusterFeature> CODEC =
@@ -39,9 +39,9 @@ public class CrystalClusterFeature implements Feature {
         if (!ModConfig.generateCrystals) {
             return false;
         }
-        // NEOFORGE_PORT: ChunkPos(BlockPos) ctor removed (record) -> containing().
+        
         ChunkPos chunkPos = ChunkPos.containing(origin);
-        // NEOFORGE_PORT: ChunkPos record accessors x()/z().
+        
         int chunkX = chunkPos.x();
         int chunkZ = chunkPos.z();
 
@@ -84,7 +84,7 @@ public class CrystalClusterFeature implements Feature {
                         }
                         BlockPos target = bp.offset(xx, yy, zz);
                         if (target.getY() < level.getMinY()
-                                // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+                                
                                 || target.getY() > level.getMaxY()) {
                             continue;
                         }

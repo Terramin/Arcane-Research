@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
@@ -24,7 +24,7 @@ public class TubeValveModel extends Model<net.minecraft.client.renderer.blockent
     private final ModelPart valveRing;
 
     public TubeValveModel(ModelPart root) {
-        // NEOFORGE_PORT: Model has no 1-arg ctor (only EntityModel does).
+        
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
         this.valveRod = root.getChild("valve_rod");
         this.valveRing = root.getChild("valve_ring");
@@ -47,7 +47,7 @@ public class TubeValveModel extends Model<net.minecraft.client.renderer.blockent
         return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
         valveRod.render(poseStack, buffer, packedLight, packedOverlay, net.minecraft.util.ARGB.colorFromFloat(alpha, red, green, blue));

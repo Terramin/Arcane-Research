@@ -7,12 +7,12 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-// NEOFORGE_PORT: new file, no Forge counterpart (Forge used CraftingHelper.register()
-//   for its custom ingredient serializer in Arcaneresearch.registerIngredientTypes).
-// NeoForge custom ingredients need a registered IngredientType (codec + stream codec)
-// for recipe JSON parsing and client sync. Registry name preserved 1:1:
-// Forge CrystalAspectIngredient.TYPE_ID was arcaneresearch:crystal; NBTTC registers
-// as arcaneresearch:nbt_test.
+
+
+
+
+
+
 public class ModIngredientTypes {
 
     public static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES =

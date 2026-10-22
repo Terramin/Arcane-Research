@@ -3,10 +3,10 @@ package arcaneresearch.common.items.tools;
 import net.minecraft.world.item.Item;
 import arcaneresearch.api.aspects.Aspect;
 
-/**
- * Первородная стрела, порт TC4 {@code ItemPrimalArrow}: 6 видов
- * (в 1.7.10 — метадата 0-5, здесь 6 отдельных предметов).
- */
+ 
+
+
+ 
 public class ItemPrimalArrow extends Item {
 
     public static final int AIR = 0;
@@ -19,7 +19,7 @@ public class ItemPrimalArrow extends Item {
     private final int type;
 
     public ItemPrimalArrow(Item.Properties props, int type) {
-        // NEOFORGE_PORT: registerItem passes props (same plain properties as Forge).
+        
         super(props);
         this.type = type;
     }

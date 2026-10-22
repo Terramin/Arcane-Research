@@ -40,8 +40,8 @@ public class CommonInternals {
         return craftingRecipeCatalogFake.get(key);
     }
 
-    // NEOFORGE_PORT: ItemStack.save(CompoundTag)/setTag removed in 26.x; ids derive from
-    // the CODEC encoding instead (same purpose: stable per-stack identity hash).
+    
+    
     public static int generateUniqueItemstackId(ItemStack stack) {
         ItemStack sc = stack.copy();
         sc.setCount(1);

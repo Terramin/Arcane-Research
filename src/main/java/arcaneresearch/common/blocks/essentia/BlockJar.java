@@ -143,8 +143,8 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
         }
     }
 
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) split in 26.x;
-    // this interaction uses hand+hit -> useItemOn (same body, same order).
+    
+    
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
@@ -253,7 +253,7 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
         if (be instanceof TileJarBrain brain) {
             ItemStack drop = new ItemStack(this);
             if (brain.xp > 0) {
-                // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same keys).
+                
                 net.minecraft.nbt.CompoundTag xpTag =
                         arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(drop);
                 xpTag.putInt("xp", brain.xp);
@@ -286,12 +286,12 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
     @Override
     public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
         ItemStack stack = new ItemStack(this);
-        // NEOFORGE_PORT (26.3): no includeData guard - the 1.20.1 override always copied the
-        // jar contents/label/xp (plain pick block and scanning saw the filled jar).
+        
+        
         {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof TileJarBrain brain && brain.xp > 0) {
-                // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).
+                
                 net.minecraft.world.item.component.CustomData.update(
                         net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack,
                         tag -> tag.putInt("xp", brain.xp));
@@ -315,10 +315,10 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
 
 
@@ -343,8 +343,8 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
         return super.getAnalogOutputSignal(state, level, pos, direction);
     }
 
-    // NEOFORGE_PORT: Forge vanilla hook moved to IBlockExtension in 26.x with
-    // BlockGetter instead of LevelReader (same 5.0f brain-jar bonus, same logic).
+    
+    
     @Override
     public float getEnchantPowerBonus(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof TileJarBrain) {

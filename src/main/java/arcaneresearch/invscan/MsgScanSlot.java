@@ -9,13 +9,13 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Клиент -&gt; сервер: «сканирую слот N меню M» (таумометр на курсоре).
- *
- * NEOFORGE_PORT: Forge FriendlyByteBuf encode/decode/handle -&gt;
- * CustomPacketPayload + ручной StreamCodec (порядок полей 1:1).
- * Payload id "arcaneresearch:invscan_slot".
- */
+ 
+
+
+
+
+
+ 
 public class MsgScanSlot implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgScanSlot> TYPE =

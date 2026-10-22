@@ -50,9 +50,9 @@ public class ServerEvents {
     private static final Map<String, LinkedBlockingQueue<VirtualSwapper>> swapList = new ConcurrentHashMap<>();
     private static final Map<String, LinkedBlockingQueue<BreakData>> breakList = new ConcurrentHashMap<>();
 
-    // NEOFORGE_PORT: Forge TickEvent.LevelTickEvent (level + side + phase) split in 26.x
-    // into LevelTickEvent.Pre/Post (tick package). START -> Pre, END -> Post; the old
-    // CLIENT-side guard becomes a ServerLevel check (client levels carry ClientLevel).
+    
+    
+    
     @SubscribeEvent
     public static void onLevelTickPre(net.neoforged.neoforge.event.tick.LevelTickEvent.Pre event) {
         if (!(event.getLevel() instanceof ServerLevel level)) {
@@ -98,17 +98,17 @@ public class ServerEvents {
                     for (ChunkPos pos : dirtyChunks) {
                         ChunkAccess access = level.getChunkSource().getChunk(pos.x(), pos.z(), false);
                         if (access instanceof LevelChunk levelChunk) {
-                            // NEOFORGE_PORT: 26.x captures chunk attachments inside
-                            // SerializableChunkData.copyOf(), i.e. *before* ChunkDataEvent.Save is
-                            // fired, and ChunkAccess.setData() calls markUnsaved(). Writing the
-                            // aura/seal snapshot from the Save listener therefore (a) missed the save
-                            // being written and (b) re-dirtied the chunk, so ChunkMap.saveAllChunks'
-                            // "as long as something was saved" loop never terminated: it re-copied
-                            // every chunk until the heap was full (OutOfMemoryError during world
-                            // creation, nothing ever flushed to disk). Snapshot here instead - server
-                            // thread, before any save - which is where Forge persisted the same NBT.
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
                             writeChunkAttachments(levelChunk, dimension, pos);
-                            // NEOFORGE_PORT: setUnsaved(boolean) removed -> markUnsaved().
+                            
                             levelChunk.markUnsaved();
                         }
                     }
@@ -129,10 +129,10 @@ public class ServerEvents {
             serverTicks.put(dimKey, ticks + 1);
     }
 
-    // NEOFORGE_PORT: the 1.20.1 save-time chunk NBT (ChunkEvents wrote
-    // "Arcaneresearch"/"seals", AuraChunkHandler wrote "Arcaneresearch"/"aura") now lives in
-    // chunk attachments. A save in progress can no longer be modified from ChunkDataEvent.Save,
-    // so the same snapshot is taken here, on the server thread, before the chunk is serialized.
+    
+    
+    
+    
     private static void writeChunkAttachments(LevelChunk chunk, ResourceKey<Level> dimension, ChunkPos pos) {
         AuraChunk auraChunk = AuraHandler.getAuraChunk(dimension, pos.x(), pos.z());
         if (auraChunk != null) {
@@ -149,8 +149,8 @@ public class ServerEvents {
         chunk.setData(ArcaneresearchCapabilities.SEAL_DATA.get(), new ChunkEvents.SealChunkData(seals));
     }
 
-    // NEOFORGE_PORT: ClientTickEvent ships in the common NeoForge jar, so this subscriber
-    // also loads on a dedicated server (verified with the dev dist cleaner); it never fires there.
+    
+    
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
 
@@ -507,11 +507,11 @@ public class ServerEvents {
 
         AuraThreadManager.stopAllThreads();
 
-        // NEOFORGE_PORT (26.3): Forge wrote the live aura/seal NBT from ChunkDataEvent.Save during
-        // the final saveAllChunks() that runs after this event. Here the saved data is the
-        // attachment snapshot taken by the 20-tick flush in onLevelTickPost, so snapshot the
-        // still-pending dirty chunks before the list is cleared; otherwise the last <20 ticks of
-        // changes (e.g. a seal placed right before quitting) never reach the disk.
+        
+        
+        
+        
+        
         for (ServerLevel level : event.getServer().getAllLevels()) {
             ResourceKey<Level> dimension = level.dimension();
             CopyOnWriteArrayList<ChunkPos> dirtyChunks = AuraHandler.dirtyChunks.get(dimension);

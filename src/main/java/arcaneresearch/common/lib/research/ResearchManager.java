@@ -95,7 +95,7 @@ public class ResearchManager {
             catKey = null;
         }
 
-        // NEOFORGE_PORT: bus post(T):T (was boolean); cancellable check via isCanceled().
+        
         if (NeoForge.EVENT_BUS.post(new ResearchEvent.Knowledge(player, type, category, amount)).isCanceled()) {
             return false;
         }
@@ -228,8 +228,8 @@ public class ResearchManager {
                     if (entry.getRewardItem() != null) {
                         for (ItemStack reward : entry.getRewardItem()) {
                             if (!player.getInventory().add(reward.copy())) {
-                                // NEOFORGE_PORT: spawnAtLocation(ItemStack, float) removed ->
-                                // spawnAtLocation(ServerLevel, ItemStack, float).
+                                
+                                
                                 if (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
                                     player.spawnAtLocation(serverLevel, reward.copy(), 1.0f);
                                 }
@@ -456,8 +456,8 @@ public class ResearchManager {
     private static ResearchStage parseStageJson(JsonObject obj, String entryKey) {
         ResearchStage stage = new ResearchStage();
 
-        // text опционален ( бывает stage только с рецептами): без проверки
-        // падало NPE и выкидывало ВСЁ исследование из загрузки как invalid.
+        
+        
         if (obj.has("text") && !obj.get("text").isJsonNull()) {
             stage.setText(obj.get("text").getAsString());
         }
@@ -524,7 +524,7 @@ public class ResearchManager {
             stage.setWarp(obj.get("warp").getAsInt());
         }
 
-        // NEOFORGE_PORT (discovered/*, Forge 1:1): структура-книга + required_discovery.
+        
         if (obj.has("structure")) {
             String[] structStrings = arrayJsonToString(obj.getAsJsonArray("structure"));
             if (structStrings != null && structStrings.length > 0) {
@@ -533,9 +533,9 @@ public class ResearchManager {
         }
 
         if (obj.has("required_discovery")) {
-            // Элемент-строка ("#KEY") — ключ открытия; элемент-булево — флаг
-            // hex-стадии (вторая, мини-игра). false/отсутствие — только первая.
-            // Объектная форма {"keys": [...], "hex": ...} тоже поддерживается.
+            
+            
+            
             com.google.gson.JsonArray discArray = null;
             try {
                 if (obj.get("required_discovery").isJsonArray()) {
@@ -753,9 +753,9 @@ public class ResearchManager {
                 ItemStack stack = new ItemStack(item, count);
                 if (nbt != null && !nbt.isEmpty()) {
                     try {
-                        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same parsed NBT).
-                        // TagParser.parseTag -> parseCompoundFully in 26.x (checked exception
-                        // already covered by the surrounding catch).
+                        
+                        
+                        
                         arcaneresearch.api.ArcaneresearchInvHelper.setCustomTag(
                                 stack, TagParser.parseCompoundFully(nbt));
                     } catch (Exception nbtEx) {

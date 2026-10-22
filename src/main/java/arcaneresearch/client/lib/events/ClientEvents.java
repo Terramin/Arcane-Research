@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber; // NEOFORGE_PORT: was Mod
+import net.neoforged.fml.common.EventBusSubscriber; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.client.fx.other.MistEffect;
@@ -16,7 +16,7 @@ public class ClientEvents {
 
     private static int tickCount = 0;
 
-    // NEOFORGE_PORT: phased TickEvent.ClientTickEvent -> Pre/Post (KeyHandler is Pre-only).
+    
     @SubscribeEvent
     public static void onClientTickPre(ClientTickEvent.Pre event) {
         tickEssentiaStreams();
@@ -27,9 +27,9 @@ public class ClientEvents {
 
         KeyHandler.onClientTick(event);
 
-        // NEOFORGE_PORT: Forge ItemThaumometer.inventoryTick highlighted scannables
-        // client-side every 5 ticks; inventoryTick is server-only in 26.x, so the
-        // client phase drives it here (same held check + 5-tick gate, Forge 1:1).
+        
+        
+        
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null && mc.level != null) {
             arcaneresearch.common.items.tools.ItemThaumometer.clientTick(mc.level, mc.player);
@@ -70,7 +70,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    // NEOFORGE_PORT: LivingEvent.LivingTickEvent removed in 26.x -> EntityTickEvent.Post.
+    
     public static void onLivingTick(net.neoforged.neoforge.event.tick.EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof net.minecraft.world.entity.LivingEntity living)) {
             return;

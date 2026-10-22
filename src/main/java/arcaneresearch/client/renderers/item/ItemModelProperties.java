@@ -20,12 +20,12 @@ import arcaneresearch.common.items.wands.ItemWandCap;
 import arcaneresearch.init.ModItems;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.x item models): vanilla ItemProperties + model "overrides"
-// are gone. Per-variant models (jar fill, grapple/pearl/charm type, mirror
-// link, wand cap) move to minecraft:select in assets/arcaneresearch/items/*.json
-// backed by these SelectItemModelProperty<String> providers (values "0".."6",
-// mirroring the old float predicates 1:1). All reads go through Data Components
-// (CUSTOM_DATA via ArcaneresearchInvHelper, damage API) — never root NBT.
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class ItemModelProperties {
 
@@ -39,7 +39,7 @@ public class ItemModelProperties {
         event.register(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "staff"), Staff.TYPE);
     }
 
-    // Jar fill level 0..4 (BlockJarItem.getFill).
+    
     public record Fill() implements SelectItemModelProperty<String> {
         public static final SelectItemModelProperty.Type<Fill, String> TYPE =
                 SelectItemModelProperty.Type.create(MapCodec.unit(new Fill()), Codec.STRING);
@@ -61,9 +61,9 @@ public class ItemModelProperties {
         }
     }
 
-    // Per-item variant: grapple loaded (CustomData "loaded"), primordial pearl
-    // damage tiers, like the old per-item "arcaneresearch:type" predicates.
-    // (Verdant charms are separate items in the port — no predicate needed.)
+    
+    
+    
     public record Variant() implements SelectItemModelProperty<String> {
         public static final SelectItemModelProperty.Type<Variant, String> TYPE =
                 SelectItemModelProperty.Type.create(MapCodec.unit(new Variant()), Codec.STRING);
@@ -93,7 +93,7 @@ public class ItemModelProperties {
         }
     }
 
-    // Mirror linked state (CustomData "linkX" presence).
+    
     public record Linked() implements SelectItemModelProperty<String> {
         public static final SelectItemModelProperty.Type<Linked, String> TYPE =
                 SelectItemModelProperty.Type.create(MapCodec.unit(new Linked()), Codec.STRING);
@@ -116,7 +116,7 @@ public class ItemModelProperties {
         }
     }
 
-    // Wand cap material index (ItemWandCap.getCapIndex, 0 = iron default).
+    
     public record Cap() implements SelectItemModelProperty<String> {
         public static final SelectItemModelProperty.Type<Cap, String> TYPE =
                 SelectItemModelProperty.Type.create(MapCodec.unit(new Cap()), Codec.STRING);
@@ -138,9 +138,9 @@ public class ItemModelProperties {
         }
     }
 
-    // Caster focus presence (Forge "arcaneresearch:focus" ItemProperty 1:1:
-    // 1 when ItemCaster.getFocus(stack) != null, else 0). Switches the base
-    // mesh between the plain gauntlet and the socket-nub variant.
+    
+    
+    
     public record Focus() implements SelectItemModelProperty<String> {
         public static final SelectItemModelProperty.Type<Focus, String> TYPE =
                 SelectItemModelProperty.Type.create(MapCodec.unit(new Focus()), Codec.STRING);
@@ -166,9 +166,9 @@ public class ItemModelProperties {
         }
     }
 
-    // Wand staff variant (Forge wand vs staff inventory models 1:1: 1 when the
-    // rod isStaff(), else 0). Switches the special base (own display each) and
-    // the OBJ mesh (staff.obj vs wand.obj); hand transforms match in both.
+    
+    
+    
     public record Staff() implements SelectItemModelProperty<String> {
         public static final SelectItemModelProperty.Type<Staff, String> TYPE =
                 SelectItemModelProperty.Type.create(MapCodec.unit(new Staff()), Codec.STRING);

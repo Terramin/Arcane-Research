@@ -31,14 +31,14 @@ import java.util.ArrayList;
 public class ItemElementalShovel extends Item implements IArchitect {
 
     public ItemElementalShovel(Item.Properties props) {
-        // NEOFORGE_PORT: ShovelItem REMOVED in 26.x -> plain Item with .shovel(material, damage, speed).
+        
         super(props
                 .rarity(Rarity.RARE)
                 .shovel(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 1.5F, -3.0F));
     }
 
     public static byte getOrientation(ItemStack stack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA via ArcaneresearchInvHelper (COPY semantics).
+        
         CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
         if (tag != null && tag.contains("or")) {
             return tag.getByteOr("or", (byte) 0);
@@ -47,7 +47,7 @@ public class ItemElementalShovel extends Item implements IArchitect {
     }
 
     public static void setOrientation(ItemStack stack, byte orientation) {
-        // NEOFORGE_PORT: getOrCreateTag() REMOVED -> get copy, mutate, write back.
+        
         CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         tag.putByte("or", (byte) (orientation % 3));
         ArcaneresearchInvHelper.setCustomTag(stack, tag);
@@ -111,8 +111,8 @@ public class ItemElementalShovel extends Item implements IArchitect {
         }
 
         level.sendBlockUpdated(p2, oldState, toPlace, Block.UPDATE_ALL);
-        // NEOFORGE_PORT: broadcastBreakEvent consumer overload REMOVED;
-        // hurtAndBreak(int, LivingEntity, InteractionHand) is the direct replacement.
+        
+        
         stack.hurtAndBreak(1, player, ctx.getHand());
         level.playSound(null, p2, toPlace.getSoundType().getPlaceSound(), SoundSource.BLOCKS,
                 0.6F, 0.9F + level.getRandom().nextFloat() * 0.2F);
@@ -127,14 +127,14 @@ public class ItemElementalShovel extends Item implements IArchitect {
         FXDispatcher.INSTANCE.drawBamf(p2, 8401408, false, false, side);
         Player player = ctx.getPlayer();
         if (player != null) {
-            // NEOFORGE_PORT: 1-arg LivingEntity.swing REMOVED -> swing(hand, animation, serverAware).
+            
             player.swing(ctx.getHand(), SwingAnimation.DEFAULT, false);
         }
     }
 
-    // NEOFORGE_PORT: isValidRepairItem(ItemStack, ItemStack) REMOVED from Item in 26.x;
-    // repair is now data-driven via the ToolMaterial repairItems tag (repairs_thaumium)
-    // -> REPAIRABLE component, so no override is needed (or possible).
+    
+    
+    
 
     @Override
     public BlockHitResult getArchitectMOP(ItemStack stack, Level level, LivingEntity player) {

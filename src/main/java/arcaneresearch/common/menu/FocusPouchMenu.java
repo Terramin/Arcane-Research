@@ -3,13 +3,13 @@ package arcaneresearch.common.menu;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
-// NEOFORGE_PORT: net.minecraft.world.ContainerListener removed; plain containerChanged kept below.
+
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput; // NEOFORGE_PORT: ContainerInput -> ContainerInput
+import net.minecraft.world.inventory.ContainerInput; 
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import arcaneresearch.common.items.casters.ItemFocus;
@@ -17,7 +17,7 @@ import arcaneresearch.common.items.casters.ItemFocusPouch;
 import arcaneresearch.common.menu.slot.FocusSlot;
 import arcaneresearch.init.ModMenuTypes;
 
-public class FocusPouchMenu extends AbstractContainerMenu /* NEOFORGE_PORT: implements ContainerListener removed */ {
+public class FocusPouchMenu extends AbstractContainerMenu    {
 
     public static final int POUCH_SIZE = 18;
 
@@ -51,9 +51,9 @@ public class FocusPouchMenu extends AbstractContainerMenu /* NEOFORGE_PORT: impl
                 return !stack.isEmpty() && stack.getItem() instanceof ItemFocus;
             }
 
-            // NEOFORGE_PORT: ContainerListener removed in 26.x; Forge did
-            // pouchInventory.addListener(this) so edits called containerChanged ->
-            // broadcastChanges. Same behavior via setChanged override (slots call it).
+            
+            
+            
             @Override
             public void setChanged() {
                 super.setChanged();
@@ -87,7 +87,7 @@ public class FocusPouchMenu extends AbstractContainerMenu /* NEOFORGE_PORT: impl
         }
     }
 
-    // NEOFORGE_PORT: @Override dropped with ContainerListener
+    
 
     public void containerChanged(Container container) {
         broadcastChanges();

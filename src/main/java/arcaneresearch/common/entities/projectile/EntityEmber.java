@@ -30,7 +30,7 @@ public class EntityEmber extends ThrowableItemProjectile {
     public EntityEmber(EntityType<? extends EntityEmber> type, Level level, LivingEntity owner, float scatter) {
         super(type, level);
         setOwner(owner);
-        // NEOFORGE_PORT (26.3): Forge super(type, owner, level) also placed the ember at the owner's eyes.
+        
         setPos(owner.getX(), owner.getEyeY() - 0.1F, owner.getZ());
         setItem(new ItemStack(getDefaultItem()));
         this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0.0F, this.getGravityVelocity(), scatter);
@@ -85,8 +85,8 @@ public class EntityEmber extends ThrowableItemProjectile {
         }
         if (!this.level().isClientSide()) {
             if (hit instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity living) {
-                // NEOFORGE_PORT (26.3): Entity.hurt is void -> hurtServer keeps the boolean, so fire is
-                // only applied when the hit landed; setSecondsOnFire -> igniteForSeconds (no shortening).
+                
+                
                 if (!living.isDeadOrDying() && this.level() instanceof net.minecraft.server.level.ServerLevel sl
                         && living.hurtServer(sl, this.damageSources().indirectMagic(this, this.getOwner() instanceof LivingEntity o ? o : this), this.damage)) {
                     living.igniteForSeconds(3 + this.firey);
@@ -109,7 +109,7 @@ public class EntityEmber extends ThrowableItemProjectile {
         this.discard();
     }
 
-    // NEOFORGE_PORT: 26.x canBeCollidedWith takes the colliding entity.
+    
     @Override
     public boolean canBeCollidedWith(net.minecraft.world.entity.Entity other) {
         return false;

@@ -281,9 +281,9 @@ public class FocusEngine {
                             if (target instanceof net.minecraft.world.phys.EntityHitResult ehr
                                     && ehr.getEntity() != null) {
                                 String k = ehr.getEntity().getId() + focusPackage.getUniqueID().toString();
-                                // NEOFORGE_PORT (26.3): Entity.invulnerableTime is private in 26.x ->
-                                // public getInvulnerableTime()/setInvulnerableTime() (same field; the
-                                // damage-immunity window, NOT the cosmetic LivingEntity.hurtTime).
+                                
+                                
+                                
                                 if (damageResistList.contains(k) && ehr.getEntity().getInvulnerableTime() > 0) {
                                     ehr.getEntity().setInvulnerableTime(0);
                                 } else {

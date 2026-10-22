@@ -7,21 +7,21 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT (26.3): model shared by guardian + warden renderers via the
-// common GuardianState (arm lifts); concrete EntityModel<GuardianState>.
+
+
 public class EldritchGuardianModel extends EntityModel<EldritchGuardianModel.GuardianState> {
 
     public static class GuardianState extends LivingEntityRenderState {
         public float armLiftR;
         public float armLiftL;
-        // NEOFORGE_PORT (26.3): Forge model.renderAlpha (ghost fade), applied as model tint.
+        
         public float ghostAlpha = 1.0F;
     }
 
@@ -92,8 +92,8 @@ public class EldritchGuardianModel extends EntityModel<EldritchGuardianModel.Gua
         this.beltL = root.getChild("belt_l");
         this.chestplate = root.getChild("chestplate");
         this.hoodEye = root.getChild("hood_eye");
-        // NEOFORGE_PORT (26.3): Forge renderToBuffer skipped hood_eye (renderEye unused);
-        // the final root render would draw every root child, so hide it.
+        
+        
         this.hoodEye.visible = false;
         this.hood1 = root.getChild("hood1");
         this.hood2 = this.hood1.getChild("hood2");
@@ -249,14 +249,14 @@ public class EldritchGuardianModel extends EntityModel<EldritchGuardianModel.Gua
         part.render(poseStack, consumer, packedLight, packedOverlay, net.minecraft.util.ARGB.colorFromFloat(a, r, g, b));
     }
 
-    /**
-     * Общий множитель альфы вершин, выставляется рендерером перед рендером.
-     * Дистанционный фейд гардиана (0.6 → 0) идёт через него — рендер-тайп
-     * entityTranslucent уважает вершинную альфу (как призрачная слизь).
-     */
+     
+
+
+
+ 
     public float renderAlpha = 1.0f;
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
         float r = red, g = green, b = blue, a = alpha * renderAlpha;

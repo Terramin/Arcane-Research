@@ -5,15 +5,15 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.entity.CrossbowModel;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
 
-// NEOFORGE_PORT (26.3): load progress + swing phase via State (swing from
-// ArmedEntityRenderState.swingAnimation; LivingEntity.getAttackAnim gone).
-// yBodyRot zeroing moved to extract (was render()).
+
+
+
 public class TurretCrossbowRenderer extends MobRenderer<EntityTurretCrossbow, TurretCrossbowRenderer.State, CrossbowModel> {
 
     public static class State extends ArmedEntityRenderState {

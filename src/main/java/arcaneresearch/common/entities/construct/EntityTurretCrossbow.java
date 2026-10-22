@@ -57,14 +57,14 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     protected float prevLoadProgress = 0.0f;
     protected boolean attackedLastTick = false;
     protected int attackCount = 0;
-    // NEOFORGE_PORT: LivingEntity.swinging/swingTime removed in 26.x (private SwingState);
-    // this class drives its own swing timing for the draw animation, kept as local fields 1:1.
+    
+    
     protected boolean swinging;
     protected int swingTime;
 
     public EntityTurretCrossbow(EntityType<? extends EntityTurretCrossbow> type, Level level) {
         super(type, level);
-        // NEOFORGE_PORT: setMaxUpStep removed in 26.x -> STEP_HEIGHT attribute (Thaumaturge oracle).
+        
         var stepHeight = getAttribute(Attributes.STEP_HEIGHT);
         if (stepHeight != null) {
             stepHeight.setBaseValue(0.0);
@@ -105,8 +105,8 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             arrow.setBaseDamage(2.25 + distanceFactor * 2.0 + random.nextGaussian() * 0.25);
 
             if (ammo.getItem() == Items.TIPPED_ARROW) {
-                // NEOFORGE_PORT: Arrow.setEffectsFromItem removed (setPotionContents is
-                // private) -> copy PotionContents effects via public addEffect, same result.
+                
+                
                 var contents = ammo.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
                 if (contents != null) {
                     contents.forEachEffect(arrow::addEffect, 1.0F);
@@ -172,8 +172,8 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         return prevLoadProgress + diff * partialTicks;
     }
 
-    // NEOFORGE_PORT: LivingEntity.getAttackAnim gone; the local swing fields
-    // drive the same 0..1 shoot-flex phase for the render states.
+    
+    
     public float getShootSwingPhase(float partialTicks) {
         return swinging && swingTime >= 0
                 ? Math.min(1.0F, (swingTime + partialTicks) / 6.0F) : 0.0F;
@@ -262,7 +262,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             updateSwingProgress();
         }
     }
-    // NEOFORGE_PORT: getStandingEyeHeight removed in 26.3 (eye height via EntityDimensions.withEyeHeight).
+    
 
     @Override
     public boolean isPushable() {
@@ -288,11 +288,11 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         return super.hurtServer(serverLevel, source, amount);
     }
 
-    // NEOFORGE_PORT: LivingEntity.knockback gained (DamageSource, damage, comesFromEffect) in 26.x;
-    // damped-turret behavior kept (1/10th horizontal push + upward clamp).
-    // NEOFORGE_PORT (26.3): override the 6-arg variant -- the 5-arg one delegates to it, but attack
-    // knockback (causeExtraKnockback, Player sprint/enchant) calls the 6-arg one directly; in Forge
-    // every path went through the single 3-arg knockback.
+    
+    
+    
+    
+    
     @Override
     public void knockback(double strength, double x, double z, DamageSource source, float damage, boolean comesFromEffect) {
         super.knockback(strength, x / 10.0, z / 10.0, source, damage, comesFromEffect);
@@ -364,8 +364,8 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean recentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, recentlyHit);
         float bonus = looting * 0.15f;

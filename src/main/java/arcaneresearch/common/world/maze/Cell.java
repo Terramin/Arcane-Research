@@ -2,8 +2,8 @@ package arcaneresearch.common.world.maze;
 
 import arcaneresearch.common.lib.utils.Utils;
 
-// Pure-java maze cell: wall flags pack into a short with the feature id in the high byte.
-// No Minecraft dependencies; ported verbatim from 1.8.9.
+
+
 public class Cell {
     public boolean north;
     public boolean south;

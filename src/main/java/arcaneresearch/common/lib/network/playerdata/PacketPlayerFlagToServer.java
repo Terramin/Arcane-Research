@@ -8,10 +8,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/playerdata/PacketPlayerFlagToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:player_flag_to_server".
+
+
+
+
 public class PacketPlayerFlagToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketPlayerFlagToServer> TYPE =

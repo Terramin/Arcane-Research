@@ -10,8 +10,8 @@ public class ItemBathSalts extends Item {
         super(props);
     }
 
-    // NEOFORGE_PORT: no change needed - getEntityLifespan(ItemStack, Level) survives in 26.x
-    // as an IItemExtension default, so this override still compiles as-is.
+    
+    
     @Override
     public int getEntityLifespan(ItemStack itemStack, Level level) {
         return 200;

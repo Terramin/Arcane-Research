@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-// NEOFORGE_PORT: 1:1 logic (empty-guard + item/decorations draw). GL blend save/restore
-// removed (pipelines own state now); GuiGraphics.item/itemDecorations -> extractor.
+
+
 @OnlyIn(Dist.CLIENT)
 public final class GuiRenderHelper {
 

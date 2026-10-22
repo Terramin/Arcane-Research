@@ -10,12 +10,12 @@ import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aura.AuraHelper;
 
-/**
- * Pull totem, ported from TC5 TileAuraTotemPull.
- * Drains vis far away and releases it near the totem, with a flux
- * pollution gamble. Aspect-aura calls of TC5 map onto this port's
- * vis/flux aura API.
- */
+ 
+
+
+
+
+ 
 public class AuraTotemPullTile extends AuraTotemTile {
     public AuraTotemPullTile(BlockEntityType<?> tileType, BlockPos pos, BlockState state) {
         super(tileType, pos, state);

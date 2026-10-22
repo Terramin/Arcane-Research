@@ -20,18 +20,18 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.material.MapColor;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge common/blocks/world/plants/BlockSaplingTC.java.
-// REQUIRED changes (vanilla 26.x, verified via javap/javap -c on 26.3.0.23-beta):
-//   - AbstractTreeGrower (subclassable) -> TreeGrower (final, data-key based).
-//     Anonymous growers become `new TreeGrower(name, trees, megaTrees, flowerTrees,
-//     shortestTreeType)`; single-tree growers put their key in `trees` and as shortest.
-//     Feature keys resolve via Registries.FEATURE (ConfiguredFeature registry removed;
-//     ids arcaneresearch:greatwood_tree/big_magic_tree/big_silverwood_tree match
-//     ModFeatures registrations).
-//   - advanceTree 2x2 logic: same shape, Registries.FEATURE holder lookup.
-//   - LevelReader.getRandom() -> getRandom() (protected field).
-// getCloneItemStack/getFlammability/getFireSpreadSpeed/isValidBonemealTarget unchanged
-// (vanilla/IBlockExtension signatures kept).
+
+
+
+
+
+
+
+
+
+
+
+
 public class BlockSaplingTC extends SaplingBlock {
 
     public BlockSaplingTC(TreeGrower treeGrower, Properties properties) {
@@ -44,9 +44,9 @@ public class BlockSaplingTC extends SaplingBlock {
         return new TreeGrower(name, WeightedList.of(key), WeightedList.of(), WeightedList.of(), key);
     }
 
-    // NEOFORGE_PORT: Forge grew the 2x2 greatwood mega-tree (big_magic_tree) in a
-    // custom advanceTree. 26.x TreeGrower handles 2x2 mega-trees itself via the
-    // megaTrees list, so the grower carries both keys and no override is needed.
+    
+    
+    
     private static TreeGrower megaTreeGrower(String name, String featurePath, String megaFeaturePath) {
         var key = ResourceKey.create(Registries.FEATURE,
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, featurePath));
@@ -104,9 +104,9 @@ public class BlockSaplingTC extends SaplingBlock {
         return true;
     }
 
-    // NEOFORGE_PORT (26.3): the TreeGrower above places the 2x2 greatwood mega-tree
-    // (big_magic_tree), but SaplingBlock.advanceTree only reaches it at STAGE 1. The reference
-    // advanceTree grew a complete 2x2 immediately (no stage step), so that shortcut is kept.
+    
+    
+    
     @Override
     public void advanceTree(net.minecraft.server.level.ServerLevel level, BlockPos pos, BlockState state, RandomSource random) {
         if (this == arcaneresearch.init.ModBlocks.GREATWOOD_SAPLING.get()) {

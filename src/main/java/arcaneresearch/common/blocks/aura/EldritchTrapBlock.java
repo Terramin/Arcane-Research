@@ -15,10 +15,10 @@ import arcaneresearch.common.blocks.aura.AuraBlockEntities;
 
 import javax.annotation.Nullable;
 
-/**
- * Элдритч-ловушка, порт TC4 blockEldritch meta 10 (TileEldritchTrap).
- * Нерушима, бьёт током с варпом зазевавшихся. Лежит в arcaneresearch.arcaneresearch.common.blocks.aura.
- */
+ 
+
+
+ 
 public class EldritchTrapBlock extends BaseEntityBlock {
     public EldritchTrapBlock(BlockBehaviour.Properties props) {
         super(props

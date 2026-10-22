@@ -16,10 +16,10 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXWispZap.java (PLAY_TO_CLIENT).
-// Fields/ctors/handleClient logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:fx_wisp_zap".
+
+
+
+
 public class PacketFXWispZap implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXWispZap> TYPE =

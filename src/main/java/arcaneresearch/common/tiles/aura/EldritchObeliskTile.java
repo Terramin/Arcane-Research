@@ -16,12 +16,12 @@ import java.util.List;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-/**
- * Тайл обелиска, порт TC4 TileEldritchObelisk (через TC5):
- * сервер — каждые 20 тиков вешает баффы на элдритч-мобов в радиусе 6;
- * клиент — тянучки-виспы от пилона к мобам (TC4 wispFX4).
- * Лежит в arcaneresearch.arcaneresearch.common.tiles.aura.
- */
+ 
+
+
+
+
+ 
 public class EldritchObeliskTile extends TileArcaneresearch {
     private int counter = 0;
 
@@ -52,7 +52,7 @@ public class EldritchObeliskTile extends TileArcaneresearch {
                 if (!(entity instanceof IEldritchMob)) {
                     continue;
                 }
-                // 1:1 с TC5 (порт 1.8.9): бафф только если нет регенерации.
+                
                 if (entity.hasEffect(MobEffects.REGENERATION)) {
                     continue;
                 }
@@ -83,7 +83,7 @@ public class EldritchObeliskTile extends TileArcaneresearch {
                     continue;
                 }
                 try {
-                    // TC4: Arcaneresearch.proxy.wispFX4(world, x+0.5, y+1+rand*3, z+0.5, e, 5, true, 1.0F).
+                    
                     arcaneresearch.client.fx.FXDispatcher.INSTANCE.wispFXEG(
                             this.worldPosition.getX() + 0.5D,
                             this.worldPosition.getY() + 1.0D + level.getRandom().nextFloat() * 3.0F,
@@ -96,11 +96,11 @@ public class EldritchObeliskTile extends TileArcaneresearch {
         }
     }
 
-    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox removed in 26.x; kept as
-    // a plain bounds helper (EldritchObeliskRenderer opts out of frustum
-    // culling via shouldRenderOffScreen, so vanilla never needs this).
+    
+    
+    
     public AABB getRenderBoundingBox() {
-        // 1:1 с TC5 (границы рендера пилона y..y+5).
+        
         return new AABB(this.worldPosition.getX() - 0.3D, this.worldPosition.getY() - 0.3D,
                 this.worldPosition.getZ() - 0.3D, this.worldPosition.getX() + 1.3D,
                 this.worldPosition.getY() + 5.3D, this.worldPosition.getZ() + 1.3D);

@@ -6,21 +6,21 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.discovered.scan.ScanWallet;
 import arcaneresearch.discovered.scan.MsgWalletRequest;
 
-/**
- * Хранилище hex-стола в одном месте: списание (кошелёк игрока, затем
- * бонус открытого тайла) и пуш синка клиенту. Паритет ветвей
- * {@code placeAspect} / {@code PacketAspectCombinationToServer} оригинала
- * (без перков и ab-флагов клиента).
- *
- * NEOFORGE_PORT: 1:1 из Forge 1.20.1 (транспорт — через MsgWalletRequest.push,
- * см. ScanNetwork).
- */
+ 
+
+
+
+
+
+
+
+ 
 public final class HexEconomy {
 
     private HexEconomy() {
     }
 
-    /** Тайл открытого меню (null у прототипа без блока — бонуса нет). */
+      
     public static HexNoteTableTile openTile(ServerPlayer player) {
         try {
             if (player != null && player.containerMenu instanceof HexResearchTableMenu menu
@@ -32,10 +32,10 @@ public final class HexEconomy {
         return null;
     }
 
-    /**
-     * Списать очко аспекта: кошелёк, затем бонус тайла.
-     * Частичная оплата возможна (как в оригинале, без рефанда).
-     */
+     
+
+
+ 
     public static boolean takeAspect(ServerPlayer player, Aspect aspect) {
         return takeAspect(player, openTile(player), aspect);
     }
@@ -68,7 +68,7 @@ public final class HexEconomy {
         return false;
     }
 
-    /** Отправить игроку снимок хранилища (после каждой мутации). */
+      
     public static void push(ServerPlayer player) {
         try {
             MsgWalletRequest.push(player);

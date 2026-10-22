@@ -6,19 +6,19 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Регистрация сети мини-игры исследовательского стола (стадия 2).
- * Ничего в проектной регистрации пакетов не трогает: свои сообщения.
- * Серверная привязка к реальному тайлу/меню стола — вопрос отдельно;
- * источником записки на сервере служит предмет в слоте меню
- * (см. хендлеры).
- *
- * NEOFORGE_PORT: отдельный SimpleChannel "hex_table" -&gt; те же payload-id
- * в общем реестре мода (свой RegisterPayloadHandlersEvent-регистратор,
- * тот же modid/version "1", что у PacketHandler; типы не пересекаются).
- * Отправки: сервер -&gt; PacketHandler.sendToPlayer, клиент -&gt;
- * PacketHandler.sendToServer (см. Msg*).
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class HexTableNetwork {
 

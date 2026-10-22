@@ -14,14 +14,14 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.helper.TintHelper;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors wisp-essence entry 1:1.
-// Forge bound one lambda (RegisterColorHandlersEvent.Item, now removed) to
-// WISP_ESSENCE: 0xFF000000 | TintHelper.wispEssenceAspect(stack) for any tintIndex.
-// 26.x item tints are data-driven ItemTintSource records wired per item via the
-// "tints" array in assets/arcaneresearch/items/wisp_essence.json (index = tintIndex,
-// same pattern as Crystal/Jar/Nitor/Banner tint sources).
-// Opaque OR (0xFF000000 |): Forge ItemColors ignored alpha (RGB only); 26.3 tint
-// layers are ARGB, so alpha is forced for the same visible result.
+
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class WispEssenceTintSources {
 

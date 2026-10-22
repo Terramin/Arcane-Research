@@ -21,12 +21,12 @@ import arcaneresearch.common.tiles.aura.TileNodeEnergized;
 import javax.annotation.Nullable;
 import java.util.Locale;
 
-/**
- * Airy staging block, ported from TC4 BlockAiry node-holder metas.
- * Invisible intangible block used by the node converter transition:
- * AIR is plain, STAGING holds the node being converted. Staging tiles
- * stay frozen (no ticker); the converter swaps them out after the delay.
- */
+ 
+
+
+
+
+ 
 public class BlockAiry extends BaseEntityBlock {
     public static final EnumProperty<AiryType> TYPE =
             EnumProperty.create("type", AiryType.class);

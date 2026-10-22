@@ -17,14 +17,14 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.init.ModBlocks;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors leaf/grass entries 1:1.
-// Forge delegated both to the block colors with (null, null) level/pos:
-//   leaves -> silverwood white, else FoliageColor.getDefaultColor();
-//   grass_ambient -> GrassColor.get(0.5, 1.0).
-// Same values here (inventory has no level, matching the Forge null-level path).
-// FoliageColor.getDefaultColor() is gone in 26.x; FOLIAGE_DEFAULT holds the same
-// value (verified constant in the 26.3 client jar). Opaque OR: same ARGB transport
-// adaptation as the other tint sources.
+
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class FoliageTintSources {
 

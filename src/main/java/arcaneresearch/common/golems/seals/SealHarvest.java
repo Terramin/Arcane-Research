@@ -145,8 +145,8 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
                         if (seed != null && !seed.isEmpty()) {
                             BlockState below = level.getBlockState(task.getPos().below());
                             Direction rf = null;
-                            // NEOFORGE_PORT: forge IPlantable removed; seeds are BlockItems whose
-                            // crop block sustains via BlockState.canSustainPlant (now TriState).
+                            
+                            
                             if (seed.getItem() instanceof net.minecraft.world.item.BlockItem seedBlock
                                     && below.canSustainPlant(level, task.getPos().below(), Direction.UP,
                                             seedBlock.getBlock().defaultBlockState()).toBoolean(true)) {
@@ -265,8 +265,8 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
 
     @Override
     public void readCustomNBT(CompoundTag nbt) {
-        // NEOFORGE_PORT: 1:1 from Forge; ItemStack.of/save removed ->
-        // ItemStack.CODEC nested under "seed" (was flat-merged into the task tag).
+        
+        
         ListTag list = nbt.getListOrEmpty("replant");
         for (int i = 0; i < list.size(); i++) {
             CompoundTag tag = list.getCompoundOrEmpty(i);
@@ -292,7 +292,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
                 tag.putLong("taskloc", info.pos.asLong());
                 tag.putByte("taskface", (byte) info.face.ordinal());
                 tag.putBoolean("farmland", info.farmland);
-                // NEOFORGE_PORT: ItemStack.save removed -> CODEC (see readCustomNBT).
+                
                 ItemStack.CODEC.encodeStart(SealHandler.nbtOps(), info.seed)
                         .result().ifPresent(encoded -> tag.put("seed", encoded));
                 list.add(tag);

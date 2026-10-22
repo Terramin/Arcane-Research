@@ -8,7 +8,7 @@ import arcaneresearch.client.fx.particles.TCSprites;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 
-// NEOFORGE_PORT: camera quad -> base SingleQuadParticle.extract.
+
 public class FXSlimyBubble extends SingleQuadParticle {
 
     private int particle = 144;

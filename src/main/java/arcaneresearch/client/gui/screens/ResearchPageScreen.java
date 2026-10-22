@@ -1,13 +1,13 @@
 package arcaneresearch.client.gui.screens;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -83,7 +83,7 @@ public class ResearchPageScreen extends Screen {
     private boolean[] hasResearch;
     private boolean[] hasKnow;
     private boolean[] hasDiscovery;
-    /** Текст стадии зашифрован: требует непредъявленное открытие. */
+      
     private boolean discoveryLocked = false;
     private boolean showingAspects = false;
     private boolean showingKnowledge = false;
@@ -126,16 +126,16 @@ public class ResearchPageScreen extends Screen {
     }
 
     private static void blitBlend() {
-        // NEOFORGE_PORT: blend state is pipeline-owned in 26.x; kept as no-op
-        // so Forge 1:1 call sites (checkmark overlays) still read the same.
+        
+        
     }
 
     public static String findCraftingRecipe(Player player, ItemStack stack) {
         if (stack.isEmpty() || player == null) {
             return null;
         }
-        // NEOFORGE_PORT: ItemStack.serializeNBT gone in 26.x -> stable key from
-        // item id + components hash (cache key only, format not persisted).
+        
+        
         int key = (stack.getItem().toString() + "#" + stack.getComponents().hashCode()).hashCode();
         if (keyCache.containsKey(key)) {
             return keyCache.get(key);
@@ -154,10 +154,10 @@ public class ResearchPageScreen extends Screen {
                         for (int g = 0; g < members.size(); g++) {
                             int result = findRecipePage(player, members.get(g), stack);
                             if (result != -1) {
-                                // Рецепт есть, но исследование закрыто: clickthrough
-                                // не даём (потребитель всё равно игнорирует ref без ';').
-                                // Раньше тут был Identifier.fromNamespaceAndPath(MODID, "UNKNOWN") —
-                                // краш: заглавные буквы запрещены в путях 1.20.
+                                
+                                
+                                
+                                
                                 if (result == -99) {
                                     keyCache.put(key, null);
                                     return null;
@@ -182,7 +182,7 @@ public class ResearchPageScreen extends Screen {
         }
         var level = Minecraft.getInstance().level;
         if (recipe == null && level != null) {
-            // NEOFORGE_PORT: client getRecipeManager gone -> ClientRecipeCache (unwrap holder).
+            
             var byKey = arcaneresearch.common.lib.crafting.ClientRecipeCache.byKey(rk);
             if (byKey.isPresent()) {
                 recipe = byKey.get().value();
@@ -217,15 +217,15 @@ public class ResearchPageScreen extends Screen {
             return gateByResearch(player, infusionType.getResearch());
         }
         if (recipe instanceof IArcaneRecipe arcane && level != null) {
-            // NEOFORGE_PORT: IArcaneRecipe.getResultItem() is no-arg in 26.x.
+            
             if (!arcane.getResultItem().is(stack.getItem())) {
                 return -1;
             }
             return gateByResearch(player, arcane.getResearch());
         }
         if (recipe instanceof net.minecraft.world.item.crafting.CraftingRecipe crafting && level != null) {
-            // NEOFORGE_PORT: CraftingRecipe.getResultItem(RegistryAccess) gone ->
-            // display API (null = unresolvable, skip like Forge's EMPTY).
+            
+            
             net.minecraft.world.item.ItemStack craftingOut =
                     arcaneresearch.common.lib.crafting.ClientRecipeCache.displayResultStack(crafting);
             if (craftingOut == null || craftingOut.isEmpty() || !craftingOut.is(stack.getItem())) {
@@ -286,7 +286,7 @@ public class ResearchPageScreen extends Screen {
         super.init();
 
         player = Objects.requireNonNull(minecraft).player;
-        // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+        
         playerKnowledge = ArcaneresearchCapabilities.getKnowledge(Objects.requireNonNull(player));
 
         parsePages();
@@ -436,7 +436,7 @@ public class ResearchPageScreen extends Screen {
             recipe = CommonInternals.getCatalogRecipeFake(rk);
         }
         if (recipe == null && minecraft != null && minecraft.level != null) {
-            // NEOFORGE_PORT: client getRecipeManager gone -> ClientRecipeCache (unwrap holder).
+            
             var byKey = arcaneresearch.common.lib.crafting.ClientRecipeCache.byKey(rk);
             if (byKey.isPresent()) {
                 recipe = byKey.get().value();
@@ -505,7 +505,7 @@ public class ResearchPageScreen extends Screen {
                 }
                 if (is == null) {
                     is = base.copy();
-                    // NEOFORGE_PORT: ItemStack.addTagElement gone -> CUSTOM_DATA merge.
+                    
                     Object[] obj = (Object[]) infusion.getRecipeOutput();
                     if (obj[0] instanceof String tagKey && obj[1] instanceof net.minecraft.nbt.Tag tagVal) {
                         net.minecraft.nbt.CompoundTag custom =
@@ -521,7 +521,7 @@ public class ResearchPageScreen extends Screen {
                 outs.add(is);
             }
         } else if (recipe instanceof IArcaneRecipe arcane && minecraft != null && minecraft.level != null) {
-            // NEOFORGE_PORT: IArcaneRecipe.getResultItem() is no-arg in 26.x.
+            
             ItemStack is = InventoryUtils.cycleItemStack(
                     arcane.getResultItem(), 0);
             if (is != null && !is.isEmpty() && !isGated(arcane.getResearch())) {
@@ -530,9 +530,9 @@ public class ResearchPageScreen extends Screen {
             }
         } else if (recipe instanceof net.minecraft.world.item.crafting.CraftingRecipe crafting
                 && minecraft != null && minecraft.level != null) {
-            // NEOFORGE_PORT: CraftingRecipe.getResultItem(RegistryAccess) gone -> display API
-            // (Forge parity: getResultItem never returns null, EMPTY at worst — a null hole
-            // in outs desyncs drawBookmarks tabs from mouseClicked zones and opens wrong/empty modals).
+            
+            
+            
             net.minecraft.world.item.ItemStack craftingOut =
                     arcaneresearch.common.lib.crafting.ClientRecipeCache.displayResultStack(crafting);
             list.add(crafting);
@@ -685,7 +685,7 @@ public class ResearchPageScreen extends Screen {
             if (!line.isEmpty()) {
                 line = line.trim();
                 boolean big = line.endsWith("~B");
-                // До предъявления открытия текст стадии — шифр (ширина та же).
+                
                 page.contents.add(discoveryLocked ? "§k" + line + "§r" : line);
                 heightRemaining -= lineHeight;
                 if (big) {
@@ -762,7 +762,7 @@ public class ResearchPageScreen extends Screen {
             }
         }
 
-        // NEOFORGE_PORT (discovered/*, Forge 1:1).
+        
         if (stage.getDiscovery() != null) {
             hasDiscovery = new boolean[stage.getDiscovery().length];
             for (int i = 0; i < stage.getDiscovery().length; i++) {
@@ -791,7 +791,7 @@ public class ResearchPageScreen extends Screen {
         } else if (required instanceof String tagName) {
             try {
                 TagKey<Item> tag = TagKey.create(Registries.ITEM, Identifier.parse(tagName));
-                // NEOFORGE_PORT: Inventory.items приватны в 26.x -> Container-API.
+                
                 var inventory = player.getInventory();
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
                     ItemStack stack = inventory.getItem(i);
@@ -847,13 +847,13 @@ public class ResearchPageScreen extends Screen {
         return lines;
     }
 
-    // NEOFORGE_PORT: plain-Screen drawing lives in extractBackground (base handles
-    // background/widgets/deferred tooltips).
-        // NEOFORGE_PORT: Screen.extractBackground is public in 26.x.
+    
+    
+        
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        // NEOFORGE_PORT (26.3): isInGameUi() -> super draws exactly the 1.20.1 in-world
-        // renderBackground gradient (no blur / menu texture, no second gradient).
+        
+        
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
         int sw = (width - PANE_WIDTH) / 2;
@@ -1016,9 +1016,9 @@ public class ResearchPageScreen extends Screen {
                     lineY += (int) (font.lineHeight * 0.66);
                 }
             } else if (content instanceof PageImage pi) {
-                // NEOFORGE_PORT (Forge 1:1): Forge enabled blend before the <IMG>
-                // blit and disabled it after; 26.3 blend is pipeline-owned, so this
-                // is a no-op call kept for 1:1 call-site parity.
+                
+                
+                
                 blitBlend();
                                 int pad = (140 - pi.aw) / 2;
                 graphics.pose().pushMatrix();
@@ -1059,11 +1059,11 @@ public class ResearchPageScreen extends Screen {
         return null;
     }
 
-    /**
-     * Изометрия структуры (порт reforged drawCompoundPage):
-     * два прохода не нужны — предметы рисуются painter's algorithm
-     * снизу вверх, тултип — имя блока под курсором.
-     */
+     
+
+
+
+ 
     private List<net.minecraft.network.chat.Component> drawStructure(GuiGraphicsExtractor graphics,
             PageStructure ps, int x, int y, int mouseX, int mouseY) {
         List<net.minecraft.network.chat.Component> tip = null;
@@ -1143,8 +1143,8 @@ public class ResearchPageScreen extends Screen {
             int sh2 = rng.nextInt(3);
             boolean hover = mx >= sw + 280 && my >= y - 1 && mx < sw + 310 && my < y + 15;
             int le = rng.nextInt(3) + (hover ? 0 : 3);
-                // NEOFORGE_PORT: Forge setShaderColor(1, 0.5, 0.5) on the open
-                // bookmark tab -> pink ARGB tint.
+                
+                
                 int tabTint = rk.equals(shownRecipe) ? 0xFFFF8080 : 0xFFFFFFFF;
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, sw + 280 + sh2, y - 1, 120 + le, 232, 28, 16, 256, 256, tabTint);
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, sw + 280 + sh2, y - 1, 116, 232, 4, 16, 256, 256, tabTint);
@@ -1269,7 +1269,7 @@ public class ResearchPageScreen extends Screen {
             }
         }
 
-        // NEOFORGE_PORT (discovered/*, Forge 1:1, extractor-API): ряд требований-открытий.
+        
         if (stage.getDiscovery() != null && stage.getDiscovery().length > 0) {
             y -= 18;
             hasRows = true;
@@ -1379,7 +1379,7 @@ public class ResearchPageScreen extends Screen {
                     graphics.text(font, s, sw + 52 - Math.round(font.width(s) / 2f), y - 4, 0xFFFFFFFF, true);
                 } else {
                     boolean hover = mx >= reqBtnX && my >= reqBtnY && mx < reqBtnX + 64 && my < reqBtnY + 12;
-                                // NEOFORGE_PORT: Forge setShaderColor(1,1,1) / !hover (0.8,0.8,0.9) -> ARGB.
+                                
                                 int btnTint = hover ? 0xFFFFFFFF : 0xFFCCCCE5;
                                 graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, reqBtnX, reqBtnY, 84, 216, 64, 12, 256, 256, btnTint);
                                 String s = Component.translatable("tc.stage.complete").getString();
@@ -1399,15 +1399,15 @@ public class ResearchPageScreen extends Screen {
     private void drawReqIconTinted(GuiGraphicsExtractor graphics, ItemStack cycled, Object loc,
                                    int ix, int iy, float r, float g) {
 
-        // NEOFORGE_PORT: Forge setShaderColor(r, g, 1) tint on the texture
-        // branches (aspect branch used its own color instead) -> ARGB colors.
+        
+        
         int dimTint = 0xFF000000 | ((int) (r * 255.0f) << 16)
                 | ((int) (g * 255.0f) << 8) | 0xFF;
         if (loc instanceof Aspect aspect) {
                 java.awt.Color cc = new java.awt.Color(aspect.getColor());
                 int aspectTint = 0xFF000000 | (cc.getRed() << 16) | (cc.getGreen() << 8) | cc.getBlue();
-                // NEOFORGE_PORT (Forge 1:1): Forge strips the aspect bg here via
-                // UtilsFX.strippedAspectTexture instead of drawing the raw image.
+                
+                
                 graphics.blit(RenderPipelines.GUI_TEXTURED,
                         arcaneresearch.client.lib.UtilsFX.strippedAspectTexture(aspect.getImage()),
                         ix, iy, 0, 0, 16, 16, 16, 16, aspectTint);
@@ -1441,7 +1441,7 @@ public class ResearchPageScreen extends Screen {
         }
     }
 
-            // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+            
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();
@@ -1586,12 +1586,12 @@ public class ResearchPageScreen extends Screen {
         return super.mouseClicked(event, doubleClick);
     }
 
-        // NEOFORGE_PORT: key codes via KeyEvent.key().
+        
     @Override
     public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
 
-        // NEOFORGE_PORT (26.3): KeyEvent.key() is an InputConstants (SDL scancode) value, not
-        // GLFW: 256/259/262-267 -> KEY_ESCAPE/BACKSPACE/RIGHT/LEFT/DOWN/UP/PAGEUP/PAGEDOWN.
+        
+        
         if (minecraft != null && (event.key() == com.mojang.blaze3d.platform.InputConstants.KEY_ESCAPE
                 || event.key() == minecraft.options.keyInventory.getKey().getValue())) {
             history.clear();
@@ -1645,7 +1645,7 @@ public class ResearchPageScreen extends Screen {
         }
     }
 
-    // NEOFORGE_PORT: mouseScrolled(double,double,double) -> (double,double,double,double).
+    
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (scrollY < 0) {
@@ -1729,7 +1729,7 @@ public class ResearchPageScreen extends Screen {
                                             graphics.pose().pushMatrix();
                     graphics.pose().translate(x - 2, ty - 2);
                     graphics.pose().scale(2f, 2f);
-                    // NEOFORGE_PORT: Forge setShaderColor(1,1,1,0.5) soft highlight -> 50% ARGB.
+                    
                     graphics.blit(RenderPipelines.GUI_TEXTURED, BACK_TEX, 0, 0, 0, 0, 16, 16, 64, 64, 0x80FFFFFF);
                     graphics.pose().popMatrix();
                                 tip = List.of(Component.literal(aspect.getName()));
@@ -1757,7 +1757,7 @@ public class ResearchPageScreen extends Screen {
                         if (knownComp) {
                             AspectRenderer.drawAspect(graphics, 0, 0, comp[c]);
                         } else {
-                            // NEOFORGE_PORT: Forge setShaderColor(0.8,0.8,0.8) muted combo -> gray ARGB.
+                            
                                                         graphics.blit(RenderPipelines.GUI_TEXTURED, DUMMY_RESEARCH, 0, 0, 0, 0, 16, 16, 16, 16, 0xFFCCCCCC);
                                                 }
                         graphics.pose().popMatrix();
@@ -1833,9 +1833,9 @@ public class ResearchPageScreen extends Screen {
                         String s = "" + amt;
                 int m = font.width(s);
 
-                // NEOFORGE_PORT: Forge translate(0, 0, 200) lifted the amount
-                // above the icons/progress bars; the 2D stack has no z, so the
-                // text submits AFTER the bars (painter's order = same result).
+                
+                
+                
                 String label = Component.translatable("tc.type." + type.toString().toLowerCase()).getString();
                 if (type.hasFields() && category != null) {
                     label += ": " + ResearchCategories.getCategoryName(category.key).getString();
@@ -1867,7 +1867,7 @@ public class ResearchPageScreen extends Screen {
     public void onClose() {
 
         history.clear();
-        // NEOFORGE_PORT: Minecraft.setScreen removed -> setScreenAndShow.
+        
         Objects.requireNonNull(minecraft).setScreenAndShow(new ResearchBrowserScreen(returnX, returnY));
     }
 
@@ -1891,11 +1891,11 @@ public class ResearchPageScreen extends Screen {
         }
     }
 
-    /**
-     * Изометрическая схема мультиблока из stage.structure
-     * ("dx,dy,dz:itemId"), порт reforged drawCompoundPage:
-     * та же раскладка px = i*16 + k*16, py = -i*8 + k*8 + j*50.
-     */
+     
+
+
+
+ 
     private static class PageStructure {
         record Cell(int x, int y, int z, ItemStack stack) {
         }
@@ -1916,8 +1916,8 @@ public class ResearchPageScreen extends Screen {
                 if (d == null) {
                     continue;
                 }
-                // У itemId внутри есть ':' ("0,0,0:arcaneresearch:table") —
-                // без лимита split даёт 3 части и parse всегда возвращал null.
+                
+                
                 String[] parts = d.split(":", 2);
                 if (parts.length != 2) {
                     continue;
@@ -1930,7 +1930,7 @@ public class ResearchPageScreen extends Screen {
                     int x = Integer.parseInt(c[0].trim());
                     int y = Integer.parseInt(c[1].trim());
                     int z = Integer.parseInt(c[2].trim());
-                    // NEOFORGE_PORT: ForgeRegistries.ITEMS -> BuiltInRegistries.ITEM.
+                    
                     Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM
                             .getValue(Identifier.parse(parts[1].trim()));
                     if (item == null) {

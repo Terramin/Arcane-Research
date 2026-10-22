@@ -77,9 +77,9 @@ public class BlockEffect extends Block {
         applyInside(level, pos, entity);
     }
 
-    // NEOFORGE_PORT (26.3): Entity.checkInsideBlocks skips air blocks, so entityInside never runs for
-    // these .air() blocks; EffectBlockEvents calls this every tick for entities overlapping them,
-    // like 1.20.1 checkInsideBlocks did.
+    
+    
+    
     public void applyInside(Level level, BlockPos pos, Entity entity) {
         if (level.isClientSide()) return;
 

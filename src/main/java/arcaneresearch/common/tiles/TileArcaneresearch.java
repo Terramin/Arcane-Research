@@ -25,10 +25,10 @@ public abstract class TileArcaneresearch extends BlockEntity {
         super(type, pos, state);
     }
 
-    // NEOFORGE_PORT: 26.x persistence uses ValueOutput/ValueInput instead of
-    // CompoundTag (saveAdditional(ValueOutput)/loadAdditional(ValueInput)).
-    // writeSyncNBT/readSyncNBT keep 1:1 bodies across all tiles, only the
-    // parameter type changes (puts/gets are name-identical: putInt/getIntOr/...).
+    
+    
+    
+    
     @Override
     protected void saveAdditional(ValueOutput out) {
         super.saveAdditional(out);
@@ -60,22 +60,22 @@ public abstract class TileArcaneresearch extends BlockEntity {
 
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState newState) {
-        // NEOFORGE_PORT: runs before map removal with the tile present (verified in
-        // LevelChunk.setBlockState flow: preRemoveSideEffects, then
-        // affectNeighborsAfterRemoval, tile map removal last). super drops Container
-        // contents (was InventoryUtils.dropItems in BlockTCTile.onRemove).
+        
+        
+        
+        
         super.preRemoveSideEffects(pos, newState);
-        // NEOFORGE_PORT (26.3): no generic essentia spill here. In the reference the
-        // spill lived in BlockTCTile.onRemove, but no block extends BlockTCTile there,
-        // so it never ran; blocks that spill (tube, reservoir, smelter) do it themselves.
-        // Note: LevelChunk passes the OLD state as the 2nd arg (it is only called when
-        // the block actually changes), so a "same block" guard on it is always false.
+        
+        
+        
+        
+        
     }
 
-    // NEOFORGE_PORT: ValueInput has no contains()/getByteArray()/getList() (26.x).
-    // Helpers below preserve the exact NBT shapes the CompoundTag code used:
-    // booleans via Codec.BOOL presence, byte[] via Codec.BYTE_BUFFER
-    // (NbtOps maps it to a byte array tag), compound lists via CompoundTag.CODEC.
+    
+    
+    
+    
     protected static boolean hasBoolean(net.minecraft.world.level.storage.ValueInput in, String key) {
         return in.read(key, com.mojang.serialization.Codec.BOOL).isPresent();
     }

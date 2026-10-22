@@ -14,20 +14,20 @@ import arcaneresearch.Arcaneresearch;
 
 import java.util.Map;
 
-// NEOFORGE_PORT: 1:1 value port from Forge 1.20.1 api/ArcaneresearchMaterials.java.
-// Vanilla 26.x removed Tier/ArmorMaterial(interface)/ArmorItem:
-//   Tier -> ToolMaterial RECORD (incorrectBlocksForDrops, durability=uses, speed,
-//     attackDamageBonus, enchantmentValue, repairItems:TagKey<Item>).
-//   Harvest level (getLevel 3/4) -> incorrect-blocks tag: 3 = diamond tier, 4 = netherite tier.
-//   ArmorMaterial(interface) -> ArmorMaterial RECORD (durability factor, defense map,
-//     enchantmentValue, equipSound:Holder<SoundEvent>, toughness, knockbackResistance,
-//     repairIngredient:TagKey<Item>, assetId:ResourceKey<EquipmentAsset>).
-//   Repair Ingredient.of(item) -> mod repair tags (data/arcaneresearch/tags/item/repairs_*.json,
-//     values = the same items Forge used; cultist stays EMPTY via empty tag).
-//   getName()/asset textures -> EquipmentAssets keys arcaneresearch:<name>;
-//     equipment datapack JSONs are a resources-phase TODO (see TODO_State.md).
-// All numeric values (uses/speed/damage/enchant/durability/protection/toughness/knockback)
-// copied VERBATIM from Forge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class ArcaneresearchMaterials {
 
     private static TagKey<Item> repairTag(String path) {
@@ -69,11 +69,11 @@ public class ArcaneresearchMaterials {
                         Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, assetPath)));
     }
 
-    // NEOFORGE_PORT (26.3): Forge getDurabilityForType() was DURABILITY[type.ordinal()] * factor
-    // with DURABILITY = {13, 15, 16, 11} and ArmorItem.Type order HELMET, CHESTPLATE, LEGGINGS,
-    // BOOTS (helmet 13x, chest 15x, legs 16x, boots 11x). Properties.humanoidArmor() uses
-    // vanilla ArmorType units (helmet 11x, chest 16x, legs 15x, boots 13x) -> armor items must
-    // re-apply .durability(forgeArmorDurability(material, type)) AFTER humanoidArmor(...).
+    
+    
+    
+    
+    
     private static final int[] FORGE_ARMOR_DURABILITY = {13, 15, 16, 11};
 
     public static int forgeArmorDurability(ArmorMaterial material, ArmorType type) {

@@ -10,14 +10,14 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.entity.GrapplerModel;
 import arcaneresearch.common.entities.projectile.EntityFocusMine;
 
-// NEOFORGE_PORT (26.3): pulsing mine prop; model drawn via seeded
-// submitCustomGeometry calling the kept 8-float renderToBuffer overload.
+
+
 public class FocusMineRenderer extends EntityRenderer<EntityFocusMine, FocusMineRenderer.State> {
 
     public static class State extends EntityRenderState {

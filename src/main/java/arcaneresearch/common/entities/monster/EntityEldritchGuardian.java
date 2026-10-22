@@ -124,9 +124,9 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
 
             spawnWispTrail();
         } else {
-            // Паритет java_old (EntityEldritchGuardian 124-135): гардиан вне
-            // Внешних земель и не на Easy каждые 100 тиков «накрывает» туманом
-            // игроков в радиусе (256кв, на Complex 576кв) — MIST_EVENT_SHORT.
+            
+            
+            
             if ((tickCount == 0 || tickCount % 100 == 0)
                     && level().getDifficulty() != Difficulty.EASY
                     && !isOuterLands()) {
@@ -141,10 +141,10 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
         }
     }
 
-    /**
-     * Паритет java_old: во Внешних землях (dimensionOuterId) гардиан
-     * полностью непрозрачен и туман не рассылает.
-     */
+     
+
+
+ 
     private boolean isOuterLands() {
         try {
             return level().dimension().equals(
@@ -168,7 +168,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
 
             int difficulty = level().getDifficulty().getId();
             if (getMainHandItem().isEmpty() && isOnFire() && random.nextFloat() < difficulty * 0.3f) {
-                // NEOFORGE_PORT (26.3): setSecondsOnFire -> igniteForSeconds (never shortens a longer burn, applies BURNING_TIME).
+                
                 target.igniteForSeconds(2 * difficulty);
             }
         }
@@ -246,12 +246,12 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
         return 1.5f;
     }
 
-    // NEOFORGE_PORT: Forge MobType.UNDEAD (Smite bonus + inverted heal/harm) has
-    // no 26.x class; behavior carried by data/minecraft/tags/entity_type/undead.json
-    // (vanilla sensitive_to_smite and inverted_healing_and_harm reference #minecraft:undead).
+    
+    
+    
 
-    // NEOFORGE_PORT: getEyeHeight is final in Entity (26.x); 2.1 set in
-    // ModEntities ELDRITCH_GUARDIAN builder (.eyeHeight(2.1)).
+    
+    
 
     public void setHomePos(BlockPos pos, int distance) {
         this.homePos = pos;
@@ -297,7 +297,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
     }
 
     @Override
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     protected boolean considersEntityAsAlly(Entity entity) {
 
         if (entity instanceof IEldritchMob) {
@@ -306,13 +306,13 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
         return super.considersEntityAsAlly(entity);
     }
 
-    // NEOFORGE_PORT: looting param removed in 26.x (derived from killer's weapon).
+    
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
 
-        // 1.7.10 парити (EntityEldritchGuardian.dropFewItems): два независимых броска —
-        // 50% нежить (x2 эссенции) и 50% элит (x2 эссенции) в виде висп-эссенций.
+        
+        
         if (this.random.nextBoolean()) {
             this.spawnAtLocation(serverLevel, ItemWispEssence.createStack(
                     ModItems.WISP_ESSENCE.get(), Aspect.UNDEAD, 1));

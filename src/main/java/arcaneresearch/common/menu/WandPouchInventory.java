@@ -93,8 +93,8 @@ public class WandPouchInventory implements Container {
         return !stack.isEmpty() && stack.getItem() instanceof ItemFocusBasic;
     }
 
-    // NEOFORGE_PORT (26.3): Container.startOpen/stopOpen now take ContainerUser
-    // (the old Player overloads overrode nothing); Forge no-op overrides kept.
+    
+    
     @Override
     public void startOpen(ContainerUser containerUser) {
     }

@@ -10,11 +10,11 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.fx.FXDispatcher;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXZap.java (PLAY_TO_CLIENT).
-// Fields/ctors/color math preserved verbatim; transport -> CustomPacketPayload.
-// Manual StreamCodec (8 fields exceed StreamCodec.composite arity); wire order
-// identical to the old encode/decode (6 doubles, int, float).
-// Payload id "arcaneresearch:fx_zap".
+
+
+
+
+
 public class PacketFXZap implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXZap> TYPE =

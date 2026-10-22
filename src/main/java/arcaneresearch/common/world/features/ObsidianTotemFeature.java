@@ -22,15 +22,15 @@ import arcaneresearch.common.world.biomes.BiomeHandler;
 
 import java.util.List;
 
-/**
- * Obsidian node-totems, ported from TC4 generateTotem: a rare surface pillar
- * (base plus up to four face segments) capped with an aura node.
- */
-// NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-// NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-// WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-// features are placed from code with fixed params (never deserialized from datapacks),
-// registry-id dispatch resolves the registered instance on load.
+ 
+
+
+ 
+
+
+
+
+
 public class ObsidianTotemFeature implements Feature {
     public static final MapCodec<ObsidianTotemFeature> CODEC =
             MapCodec.unit(new ObsidianTotemFeature());
@@ -55,7 +55,7 @@ public class ObsidianTotemFeature implements Feature {
             return false;
         }
         int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
-        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+        
         if (topY <= level.getMinY() + 1 || topY + 6 > level.getMaxY()) {
             return false;
         }
@@ -90,7 +90,7 @@ public class ObsidianTotemFeature implements Feature {
         }
         if (!capped && height > 4) {
             BlockPos capPos = groundPos.above(5);
-            // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+            
             if (capPos.getY() <= level.getMaxY() && level.isEmptyBlock(capPos)) {
                 placeNode(level, random, capPos);
                 capped = true;

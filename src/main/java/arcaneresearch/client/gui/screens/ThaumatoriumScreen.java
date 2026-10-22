@@ -1,11 +1,11 @@
 package arcaneresearch.client.gui.screens;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -47,7 +47,7 @@ public class ThaumatoriumScreen extends AbstractContainerScreen<ThaumatoriumMenu
         return cr;
     }
 
-    // NEOFORGE_PORT: recipe hover tooltips ride extractBackground (deferred item tooltip).
+    
     private void renderHoverTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int px = 0, py = 0, q = 0, idx = 0;
         for (int hash : hashList) {
@@ -71,7 +71,7 @@ public class ThaumatoriumScreen extends AbstractContainerScreen<ThaumatoriumMenu
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int k = leftPos;
         int l = topPos;
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, k, l, 0, 0, imageWidth, imageHeight, 256, 256);
@@ -116,7 +116,7 @@ public class ThaumatoriumScreen extends AbstractContainerScreen<ThaumatoriumMenu
             int fill = (int) (tile.essentia.getAmount(aspect) / (float) cr.getAspects().getAmount(aspect) * 12.0f);
             fill = Math.max(0, Math.min(12, fill));
             int color = aspect.getColor();
-            // NEOFORGE_PORT: Forge setShaderColor(aspect color) on the fill bar -> ARGB.
+            
             int fillTint = 0xFF000000 | (color & 0xFFFFFF);
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, k + 98 + 16 * px, l + 40 + 20 * py, 176, 0, fill, 3, 256, 256, fillTint);
             if (++px > 1) {
@@ -155,7 +155,7 @@ public class ThaumatoriumScreen extends AbstractContainerScreen<ThaumatoriumMenu
 
     private void drawOutputIcon(GuiGraphicsExtractor graphics, int x, int y, CrucibleRecipe cr, long time) {
         if (tile.recipeHash.contains(cr.hash)) {
-            // NEOFORGE_PORT: Forge 0.7-alpha ghost slot backing -> ARGB.
+            
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 176, 8, 16, 16, 256, 256, 0xB3FFFFFF);
             if (tile.recipeHash.size() > 1) {
                 int hash = tile.recipeHash.get((int) (time / 1000L % tile.recipeHash.size()));
@@ -167,7 +167,7 @@ public class ThaumatoriumScreen extends AbstractContainerScreen<ThaumatoriumMenu
     }
 
     @Override
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         double mx = event.x();
         double my = event.y();

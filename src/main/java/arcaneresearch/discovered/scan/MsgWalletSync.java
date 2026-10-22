@@ -14,15 +14,15 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Сервер -&gt; клиент: снимок хранилища аспектов (кошелёк игрока + бонус
- * открытого тайла). Порт {@code PacketAspectPool}: клиентское зеркало для
- * отображения пула в GUI ({@code ScanWallet.applyView}).
- *
- * NEOFORGE_PORT: SimpleChannel(ScanNetwork) -&gt; CustomPacketPayload
- * (ручной StreamCodec, порядок полей как в encode/decode 1:1).
- * Payload id "arcaneresearch:scan_wallet_sync".
- */
+ 
+
+
+
+
+
+
+
+ 
 public class MsgWalletSync implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgWalletSync> TYPE =

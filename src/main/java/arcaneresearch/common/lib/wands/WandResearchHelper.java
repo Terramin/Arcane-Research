@@ -5,8 +5,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/lib/wands/WandResearchHelper.java (44 lines).
-// Only change: level.isClientSide field -> isClientSide() method.
+
+
 public class WandResearchHelper {
     public static boolean isResearchComplete(Player player, String research) {
         if (player == null || research == null) {
@@ -35,7 +35,7 @@ public class WandResearchHelper {
                 return false;
             }
             for (Player p : level.players()) {
-                // NEOFORGE_PORT: Player.getGameProfile removed -> Component name compare.
+                
                 if (playerName.equals(p.getName().getString())) {
                     return isResearchComplete(p, research);
                 }

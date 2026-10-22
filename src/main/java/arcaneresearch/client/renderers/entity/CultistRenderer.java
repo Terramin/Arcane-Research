@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -25,9 +25,9 @@ import arcaneresearch.common.entities.monster.cult.EntityCultistCleric;
 
 import java.util.Random;
 
-// NEOFORGE_PORT (26.3): HumanoidMobRenderer + State (ritualist bob + tether
-// endpoints, oracle CultistClericRenderer shape). Tether line math 1:1 from
-// Forge, drawn via submitCustomGeometry (new vertex chain, no endVertex).
+
+
+
 public class CultistRenderer extends HumanoidMobRenderer<EntityCultist, CultistRenderer.State, HumanoidModel<CultistRenderer.State>> {
 
     public static class State extends HumanoidRenderState {
@@ -69,7 +69,7 @@ public class CultistRenderer extends HumanoidMobRenderer<EntityCultist, CultistR
         float cycle = entity.tickCount + partialTicks + phase;
         state.bob = Mth.sin(cycle / 9.0F) * 0.1F + 0.21F;
         state.lineStartY = entity.getEyeHeight() * 1.2F;
-        // NEOFORGE_PORT: Mob.getRestrictCenter gone -> cultist homePos (same anchor).
+        
         BlockPos anchor = cleric.getHomePos();
         if (anchor == null) {
             state.ritualist = false;
@@ -96,9 +96,9 @@ public class CultistRenderer extends HumanoidMobRenderer<EntityCultist, CultistR
         }
         super.submit(state, poseStack, collector, camera);
         if (state.ritualist) {
-            // NEOFORGE_PORT (26.3): Forge started the tether at (0, eye*1.2, 0) in the bobbed
-            // frame without translating (a translate also lifted the altar end); the wobble
-            // phase uses the cleric's world position.
+            
+            
+            
             Vec3 from = new Vec3(0.0, state.lineStartY, 0.0);
             Vec3 to = state.lineTo;
             float fade = state.lineFade;
@@ -111,8 +111,8 @@ public class CultistRenderer extends HumanoidMobRenderer<EntityCultist, CultistR
 
     private static void drawTether(PoseStack.Pose pose, VertexConsumer consumer,
                                    Vec3 world, Vec3 from, Vec3 to, float fade) {
-        // NEOFORGE_PORT: Forge drawTether math preserved (wobbly two-pass ribbon,
-        // color 1114129, speed -0.03, width 0.25); only the vertex sink changed.
+        
+        
         double sx = from.x, sy = from.y, sz = from.z;
         double ex = to.x, ey = to.y, ez = to.z;
         double dx = ex - sx, dy = ey - sy, dz = ez - sz;

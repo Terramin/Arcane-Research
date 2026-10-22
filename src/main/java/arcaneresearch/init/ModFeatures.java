@@ -15,16 +15,16 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.world.features.*;
 import arcaneresearch.common.world.structures.CultistPortalFeature;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModFeatures.java (same order, same registry names).
-// REQUIRED changes only:
-//   DeferredRegister.create(ForgeRegistries.FEATURES, ...) ->
-//   create(Registries.FEATURE_TYPE, ...) - NOT Registries.FEATURE, which is the
-//   DATAPACK registry (worldgen/feature configured instances); feature type codecs
-//   dispatch through BuiltInRegistries.FEATURE_TYPE (verified in 26.3 jar sources).
-//   RegistryObject -> DeferredHolder<Feature, ConcreteFeature>
-//   Feature is NO LONGER generic in 26.3 (interface, no FeaturePlaceContext /
-//   NoneFeatureConfiguration): constructors take only gameplay params (no codec arg).
-// All worldgen params (tree/plant/ore types, forceSpiders flags) preserved verbatim.
+
+
+
+
+
+
+
+
+
+
 public class ModFeatures {
 
     public static final DeferredRegister<MapCodec<? extends Feature>> FEATURES =

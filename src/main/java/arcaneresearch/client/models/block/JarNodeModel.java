@@ -8,7 +8,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
@@ -62,7 +62,7 @@ public class JarNodeModel extends Model<BlockEntityRenderState> {
                 net.minecraft.util.ARGB.colorFromFloat(alpha, 1.0F, 1.0F, 1.0F));
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer builder, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
         this.core.render(poseStack, builder, packedLight, packedOverlay, net.minecraft.util.ARGB.colorFromFloat(alpha, red, green, blue));

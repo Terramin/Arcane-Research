@@ -47,8 +47,8 @@ public class ItemThaumonomicon extends ItemTC {
         return cheat;
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.sidedSuccess(stack, client) -> InteractionResult.SUCCESS.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -89,12 +89,12 @@ public class ItemThaumonomicon extends ItemTC {
     }
 
     private void openThaumonomiconGui() {
-        // Client screen opened via side-split bridge (server-safe signature).
+        
         arcaneresearch.client.gui.screens.ResearchBrowserScreen.open();
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (ItemStack, Level, List) -> (ItemStack, TooltipContext, TooltipDisplay, Consumer, TooltipFlag).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

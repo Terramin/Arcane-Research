@@ -26,12 +26,12 @@ import arcaneresearch.common.entities.monster.tainted.*;
 import arcaneresearch.common.entities.projectile.*;
 import arcaneresearch.common.golems.EntityArcaneresearchGolem;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModEntities.java (entries + order preserved).
-// REQUIRED changes: RegistryObject -> DeferredHolder; Builder.build(String id)
-//   -> build(ResourceKey) (26.x signature); Identifier -> Identifier.
-// Mob.shouldDespawnInPeaceful() is gone in 26.x: peaceful despawn is the EntityType
-// notInPeaceful() flag. Set on every type that despawned in peaceful in Forge (Monster
-// subclasses, Slime, Wisp); fire/spell bats keep Forge's per-instance rule in checkDespawn.
+
+
+
+
+
+
 public class ModEntities {
 
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
@@ -98,19 +98,19 @@ public class ModEntities {
             ENTITY_TYPES.register("golem_dart", () ->
                     EntityType.Builder.<EntityGolemDart>of(EntityGolemDart::new, MobCategory.MISC)
                             .sized(0.2f, 0.2f)
-                            // NEOFORGE_PORT (26.3): Forge AbstractArrow.getEyeHeight -> 0.13f (vanilla ARROW type).
+                            
                             .eyeHeight(0.13f)
                             .clientTrackingRange(4)
                             .updateInterval(20)
                             .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "golem_dart"))));
 
-    // NEOFORGE_PORT: порт Forge ModEntities.PRIMAL_ARROW (TC4 parity).
+    
     public static final DeferredHolder<EntityType<?>, EntityType<arcaneresearch.common.entities.projectile.EntityPrimalArrow>> PRIMAL_ARROW =
             ENTITY_TYPES.register("primal_arrow", () ->
                     EntityType.Builder.<arcaneresearch.common.entities.projectile.EntityPrimalArrow>of(
                                     arcaneresearch.common.entities.projectile.EntityPrimalArrow::new, MobCategory.MISC)
                             .sized(0.5f, 0.5f)
-                            // NEOFORGE_PORT (26.3): Forge AbstractArrow.getEyeHeight -> 0.13f (vanilla ARROW type).
+                            
                             .eyeHeight(0.13f)
                             .clientTrackingRange(4)
                             .updateInterval(20)
@@ -173,7 +173,7 @@ public class ModEntities {
                     EntityType.Builder.<EntityBrainyZombie>of(EntityBrainyZombie::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(0.6f, 1.95f)
-                            // NEOFORGE_PORT (26.3): Forge Zombie.getStandingEyeHeight -> 1.74f (adult).
+                            
                             .eyeHeight(1.74f)
 
                             .clientTrackingRange(4)
@@ -185,7 +185,7 @@ public class ModEntities {
                     EntityType.Builder.<EntityMindSpider>of(EntityMindSpider::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(0.7f, 0.5f)
-                            // NEOFORGE_PORT (26.3): Forge EntityMindSpider.getStandingEyeHeight -> 0.45f.
+                            
                             .eyeHeight(0.45f)
                             .clientTrackingRange(8)
                             .updateInterval(3)
@@ -195,10 +195,10 @@ public class ModEntities {
             ENTITY_TYPES.register("thaumic_slime", () ->
                     EntityType.Builder.<EntityThaumicSlime>of(EntityThaumicSlime::new, MobCategory.MONSTER)
                             .notInPeaceful()
-                            // NEOFORGE_PORT (26.3): Forge 1.20.1 Slime.getDimensions scaled the 2.04 type
-                            // box by 0.255 * size and eye = 0.625 * height; 26.x AbstractCubeMob scales the
-                            // type box by size alone (vanilla SLIME: 0.52 / eye 0.325), so the base box is
-                            // pre-multiplied here to keep the Forge hitbox and eye height.
+                            
+                            
+                            
+                            
                             .sized(2.04f * 0.255f, 2.04f * 0.255f)
                             .eyeHeight(0.625f * 2.04f * 0.255f)
                             .clientTrackingRange(10)
@@ -220,7 +220,7 @@ public class ModEntities {
                     EntityType.Builder.<EntityInhabitedZombie>of(EntityInhabitedZombie::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(0.6f, 1.95f)
-                            // NEOFORGE_PORT (26.3): Forge Zombie.getStandingEyeHeight -> 1.74f (adult).
+                            
                             .eyeHeight(1.74f)
                             .clientTrackingRange(8)
                             .updateInterval(3)
@@ -248,8 +248,8 @@ public class ModEntities {
                     EntityType.Builder.<EntityEldritchGuardian>of(EntityEldritchGuardian::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(0.8f, 2.25f)
-                            // NEOFORGE_PORT (26.3): no type eyeHeight - 1.20.1 overrode only the 1-arg
-                            // getEyeHeight(Pose), which never fed the eyeHeight field (effective 0.85 x height).
+                            
+                            
                             .clientTrackingRange(10)
                             .updateInterval(3)
                             .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "eldritch_guardian"))));
@@ -296,10 +296,10 @@ public class ModEntities {
                     EntityType.Builder.<EntityPech>of(EntityPech::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(0.6f, 1.2f)
-                            // NEOFORGE_PORT: getEyeHeight final in 26.x; Forge returned
-                            // getBbHeight() * 0.66f = 0.792f.
-                            // NEOFORGE_PORT (26.3): no type eyeHeight - 1.20.1 overrode only the 1-arg
-                            // getEyeHeight(Pose), which never fed the eyeHeight field (effective 0.85 x height).
+                            
+                            
+                            
+                            
 
                             .clientTrackingRange(4)
                             .updateInterval(3)
@@ -310,7 +310,7 @@ public class ModEntities {
                     EntityType.Builder.<EntityTaintCrawler>of(EntityTaintCrawler::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(0.5f, 0.4f)
-                            // NEOFORGE_PORT (26.3): Forge EntityTaintCrawler.getStandingEyeHeight -> 0.1f.
+                            
                             .eyeHeight(0.1f)
                             .clientTrackingRange(8)
                             .updateInterval(3)
@@ -394,8 +394,8 @@ public class ModEntities {
                     EntityType.Builder.<EntityEldritchGolem>of(EntityEldritchGolem::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(1.75f, 3.5f)
-                            // NEOFORGE_PORT (26.3): no type eyeHeight - 1.20.1 overrode only the 1-arg
-                            // getEyeHeight(Pose), which never fed the eyeHeight field (effective 0.85 x height).
+                            
+                            
                             .clientTrackingRange(10)
                             .updateInterval(3)
                             .fireImmune()
@@ -406,8 +406,8 @@ public class ModEntities {
                     EntityType.Builder.<EntityEldritchWarden>of(EntityEldritchWarden::new, MobCategory.MONSTER)
                             .notInPeaceful()
                             .sized(1.5f, 3.5f)
-                            // NEOFORGE_PORT (26.3): no type eyeHeight - 1.20.1 overrode only the 1-arg
-                            // getEyeHeight(Pose), which never fed the eyeHeight field (effective 0.85 x height).
+                            
+                            
                             .clientTrackingRange(10)
                             .updateInterval(3)
                             .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "eldritch_warden"))));
@@ -416,7 +416,7 @@ public class ModEntities {
             ENTITY_TYPES.register("turret_crossbow", () ->
                     EntityType.Builder.<EntityTurretCrossbow>of(EntityTurretCrossbow::new, MobCategory.MISC)
                             .sized(0.95f, 1.25f)
-                            // NEOFORGE_PORT (26.3): Forge EntityTurretCrossbow.getStandingEyeHeight -> height * 0.66f.
+                            
                             .eyeHeight(1.25f * 0.66f)
                             .clientTrackingRange(8)
                             .updateInterval(3)
@@ -426,7 +426,7 @@ public class ModEntities {
             ENTITY_TYPES.register("turret_crossbow_advanced", () ->
                     EntityType.Builder.<EntityTurretCrossbowAdvanced>of(EntityTurretCrossbowAdvanced::new, MobCategory.MISC)
                             .sized(0.95f, 1.5f)
-                            // NEOFORGE_PORT (26.3): Forge EntityTurretCrossbowAdvanced.getStandingEyeHeight -> 1.0f.
+                            
                             .eyeHeight(1.0f)
                             .clientTrackingRange(8)
                             .updateInterval(3)
@@ -435,10 +435,10 @@ public class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityArcaneresearchGolem>> ARCANERESEARCH_GOLEM =
             ENTITY_TYPES.register("arcaneresearch_golem", () ->
                     EntityType.Builder.<EntityArcaneresearchGolem>of(EntityArcaneresearchGolem::new, MobCategory.MISC)
-                            // NEOFORGE_PORT (26.3): Forge size 0.4 x 0.9 (port had 0.7 x 1.0).
+                            
                             .sized(0.4f, 0.9f)
-                            // NEOFORGE_PORT: getStandingEyeHeight override removed in 26.x ->
-                            // type-level eyeHeight (was 0.7f).
+                            
+                            
                             .eyeHeight(0.7f)
                             .clientTrackingRange(8)
                             .updateInterval(3)
@@ -448,7 +448,7 @@ public class ModEntities {
             ENTITY_TYPES.register("arcane_bore", () ->
                     EntityType.Builder.<EntityArcaneBore>of(EntityArcaneBore::new, MobCategory.MISC)
                             .sized(0.9f, 0.9f)
-                            // NEOFORGE_PORT (26.3): Forge EntityArcaneBore.getStandingEyeHeight -> 0.8125f.
+                            
                             .eyeHeight(0.8125f)
                             .clientTrackingRange(8)
                             .updateInterval(3)

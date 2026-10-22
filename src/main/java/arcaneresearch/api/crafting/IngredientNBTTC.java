@@ -11,14 +11,14 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
-// NEOFORGE_PORT: 1:1 logic port from Forge api/crafting/IngredientNBTTC.java.
-// REQUIRED changes (vanilla 26.x, verified in 26.3.0.23-beta jar):
-//   - Ingredient is FINAL -> cannot extend; NeoForge ICustomIngredient is the replacement
-//     (test/items/isSimple/getType). Wrapped into vanilla via new Ingredient(custom).
-//   - test()/isSimple() logic VERBATIM (item + damage + relaxed-components match).
-//   - items() exposes the single wrapped holder (was: super(Stream.of(new ItemValue(stack)))).
-//   - TYPE + CODEC/STREAM_CODEC added for recipe (de)serialization; registered in
-//     init/ModIngredientTypes (NeoForgeRegistries INGREDIENT_TYPES).
+
+
+
+
+
+
+
+
 public class IngredientNBTTC implements ICustomIngredient {
 
     public static final MapCodec<IngredientNBTTC> CODEC =
@@ -55,9 +55,9 @@ public class IngredientNBTTC implements ICustomIngredient {
         return Stream.of(stack.typeHolder());
     }
 
-    // NEOFORGE_PORT (26.3): Forge getItems() returned the wrapped stack WITH its NBT (book/JEI
-    // showed e.g. the aspect-specific crystal/phial). The default ICustomIngredient display is
-    // built from items() (bare item) -> show the full stack instead.
+    
+    
+    
     @Override
     public net.minecraft.world.item.crafting.display.SlotDisplay display() {
         if (stack.isEmpty()) {

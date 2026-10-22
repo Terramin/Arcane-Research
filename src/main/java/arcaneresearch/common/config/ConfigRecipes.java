@@ -1,7 +1,7 @@
 package arcaneresearch.common.config;
 
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
@@ -23,9 +23,9 @@ import arcaneresearch.init.ModItems;
 public class ConfigRecipes {
 
     public static void registerFakeRecipes() {
-        // NEOFORGE_PORT: vanilla ShapelessRecipe ctor is now (CommonInfo, CraftingBookInfo,
-        // ItemStackTemplate, List<Ingredient>) — no id/group params; Ingredient.EMPTY removed.
-        // Fake recipes are display-only (thaumonomicon book), never matched against grids.
+        
+        
+        
         ArcaneresearchApi.addFakeCraftingRecipe(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "salis_mundus_fake"),
                 new ShapelessRecipe(new Recipe.CommonInfo(false),
@@ -75,13 +75,13 @@ public class ConfigRecipes {
                 new AspectList().add(Aspect.LIGHT, 80).add(Aspect.AIR, 20),
                 new ItemStack(ModBlocks.NITOR_YELLOW.get()), new ItemStack(Items.GOLDEN_PICKAXE));
 
-        // NEOFORGE_PORT (26.3): Forge parity - levels 0..4, vis = 32 * 2^level, PROTECT/MAGIC vis/2,
-        // ENERGY vis (same as InfusionRunicAugmentRecipe.getAspects), plus the cloth-chest set
-        // (port had levels 0..2 with a different cost and no chest entries).
+        
+        
+        
         for (int level = 0; level <= 4; level++) {
             ItemStack ring = new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get());
             if (level > 0) {
-                // NEOFORGE_PORT: getOrCreateTag removed -> CustomData.update (same NBT shape).
+                
                 final byte runic = (byte) level;
                 CustomData.update(DataComponents.CUSTOM_DATA, ring, tag -> tag.putByte("TC.RUNIC", runic));
             }

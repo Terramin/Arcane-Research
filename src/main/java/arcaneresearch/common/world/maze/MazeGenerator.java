@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import net.minecraft.util.RandomSource;
 
-// Pure-java labyrinth generator (growing-tree maze with 2x2 boss room, portal room and
-// feature-tagged dead ends). No Minecraft dependencies; algorithm ported verbatim from 1.8.9.
+
+
 public class MazeGenerator {
     int width = 0;
     int height = 0;

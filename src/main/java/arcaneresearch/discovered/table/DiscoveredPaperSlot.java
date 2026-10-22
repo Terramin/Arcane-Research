@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-/** Паритет TC3 SlotResearchTablePaper: только бумага. */
+  
 public class DiscoveredPaperSlot extends Slot {
 
     public DiscoveredPaperSlot(Container container, int slot, int x, int y) {

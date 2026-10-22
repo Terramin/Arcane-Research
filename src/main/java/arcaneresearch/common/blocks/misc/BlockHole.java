@@ -45,7 +45,7 @@ public class BlockHole extends BaseEntityBlock {
         net.minecraft.nbt.CompoundTag tileData = null;
         BlockEntity existingTile = level.getBlockEntity(pos);
         if (existingTile != null) {
-            // NEOFORGE_PORT: saveWithoutMetadata() now takes registries (returns CompoundTag as before).
+            
             tileData = existingTile.saveWithoutMetadata(level.registryAccess());
         }
 
@@ -91,7 +91,7 @@ public class BlockHole extends BaseEntityBlock {
         return Shapes.empty();
     }
 
-    // NEOFORGE_PORT: 26.x propagatesSkylightDown takes only the state.
+    
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;

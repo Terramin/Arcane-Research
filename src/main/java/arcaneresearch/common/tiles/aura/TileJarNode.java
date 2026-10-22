@@ -283,7 +283,7 @@ public class TileJarNode extends TileArcaneresearch implements INode, IWandable 
                 node.syncTile(true);
             }
             level.sendBlockUpdated(pos, getBlockState(), level.getBlockState(pos), 3);
-            // TC4: частицы разбитого стекла (2001) при высвобождении ноды
+            
             try {
                 level.levelEvent(2001, pos,
                         net.minecraft.world.level.block.Block.getId(
@@ -354,7 +354,7 @@ public class TileJarNode extends TileArcaneresearch implements INode, IWandable 
 
     @Override
     protected void readSyncNBT(ValueInput tag) {
-        // NEOFORGE_PORT: Forge body; CompoundTag getters -> ValueInput Or-getters.
+        
         super.readSyncNBT(tag);
         long prevDrain = this.drainTime;
         try {
@@ -374,7 +374,7 @@ public class TileJarNode extends TileArcaneresearch implements INode, IWandable 
     }
 
     private void loadJar(ValueInput tag) {
-        // NEOFORGE_PORT: Forge body; AspectsBase list via readTagList helper.
+        
         this.aspects.readFromNBT(tag);
         this.id = tag.getStringOr("nodeId", "");
         this.animate = tag.getLongOr("animate", this.animate);
@@ -387,7 +387,7 @@ public class TileJarNode extends TileArcaneresearch implements INode, IWandable 
                 }
             }
         }
-        // NEOFORGE_PORT: ValueInput has no getShortOr; read via Codec.SHORT (cf. TileAlembic).
+        
         short oldBase = tag.read("nodeVisBase", com.mojang.serialization.Codec.SHORT).orElse((short) 0);
         this.aspectsBase = new AspectList();
         if (oldBase > 0 && al.size() == 0) {

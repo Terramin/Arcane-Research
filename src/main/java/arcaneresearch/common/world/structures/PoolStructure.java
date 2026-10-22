@@ -25,7 +25,7 @@ import java.util.Optional;
 
 public class PoolStructure extends Structure {
 
-    // NEOFORGE_PORT: StructureType.codec() is a MapCodec in 26.x (was Codec) - mapCodec form.
+    
     public static final com.mojang.serialization.MapCodec<PoolStructure> CODEC = RecordCodecBuilder.<PoolStructure>mapCodec(instance ->
             instance.group(
                     settingsCodec(instance),
@@ -94,8 +94,8 @@ public class PoolStructure extends Structure {
         }
 
         BlockPos structurePos = new BlockPos(x, groundY + this.yOffset, z);
-        // NEOFORGE_PORT: addPieces gained MaxDistance record + alias/padding/liquid params;
-        // old int maxDistance 80 -> MaxDistance(80), vanilla defaults for the rest.
+        
+        
         return JigsawPlacement.addPieces(
                 context,
                 this.startPool,

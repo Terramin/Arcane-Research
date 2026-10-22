@@ -9,10 +9,10 @@ import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
 
-/**
- * Паритет TC3 SlotResearchTableOutput: только незавершённые записки
- * под нужные открытия (готовые/потраченные/без discovery — мимо).
- */
+ 
+
+
+ 
 public class DiscoveredNoteSlot extends Slot {
 
     private final Player player;

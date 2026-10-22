@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -65,8 +65,8 @@ public class BlockVisGenerator extends Block implements EntityBlock {
         for (Direction face : Direction.values()) {
             BlockEntity te = level.getBlockEntity(pos.relative(face));
             if (te != null) {
-                // NEOFORGE_PORT: ForgeCapabilities.ENERGY LazyOptional -> level.getCapability
-                // (Capabilities.Energy.BLOCK, pos, side), @Nullable EnergyHandler (no canReceive()).
+                
+                
                 var storage = level.getCapability(
                         net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK,
                         pos.relative(face), face.getOpposite());
@@ -93,15 +93,15 @@ public class BlockVisGenerator extends Block implements EntityBlock {
                 .setValue(ENABLED, true);
     }
 
-    // NEOFORGE_PORT (26.3): Forge IEnergyStorage.canReceive() ("accepts energy at all", independent
-    // of fill level) probed with an aborted transaction. The former "spare capacity" test also
-    // matched non-receiving sources (other generators) and skipped full receivers.
+    
+    
+    
     private static boolean canReceive(net.neoforged.neoforge.transfer.energy.EnergyHandler storage) {
         try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
             if (storage.insert(1, tx) > 0) {
                 return true;
             }
-            // full receiver: make room for the probe, still never committed
+            
             return storage.extract(1, tx) > 0 && storage.insert(1, tx) > 0;
         }
     }
@@ -146,10 +146,10 @@ public class BlockVisGenerator extends Block implements EntityBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        // NEOFORGE_PORT: 1:1 from Forge (vanilla-only + client FXDispatcher, unchanged in 26.x).
+        
         BlockEntity te = level.getBlockEntity(pos);
         if (te instanceof TileVisGenerator generator) {
-            // NEOFORGE_PORT: IEnergyStorage.getEnergyStored() -> EnergyHandler.getAmountAsLong().
+            
             if (generator.getAmountAsLong() > 0) {
                 Direction face = state.getValue(FACING);
                 double x = pos.getX() + 0.5 + (face.getStepX() == 0 ? random.nextGaussian() * 0.1 : face.getStepX() * 0.1);

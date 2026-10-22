@@ -14,8 +14,8 @@ import arcaneresearch.api.research.ScanningManager;
 
 public class ScanPotion implements IScanThing {
 
-    // NEOFORGE_PORT: registry values are Holders in 26.x; MobEffectInstance.getEffect()
-    // also returns Holder, so identity comparison stays holder-to-holder.
+    
+    
     private final Holder<MobEffect> effect;
 
     public ScanPotion(Holder<MobEffect> effect) {
@@ -40,7 +40,7 @@ public class ScanPotion implements IScanThing {
         } else {
             ItemStack stack = ScanningManager.getItemFromParams(player, obj);
             if (stack != null && !stack.isEmpty()) {
-                // NEOFORGE_PORT: PotionUtils removed -> POTION_CONTENTS component.
+                
                 PotionContents contents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
                 for (MobEffectInstance instance : contents.getAllEffects()) {
                     if (instance.getEffect() == effect) {

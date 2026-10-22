@@ -29,7 +29,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 public class EntityFocusCloud extends Entity {
-    // NEOFORGE_PORT: Entity.hurtServer abstract in 26.3; this entity is unhurtable (was: no hurt override).
+    
     @Override
     public final boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float damage) {
         if (!isInvulnerableToBase(source)) {
@@ -38,7 +38,7 @@ public class EntityFocusCloud extends Entity {
         return false;
     }
 
-    // NEOFORGE_PORT: IEntityAdditionalSpawnData removed in NeoForge; extra spawn data synced via pairing payload (see below).
+    
 
     private static final EntityDataAccessor<Float> DATA_RADIUS =
             SynchedEntityData.defineId(EntityFocusCloud.class, EntityDataSerializers.FLOAT);
@@ -277,7 +277,7 @@ public class EntityFocusCloud extends Entity {
         duration = tag.getIntOr("Duration", 0);
         setRadius(tag.getFloatOr("Radius", 0.0F));
         if (tag.read("OwnerUUID", net.minecraft.core.UUIDUtil.CODEC).isPresent()) {
-            // NEOFORGE_PORT: getUUID removed -> CODEC read (write side already stores via CODEC).
+            
             ownerUUID = tag.read("OwnerUUID", net.minecraft.core.UUIDUtil.CODEC).orElse(null);
         }
         if (tag.read("pack", net.minecraft.nbt.CompoundTag.CODEC).isPresent()) {
@@ -287,10 +287,10 @@ public class EntityFocusCloud extends Entity {
         }
     }
 
-    // NEOFORGE_PORT (26.3-native spawn sync, variant B): Forge IEntityAdditionalSpawnData
-    // (FocusPackage NBT only) ported 1:1 to a pairing payload (PacketFocusPackToClient,
-    // bundled with spawn). Radius/duration/owner need no spawn packet: radius already
-    // synced, duration and owner are server-side only (discard/applyEffects server branch).
+    
+    
+    
+    
     @Override
     public void sendPairingData(net.minecraft.server.level.ServerPlayer player,
                                 java.util.function.Consumer<net.minecraft.network.protocol.common.custom.CustomPacketPayload> bundle) {

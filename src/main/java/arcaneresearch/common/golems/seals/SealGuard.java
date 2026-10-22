@@ -67,8 +67,8 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
         }
 
         AABB area = GolemHelper.getBoundsForArea(seal);
-        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists (NO_SPECTATORS filter);
-        // the getEntities(..., e -> true) rewrite also returned spectators.
+        
+        
         List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, area);
 
         if (!targets.isEmpty()) {
@@ -95,7 +95,7 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
         }
 
         if (props[2].getValue() && target instanceof Player) {
-            // NEOFORGE_PORT: MinecraftServer.isPvpAllowed moved to ServerLevel in 26.x.
+            
             if (target.level() instanceof ServerLevel serverLevel && serverLevel.isPvpAllowed()) {
                 valid = true;
             }

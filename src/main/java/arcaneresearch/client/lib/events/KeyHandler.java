@@ -8,7 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.ClientTickEvent; // NEOFORGE_PORT: TickEvent.ClientTickEvent removed -> client Pre/Post
+import net.neoforged.neoforge.client.event.ClientTickEvent; 
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.casters.ICaster;
@@ -26,7 +26,7 @@ public class KeyHandler {
 
     public static final String KEY_CATEGORY = "key.categories.arcaneresearch";
 
-    // NEOFORGE_PORT: 26.3 KeyMapping takes Category object (registerCategory first).
+    
     public static final KeyMapping.Category CATEGORY =
             new KeyMapping.Category(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "main"));
 
@@ -46,7 +46,7 @@ public class KeyHandler {
         keyF = new KeyMapping(
                 "key.arcaneresearch.focus",
                 InputConstants.Type.KEYBOARD,
-                // NEOFORGE_PORT (26.3): key values are SDL scancodes now (GLFW 70 = PrintScreen).
+                
                 InputConstants.KEY_F,
                 CATEGORY
         );
@@ -54,14 +54,14 @@ public class KeyHandler {
         keyG = new KeyMapping(
                 "key.arcaneresearch.misc",
                 InputConstants.Type.KEYBOARD,
-                InputConstants.KEY_G, // NEOFORGE_PORT (26.3): was GLFW 71 (= ScrollLock scancode).
+                InputConstants.KEY_G, 
                 CATEGORY
         );
 
         keyRemoveFocus = new KeyMapping(
                 "key.arcaneresearch.remove_focus",
                 InputConstants.Type.KEYBOARD,
-                InputConstants.KEY_V, // NEOFORGE_PORT (26.3): was GLFW 86.
+                InputConstants.KEY_V, 
                 CATEGORY
         );
     }
@@ -77,7 +77,7 @@ public class KeyHandler {
         Arcaneresearch.LOGGER.info("Registered Arcaneresearch key mappings");
     }
 
-    // NEOFORGE_PORT: phased ClientTickEvent -> Pre (this handler was START-only).
+    
     public static void onClientTick(ClientTickEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
 
@@ -123,7 +123,7 @@ public class KeyHandler {
             boolean hasCaster = (!mainHand.isEmpty() && mainHand.getItem() instanceof ICaster) ||
                     (!offHand.isEmpty() && offHand.getItem() instanceof ICaster);
 
-            // NEOFORGE_PORT (26.3): Forge parity - wand in either hand (heldWand), not main hand only.
+            
             boolean hasWand = !WandRenderingHandler.heldWand(player).isEmpty();
 
             if (!radialLock && (hasCaster || hasWand)) {
@@ -164,7 +164,7 @@ public class KeyHandler {
 
                 lastPressG = System.currentTimeMillis();
 
-                // NEOFORGE_PORT (26.3): isKeyDown takes SDL scancodes (GLFW 340-345 never matched).
+                
                 boolean ctrlDown = InputConstants.isKeyDown(InputConstants.KEY_LCONTROL)
                         || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
                 boolean shiftDown = InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)

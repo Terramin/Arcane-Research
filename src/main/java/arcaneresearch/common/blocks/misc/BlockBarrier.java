@@ -131,7 +131,7 @@ public class BlockBarrier extends Block {
         return ItemStack.EMPTY;
     }
 
-    // NEOFORGE_PORT: 26.x propagatesSkylightDown takes only the state.
+    
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;

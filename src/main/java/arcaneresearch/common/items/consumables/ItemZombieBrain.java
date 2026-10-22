@@ -17,9 +17,9 @@ public class ItemZombieBrain extends Item {
 
     public ItemZombieBrain(Item.Properties props) {
         super(props
-                // NEOFORGE_PORT: FoodProperties.Builder saturationMod -> saturationModifier;
-                // Builder.effect(...) is GONE, so the effect moves to the Consumable component
-                // (Consumable.builder() defaults = 1.6s EAT, verified via bytecode).
+                
+                
+                
                 .food(new FoodProperties.Builder()
                         .nutrition(4)
                         .saturationModifier(0.2f)
@@ -31,8 +31,8 @@ public class ItemZombieBrain extends Item {
                                 .build()));
     }
 
-    // NEOFORGE_PORT: Forge FoodProperties.meat() (wolves eat/breed with it) -> 26.x
-    // #minecraft:meat item tag (data/minecraft/tags/item/meat.json, part of #wolf_food).
+    
+    
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {

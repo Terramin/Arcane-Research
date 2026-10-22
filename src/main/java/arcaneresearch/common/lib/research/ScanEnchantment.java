@@ -10,10 +10,10 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import arcaneresearch.api.research.IScanThing;
 import arcaneresearch.api.research.ScanningManager;
 
-// NEOFORGE_PORT (26.x): enchantments are Holder-based + datapack-driven.
-// Field is Holder<Enchantment> (was raw value); stack lookup via
-// EnchantmentHelper.getEnchantmentsForCrafting (was getEnchantments map);
-// key via unwrapKey (was BuiltInRegistries.ENCHANTMENT, gone in 26.x).
+
+
+
+
 public class ScanEnchantment implements IScanThing {
 
     private final Holder<Enchantment> enchantment;

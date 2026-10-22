@@ -53,7 +53,7 @@ public class BlockJarItem extends BlockItem implements IEssentiaContainerItem {
     }
 
     public static AspectList getAspectsStatic(ItemStack itemstack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same NBT shape).
+        
         net.minecraft.nbt.CompoundTag tag =
                 arcaneresearch.api.ArcaneresearchInvHelper.getCustomTag(itemstack);
         if (tag != null) {
@@ -74,8 +74,8 @@ public class BlockJarItem extends BlockItem implements IEssentiaContainerItem {
     }
 
     public static void setAspectsStatic(ItemStack itemstack, AspectList aspects) {
-        // NEOFORGE_PORT (26.3): merge into the existing CUSTOM_DATA like the reference wrote into
-        // the existing root tag (a fresh tag dropped "AspectFilter" when filling a labelled jar).
+        
+        
         net.minecraft.nbt.CompoundTag tag =
                 arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(itemstack);
         aspects.writeToNBT(tag);
@@ -141,8 +141,8 @@ public class BlockJarItem extends BlockItem implements IEssentiaContainerItem {
         return super.useOn(context);
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (Level+List) -> (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,

@@ -4,7 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +14,7 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.minecraft.core.registries.BuiltInRegistries; // NEOFORGE_PORT: was ForgeRegistries
+import net.minecraft.core.registries.BuiltInRegistries; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.Aspect;
@@ -76,7 +76,7 @@ public class ConfigEntities {
         forMag.add(entry(1, ArcaneresearchApiHelper.makeCrystal(Aspect.ORDER)));
         forMag.add(entry(1, ArcaneresearchApiHelper.makeCrystal(Aspect.ENTROPY)));
 
-        // NEOFORGE_PORT: PotionUtils removed -> PotionContents.createItemStack (static holders, setup-safe).
+        
         forMag.add(entry(2, PotionContents.createItemStack(Items.POTION, Potions.SWIFTNESS)));
         forMag.add(entry(2, PotionContents.createItemStack(Items.POTION, Potions.HEALING)));
         forMag.add(entry(2, ArcaneresearchApiHelper.makeCrystal(Aspect.FLUX)));
@@ -112,7 +112,7 @@ public class ConfigEntities {
         forArc.add(entry(4, new ItemStack(Items.ENCHANTED_GOLDEN_APPLE)));
         forInv.add(entry(4, new ItemStack(Items.SPECTRAL_ARROW)));
         forArc.add(entry(5, new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get())));
-        // NEOFORGE_PORT (26.3): Forge forager trade (lesser runic ring, cost 5) was dropped in the port.
+        
         forArc.add(entry(5, new ItemStack(ModItems.RUNIC_RING_LESSER.get())));
         forArc.add(entry(5, new ItemStack(ModItems.CURIO_KNOWLEDGE.get())));
         tradeInventory.put(2, forArc);
@@ -125,13 +125,13 @@ public class ConfigEntities {
         return new TradeEntry(cost, stack);
     }
 
-    // NEOFORGE_PORT: EnchantedBookItem/EnchantmentInstance removed in 26.x; enchantments are
-    // datapack holders, unresolvable at commonSetup. These 3 forager (index 2) book trades
-    // (power-1 cost 2, flame-1 cost 5, infinity-1 cost 5 — same costs/levels as Forge) are
-    // appended at server start via initPechBookTrades; table picks are uniformly random by
-    // cost, so append position does not change behavior.
-    // Book trades hold enchantment holders of the running server's registries, so they are
-    // rebuilt on every server start (previous server's entries removed, never duplicated).
+    
+    
+    
+    
+    
+    
+    
     private static final List<TradeEntry> bookTrades = new ArrayList<>();
 
     public static void initPechBookTrades(HolderLookup.Provider registries) {
@@ -176,8 +176,8 @@ public class ConfigEntities {
     private static void whitelistChampion(String namespace, String path, int level) {
         try {
             Identifier id = Identifier.fromNamespaceAndPath(namespace, path);
-            // NEOFORGE_PORT: ForgeRegistries.ENTITY_TYPES -> BuiltInRegistries.ENTITY_TYPE
-            // (same containsKey/getValue shape; see EntityEvents precedent).
+            
+            
             if (BuiltInRegistries.ENTITY_TYPE.containsKey(id)
                     && BuiltInRegistries.ENTITY_TYPE.getValue(id) instanceof EntityType) {
                 CommonProxy.championModWhitelist.put(id, level);

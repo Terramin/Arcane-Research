@@ -17,8 +17,8 @@ public class ChampionModInfested implements IChampionModifierEffect {
 
             champion.playSound(ModSounds.GORE.get(), 0.5f, 1.0f);
             int count = 2 + champion.level().getRandom().nextInt(3);
-            // NEOFORGE_PORT: vanilla EntityType constants removed in 26.3;
-            // the type resolves through the vanilla registry (same silverfish).
+            
+            
             net.minecraft.world.entity.EntityType<?> silverfishType =
                     net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getValue(
                             net.minecraft.resources.Identifier.fromNamespaceAndPath("minecraft", "silverfish"));

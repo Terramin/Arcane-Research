@@ -87,9 +87,9 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         });
     }
 
-    // NEOFORGE_PORT (26.3): shared seal-click handling restored from Forge 1.20.1 (the port had
-    // inlined it into onItemUseFirst/useOn/use and dropped the sneak fallback that picks the
-    // single seal on another face of the clicked block).
+    
+    
+    
     private static InteractionResult handleSealClick(Player player, Level level, BlockPos pos, Direction side) {
         ISealEntity seal = SealHandler.getSealEntity(level.dimension(), new SealPos(pos, side));
         if (seal == null && player.isShiftKeyDown()) {
@@ -164,8 +164,8 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
     }
 
     @Override
-    // NEOFORGE_PORT: Item.use now returns plain InteractionResult (holder removed);
-    // SUCCESS preserves the old success(stack) semantics (both sides, swing already done above).
+    
+    
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         player.swing(hand, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
 

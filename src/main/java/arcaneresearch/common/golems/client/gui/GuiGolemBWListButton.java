@@ -21,11 +21,11 @@ public class GuiGolemBWListButton extends Button {
         this.blacklist = blacklist;
     }
 
-    // NEOFORGE_PORT (26.3 render-state rework): renderWidget(GuiGraphics) removed ->
-    // extractContents(GuiGraphicsExtractor); old setShaderColor tint -> per-blit color arg.
+    
+    
     @Override
     protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        // NEOFORGE_PORT (26.3): setShaderColor(c, c, c, c) scaled RGB as well as alpha -> 0xAARRGGBB = c in every channel.
+        
         int tint = isHovered() ? 0xFFFFFFFF : 0xE6E6E6E6;
         boolean isBlacklist = blacklist.getAsBoolean();
         if (isBlacklist) {

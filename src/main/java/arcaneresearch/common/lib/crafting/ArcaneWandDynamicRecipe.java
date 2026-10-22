@@ -25,14 +25,14 @@ import arcaneresearch.init.ModRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/crafting/ArcaneWandDynamicRecipe.java.
-// 26.x changes only: assemble(IArcaneWorkbench) single-arg; getIngredients() returns
-// List<Ingredient> (cap stacks wrapped via IngredientNBTTC since Ingredient.of takes
-// ItemLike, not ItemStack — same NBT-sensitive match as before); removed
-// canCraftInDimensions/getResultItem(RegistryAccess) (gone from Recipe);
-// placementInfo()/showNotification()/recipeBookCategory() inherit the IArcaneRecipe
-// defaults (NOT_PLACEABLE/false/CRAFTING_MISC; isSpecial skips placement anyway).
-// Wand matching/cost logic VERBATIM.
+
+
+
+
+
+
+
+
 public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
     private final String capTag;
     private final String rodTag;
@@ -86,7 +86,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         }
     }
 
-    /** Скипетр: тот же доступ, что жезлы, плюс известные насадка/стержень. */
+      
     public static ArcaneWandDynamicRecipe matchSceptre(CraftingContainer matrix, Player player) {
         if (matrix == null) {
             return null;
@@ -254,8 +254,8 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
             WandCap cap = WandCap.caps.get(capTag);
             WandRod rod = WandRod.rods.get(rodTag);
             if (sceptre) {
-                // Раскладка скипетра: три насадки, стержень, салис (те же
-                // предметы, что в ArcaneWandRecipe.readSceptre).
+                
+                
                 if (cap != null) {
                     out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
                     out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
@@ -265,20 +265,20 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
                     out.add(new Ingredient(new IngredientNBTTC(rod.getItem())));
                 }
                 try {
-                    // NEOFORGE_PORT: Ingredient.of takes ItemLike, not ItemStack.
+                    
                     out.add(Ingredient.of(arcaneresearch.init.ModItems.SALIS_MUNDUS.get()));
                 } catch (Exception ignored) {
                 }
                 return out;
             }
             if (cap != null) {
-                // NEOFORGE_PORT: Ingredient.of(ItemStack...) is gone in 26.x (ItemLike
-                // only); cap stacks carry NBT (cap tag) so they wrap IngredientNBTTC.
+                
+                
                 out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
                 out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
             }
             if (rod != null) {
-                // NEOFORGE_PORT: rod entries are ItemStacks (may carry NBT), same wrap.
+                
                 out.add(new Ingredient(new IngredientNBTTC(rod.getItem())));
             }
         } catch (Exception ignored) {

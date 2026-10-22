@@ -94,7 +94,7 @@ public class ItemTurretPlacer extends Item {
             }
         }
 
-        // NEOFORGE_PORT: sidedSuccess(boolean) removed -> (client ? SUCCESS : CONSUME).
+        
         return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 

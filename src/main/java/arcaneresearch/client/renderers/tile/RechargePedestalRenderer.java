@@ -19,8 +19,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.tiles.devices.TileRechargePedestal;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (spinning levitating item).
+
+
 public class RechargePedestalRenderer implements BlockEntityRenderer<TileRechargePedestal, RechargePedestalRenderer.State> {
 
     public static class State extends BlockEntityRenderState {
@@ -71,8 +71,8 @@ public class RechargePedestalRenderer implements BlockEntityRenderer<TileRecharg
             return;
         }
         float ticks = state.ticks;
-        // NEOFORGE_PORT: BakedModel GROUND scale gone with ItemRenderer;
-        // standard GROUND display scale (0.5) preserved.
+        
+        
         float bob = Mth.sin(ticks / 10.0f) * 0.1f + 0.1f;
         float lift = bob + 0.25f * 0.5f + 0.05f;
 
@@ -89,8 +89,8 @@ public class RechargePedestalRenderer implements BlockEntityRenderer<TileRecharg
         poseStack.popPose();
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TileRechargePedestal blockEntity) {
         return blockEntity.getRenderBoundingBox();

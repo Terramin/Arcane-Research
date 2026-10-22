@@ -112,11 +112,11 @@ public class ArcaneWandRecipe {
         return checkMatch(cap1, cap2, rod, player);
     }
 
-    /**
-     * Скипетр, порт TC4 {@code ArcaneSceptreRecipe}: три одинаковые насадки
-     * (1,0), (2,1), (0,2), стержень (1,1) и салис мундус (2,0)
-     * (в TC4 там primal charm, которого в порте нет).
-     */
+     
+
+
+
+ 
     public static ItemStack getSceptreResult(CraftingContainer inv) {
         SceptreParts parts = readSceptre(inv);
         if (parts == null) {

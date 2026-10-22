@@ -13,7 +13,7 @@ public class ItemEssentiaContainer extends ItemTC implements IEssentiaContainerI
 
     protected final int capacity;
 
-    // NEOFORGE_PORT: bare `Properties` -> Item.Properties (26.x explicit nesting).
+    
     public ItemEssentiaContainer(Item.Properties properties, int capacity) {
         super(properties);
         this.capacity = capacity;
@@ -30,8 +30,8 @@ public class ItemEssentiaContainer extends ItemTC implements IEssentiaContainerI
 
     @Override
     public AspectList getAspects(ItemStack stack) {
-        // NEOFORGE_PORT: stack root-tag storage -> DataComponents.CUSTOM_DATA
-        // (same NBT shape; CustomData.of/copyTag round-trip).
+        
+        
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
         if (data != null) {
             AspectList aspects = new AspectList();
@@ -43,8 +43,8 @@ public class ItemEssentiaContainer extends ItemTC implements IEssentiaContainerI
 
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
-        // NEOFORGE_PORT (26.3): Forge wrote into the EXISTING root tag (other keys kept);
-        // CustomData.update merges the same way instead of replacing the whole component.
+        
+        
         CustomData.update(DataComponents.CUSTOM_DATA, stack, aspects::writeToNBT);
     }
 

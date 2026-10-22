@@ -7,13 +7,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.TaintSeedRenderer;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>; hurt/attack/age via renderer State.
+
 public class TaintSeedModel extends EntityModel<TaintSeedRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -97,9 +97,9 @@ public class TaintSeedModel extends EntityModel<TaintSeedRenderer.State> {
         float attackAnim = state.attackPhase;
         float mod = 0.0625f * 0.2f;
         float fi = (0.1f - mod) * 3.0f;
-        // NEOFORGE_PORT: base submit renders root() directly (the old recursive
-        // renderToBuffer has no submit path); the per-level applySeedScale pulse
-        // moves into part scales (same compounding as the pose-stack version).
+        
+        
+        
         this.tentacle.xScale = 1.0F;
         this.tentacle.yScale = 1.0F;
         this.tentacle.zScale = 1.0F;
@@ -114,16 +114,16 @@ public class TaintSeedModel extends EntityModel<TaintSeedRenderer.State> {
             this.tents[k].xScale = s + pulse;
             this.tents[k].yScale = s * 0.9f;
             this.tents[k].zScale = s + pulse;
-            // NEOFORGE_PORT (26.3): Forge scaled before the child's translate, so the
-            // segment offset is scaled too (part scale applies only after it).
+            
+            
             this.tents[k].y *= s * 0.9f;
         }
     }
 
-    // NEOFORGE_PORT: custom recursive tentacle rendering kept (base root render
-    // would double-draw); old @Override dropped (base is final with tint int).
-    // Called by renderWithAlpha below. The applySeedScale pulse now also lives
-    // in setupAnim part scales, so base submit draws the same shape.
+    
+    
+    
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {

@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -18,9 +18,9 @@ import arcaneresearch.client.models.entity.ArcaneBoreModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.construct.EntityArcaneBore;
 
-// NEOFORGE_PORT (26.3): digging-beam inputs via State; beam/glow quads via
-// submitCustomGeometry (new vertex chain); yBodyRot zeroing moved to extract.
-// shouldShowName hook now takes (entity, distance).
+
+
+
 public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBoreRenderer.State, ArcaneBoreModel> {
 
     public static class State extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState {
@@ -99,8 +99,8 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
         offset = rotateAroundZ(offset, state.pitch * Mth.DEG_TO_RAD);
         offset = rotateAroundY(offset, -((state.yaw + 90.0F) * Mth.DEG_TO_RAD));
 
-        // NEOFORGE_PORT: glow sprite is camera-facing (old rotateToPlayer),
-        // the beam stays directional: separate pose pushes.
+        
+        
         poseStack.pushPose();
         poseStack.translate(offset.x, state.eyeHeight + offset.y, offset.z);
         poseStack.rotate(camera.orientation);
@@ -125,8 +125,8 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
         float u1 = u0 + 1.0F / grid;
         float v0 = ym / (float) gridH;
         float v1 = v0 + 1.0F / gridH;
-        // NEOFORGE_PORT (26.3): Forge UtilsFX.renderBillboardQuad vertex/UV order (front face
-        // under the culling additive type) and light pack(13, 0).
+        
+        
         int light = 0xD0;
         glowVertex(pose, consumer, -size, -size, u1, v1, light);
         glowVertex(pose, consumer, -size, size, u1, v0, light);
@@ -163,8 +163,8 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
                 PoseStack work = new PoseStack();
                 work.last().pose().set(pose.pose());
                 work.last().normal().set(pose.normal());
-                // NEOFORGE_PORT: same three crossed planes as Forge (rotations
-                // applied per pass on the working stack).
+                
+                
                 work.rotate(com.mojang.math.Axis.XN.rotationDegrees(90.0F));
                 work.rotate(com.mojang.math.Axis.ZN.rotationDegrees(180.0F + state.yaw));
                 work.rotate(com.mojang.math.Axis.XN.rotationDegrees(state.pitch));

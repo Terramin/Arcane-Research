@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-// NEOFORGE_PORT: Forge capability plumbing (Capability/LazyOptional/InvWrapper) removed;
-//   item access is exposed centrally via RegisterCapabilitiesEvent (see ModBlockEntities).
+
+
 public abstract class TileArcaneresearchInventory extends TileArcaneresearch implements Container {
 
     protected NonNullList<ItemStack> items;
@@ -143,7 +143,7 @@ public abstract class TileArcaneresearchInventory extends TileArcaneresearch imp
     @Override
     protected void readSyncNBT(ValueInput tag) {
         super.readSyncNBT(tag);
-        // NEOFORGE_PORT: ValueInput.getStringOr returns String (no Optional).
+        
         String name = tag.getStringOr("CustomName", "");
         customName = name.isEmpty() ? null : name;
 

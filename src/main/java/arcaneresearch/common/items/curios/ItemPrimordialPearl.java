@@ -17,13 +17,13 @@ public class ItemPrimordialPearl extends ItemTCBase {
     public ItemPrimordialPearl(Item.Properties props) {
         super(props
                 .stacksTo(1)
-                // NEOFORGE_PORT (26.3): Forge passed EPIC here but overrode getRarity(stack) to
-                // return UNCOMMON (what the name color actually showed); getRarity is gone in
-                // 26.x and the RARITY component is the only source -> UNCOMMON.
+                
+                
+                
                 .rarity(Rarity.UNCOMMON)
-                // NEOFORGE_PORT: Forge isRepairable()/isValidRepairItem() (both false) are REMOVED
-                // in 26.x; anvil-combine repair now defaults ON via canCombineRepair, so opt out
-                // here to keep the old behavior (see ItemElementalSword precedent).
+                
+                
+                
                 .setNoCombineRepair()
                 .durability(MAX_DAMAGE), "primordial_pearl", "pearl", "nodule", "mote");
     }
@@ -39,8 +39,8 @@ public class ItemPrimordialPearl extends ItemTCBase {
         }
     }
 
-    // NEOFORGE_PORT: per-stack getDescriptionId(ItemStack) is GONE in 26.x
-    // (getDescriptionId() is now final, no-arg); same key via the no-arg call.
+    
+    
     @Override
     public Component getName(ItemStack stack) {
         String suffix = switch (getVariant(stack)) {
@@ -52,8 +52,8 @@ public class ItemPrimordialPearl extends ItemTCBase {
         return Component.translatable(this.getDescriptionId() + "." + suffix);
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (ItemStack, Level, List) -> (ItemStack, TooltipContext, TooltipDisplay, Consumer, TooltipFlag).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
@@ -61,9 +61,9 @@ public class ItemPrimordialPearl extends ItemTCBase {
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
 
-    // NEOFORGE_PORT: Forge getCraftingRemainingItem/hasCraftingRemainingItem (a +1-damage copy
-    // while damage < MAX_DAMAGE - 1) -> NeoForge IItemExtension.getCraftingRemainder(ItemInstance),
-    // which ItemStack.getCraftingRemainder() and every recipe remainder path consult.
+    
+    
+    
     @Override
     public net.minecraft.world.item.@org.jspecify.annotations.Nullable ItemStackTemplate getCraftingRemainder(
             net.minecraft.world.item.ItemInstance instance) {
@@ -79,12 +79,12 @@ public class ItemPrimordialPearl extends ItemTCBase {
         return net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(result);
     }
 
-    // NEOFORGE_PORT: Forge getBurnTime override (returned 0 = non-fuel) dropped - fuel is now
-    // data-driven via Properties.cookingFuel(...), and 0 matches the default anyway.
+    
+    
 
-    // TODO_PORT (items): Forge isValidRepairItem() (false), canApplyAtEnchantingTable() (false),
-    // isBookEnchantable() (false), isEnchantable() (false), getEnchantmentValue() (0) and
-    // getRarity(stack) (UNCOMMON) are all REMOVED in 26.x with no method equivalents - repair is
-    // data-driven and rarity is a component (UNCOMMON set in Properties above). Restore via
-    // components if the old per-stack behavior is needed (Forge ref: see dropped overrides).
+    
+    
+    
+    
+    
 }

@@ -25,8 +25,8 @@ import arcaneresearch.common.tiles.essentia.TileAlembic;
 
 import java.awt.*;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (aspect label + transport nozzles).
+
+
 public class AlembicRenderer implements BlockEntityRenderer<TileAlembic, AlembicRenderer.State> {
 
     private static final Identifier LABEL_TEXTURE =
@@ -37,7 +37,7 @@ public class AlembicRenderer implements BlockEntityRenderer<TileAlembic, Alembic
     public static class State extends BlockEntityRenderState {
         public Aspect filter;
         public int facing;
-        // NEOFORGE_PORT: transport topology stashed (level reads forbidden in submit).
+        
         public boolean[] nozzleDir = new boolean[4];
     }
 
@@ -121,7 +121,7 @@ public class AlembicRenderer implements BlockEntityRenderer<TileAlembic, Alembic
         float g = color.getGreen() / 255f;
         float b = color.getBlue() / 255f;
 
-        // NEOFORGE_PORT (Forge 1:1): aspect bg stripped via the shared helper.
+        
         RenderType iconType = TCRenderTypes.translucentPortal(UtilsFX.strippedAspectTexture(aspect.getImage()));
         float iconSize = 0.15f;
         collector.submitCustomGeometry(poseStack, iconType, (pose, consumer) -> {

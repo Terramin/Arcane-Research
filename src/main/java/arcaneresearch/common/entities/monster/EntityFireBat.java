@@ -238,9 +238,9 @@ public class EntityFireBat extends Monster {
         setYRot(getYRot() + yawDiff);
     }
 
-    // NEOFORGE_PORT: Mob.shouldDespawnInPeaceful() is gone in 26.x (peaceful despawn is the
-    // EntityType notInPeaceful flag). Fire bats depend on the owner, so the type stays allowed
-    // in peaceful and checkDespawn applies the Forge per-instance rule (Hellbat overrides it).
+    
+    
+    
     @Override
     public void checkDespawn() {
         if (this.level().getDifficulty() == net.minecraft.world.Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
@@ -255,7 +255,7 @@ public class EntityFireBat extends Monster {
         return this.owner == null;
     }
 
-    // NEOFORGE_PORT: 26.x causeFallDamage takes a double fall distance.
+    
     @Override
     public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return false;
@@ -282,8 +282,8 @@ public class EntityFireBat extends Monster {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int lootingLevel = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
 

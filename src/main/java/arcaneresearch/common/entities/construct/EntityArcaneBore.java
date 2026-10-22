@@ -173,7 +173,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         ItemStack held = getMainHandItem();
         if (held.isEmpty()) return false;
 
-        // NEOFORGE_PORT: PickaxeItem/ToolActions removed; pickaxe-ness is the PICKAXES tag now.
+        
         boolean isPickaxe = held.is(net.minecraft.tags.ItemTags.PICKAXES);
 
         if (!isPickaxe) return false;
@@ -186,8 +186,8 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         ItemStack held = getMainHandItem();
 
         if (!held.isEmpty() && held.is(net.minecraft.tags.ItemTags.PICKAXES)) {
-            // NEOFORGE_PORT: Item.getEnchantmentValue removed; enchantability now lives in the
-            // ENCHANTABLE component (same number: diamond pickaxe = 10 -> r = 3 as before).
+            
+            
             var enchantable = held.get(net.minecraft.core.component.DataComponents.ENCHANTABLE);
             r = (enchantable != null ? enchantable.value() : 10) / 3;
             r += EnumInfusionEnchantment.getInfusionEnchantmentLevel(held, EnumInfusionEnchantment.DESTRUCTIVE) * 2;
@@ -260,15 +260,15 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             if (silktouch) {
                 fortune = 0;
             }
-            // NEOFORGE_PORT (26.3): same "[Minecraft]" fake player as Forge getMinecraft.
+            
             net.neoforged.neoforge.common.util.FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(serverLevel);
             fakePlayer.snapTo(getX(), getY(), getZ(), getYRot(), getXRot());
             ItemStack held = getMainHandItem().copy();
             fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, held);
 
-            // NEOFORGE_PORT (26.3): ForgeHooks.onBlockBreakEvent -> CommonHooks.fireBlockBreak (same
-            // pre-cancel checks + event). Forge's BreakEvent exp was 0 unless the player could
-            // harvest the block (isCorrectToolForDrops), else the block's xp for the held tool.
+            
+            
+            
             var breakEvent = net.neoforged.neoforge.common.CommonHooks.fireBlockBreak(
                     serverLevel, fakePlayer.gameMode.getGameModeForPlayer(), fakePlayer, digTarget, digBs);
             if (breakEvent.isCanceled()) {
@@ -584,5 +584,5 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         }
         return super.getTeam();
     }
-    // NEOFORGE_PORT: getStandingEyeHeight removed in 26.3 (eye height via EntityDimensions.withEyeHeight).
+    
 }

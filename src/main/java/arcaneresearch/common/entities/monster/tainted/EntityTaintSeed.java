@@ -99,7 +99,7 @@ public class EntityTaintSeed extends Monster implements ITaintedMob {
     }
 
     @Override
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     protected boolean considersEntityAsAlly(Entity entity) {
         if (entity instanceof ITaintedMob) {
             return true;
@@ -236,7 +236,7 @@ public class EntityTaintSeed extends Monster implements ITaintedMob {
         }
 
         EntityTaintacleSmall tentacle = new EntityTaintacleSmall(level());
-        // NEOFORGE_PORT (26.3): Entity.moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+        
         tentacle.snapTo(target.getX() + random.nextFloat() - random.nextFloat(), target.getY(), target.getZ() + random.nextFloat() - random.nextFloat(), 0.0f, 0.0f);
         level().addFreshEntity(tentacle);
 
@@ -281,8 +281,8 @@ public class EntityTaintSeed extends Monster implements ITaintedMob {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
 
         spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), ArcaneresearchApiHelper.makeCrystal(Aspect.FLUX));

@@ -18,13 +18,13 @@ import arcaneresearch.discovered.scan.ScanTargets;
 import arcaneresearch.discovered.scan.ScanWallet;
 import arcaneresearch.helper.RegsHelper;
 
-/**
- * Server-side validation and completion of inventory hovers scans.
- * Mirrors the grant logic of MsgStudyComplete for item stacks and the player itself.
- *
- * NEOFORGE_PORT: Forge PacketDistributor.PLAYER -&gt; PacketHandler.sendToPlayer;
- * displayClientMessage -&gt; sendSystemMessage (как в MsgStudyComplete).
- */
+ 
+
+
+
+
+
+ 
 public final class InvScanServer {
 
     public static final String KEY_PREFIX = "T:";

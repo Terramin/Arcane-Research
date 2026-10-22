@@ -20,49 +20,49 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Порт {@code thaumcraft.client.lib.GhostItem} (reforged) на 26.3.
- *
- * <p><b>Forge 1.20.1</b> ({@code GhostItem}): предмет рендерился штатным
- * ItemRenderer'ом, но все выдаваемые им RenderType подменялись reflection-ом
- * ({@code GhostTypes}) на копии, где только TransparencyStateShard заменён на
- * LIGHTNING (аддитивный SRC_ALPHA/ONE), а вершины через
- * {@code ScaledAlphaConsumer} масштабировались цветом-тинтом
- * (R 0.85, G 0.72, B 1.0) и альфой ({@code ghostAlpha}).</p>
- *
- * <p><b>26.3</b>: предмет через ItemStackRenderState рисует
- * ItemFeatureRenderer, который сам выбирает материал-render types; классический
- * MultiBufferSource-перехват невозможен. Поэтому квад'ы читаются из уже
- * разрешённого состояния (как в Forge — через reflection: поля слоёв приватные,
- * Reflection в Forge-версии лезла в те же приватные внутренности
- * RenderType$CompositeState) и переэмитируются вручную через
- * {@code VertexConsumer.putBakedQuad} — математику 1:1 с
- * ItemFeatureRenderer.prepareMainSubmit (поза слоя = itemTransform.apply +
- * localTransform.mulPose, цвет = ARGB.multiply(тинт слоя, ghost-цвет),
- * свет через lightEmission, нормали из направления квад'а) — на ghost-слой
- * {@link arcaneresearch.client.renderers.TCRenderTypes#ghostItem(Identifier)},
- * привязанный к атласу квад'ов (blocks/items) — UV квад'ов уже в
- * атласном пространстве (как у ванильных item-листов).</p>
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
 public final class GhostItem {
 
-    /** Forge ScaledAlphaConsumer constants, 1:1. */
+      
     public static final float TINT_R = 0.85F;
     public static final float TINT_G = 0.72F;
     public static final float TINT_B = 1.0F;
     public static final float GHOST_ALPHA = 0.75F;
 
-    // Нормализованный ghost-цвет (ARGB): альфа масштабируется в-emission,
-    // RGB — тинтом. Умножается в каждый цвет вершины через ARGB.multiply.
+    
+    
     private static final int GHOST_COLOR_ARGB =
             ((int) (255.0F * GHOST_ALPHA) << 24)
             | ((int) (255.0F * TINT_R) << 16)
             | ((int) (255.0F * TINT_G) << 8)
             | (int) (255.0F * TINT_B);
 
-    // отражение приватных полей ItemStackRenderState.LayerRenderState
-    // (1:1 armor подход Forge GhostTypes reflection).
+    
+    
     private static final Field LAYERS_FIELD;
     private static final Field ACTIVE_COUNT_FIELD;
     private static final Field QUADS_FIELD;
@@ -99,11 +99,11 @@ public final class GhostItem {
     private GhostItem() {
     }
 
-    /**
-     * Ghost-рендер разрешённого предмета: только непустые слои с квад'ами;
-     * спец-рендер (wand и т.п.) рисуется обычным submit'ом (fallback) — его
-     * геометрию переиспользовать нельзя.
-     */
+     
+
+
+
+ 
     public static void render(ItemStackRenderState state, PoseStack poseStack,
                               SubmitNodeCollector collector, int packedLight) {
         if (state == null || state.isEmpty()) {
@@ -121,11 +121,11 @@ public final class GhostItem {
                 ItemStackRenderState.LayerRenderState layer = layers[i];
                 ItemQuads quads = (ItemQuads) QUADS_FIELD.get(layer);
                 if (quads == null || quads.isEmpty()) {
-                    // Спец-модель (WandSpecialRenderer и т.п.): рисуем штатно,
-                    // ghost-стили consumer'ом подменить нельзя (Forge тоже
-                    // рисовал их обычным путём через renderStatic → их
-                    // quad'ы шли через GhostTypes; в 26.3 special-геометрия
-                    // невидима для нас — регистрируем fallback).
+                    
+                    
+                    
+                    
+                    
                     fallback(state, poseStack, collector, packedLight);
                     return;
                 }
@@ -133,13 +133,13 @@ public final class GhostItem {
                 Matrix4f localTransform = (Matrix4f) LOCAL_TRANSFORM_FIELD.get(layer);
                 int[] tints = intArray(layer.tintLayers());
 
-                // 1:1 ItemStackRenderState.LayerRenderState.applyTransform
+                
                 poseStack.pushPose();
                 itemTransform.apply(false, poseStack.last());
                 poseStack.last().mulPose(localTransform);
 
-                // Группировка по атласу (TEXTURE-шард примета 1:1): UV квад'ов
-                // отныне в атласном пространстве, как и типы Sheets'а.
+                
+                
                 Map<Identifier, List<BakedQuad>> byAtlas = new LinkedHashMap<>();
                 for (BakedQuad quad : quads.all()) {
                     TextureAtlasSprite sprite = quad.materialInfo().sprite();
@@ -176,7 +176,7 @@ public final class GhostItem {
                                 color = tintCopy[index];
                             }
                         }
-                        // ScaledAlphaConsumer 1:1: цвет * тинт-константы * альфа-scale.
+                        
                         instance.setColor(ARGB.multiply(color, GHOST_COLOR_ARGB));
                         consumer.putBakedQuad(pose, quad, instance);
                     }

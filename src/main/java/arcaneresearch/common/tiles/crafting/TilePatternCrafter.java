@@ -156,8 +156,8 @@ public class TilePatternCrafter extends TileArcaneresearch {
         }
     }
 
-    // NEOFORGE_PORT: ItemHandlerHelper.insertItem (returned remainder) removed with
-    // neoforge.items; ItemUtil.insertItemReturnRemaining in a root tx (same contract).
+    
+    
     private static ItemStack insertRemaining(ResourceHandler<ItemResource> handler, ItemStack stack,
                                              boolean simulate) {
         try (var tx = Transaction.openRoot()) {
@@ -170,7 +170,7 @@ public class TilePatternCrafter extends TileArcaneresearch {
     }
 
     private ResourceHandler<ItemResource> getItemHandler(BlockPos pos, Direction side) {
-        // NEOFORGE_PORT: kept helper (same nullable contract); unified on the api lookup.
+        
         return ArcaneresearchInvHelper.getItemHandlerAt(level, pos, side);
     }
 
@@ -249,8 +249,8 @@ public class TilePatternCrafter extends TileArcaneresearch {
             }
         }
 
-        // NEOFORGE_PORT: getRecipeFor returns Optional<RecipeHolder<CraftingRecipe>>
-        // in 26.x (recipe access via .value()); assemble(input) single-arg.
+        
+        
         Optional<net.minecraft.world.item.crafting.RecipeHolder<CraftingRecipe>> recipe = level.getServer().getRecipeManager()
                 .getRecipeFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), level);
 

@@ -208,9 +208,9 @@ public class MeshModel {
         }
         int tint = (part.name != null && part.name.contains("focus")) ? 1 : part.tintIndex;
         Direction facing = getFacingFromPositions(cornerPositions[0], cornerPositions[1], cornerPositions[2]);
-        // NEOFORGE_PORT: QuadBakingVertexConsumer gone; 26.3 BakedQuad is a record.
-        // Same inputs as Forge (flat face normal, sprite UVs, no shade, AO on):
-        // 26.x sprite.getU/getV take 0..1 (old code multiplied by 16).
+        
+        
+        
         Vector3f normal = faceNormal(cornerPositions[0], cornerPositions[1], cornerPositions[2]);
         int packedNormal = BakedNormals.pack(normal);
         Vector3f p0 = new Vector3f(cornerPositions[0]);

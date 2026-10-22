@@ -22,12 +22,12 @@ import arcaneresearch.common.entities.projectile.EntityPrimalArrow;
 import arcaneresearch.common.items.tools.ItemBoneBow;
 import arcaneresearch.common.items.tools.ItemPrimalArrow;
 
-/**
- * Первородные стрелы в полёте, порт TC4 {@code EventHandlerEntity.bowShot}:
- * если в инвентаре есть первородные стрелы — выстрел заменяется на
- * {@link EntityPrimalArrow} (тип из первого найденного стака) и ванильный
- * выстрел отменяется. Заряд: костяной лук j / 10, остальные j / 20.
- */
+ 
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class PrimalArrowEvents {
 
@@ -38,7 +38,7 @@ public class PrimalArrowEvents {
 
     @SubscribeEvent
     public static void onArrowLoose(ArrowLooseEvent event) {
-        // NEOFORGE_PORT: bus FORGE -> NeoForge.EVENT_BUS (default GAME bus of the subscriber).
+        
         Player player = event.getEntity();
         if (player == null) {
             return;
@@ -64,9 +64,9 @@ public class PrimalArrowEvents {
         float dam = bonebow ? 2.5F : 2.0F;
 
         EntityPrimalArrow shot = new EntityPrimalArrow(level, player, power * dam, type);
-        // NEOFORGE_PORT: AbstractArrow.getBaseDamage удалён (только setBaseDamage);
-        // база после ctor известна: 2.1*mult (см. EntityPrimalArrow). Бонусы считаем
-        // от неё же: костяной лук +0.5 (вместо крита), иначе крит при полном заряде.
+        
+        
+        
         double base = 2.1D * EntityPrimalArrow.damageMult(type);
         if (bonebow) {
             base += 0.5D;
@@ -87,16 +87,16 @@ public class PrimalArrowEvents {
             punchLevel++;
         }
         if (punchLevel > 0) {
-            // NEOFORGE_PORT: setKnockback удалён -> поле EntityPrimalArrow.punchLevel
-            // (применяется в onHitEntity тем же толчком 0.6/уровень).
+            
+            
             shot.punchLevel = punchLevel;
         }
         if (EnchantmentHelper.getItemEnchantmentLevel(flameH, bow) > 0) {
-            // NEOFORGE_PORT: setSecondsOnFire(100) -> igniteForSeconds(100).
-            // NEOFORGE_PORT (26.3): setSecondsOnFire took SECONDS (100 s = 2000 ticks, vanilla Flame).
+            
+            
             shot.igniteForSeconds(100.0F);
         }
-        // NEOFORGE_PORT: broadcastBreakEvent consumer overload REMOVED.
+        
         bow.hurtAndBreak(1, player, player.getUsedItemHand());
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT,
                 SoundSource.PLAYERS, 1.0F,
@@ -117,11 +117,11 @@ public class PrimalArrowEvents {
         event.setCanceled(true);
     }
 
-    /**
-     * Паритет TC4 ArrowNockEvent: любой лук натягивается, если есть
-     * первородные стрелы (ванилла без обычных стрел отказывает).
-     * Событие постится до проверки патронов — подменяем исход consume.
-     */
+     
+
+
+
+ 
     @SubscribeEvent
     public static void onArrowNock(ArrowNockEvent event) {
         if (event.getAction() != null) {
@@ -136,17 +136,17 @@ public class PrimalArrowEvents {
             return;
         }
         player.startUsingItem(event.getHand());
-        // NEOFORGE_PORT: InteractionResultHolder removed -> InteractionResult.
+        
         event.setAction(net.minecraft.world.InteractionResult.CONSUME);
     }
 
-    /**
-     * NEOFORGE_PORT (26.3): BowItem.releaseUsing now returns BEFORE posting ArrowLooseEvent when
-     * player.getProjectile(bow) is empty (Forge 1.20.1 posted it with hasAmmo=false), so with only
-     * primal arrows a vanilla bow would nock (onArrowNock) but never fire. Report the primal stack
-     * as the bow's ammo in that case; onArrowLoose then cancels the vanilla shot exactly as before
-     * (it fires whenever a primal stack exists and power >= 0.1; below that vanilla also aborts).
-     */
+     
+
+
+
+
+
+ 
     @SubscribeEvent
     public static void onGetProjectile(net.neoforged.neoforge.event.entity.living.LivingGetProjectileEvent event) {
         if (!event.getProjectileItemStack().isEmpty()) {
@@ -162,10 +162,10 @@ public class PrimalArrowEvents {
         }
     }
 
-    /** Первый стак первородных стрел: основной инвентарь, затем вторая рука. */
+      
     private static ItemStack findPrimalArrow(Player player) {
-        // NEOFORGE_PORT: Inventory.items now private -> slot iteration (same stacks).
-        // NEOFORGE_PORT (26.3): only the 36 main slots (Forge `items`); getContainerSize() also spans armor/offhand.
+        
+        
         net.minecraft.world.entity.player.Inventory inv = player.getInventory();
         for (int i = 0; i < net.minecraft.world.entity.player.Inventory.INVENTORY_SIZE; i++) {
             ItemStack stack = inv.getItem(i);

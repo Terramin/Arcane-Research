@@ -4,15 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.entity.TaintSeedModel;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintSeed;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintSeedPrime;
 
-// NEOFORGE_PORT (26.3): grow/pulse/shadow inputs via State (were entity reads
-// in scale()); model animation inputs (hurt/attack phase) via State.
+
+
 public class TaintSeedRenderer extends MobRenderer<EntityTaintSeed, TaintSeedRenderer.State, TaintSeedModel> {
 
     public static class State extends LivingEntityRenderState {

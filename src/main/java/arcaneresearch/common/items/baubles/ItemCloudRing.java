@@ -45,7 +45,7 @@ public class ItemCloudRing extends Item implements ICurioItem {
             jumpList.put(name, false);
             Vec3 motion = player.getDeltaMovement();
             double boost = 0.75D;
-            // NEOFORGE_PORT: MobEffects.JUMP_BOOST renamed JUMP_BOOST in 26.x (both are Holders now).
+            
             if (player.hasEffect(MobEffects.JUMP_BOOST)) {
                 boost += (player.getEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1) * 0.1F;
             }
@@ -60,7 +60,7 @@ public class ItemCloudRing extends Item implements ICurioItem {
             arcaneresearch.common.lib.network.PacketHandler.sendToServer(
                     new arcaneresearch.common.lib.network.playerdata.PacketPlayerFlagToServer(
                             arcaneresearch.common.lib.network.playerdata.PacketPlayerFlagToServer.FLAG_RESET_FALL_DISTANCE));
-            // NEOFORGE_PORT: ForgeHooks.onLivingJump -> CommonHooks.onLivingJump.
+            
             CommonHooks.onLivingJump(player);
         }
         if (player.onGround()) {

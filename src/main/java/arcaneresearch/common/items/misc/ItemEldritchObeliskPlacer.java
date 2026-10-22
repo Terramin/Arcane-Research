@@ -20,15 +20,15 @@ import java.util.List;
 
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 
-/**
- * TC4 ItemEldritchObject meta 4 "Eldritch Obelisk Placer" — в 1.7.10 у
- * обелиска свой ПРЕДМЕТ (не BlockItem) со своей иконкой ob_placer и
- * тултипом §oCreative Mode Only. ПКМ по ВЕРХНЕЙ грани: при 6 воздухе
- * сверху (y+1..y+6, TC4 verbatim func_147437_c) ставит алтарь (meta 0)
- * на y+1, базу обелиска (meta 1) на y+3 и 4 тела (meta 2) на y+4..y+7
- * (setBlock(...,3) как world.func_147465_d). Предмет не расходуется.
- * Лежит в arcaneresearch.arcaneresearch.common.items.misc.
- */
+ 
+
+
+
+
+
+
+
+ 
 public class ItemEldritchObeliskPlacer extends Item {
 
     public ItemEldritchObeliskPlacer(Item.Properties props) {
@@ -47,12 +47,12 @@ public class ItemEldritchObeliskPlacer extends Item {
         if (player == null || context.getClickedFace() != Direction.UP) {
             return InteractionResult.PASS;
         }
-        // TC4: player.swingItem() ДО проверок — на обеих сторонах.
-        // NEOFORGE_PORT (26.x): LivingEntity.swing(InteractionHand) -> swing(hand, SwingAnimation, sendToSwingingEntity).
+        
+        
         player.swing(InteractionHand.MAIN_HAND,
                 net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
-        // TC4 verbatim: проверка воздуха только y+1..y+6 (тело на y+7
-        // ставится поверх чего угодно, как func_147465_d).
+        
+        
         for (int a = 1; a <= 6; a++) {
             if (!level.getBlockState(pos.above(a)).isAir()) {
                 return InteractionResult.FAIL;
@@ -66,12 +66,12 @@ public class ItemEldritchObeliskPlacer extends Item {
                 level.setBlock(pos.above(a), body.defaultBlockState(), 3);
             }
         }
-        // TC4: return !world.field_72995_K.
+        
         return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (TooltipContext/TooltipDisplay/Consumer). Same content as Forge.
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,

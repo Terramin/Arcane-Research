@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 
-// NEOFORGE_PORT: custom per-frame math -> extract() override (same math).
+
 public class FXVisSparkle extends SingleQuadParticle {
 
     protected double targetX;
@@ -130,13 +130,13 @@ public class FXVisSparkle extends SingleQuadParticle {
     }
 
 
-    // NEOFORGE_PORT: getLightColor -> getLightCoords (same fullbright contract).
+    
     @Override
     protected int getLightCoords(float partialTick) {
         return 0xF000F0;
     }
 
-    // NEOFORGE_PORT: same math as the old render(); immediate verts -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         float bob = Mth.sin(this.age / 3.0f) * 0.3f + 6.0f;

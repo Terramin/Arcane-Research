@@ -14,7 +14,7 @@ import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.util.RecipeMatcher; // NEOFORGE_PORT: package move
+import net.neoforged.neoforge.common.util.RecipeMatcher; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.crafting.IArcaneRecipe;
@@ -24,19 +24,19 @@ import arcaneresearch.init.ModRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: gameplay logic 1:1 from Forge common/lib/crafting/ShapelessArcaneRecipe.java.
-// 26.x changes only:
-//   - Old Serializer (fromJson/fromNetwork/toNetwork) replaced by MAP_CODEC/STREAM_CODEC
-//     + `new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC)` (mirrors vanilla
-//     ShapelessRecipe: result as ItemStack.CODEC, ingredients as
-//     Ingredient.CODEC.listOf(1, 9), same "group"/"research"/"vis"/"crystals" keys).
-//     The vanilla id parameter is gone (recipes are holder-keyed); id is kept as a
-//     nullable runtime field for research-display paths (see IArcaneRecipe#getId).
-//   - Ingredients stay a plain List<Ingredient> via ArrayList (empties skipped at
-//     decode, same as the old itemsFromJson); size cap 9 preserved by the codec.
-//   - matches(IArcaneWorkbench, Level) VERBATIM (count + RecipeMatcher).
-//   - assemble(IArcaneWorkbench) single-arg; placementInfo() via
-//     PlacementInfo.create (mirrors vanilla ShapelessRecipe).
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class ShapelessArcaneRecipe implements IArcaneRecipe {
 
     public static final MapCodec<ShapelessArcaneRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -118,13 +118,13 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
 
     @Override
     public RecipeSerializer<? extends net.minecraft.world.item.crafting.Recipe<IArcaneWorkbench>> getSerializer() {
-        // NEOFORGE_PORT: wildcard bound (parameterized types are invariant; the concrete
-        // type would block the ShapelessArcaneEssencePhialRecipe override, cf. ShapedArcaneRecipe).
+        
+        
         return Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<IArcaneRecipe> getType() { // NEOFORGE_PORT: Recipe bound requires concrete type
+    public RecipeType<IArcaneRecipe> getType() { 
         return ModRecipeTypes.ARCANE_WORKBENCH.get();
     }
 
@@ -158,8 +158,8 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
         return crystals;
     }
 
-    // NEOFORGE_PORT: kept so existing references (api ShapelessArcaneRecipe#
-    // getSerializer) keep resolving; the registered serializer instance is SERIALIZER.
+    
+    
     public static class Serializer {
         public static final RecipeSerializer<ShapelessArcaneRecipe> INSTANCE = SERIALIZER;
         public static final Identifier ID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_workbench_shapeless");

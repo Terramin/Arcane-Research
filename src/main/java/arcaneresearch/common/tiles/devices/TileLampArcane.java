@@ -100,10 +100,10 @@ public class TileLampArcane extends TileArcaneresearch {
         }
     }
 
-    // NEOFORGE_PORT (26.3): reference BlockLamp.onRemove (ARCANE, !isMoving) called
-    // removeLights(); the port's BlockLamp.affectNeighborsAfterRemoval runs after the tile is
-    // already removed, so glimmers were left behind. LevelChunk calls this only on a block
-    // change (server side) with the tile present; block entities are never piston-moved.
+    
+    
+    
+    
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
         super.preRemoveSideEffects(pos, oldState);

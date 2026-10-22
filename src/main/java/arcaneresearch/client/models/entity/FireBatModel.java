@@ -7,13 +7,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.FireBatRenderer;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>; hanging via renderer State.
+
 public class FireBatModel extends EntityModel<FireBatRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -126,6 +126,6 @@ public class FireBatModel extends EntityModel<FireBatRenderer.State> {
         }
     }
 
-    // NEOFORGE_PORT: base Model.renderToBuffer (final, root part) draws head +
-    // body; the old 8-float overload is removed (same coverage).
+    
+    
 }

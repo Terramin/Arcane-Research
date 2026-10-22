@@ -17,14 +17,14 @@ import arcaneresearch.common.world.maze.TeleporterArcaneresearch;
 
 import java.util.List;
 
-/**
- * Eldritch portal tile, ported from TC4 TileEldritchPortal.
- * Every 5 ticks moves free-standing real players in its space to the other
- * side (Outer Lands and back) with a 100-tick portal cooldown; first
- * entry grants ENTEROUTER. Mobs, items, projectiles, spectators and fake
- * players are never teleported. Clientside it plays the portal hum and
- * advances opencount for the renderer.
- */
+ 
+
+
+
+
+
+
+ 
 public class EldritchPortalTile extends TileArcaneresearch {
     public int opencount = -1;
     private int count = 0;
@@ -58,8 +58,8 @@ public class EldritchPortalTile extends TileArcaneresearch {
     }
 
     protected void serverTick() {
-        // NEOFORGE_PORT: Forge body; FakePlayer -> neo package;
-        // changeDimension(dest, teleporter) -> TeleporterArcaneresearch.teleportPlayer.
+        
+        
         Level level = getLevel();
         if (level == null || level.isClientSide() || this.count++ % 5 != 0) {
             return;
@@ -81,16 +81,16 @@ public class EldritchPortalTile extends TileArcaneresearch {
                 continue;
             }
             if (player.level().dimension().equals(MazeFeature.DIMENSION)) {
-                // NEOFORGE_PORT: ServerPlayer.getServer()/getRespawnDimension gone in 26.x;
-                // server is non-null here (serverTick runs server-side), dim via RespawnConfig.
+                
+                
                 net.minecraft.server.MinecraftServer server = level.getServer();
                 if (server == null) {
                     continue;
                 }
                 net.minecraft.server.level.ServerLevel dest = null;
                 try {
-                    // NEOFORGE_PORT: dim lives on RespawnConfig.respawnData().globalPos()
-                    // (cf. TeleporterArcaneresearch.placeOnReturn).
+                    
+                    
                     ServerPlayer.RespawnConfig cfg = player.getRespawnConfig();
                     net.minecraft.resources.ResourceKey<Level> respawnDim =
                             cfg != null && cfg.respawnData() != null

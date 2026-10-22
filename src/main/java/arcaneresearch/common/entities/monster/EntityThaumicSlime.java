@@ -124,8 +124,8 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
         return super.finalizeSpawn(level, difficulty, spawnType, spawnData);
     }
 
-    // NEOFORGE_PORT (26.3): size is the synced AbstractCubeMob ID_SIZE (getSize() is inherited, as
-    // in Forge); a local shadow field was never synced to the client and lagged the dimension refresh.
+    
+    
     @Override
     public void setSize(int size, boolean resetHealth) {
         super.setSize(size, resetHealth);
@@ -199,7 +199,7 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
 
                 EntityThaumicSlime smallSlime = new EntityThaumicSlime(ModEntities.THAUMIC_SLIME.get(), level());
                 smallSlime.setSize(1, true);
-                // NEOFORGE_PORT (26.3): moveTo(x,y,z,yaw,pitch) -> snapTo (same body).
+                
                 smallSlime.snapTo(getX() + offsetX, getY() + 0.5, getZ() + offsetZ,
                         random.nextFloat() * 360.0f, 0.0f);
                 level().addFreshEntity(smallSlime);
@@ -214,7 +214,7 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
         return getSize() + 1;
     }
 
-    // NEOFORGE_PORT: Slime.isDealsDamage -> 26.x AbstractCubeMob.canDealDamage.
+    
     @Override
     protected boolean canDealDamage() {
         return true;
@@ -228,8 +228,8 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
         if (isAlive() && hasLineOfSight(target) &&
                 distanceToSqr(target) < 0.6 * effectiveSize * 0.6 * effectiveSize) {
 
-            // NEOFORGE_PORT: doEnchantDamageEffects(attacker, target) removed in 26.x ->
-            // doPostAttackEffects(ServerLevel, victim, source) (victim = target, as vanilla cube mobs).
+            
+            
             DamageSource attackSource = damageSources().mobAttack(this);
             if (target.level() instanceof net.minecraft.server.level.ServerLevel _sl
                     && target.hurtServer(_sl, attackSource, getAttackDamage())) {
@@ -242,8 +242,8 @@ public class EntityThaumicSlime extends Slime implements ITaintedMob {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int lootingLevel = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
 

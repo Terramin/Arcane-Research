@@ -158,7 +158,7 @@ public class FXSwarmRunes extends ArcaneresearchParticle {
     }
 
 
-    // NEOFORGE_PORT: same math as the old render(); immediate verts -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         float bob = Mth.sin(this.age / 3.0f) * 0.25f + 1.0f;

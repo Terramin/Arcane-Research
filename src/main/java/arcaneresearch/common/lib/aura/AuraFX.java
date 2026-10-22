@@ -5,9 +5,9 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/aura/AuraFX.java.
-// REQUIRED: DustParticleOptions(Vector3f, float) removed in 26.x ->
-//   DustParticleOptions(int packedColor, float scale). Color math preserved.
+
+
+
 public class AuraFX {
     private AuraFX() {
     }

@@ -59,15 +59,15 @@ public class ItemFocusShock extends ItemFocusBasic {
         double pz = caster.getZ()
                 + (-Mth.sin(caster.getYRot() / 180.0F * (float) Math.PI) * 0.06F)
                 + look.z * 0.5D;
-        // Старт молнии — от кончика жезла (клиент, первое лицо), иначе
-        // старая аппроксимация выше. Серверный путь не трогаем.
-        // NEOFORGE_PORT: Forge шёл через WandFX.tipStart (файл WandFX.java — чужой);
-        // здесь тот же вызов напрямую: WandTipHelper.tipWorld (мой порт) с откатом.
+        
+        
+        
+        
         if (level.isClientSide() && caster instanceof Player) {
             try {
                 float partial = 1.0F;
                 try {
-                    // NEOFORGE_PORT: Minecraft.getFrameTime удалён -> DeltaTracker.
+                    
                     partial = net.minecraft.client.Minecraft.getInstance().getDeltaTracker()
                             .getGameTimeDeltaPartialTick(false);
                 } catch (Exception ignored) {
@@ -146,7 +146,7 @@ public class ItemFocusShock extends ItemFocusBasic {
     }
 
     public void doLightningBolt(ItemStack stack, LivingEntity caster, int count) {
-        // NEOFORGE_PORT: restored Forge body; isClientSide()/getRandom()/sendToNear(level,x,y,z,range).
+        
         if (!(stack.getItem() instanceof IWand wand)) {
             return;
         }
@@ -192,7 +192,7 @@ public class ItemFocusShock extends ItemFocusBasic {
         level.playSound(null, caster.blockPosition(), WandSounds.shock(), SoundSource.PLAYERS, 0.25F, 1.0F);
         if (pointed instanceof LivingEntity target
                 && (!(target instanceof Player) || !(caster instanceof Player)
-                // NEOFORGE_PORT: MinecraftServer.isPvpAllowed moved to ServerLevel (cf. ItemFocusHellbat).
+                
                 || (level instanceof net.minecraft.server.level.ServerLevel pvpLevel && pvpLevel.isPvpAllowed()))) {
             int chain = getUpgradeLevel(wand.getFocusStack(stack), chainlightning) * 2;
             target.hurt(caster.damageSources().lightningBolt(), (chain > 0 ? 6 : 4) + potency);
@@ -209,7 +209,7 @@ public class ItemFocusShock extends ItemFocusBasic {
                             e -> e instanceof LivingEntity && !hitIds.contains(e.getId()) && !e.isRemoved()
                                     && !(e instanceof Player && caster instanceof Player
                                     && (!(level instanceof net.minecraft.server.level.ServerLevel pvpLevel2) || !pvpLevel2.isPvpAllowed()))
-                                    // NEOFORGE_PORT: OwnableEntity.getOwnerUUID gone -> getOwnerReference().getUUID().
+                                    
                                     && !(e instanceof OwnableEntity own && own.getOwnerReference() != null
                                     && own.getOwnerReference().getUUID() != null
                                     && own.getOwnerReference().getUUID().equals(caster.getUUID())));

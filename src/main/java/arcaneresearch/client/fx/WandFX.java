@@ -6,10 +6,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-// NEOFORGE_PORT: copied 1:1 from Forge 1.20.1 WandFX.java; mechanical fixes:
-// level.isClientSide -> level.isClientSide(), level.random -> level.getRandom().
-// Custom-geometry beams bypass vanilla gating via BeamEngine (as in Forge,
-// where they went straight to particleEngine).
+
+
+
+
 public class WandFX {
     private WandFX() {
     }
@@ -60,7 +60,7 @@ public class WandFX {
                 beam.setType(type);
                 beam.setEndMod(endmod);
                 beam.setReverse(reverse);
-                // NEOFORGE_PORT: custom geometry bypasses gating (as in Forge) via BeamEngine.
+                
                 arcaneresearch.client.fx.BeamEngine.add(beam);
             } else {
                 beam.updateBeam(tx, ty, tz);
@@ -118,11 +118,11 @@ public class WandFX {
         return new Vec3(sx, sy, sz);
     }
 
-    /**
-     * Старт от кончика жезла (то же решение, что луч): в первом лице —
-     * динамический кончик, иначе старый beamStart. Только для клиентских
-     * вызовов (трогает клиентские классы).
-     */
+     
+
+
+
+ 
     public static Vec3 tipStart(LivingEntity caster) {
         if (caster == null || !caster.level().isClientSide()
                 || !(caster instanceof net.minecraft.world.entity.player.Player player)) {
@@ -131,7 +131,7 @@ public class WandFX {
         try {
             float partial = 1.0F;
             try {
-                // NEOFORGE_PORT: Minecraft.getFrameTime удалён -> DeltaTracker.
+                
                 partial = net.minecraft.client.Minecraft.getInstance().getDeltaTracker()
                         .getGameTimeDeltaPartialTick(false);
             } catch (Exception ignored) {

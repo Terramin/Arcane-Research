@@ -7,7 +7,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXShieldRunes extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier[] RIPPLE_TEXTURES = new Identifier[15];
@@ -38,7 +38,7 @@ public class FXShieldRunes extends SingleQuadParticle implements BeamEngine.Beam
     private final float pitch;
 
     public FXShieldRunes(ClientLevel level, double x, double y, double z, Entity target, int maxAge, float yaw, float pitch) {
-        super(level, x, y, z, 0.0, 0.0, 0.0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, x, y, z, 0.0, 0.0, 0.0, null); 
 
         this.rCol = 1.0f;
         this.gCol = 1.0f;
@@ -91,8 +91,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
         return TCSprites.translucent();
     }
 
-    // NEOFORGE_PORT: Forge computed the frame once from age+partialTicks and used
-    // it for both texture bind and emission; the bind rides beamRenderTypes(partialTicks).
+    
+    
     public Identifier currentTexture(float partialTicks) {
         float fade = (this.age + partialTicks) / this.lifetime;
         int frame = Math.min(15, (int) (14.0f * fade) + 1);
@@ -119,7 +119,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;

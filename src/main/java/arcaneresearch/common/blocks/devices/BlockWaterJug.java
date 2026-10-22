@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
-// NEOFORGE_PORT: PotionUtils removed -> PotionContents (see usage below).
+
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -27,7 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.transfer.fluid.FluidUtil; // NEOFORGE_PORT: package move
+import net.neoforged.neoforge.transfer.fluid.FluidUtil; 
 import arcaneresearch.common.tiles.devices.TileWaterJug;
 import arcaneresearch.init.ModBlockEntities;
 
@@ -56,8 +56,8 @@ public class BlockWaterJug extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
@@ -81,7 +81,7 @@ public class BlockWaterJug extends Block implements EntityBlock {
         }
 
         if (heldItem.is(Items.GLASS_BOTTLE) && tile.tank.getFluidAmount() >= 333) {
-            // NEOFORGE_PORT: PotionUtils removed -> PotionContents.createItemStack.
+            
             ItemStack waterBottle = net.minecraft.world.item.alchemy.PotionContents.createItemStack(
                     Items.POTION, Potions.WATER);
 
@@ -123,7 +123,7 @@ public class BlockWaterJug extends Block implements EntityBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity be = level.getBlockEntity(pos);

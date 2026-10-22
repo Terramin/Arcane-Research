@@ -10,7 +10,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-// NEOFORGE_PORT: PotionUtils (alchemy) removed -> PotionContents/DataComponents (see usages).
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -54,7 +54,7 @@ public class TilePotionSprayer extends TileArcaneresearchInventory implements IA
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TilePotionSprayer tile) {
-        // NEOFORGE_PORT: Forge body; PotionUtils.getMobEffects -> POTION_CONTENTS getAllEffects.
+        
         tile.counter++;
         Direction facing = tile.getFacing();
 
@@ -109,8 +109,8 @@ public class TilePotionSprayer extends TileArcaneresearchInventory implements IA
 
                         if (target.isAlive()) {
                             for (MobEffectInstance effect : effects) {
-                                // NEOFORGE_PORT: getEffect() returns Holder; instantenous typo
-                                // fixed upstream (isInstantaneous/applyInstantaneousEffect + ServerLevel).
+                                
+                                
                                 net.minecraft.core.Holder<MobEffect> holder = effect.getEffect();
                                 MobEffect potion = holder.value();
                                 if (potion.isInstantaneous()) {
@@ -249,13 +249,13 @@ public class TilePotionSprayer extends TileArcaneresearchInventory implements IA
     }
 
     public int getPotionColor(ItemStack itemstack) {
-        // NEOFORGE_PORT: PotionUtils.getPotion/getColor removed ->
-        //   PotionContents.
+        
+        
         var contents = itemstack.getOrDefault(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
                 net.minecraft.world.item.alchemy.PotionContents.EMPTY);
-        // NEOFORGE_PORT (26.3): reference PotionUtils.getPotion never returned null (EMPTY ->
-        // getColor(Potions.EMPTY) = 16253176) and PotionUtils.getColor(Potion) blended only the
-        // base potion's effects (no custom colour/effects; none -> 3694022). Same RGB, no alpha.
+        
+        
+        
         if (contents.potion().isEmpty()) {
             return 16253176;
         }

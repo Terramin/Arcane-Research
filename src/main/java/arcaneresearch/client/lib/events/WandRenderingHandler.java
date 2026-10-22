@@ -3,7 +3,7 @@ package arcaneresearch.client.lib.events;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ import java.util.TreeMap;
 public class WandRenderingHandler {
     static float radialHudScale = 0.0F;
 
-    /** Жезл в любой руке (основная первее) — для GUI/радиалки. */
+      
     public static ItemStack heldWand(Player player) {
         ItemStack main = player.getMainHandItem();
         if (main != null && !main.isEmpty() && main.getItem() instanceof IWand) {
@@ -43,14 +43,14 @@ public class WandRenderingHandler {
     HashMap<String, Float> fociScale = new HashMap<>();
     long lastTime = 0L;
     boolean lastState = false;
-    // Снятие фокуса наведением на центр (без клика, как надевание):
-    // курсор должен хоть раз покинуть центр после открытия меню,
-    // иначе фокус слетал бы при каждом открытии (курсор уже в центре).
+    
+    
+    
     boolean centerArmed = false;
     boolean centerRemoveHover = false;
 
-    // NEOFORGE_PORT: 2D pose (pushMatrix/translate(x,y)/rotate(rad)) + per-blit tint
-    // (old setColor(0.5,0.5,0.5,0.78) baked as 0xC77F7F7F).
+    
+    
     private static void drawSpinningRing(GuiGraphicsExtractor graphics, Identifier texture,
                                          int cx, int cy, float size, float spin) {
         if (size <= 0.5F) {
@@ -65,7 +65,7 @@ public class WandRenderingHandler {
         graphics.pose().popMatrix();
     }
 
-    // NEOFORGE_PORT: RenderGuiEvent removed in 26.x -> GuiLayer passes extractor + partial.
+    
     public void handleFociRadial(Minecraft mc, long time, GuiGraphicsExtractor graphics, float partialTicks) {
         if (mc.player == null || heldWand(mc.player).isEmpty()) {
             if (!KeyHandler.radialActive && radialHudScale <= 0.0F) {
@@ -76,7 +76,7 @@ public class WandRenderingHandler {
             return;
         }
         if (KeyHandler.radialActive) {
-            // NEOFORGE_PORT: Minecraft.screen removed in 26.x -> gui.screen().
+            
             if (mc.gui.screen() != null) {
                 KeyHandler.radialActive = false;
                 KeyHandler.radialLock = true;
@@ -116,9 +116,9 @@ public class WandRenderingHandler {
                         }
                     }
 
-                    // NEOFORGE_PORT: Inventory.items РїСЂРёРІР°С‚РЅС‹ РІ 26.x -> Container-API.
+                    
                     var inv = player.getInventory();
-                    // NEOFORGE_PORT (26.3): Forge iterated inventory.items (36), not armor/offhand.
+                    
                     for (int a = 0; a < inv.getNonEquipmentItems().size(); a++) {
                         ItemStack item = inv.getItem(a);
                         if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
@@ -144,7 +144,7 @@ public class WandRenderingHandler {
             mc.mouseHandler.grabMouse();
             this.lastState = false;
         }
-        // NEOFORGE_PORT: RenderGuiEvent.getWindow gone -> mc.getWindow();
+        
         int sw = mc.getWindow().getGuiScaledWidth();
         int sh = mc.getWindow().getGuiScaledHeight();
         renderFocusRadialHUD(mc, graphics, sw, sh, time, partialTicks);
@@ -165,7 +165,7 @@ public class WandRenderingHandler {
                 }
             }
 
-            // Отпускание с курсором на одетом фокусе — снять его (без клика).
+            
             if (this.centerRemoveHover && !KeyHandler.radialActive
                     && !KeyHandler.radialLock && mc.player != null) {
                 this.centerRemoveHover = false;
@@ -215,15 +215,15 @@ public class WandRenderingHandler {
 
         double mouseX = mc.mouseHandler.xpos() * sw / mc.getWindow().getWidth();
         double mouseY = mc.mouseHandler.ypos() * sh / mc.getWindow().getHeight();
-        // NEOFORGE_PORT: LWJGL not on the mod compile classpath in 26.3;
-        // MouseHandler tracks the same button state.
+        
+        
         boolean clicked = mc.mouseHandler.isLeftPressed();
 
         if (this.fociItem.isEmpty() && focus == null) {
             return;
         }
 
-        // NEOFORGE_PORT: RenderSystem blend-state calls gone (pipelines own state).
+        
 
         int cx = sw / 2;
         int cy = sh / 2;
@@ -236,7 +236,7 @@ public class WandRenderingHandler {
         ItemStack tooltipStack = null;
         if (focus != null) {
             ItemStack item = wand.getFocusStack(wandStack).copy();
-            // NEOFORGE_PORT: GuiGraphics.renderItem -> extractor item().
+            
             graphics.item(item, cx - 8, cy - 8);
             int mx = (int) (mouseX - cx);
             int my = (int) (mouseY - cy);
@@ -244,8 +244,8 @@ public class WandRenderingHandler {
             if (centerHover) {
                 tooltipStack = item;
             }
-            // Наведение на одетый фокус в центре — снять его при отпускании,
-            // как надевание наведением (клика не нужно).
+            
+            
             if (!centerHover) {
                 this.centerArmed = true;
             }
@@ -302,10 +302,10 @@ public class WandRenderingHandler {
         }
 
         if (tooltipStack != null) {
-            // NEOFORGE_PORT: renderTooltip(Font,ItemStack,int,int) gone ->
-            // setTooltipForNextFrame(Font,ItemStack,int,int).
+            
+            
             graphics.setTooltipForNextFrame(mc.font, tooltipStack, (int) mouseX, (int) mouseY);
-            // NEOFORGE_PORT (26.3): HUD has no deferred-element flush (only Screen does) -> flush now.
+            
             graphics.extractDeferredElements((int) mouseX, (int) mouseY, partialTicks);
         }
     }

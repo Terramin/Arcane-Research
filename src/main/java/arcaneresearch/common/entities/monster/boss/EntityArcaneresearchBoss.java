@@ -177,8 +177,8 @@ public abstract class EntityArcaneresearchBoss extends Monster {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
                                         EntitySpawnReason spawnType, @Nullable SpawnGroupData spawnData) {
 
-        // NEOFORGE_PORT (26.3): Forge called setHomePos (stores HomeD/X/Y/Z for hasHome() + save,
-        // then restrictTo == setHomeTo); calling setHomeTo directly skipped the persisted home.
+        
+        
         setHomePos(blockPosition(), 24);
         generateName();
         this.bossEvent.setName(getDisplayName());
@@ -211,8 +211,8 @@ public abstract class EntityArcaneresearchBoss extends Monster {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int lootingLevel = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
         spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), new ItemStack(arcaneresearch.init.ModItems.PRIMORDIAL_PEARL.get()));
@@ -226,7 +226,7 @@ public abstract class EntityArcaneresearchBoss extends Monster {
 
     @Override
     public boolean isPushable() {
-        // NEOFORGE_PORT: isInvulnerableTo(DamageSource) -> (ServerLevel, DamageSource).
+        
         if (!(level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
             return super.isPushable();
         }
@@ -234,7 +234,7 @@ public abstract class EntityArcaneresearchBoss extends Monster {
     }
 
     @Override
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     protected boolean considersEntityAsAlly(Entity entity) {
         if (entity instanceof IEldritchMob) {
             return true;

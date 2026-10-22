@@ -16,8 +16,8 @@ public class ItemCausalityCollapser extends Item {
                 .stacksTo(16));
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.sidedSuccess(stack, client) -> InteractionResult.SUCCESS.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

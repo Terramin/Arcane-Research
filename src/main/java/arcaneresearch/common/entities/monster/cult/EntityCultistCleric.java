@@ -36,7 +36,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityCultistCleric extends EntityCultist implements RangedAttackMob, net.neoforged.neoforge.entity.IEntityWithComplexSpawn {
-    // NEOFORGE_PORT: Forge IEntityAdditionalSpawnData -> NeoForge IEntityWithComplexSpawn (same payload).
+    
 
     private static final EntityDataAccessor<Boolean> DATA_RITUALIST =
             SynchedEntityData.defineId(EntityCultistCleric.class, EntityDataSerializers.BOOLEAN);
@@ -108,13 +108,13 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
 
     @Override
     public void performRangedAttack(LivingEntity target, float power) {
-        // NEOFORGE_PORT: 1:1 from Forge; SmallFireball(Level, shooter, dx, dy, dz)
-        // doubles ctor removed in 26.x -> (Level, shooter, Vec3 movement).
+        
+        
         double dx = target.getX() - getX();
         double dy = target.getBoundingBox().minY + target.getBbHeight() / 2.0f - (getY() + getBbHeight() / 2.0f);
         double dz = target.getZ() - getZ();
 
-        // NEOFORGE_PORT: swing(hand) -> swing(hand, SwingAnimation.DEFAULT, false) (26.x).
+        
         swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
 
         float roll = random.nextFloat();

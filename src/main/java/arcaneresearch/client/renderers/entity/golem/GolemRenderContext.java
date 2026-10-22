@@ -5,9 +5,9 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.client.renderers.entity.GolemRenderer;
 
-// NEOFORGE_PORT (26.3): thread-local handoff to PartModel hooks becomes an
-// explicit per-submit handoff (state + working pose + collector). Set/cleared
-// synchronously around each emission batch; safe on the render thread.
+
+
+
 public final class GolemRenderContext {
 
     public static GolemRenderer.State state;

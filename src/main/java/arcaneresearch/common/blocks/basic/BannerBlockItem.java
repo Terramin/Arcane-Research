@@ -24,8 +24,8 @@ public class BannerBlockItem extends BlockItem {
         super(block, properties);
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (Level+List) -> (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,

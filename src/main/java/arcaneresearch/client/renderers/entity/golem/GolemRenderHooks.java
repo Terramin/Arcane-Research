@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -38,8 +38,8 @@ public final class GolemRenderHooks {
         }
     }
 
-    // NEOFORGE_PORT: items are pre-resolved to ItemStackRenderState in
-    // GolemRenderer.extractRenderState; same pose math, submitted directly.
+    
+    
     public static void renderHeldItem(ItemStackRenderState item, boolean block,
                                       PoseStack poseStack, SubmitNodeCollector collector,
                                       int packedLight, int packedOverlay) {

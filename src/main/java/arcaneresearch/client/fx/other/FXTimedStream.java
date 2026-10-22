@@ -6,7 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -25,7 +25,7 @@ import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
 import net.minecraft.util.ARGB;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXTimedStream extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier ESSENTIA_TEX = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/essentia.png");
@@ -42,7 +42,7 @@ public class FXTimedStream extends SingleQuadParticle implements BeamEngine.Beam
     private long lastFrameNanos = -1L;
 
     public FXTimedStream(ClientLevel level, List<Vec3> path, int color, int duration, long startTick) {
-        super(level, path.get(path.size() - 1).x, path.get(path.size() - 1).y, path.get(path.size() - 1).z, 0.0, 0.0, 0.0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, path.get(path.size() - 1).x, path.get(path.size() - 1).y, path.get(path.size() - 1).z, 0.0, 0.0, 0.0, null); 
         this.path = new ArrayList<>(path);
         double len = 0.0;
         for (int i = 0; i < this.path.size() - 1; i++) {
@@ -151,7 +151,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;

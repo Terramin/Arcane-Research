@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.entity.TaintacleModel;
@@ -12,9 +12,9 @@ import arcaneresearch.common.entities.monster.boss.EntityTaintacleGiant;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintacle;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintacleSmall;
 
-// NEOFORGE_PORT (26.3): grow/shadow/anim inputs via State (were entity reads
-// in scale()/setupAnim); chain tip math via TaintacleModel.chainLengthFor in
-// extract (model only sees the State).
+
+
+
 public class TaintacleRenderer extends MobRenderer<EntityTaintacle, TaintacleRenderer.State, TaintacleModel> {
 
     public static class State extends LivingEntityRenderState {

@@ -4,7 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.registries.DeferredHolder; // NEOFORGE_PORT: was RegistryObject
+import net.neoforged.neoforge.registries.DeferredHolder; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.OreDictionaryEntries;
 import arcaneresearch.api.ArcaneresearchApiHelper;
@@ -44,12 +44,12 @@ public class ConfigItems {
     }
 
     public static ItemStack createStartBook() {
-        // NEOFORGE_PORT: root-tag book NBT (setTag) removed in 26.x ->
-        // WRITTEN_BOOK_CONTENT component (Filterable title + Component pages, same text).
-        // NEOFORGE_PORT (26.3): Forge stored the translated lang strings as raw page JSON (the
-        // lang values are quoted JSON strings with \n escapes, parsed by the book screen) ->
-        // parsed the same way here (mirrors PlayerEvents.bookPage), title capped at 32 chars
-        // (26.3 codec limit), no author (blank author = no "by" line, as Forge had no author).
+        
+        
+        
+        
+        
+        
         ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
         List<net.minecraft.server.network.Filterable<Component>> pages = new ArrayList<>();
         pages.add(net.minecraft.server.network.Filterable.passThrough(bookPage(Component.translatable("book.start.1").getString())));
@@ -66,7 +66,7 @@ public class ConfigItems {
         return book;
     }
 
-    /** NEOFORGE_PORT (26.3): Forge book page = JSON text (fallback: literal), as BookViewScreen parsed it. */
+      
     private static Component bookPage(String raw) {
         try {
             return net.minecraft.network.chat.ComponentSerialization.CODEC

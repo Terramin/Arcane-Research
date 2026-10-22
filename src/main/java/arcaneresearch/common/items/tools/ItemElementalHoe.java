@@ -19,17 +19,17 @@ import arcaneresearch.common.lib.utils.Utils;
 public class ItemElementalHoe extends Item {
 
     public ItemElementalHoe(Item.Properties props) {
-        // NEOFORGE_PORT: HoeItem REMOVED in 26.x -> plain Item with .hoe(material, damage, speed).
-        // stacksTo(5) kept 1:1 from Forge (unusual for a tool, but verbatim).
+        
+        
         super(props
                 .rarity(Rarity.RARE)
                 .stacksTo(5)
                 .hoe(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, -3, 0.0F));
     }
 
-    // NEOFORGE_PORT: isValidRepairItem(ItemStack, ItemStack) REMOVED from Item in 26.x;
-    // repair is now data-driven via the ToolMaterial repairItems tag (repairs_thaumium)
-    // -> REPAIRABLE component, so no override is needed (or possible).
+    
+    
+    
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
@@ -62,8 +62,8 @@ public class ItemElementalHoe extends Item {
             did = Utils.useBonemealAtLoc(level, player, pos);
             if (did) {
                 if (!level.isClientSide()) {
-                    // NEOFORGE_PORT: broadcastBreakEvent consumer overload REMOVED;
-                    // hurtAndBreak(int, LivingEntity, InteractionHand) is the direct replacement.
+                    
+                    
                     stack.hurtAndBreak(3, player, ctx.getHand());
                     level.levelEvent(2005, pos, 0);
                 } else {

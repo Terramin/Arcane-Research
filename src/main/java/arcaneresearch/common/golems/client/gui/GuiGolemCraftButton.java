@@ -15,11 +15,11 @@ public class GuiGolemCraftButton extends Button {
         super(x, y, 24, 16, Component.empty(), onPress, Button.DEFAULT_NARRATION);
     }
 
-    // NEOFORGE_PORT (26.3 render-state rework): renderWidget(GuiGraphics) removed ->
-    // extractContents(GuiGraphicsExtractor); old setShaderColor tint -> per-blit color arg.
+    
+    
     @Override
     protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        // NEOFORGE_PORT (26.3): setShaderColor(c, c, c, c) scaled RGB as well as alpha -> 0xAARRGGBB = c in every channel.
+        
         int tint = (active && isHovered()) ? 0xFFFFFFFF : 0xE6E6E6E6;
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEX, getX(), getY(), 216, 64, 24, 16, 256, 256, tint);
         if (!active) {

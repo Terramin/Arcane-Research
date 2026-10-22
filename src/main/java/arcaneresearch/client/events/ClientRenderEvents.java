@@ -10,7 +10,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber; // NEOFORGE_PORT: was Mod
+import net.neoforged.fml.common.EventBusSubscriber; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IAspectContainer;
@@ -27,11 +27,11 @@ import arcaneresearch.common.tiles.devices.TileArcaneEar;
 import arcaneresearch.common.tiles.devices.TileRechargePedestal;
 import arcaneresearch.common.tiles.devices.TileRedstoneRelay;
 
-// NEOFORGE_PORT (26.3 render-state rework, verified against 26.3 jars):
-// - onRenderLevelStage takes the AfterTranslucentBlocks subclass (no getStage());
-//   partialTick via DeltaTracker (event no longer carries it); pose may be null.
-// - onBlockHighlight moved to ExtractBlockOutlineRenderStateEvent (extraction phase,
-//   cancellable, no PoseStack): draw bodies are renderer-phase no-ops, event logic kept 1:1.
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class ClientRenderEvents {
 
@@ -65,15 +65,15 @@ public class ClientRenderEvents {
 
     @SubscribeEvent
     public static void onBlockHighlight(ExtractBlockOutlineRenderStateEvent event) {
-        // NEOFORGE_PORT: Camera.getEntity removed -> Minecraft camera entity (same viewer).
+        
         if (!(Minecraft.getInstance().getCameraEntity() instanceof Player player)) {
             return;
         }
         BlockPos pos = event.getBlockPos();
         BlockEntity te = event.getLevel().getBlockEntity(pos);
-        // NEOFORGE_PORT: extraction carries no PoseStack; draw bodies are renderer-phase
-        // no-ops until the renderers are ported (logic below stays 1:1 so call sites go
-        // live automatically).
+        
+        
+        
         com.mojang.blaze3d.vertex.PoseStack poseStack = null;
         float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
 

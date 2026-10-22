@@ -1,10 +1,10 @@
 package arcaneresearch.client.gui.screens;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphicsExtractor
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
@@ -42,13 +42,13 @@ public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkben
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int x = this.leftPos;
         int y = this.topPos;
 
-        // NEOFORGE_PORT: GL blend/shader-color gone (pipelines own state); bg blit +
-        // rotating crystal highlights via tinted blits (additive pass approximated
-        // with low-alpha tint; same positions/rotation as Forge).
+        
+        
+        
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0,
                 this.imageWidth, this.imageHeight, 256, 256);
 
@@ -82,7 +82,7 @@ public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkben
                     graphics.pose().translate(centerX, centerY);
                     graphics.pose().rotate((float) Math.toRadians(slotIndex * 60 + ticks));
                     graphics.pose().scale(0.5f, 0.5f);
-                    // NEOFORGE_PORT (26.3): Forge blendFunc(SRC_ALPHA, ONE) -> additive GUI pipeline.
+                    
                     graphics.blit(arcaneresearch.client.renderers.TCRenderTypes.GUI_TEXTURED_ADDITIVE, TEXTURE, -32, -32,
                             192, 0, 64, 64, 256, 256, tint);
                     graphics.pose().popMatrix();

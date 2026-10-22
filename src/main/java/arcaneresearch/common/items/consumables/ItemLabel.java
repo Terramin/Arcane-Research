@@ -31,7 +31,7 @@ public class ItemLabel extends Item {
     }
 
     public Aspect getAspect(ItemStack stack) {
-        // NEOFORGE_PORT: stack NBT removed -> CUSTOM_DATA via ArcaneresearchInvHelper.
+        
         if (isFilled && arcaneresearch.api.ArcaneresearchInvHelper.hasCustomTag(stack)
                 && arcaneresearch.api.ArcaneresearchInvHelper.getCustomTag(stack).contains("aspect")) {
             return Aspect.getAspect(arcaneresearch.api.ArcaneresearchInvHelper.getCustomTag(stack).getStringOr("aspect", ""));

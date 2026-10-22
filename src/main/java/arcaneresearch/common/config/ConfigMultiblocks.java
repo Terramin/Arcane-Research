@@ -1,7 +1,7 @@
 package arcaneresearch.common.config;
 
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -237,12 +237,12 @@ public class ConfigMultiblocks {
         );
     }
 
-    /**
-     * Чертёж ритуала ноды-в-банке для книги (LEGACYJARNODE):
-     * повторяет NodeJarRitual — крышка из деревянных плит, кокон
-     * из стекла, нода в центре. Ритуал срабатывает жезлом, поэтому
-     * DustTrigger здесь не регистрируется, только каталог для книги.
-     */
+     
+
+
+
+
+ 
     private static void registerNodeJar() {
         Part SLAB = new Part(Blocks.OAK_SLAB, ItemStack.EMPTY);
         Part GLASS = new Part(Blocks.GLASS, ItemStack.EMPTY);
@@ -269,25 +269,25 @@ public class ConfigMultiblocks {
         );
     }
 
-    /**
-     * Чертёж портала для книги (привязан к LEGACYELDRITCHALTAR, поэтому виден
-     * и на странице алтаря, и на странице окулуса): столбец, необходимый для
-     * ритуала окулуса и жизни портала — внизу алтарь с 4 глазами,
-     * над ним тёмная нода (слот портала), сверху элдритч-рама
-     * (столб/капитель/плитка: портал держится, только пока сверху
-     * и снизу элдритч-камень). Нода съедается жезлом (100 праймалов).
-     */
+     
+
+
+
+
+
+
+ 
     private static void registerEldritchPortal() {
         Part TILE = new Part(ModBlocks.ELDRITCH_STONE_TILE.get(), ItemStack.EMPTY);
         Part ALTAR = new Part(
                 AuraBlocks.ELDRITCH_ALTAR.get(), ItemStack.EMPTY);
-        // Нода ритуала — зловещая (DARK): тип едет в Part, книга рисует
-        // чёрный маркер + настоящий тёмный вихрь, в ингредиентах — нода
-        // с тултипом типа, иначе клетка чертежа пуста (блок невидим).
+        
+        
+        
         Part NODE = new Part(
                 AuraBlocks.AURA_NODE.get(), ItemStack.EMPTY).setNodeType(NodeType.DARK);
 
-        // Слои сверху вниз: рендерер кладёт blueprint[0] наверх.
+        
         Part[][][] blueprint = {
                 {
                         {null, null, null, null, null},
@@ -327,7 +327,7 @@ public class ConfigMultiblocks {
         );
     }
 
-    /** Показной состав ноды для книги/JEI: все праймалы по 25. */
+      
     private static AspectList primalDisplayAspects() {
         AspectList aspects = new AspectList();
         try {

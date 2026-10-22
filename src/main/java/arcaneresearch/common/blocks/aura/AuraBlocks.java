@@ -65,15 +65,15 @@ public class AuraBlocks {
     public static final DeferredBlock<Block> ELDRITCH_OBELISK = BLOCKS.registerBlock("eldritch_obelisk",
             arcaneresearch.common.blocks.aura.EldritchObeliskBlock::new);
 
-    /** Тело столба (TC4 meta 2): без предмета и тайла, ставится базой/генерацией. */
+      
     public static final DeferredBlock<Block> ELDRITCH_OBELISK_BODY = BLOCKS.registerBlock("eldritch_obelisk_body",
             arcaneresearch.common.blocks.aura.EldritchObeliskBodyBlock::new);
 
     public static final DeferredBlock<Block> ELDRITCH_CAP = BLOCKS.registerBlock("eldritch_cap",
             arcaneresearch.common.blocks.aura.EldritchCapBlock::new);
 
-    // NEOFORGE_PORT: 26.x items no longer inherit the block name; useBlockDescriptionPrefix()
-    // keeps the Forge "block.arcaneresearch.*" lang keys (what registerSimpleBlockItem does).
+    
+    
     public static final DeferredItem<Item> JAR_NODE_ITEM = BLOCK_ITEMS.registerItem("jar_node",
             props -> new ItemJarNode(JAR_NODE.get(), props.useBlockDescriptionPrefix()));
 
@@ -119,8 +119,8 @@ public class AuraBlocks {
     public static final DeferredItem<Item> ELDRITCH_CRAB_ITEM = BLOCK_ITEMS.registerItem("eldritch_crab",
             props -> new BlockItem(ELDRITCH_CRAB.get(), props.useBlockDescriptionPrefix()));
 
-    // TC4: обелиск — не BlockItem, а отдельный предмет
-    // (ModItems.ELDRITCH_OBELISK_PLACER / ItemEldritchObeliskPlacer).
+    
+    
 
     public static final DeferredItem<Item> ELDRITCH_CAP_ITEM = BLOCK_ITEMS.registerItem("eldritch_cap",
             props -> new BlockItem(ELDRITCH_CAP.get(), props.useBlockDescriptionPrefix()));

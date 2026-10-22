@@ -70,7 +70,7 @@ public class BlockSmelter extends Block implements EntityBlock {
         return new BlockSmelter(props, 2);
     }
 
-    // NEOFORGE_PORT: 26.x uses EnumProperty<Direction> instead of DirectionProperty.
+    
     public static final net.minecraft.world.level.block.state.properties.EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 
     @Override
@@ -86,8 +86,8 @@ public class BlockSmelter extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -125,8 +125,8 @@ public class BlockSmelter extends Block implements EntityBlock {
         return super.triggerEvent(state, level, pos, id, param);
     }
 
-    // NEOFORGE_PORT: Forge 1:1 — клиентский код вынесен в @OnlyIn-метод
-    // (dist-безопасность: сервер не грузит client.fx.FXDispatcher).
+    
+    
     @OnlyIn(Dist.CLIENT)
     private boolean clientTriggerEvent(Level level, BlockPos pos, int param) {
         net.minecraft.core.Direction dir =
@@ -151,14 +151,14 @@ public class BlockSmelter extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         if (!state.is(level.getBlockState(pos).getBlock())) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            // NEOFORGE_PORT: inventory dropped by preRemoveSideEffects default; vis pollution kept.
+            
             if (blockEntity instanceof TileSmelter smelter) {
 
                 if (smelter.vis > 0) {

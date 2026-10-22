@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
@@ -27,7 +27,7 @@ public class BellowsModel extends Model<net.minecraft.client.renderer.blockentit
     private final ModelPart nozzle;
 
     public BellowsModel(ModelPart root) {
-        // NEOFORGE_PORT: Model has no 1-arg ctor (only EntityModel does).
+        
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
         this.bottomPlank = root.getChild("bottom_plank");
         this.middlePlank = root.getChild("middle_plank");
@@ -68,7 +68,7 @@ public class BellowsModel extends Model<net.minecraft.client.renderer.blockentit
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
         bottomPlank.render(poseStack, buffer, packedLight, packedOverlay, net.minecraft.util.ARGB.colorFromFloat(alpha, red, green, blue));

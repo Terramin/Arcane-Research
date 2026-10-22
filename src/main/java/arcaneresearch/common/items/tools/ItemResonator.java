@@ -24,7 +24,7 @@ public class ItemResonator extends Item {
         super(props.stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
-    // NEOFORGE_PORT: getRarity(stack) override removed in 26.x -> rarity in Properties (UNCOMMON set in ctor).
+    
 
     @Override
     public boolean isFoil(ItemStack stack) {

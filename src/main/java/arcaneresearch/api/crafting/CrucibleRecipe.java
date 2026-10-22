@@ -34,15 +34,15 @@ public class CrucibleRecipe implements IArcaneresearchRecipe {
         StringBuilder hc = new StringBuilder(research);
         hc.append(recipeOutput.toString());
 
-        // NEOFORGE_PORT: hasTag/getTag -> custom-tag helpers (components).
+        
         if (ArcaneresearchInvHelper.hasCustomTag(recipeOutput)) {
             hc.append(ArcaneresearchInvHelper.getCustomTag(recipeOutput).toString());
         }
 
-        // NEOFORGE_PORT: Ingredient#getItems():ItemStack[] removed (26.x exposes
-        //   items():Stream<Holder<Item>>); per-holder ItemStack rebuilt for the same
-        //   toString()/tag hash input (components re-read from the live stack helper path).
-        //   items() (not getValues()) so custom ingredients don't throw.
+        
+        
+        
+        
         catalyst.items().forEach(holder -> {
             ItemStack is = new ItemStack(holder.value());
             hc.append(is.toString());

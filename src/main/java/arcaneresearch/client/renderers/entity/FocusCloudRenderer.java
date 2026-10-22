@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.entities.projectile.EntityFocusCloud;
 
-// NEOFORGE_PORT (26.3): invisible by design (Forge render() was an empty no-op).
+
 public class FocusCloudRenderer extends EntityRenderer<EntityFocusCloud, EntityRenderState> {
 
     public FocusCloudRenderer(EntityRendererProvider.Context context) {

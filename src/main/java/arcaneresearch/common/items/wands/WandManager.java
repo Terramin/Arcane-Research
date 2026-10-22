@@ -26,8 +26,8 @@ import top.theillusivec4.curios.api.CuriosApi;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/items/wands/WandManager.java (429 lines).
-// Logic/names/order preserved; only transport/API adaptations below (each marked).
+
+
 public class WandManager {
     static HashMap<Integer, Long> cooldownServer = new HashMap<>();
     static HashMap<Integer, Long> cooldownClient = new HashMap<>();
@@ -61,8 +61,8 @@ public class WandManager {
         } catch (Exception ignored) {
         }
         total += curiosTotal[0];
-        // NEOFORGE_PORT: Inventory.armor removed in 26.x (verified via javap) ->
-        // iterate HEAD/CHEST/LEGS/FEET with getItemBySlot (same IVisDiscountGear check).
+        
+        
         for (EquipmentSlot armorSlot : new EquipmentSlot[]{
                 EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             ItemStack armor = player.getItemBySlot(armorSlot);
@@ -73,7 +73,7 @@ public class WandManager {
         MobEffectInstance visExhaust = null;
         MobEffectInstance infectious = null;
         try {
-            // NEOFORGE_PORT: getEffect takes Holder in 26.x -> DeferredHolder passed directly (NO .get()).
+            
             visExhaust = player.getEffect(ModEffects.VIS_EXHAUST);
             infectious = player.getEffect(ModEffects.INFECTIOUS_VIS_EXHAUST);
         } catch (Exception ignored) {
@@ -87,7 +87,7 @@ public class WandManager {
     }
 
     public static boolean consumeVisFromInventory(Player player, AspectList cost) {
-        // Паритет TC4 WandManager: сначала носимый амулет вис, потом жезлы.
+        
         try {
             final boolean[] done = {false};
             CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach(
@@ -106,10 +106,10 @@ public class WandManager {
             }
         } catch (Exception ignored) {
         }
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access via getItem (same order).
+        
         net.minecraft.world.entity.player.Inventory inv = player.getInventory();
-        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (36 main slots); getContainerSize()
-        // also spans armor/offhand, so bound by the main list (same indices for getItem).
+        
+        
         for (int a = inv.getNonEquipmentItems().size() - 1; a >= 0; a--) {
             ItemStack stack = inv.getItem(a);
             if (!stack.isEmpty() && stack.getItem() instanceof IWand wand
@@ -153,9 +153,9 @@ public class WandManager {
         for (int ci = 0; ci < curioPouches.size(); ci++) {
             pouches.put(ci + 1, -1000 - ci);
         }
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed getItem (same order/indices).
+        
         net.minecraft.world.entity.player.Inventory inv = player.getInventory();
-        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (36 main slots) only.
+        
         for (int a = 0; a < inv.getNonEquipmentItems().size(); a++) {
             item = inv.getItem(a);
             if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
@@ -357,7 +357,7 @@ public class WandManager {
     }
 
     public static int getAreaDim(ItemStack stack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA via ArcaneresearchInvHelper (getCustomTag returns COPY-or-null).
+        
         CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
         if (tag != null && tag.contains("aread")) {
             return tag.getIntOr("aread", 0);
@@ -411,7 +411,7 @@ public class WandManager {
     }
 
     public static void setAreaX(ItemStack stack, int area) {
-        // NEOFORGE_PORT: getTag().putInt -> getOrCreateCustomTag + mutate + setCustomTag write-back.
+        
         if (stack.isEmpty()) {
             return;
         }
@@ -421,7 +421,7 @@ public class WandManager {
     }
 
     public static void setAreaY(ItemStack stack, int area) {
-        // NEOFORGE_PORT: getTag().putInt -> getOrCreateCustomTag + mutate + setCustomTag write-back.
+        
         if (stack.isEmpty()) {
             return;
         }
@@ -431,7 +431,7 @@ public class WandManager {
     }
 
     public static void setAreaZ(ItemStack stack, int area) {
-        // NEOFORGE_PORT: getTag().putInt -> getOrCreateCustomTag + mutate + setCustomTag write-back.
+        
         if (stack.isEmpty()) {
             return;
         }
@@ -441,7 +441,7 @@ public class WandManager {
     }
 
     public static void setAreaDim(ItemStack stack, int dim) {
-        // NEOFORGE_PORT: getTag().putInt -> getOrCreateCustomTag + mutate + setCustomTag write-back.
+        
         if (stack.isEmpty()) {
             return;
         }
@@ -451,7 +451,7 @@ public class WandManager {
     }
 
     static boolean isOnCooldown(LivingEntity entity) {
-        // NEOFORGE_PORT: level.isClientSide field -> isClientSide() method.
+        
         if (entity.level().isClientSide() && cooldownClient.containsKey(entity.getId())) {
             return cooldownClient.get(entity.getId()) > System.currentTimeMillis();
         }

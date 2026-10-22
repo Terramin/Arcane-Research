@@ -12,8 +12,8 @@ public class InventoryHandMirror extends SimpleContainer {
         this(null);
     }
 
-    // NEOFORGE_PORT: ContainerListener removed in 26.x; Forge addListener parity
-    // via setChanged callback (slots call it).
+    
+    
     public InventoryHandMirror(Consumer<Container> onChanged) {
         super(1);
         this.onChanged = onChanged;

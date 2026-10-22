@@ -93,7 +93,7 @@ public class BlockVisBattery extends Block {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         return state.getValue(CHARGE);

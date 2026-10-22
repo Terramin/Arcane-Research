@@ -18,8 +18,8 @@ import arcaneresearch.client.models.block.CentrifugeModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.essentia.TileCentrifuge;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (static parts + spin rotation via submitCustomGeometry bridge).
+
+
 public class CentrifugeRenderer implements BlockEntityRenderer<TileCentrifuge, CentrifugeRenderer.State> {
 
     private static final Identifier TEXTURE =
@@ -52,8 +52,8 @@ public class CentrifugeRenderer implements BlockEntityRenderer<TileCentrifuge, C
             CameraRenderState cameraState) {
         RenderType type = TCRenderTypes.objSolid(TEXTURE);
         int light = state.lightCoords;
-        // NEOFORGE_PORT (26.3): geometry is emitted later (deferred) and the model is
-        // shared, so the per-tile spin is applied inside the callback.
+        
+        
         final float spin = state.spinRotation;
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);

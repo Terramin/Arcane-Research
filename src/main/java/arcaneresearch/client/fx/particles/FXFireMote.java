@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 
-// NEOFORGE_PORT: custom per-frame math -> extract() override (same math).
+
 public class FXFireMote extends SingleQuadParticle {
 
     protected float baseScale;
@@ -95,7 +95,7 @@ public class FXFireMote extends SingleQuadParticle {
         return 0xF000F0;
     }
 
-    // NEOFORGE_PORT: grid fractions remapped into the stitched sheet sprite (same art).
+    
     @Override
     protected float getU0() {
         return ((float) spriteIndexX / (float) GRID_SIZE);
@@ -116,7 +116,7 @@ public class FXFireMote extends SingleQuadParticle {
         return (((float) spriteIndexY + 1.0f) / (float) GRID_SIZE);
     }
 
-    // NEOFORGE_PORT: same math as the old render(); immediate verts -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         Vec3 cameraPos = camera.position();
@@ -157,7 +157,7 @@ public class FXFireMote extends SingleQuadParticle {
 
     @Override
 public SingleQuadParticle.Layer getLayer() {
-        // NEOFORGE_PORT: glowLayer switch preserved (additive vs normal sheet layers).
+        
         return glowLayer == 0 ? TCSprites.additive() : TCSprites.translucent();
     }
 

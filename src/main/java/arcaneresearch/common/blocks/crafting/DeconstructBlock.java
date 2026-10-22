@@ -26,17 +26,17 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-/**
- * Порт {@code thaumcraft.common.blocks.BlockTable} (TC 4.2.3.5, мета 14 —
- * Deconstruction Table): деревянный стол, ПКМ открывает GUI разборки
- * предметов на аспекты. Сама разборка — {@link DeconstructTile}
- * (в соседнем пакете {@code common.tiles.crafting}).
- * Регистрация — {@code ModBlocks.DECONSTRUCTION_TABLE} +
- * {@code ModBlockEntities.DECONSTRUCTION_TABLE}.
- */
+ 
+
+
+
+
+
+
+ 
 public class DeconstructBlock extends Block implements EntityBlock {
 
-    /** Хитбокс 1-в-1 по модели {@code deconstruction_table.json}. */
+      
     private static final VoxelShape SHAPE = Shapes.or(
             Block.box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0),
             Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),
@@ -76,11 +76,11 @@ public class DeconstructBlock extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval.
-        // Slot contents are dropped automatically: 26.x BlockEntity.preRemoveSideEffects
-        // drops Container contents (LevelChunk.setBlockState calls it with the tile still
-        // present, before this hook and before the block entity is removed), so the
-        // 1.20.1 tile.dropContents() call is not needed.
+        
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
     }
 

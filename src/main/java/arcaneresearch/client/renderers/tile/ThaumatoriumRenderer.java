@@ -23,8 +23,8 @@ import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.crafting.CrucibleRecipe;
 import arcaneresearch.common.tiles.crafting.TileThaumatorium;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (cycling recipe output display).
+
+
 public class ThaumatoriumRenderer implements BlockEntityRenderer<TileThaumatorium, ThaumatoriumRenderer.State> {
 
     public static class State extends BlockEntityRenderState {
@@ -104,8 +104,8 @@ public class ThaumatoriumRenderer implements BlockEntityRenderer<TileThaumatoriu
         poseStack.popPose();
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TileThaumatorium blockEntity) {
         return blockEntity.getRenderBoundingBox();

@@ -22,8 +22,8 @@ import arcaneresearch.common.tiles.crafting.TileInfusionMatrix;
 
 import java.util.Random;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (8 wobbling corner cubes + emissive overlay + halo spikes).
+
+
 public class InfusionMatrixRenderer implements BlockEntityRenderer<TileInfusionMatrix, InfusionMatrixRenderer.State> {
 
     private static final Identifier TEXTURE_NORMAL =
@@ -133,8 +133,8 @@ public class InfusionMatrixRenderer implements BlockEntityRenderer<TileInfusionM
         }
 
         if (state.active) {
-            // NEOFORGE_PORT (26.3): Forge used entityTranslucentEmissive (alpha blend),
-            // not an additive layer — same vanilla type here.
+            
+            
             RenderType glowType = net.minecraft.client.renderer.rendertype.RenderTypes
                     .entityTranslucentEmissive(state.texture);
 
@@ -244,9 +244,9 @@ public class InfusionMatrixRenderer implements BlockEntityRenderer<TileInfusionM
 
         float intensity = craftCount / 500.0f;
 
-        // NEOFORGE_PORT: Tesselator/POSITION_COLOR gone; same spikes as fans
-        // (apex + 3 rim verts = identical 3 triangles) via the color-fan layer.
-        // NEOFORGE_PORT (26.3): Forge drew the halo with RenderSystem.disableCull() -> no-cull variant.
+        
+        
+        
         RenderType type = TCRenderTypes.orbTendrilsNoCull();
 
         poseStack.pushPose();
@@ -270,8 +270,8 @@ public class InfusionMatrixRenderer implements BlockEntityRenderer<TileInfusionM
             float ax = -0.866f * width, ay = length, az = -0.5f * width;
             float bx = 0.866f * width, by = length, bz = -0.5f * width;
             float cx = 0, cy = length, cz = width;
-            // NEOFORGE_PORT (26.3): one fan per submit; the rim is closed back to the
-            // first vertex so the fan yields all 3 Forge triangles (a-b, b-c, c-a).
+            
+            
             collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
                 fan(consumer, pose, 0, 0, 0, 1, 1, 1, alpha);
                 fan(consumer, pose, ax, ay, az, 1, 0, 1, 0);

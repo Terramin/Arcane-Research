@@ -12,9 +12,9 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.entities.monster.EntityMindSpider;
 
-// NEOFORGE_PORT (26.3): vanilla SpiderModel/SpiderEyesLayer (moved packages,
-// non-generic model). Viewer-conditional visibility via shouldRender (was
-// render() gate); scale via hook.
+
+
+
 public class MindSpiderRenderer extends MobRenderer<EntityMindSpider, LivingEntityRenderState, SpiderModel> {
 
     private static final Identifier TEXTURE =

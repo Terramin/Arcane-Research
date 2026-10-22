@@ -21,15 +21,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-// NEOFORGE_PORT: gameplay logic 1:1 from Forge api/crafting/ShapedArcaneRecipe.java.
-// 26.x changes only:
-//   Identifier replaces Identifier; Ingredient.EMPTY is gone (empty slots are
-//   Optional.empty()); NonNullList.withSize/of replaced with ArrayList.
-//   assemble(IArcaneWorkbench) single-arg; canCraftInDimensions/getResultItem(
-//   RegistryAccess)/getId removed from the vanilla interface (getId/getIngredients/
-//   getResultItem kept as legacy helpers declared on IArcaneRecipe).
-//   placementInfo() via PlacementInfo.createFromOptionals (mirrors vanilla ShapedRecipe).
-//   Matching algorithm (offset scan + mirror) VERBATIM, including the crystal check.
+
+
+
+
+
+
+
+
+
 public class ShapedArcaneRecipe implements IArcaneRecipe {
 
     private String research;
@@ -255,13 +255,13 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
     }
 
     @Override
-    public RecipeSerializer<arcaneresearch.common.lib.crafting.ShapedArcaneRecipe> getSerializer() { // NEOFORGE_PORT: Recipe bound requires concrete type
+    public RecipeSerializer<arcaneresearch.common.lib.crafting.ShapedArcaneRecipe> getSerializer() { 
 
         return arcaneresearch.common.lib.crafting.ShapedArcaneRecipe.Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<IArcaneRecipe> getType() { // NEOFORGE_PORT: Recipe bound requires concrete type
+    public RecipeType<IArcaneRecipe> getType() { 
         return ModRecipeTypes.ARCANE_WORKBENCH.get();
     }
 }

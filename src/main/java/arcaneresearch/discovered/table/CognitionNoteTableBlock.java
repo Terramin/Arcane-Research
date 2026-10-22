@@ -31,35 +31,35 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/**
- * Двухблочный стол записок, порт в паритете с:
- * - TC3 BlockTable: главный блок (TileResearchTable) + соседний обычный стол;
- *   клик по соседнему открывает GUI главного; разрыв связи чинится/ломается;
- * - reforged ResearchTableBlock: PART MAIN/SIDE + FACING, BE только на MAIN,
- *   mainPos(), SIDE без BE, клик с любой половины открывает меню MAIN.
- *
- * Схема: MAIN смотрит FACING; SIDE стоит спереди (pos.relative(FACING))
- * и смотрит назад. Установка ставит обе половины (как кровать).
- *
- * NEOFORGE_PORT: NetworkHooks.openScreen -> ServerPlayer.openMenu(tile, pos-buf);
- * isClientSide-поле -> isClientSide().
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class CognitionNoteTableBlock extends Block implements EntityBlock {
 
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
 
-    /**
-     * Хитбоксы 1:1 с JSON-моделью (проверено по элементам):
-     * MAIN (локально x 0..16): верх, 2 ножки, перекладина, чернильница;
-     * SIDE (локально x 0..16 = модели 16..32): верх, 2 ножки, перекладина.
-     * Поворот — та же конвенция, что у blockstate (y=90: +x→+z,
-     * проверено по ванильной лестнице).
-     * Важно: SIDE хранит FACING наоборот (против MAIN), а модель SIDE
-     * не поворачивается в blockstate — поэтому шейп SIDE крутим
-     * по развороту MAIN (facing.getOpposite()), иначе обводка
-     * зеркалится относительно модели на всех разворотах.
-     */
+     
+
+
+
+
+
+
+
+
+
+ 
     private static VoxelShape shapeFor(Part part, Direction facing) {
         Direction eff = part == Part.SIDE ? facing.getOpposite() : facing;
         double[][] boxes = part == Part.MAIN
@@ -108,7 +108,7 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
         builder.add(FACING, PART);
     }
 
-    /** Позиция главной половины из любой половины. Паритет reforged mainPos. */
+      
     public static BlockPos mainPos(BlockPos pos, BlockState state) {
         return state.getValue(PART) == Part.MAIN ? pos : pos.relative(state.getValue(FACING));
     }
@@ -137,15 +137,15 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
         Direction facing = state.getValue(FACING);
         BlockPos sidePos = pos.relative(facing);
         if (!level.getBlockState(sidePos).canBeReplaced()) {
-            // Занято: сервер сносит MAIN, клиентский призрак SIDE чинится сам
-            // через updateShape (нет партнёра -> воздух).
+            
+            
             if (!level.isClientSide()) {
                 level.removeBlock(pos, false);
             }
             return;
         }
-        // Как ванильные двери: вторая половина ставится сразу на обеих
-        // сторонах (предсказание клиента), сервер в итоге решает.
+        
+        
         level.setBlock(sidePos, state.setValue(PART, Part.SIDE)
                 .setValue(FACING, facing.getOpposite()), 3);
     }
@@ -156,7 +156,7 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
         return isPartner(state, neighbour);
     }
 
-    // NEOFORGE_PORT: 26.x updateShape(state, level, ticks, pos, dir, neighbourPos, neighbourState, random).
+    
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level,
             net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos pos, Direction direction,
@@ -185,8 +185,8 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -196,8 +196,8 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
         BlockPos main = mainPos(pos, state);
         BlockEntity be = level.getBlockEntity(main);
         if (be instanceof CognitionNoteTableTile tile && player instanceof ServerPlayer serverPlayer) {
-            // NEOFORGE_PORT: NetworkHooks.openScreen -> ServerPlayer.openMenu (та же
-            // MenuProvider + BlockPos, как BlockResearchTable/BlockArcaneWorkbench).
+            
+            
             serverPlayer.openMenu(tile, buf -> buf.writeBlockPos(main));
             return InteractionResult.CONSUME;
         }
@@ -207,8 +207,8 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level,
                                                BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (cf. BlockResearchTable; same PART.MAIN + dropContents logic).
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         if (!state.is(level.getBlockState(pos).getBlock())) {
             if (state.getValue(PART) == Part.MAIN

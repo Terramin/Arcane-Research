@@ -183,8 +183,8 @@ public class EntityTaintacleGiant extends EntityTaintacle implements ITaintedMob
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
 
         AABB searchBox = getBoundingBox().inflate(48.0);
@@ -204,8 +204,8 @@ public class EntityTaintacleGiant extends EntityTaintacle implements ITaintedMob
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        // NEOFORGE_PORT (26.3): ValueInput.contains gone; defaulting to the current value keeps the
-        // Forge "only set when the key exists" behaviour.
+        
+        
         setAnger(tag.getIntOr("Anger", getAnger()));
 
         if (hasCustomName()) {

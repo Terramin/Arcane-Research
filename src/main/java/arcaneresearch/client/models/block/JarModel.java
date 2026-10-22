@@ -8,7 +8,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
@@ -22,7 +22,7 @@ public class JarModel extends Model<net.minecraft.client.renderer.blockentity.st
     private final ModelPart brine;
 
     public JarModel(ModelPart root) {
-        // NEOFORGE_PORT: Model has no 1-arg ctor (only EntityModel does).
+        
         super(root, net.minecraft.client.renderer.rendertype.RenderTypes::entityCutout);
         this.lid = root.getChild("lid");
         this.lidExtension = root.getChild("lid_extension");
@@ -72,7 +72,7 @@ public class JarModel extends Model<net.minecraft.client.renderer.blockentity.st
         brine.render(poseStack, buffer, packedLight, packedOverlay, -1);
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {

@@ -10,7 +10,7 @@ public class InventoryPech extends SimpleContainer {
     private final EntityPech merchant;
     private final Player thePlayer;
 
-    // NEOFORGE_PORT: ContainerListener/addListener removed (vanilla); listener dropped.
+    
     public InventoryPech(Player player, EntityPech merchant) {
         super(5);
         this.thePlayer = player;

@@ -5,7 +5,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
@@ -41,7 +41,7 @@ public class LeaderArmorModel extends HumanoidModel<net.minecraft.client.rendere
                         .texOffs(41, 8)
                         .addBox(-4.5F, -9.0F, -4.5F, 9.0F, 9.0F, 9.0F, CubeDeformation.NONE),
                 PartPose.ZERO);
-        // NEOFORGE_PORT (26.3): hat is head.getChild (was root child in 1.20.1).
+        
         head.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
 
         PartDefinition body = root.addOrReplaceChild("body",
@@ -210,7 +210,7 @@ public class LeaderArmorModel extends HumanoidModel<net.minecraft.client.rendere
     }
 
     @Override
-    // NEOFORGE_PORT (26.3): HumanoidModel<State>; walk/yaw/pitch via state.
+    
     public void setupAnim(net.minecraft.client.renderer.entity.state.HumanoidRenderState state) {
         super.setupAnim(state);
         float limbSwing = state.walkAnimationPos;

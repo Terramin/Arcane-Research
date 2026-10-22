@@ -14,13 +14,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import arcaneresearch.Arcaneresearch;
 
-/**
- * NEOFORGE_PORT: furnace fuels. Forge 1.20.1 used Item.getBurnTime + FurnaceFuelBurnTimeEvent
- * (alumentum 4800, greatwood log 500, silverwood log 400) and vanilla fuel tags for the planks
- * (#minecraft:planks 300) and slabs (#minecraft:wooden_slabs 150). In 26.x a fuel is the
- * COOKING_FUEL item component pointing at a context_int_provider (burn time, halved in fast
- * furnaces like vanilla); the custom ones live in data/arcaneresearch/context_int_provider/cooking.
- */
+ 
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public final class ModFuels {
 

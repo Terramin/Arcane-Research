@@ -4,9 +4,9 @@ package arcaneresearch.client.gui.screens;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
 
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.renderer.RenderPipelines; 
 
 import net.minecraft.client.gui.components.EditBox;
 
@@ -18,7 +18,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 
 import net.minecraft.network.chat.Component;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -173,9 +173,9 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         graphics.pose().pushMatrix();
 
         graphics.pose().translate(x, y);
-        // Без поворота: иконки рисуются прямо, как лежат в PNG. Поворот
-        // оригинала TC6 работал только в связке с его зеркальными UV;
-        // при стандартных UV любой поворот на 90° кладёт иконки боком.
+        
+        
+        
 
 
         boolean isRoot = node.getType() == IFocusElement.EnumUnitType.MOD || node.getKey().equals("arcaneresearch.ROOT");
@@ -196,9 +196,9 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
         float b = color.getBlue() / 255.0f;
 
-        // NEOFORGE_PORT: Forge setShaderColor(r, g, b) on the EFFECT/MEDIUM
+        
 
-        // backing -> ARGB tint (icon below stays untinted, submitted after).
+        
 
         int backingTint = 0xFF000000 | (color.getRed() << 16) | (color.getGreen() << 8) | color.getBlue();
 
@@ -377,9 +377,9 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
 
 
-    // NEOFORGE_PORT: per-frame customs moved into extractBackground (render() removed;
+    
 
-    // base extractRenderState handles background/super/tooltip). Tooltips are deferred calls.
+    
 
     private void renderCustom(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
 
@@ -442,7 +442,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int x = leftPos;
         int y = topPos;
 
@@ -1973,7 +1973,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
     @Override
 
-        // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+        
 
 
 
@@ -2007,7 +2007,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
 
 
-                // NEOFORGE_PORT (26.3): mouse buttons are 1-based (1 = LEFT); Forge 1 = right click.
+                
                 if (button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_RIGHT
                         && tile.data.get(selectedNode).node != null) {
 
@@ -2095,7 +2095,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
     @Override
 
-        // NEOFORGE_PORT: release/drag via MouseButtonEvent.
+        
 
 
 
@@ -2178,7 +2178,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
             int maxScroll = (sMaxY - 3) * 32;
 
-            // NEOFORGE_PORT: param scrollY (amount) shadows the field; field via this.* (as in Forge).
+            
 
             if (delta < 0 && this.scrollY < maxScroll) {
 
@@ -2208,13 +2208,13 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
     @Override
 
-    // NEOFORGE_PORT: EditBox takes KeyEvent directly; 256 = ESC (see Thaumaturge screens).
+    
 
 
 
     public boolean keyPressed(KeyEvent event) {
 
-        // NEOFORGE_PORT (26.3): key values are SDL scancodes (GLFW 256 never matched) -> isEscape().
+        
         if (nameField != null && nameField.isFocused() && !event.isEscape()) {
 
             nameField.keyPressed(event);

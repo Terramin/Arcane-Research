@@ -3,7 +3,7 @@ package arcaneresearch.client.renderers.entity.golem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.server.packs.resources.Resource;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
@@ -155,10 +155,10 @@ public class ObjModel {
         if (tris == null || tris.isEmpty()) {
             return;
         }
-        // NEOFORGE_PORT: new VertexConsumer chain (addVertex/setColor/setUv/
-        // setOverlay/setLight/setNormal, no endVertex); pose passed per call.
-        // 26.x pipelines are QUADS-topology: emit each triangle as a degenerate
-        // quad (4th vertex duplicates the 3rd), 1:1 visuals with Forge.
+        
+        
+        
+        
         PoseStack.Pose pose = poseStack.last();
         for (Tri tri : tris) {
             float[] d = tri.data;

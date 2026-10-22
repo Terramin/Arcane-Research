@@ -7,11 +7,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput; // NEOFORGE_PORT: ContainerInput -> ContainerInput
+import net.minecraft.world.inventory.ContainerInput; 
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension; // NEOFORGE_PORT: same create(factory) shape
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension; 
 import arcaneresearch.api.wands.ItemFocusBasic;
 import arcaneresearch.common.items.wands.ItemFocusPouch;
 

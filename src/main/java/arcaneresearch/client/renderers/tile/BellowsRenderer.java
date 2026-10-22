@@ -21,8 +21,8 @@ import arcaneresearch.client.models.block.BellowsNozzleModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.devices.TileBellows;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (facing rotation, inflation, nozzle extension).
+
+
 public class BellowsRenderer implements BlockEntityRenderer<TileBellows, BellowsRenderer.State> {
 
     private static final Identifier TEXTURE =
@@ -76,8 +76,8 @@ public class BellowsRenderer implements BlockEntityRenderer<TileBellows, Bellows
         Direction facing = state.facing;
         applyRotation(poseStack, facing);
 
-        // NEOFORGE_PORT (26.3): geometry is emitted later (deferred) and the model is
-        // shared between all bellows, so the inflation is applied inside the callback.
+        
+        
         final float inflation = state.inflation;
 
         RenderType type = TCRenderTypes.objSolid(TEXTURE);

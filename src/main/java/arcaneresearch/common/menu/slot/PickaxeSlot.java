@@ -15,8 +15,8 @@ public class PickaxeSlot extends MobEquipmentSlot {
             return false;
         }
 
-        // NEOFORGE_PORT: PickaxeItem class removed (tools are tag/components now).
-        // The tag check below already covered modded pickaxes; kept as the test.
+        
+        
         if (stack.is(ItemTags.PICKAXES)) {
             return true;
         }

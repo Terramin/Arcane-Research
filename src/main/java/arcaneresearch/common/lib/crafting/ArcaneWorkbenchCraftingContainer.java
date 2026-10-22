@@ -110,7 +110,7 @@ public class ArcaneWorkbenchCraftingContainer implements CraftingContainer, IArc
         tile.clearCraftMatrix();
     }
 
-    // NEOFORGE_PORT: StackedContentsCompatible takes StackedItemContents in 26.x.
+    
     @Override
     public void fillStackedContents(net.minecraft.world.entity.player.StackedItemContents contents) {
 

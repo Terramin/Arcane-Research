@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities; // NEOFORGE_PORT: was ForgeCapabilities
+import net.neoforged.neoforge.capabilities.Capabilities; 
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 
@@ -66,14 +66,14 @@ public class ScanningManager {
 
             var blockEntity = level.getBlockEntity(pos);
             if (blockEntity != null) {
-                // NEOFORGE_PORT: Forge blockEntity.getCapability(ITEM_HANDLER, side):LazyOptional{ifPresent}
-                //   -> NeoForge level.getCapability(Item.BLOCK, pos, side):@Nullable ResourceHandler
-                //   (transfer rework). Handler logic below unchanged 1:1.
+                
+                
+                
                 var handler = level.getCapability(Capabilities.Item.BLOCK, pos, Direction.UP);
                 if (handler != null) {
                     int scanned = 0;
                     for (int slot = 0; slot < handler.size(); slot++) {
-                        // NEOFORGE_PORT: getStackInSlot(slot) -> ItemUtil.getStack(handler, slot).
+                        
                         ItemStack stack = net.neoforged.neoforge.transfer.item.ItemUtil.getStack(handler, slot);
                         if (!stack.isEmpty()) {
                             scanTheThing(player, stack);
@@ -119,11 +119,11 @@ public class ScanningManager {
             BlockHitResult hit = rayTrace(player);
             if (hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
                     && hit.getBlockPos().equals(pos)) {
-                // NEOFORGE_PORT: Forge player-sensitive pick block -> IBlockStateExtension.
+                
                 result = state.getCloneItemStack(pos, level, false, player);
             }
             if (result.isEmpty()) {
-                // NEOFORGE_PORT: Block.getCloneItemStack is protected in 26.x -> BlockState accessor.
+                
                 result = state.getCloneItemStack(level, pos, false);
             }
 
@@ -157,8 +157,8 @@ public class ScanningManager {
         if (arcaneresearch.api.ArcaneresearchApi.internalMethods != null) {
             return arcaneresearch.api.ArcaneresearchApi.internalMethods.progressResearch(player, researchKey);
         }
-        // NEOFORGE_PORT: Forge getKnowledge(player):LazyOptional{.map().orElse()}
-        //   -> NeoForge getKnowledge(player):@Nullable direct null-check. Logic identical.
+        
+        
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null && !knowledge.isResearchKnown(researchKey)) {
             knowledge.addResearch(researchKey);

@@ -15,13 +15,13 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.items.consumables.ItemPhial;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors phial entry 1:1.
-// Forge bound PHIAL_FILLED: tintIndex 1 + ItemPhial -> aspects[0] color, else white.
-// 26.x item tints are positional (array index = tintIndex, verified NeoForge docs
-// pattern, same as JarTintSources): phial_filled.json declares
-// "tints": [constant white (glass layer0), arcaneresearch:phial (overlay layer1)].
-// Opaque OR (0xFF000000 |): Forge ItemColors ignored alpha (RGB only); 26.3 tint
-// layers are ARGB, so alpha is forced for the same visible result.
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class PhialTintSources {
 

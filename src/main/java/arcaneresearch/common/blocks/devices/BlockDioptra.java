@@ -60,8 +60,8 @@ public class BlockDioptra extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -76,7 +76,7 @@ public class BlockDioptra extends Block implements EntityBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity be = level.getBlockEntity(pos);

@@ -56,8 +56,8 @@ public class CommandArcaneresearch {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("arcaneresearch")
-                // NEOFORGE_PORT: hasPermission(int) removed -> permissions() + COMMANDS_GAMEMASTER
-                // (old level 2, verified in 26.3 jar).
+                
+                
                 .requires(source -> source.permissions().hasPermission(
                         net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER));
 
@@ -95,7 +95,7 @@ public class CommandArcaneresearch {
                 )
         );
 
-        // NEOFORGE_PORT: Forge "aspect" subcommand (hex-table aspects) was missing in the port.
+        
         builder.then(Commands.literal("aspect")
                 .then(Commands.argument("player", EntityArgument.player())
                         .then(Commands.argument("aspect", StringArgumentType.string())
@@ -133,8 +133,8 @@ public class CommandArcaneresearch {
                 )
         );
 
-        // The aliases must redirect to the registered node: Forge redirected to builder.build()
-        // taken before any subcommand was added, so /thaum and /tc had no subcommands at all.
+        
+        
         com.mojang.brigadier.tree.LiteralCommandNode<CommandSourceStack> root = dispatcher.register(builder);
         dispatcher.register(Commands.literal("thaum").requires(builder.getRequirement()).redirect(root));
         dispatcher.register(Commands.literal("tc").requires(builder.getRequirement()).redirect(root));
@@ -332,7 +332,7 @@ public class CommandArcaneresearch {
             revokeRecursiveResearch(player, research);
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {
-                // NEOFORGE_PORT (26.3): Forge also cleared presented discoveries on revoke.
+                
                 knowledge.clearPresentedDiscoveries();
                 knowledge.sync(player);
             }

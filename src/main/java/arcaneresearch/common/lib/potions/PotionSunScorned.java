@@ -28,8 +28,8 @@ public class PotionSunScorned extends MobEffect {
         if (brightness > 0.5f
                 && level.getRandom().nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f
                 && level.canSeeSky(pos)) {
-            // NEOFORGE_PORT (26.3): Forge setSecondsOnFire(4) = only-if-longer + fire-protection
-            // dampening; 26.x equivalent is igniteForSeconds (BURNING_TIME attribute), not a raw set.
+            
+            
             target.igniteForSeconds(4.0F);
         } else if (brightness < 0.25f && level.getRandom().nextFloat() > brightness * 2.0f) {
             target.heal(1.0f);

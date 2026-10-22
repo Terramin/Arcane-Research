@@ -1,7 +1,7 @@
 package arcaneresearch.common.lib.aura;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/lib/aura/ScanNode.java (33 lines).
-// player.level() is unchanged in 26.x; api ScanningManager/IScanThing already ported.
+
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;

@@ -18,8 +18,8 @@ public class BlockJarBrainItem extends BlockJarItem {
         super(block, properties);
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (Level+List) -> (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {

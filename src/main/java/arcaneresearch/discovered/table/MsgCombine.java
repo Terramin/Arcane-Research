@@ -19,19 +19,19 @@ import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.discovered.scan.MsgStudyReward;
 import arcaneresearch.discovered.scan.ScanWallet;
 
-/**
- * Client -&gt; Server: соединить два аспекта.
- * Порт {@code PacketAspectCombinationToServer}: гейт — кошелёк/бонус
- * по каждому аспекту (без перков и ab-флагов клиента), списание ДО проверки
- * результата (плата за попытку), успех — {@code checkAndSync} (открытие +
- * пул 1/3) и анимация награды.
- *
- * NEOFORGE_PORT: SimpleChannel(HexTableNetwork) -&gt; CustomPacketPayload
- * (ручной StreamCodec: два тега строками). Награда — сообщениями
- * scan-канала (на table-канале не зарегистрирована — было
- * "invalid message" и тишина).
- * Payload id "arcaneresearch:hex_combine".
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class MsgCombine implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgCombine> TYPE =
@@ -69,7 +69,7 @@ public class MsgCombine implements CustomPacketPayload {
             if (!(ctx.player() instanceof ServerPlayer player)) {
                 return;
             }
-            // Пул — хранилище игрока (кошелёк/бонус), записка не нужна.
+            
             Aspect a1;
             Aspect a2;
             try {
@@ -83,7 +83,7 @@ public class MsgCombine implements CustomPacketPayload {
             }
             HexResearchTableMenu menu = player.containerMenu instanceof HexResearchTableMenu m
                     ? m : null;
-            // Соединение — только с годными инструментами (гейт, без порчи).
+            
             if (menu == null) {
                 return;
             }
@@ -98,8 +98,8 @@ public class MsgCombine implements CustomPacketPayload {
                 player.sendSystemMessage(Component.literal("Need scribing tools"), true);
                 return;
             }
-            // Списание каждого прошедшего гейт (кошелёк, иначе бонус тайла).
-            // Частичная оплата возможна — как в оригинале (без рефанда).
+            
+            
             boolean paid1 = HexEconomy.takeAspect(player, menu, a1);
             boolean paid2 = HexEconomy.takeAspect(player, menu, a2);
             if (!paid1 || !paid2) {
@@ -113,13 +113,13 @@ public class MsgCombine implements CustomPacketPayload {
             } catch (Exception ignored) {
             }
             if (result == null) {
-                // Плата за попытку остаётся списанной (паритет).
+                
                 player.sendSystemMessage(Component.literal("No combination"), true);
                 HexEconomy.push(player);
                 return;
             }
-            // Порт checkAndSyncAspectKnowledge(combo, 1): открытие + пул
-            // (1 знаю, 3 новое) + анимация награды.
+            
+            
             boolean known = HexResearchGame.isKnown(player, result);
             if (!known) {
                 try {
@@ -130,8 +130,8 @@ public class MsgCombine implements CustomPacketPayload {
             ScanWallet.add(player, result, known ? 1 : 3);
             AspectList granted = new AspectList();
             granted.add(result, known ? 1 : 3);
-            // Награда — сообщениями scan-канала (на table-канале не
-            // зарегистрирована — было "invalid message" и тишина).
+            
+            
             PacketHandler.sendToPlayer(new MsgStudyReward(granted), player);
             HexEconomy.push(player);
         });

@@ -35,7 +35,7 @@ public class FXBreakingFade extends ArcaneresearchParticle {
 
         this.itemStack = new ItemStack(item);
 
-        // NEOFORGE_PORT: ItemRenderer.getModel().getParticleIcon() removed; see pickItemSprite.
+        
         this.setSprite(pickItemSprite(this.itemStack, level, this.random));
 
         this.gravity = 1.0f;
@@ -100,8 +100,8 @@ public class FXBreakingFade extends ArcaneresearchParticle {
 
 
 
-    // NEOFORGE_PORT (26.3): Forge getModel(item).getParticleIcon() -> the item model's
-    // particle material (vanilla BreakingItemParticle path); also right for block items.
+    
+    
     private static net.minecraft.client.renderer.texture.TextureAtlasSprite pickItemSprite(
             net.minecraft.world.item.ItemStack item, ClientLevel level,
             net.minecraft.util.RandomSource random) {
@@ -114,11 +114,11 @@ public class FXBreakingFade extends ArcaneresearchParticle {
                     state.pickParticleMaterial(random);
             return material != null ? material.sprite() : null;
         } catch (Exception e) {
-            return null; // guarded by getU0..V1/getLayer above
+            return null; 
         }
     }
 
-    // NEOFORGE_PORT: same math as the old render(); fade baked per frame.
+    
     @Override
     public void extract(net.minecraft.client.renderer.state.level.QuadParticleRenderState state,
             net.minecraft.client.Camera camera, float partialTicks) {
@@ -144,8 +144,8 @@ public class FXBreakingFade extends ArcaneresearchParticle {
         return net.minecraft.client.particle.ParticleRenderType.SINGLE_QUADS;
     }
 
-    // NEOFORGE_PORT: sprite fetch can fail pre-reload; guard so a missing sprite
-    // falls back to the sheet instead of NPEing (practically unreachable in-game).
+    
+    
     @Override
     protected float getU0() {
         return this.sprite != null ? this.sprite.getU0() : 0.0f;
@@ -166,8 +166,8 @@ public class FXBreakingFade extends ArcaneresearchParticle {
         return this.sprite != null ? this.sprite.getV1() : 1.0f;
     }
 
-    // NEOFORGE_PORT (26.3): Forge TERRAIN_SHEET was alpha-blended (the 0.5 alpha and
-    // the fade show); bySprite would pick the opaque layer for opaque item sprites.
+    
+    
     @Override
     public SingleQuadParticle.Layer getLayer() {
         if (this.sprite == null) {

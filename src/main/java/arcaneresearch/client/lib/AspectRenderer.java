@@ -12,28 +12,28 @@ import arcaneresearch.api.aspects.AspectList;
 import java.text.DecimalFormat;
 import java.util.List;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 client/lib/AspectRenderer.java.
-// REQUIRED changes (verified via javap on MC 26.3):
-//   GuiGraphics -> GuiGraphicsExtractor; drawString -> text.
-//   Immediate-mode tinted quads (RenderSystem/Tesselator/BufferBuilder/GameRenderer) removed ->
-//     extractor.blit(GUI_TEXTURED, tex, x, y, 0, 0, w, h, imgW, imgH, argbTint) (ARGB tint multiplies).
-//   Identifier -> Identifier (fromNamespaceAndPath; getNamespace/getPath kept).
-//   NativeImage.getPixelRGBA/setPixelRGBA -> getPixel/setPixel (packing verified
-//     below: luminance is channel-order independent, alpha handling identical).
-//   DynamicTexture(image) removed -> DynamicTexture(Supplier<String>, NativeImage).
+
+
+
+
+
+
+
+
+
 public class AspectRenderer {
 
     private static final DecimalFormat AMOUNT_FORMATTER = new DecimalFormat("#");
     private static final int ICON_SIZE = 16;
-    // NEOFORGE_PORT: blit needs explicit texture dims; recorded in
-    // UtilsFX.processedAspectTexture while the image is read (same image read).
-    // FIX: the map is only ever READ here - it is POPULATED by UtilsFX via
-    // registerTextureDims below. Without entries, renderColoredTexture skipped
-    // its blit and aspect icons were silently never drawn (tooltips, HUD, JEI).
+    
+    
+    
+    
+    
     private static final java.util.Map<Identifier, int[]> TEXTURE_DIMS =
             new java.util.concurrent.ConcurrentHashMap<>();
 
-    /** Called by UtilsFX.processedAspectTexture with the pixels size of an aspect texture. */
+      
     public static void registerTextureDims(Identifier texture, int width, int height) {
         TEXTURE_DIMS.put(texture, new int[]{width, height});
     }
@@ -78,10 +78,10 @@ public class AspectRenderer {
             int textX = x + ICON_SIZE - font.width(amountStr);
             int textY = y + ICON_SIZE - font.lineHeight;
 
-            // NEOFORGE_PORT (26.3 strict-ARGB text): GuiGraphicsExtractor.text
-            // early-outs when ARGB.alpha(color)==0 (verified in 26.x bytecode),
-            // while Forge 1.20.1 ignored alpha. 0xRRGGBB literals must carry
-            // full alpha or the text is silently skipped.
+            
+            
+            
+            
             graphics.text(font, amountStr, textX + 1, textY + 1, 0xFF000000, false);
             graphics.text(font, amountStr, textX, textY, 0xFFFFFFFF, false);
         }
@@ -96,30 +96,30 @@ public class AspectRenderer {
     }
 
     public static Identifier strippedTexture(Identifier texture) {
-        // Вырезка фона переехала в общий helper — используется всеми
-        // местами, рисующими иконки аспектов (GUI + мир).
+        
+        
         return UtilsFX.strippedAspectTexture(texture);
     }
 
-    /**
-     * Full pixel dimensions of a GUI texture for blit sampling. Populated by
-     * {@link arcaneresearch.client.lib.UtilsFX#strippedAspectTexture} while the image is read.
-     * Null when the resource is missing/unreadable (callers skip drawing then).
-     */
+     
+
+
+
+ 
     public static int[] textureDims(Identifier texture) {
         return TEXTURE_DIMS.get(texture);
     }
 
     private static void renderColoredTexture(GuiGraphicsExtractor graphics, Identifier texture,
                                              int x, int y, int width, int height, float r, float g, float b, float a) {
-        // NEOFORGE_PORT: POSITION_TEX_COLOR immediate quad -> tinted pipeline blit
-        // (blit color is ARGB and multiplies the texture, same as vertex color did).
-        // UV contract (verified against 26.3 GuiGraphicsExtractor bytecode: the 12-arg
-        // overload is (x, y, u, v, screenW, screenH, srcW, srcH, texW, texH) delegating
-        // to the 13-arg with default color -1): the FULL texture is sampled (srcW/H =
-        // texW/H, same as Forge's uv 0->1 quad), drawn at width x height. The old
-        // 11-arg call passed width/height as sample size and showed only the top-left
-        // corner magnified (aspect art is 400x400, icons looked distorted/wrong size).
+        
+        
+        
+        
+        
+        
+        
+        
         Identifier tex = strippedTexture(texture);
         int[] dims = TEXTURE_DIMS.get(tex);
         int argb = ((int) (a * 255.0f) << 24)

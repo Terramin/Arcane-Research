@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -91,8 +91,8 @@ public class BlockHungryChest extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -122,8 +122,8 @@ public class BlockHungryChest extends Block implements EntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
                                 net.minecraft.world.entity.InsideBlockEffectApplier applier, boolean runningEffects) {
-        // NEOFORGE_PORT: 1:1 from Forge entityInside (new 26.x signature only);
-        // isClientSide field -> method, level.random -> level.getRandom().
+        
+        
         if (level.isClientSide() || !(entity instanceof ItemEntity itemEntity)) {
             return;
         }
@@ -138,9 +138,9 @@ public class BlockHungryChest extends Block implements EntityBlock {
         if (leftovers == null || leftovers.isEmpty() || leftovers.getCount() != before.getCount()) {
             level.playSound(null, pos, SoundEvents.GENERIC_EAT.value(), SoundSource.BLOCKS, 0.25f,
                     (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2f + 1.0f);
-            // Паритет TC4 (BlockChestHungry.onEntityCollidedWithBlock):
-            // щелчок крышкой при поглощении — без этого клиент не видит chomp,
-            // т.к. entityInside поглощает раньше серверного pickupNearbyItems.
+            
+            
+            
             level.blockEvent(pos, state.getBlock(), 2, 2);
         }
         if (leftovers != null && !leftovers.isEmpty()) {
@@ -153,13 +153,13 @@ public class BlockHungryChest extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         if (!state.is(level.getBlockState(pos).getBlock())) {
-            // NEOFORGE_PORT: contents dropped by preRemoveSideEffects default; comparator update kept.
+            
             level.updateNeighbourForOutputSignal(pos, this);
         }
     }
@@ -169,7 +169,7 @@ public class BlockHungryChest extends Block implements EntityBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);

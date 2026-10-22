@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -94,9 +94,9 @@ public class BlockThaumatorium extends Block implements EntityBlock {
                                 Direction facing, BlockPos facingPos, BlockState facingState,
                                 net.minecraft.util.RandomSource random) {
 
-        // NEOFORGE_PORT (26.3): reverts to a brass block like the reference (was AIR, which
-        // went through Block.updateOrDestroy -> destroyBlock and, with the re-place below,
-        // left a brass block AND dropped a brass item).
+        
+        
+        
         if (facing == Direction.UP && !facingState.is(ModBlocks.THAUMATORIUM_TOP.get())) {
             return ModBlocks.ALCHEMICAL_BRASS_BLOCK.get().defaultBlockState();
         }
@@ -119,8 +119,8 @@ public class BlockThaumatorium extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -142,8 +142,8 @@ public class BlockThaumatorium extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side, old state + isMoving; new state already swapped: level.getBlockState(pos)).
+        
+        
         Block brass = ModBlocks.ALCHEMICAL_BRASS_BLOCK.get();
         BlockState newState = level.getBlockState(pos);
         if (isMoving || state.is(newState.getBlock()) || newState.is(brass)) {
@@ -152,8 +152,8 @@ public class BlockThaumatorium extends Block implements EntityBlock {
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof TileThaumatorium thaumatorium) {
-            // NEOFORGE_PORT: inventory dropped by preRemoveSideEffects default; clear slots kept
-            // (prevents stale client sync of a removed tile).
+            
+            
             for (int i = 0; i < thaumatorium.getContainerSize(); i++) {
                 thaumatorium.setItem(i, ItemStack.EMPTY);
             }
@@ -166,8 +166,8 @@ public class BlockThaumatorium extends Block implements EntityBlock {
         Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
                 new ItemStack(brass));
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
-        // NEOFORGE_PORT (26.3): no brass re-place here - the reference left the broken
-        // base as air (only the brass item above drops); re-placing duplicated the block.
+        
+        
     }
 
     @Override
@@ -175,7 +175,7 @@ public class BlockThaumatorium extends Block implements EntityBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity blockEntity = level.getBlockEntity(pos);

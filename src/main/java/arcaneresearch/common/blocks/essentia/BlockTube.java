@@ -81,7 +81,7 @@ public class BlockTube extends Block implements EntityBlock {
                 .setValue(DOWN, false));
     }
 
-    // NEOFORGE_PORT: 26.x uses BlockGetter instead of LevelAccessor for withConnections.
+    
     public static BlockState withConnections(net.minecraft.world.level.BlockGetter level, net.minecraft.core.BlockPos pos, BlockState state) {
         for (Direction dir : Direction.values()) {
             state = state.setValue(getPropertyForDirection(dir), canConnectTo(level, pos, dir));
@@ -101,7 +101,7 @@ public class BlockTube extends Block implements EntityBlock {
         return false;
     }
 
-    // NEOFORGE_PORT: 26.x uses BlockGetter instead of LevelAccessor for withConnections.
+    
 
     public static BooleanProperty getPropertyForDirection(Direction dir) {
         return switch (dir) {
@@ -186,8 +186,8 @@ public class BlockTube extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
@@ -250,8 +250,8 @@ public class BlockTube extends Block implements EntityBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x vanilla added a Direction param (same vis/10 buffer
-    // signal, side-independent, same logic as Forge).
+    
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
 
@@ -305,10 +305,10 @@ public class BlockTube extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         BlockEntity te = level.getBlockEntity(pos);
 
@@ -324,8 +324,8 @@ public class BlockTube extends Block implements EntityBlock {
         }
     }
 
-    // NEOFORGE_PORT: Forge 1:1 — клиентский код вынесен в @OnlyIn-метод
-    // (dist-безопасность: сервер не грузит client.fx.FXDispatcher).
+    
+    
     @OnlyIn(Dist.CLIENT)
     private void playVentFX(Level level, BlockPos pos) {
         level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,

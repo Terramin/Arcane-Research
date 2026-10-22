@@ -13,14 +13,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketLogisticsRequestToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Codec buffer is RegistryFriendlyByteBuf (REQUIRED: ItemStack.OPTIONAL_STREAM_CODEC
-// is StreamCodec<RegistryFriendlyByteBuf, ItemStack>; registrar accepts
-// StreamCodec<? super RegistryFriendlyByteBuf, T>). Wire format is the NeoForge-native
-// ItemStack codec on both ends (same mod version), replacing FriendlyByteBuf.writeItem/readItem.
-// Payload id "arcaneresearch:logistics_request_to_server".
+
+
+
+
+
+
+
+
 public class PacketLogisticsRequestToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketLogisticsRequestToServer> TYPE =

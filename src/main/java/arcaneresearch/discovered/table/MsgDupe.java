@@ -21,17 +21,17 @@ import arcaneresearch.discovered.scan.ScanWallet;
 import arcaneresearch.discovered.table.DiscoveredTableResearch;
 import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
 
-/**
- * Client -&gt; Server: скопировать завершённую записку.
- * Порт кнопки 5 контейнера ({@code duplicate}): цена — из КОШЕЛЬКА игрока
- * по каждому аспекту (требуемое количество + copies), бумага + чернильный
- * мешок (оба проверяются ДО списания). Копия — полный клон предмета
- * (hex-слой и проектный слой), счётчик copies растёт на обеих.
- *
- * NEOFORGE_PORT: SimpleChannel(HexTableNetwork) -&gt; CustomPacketPayload
- * (пустое тело); player.drop — 3-аргументный с Prediction.SERVER_ONLY.
- * Payload id "arcaneresearch:hex_dupe".
- */
+ 
+
+
+
+
+
+
+
+
+
+ 
 public class MsgDupe implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgDupe> TYPE =
@@ -81,8 +81,8 @@ public class MsgDupe implements CustomPacketPayload {
                     targets.add(entry.aspect);
                 }
             }
-            // Цена копии — как rr.tags: требуемое количество + copies,
-            // из кошелька игрока (паритет duplicate).
+            
+            
             AspectList required = null;
             try {
                 required = DiscoveredTableResearch.requiredAspects(note.key);
@@ -102,7 +102,7 @@ public class MsgDupe implements CustomPacketPayload {
                 }
             }
             Inventory inv = player.getInventory();
-            // Оба ресурса проверяются до списания (иначе терялась бы бумага).
+            
             if (!inv.contains(new ItemStack(Items.PAPER))) {
                 player.sendSystemMessage(Component.literal("Need paper to copy"), true);
                 return;
@@ -125,11 +125,11 @@ public class MsgDupe implements CustomPacketPayload {
                 ScanWallet.remove(player, target, amount + note.copies);
             }
             note.copies++;
-            // Полный клон: проектный слой (DiscoveredNote) копируется вместе
-            // с предметом, hex-слой перезаписывается со счётчиком.
+            
+            
             ItemStack copy = source.copy();
             HexResearchNoteData.updateData(copy, note);
-            // NEOFORGE_PORT: placeItemBackInInventory now needs Prediction (server-side).
+            
             inv.placeItemBackInInventory(copy, net.minecraft.util.Prediction.SERVER_ONLY);
             if (!copy.isEmpty()) {
                 player.drop(copy, false, net.minecraft.util.Prediction.SERVER_ONLY);
@@ -142,9 +142,9 @@ public class MsgDupe implements CustomPacketPayload {
     }
 
     private static boolean consumeOne(Inventory inv, net.minecraft.world.item.Item item) {
-        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems()
-        // (the same 36-slot list; getContainerSize() also spans armor/offhand,
-        // which the reference never consumed from).
+        
+        
+        
         for (ItemStack stack : inv.getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.is(item)) {
                 stack.shrink(1);

@@ -25,21 +25,21 @@ import arcaneresearch.discovered.table.HexResearchNoteData;
 import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
 import arcaneresearch.discovered.table.HexUtils;
 
-/**
- * Отрисовка hex-стола: фон, пул, соединение, лист, ховеры.
- * Вынесено из {@link HexResearchTableScreen} без смены поведения:
- * состояние читается из экрана (package-доступ), константы геометрии
- * и текстур живут здесь.
- *
- * NEOFORGE_PORT (26.3 render-state): GuiGraphics -&gt; GuiGraphicsExtractor;
- * ResourceLocation -&gt; Identifier; RenderSystem-бленд/шейдер-цвет удалены
- * (пайплайны владеют состоянием; полупрозрачные подложки — per-blit tint);
- * pose — pushMatrix/translate/scale 2D + rotate(Axis...rotationDegrees);
- * drawString -&gt; text; renderTooltip -&gt; deferred
- * setComponentTooltipForNextFrame; ручной рендер слотов/переносимого
- * удалён (их рисует фреймворк — иначе двойной рендер); level.random -&gt;
- * getRandom().
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class HexTableDraw {
 
@@ -67,7 +67,7 @@ public class HexTableDraw {
     static final int POOL_X = 10;
     static final int POOL_Y = 40;
 
-    /** Формат количества — паритет UtilsFX.myFormatter ("#######.##"). */
+      
     private static final java.text.DecimalFormat POOL_AMOUNT_FORMAT =
             new java.text.DecimalFormat("#######.##");
 
@@ -90,16 +90,16 @@ public class HexTableDraw {
         this.s = screen;
     }
 
-    /**
-     * Фон стола 255x167 + нижняя панель 184x88 — тот же
-     * {@code guiresearchtable2.png} (скопирован из 1.7.10), что и в оригинале.
-     */
+     
+
+
+ 
     void drawTableBackground(GuiGraphicsExtractor graphics) {
         GuiBlitHelper.blit(graphics, TABLE_BG, s.guiLeft(), s.guiTop(), 0, 0, 255, 167, 256, 256);
         GuiBlitHelper.blit(graphics, TABLE_BG, s.guiLeft() + 40, s.guiTop() + 167, 0, 166, 184, 88, 256, 256);
     }
 
-    /** Кнопка копирования (регион 232,200), только при complete. */
+      
     void drawDupe(GuiGraphicsExtractor graphics) {
         if (s.note != null && s.note.complete) {
             GuiBlitHelper.blit(graphics, TABLE_BG, s.guiLeft() + 37, s.guiTop() + 5, 232, 200, 24, 24, 256, 256);
@@ -107,13 +107,13 @@ public class HexTableDraw {
     }
 
     void drawPool(GuiGraphicsExtractor graphics, int mx, int my) {
-        // Без инструментов пул скрыт целиком.
+        
         if (!s.hasTools()) {
             return;
         }
-        // Паритет GuiResearchTable.drawAspects (строка 685): сетка 5 колонок
-        // (xx=drawn/5*16, yy=drawn%5*16), страница 25 шт со сдвигом page*5,
-        // faded — ЦВЕТНОЙ с alpha 0.33 (bw=false!), бонус — с тайла.
+        
+        
+        
         List<Aspect> order = s.poolView();
         int drawn = 0;
         int shown = 0;
@@ -136,11 +136,11 @@ public class HexTableDraw {
         }
     }
 
-    /**
-     * Порт {@code UtilsFX.drawTag(double...)} для пула: цветная иконка 16x16
-     * с alpha + количество мелким шрифтом (scale 0.5, прижато вправо-вниз,
-     * тёмная обводка крестом + белый текст — ветвь {@code blend > 1}).
-     */
+     
+
+
+
+ 
     private void drawPoolTag(GuiGraphicsExtractor graphics, int x, int y, Aspect aspect,
             int amount, int bonus, float alpha) {
         AspectRenderer.drawAspect(graphics, x, y, aspect, 0, 0, alpha, false);
@@ -152,8 +152,8 @@ public class HexTableDraw {
             graphics.pose().scale(0.5F, 0.5F);
             int tx = 32 - sw;
             int ty = 32 - s.font().lineHeight;
-            // NEOFORGE_PORT (26.3): ARGB colors — 1.20.1 Font forced alpha 0xFF,
-            // text() skips alpha-0 colors (counts were invisible).
+            
+            
             graphics.text(s.font(), text, tx - 1, ty, 0xFF000000, false);
             graphics.text(s.font(), text, tx + 1, ty, 0xFF000000, false);
             graphics.text(s.font(), text, tx, ty - 1, 0xFF000000, false);
@@ -162,8 +162,8 @@ public class HexTableDraw {
             graphics.pose().popMatrix();
         }
         if (bonus > 0) {
-            // Бонус тайла: мелкий "+N" слева вверху (паритет счётчика
-            // PacketAspectPool-ветви; искра-партикл здесь — заливка текстом).
+            
+            
             String text = "+" + bonus;
             graphics.pose().pushMatrix();
             graphics.pose().translate((float) x, (float) y);
@@ -175,7 +175,7 @@ public class HexTableDraw {
     }
 
     void drawCombineUi(GuiGraphicsExtractor graphics) {
-        // Кнопка соединения и стрелки — регионы guiresearchtable2.png.
+        
         int bx = s.guiLeft() + 35;
         int by = s.guiTop() + 139;
         boolean armed = s.select1 != null && s.select2 != null;
@@ -183,16 +183,16 @@ public class HexTableDraw {
         if (armed && System.nanoTime() - s.lastCombineClick < 200000000L) {
             GuiBlitHelper.blit(graphics, TABLE_BG, bx, by, 184, 168, 32, 16, 256, 256);
         }
-        // Орб на кнопке — тинтом, аддитивно (blendFunc 770, 1), см. drawOrbSprite.
+        
         drawOrbSprite(graphics, bx + 8, by, rainbowOrb(orbTick(), bx, by));
-        // Стрелки страниц.
+        
         if (s.page < s.lastPage(s.poolView().size())) {
             GuiBlitHelper.blit(graphics, TABLE_BG, s.guiLeft() + 51, s.guiTop() + 121, 208, 208, 24, 8, 256, 256);
         }
         if (s.page > 0) {
             GuiBlitHelper.blit(graphics, TABLE_BG, s.guiLeft() + 27, s.guiTop() + 121, 184, 208, 24, 8, 256, 256);
         }
-        // Слоты соединения: только иконки, как в оригинале.
+        
         drawSelectSlot(graphics, s.guiLeft() + 13, s.guiTop() + 139, s.select1);
         drawSelectSlot(graphics, s.guiLeft() + 71, s.guiTop() + 139, s.select2);
     }
@@ -203,16 +203,16 @@ public class HexTableDraw {
         }
     }
 
-    /**
-     * Орб drawOrb 1-в-1: кадр {@code part=ticks%8} атласа частиц
-     * ({@code u=0.5+part/8, v=0.5, 1/16}), тинт цветом, 16x16.
-     */
+     
+
+
+ 
     private void drawOrbSprite(GuiGraphicsExtractor graphics, int x, int y, int rgb) {
         int part = (int) (orbTick() % 8);
         int u = 128 + part * 32;
-        // NEOFORGE_PORT (26.3): Forge blendFunc(770, 1) + setShaderColor(r, g, b, 1)
-        // -> additive pipeline + opaque tint (aspect colors are 0xRRGGBB, alpha 0
-        // made the drag orb invisible).
+        
+        
+        
         graphics.blit(HexTablePipelines.GUI_TEXTURED_LIGHTNING, ORB, x, y, u, 128, 16, 16, 256, 256,
                 ARGB.opaque(rgb));
     }
@@ -242,7 +242,7 @@ public class HexTableDraw {
         int sx = s.guiLeft() + SHEET_X;
         int sy = s.guiTop() + SHEET_Y;
         GuiBlitHelper.blit(graphics, PARCHMENT, sx, sy, 0, 0, SHEET, SHEET, 256, 256);
-        // Без записки — пустой пергамент (пул и соединение живут отдельно).
+        
         if (note == null) {
             return;
         }
@@ -250,7 +250,7 @@ public class HexTableDraw {
         tickRunes();
         HexResearchGame.visualize(note, s::known, lines, highlight);
 
-        // Линии связей.
+        
         long tick = s.minecraft() != null && s.minecraft().level != null
                 ? s.minecraft().level.getGameTime() : 0;
         for (HexUtils.Hex[] pair : lines.values()) {
@@ -262,8 +262,8 @@ public class HexTableDraw {
 
         HexUtils.Hex hover = s.sheetHex(mx, my);
         if (!note.complete) {
-            // Паритет drawHex/drawHexHighlight: подложка всегда (белым
-            // с alpha 0.25 — тинт), аддитивная подсветка HEX2 при ховере.
+            
+            
             for (String k : note.hexes.keySet()) {
                 HexUtils.Hex hex = note.hexes.get(k);
                 HexEntry entry = note.hexEntries.get(k);
@@ -276,14 +276,14 @@ public class HexTableDraw {
                 graphics.blit(RenderPipelines.GUI_TEXTURED, HEX1, hx - 8, hy - 8,
                         0, 0, 16, 16, 16, 16, 0x40FFFFFF);
                 if (hover != null && hover.equals(hex)) {
-                    // NEOFORGE_PORT (26.3): Forge blendFunc(770, 1) -> additive pipeline.
+                    
                     graphics.blit(HexTablePipelines.GUI_TEXTURED_LIGHTNING, HEX2, hx - 8, hy - 8,
                             0, 0, 16, 16, 16, 16);
                 }
             }
         }
 
-        // Якоря и руны.
+        
         for (String k : note.hexEntries.keySet()) {
             HexEntry entry = note.hexEntries.get(k);
             HexUtils.Hex hex = note.hexes.get(k);
@@ -298,10 +298,10 @@ public class HexTableDraw {
                 graphics.blit(RenderPipelines.GUI_TEXTURED, UNKNOWN, ix, iy,
                         0, 0, 16, 16, 16, 16, 0x80000000);
             } else {
-                // Орбы якорей — только незавершённой (первый цикл
-                // drawSheet под if(!complete); теги ниже — всегда).
+                
+                
                 if (entry.type == 1 && !note.complete) {
-                    // Радужный орб якоря под иконкой, как drawOrb оригинала.
+                    
                     drawOrbSprite(graphics, ix, iy, rainbowOrb(orbTick(), ix, iy));
                 }
                 if (bright) {
@@ -312,7 +312,7 @@ public class HexTableDraw {
             }
         }
 
-        // Декоративные руны (script.png: 16 кадров в ряд).
+        
         for (Rune rune : runes.values()) {
             HexUtils.Pixel pix = new HexUtils.Hex(rune.q, rune.r).toPixel(HEX);
             long now = System.currentTimeMillis();
@@ -323,7 +323,7 @@ public class HexTableDraw {
             int tint = ((int) (Math.max(0.0F, alpha) * 255.0F) << 24);
             graphics.pose().pushMatrix();
             graphics.pose().translate((float) (s.guiLeft() + CX + pix.x), (float) (s.guiTop() + CY + pix.y));
-            // NEOFORGE_PORT: 2D pose rotate takes radians float (cf. HudHandler).
+            
             graphics.pose().rotate((float) Math.toRadians(-90.0F));
             graphics.blit(RenderPipelines.GUI_TEXTURED, SCRIPT, -5, -5,
                     rune.idx * 16, 0, 10, 10, 256, 16, tint);
@@ -348,8 +348,8 @@ public class HexTableDraw {
         if (!note.hexes.containsKey(k) || runes.containsKey(k)) {
             return;
         }
-        // Паритет drawSheet: руна не кладётся только на занятый гекс
-        // (!hexes) и поверх существующей; aspect в hexEntries не проверяется.
+        
+        
         Rune rune = new Rune();
         rune.q = hex.q;
         rune.r = hex.r;
@@ -359,10 +359,10 @@ public class HexTableDraw {
         runes.put(k, rune);
     }
 
-    /**
-     * Иконка аспекта на листе: на ~15% меньше клетки (scale 0.85 от центра),
-     * чтобы не сливаться с подложкой гекса.
-     */
+     
+
+
+ 
     private void drawSheetAspect(GuiGraphicsExtractor graphics, int x, int y, Aspect aspect,
             float alpha, boolean grayscale) {
         graphics.pose().pushMatrix();
@@ -373,7 +373,7 @@ public class HexTableDraw {
         graphics.pose().popMatrix();
     }
 
-    /** Линия связи повёрнутой заливкой (без GL-линий). */
+      
     private void drawLine(GuiGraphicsExtractor graphics, float x1, float y1, float x2, float y2, long tick) {
         float dx = x2 - x1;
         float dy = y2 - y1;
@@ -385,14 +385,14 @@ public class HexTableDraw {
         int alpha = Math.min(255, (int) (pulse * 255.0F));
         graphics.pose().pushMatrix();
         graphics.pose().translate(x1, y1);
-        // NEOFORGE_PORT: 2D pose rotate takes radians float (cf. HudHandler).
+        
         graphics.pose().rotate((float) Math.atan2(dy, dx));
-        // NEOFORGE_PORT (26.3): Forge blendFunc(770, 1) -> additive pipeline.
+        
         graphics.fill(HexTablePipelines.GUI_LIGHTNING, 0, -1, (int) len, 2, (alpha << 24) | 0x0099CC);
         graphics.pose().popMatrix();
     }
 
-    /** Перетаскиваемый орб в цвете аспекта (паритет drawOrb, без иконки). */
+      
     void renderDragOrb(GuiGraphicsExtractor graphics) {
         if (s.dragging && s.dragged != null) {
             drawOrbSprite(graphics, (int) s.dragX - 8, (int) s.dragY - 8, s.dragged.getColor());
@@ -400,7 +400,7 @@ public class HexTableDraw {
     }
 
     void drawHover(GuiGraphicsExtractor graphics, int mx, int my) {
-        // Тултипы пула.
+        
         List<Aspect> order = s.poolView();
         int drawn = 0;
         int shown = 0;
@@ -418,19 +418,19 @@ public class HexTableDraw {
                 ArrayList<Component> tip = new ArrayList<>();
                 tip.add(Component.literal(aspect.getName()));
                 tip.add(Component.literal(aspect.getLocalizedDescription()));
-                // Откуда бонус: игроку не видно, что +N — это окружение стола.
+                
                 if (s.shownBonus(aspect) > 0) {
                     tip.add(Component.translatable("tooltip.arcaneresearch.hexbonus",
                             s.shownBonus(aspect)));
                 }
-                // Паритет drawAspectText: тултип в (mx, my-8).
+                
                 graphics.setComponentTooltipForNextFrame(s.font(), tip, mx, my - 8);
-                // Рецепт компонентов, как drawAspectText, но без _back-подложек.
+                
                 if (!aspect.isPrimal() && aspect.getComponents() != null
                         && aspect.getComponents().length >= 2) {
-                    // Высота бокса тултипа (формула ваниллы: 8 + (строк-1)*10,
-                    // строки с переносом по 170): иконки — под боксом, иначе
-                    // тултип их перекрывает.
+                    
+                    
+                    
                     int textLines = 0;
                     for (net.minecraft.network.chat.Component line : tip) {
                         textLines += Math.max(1, s.font().split(line, 170).size());
@@ -454,7 +454,7 @@ public class HexTableDraw {
             drawn++;
             shown++;
         }
-        // Тултипы слотов соединения (паритет drawAspectText: select1/select2).
+        
         if (s.select1 != null && s.inZone(mx, my, s.guiLeft() + 13, s.guiTop() + 139, 16, 16)) {
             graphics.setComponentTooltipForNextFrame(s.font(), aspectTip(s.select1), mx, my - 8);
             return;
@@ -463,7 +463,7 @@ public class HexTableDraw {
             graphics.setComponentTooltipForNextFrame(s.font(), aspectTip(s.select2), mx, my - 8);
             return;
         }
-        // Тултипы рун на листе.
+        
         HexUtils.Hex hex = s.sheetHex(mx, my);
         if (hex != null && s.note != null) {
             HexEntry entry = s.note.hexEntries.get(hex.toString());
@@ -474,7 +474,7 @@ public class HexTableDraw {
         }
     }
 
-    /** Строки тултипа аспекта (имя + описание). */
+      
     private static ArrayList<Component> aspectTip(Aspect aspect) {
         ArrayList<Component> tip = new ArrayList<>();
         tip.add(Component.literal(aspect.getName()));
@@ -482,12 +482,12 @@ public class HexTableDraw {
         return tip;
     }
 
-    /**
-     * Диагностика инверсии: с зажатым Shift показывает гекс, который
-     * вернул хит-тест под курсором.
-     *
-     * @deprecated помечено на удаление: отладочный оверлей, никем не вызывается.
-     */
+     
+
+
+
+
+ 
     @Deprecated(forRemoval = true)
     void drawPickDebug(GuiGraphicsExtractor graphics, int mx, int my) {
         if (!Minecraft.getInstance().hasShiftDown() || s.note == null) {
@@ -501,7 +501,7 @@ public class HexTableDraw {
         graphics.text(s.font(), text, mx + 12, my - 12, 0xFFFF55, true);
     }
 
-    /** No-ink предупреждение (порт; чернила — слот 0 меню). */
+      
     void drawInkWarning(GuiGraphicsExtractor graphics) {
         ItemStack tools;
         try {
@@ -519,10 +519,10 @@ public class HexTableDraw {
         for (Component line : tip) {
             w = Math.max(w, s.font().width(line));
         }
-        // NEOFORGE_PORT (26.3): Forge drew this panel immediately every frame
-        // (renderTooltip), independent of hover tooltips. The deferred
-        // setTooltipForNextFrame is first-wins/replaced by slot tooltips, which
-        // hid the warning while hovering the pool/sheet — draw it immediately.
+        
+        
+        
+        
         int tx = s.guiLeft() + 157 - w;
         int ty = s.guiTop() + 84;
         java.util.List<net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent> components =

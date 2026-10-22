@@ -7,8 +7,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT (26.3): BEWLR item renderers -> SpecialModelRenderer codecs.
-// Items opt in via assets/arcaneresearch/items/*.json (minecraft:special).
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class SpecialItemModels {
 

@@ -10,21 +10,21 @@ import arcaneresearch.api.ArcaneresearchInvHelper;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
 
-/**
- * Порт {@code thaumcraft.common.lib.research.ResearchNoteData} (TC 4.2.3.5).
- * Только DTO + NBT; вся логика — в {@link HexResearchGame}.
- * Имена NBT-тегов 1-в-1 с оригиналом ({@code key/color/complete/copies/
- * hexgrid/{hexq,hexr,type,aspect}}).
- * Живёт в едином {@code DiscoveredNote}-слое предмета (см. getData).
- *
- * NEOFORGE_PORT: ItemStack NBT (hasTag/getTag) удалён в 26.x ->
- * CUSTOM_DATA через ArcaneresearchInvHelper (getCustomTag — копия,
- * правки только с write-back через setCustomTag); геттеры CompoundTag/
- * ListTag — OrEmpty-варианты 26.x; NBT-формат 1:1.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+ 
 public class HexResearchNoteData {
 
-    /** Ячейка поля. type: 0 — свободна, 1 — стартовая цель, 2 — поставлена игроком. */
+      
     public static class HexEntry {
         public Aspect aspect;
         public int type;
@@ -99,20 +99,20 @@ public class HexResearchNoteData {
         }
     }
 
-    /** Чтение записки из NBT предмета; null если тега нет. */
+      
     public static HexResearchNoteData getData(ItemStack stack) {
         if (stack == null || stack.isEmpty() || !ArcaneresearchInvHelper.hasCustomTag(stack)) {
             return null;
         }
         CompoundTag layer = layer(stack, false);
         HexResearchNoteData data = new HexResearchNoteData();
-        // NEOFORGE_PORT (26.3): reference contains("hexgrid", TAG_LIST) — present even
-        // when empty (size() > 0 sent empty-grid notes down the legacy path -> null).
+        
+        
         boolean haveField = layer != null && layer.getList("hexgrid").isPresent();
         if (haveField) {
             data.readFromNBT(layer);
         } else {
-            // Legacy: поле в корне тега — читаем и мигрируем в единый слой.
+            
             data.readFromNBT(ArcaneresearchInvHelper.getCustomTag(stack));
             if (data.key == null || data.key.isEmpty()) {
                 return null;
@@ -125,7 +125,7 @@ public class HexResearchNoteData {
         return data;
     }
 
-    /** Слой записки (единый компаунд {@code DiscoveredNote}). */
+      
     private static CompoundTag layer(ItemStack stack, boolean create) {
         try {
             CompoundTag custom = ArcaneresearchInvHelper.getCustomTag(stack);
@@ -143,15 +143,15 @@ public class HexResearchNoteData {
                     return null;
                 }
             }
-            // Отсоединённая копия: вызыватели пишут назад через putCompound-логику
-            // updateData/migrateToLayer.
+            
+            
             return custom.getCompound(DiscoveredNoteData.NBT_ROOT).orElse(null);
         } catch (Exception e) {
             return null;
         }
     }
 
-    /** Перенос legacy-поля из корня в единый слой (с зачисткой корня). */
+      
     private static void migrateToLayer(ItemStack stack, HexResearchNoteData data) {
         try {
             CompoundTag layer = layer(stack, true);
@@ -175,7 +175,7 @@ public class HexResearchNoteData {
         }
     }
 
-    /** Запись записки в NBT предмета (единый слой). */
+      
     public static void updateData(ItemStack stack, HexResearchNoteData data) {
         if (stack == null || stack.isEmpty() || data == null) {
             return;

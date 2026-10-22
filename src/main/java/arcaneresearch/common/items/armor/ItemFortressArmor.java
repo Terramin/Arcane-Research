@@ -31,31 +31,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-// NEOFORGE_PORT: ArmorItem REMOVED in 26.x (verified via javap) -> plain Item with
-// .humanoidArmor(material, type). ArmorItem.Type -> ArmorType; the worn piece is tracked in
-// the armorType field (Item no longer knows its own slot).
-// NEOFORGE_PORT: net.minecraftforge.* -> net.neoforged.* (@Mod.EventBusSubscriber was removed;
-// use net.neoforged.fml.common.EventBusSubscriber).
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRunicArmor {
 
-    /**
-     * Паритет TC4: вся таум-броня — IRunicArmor с нулевым базовым зарядом
-     * (пул собирается из TC.RUNIC от рунического аугмента).
-     */
+     
+
+
+ 
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
 
-    // NEOFORGE_PORT: replaces the removed ArmorItem.getType() for per-piece logic.
+    
     private final ArmorType armorType;
 
     public ItemFortressArmor(Item.Properties props, ArmorType type) {
-        // NEOFORGE_PORT: super(material, type, props) -> super(props.humanoidArmor(material, type)).
+        
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_FORTRESS, type)
-                // NEOFORGE_PORT (26.3): humanoidArmor() uses vanilla per-slot units (11/16/15/13);
-                // Forge indexed {13,15,16,11} by ArmorItem.Type ordinal -> restore Forge durability.
+                
+                
                 .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(
                         ArcaneresearchArmorMaterials.ARMORMAT_FORTRESS, type))
                 .stacksTo(1)
@@ -79,8 +79,8 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
         return armorType;
     }
 
-    // NEOFORGE_PORT: NBT root tag -> CUSTOM_DATA via ArcaneresearchInvHelper. getCustomTag
-    // returns a COPY, so every mutation is written back with setCustomTag.
+    
+    
     public static boolean hasGoggles(ItemStack stack) {
         CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
         return tag != null && tag.contains("goggles");
@@ -122,8 +122,8 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
 
     public static int countFortressPieces(Player player) {
         int count = 0;
-        // NEOFORGE_PORT: LivingEntity.getArmorSlots() REMOVED in 26.x (verified via javap) ->
-        // iterate HEAD/CHEST/LEGS/FEET with getItemBySlot (same convention as ported PlayerEvents).
+        
+        
         for (EquipmentSlot armorSlot : ARMOR_SLOTS) {
             ItemStack armor = player.getItemBySlot(armorSlot);
             if (!armor.isEmpty() && armor.getItem() instanceof ItemFortressArmor) {
@@ -172,19 +172,19 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
         return defense / 25.0D;
     }
 
-    // NEOFORGE_PORT: LivingHurtEvent REMOVED in NeoForge (verified via javap on the NeoForge jar).
-    // NEOFORGE_PORT (26.3): Forge rescaled the PRE-armor amount (LivingHurtEvent, top of
-    // actuallyHurt) and vanilla armor then absorbed the rescaled amount. LivingDamageEvent.Pre runs
-    // after armor/enchant/resistance, so rescaling there applied the factor to an already
-    // armor-reduced amount (armor absorption is not linear in damage). Same approach as
-    // EntityEvents.onEntityHurt: an ARMOR reduction callback, which runs inside actuallyHurt with
-    // container.getNewDamage() == Forge's LivingHurtEvent amount. LOWEST priority appends it after
-    // the EntityEvents (other Forge LivingHurt handlers) callback; their pre-armor result is
-    // recovered from the chained reduction, then this handler's factor is applied on top.
-    // NEOFORGE_PORT: CombatRules.getDamageAfterAbsorb(float, float, float) signature changed in 26.x ->
-    // getDamageAfterAbsorb(LivingEntity, float, DamageSource, float, float) (verified via javap).
-    // NEOFORGE_PORT: ArmorItem.getDefense()/getToughness()/getType() are gone with ArmorItem ->
-    // per-piece defense comes from the ARMORMAT_FORTRESS defense map keyed by armorType.
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
     public static void onLivingHurt(LivingIncomingDamageEvent event) {
         LivingEntity living = event.getEntity();
@@ -203,7 +203,7 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
                 (float) living.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
     }
 
-    /** Pre-armor amount whose vanilla armor result is {@code postArmor} (absorb is strictly increasing). */
+      
     private static float preArmorAmount(LivingEntity living, DamageSource source, float before, float postArmor) {
         if (postArmor <= 0.0F || source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             return Math.max(0.0F, postArmor);
@@ -244,7 +244,7 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
             return reductionIn;
         }
         float before = container.getNewDamage();
-        // Forge LivingHurtEvent amount (after any earlier LivingHurt handler).
+        
         float amount = preArmorAmount(living, source, before, before - reductionIn);
 
         float armorValue = (float) living.getArmorValue();
@@ -275,20 +275,20 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
         }
         double specialFactor = otherFactor * remaining * (1.0D - bonusAbsorb);
         float after = Math.max(0.0F, (float) (amount * specialFactor / vanillaFactor));
-        // Vanilla armor (and the later enchant/resistance/absorption steps) then apply to `after`.
+        
         return before - armorAbsorb(living, source, after);
     }
 
-    // NEOFORGE_PORT: Forge isValidRepairItem accepted the thaumium ingot item (or the material match).
-    // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
-    // via the ArmorMaterial repairIngredient tag); ARMORMAT_FORTRESS maps to the repairs_thaumium
-    // data tag (thaumium ingot, as Forge used), so no override is needed (or possible).
+    
+    
+    
+    
 
-    // NEOFORGE_PORT: Forge armor-model/texture parity -> arcaneresearch.client.ArmorClientSetup.
+    
 
     @Override
-    // NEOFORGE_PORT: appendHoverText 4-arg (ItemStack, Level, List, TooltipFlag) REMOVED in 26.x ->
-    // 5-arg (ItemStack, TooltipContext, TooltipDisplay, Consumer<Component>, TooltipFlag).
+    
+    
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
 
@@ -318,5 +318,5 @@ public class ItemFortressArmor extends Item implements IGoggles, IRevealer, IRun
         return hasGoggles(itemstack);
     }
 
-    // NEOFORGE_PORT: Forge armor-model/texture parity -> arcaneresearch.client.ArmorClientSetup.
+    
 }

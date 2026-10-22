@@ -75,7 +75,7 @@ public class ItemVerdantCharm extends Item implements ICurioItem, IRechargable {
             return;
         }
 
-        // NEOFORGE_PORT: DeferredHolder<MobEffect, MobEffect> IS a Holder -> pass directly (no .get()).
+        
         if (player.hasEffect(ModEffects.FLUX_TAINT) && RechargeHelper.consumeCharge(stack, player, 5)) {
             player.removeEffect(ModEffects.FLUX_TAINT);
             return;
@@ -101,7 +101,7 @@ public class ItemVerdantCharm extends Item implements ICurioItem, IRechargable {
         }
     }
 
-    // NEOFORGE_PORT: appendHoverText 5-arg (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

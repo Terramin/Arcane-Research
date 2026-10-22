@@ -12,12 +12,12 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: Model is generic in 26.x (Model<S>); state type matches the
-// ResearchTableRenderer stub (BlockEntityRenderState) вЂ” Thaumaturge oracle.
+
+
 public class ResearchTableModel extends Model<BlockEntityRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -28,8 +28,8 @@ public class ResearchTableModel extends Model<BlockEntityRenderState> {
     private final ModelPart scrollRibbon;
 
     public ResearchTableModel(ModelPart root) {
-        // NEOFORGE_PORT: generic Model<S> pins the Function to Identifier ->
-        // RenderType, so the method ref picks entityCutout(Identifier).
+        
+        
         super(root, RenderTypes::entityCutout);
         this.inkwell = root.getChild("inkwell");
         this.scrollTube = root.getChild("scroll_tube");
@@ -61,8 +61,8 @@ public class ResearchTableModel extends Model<BlockEntityRenderState> {
         return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
-    // NEOFORGE_PORT: ModelPart.render(PoseStack, VertexConsumer, light, overlay[, tint])
-    // in 26.x вЂ” colors packed ARGB int (was r/g/b/a floats); Model.renderToBuffer final.
+    
+    
     private static int pack(float red, float green, float blue, float alpha) {
         return ((int) (alpha * 255.0F) << 24) | ((int) (red * 255.0F) << 16)
                 | ((int) (green * 255.0F) << 8) | (int) (blue * 255.0F);

@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 
-// NEOFORGE_PORT: camera quad -> base SingleQuadParticle.extract.
+
 public class FXBoreSparkle extends SingleQuadParticle {
 
     private Entity target;

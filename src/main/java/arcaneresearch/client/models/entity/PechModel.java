@@ -9,16 +9,16 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.EntityPech;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>; animation inputs come from the
-// render state (limbSwing->walkAnimationPos etc., mumble/attack/crouch via
-// PechRenderer.State, filled in extractRenderState).
+
+
+
 public class PechModel extends EntityModel<PechRenderer.State> implements ArmedModel<PechRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -150,8 +150,8 @@ public class PechModel extends EntityModel<PechRenderer.State> implements ArmedM
         this.rightArm.yRot = 0.0F;
         this.leftArm.yRot = 0.0F;
 
-        // NEOFORGE_PORT: swing phase from ArmedEntityRenderState.swingAnimation
-        // (filled by extractArmedEntityRenderState); same arc math as Forge attackTime.
+        
+        
         float attackTime = state.swingAnimation;
         if (attackTime > 0) {
             this.rightArm.yRot += body.yRot;
@@ -182,8 +182,8 @@ public class PechModel extends EntityModel<PechRenderer.State> implements ArmedM
         this.leftArm.xRot -= Mth.sin(ageInTicks * 0.067F) * 0.05F;
     }
 
-    // NEOFORGE_PORT: base Model.renderToBuffer (final, root part) draws all
-    // parts; the old 8-float overload is removed (same coverage).
+    
+    
 
     @Override
     public void translateToHand(PechRenderer.State state, HumanoidArm arm, PoseStack poseStack) {

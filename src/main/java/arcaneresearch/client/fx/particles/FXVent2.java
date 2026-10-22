@@ -115,7 +115,7 @@ public class FXVent2 extends ArcaneresearchParticle {
     }
 
 
-    // NEOFORGE_PORT: same math as the old render(); immediate verts -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         Vec3 cameraPos = camera.position();

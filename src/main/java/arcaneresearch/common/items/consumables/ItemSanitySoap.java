@@ -27,20 +27,20 @@ public class ItemSanitySoap extends Item {
         super(props);
     }
 
-    // NEOFORGE_PORT: getUseDuration now takes (ItemStack, LivingEntity).
+    
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity user) {
         return 100;
     }
 
-    // NEOFORGE_PORT: UseAnim REMOVED -> ItemUseAnimation.
+    
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
         return ItemUseAnimation.BLOCK;
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.success(stack) -> InteractionResult.SUCCESS.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         player.startUsingItem(hand);
@@ -75,7 +75,7 @@ public class ItemSanitySoap extends Item {
         }
     }
 
-    // NEOFORGE_PORT: releaseUsing now returns boolean; true = the soap was consumed.
+    
     @Override
     public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
         int held = getUseDuration(stack, entity) - timeLeft;
@@ -85,8 +85,8 @@ public class ItemSanitySoap extends Item {
                 IPlayerWarp warp = ArcaneresearchCapabilities.getWarp(player);
                 if (warp != null) {
                     int amt = 1;
-                    // NEOFORGE_PORT: hasEffect now takes Holder<MobEffect>; DeferredHolder IS a
-                    // holder, so the Forge .get() must be dropped (same as BlockFluidPure).
+                    
+                    
                     if (player.hasEffect(ModEffects.WARP_WARD)) amt++;
                     int i = Mth.floor(player.getX());
                     int j = Mth.floor(player.getY());

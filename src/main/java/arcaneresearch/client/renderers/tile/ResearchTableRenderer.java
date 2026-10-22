@@ -26,10 +26,10 @@ import arcaneresearch.common.tiles.crafting.TileResearchTable;
 
 import java.awt.*;
 
-// NEOFORGE_PORT (26.3 render-state rework, verified in 26.3 jars):
-// Forge draw logic (facing rotation, alchemy-tinted scroll, inkwell, 2D quill)
-// via submitCustomGeometry bridge + submitModelPart; quill as textured quad
-// (UtilsFX.renderItemIn2D lost its texture arg in the port).
+
+
+
+
 public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTable, ResearchTableRenderer.State> {
 
     private static final Identifier TEXTURE =
@@ -91,8 +91,8 @@ public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTa
         }
 
         if (state.hasScribeTools) {
-            // NEOFORGE_PORT (26.3): Forge drew the inkwell with entityTranslucent
-            // (semi-transparent glass pixels in the texture), not cutout.
+            
+            
             collector.submitCustomGeometry(poseStack, TCRenderTypes.translucentPortal(TEXTURE), (pose, consumer) -> {
                 PoseStack work = bridge(pose);
                 tableModel.renderInkwell(work, consumer, light, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -110,13 +110,13 @@ public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTa
             poseStack.scale(0.5f, 0.5f, 0.5f);
 
             RenderType quillType = TCRenderTypes.translucentPortal(QUILL_TEXTURE);
-            // Forge parity: UtilsFX.renderItemIn2D -> renderTextureIn3D builds a
-            // thick double-sided item (front normal +Z at z=0, back normal -Z at
-            // z=-thickness, U-mirrored). A single front-only quad is backface-culled
-            // by ENTITY_TRANSLUCENT (cull=true), so the quill vanishes from behind
-            // and flickers at grazing/close camera angles. Restore both faces.
-            // NEOFORGE_PORT (26.3): UtilsFX.renderItemIn2D(texture, ...) exists in the
-            // port — same call as Forge (front/back faces + 16+16 edge strips).
+            
+            
+            
+            
+            
+            
+            
             float quillThickness = 0.0625f;
             collector.submitCustomGeometry(poseStack, quillType, (pose, consumer) ->
                     arcaneresearch.client.lib.UtilsFX.renderItemIn2D(QUILL_TEXTURE, quillThickness,

@@ -7,14 +7,14 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.TurretCrossbowRenderer;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>; load/swing/passenger inputs via
-// TurretCrossbowRenderer.State.
+
+
 public class CrossbowModel extends EntityModel<TurretCrossbowRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -233,7 +233,7 @@ public class CrossbowModel extends EntityModel<TurretCrossbowRenderer.State> {
         }
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
         crossbow.render(poseStack, vertexConsumer, packedLight, packedOverlay, net.minecraft.util.ARGB.colorFromFloat(alpha, red, green, blue));

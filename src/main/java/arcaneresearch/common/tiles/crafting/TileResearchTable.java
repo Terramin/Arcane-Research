@@ -60,8 +60,8 @@ public class TileResearchTable extends TileArcaneresearchInventory implements Me
     @Override
     protected void writeSyncNBT(ValueOutput tag) {
         super.writeSyncNBT(tag);
-        // NEOFORGE_PORT: ValueOutput has no put/remove/contains(String) — codec store;
-        // absent key reads back empty (same semantics as Forge remove).
+        
+        
         if (data != null) {
             tag.store("note", net.minecraft.nbt.CompoundTag.CODEC, data.serialize());
         }
@@ -189,9 +189,9 @@ public class TileResearchTable extends TileArcaneresearchInventory implements Me
 
     private ItemStack pickBlockEquivalent(BlockState state, BlockPos pos) {
         try {
-            // NEOFORGE_PORT: Block.getCloneItemStack(Level, BlockPos, BlockState, boolean)
-            // removed in 26.x -> BlockState.getCloneItemStack(LevelReader, BlockPos, boolean)
-            // (verified in 26.3 jar); data-carrying pick preserved via includeData=true.
+            
+            
+            
             ItemStack picked = state.getCloneItemStack(level, pos, true);
             if (picked != null && !picked.isEmpty()) {
                 return picked;

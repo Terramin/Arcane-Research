@@ -94,7 +94,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         ByteBuffer bb = ByteBuffer.allocate(8);
         bb.putInt(this.entityData.get(DATA_PROPS1));
         bb.putInt(this.entityData.get(DATA_PROPS2));
-        // NEOFORGE_PORT: ByteBuffer.getLongOr doesn't exist -> getLong.
+        
         return GolemProperties.fromLong(bb.getLong(0));
     }
 
@@ -140,8 +140,8 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         maxHealth += props.getRank();
         getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealth);
 
-        // NEOFORGE_PORT: setMaxUpStep removed in 26.x -> STEP_HEIGHT attribute
-        // (same values; Thaumaturge oracle).
+        
+        
         var stepHeight = getAttribute(Attributes.STEP_HEIGHT);
         if (stepHeight != null) {
             stepHeight.setBaseValue(props.hasTrait(EnumGolemTrait.WHEELED) ? 0.5 : 0.6);
@@ -326,7 +326,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         }
     }
 
-    // NEOFORGE_PORT: causeFallDamage(float, float, DamageSource) -> (double, float, DamageSource).
+    
     @Override
     public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         if (getProperties().hasTrait(EnumGolemTrait.FLYER) || getProperties().hasTrait(EnumGolemTrait.CLIMBER)) {
@@ -348,10 +348,10 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         double newZ = home.getZ() + 0.5;
         boolean foundCeiling = false;
         BlockPos checkPos = home;
-        // NEOFORGE_PORT: getMaxBuildHeight gone -> getMaxY (LevelHeightAccessor);
-        // blocksMotion gone -> isSolid (same motion-blocking intent).
-        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= getMaxBuildHeight() - 1), and 1.20.1
-        // blocksMotion() was isSolid() minus cobweb and bamboo sapling.
+        
+        
+        
+        
         while (!foundCeiling && checkPos.getY() <= level().getMaxY()) {
             net.minecraft.world.level.block.state.BlockState ceiling = level().getBlockState(checkPos.above());
             if (ceiling.isSolid() && !ceiling.is(net.minecraft.world.level.block.Blocks.COBWEB)
@@ -387,8 +387,8 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         if (source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION) && getProperties().hasTrait(EnumGolemTrait.BLASTPROOF)) {
             amount = Math.min(getMaxHealth() / 2.0f, amount * 0.3f);
         }
-        // NEOFORGE_PORT (26.3): match by damage type like 1.20.1 (identity checks against the
-        // cached damageSources() instances missed any equal-typed source created elsewhere).
+        
+        
         if (source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)) {
             return false;
         }
@@ -433,10 +433,10 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
     @Override
     public boolean doHurtTarget(net.minecraft.server.level.ServerLevel serverLevel, Entity target) {
-        // NEOFORGE_PORT: 26.x enchant-combat rework (verified against Mob.doHurtTarget bytecode).
-        // getDamageBonus(weapon, mobType)/getKnockbackBonus/getFireAspect/doPostHurtEffects removed;
-        // equivalents: modifyDamage (incl. smite/bane), modifyKnockback, doPostAttackEffects
-        // (covers fire aspect). Custom golem kb math + DEFT trait + arms hook preserved 1:1.
+        
+        
+        
+        
         float damage = (float) getAttributeValue(Attributes.ATTACK_DAMAGE);
         ItemStack weapon = getMainHandItem();
         net.minecraft.world.damagesource.DamageSource source = damageSources().mobAttack(this);
@@ -670,18 +670,18 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         return level();
     }
 
-    // NEOFORGE_PORT: render states read the arm-wiggle phase through this accessor;
-    // it is the old LivingEntity.getAttackAnim(partialTicks) (26.x: SwingState animation).
+    
+    
     public float getArmSwingPhase(float partialTicks) {
         return getSwingAnimation(partialTicks);
     }
 
-    // NEOFORGE_PORT (26.3): LivingEntity.swinging/swingTime are now the private SwingState.
-    // The previous port kept shadow fields that never ticked and broadcast entity event 0,
-    // which no 26.x client handles, so golem arms never animated. Vanilla swing() is the
-    // same logic as the 1.20.1 body: restart only when idle, before the first tick or past
-    // duration/2 (= 3 of 6 ticks), then ClientboundSwingAnimationPacket(MAIN_HAND) to
-    // trackers and self (old broadcastAndSend(ClientboundAnimatePacket(this, 0))).
+    
+    
+    
+    
+    
+    
     @Override
     public void swingArm() {
         swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
@@ -703,7 +703,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
                 dropCarried();
 
                 ItemStack placer = new ItemStack(ModItems.GOLEM_PLACER.get());
-                // NEOFORGE_PORT: stack CompoundTag removed -> CUSTOM_DATA (copy + write-back).
+                
                 net.minecraft.nbt.CompoundTag placerTag =
                         arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(placer);
                 placerTag.putLong("props", getProperties().toLong());
@@ -717,7 +717,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
             }
 
             if (heldItem.getItem() instanceof DyeItem) {
-                // NEOFORGE_PORT: DyeItem.getDyeColor removed; dye color is the DYE component now.
+                
                 DyeColor color = heldItem.get(net.minecraft.core.component.DataComponents.DYE);
                 if (color == null) {
                     return InteractionResult.PASS;
@@ -822,8 +822,8 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean recentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, recentlyHit);
         float bonus = looting * 0.15f;
@@ -849,7 +849,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         tag.putByte("color", getGolemColor());
     }
 
-    // NEOFORGE_PORT: finalizeSpawn 5-arg (CompoundTag) removed in 26.x -> 4-arg.
+    
     @Override
     public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
             net.minecraft.world.level.ServerLevelAccessor level,
@@ -875,11 +875,11 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         updateEntityAttributes();
     }
 
-    // NEOFORGE_PORT: getStandingEyeHeight removed in 26.x (getEyeHeight final);
-    // eye height 0.7f moved to the EntityType builder (see ModEntities).
+    
+    
 
-    // NEOFORGE_PORT: getBoundingBoxForCulling() removed in 26.x (culling now via
-    // render state). The inflated cull box (0.6, 1.2, 0.6) returns in the render phase.
+    
+    
     public net.minecraft.world.phys.AABB getCullingBox() {
 
         return getBoundingBox().inflate(0.6, 1.2, 0.6);

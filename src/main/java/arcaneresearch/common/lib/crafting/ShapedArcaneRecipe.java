@@ -26,19 +26,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-// NEOFORGE_PORT: gameplay logic 1:1 from Forge common/lib/crafting/ShapedArcaneRecipe.java.
-// 26.x changes only:
-//   - Old Serializer (fromJson/fromNetwork/toNetwork) replaced by MAP_CODEC/STREAM_CODEC
-//     + `new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC)` (mirrors vanilla ShapedRecipe).
-//     JSON keys unchanged ("group", "research", "vis", "crystals", key+pattern via
-//     ShapedRecipePattern.MAP_CODEC, "result" as ItemStack.CODEC), so data files parse
-//     unchanged. The vanilla id parameter is gone (recipes are holder-keyed); id is kept
-//     as a nullable runtime field for research-display paths (see IArcaneRecipe#getId).
-//   - Ingredient.EMPTY gone: grid is List<Optional<Ingredient>> (empty = Optional.empty()).
-//   - matches(IArcaneWorkbench, Level) grid-scan VERBATIM (no crystal check here —
-//     crystals are validated separately by ArcaneWorkbenchMenu, same as Forge).
-//   - assemble(IArcaneWorkbench) single-arg; placementInfo() via
-//     PlacementInfo.createFromOptionals (mirrors vanilla ShapedRecipe).
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class ShapedArcaneRecipe implements IArcaneRecipe {
 
     public static final MapCodec<ShapedArcaneRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -141,11 +141,11 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         return result.create();
     }
 
-    // NEOFORGE_PORT 26.3: template accessor so codecs/xmap can rewrap without
-    // calling create() during datapack decode (create() touches components,
-    // which are unbound until freeze — same "does not have components yet"
-    // crash as ItemStack.CODEC). See docs.neoforged.net custom recipes:
-    // result is ItemStackTemplate, assemble via template.create().
+    
+    
+    
+    
+    
     public ItemStackTemplate getResultTemplate() {
         return result;
     }
@@ -156,12 +156,12 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
     }
 
     @Override
-    public RecipeSerializer<? extends Recipe<arcaneresearch.api.crafting.IArcaneWorkbench>> getSerializer() { // NEOFORGE_PORT: wildcard bound (parameterized types are invariant; concrete type would block ShapedArcaneVoidJarRecipe override)
+    public RecipeSerializer<? extends Recipe<arcaneresearch.api.crafting.IArcaneWorkbench>> getSerializer() { 
         return Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<IArcaneRecipe> getType() { // NEOFORGE_PORT: Recipe bound requires concrete type
+    public RecipeType<IArcaneRecipe> getType() { 
         return ModRecipeTypes.ARCANE_WORKBENCH.get();
     }
 
@@ -211,9 +211,9 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         return crystals;
     }
 
-    // NEOFORGE_PORT: kept so existing references (api ShapedArcaneRecipe#getSerializer,
-    // ArcaneWandDynamicRecipe#getSerializer, ShapedArcaneVoidJarRecipe.Serializer base)
-    // keep resolving; the registered serializer instance is SERIALIZER above.
+    
+    
+    
     public static class Serializer {
         public static final RecipeSerializer<ShapedArcaneRecipe> INSTANCE = SERIALIZER;
         public static final Identifier ID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_workbench_shaped");

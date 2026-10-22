@@ -11,12 +11,12 @@ import net.minecraft.world.level.material.MapColor;
 
 import java.util.Locale;
 
-/**
- * Obsidian totem, ported from TC4 BlockCosmeticSolid totem metas.
- * Decorative node-totem pillar: a BASE cube plus four PILLAR face variants
- * (TC4 picked faces 1-4 by position hash; here they are explicit states).
- * Worldgen caps pillars with aura nodes (TC4 meta 8 held a TileNode).
- */
+ 
+
+
+
+
+ 
 public class BlockObsidianTotem extends Block {
     public static final EnumProperty<TotemFace> VARIANT =
             EnumProperty.create("variant", TotemFace.class);

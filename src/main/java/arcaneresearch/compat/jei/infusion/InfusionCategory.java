@@ -10,12 +10,12 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import mezz.jei.api.gui.builder.ITooltipBuilder; // NEOFORGE_PORT: getTooltipStrings -> getTooltip
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipelineExtractor
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import mezz.jei.api.gui.builder.ITooltipBuilder; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import arcaneresearch.Arcaneresearch;
@@ -86,8 +86,8 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
         return title;
     }
 
-    // NEOFORGE_PORT: IRecipeCategory.getBackground removed in JEI 26.3;
-    // getWidth/getHeight are mandatory instead (background field kept unused).
+    
+    
     @Override
     public int getWidth() {
         return WIDTH;
@@ -105,7 +105,7 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, InfusionRecipeType recipe, IFocusGroup focuses) {
-        // NEOFORGE_PORT: Neo InfusionRecipeType.getResultItem() is no-arg.
+        
         builder.addSlot(RecipeIngredientRole.OUTPUT, OX - 9, OY - 86)
                 .addItemStack(recipe.getResultItem());
 
@@ -137,8 +137,8 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(OX, OY + 20);
         guiGraphics.pose().scale(2f, 2f);
-        // NEOFORGE_PORT (26.3): Forge blit(tex, x, y, u, v, w, h) assumed a 256x256 sheet
-        // (UVs are in 256-space; the 512px overlay is a 2x asset) -> 256, 256 like RecipeRenderer.
+        
+        
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -56, 0, 3, 56, 17, 256, 256);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -36, 200, 77, 60, 44, 256, 256);
         guiGraphics.pose().popMatrix();
@@ -168,8 +168,8 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
         tooltip.addAll(JeiResearch.tooltip(recipe.getResearch(), mouseX, mouseY, WIDTH));
     }
 
-    // NEOFORGE_PORT (26.3): JEI 15 default getRegistryName(recipe) was Recipe.getId();
-    // 26.x only reads RecipeHolder ids (see ArcaneresearchJEIPlugin.recipeId).
+    
+    
     @Override
     public Identifier getIdentifier(InfusionRecipeType recipe) {
         return ArcaneresearchJEIPlugin.recipeId(recipe);

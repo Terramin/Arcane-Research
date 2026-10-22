@@ -18,16 +18,16 @@ import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.projectile.EntityPrimalArrow;
 import arcaneresearch.common.items.tools.ItemPrimalArrow;
 
-/**
- * Первородная стрела, порт TC4 {@code RenderPrimalArrow}: ванильный силуэт
- * стрелы + висп-след в цвете аспекта (аддитив; энтропия — обычным блендом).
- * Затухание в земле — как в оригинале ((100 - ticksInGround) / 100).
- *
- * NEOFORGE_PORT (26.3): EntityRenderer<Entity, State> + extractRenderState/submit
- * (cf. GolemDartRenderer/WispRenderer); геометрия через submitCustomGeometry
- * с новым addVertex/setColor/setUv/setOverlay/setLight/setNormal чейном.
- * След — билборд по CameraRenderState.orientation.
- */
+ 
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class PrimalArrowRenderer extends EntityRenderer<EntityPrimalArrow, PrimalArrowRenderer.State> {
 
@@ -79,9 +79,9 @@ public class PrimalArrowRenderer extends EntityRenderer<EntityPrimalArrow, Prima
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
                        CameraRenderState camera) {
-        // NEOFORGE_PORT: submit-pose уже стоит в позиции сущности (cf. WispRenderer:
-        // билборд рисуется вокруг origin) — мировые координаты не вычитаем.
-        // Тело стрелы (паритет TC4: те же квады/UV, аддитив, альфа fade).
+        
+        
+        
         RenderType body = TCRenderTypes.additiveTextured(ARROW_TEXTURE);
         int light = state.lightCoords;
         float alpha = state.fade;
@@ -117,8 +117,8 @@ public class PrimalArrowRenderer extends EntityRenderer<EntityPrimalArrow, Prima
                     -7.0F, -2.0F, -2.0F, f6, f9,
                     -1.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, alpha, light);
         });
-        // Средние 4 плоскости поворачиваются каждая своим шагом — отдельными
-        // эмиссиями поверх уже повёрнутого стека (паритет TC4: 4 x push/rotate).
+        
+        
         for (int i = 0; i < 4; ++i) {
             poseStack.pushPose();
             poseStack.rotate(com.mojang.math.Axis.XP.rotationDegrees(90.0F * i));
@@ -132,7 +132,7 @@ public class PrimalArrowRenderer extends EntityRenderer<EntityPrimalArrow, Prima
         }
         poseStack.popPose();
 
-        // Висп-след в цвете аспекта (паритет TC4; энтропия — обычным блендом).
+        
         if (alpha > 0.0F) {
             RenderType trail = state.primalType == ItemPrimalArrow.ENTROPY
                     ? TCRenderTypes.translucentPortal(WISP_TEXTURE)

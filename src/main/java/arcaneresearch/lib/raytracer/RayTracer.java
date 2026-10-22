@@ -14,7 +14,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
-import net.minecraft.world.entity.ai.attributes.Attributes; // NEOFORGE_PORT: ForgeMod removed -> vanilla holder
+import net.minecraft.world.entity.ai.attributes.Attributes; 
 import arcaneresearch.lib.math.MathHelper;
 import arcaneresearch.lib.vec.BlockCoord;
 import arcaneresearch.lib.vec.Cuboid6;
@@ -65,13 +65,13 @@ public class RayTracer {
     }
 
     private static double getBlockReachDistance_server(ServerPlayer player) {
-        // NEOFORGE_PORT: ForgeMod.BLOCK_REACH removed -> vanilla BLOCK_INTERACTION_RANGE (Holder).
+        
         return player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
     }
 
     private static double getBlockReachDistance_client() {
-        // NEOFORGE_PORT: MultiPlayerGameMode.getPickRange removed in 26.3 ->
-        // vanilla Player.blockInteractionRange() (same source as server attribute).
+        
+        
         var player = Minecraft.getInstance().player;
         if (player != null) {
             return player.blockInteractionRange();

@@ -46,7 +46,7 @@ public class AIGotoEntity extends AIGoto {
 
             if (areGolemTagsValidForTask(task) &&
                     task.canGolemPerformTask(golem) &&
-                    golem.isWithinHome(task.getEntity().blockPosition()) /* Forge isWithinRestriction -> 26.x isWithinHome */ &&
+                    golem.isWithinHome(task.getEntity().blockPosition())    &&
                     isValidDestination(golem.level(), task.getEntity().blockPosition()) &&
                     canEasilyReach(task.getEntity())) {
 

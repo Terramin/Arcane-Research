@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.boss.EntityCultistLeader;
 
-// NEOFORGE_PORT (26.3): HumanoidMobRenderer<T, HumanoidRenderState,
-// HumanoidModel<HumanoidRenderState>>; armor layer via ArmorModelSet (oracle
-// CultistClericRenderer shape); scale via hook.
+
+
+
 public class CultistLeaderRenderer extends HumanoidMobRenderer<EntityCultistLeader, HumanoidRenderState, HumanoidModel<HumanoidRenderState>> {
 
     private static final Identifier TEXTURE =

@@ -23,24 +23,24 @@ import arcaneresearch.common.items.resources.ItemWispEssence;
 
 import java.util.List;
 
-/**
- * Наполняемый фиал: 5 висл-эссенций одного аспекта + пузырёк (glass bottle)
- * = фиал с эссенцией этого аспекта. Динамический результат — по образцу
- * {@link ShapedArcaneVoidJarRecipe}: статический {@code result} из JSON служит
- * заглушкой для отображения, реальный стак собирается в {@link #assemble}.
- * Все эссенции в решётке обязаны нести один и тот же аспект.
- *
- * NEOFORGE_PORT: 26.x changes:
- *   - ResourceLocation -> Identifier, NonNullList -> List, ItemStack result -> ItemStackTemplate
- *   - Old Serializer (fromJson/fromNetwork/toNetwork) replaced by MAP_CODEC/STREAM_CODEC
- *     + `new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC)` (mirrors vanilla
- *     ShapelessRecipe: result as ItemStack.CODEC, ingredients as
- *     Ingredient.CODEC.listOf(1, 9), same "group"/"research"/"vis"/"crystals" keys).
- *     The vanilla id parameter is gone (recipes are holder-keyed); id is kept as a
- *     nullable runtime field for research-display paths (see IArcaneRecipe#getId).
- *   - assemble(IArcaneWorkbench) single-arg (no RegistryAccess).
- *   - matches(IArcaneWorkbench, Level) logic kept verbatim.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class ShapelessArcaneEssencePhialRecipe extends ShapelessArcaneRecipe {
 
     public static final MapCodec<ShapelessArcaneEssencePhialRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -163,7 +163,7 @@ public class ShapelessArcaneEssencePhialRecipe extends ShapelessArcaneRecipe {
         return super.getCrystals();
     }
 
-    // NEOFORGE_PORT: kept so existing references keep resolving; the registered serializer instance is SERIALIZER.
+    
     public static class Serializer {
         public static final RecipeSerializer<ShapelessArcaneEssencePhialRecipe> INSTANCE = SERIALIZER;
         public static final Identifier ID = Identifier.fromNamespaceAndPath("arcaneresearch", "arcane_workbench_shapeless_essence_phial");

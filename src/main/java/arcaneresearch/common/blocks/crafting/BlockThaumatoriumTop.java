@@ -56,8 +56,8 @@ public class BlockThaumatoriumTop extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -93,18 +93,18 @@ public class BlockThaumatoriumTop extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side, old state + isMoving; new state already swapped: level.getBlockState(pos)).
+        
+        
         BlockState newState = level.getBlockState(pos);
         if (!isMoving && !state.is(newState.getBlock())
                 && !newState.is(ModBlocks.ALCHEMICAL_BRASS_BLOCK.get())) {
 
             BlockState below = level.getBlockState(pos.below());
             if (below.is(ModBlocks.THAUMATORIUM.get())) {
-                // NEOFORGE_PORT: parity with Forge onRemove — top break downgrades the
-                // multiblock base to brass + drops a brass item. The tile inventory is
-                // NOT dropped manually: 26.x BlockEntity.preRemoveSideEffects drops
-                // Container contents automatically on setBlock (manual loop would double-drop).
+                
+                
+                
+                
                 level.setBlock(pos.below(), ModBlocks.ALCHEMICAL_BRASS_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
                 net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
                         new net.minecraft.world.item.ItemStack(ModBlocks.ALCHEMICAL_BRASS_BLOCK.get()));

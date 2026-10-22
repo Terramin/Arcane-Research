@@ -16,13 +16,13 @@ import arcaneresearch.api.research.ResearchEntry;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/lib/capabilities/PlayerKnowledge.java.
-// DefaultImpl logic preserved VERBATIM (fields, methods, order, NBT format keys).
-// REQUIRED changes (transport/storage layer only):
-//   - Removed inner Provider class (Forge ICapabilitySerializable + LazyOptional — no equivalent;
-//     storage now via AttachmentType in ArcaneresearchCapabilities (common), serializable from
-//     the preserved serializeNBT/deserializeNBT below).
-//   - sync() transport unchanged (PacketHandler.sendToPlayer + PacketSyncKnowledge payload).
+
+
+
+
+
+
+
 public class PlayerKnowledge {
 
     public static final Identifier ID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "knowledge");
@@ -33,7 +33,7 @@ public class PlayerKnowledge {
         private final Map<String, Integer> stages = new HashMap<>();
         private final Map<String, HashSet<EnumResearchFlag>> flags = new HashMap<>();
         private final Map<String, Integer> knowledge = new HashMap<>();
-        // NEOFORGE_PORT: restored with discovered/* (Forge 1:1): presented-via-RMB discoveries.
+        
         private final HashSet<String> presentedDiscoveries = new HashSet<>();
 
         @Override
@@ -137,7 +137,7 @@ public class PlayerKnowledge {
 
             if (isResearchKnown(res)) {
                 research.remove(res);
-                // NEOFORGE_PORT (26.3): Forge also dropped the stage and flags of the removed research.
+                
                 stages.remove(res);
                 flags.remove(res);
                 return true;
@@ -257,7 +257,7 @@ public class PlayerKnowledge {
             }
             rootTag.put("knowledge", knowledgeList);
 
-            // NEOFORGE_PORT: restored with discovered/* (Forge 1:1 key "presented").
+            
             ListTag presentedList = new ListTag();
             for (String key : presentedDiscoveries) {
                 if (key != null && !key.isEmpty()) {
@@ -319,7 +319,7 @@ public class PlayerKnowledge {
                 }
             }
 
-            // NEOFORGE_PORT: restored with discovered/* (Forge 1:1 key "presented").
+            
             ListTag presentedList = rootTag.getListOrEmpty("presented");
             for (int j = 0; j < presentedList.size(); j++) {
                 String key = presentedList.getCompoundOrEmpty(j).getStringOr("key", "");
@@ -331,10 +331,10 @@ public class PlayerKnowledge {
             addAutoUnlockResearch();
         }
 
-        // NEOFORGE_PORT: ValueIOSerializable persistence for AttachmentType.serializable(...).
-        // Mirrors serializeNBT/deserializeNBT key-for-key ("research"[{key,stage?,flags?}],
-        // "knowledge"[{key,amount}]) so disk format carries the same data.
-        // NBT methods are kept: network sync still uses CompoundTag payloads.
+        
+        
+        
+        
         @Override
         public void serialize(ValueOutput output) {
             var researchList = output.childrenList("research");
@@ -370,7 +370,7 @@ public class PlayerKnowledge {
                 }
             }
 
-            // NEOFORGE_PORT: restored with discovered/* (Forge 1:1 key "presented").
+            
             var presentedList = output.childrenList("presented");
             for (String key : presentedDiscoveries) {
                 if (key != null && !key.isEmpty()) {
@@ -421,7 +421,7 @@ public class PlayerKnowledge {
                 }
             }
 
-            // NEOFORGE_PORT: restored with discovered/* (Forge 1:1 key "presented").
+            
             for (var tag : input.childrenListOrEmpty("presented")) {
                 String key = tag.getStringOr("key", "");
                 if (key != null && !key.isEmpty()) {

@@ -98,7 +98,7 @@ public class ItemFocusHellbat extends ItemFocusBasic {
 
                 bat.setPersistenceRequired();
                 if (level.addFreshEntity(bat)) {
-                    // NEOFORGE_PORT: Level.levelEvent now takes the causing entity first (null = none).
+                    
                     level.levelEvent(null, 2004, new BlockPos((int) px, (int) py, (int) pz), 0);
                     level.playSound(null, bat.blockPosition(), WandSounds.ice(), SoundSource.PLAYERS, 0.2F,
                             0.95F + level.getRandom().nextFloat() * 0.1F);

@@ -13,16 +13,16 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.discovered.client.HexResearchTableScreen;
 import arcaneresearch.helper.ClientRunHelper;
 
-/**
- * Server -&gt; Client: авторитетное состояние записки после place/combine.
- * Экран применяет его поверх локального (см.
- * {@code HexResearchTableScreen.applySync}).
- *
- * NEOFORGE_PORT: SimpleChannel(HexTableNetwork) -&gt; CustomPacketPayload
- * (COMPOUND_TAG; null-нормализация в конструкторах — старый writeNbt был
- * null-safe). mc.screen -&gt; mc.gui.screen().
- * Payload id "arcaneresearch:hex_sync_note".
- */
+ 
+
+
+
+
+
+
+
+
+ 
 public class MsgSyncNote implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgSyncNote> TYPE =
@@ -62,8 +62,8 @@ public class MsgSyncNote implements CustomPacketPayload {
         if (mc.player == null || tag == null) {
             return;
         }
-        // Авторитетно — в слот: предмет клиента догоняет серверный,
-        // экран перечитывает его каждый кадр (refreshNote).
+        
+        
         try {
             if (mc.player.containerMenu instanceof HexResearchTableMenu menu) {
                 ItemStack stack = menu.getSlot(1).getItem();

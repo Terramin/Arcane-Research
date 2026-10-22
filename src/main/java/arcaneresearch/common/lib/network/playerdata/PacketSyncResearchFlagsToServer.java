@@ -11,10 +11,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/playerdata/PacketSyncResearchFlagsToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:sync_research_flags_to_server".
+
+
+
+
 public class PacketSyncResearchFlagsToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketSyncResearchFlagsToServer> TYPE =
@@ -30,7 +30,7 @@ public class PacketSyncResearchFlagsToServer implements CustomPacketPayload {
         @Override
         public PacketSyncResearchFlagsToServer decode(ByteBuf buf) {
             PacketSyncResearchFlagsToServer msg = new PacketSyncResearchFlagsToServer();
-            // NEOFORGE_PORT (26.3): Forge decode used readUtf(256) (server-side length cap).
+            
             msg.key = ByteBufCodecs.stringUtf8(256).decode(buf);
             msg.flags = buf.readByte();
             return msg;
@@ -46,7 +46,7 @@ public class PacketSyncResearchFlagsToServer implements CustomPacketPayload {
     public PacketSyncResearchFlagsToServer(ServerPlayer player, String key) {
         this.key = key;
 
-        // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+        
         arcaneresearch.api.capabilities.IPlayerKnowledge knowledge =
                 ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null) {
@@ -77,7 +77,7 @@ public class PacketSyncResearchFlagsToServer implements CustomPacketPayload {
             boolean hasPopup = unpacked[1];
             boolean hasResearch = unpacked[2];
 
-            // NEOFORGE_PORT: getKnowledge returns @Nullable directly (no Optional).
+            
             arcaneresearch.api.capabilities.IPlayerKnowledge knowledge =
                     ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {

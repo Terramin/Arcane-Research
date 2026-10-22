@@ -15,7 +15,7 @@ public class ItemWandCap extends Item {
     }
 
     public static String getCapTag(ItemStack stack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same "cap" key).
+        
         CompoundTag root = ArcaneresearchInvHelper.getCustomTag(stack);
         if (root != null && root.contains(TAG)) {
             String tag = root.getStringOr(TAG, "");
@@ -58,8 +58,8 @@ public class ItemWandCap extends Item {
         return stack;
     }
 
-    // NEOFORGE_PORT: getDescriptionId(stack) REMOVED in 26.x (getDescriptionId() is final) ->
-    // override getName(stack) with the same composed key (same displayed name).
+    
+    
     @Override
     public Component getName(ItemStack stack) {
         String tag = getCapTag(stack);

@@ -17,7 +17,7 @@ import arcaneresearch.client.fx.FXDispatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: trail of camera quads -> extract() with looped state.add.
+
 public class FXEssentiaTrail extends SingleQuadParticle {
 
     private final List<Vec3> trailPoints = new ArrayList<>();
@@ -162,7 +162,7 @@ public class FXEssentiaTrail extends SingleQuadParticle {
     }
 
 
-    // NEOFORGE_PORT: same trail math; immediate verts -> state.add per point.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         if (trailPoints.size() < 3) return;

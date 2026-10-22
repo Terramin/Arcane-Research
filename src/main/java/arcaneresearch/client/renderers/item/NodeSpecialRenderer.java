@@ -24,8 +24,8 @@ import arcaneresearch.common.lib.aura.NodeType;
 
 import java.util.function.Consumer;
 
-// NEOFORGE_PORT (26.3): NodeItemRenderer (BEWLR) -> SpecialModelRenderer.
-// Forge renderByItem() bodies 1:1 (node strips + jar lid/core).
+
+
 public class NodeSpecialRenderer implements SpecialModelRenderer<NodeSpecialRenderer.NodeData> {
 
     private static final Identifier JAR_TEX =
@@ -198,15 +198,15 @@ public class NodeSpecialRenderer implements SpecialModelRenderer<NodeSpecialRend
         float v1 = (strip + 1.0F) / (float) FRAMES;
         float[][] corners = {{-scale, -scale}, {-scale, scale}, {scale, scale}, {scale, -scale}};
         float[][] uvs = {{u1, v1}, {u1, v0}, {u0, v0}, {u0, v1}};
-            // NEOFORGE_PORT (26.3, паритет биллборда 1.20.1 Forge):
-            // 1.20.1 Forge инвертировал только позу item-стека, и квад
-            // смотрел на вьювер в любом контексте. В 26.3 вью-поворот камеры
-            // сидит в sink model-view (и в мире, и в руке первого лица:
-            // renderItemInHand делает modelViewStack.mul(viewRotationMatrix),
-            // а cam.rot заходит в poseStack — они взаимно гасятся при чтении
-            // текущего стека на момент submit). Берём базис из инверсии
-            // полной эффективной цепочки (sink · поза)⁻¹: для GUI sink
-            // тождественен и матрица совпадает со старым трюком.
+            
+            
+            
+            
+            
+            
+            
+            
+            
             Vector3f right = new Vector3f(1.0F, 0.0F, 0.0F);
             Vector3f up = new Vector3f(0.0F, 1.0F, 0.0F);
             Vector3f face = new Vector3f(0.0F, 0.0F, 1.0F);

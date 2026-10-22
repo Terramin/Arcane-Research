@@ -1,11 +1,11 @@
 package arcaneresearch.client.gui.widgets;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import arcaneresearch.Arcaneresearch;
 
 public class SliderWidget extends AbstractWidget {
@@ -66,10 +66,10 @@ public class SliderWidget extends AbstractWidget {
         this.sliderPosition = pos;
     }
 
-    // NEOFORGE_PORT: renderWidget -> extractWidgetRenderState.
+    
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        // NEOFORGE_PORT: white-only tints dropped; blit takes pipeline + sheet size (256).
+        
         graphics.pose().pushMatrix();
         if (vertical) {
             graphics.pose().translate(getX() + 2, getY());
@@ -91,15 +91,15 @@ public class SliderWidget extends AbstractWidget {
         }
     }
 
-    // NEOFORGE_PORT (26.3): AbstractWidget.mouseClicked plays the button click before
-    // onClick; Forge's slider overrode mouseClicked and was silent.
+    
+    
     @Override
     public void playDownSound(net.minecraft.client.sounds.SoundManager soundManager) {
     }
 
-    // NEOFORGE_PORT: 26.3 widget input via onClick/onDrag/onRelease (Forge
-    // mouseClicked/mouseDragged/mouseReleased 1:1: valid-button + hit guards,
-    // dragging reset on release).
+    
+    
+    
     @Override
     public void onClick(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         if (isValidClickButton(event.buttonInfo()) && this.visible && isMouseOver(event.x(), event.y())) {

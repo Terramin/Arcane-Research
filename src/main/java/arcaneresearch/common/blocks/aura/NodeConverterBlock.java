@@ -17,29 +17,29 @@ import arcaneresearch.common.blocks.aura.AuraBlockEntities;
 
 import javax.annotation.Nullable;
 
-/**
- * Node converter block, ported from TC4 (BlockStoneDevice meta 11).
- * Sits above an aura node with a stabilizer below the node; its tile
- * converts the node to energized. The device mesh is drawn by
- * NodeConverterRenderer, like the TC4 TESR.
- */
+ 
+
+
+
+
+ 
 public class NodeConverterBlock extends BaseEntityBlock {
     public NodeConverterBlock(BlockBehaviour.Properties props) {
         super(props
                 .strength(3.0F, 25.0F)
                 .sound(SoundType.STONE)
-                // Девайс — не куб (рисует TESR): иначе грани соседних блоков,
-                // касающиеся его, отсекаются и соседи выглядят прозрачными.
+                
+                
                 .noOcclusion());
     }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        // NEOFORGE_PORT: 26.x RenderShape only has INVISIBLE/MODEL.
+        
         return RenderShape.INVISIBLE;
     }
 
-    // NEOFORGE_PORT: 26.x signature is propagatesSkylightDown(BlockState).
+    
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;

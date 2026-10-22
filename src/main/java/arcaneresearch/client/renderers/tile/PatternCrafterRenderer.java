@@ -20,8 +20,8 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.crafting.TilePatternCrafter;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (mode display + two meshing gears).
+
+
 public class PatternCrafterRenderer implements BlockEntityRenderer<TilePatternCrafter, PatternCrafterRenderer.State> {
 
     private static final Identifier MODES_TEXTURE =

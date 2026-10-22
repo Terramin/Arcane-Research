@@ -75,17 +75,17 @@ public class ItemCelestialNotes extends ItemTCBase {
         return noteType;
     }
 
-    // NEOFORGE_PORT (items): Forge overrode getOrCreateDescriptionId() to pin every variant to
-    // "item.arcaneresearch.celestial_notes", but that method is GONE in 26.x (descriptionId is
-    // now final, derived from the item id). Simplest compiling equivalent: pin the display name
-    // via getName; revisit when ItemTCBase is ported (Forge ref: getOrCreateDescriptionId).
+    
+    
+    
+    
     @Override
     public Component getName(ItemStack stack) {
         return Component.translatable("item.arcaneresearch.celestial_notes");
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (ItemStack, Level, List) -> (ItemStack, TooltipContext, TooltipDisplay, Consumer, TooltipFlag).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

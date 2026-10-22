@@ -40,7 +40,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntitySpellBat extends Monster implements net.neoforged.neoforge.entity.IEntityWithComplexSpawn {
-    // NEOFORGE_PORT: Forge IEntityAdditionalSpawnData -> NeoForge IEntityWithComplexSpawn (same payload).
+    
 
     private static final EntityDataAccessor<Boolean> DATA_FRIENDLY =
             SynchedEntityData.defineId(EntitySpellBat.class, EntityDataSerializers.BOOLEAN);
@@ -153,7 +153,7 @@ public class EntitySpellBat extends Monster implements net.neoforged.neoforge.en
         return super.getTeam();
     }
 
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     @Override
     public boolean considersEntityAsAlly(Entity other) {
         LivingEntity owner = getOwner();
@@ -343,10 +343,10 @@ public class EntitySpellBat extends Monster implements net.neoforged.neoforge.en
         }
     }
 
-    // NEOFORGE_PORT: Forge shouldDespawnInPeaceful() returned false -> SPELL_BAT type is
-    // registered without notInPeaceful() (26.x peaceful despawn flag).
+    
+    
 
-    // NEOFORGE_PORT: 26.x causeFallDamage takes a double fall distance.
+    
     @Override
     public boolean causeFallDamage(double distance, float multiplier, DamageSource source) {
         return false;
@@ -362,8 +362,8 @@ public class EntitySpellBat extends Monster implements net.neoforged.neoforge.en
         return true;
     }
 
-    // NEOFORGE_PORT (26.3): LivingEntity.isAffectedByFluids still exists (now public); Forge
-    // returned false (no fluid travel/drag) while water currents still pushed the bat.
+    
+    
     @Override
     public boolean isAffectedByFluids() {
         return false;
@@ -384,7 +384,7 @@ public class EntitySpellBat extends Monster implements net.neoforged.neoforge.en
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
-        // NEOFORGE_PORT: getUUID removed -> CODEC read (write side already stores via CODEC).
+        
         ownerUUID = tag.read("OwnerUUID", net.minecraft.core.UUIDUtil.CODEC).orElse(null);
         setFriendly(tag.getBooleanOr("friendly", false));
         if (tag.read("pack", net.minecraft.nbt.CompoundTag.CODEC).isPresent()) {
@@ -396,8 +396,8 @@ public class EntitySpellBat extends Monster implements net.neoforged.neoforge.en
         }
     }
 
-    // NEOFORGE_PORT: Forge NetworkHooks.getEntitySpawningPacket removed; vanilla
-    // ClientboundAddEntityPacket covers spawning, the focus package rides IEntityWithComplexSpawn.
+    
+    
 
     @Override
     public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buffer) {

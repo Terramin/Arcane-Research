@@ -22,19 +22,19 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import arcaneresearch.discovered.table.DiscoveredTableResearch;
 import arcaneresearch.discovered.table.DiscoveredTableSetup;
 
-/**
- * Автоподключение записки без правок вне {@code temp}:
- * регистрация предмета, вкладка креатива и тинт иконки.
- * Паритет тинта: TC3 ItemResearchNotes (второй проход цветом аспекта)
- * + reforged ResearchNoteTint (цвет первичного тега).
- *
- * NEOFORGE_PORT: net.minecraftforge.* -> net.neoforged.* (EventBusSubscriber,
- * RegisterEvent с тем же register(ResourceKey, Identifier, Supplier));
- * ForgeRegistries.Keys.ITEMS -> Registries.ITEM, значения через
- * BuiltInRegistries.ITEM; ResourceLocation -> Identifier.
- * Тинт иконки отложен в ItemTintSource-дата (как остальные тинты, см. главный
- * onRegisterItemColors TODO) — RegisterColorHandlersEvent.Item удалён в 26.3.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class DiscoveredNoteSetup {
 
@@ -55,12 +55,12 @@ public class DiscoveredNoteSetup {
     @SubscribeEvent
     public static void onRegisterItems(RegisterEvent event) {
         if (event.getRegistryKey().equals(Registries.ITEM)) {
-            // NEOFORGE_PORT (26.3): direct RegisterEvent does not inject the
-            // item id; set it explicitly.
+            
+            
             Identifier noteId = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, NOTE_ID);
             Identifier discoveryId = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, DISCOVERY_ID);
-            // NEOFORGE_PORT (26.3): default RARITY UNCOMMON = Forge getRarity for a stack
-            // without note data (/give, plain new ItemStack); write()/toDiscovery override it.
+            
+            
             noteItem = new ItemDiscoveredResearchNote(new Item.Properties()
                     .rarity(net.minecraft.world.item.Rarity.UNCOMMON)
                     .setId(ResourceKey.create(Registries.ITEM, noteId)));
@@ -79,9 +79,9 @@ public class DiscoveredNoteSetup {
         ResourceKey<CreativeModeTab> tab = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcaneresearch_tab"));
         if (event.getTabKey().equals(tab) && noteItem != null) {
-            // Только записки под открытия, требуемые исследованиями проекта:
-            // скан загруженных стадий + статический список на случай,
-            // если категории ещё не загружены. Пустых записок нет.
+            
+            
+            
             LinkedHashSet<String> keys = new LinkedHashSet<>(NOTE_KEYS);
             keys.addAll(DiscoveredTableResearch.discoveryKeys());
             for (String key : keys) {
@@ -96,10 +96,10 @@ public class DiscoveredNoteSetup {
         }
     }
 
-    /**
-     * Ключи открытий из required_discovery исследований проекта
-     * (статический список — страховка, динамику добирает скан стадий).
-     */
+     
+
+
+ 
     private static final List<String> NOTE_KEYS = Arrays.asList(
             "ALUMENTUM", "ARCANESPA", "BATHSALTS", "BOOTSTRAVELLER", "CENTRIFUGE",
             "FOCUSADVANCED", "FOCUSBOLT", "FOCUSBREAK", "FOCUSCLOUD", "FOCUSCURSE",
@@ -109,11 +109,11 @@ public class DiscoveredNoteSetup {
             "METALPURIFICATION", "POTIONSPRAYER", "RECHARGEPEDESTAL", "SANESOAP",
             "THAUMATORIUM", "VISAMULET", "VISBATTERY", "WORKBENCHCHARGER");
 
-    /**
-     * Записка под ключ открытия: точный набор или формула категории
-     * (для ключа без своего исследования — категория требующего исследования).
-     * Нет аспектов — записки нет (не тихая заглушка).
-     */
+     
+
+
+
+ 
     private static ItemStack makeNote(String key) {
         AspectList required = DiscoveredTableResearch.requiredAspects(key);
         if (required == null || required.size() <= 0) {
@@ -122,9 +122,9 @@ public class DiscoveredNoteSetup {
         return DiscoveredNotes.createNote(key, required);
     }
 
-    // DONE (tint rework): тинт записки/открытия — client/renderers/item/NoteTintSources
-    // (arcaneresearch:note, @tint1), паритет цвета — TintHelper.researchNoteColor.
-    // Локальный noteColor оставлен как прямое зеркало Forge (тесты паритета).
+    
+    
+    
     static int noteColor(ItemStack stack, int tintIndex) {
         if (tintIndex != 1 || !(stack.getItem() instanceof ItemDiscoveredResearchNote)) {
             return 0xFFFFFF;

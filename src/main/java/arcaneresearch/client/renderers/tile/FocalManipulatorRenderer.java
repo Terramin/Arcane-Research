@@ -30,8 +30,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (hovering focus item, orbiting aspect orbs + rays + crystals).
+
+
 public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalManipulator, FocalManipulatorRenderer.State> {
 
     private static final Identifier PARTICLE_TEXTURE =
@@ -97,8 +97,8 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
 
         if (state.hasFocus) {
             float hoverStart = Mth.sin(ticks / 14.0f) * 0.2f + 0.2f;
-            // NEOFORGE_PORT: BakedModel GROUND scale gone with ItemRenderer;
-            // standard GROUND display scale (0.5) preserved.
+            
+            
             float groundScaleY = 0.5f;
             float bob = Mth.sin(ticks / 10.0f + hoverStart) * 0.1f + 0.1f;
 
@@ -161,12 +161,12 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
                                   float size, float r, float g, float b, float a, float ticks) {
         poseStack.pushPose();
 
-        // NEOFORGE_PORT: EntityRenderDispatcher.cameraOrientation removed -> main camera.
+        
         poseStack.rotate(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
         poseStack.rotate(Axis.YP.rotationDegrees(180.0f));
 
-        // NEOFORGE_PORT (26.3): Forge used entityTranslucentEmissive (alpha blend),
-        // not an additive layer — same vanilla type here.
+        
+        
         RenderType type = net.minecraft.client.renderer.rendertype.RenderTypes
                 .entityTranslucentEmissive(PARTICLE_TEXTURE);
         int fullLight = 0x00F000F0;
@@ -203,8 +203,8 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
         poseStack.rotate(Axis.YP.rotationDegrees(random.nextFloat() * 360.0f));
         poseStack.rotate(Axis.XP.rotationDegrees(pan));
 
-        // NEOFORGE_PORT: RenderType.lightning gone with the old chain; same fan
-        // topology/colors via the untextured color-fan layer.
+        
+        
         RenderType type = TCRenderTypes.orbTendrils();
 
         float fa = random.nextFloat() * 20.0f + 10.0f;
@@ -237,8 +237,8 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
                 .setNormal(pose, 0, 0, 1);
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TileFocalManipulator blockEntity) {
         return blockEntity.getRenderBoundingBox();

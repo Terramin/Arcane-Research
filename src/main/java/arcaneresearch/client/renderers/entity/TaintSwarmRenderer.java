@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintSwarm;
 
-// NEOFORGE_PORT (26.3): swarm is invisible by design (Forge render() was an
-// empty no-op, not even super) -> submit() no-op.
+
+
 public class TaintSwarmRenderer extends EntityRenderer<EntityTaintSwarm, EntityRenderState> {
 
     public TaintSwarmRenderer(EntityRendererProvider.Context context) {

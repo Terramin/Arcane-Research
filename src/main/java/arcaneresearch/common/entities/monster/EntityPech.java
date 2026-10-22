@@ -209,8 +209,8 @@ public class EntityPech extends Monster implements RangedAttackMob {
         this.entityData.set(DATA_TAMED, tamed);
     }
 
-// NEOFORGE_PORT: getEyeHeight final in Entity (26.x); 0.792f set in
-// ModEntities PECH builder (Forge returned getBbHeight() * 0.66f).
+
+
 
     @Nullable
     @Override
@@ -227,7 +227,7 @@ public class EntityPech extends Monster implements RangedAttackMob {
             if (weapon.getItem() instanceof BowItem) {
                 setPechType(TYPE_FORAGER);
             }
-            // NEOFORGE_PORT: signature gained ServerLevelAccessor first arg in 26.x.
+            
             populateDefaultEquipmentEnchantments(level, random, difficulty);
         }
 
@@ -534,8 +534,8 @@ public class EntityPech extends Monster implements RangedAttackMob {
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
 
-        // NEOFORGE_PORT (26.3): ValueInput.contains gone; defaulting to the current type keeps the
-        // Forge "only set when the key exists" behaviour.
+        
+        
         setPechType(tag.getByteOr("PechType", (byte) getPechType()));
         setAnger(tag.getShortOr("Anger", (short) 0));
         setTamed(tag.getBooleanOr("Tamed", false));
@@ -563,7 +563,7 @@ public class EntityPech extends Monster implements RangedAttackMob {
         }
     }
 
-    // NEOFORGE_PORT: 26.x canBeLeashed() has no player argument.
+    
     @Override
     public boolean canBeLeashed() {
         return false;

@@ -15,10 +15,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/tiles/PacketTileToServer.java (PLAY_TO_SERVER).
-// Same transport adaptation + null-tag normalization as PacketTileToClient.
-// Sender: NetworkEvent.Context.getSender() -> IPayloadContext.player().
-// Payload id "arcaneresearch:tile_to_server".
+
+
+
+
 public class PacketTileToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketTileToServer> TYPE =

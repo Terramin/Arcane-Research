@@ -13,14 +13,14 @@ import org.joml.Quaternionf;
 
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 logic from Forge 1.20.1 (fields/animation/setters kept).
-// REQUIRED changes (verified via javap on MC 26.3 + NeoForge docs):
-//   TextureSheetParticle removed -> SingleQuadParticle.
-//   Custom TC_* ParticleRenderTypes removed (record, fixed set) -> getLayer() with
-//     TCSprites.layerFor (additive + no-depth variants are real pipelines there).
-//   Grid UVs (spriteIndex/gridSize over the raw sheet) remapped into the stitched sheet
-//     sprite bounds (TCSprites); flipped/angled behavior preserved.
-//   level.getDayTime removed -> getGameTime (same wind-direction variety).
+
+
+
+
+
+
+
+
 public class FXGeneric extends SingleQuadParticle {
 
     protected boolean doneFrames = false;
@@ -65,14 +65,14 @@ public class FXGeneric extends SingleQuadParticle {
     public static final Identifier TC_TEXTURE =
             Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
 
-    // NEOFORGE_PORT: custom ParticleRenderTypes removed (fixed set in 26.x);
-    // same layer dispatch, now returning the sheet Layer (see TCSprites).
+    
+    
     public static SingleQuadParticle.Layer renderTypeForLayer(int layer) {
         return TCSprites.layerFor(layer);
     }
 
     public FXGeneric(ClientLevel level, double x, double y, double z) {
-        // NEOFORGE_PORT: null sprite (UVs come from grid-index getU/V overrides + sheet Layer).
+        
         super(level, x, y, z, null);
         init();
     }
@@ -209,7 +209,7 @@ public class FXGeneric extends SingleQuadParticle {
         this.spriteIndexY = index / gridSize;
     }
 
-    // NEOFORGE_PORT: grid fractions remapped into the stitched sheet sprite (same art).
+    
     @Override
     protected float getU0() {
         float f = (float) spriteIndexX / (float) gridSize;
@@ -238,8 +238,8 @@ public class FXGeneric extends SingleQuadParticle {
         return (((float) spriteIndexY + 1.0f) / (float) gridSize);
     }
 
-    // NEOFORGE_PORT: angled orientation (fixed yaw/pitch) preserved via custom quaternion;
-    // base extract() handles the camera-facing case.
+    
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         if (!angled) {
@@ -263,13 +263,13 @@ public class FXGeneric extends SingleQuadParticle {
 
     @Override
     public SingleQuadParticle.Layer getLayer() {
-        // NEOFORGE_PORT: TC sheet types collapsed (see ArcaneresearchParticle); kept per-layer
-        // for the visual-verify pass.
+        
+        
         return TCSprites.layerFor(layer);
     }
 
-    // NEOFORGE_PORT: Forge FXGeneric had NO getLightColor override (vanilla world
-    // light always, even on layer 1) -> no override here either.
+    
+    
 
     @Override
     public void setColor(float r, float g, float b) {

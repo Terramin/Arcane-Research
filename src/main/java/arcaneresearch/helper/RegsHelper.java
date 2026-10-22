@@ -6,16 +6,16 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-/**
- * Единая точка обратных поисков в реестрах (порт из Forge 1.20.1:
- * {@code ForgeRegistries} -&gt; {@code BuiltInRegistries}).
- */
+ 
+
+
+ 
 public final class RegsHelper {
 
     private RegsHelper() {
     }
 
-    /** Ключ предмета ({@code null}, если не зарегистрирован). */
+      
     public static Identifier itemKey(Item item) {
         try {
             return BuiltInRegistries.ITEM.getKey(item);
@@ -24,7 +24,7 @@ public final class RegsHelper {
         }
     }
 
-    /** Ключ блока ({@code null}, если не зарегистрирован). */
+      
     public static Identifier blockKey(Block block) {
         try {
             return BuiltInRegistries.BLOCK.getKey(block);
@@ -33,7 +33,7 @@ public final class RegsHelper {
         }
     }
 
-    /** Ключ типа сущности ({@code null}, если не зарегистрирован). */
+      
     public static Identifier entityKey(EntityType<?> type) {
         try {
             return BuiltInRegistries.ENTITY_TYPE.getKey(type);

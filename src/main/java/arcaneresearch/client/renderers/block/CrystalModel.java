@@ -6,7 +6,7 @@ import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-// NEOFORGE_PORT: BakedModel/ItemOverrides/ModelData removed in 26.3 (BlockStateModel
-// rework). This class keeps the Forge face-selection/rotation math 1:1; the baked
-// side is CrystalBakedModel (DynamicBlockStateModel) wired via
-// CrystalModelRegistration (RegisterBlockStateModels, type "arcaneresearch:crystal").
+
+
+
+
 public class CrystalModel {
 
     public static final Identifier OBJ_LOCATION =
@@ -34,7 +34,7 @@ public class CrystalModel {
     public static final Identifier TEXTURE_LOCATION =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "block/crystal");
 
-    /** Flag order: UP, DOWN, EAST, WEST, NORTH, SOUTH (Forge getQuads order). */
+      
     public static boolean[] computeFlags(BlockAndTintGetter level, BlockPos pos, BlockState state) {
         boolean[] flags = new boolean[6];
         if (level == null || pos == null || !(state.getBlock() instanceof BlockCrystalTC)) {
@@ -66,11 +66,11 @@ public class CrystalModel {
         return BlockCrystalTC.isValidSupport(neighbor, level, neighborPos, side.getOpposite());
     }
 
-    /**
-     * Forge getQuads() 1:1: picks growth+1 shard parts per attached face (seeded
-     * shuffle), rotates the mesh copy per face, bakes quads. Empty when no face
-     * (or every face) is attached, exactly as Forge.
-     */
+     
+
+
+
+ 
     public static List<BakedQuad> bakeFaceQuads(MeshModel sourceMesh, boolean[] flags,
                                                 int growth, long baseSeed, Material.Baked baked) {
         List<BakedQuad> ret = new ArrayList<BakedQuad>();

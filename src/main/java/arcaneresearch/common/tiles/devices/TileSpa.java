@@ -30,9 +30,9 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class TileSpa extends TileArcaneresearch implements Container {
 
     public static final int TANK_CAPACITY = 5000;
-    // NEOFORGE_PORT: FluidTank removed -> ArcaneresearchFluidTank (shared transfer base,
-    // same cap, same FluidName/Amount NBT keys). LazyOptional/getCapability removed;
-    // exposure via getFluidHandler (used by ModBlockEntities.registerCapabilities).
+    
+    
+    
     public final ArcaneresearchFluidTank tank = new ArcaneresearchFluidTank(TANK_CAPACITY);
     public boolean mixMode = true;
     private ItemStack bathSalts = ItemStack.EMPTY;
@@ -111,7 +111,7 @@ public class TileSpa extends TileArcaneresearch implements Container {
         tag.putBoolean("mix", mixMode);
         tank.writeToNBT(tag);
         if (!bathSalts.isEmpty()) {
-            // NEOFORGE_PORT: ItemStack.save(CompoundTag) removed -> ItemStack.CODEC store.
+            
             tag.store("BathSalts", ItemStack.CODEC, bathSalts);
         }
     }
@@ -155,8 +155,8 @@ public class TileSpa extends TileArcaneresearch implements Container {
             return false;
         }
         Fluid targetFluid = target.getFluidState().getType();
-        // NEOFORGE_PORT: DimensionType.ultraWarm() migrated to the WATER_EVAPORATES
-        // environment attribute (same meaning: water cannot exist here).
+        
+        
         boolean waterEvaporates = level.environmentAttributes().getValue(
                 net.minecraft.world.attribute.EnvironmentAttributes.WATER_EVAPORATES,
                 Vec3.atCenterOf(pos));
@@ -196,7 +196,7 @@ public class TileSpa extends TileArcaneresearch implements Container {
 
     @Nullable
     public ResourceHandler<FluidResource> getFluidHandler(Direction side) {
-        // NEOFORGE_PORT: Forge exposed the handler on all sides; same here.
+        
         return tank;
     }
 

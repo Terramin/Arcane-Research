@@ -63,7 +63,7 @@ public class EntityTaintCrawler extends Monster implements ITaintedMob {
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this, EntityTaintCrawler.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
-    // NEOFORGE_PORT: getStandingEyeHeight removed in 26.3 (eye height via EntityDimensions.withEyeHeight).
+    
 
     @Override
     public float getVoicePitch() {
@@ -90,8 +90,8 @@ public class EntityTaintCrawler extends Monster implements ITaintedMob {
         playSound(SoundEvents.SILVERFISH_STEP, 0.15f, 1.0f);
     }
 
-    // NEOFORGE_PORT: Forge getMobType() == ARTHROPOD -> 26.x #minecraft:arthropod entity tag
-    // (data/minecraft/tags/entity_type/arthropod.json; bane of arthropods etc.).
+    
+    
 
     public boolean isTaintedMob(Entity entity) {
         if (entity instanceof arcaneresearch.api.entities.ITaintedMob) return true;
@@ -109,7 +109,7 @@ public class EntityTaintCrawler extends Monster implements ITaintedMob {
         return super.canAttack(target);
     }
 
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     @Override
     public boolean considersEntityAsAlly(Entity other) {
         if (isTaintedMob(other)) {
@@ -146,10 +146,10 @@ public class EntityTaintCrawler extends Monster implements ITaintedMob {
                     && !(bs.getBlock() instanceof ITaintBlock)
                     && (level().isEmptyBlock(pos) || bs.canBeReplaced()
                     || bs.getBlock() instanceof net.minecraft.world.level.block.FlowerBlock
-                    // NEOFORGE_PORT: forge IPlantable removed; vanilla flora (flowers, grass,
-                    // crops, saplings) now shares VegetationBlock (BushBlock/CropBlock/etc. extend it).
+                    
+                    
                     || bs.getBlock() instanceof VegetationBlock
-                    // NEOFORGE_PORT (26.3): Forge also patched IPlantable onto sugar cane and cactus.
+                    
                     || bs.getBlock() instanceof net.minecraft.world.level.block.SugarCaneBlock
                     || bs.getBlock() instanceof net.minecraft.world.level.block.CactusBlock)
                     && BlockUtils.isAdjacentToSolidBlock(level(), pos)
@@ -185,8 +185,8 @@ public class EntityTaintCrawler extends Monster implements ITaintedMob {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int lootingLevel = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);
 

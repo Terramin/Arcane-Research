@@ -69,9 +69,9 @@ public class LogisticsMenu extends AbstractContainerMenu {
                 return Integer.MAX_VALUE;
             }
 
-            // NEOFORGE_PORT (26.3): SimpleContainer.setItem now clamps to
-            // getMaxStackSize(stack) = min(container, item max) -> aggregated counts
-            // were cut to 64. Forge 1.20.1 clamped to the container max only.
+            
+            
+            
             @Override
             public int getMaxStackSize(ItemStack stack) {
                 return getMaxStackSize();
@@ -108,7 +108,7 @@ public class LogisticsMenu extends AbstractContainerMenu {
                     if (handler == null) continue;
 
                     for (int slot = 0; slot < handler.size(); slot++) {
-                        // NEOFORGE_PORT: handler.getStackInSlot(slot) -> ItemUtil.getStack(handler, slot).
+                        
                         ItemStack stack = ItemUtil.getStack(handler, slot).copy();
                         if (stack.isEmpty()) continue;
 
@@ -119,10 +119,10 @@ public class LogisticsMenu extends AbstractContainerMenu {
                                 continue;
                             }
 
-                            // NEOFORGE_PORT (26.3): Forge keyed on the WHOLE item tag
-                            // (enchantments, stored enchantments, potion, ...), not just
-                            // custom data; the component patch is the 26.x equivalent
-                            // (otherwise e.g. all enchanted books merge into one entry).
+                            
+                            
+                            
+                            
                             String key = stack.getHoverName().getString() +
                                     "_" + stack.getDamageValue() +
                                     "_" + (!stack.isComponentsPatchEmpty() ? stack.getComponentsPatch().hashCode() : 0);
@@ -166,8 +166,8 @@ public class LogisticsMenu extends AbstractContainerMenu {
     }
 
     private ResourceHandler<ItemResource> getItemHandler(Level level, BlockPos pos, Direction face) {
-        // NEOFORGE_PORT: ForgeCapabilities.ITEM_HANDLER LazyOptional -> level.getCapability
-        // (Capabilities.Item.BLOCK, pos, face), @Nullable direct (same helper as everywhere else).
+        
+        
         return arcaneresearch.api.ArcaneresearchInvHelper.getItemHandlerAt(level, pos, face);
     }
 
@@ -222,8 +222,8 @@ public class LogisticsMenu extends AbstractContainerMenu {
         lastEnd = end;
     }
 
-    // NEOFORGE_PORT (Forge 1:1): vanilla slot sync clips count > maxStackSize;
-    // this packet carries the full GhostSlot stacks to the client.
+    
+    
     private void sendLargeSlotsToClient() {
         if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) {
             return;

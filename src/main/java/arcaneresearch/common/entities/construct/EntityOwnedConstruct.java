@@ -29,7 +29,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
     private static final EntityDataAccessor<Byte> DATA_FLAGS =
             SynchedEntityData.defineId(EntityOwnedConstruct.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Optional<net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity>>> DATA_OWNER_UUID =
-            // NEOFORGE_PORT: OPTIONAL_UUID removed in 26.3 -> OPTIONAL_LIVING_ENTITY_REFERENCE.
+            
             SynchedEntityData.defineId(EntityOwnedConstruct.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
 
     private static final byte FLAG_OWNED = 0x04;
@@ -68,13 +68,13 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
     }
 
     @Nullable
-    // NEOFORGE_PORT: OwnableEntity.getOwnerUUID gone in 26.3 (only getOwnerReference); kept as helper.
+    
     public UUID getOwnerUUID() {
         var ref = this.entityData.get(DATA_OWNER_UUID);
         return ref.map(net.minecraft.world.entity.EntityReference::getUUID).orElse(null);
     }
 
-    // NEOFORGE_PORT: OwnableEntity.getOwnerReference() abstract in 26.x (verified in 26.3 jar).
+    
     @Override
     public net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity> getOwnerReference() {
         return this.entityData.get(DATA_OWNER_UUID).orElse(null);
@@ -112,7 +112,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
         return super.getTeam();
     }
 
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     @Override
     public boolean considersEntityAsAlly(Entity other) {
         if (isOwned()) {
@@ -203,7 +203,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
 
     @Override
     public void die(DamageSource source) {
-        // NEOFORGE_PORT: Level.getGameRules removed in 26.x -> ServerLevel (Thaumaturge oracle).
+        
         if (!level().isClientSide() && level() instanceof net.minecraft.server.level.ServerLevel serverLevel
                 && serverLevel.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.SHOW_DEATH_MESSAGES)
                 && hasCustomName() && getOwner() instanceof ServerPlayer serverPlayer) {
@@ -219,7 +219,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
 
         UUID uuid = getOwnerUUID();
         if (uuid != null) {
-            // NEOFORGE_PORT: ValueOutput.putUUID gone in 26.3 -> codec store.
+            
             tag.store("Owner", net.minecraft.core.UUIDUtil.CODEC, uuid);
         }
     }
@@ -229,7 +229,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
         super.readAdditionalSaveData(tag);
         validSpawn = tag.getBooleanOr("ValidSpawn", false) || tag.getBooleanOr("v", false);
 
-        // NEOFORGE_PORT: ValueInput UUID/contains helpers gone in 26.3 -> codec read.
+        
         java.util.Optional<UUID> owner = tag.read("Owner", net.minecraft.core.UUIDUtil.CODEC);
         if (owner.isPresent()) {
             setOwnerUUID(owner.get());

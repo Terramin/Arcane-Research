@@ -10,14 +10,14 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketItemToClientContainer.java (PLAY_TO_CLIENT).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Codec buffer is RegistryFriendlyByteBuf (REQUIRED: ItemStack.OPTIONAL_STREAM_CODEC
-// is StreamCodec<RegistryFriendlyByteBuf, ItemStack>; registrar accepts
-// StreamCodec<? super RegistryFriendlyByteBuf, T>). Wire format is the NeoForge-native
-// ItemStack codec on both ends (same mod version), replacing FriendlyByteBuf.writeItem/readItem.
-// Payload id "arcaneresearch:item_to_client_container".
+
+
+
+
+
+
+
+
 public class PacketItemToClientContainer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketItemToClientContainer> TYPE =

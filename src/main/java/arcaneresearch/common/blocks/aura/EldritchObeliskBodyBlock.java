@@ -9,15 +9,15 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-/**
- * Тело элдритч-обелиска, порт TC4 blockEldritch meta 2 (без тайла).
- * Невидимые цельные кубы над базой (y+1..y+4): дают парящему пилону
- * твёрдый хитбокс — коллизии сущностей опрашивают только блоки,
- * пересекающие их AABB, поэтому высокий VoxelShape одной базы для
- * пролёта на высоте пилона не работает. Нерушимый, светится как в TC4.
- * Снос тела (креатив) валит базу под ним, та чистит остаток столба.
- * Лежит в arcaneresearch.arcaneresearch.common.blocks.aura.
- */
+ 
+
+
+
+
+
+
+
+ 
 public class EldritchObeliskBodyBlock extends Block {
     public EldritchObeliskBodyBlock(BlockBehaviour.Properties props) {
         super(props
@@ -40,10 +40,10 @@ public class EldritchObeliskBodyBlock extends Block {
             if (level.getBlockState(pos).is(this)) {
                 return;
             }
-            // TC4 func_149749_a (meta < 4, сюда попадает и тело meta 2):
-            // все элдритч-блоки в 7x5x7 рушатся цепно + взрыв. Прежний
-            // поиск базы под собой затыкался на дырке в столбе и оставлял
-            // парящие body — свип убирает целиком.
+            
+            
+            
+            
             Block altar = arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_ALTAR.get();
             Block base = arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_OBELISK.get();
             Block cap = arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_CAP.get();

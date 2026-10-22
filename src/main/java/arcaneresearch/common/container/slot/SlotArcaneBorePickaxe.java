@@ -15,8 +15,8 @@ public class SlotArcaneBorePickaxe extends SlotMobEquipment {
         if (stack == null || stack.isEmpty()) {
             return false;
         }
-        // NEOFORGE_PORT: PickaxeItem class removed in 26.x (tools are data-driven);
-        // tag + correct-tool checks below cover the same items.
+        
+        
         if (stack.is(ItemTags.PICKAXES)) {
             return true;
         }

@@ -16,8 +16,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.tiles.crafting.TilePedestal;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (item height/rotation/scale); item via ItemStackRenderState.submit.
+
+
 public class PedestalRenderer implements BlockEntityRenderer<TilePedestal, PedestalRenderer.State> {
 
     public static class State extends BlockEntityRenderState {
@@ -72,8 +72,8 @@ public class PedestalRenderer implements BlockEntityRenderer<TilePedestal, Pedes
         poseStack.popPose();
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TilePedestal blockEntity) {
         return blockEntity.getRenderBoundingBox();

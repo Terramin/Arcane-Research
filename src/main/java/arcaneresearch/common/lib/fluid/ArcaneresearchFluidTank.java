@@ -13,14 +13,14 @@ import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import java.util.function.Predicate;
 
-// NEOFORGE_PORT: new shared base (no Forge counterpart file; Forge used
-// net.minecraftforge.fluids.capability.templates.FluidTank directly in each tile).
-// FluidTank was REMOVED in the 21.9 transfer rework; this base re-implements the exact
-// FluidTank surface our tiles used (int fill/drain with EXECUTE semantics, getFluidAmount,
-// getFluid, writeToNBT/readFromNBT with the same "FluidName"/"Amount" keys) on top of
-// FluidStacksResourceHandler (transactional ResourceHandler<FluidResource>).
-// Per-tile validation (water-only etc.) is injected via Predicate, mirroring the old
-// anonymous `isFluidValid` overrides.
+
+
+
+
+
+
+
+
 public class ArcaneresearchFluidTank extends FluidStacksResourceHandler {
 
     private final int capacity;
@@ -51,8 +51,8 @@ public class ArcaneresearchFluidTank extends FluidStacksResourceHandler {
         return getAmountAsInt(0);
     }
 
-    // NEOFORGE_PORT: restores the Forge FluidTank getCapacity() surface
-    // (base keeps protected getCapacity(int, FluidResource)).
+    
+    
     public int getCapacity() {
         return capacity;
     }
@@ -121,8 +121,8 @@ public class ArcaneresearchFluidTank extends FluidStacksResourceHandler {
         clearAndFill(fluid, amount);
     }
 
-    // NEOFORGE_PORT: ValueOutput/ValueInput overloads for tile persistence (26.x).
-    // Same "FluidName"/"Amount" keys and semantics as the CompoundTag versions.
+    
+    
     public void writeToNBT(net.minecraft.world.level.storage.ValueOutput out) {
         FluidStack stack = getFluid();
         if (stack == null || stack.isEmpty()) {
@@ -149,8 +149,8 @@ public class ArcaneresearchFluidTank extends FluidStacksResourceHandler {
         clearAndFill(fluid, amount);
     }
 
-    // Loading overwrites the slot directly: extract() rejects an empty resource (NeoForge
-    // transfer preconditions), which crashed every empty-tank sync packet on the client.
+    
+    
     private void clearAndFill(Fluid fluid, int amount) {
         if (amount > 0 && fluid != Fluids.EMPTY) {
             set(0, FluidResource.of(fluid), Math.min(amount, capacity));

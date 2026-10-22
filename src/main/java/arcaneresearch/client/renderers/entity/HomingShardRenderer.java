@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// NEOFORGE_PORT (26.3): head billboard + beam trail via submitCustomGeometry.
-// Trail points tracked in the static map (same as Forge); camera position via
-// mainCamera().position() (getMainCamera gone). Beam segments drawn with the
-// kept UtilsFX.drawBeam (chain already ported) into one geometry node.
+
+
+
+
 public class HomingShardRenderer extends EntityRenderer<EntityHomingShard, HomingShardRenderer.State> {
 
     public static class State extends EntityRenderState {

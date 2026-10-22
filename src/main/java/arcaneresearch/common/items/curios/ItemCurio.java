@@ -47,17 +47,17 @@ public class ItemCurio extends Item {
         return variant;
     }
 
-    // NEOFORGE_PORT (items): Forge overrode getDescriptionId(ItemStack) for the variant key, but
-    // per-stack description ids are GONE in 26.x (getDescriptionId() is final). Simplest compiling
-    // equivalent: return the same translation key via getName (Forge ref: getDescriptionId).
+    
+    
+    
     @Override
     public Component getName(ItemStack stack) {
 
         return Component.translatable("item.arcaneresearch.curio." + variant);
     }
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (ItemStack, Level, List) -> (ItemStack, TooltipContext, TooltipDisplay, Consumer, TooltipFlag).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
@@ -65,9 +65,9 @@ public class ItemCurio extends Item {
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.pass(stack) -> InteractionResult.PASS, and
-    // Player.displayClientMessage(msg, false) -> sendSystemMessage(msg).
+    
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);

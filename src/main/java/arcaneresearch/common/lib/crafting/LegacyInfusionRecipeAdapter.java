@@ -16,10 +16,10 @@ public class LegacyInfusionRecipeAdapter extends InfusionRecipeType {
     private final InfusionRecipe legacy;
 
     public LegacyInfusionRecipeAdapter(Identifier id, InfusionRecipe legacy) {
-        // NEOFORGE_PORT: ported InfusionRecipeType ctor takes (group, centralItem,
-        // components, aspects, result, research, instability) — no id (holder-keyed);
-        // the legacy id is unused at runtime. Nullable central input (Ingredient.EMPTY
-        // is gone in 26.x).
+        
+        
+        
+        
         super(legacy.getGroup() == null ? "" : legacy.getGroup(),
                 legacy.getRecipeInput(),
                 legacy.getComponents(), legacy.getAspects() == null

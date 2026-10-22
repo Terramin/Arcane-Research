@@ -5,7 +5,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
@@ -38,8 +38,8 @@ public class RobeArmorModel extends HumanoidModel<net.minecraft.client.renderer.
                         .texOffs(0, 0)
                         .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, deform),
                 PartPose.ZERO);
-        // NEOFORGE_PORT (26.3): HumanoidModel ctor reads head.getChild("hat")
-        // (was root.getChild in 1.20.1) — hat nested under head, same cubes.
+        
+        
         head.addOrReplaceChild("hat",
                 CubeListBuilder.create()
                         .texOffs(32, 0)
@@ -82,7 +82,7 @@ public class RobeArmorModel extends HumanoidModel<net.minecraft.client.renderer.
     }
 
     @Override
-    // NEOFORGE_PORT (26.3): HumanoidModel<State>; walk/yaw/pitch via state.
+    
     public void setupAnim(net.minecraft.client.renderer.entity.state.HumanoidRenderState state) {
         super.setupAnim(state);
         float limbSwing = state.walkAnimationPos;

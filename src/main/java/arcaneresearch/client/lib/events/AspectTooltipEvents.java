@@ -18,7 +18,7 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber; // NEOFORGE_PORT: was Mod
+import net.neoforged.fml.common.EventBusSubscriber; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -89,7 +89,7 @@ public class AspectTooltipEvents {
             ListTag infEnch = EnumInfusionEnchantment.getInfusionEnchantmentTagList(stack);
             if (infEnch != null) {
                 for (int j = 0; j < infEnch.size(); ++j) {
-                    // NEOFORGE_PORT: ListTag.getCompound->Optional, CompoundTag.getShort->Optional in 26.3.
+                    
                     int k = infEnch.getCompoundOrEmpty(j).getShortOr("id", (short) 0);
                     int l = infEnch.getCompoundOrEmpty(j).getShortOr("lvl", (short) 0);
                     if (k >= 0 && k < EnumInfusionEnchantment.values().length) {

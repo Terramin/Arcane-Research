@@ -15,10 +15,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketStartTheoryToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:start_theory_to_server".
+
+
+
+
 public class PacketStartTheoryToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketStartTheoryToServer> TYPE =

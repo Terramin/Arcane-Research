@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -22,11 +22,11 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.EntitySpecialItem;
 
-// NEOFORGE_PORT (26.3): bob + tendrils + spinning item via State; tendrils use
-// the orbTendrils type with per-tendril emissions (same pattern as
-// EldritchOrbRenderer); item via pre-resolved ItemStackRenderState (old
-// ItemRenderer.renderStatic gone). Fancy check via graphicsPreset (was
-// graphicsMode).
+
+
+
+
+
 public class SpecialItemRenderer extends EntityRenderer<ItemEntity, SpecialItemRenderer.State> {
 
     public static class State extends EntityRenderState {

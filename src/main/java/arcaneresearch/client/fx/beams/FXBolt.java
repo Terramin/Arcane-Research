@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-// NEOFORGE_PORT: 1:1 logic from Forge 1.20.1 (points/tick/widths/colors kept).
-// REQUIRED changes: TextureSheetParticle removed -> SingleQuadParticle + BeamEngine.BeamEffect;
-// immediate-mode render (Tesselator/RenderSystem/GameRenderer) removed -> emitQuads() submits
-// world-space ribbon quads through BeamEngine (SubmitCustomGeometryEvent); texture binds via
-// the RenderType (raw texture, same UV fractions as Forge); fullbright via emissive type.
+
+
+
+
+
 public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     protected static final Identifier BEAM_TEXTURE =
@@ -45,7 +45,7 @@ public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect 
     public FXBolt(ClientLevel level, double x, double y, double z,
                   double targetX, double targetY, double targetZ,
                   float r, float g, float b, float width) {
-        super(level, x, y, z, 0, 0, 0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, x, y, z, 0, 0, 0, null); 
 
         this.rCol = r;
         this.gCol = g;
@@ -125,7 +125,7 @@ public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect 
         }
     }
 
-    // NEOFORGE_PORT: engine must NOT submit this (BeamEngine does); NO_RENDER skips grouping.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
     }
@@ -142,12 +142,12 @@ public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect 
 
     @Override
     public RenderType beamRenderType() {
-        // NEOFORGE_PORT: old blendFunc(770, 1) additive + fullbright -> emissive translucent.
+        
         return BeamEngine.additiveBeam(BEAM_TEXTURE);
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;
@@ -230,8 +230,8 @@ public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect 
             tailZ = pz - this.targetZ / ol * BEHIND_START;
         }
 
-        // NEOFORGE_PORT: POSITION_TEX_COLOR immediate quads -> new-API calls
-        // (addVertex/setUv/setColor(ARGB); no endVertex; state via RenderType).
+        
+        
         for (int pass = 0; pass < 2; pass++) {
             float widthScale = (pass == 0) ? 0.15f : 0.15f / 3.0f;
             float passAlpha = 1.0f;
@@ -278,8 +278,8 @@ public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect 
             double x1, double y1, double z1, float u1, float v1, int argb1,
             double x2, double y2, double z2, float u2, float v2, int argb2,
             double x3, double y3, double z3, float u3, float v3, int argb3) {
-        // NEOFORGE_PORT (crash fix): full vertex for ENTITY pipelines
-        // (overlay + fullbright + normal; see FXLightning.quad).
+        
+        
         consumer.addVertex((float) x0, (float) y0, (float) z0).setUv(u0, v0).setColor(argb)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(0.0F, 1.0F, 0.0F);
         consumer.addVertex((float) x1, (float) y1, (float) z1).setUv(u1, v1).setColor(argb1)

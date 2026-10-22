@@ -25,7 +25,7 @@ public class LightMatrix implements CCRenderState.IVertexOperation {
     public int computed;
     public float[][] ao;
     public int[][] brightness;
-    // NEOFORGE_PORT: BlockAndTintGetter renamed -> BlockAndLightGetter.
+    
     public BlockAndLightGetter access;
     public BlockCoord pos;
     private int sampled;
@@ -59,7 +59,7 @@ public class LightMatrix implements CCRenderState.IVertexOperation {
         return a + b + c + d >> 2 & 0xFF00FF;
     }
 
-    // NEOFORGE_PORT: BlockAndTintGetter renamed -> BlockAndLightGetter.
+    
     public void locate(BlockAndLightGetter level, BlockPos pos) {
         access = level;
         this.pos.set(pos);
@@ -77,7 +77,7 @@ public class LightMatrix implements CCRenderState.IVertexOperation {
 
             int sky = access.getBrightness(LightLayer.SKY, p);
             int block = Math.max(access.getBrightness(LightLayer.BLOCK, p),
-                    b.getLightEmission(access, p)); // NEOFORGE_PORT (26.3): position-aware IBlockStateExtension, as Forge
+                    b.getLightEmission(access, p)); 
             bSamples[i] = sky << 20 | block << 4;
             aSamples[i] = b.getShadeBrightness(access, p);
         }

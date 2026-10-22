@@ -19,7 +19,7 @@ public class GolemArmDart implements GolemArm.IArmFunction {
 
     @Override
     public void onRangedAttack(IGolemAPI golem, LivingEntity target, float range) {
-        // NEOFORGE_PORT: 1:1 from Forge (random field -> getRandom()).
+        
         EntityGolemDart dart = new EntityGolemDart(golem.getGolemWorld(), golem.getGolemEntity());
         float dmg = (float) golem.getGolemEntity().getAttributeValue(Attributes.ATTACK_DAMAGE) / 3.0F;
         dart.setBaseDamage(dmg + range + golem.getGolemWorld().getRandom().nextGaussian() * 0.25D);

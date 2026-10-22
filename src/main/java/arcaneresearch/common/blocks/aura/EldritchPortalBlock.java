@@ -20,12 +20,12 @@ import arcaneresearch.init.ModBlocks;
 
 import javax.annotation.Nullable;
 
-/**
- * Eldritch portal block, ported from TC4 BlockEldritchPortal.
- * Airy, invisible, glowing and unbreakable; breaks when the eldritch
- * frame above or below it goes missing. The swirl itself is drawn by
- * EldritchPortalRenderer from the tile's opencount.
- */
+ 
+
+
+
+
+ 
 public class EldritchPortalBlock extends BaseEntityBlock {
     public EldritchPortalBlock(BlockBehaviour.Properties props) {
         super(props
@@ -55,7 +55,7 @@ public class EldritchPortalBlock extends BaseEntityBlock {
     public void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block,
                                 net.minecraft.world.level.redstone.Orientation orientation, boolean moved) {
         super.neighborChanged(state, level, pos, block, orientation, moved);
-        // Рама TC4 (любой eldritch-камень сверху/снизу): плитка, крышка, обелиск.
+        
         if (!isFrame(level.getBlockState(pos.above()))
                 || !isFrame(level.getBlockState(pos.below()))) {
             level.removeBlock(pos, false);
@@ -67,9 +67,9 @@ public class EldritchPortalBlock extends BaseEntityBlock {
             if (state.is(ModBlocks.ELDRITCH_STONE_TILE.get())) {
                 return true;
             }
-            // TC4 BlockEldritchPortal: рамой считался ЛЮБОЙ blockEldritch сверху
-            // и снизу — включая сам алтарь (под порталом после ритуала) и
-            // столб eldritch_pillar над ним в генерируемой структуре.
+            
+            
+            
             if (state.is(arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_ALTAR.get())) {
                 return true;
             }

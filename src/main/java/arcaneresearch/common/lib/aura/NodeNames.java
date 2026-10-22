@@ -1,6 +1,6 @@
 package arcaneresearch.common.lib.aura;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/lib/aura/NodeNames.java (22 lines, no API deps).
+
 import net.minecraft.network.chat.Component;
 
 public class NodeNames {

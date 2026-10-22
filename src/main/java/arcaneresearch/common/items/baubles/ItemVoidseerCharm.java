@@ -57,7 +57,7 @@ public class ItemVoidseerCharm extends Item implements ICurioItem, IVisDiscountG
         return 0;
     }
 
-    // NEOFORGE_PORT: appendHoverText 5-arg (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

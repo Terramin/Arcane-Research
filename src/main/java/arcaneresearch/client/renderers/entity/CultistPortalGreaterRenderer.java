@@ -9,15 +9,15 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.monster.boss.EntityCultistPortalGreater;
 
-// NEOFORGE_PORT (26.3): same portal-quad conversion as CultistPortalRenderer
-// (billboard + submitCustomGeometry, wobble math 1:1).
+
+
 public class CultistPortalGreaterRenderer extends EntityRenderer<EntityCultistPortalGreater, CultistPortalGreaterRenderer.State> {
 
     public static class State extends EntityRenderState {

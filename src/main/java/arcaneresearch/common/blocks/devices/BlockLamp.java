@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -146,11 +146,11 @@ public class BlockLamp extends Block implements EntityBlock {
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
 
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side; new state already swapped: level.getBlockState(pos)).
-        // NEOFORGE_PORT (26.3): the tile is already removed when this hook runs (LevelChunk.setBlockState
-        // removes it first), so the lookup below finds nothing; removeLights() runs in
-        // TileLampArcane.preRemoveSideEffects.
+        
+        
+        
+        
+        
         if (!isMoving && !state.is(level.getBlockState(pos).getBlock()) && lampType == LampType.ARCANE) {
             BlockEntity te = level.getBlockEntity(pos);
             if (te instanceof TileLampArcane arcane) {

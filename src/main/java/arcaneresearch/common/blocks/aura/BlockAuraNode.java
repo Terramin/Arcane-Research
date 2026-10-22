@@ -27,16 +27,16 @@ import arcaneresearch.init.ModItems;
 
 import javax.annotation.Nullable;
 
-/**
- * Порт {@code thaumcraft.common.blocks.BlockAiry} (1.7.10) для нод:
- * <li>мета 0 — TileNode (обычная аура-нода): твёрдость 2.0, взрывостойкость
- * 200 (func_149712_f / getExplosionResistance);</li>
- * <li>при разрушении ноды с неё падают мудровые эссенции — для каждого
- * аспекта ноды стак по 2 эссенции, стаков = amount/10 + 1 при
- * amount >= 5 (func_149681_a, вызывается независимо от режима игры);</li>
- * <li>наполнитель (TileNodeEnergized — мета 5) — отдельный блок, дропа нет
- * (паритет условия par5 == 0).</li>
- */
+ 
+
+
+
+
+
+
+
+
+ 
 public class BlockAuraNode extends BaseEntityBlock {
     private static final VoxelShape TARGET = Block.box(5.0D, 5.0D, 5.0D, 11.0D, 11.0D, 11.0D);
 
@@ -46,7 +46,7 @@ public class BlockAuraNode extends BaseEntityBlock {
                 .sound(SoundType.WOOL)
                 .noLootTable()
                 .noOcclusion()
-                // NEOFORGE_PORT: 26.x PushReaction.BLOCK was renamed to IMMOVEABLE.
+                
                 .pushReaction(PushReaction.IMMOVEABLE));
     }
 
@@ -70,7 +70,7 @@ public class BlockAuraNode extends BaseEntityBlock {
         return Shapes.empty();
     }
 
-    // NEOFORGE_PORT: 26.x signature is propagatesSkylightDown(BlockState).
+    
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;
@@ -81,10 +81,10 @@ public class BlockAuraNode extends BaseEntityBlock {
         return 1.0F;
     }
 
-    // NEOFORGE_PORT: Block.onRemove(..) was removed in 26.x; the wisp-essence
-    // drop (TC4 BlockAiry.func_149681_a, meta 0) now runs from
-    // AuraNodeTile.preRemoveSideEffects, where the tile is still present
-    // (LevelChunk.setBlockState calls preRemoveSideEffects before removing it).
+    
+    
+    
+    
 
     @Nullable
     @Override

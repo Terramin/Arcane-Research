@@ -26,14 +26,14 @@ public class BlockGrassAmbient extends GrassBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        // NEOFORGE_PORT: 1:1 from Forge (vanilla + client FXDispatcher, unchanged in 26.x).
+        
         super.animateTick(state, level, pos, random);
 
         int skyLight = level.getBrightness(LightLayer.SKY, pos.above());
 
-        // NEOFORGE_PORT (26.3): Level.getSunAngle(1.0f) -> SUN_ANGLE environment attribute
-        // (degrees, same convention; vanilla DaylightDetectorBlock does the same). Raw sky
-        // light does NOT encode time of day, so the cosine factor must stay (night FX).
+        
+        
+        
         float celestialAngle = level.environmentAttributes().getValue(
                 net.minecraft.world.attribute.EnvironmentAttributes.SUN_ANGLE, pos) * (float) (Math.PI / 180.0);
         float adjustedAngle = celestialAngle;

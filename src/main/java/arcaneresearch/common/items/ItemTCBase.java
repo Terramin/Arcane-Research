@@ -38,7 +38,7 @@ public class ItemTCBase extends Item {
     }
 
     public String getUnlocalizedName(ItemStack stack) {
-        // NEOFORGE_PORT: Item.getDescriptionId(ItemStack) removed in 26.x (verified via javap: only no-arg getDescriptionId() remains); use it.
+        
         if (hasSubtypes && stack.getDamageValue() < VARIANTS.length && !VARIANTS[stack.getDamageValue()].equals(BASE_NAME)) {
             return String.format(super.getDescriptionId() + ".%s", VARIANTS[stack.getDamageValue()]);
         }

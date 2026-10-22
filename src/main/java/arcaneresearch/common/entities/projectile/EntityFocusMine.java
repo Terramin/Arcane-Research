@@ -25,7 +25,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityFocusMine extends ThrowableProjectile {
-    // NEOFORGE_PORT: IEntityAdditionalSpawnData removed in NeoForge; extra spawn data synced via pairing payload (see below).
+    
 
     private static final EntityDataAccessor<Boolean> DATA_ARMED =
             SynchedEntityData.defineId(EntityFocusMine.class, EntityDataSerializers.BOOLEAN);
@@ -201,10 +201,10 @@ public class EntityFocusMine extends ThrowableProjectile {
         }
     }
 
-    // NEOFORGE_PORT (26.3-native spawn sync, variant B): Forge IEntityAdditionalSpawnData
-    // (FocusPackage NBT only) ported 1:1 to a pairing payload (PacketFocusPackToClient,
-    // bundled with spawn). Armed already synced; targetFriendly is server-side only
-    // (checkForTargets server branch).
+    
+    
+    
+    
     @Override
     public void sendPairingData(net.minecraft.server.level.ServerPlayer player,
                                 java.util.function.Consumer<net.minecraft.network.protocol.common.custom.CustomPacketPayload> bundle) {

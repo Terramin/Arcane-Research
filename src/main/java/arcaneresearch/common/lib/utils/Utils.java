@@ -228,12 +228,12 @@ public class Utils {
         return dx * dx + dy * dy + dz * dz;
     }
 
-    // NEOFORGE_PORT: EnchantmentHelper.enchantItem(RandomSource, ItemStack, int, boolean)
-    // removed in 26.x -> overload with RegistryAccess + Optional<HolderSet>.
-    // RegistryAccess threaded from callers (both have Level).
-    // NEOFORGE_PORT (26.3): Optional.empty() there means ALL enchantments (treasure and
-    // curses too); the reference's treasure=false is the enchanting-table pool, i.e.
-    // #minecraft:in_enchanting_table (= #non_treasure), as EnchantmentMenu uses.
+    
+    
+    
+    
+    
+    
     private static java.util.Optional<net.minecraft.core.HolderSet.Named<net.minecraft.world.item.enchantment.Enchantment>>
             nonTreasureEnchantments(net.minecraft.core.RegistryAccess registries) {
         return registries.lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
@@ -408,8 +408,8 @@ public class Utils {
     public static BlockHitResult rayTrace(Level level, Entity entity, boolean useLiquids) {
         double range = 5.0;
         if (entity instanceof ServerPlayer serverPlayer) {
-            // NEOFORGE_PORT: ServerPlayer.getBlockReach removed -> vanilla
-            // BLOCK_INTERACTION_RANGE attribute (same value).
+            
+            
             range = serverPlayer.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.BLOCK_INTERACTION_RANGE);
         }
         return rayTrace(level, entity, useLiquids, range);

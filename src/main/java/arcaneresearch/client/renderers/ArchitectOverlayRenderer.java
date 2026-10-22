@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,9 +23,9 @@ import arcaneresearch.api.items.IArchitect;
 
 import java.util.ArrayList;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge renderArchitect() body 1:1
-// (axis lines + overlay quads), emitted at submit time with camera-relative
-// coords. Kept: connectivity bit matrix, corner/face quads, pulsing axis.
+
+
+
 public class ArchitectOverlayRenderer {
 
     private static final Identifier CFRAME =
@@ -62,9 +62,9 @@ public class ArchitectOverlayRenderer {
 
     public static boolean renderArchitect(PoseStack poseStack, Player player,
                                           ItemStack stack, float partialTick) {
-        // NEOFORGE_PORT: kept for API parity (ClientRenderEvents); emission now
-        // happens in Events.onSubmitGeometry (submit-system, no immediate draws).
-        // Return whether an overlay WOULD draw (for outline-cancel parity).
+        
+        
+        
         if (!(stack.getItem() instanceof IArchitect architect)) {
             return false;
         }
@@ -180,15 +180,15 @@ public class ArchitectOverlayRenderer {
     private static void drawTexturedQuad(PoseStack poseStack,
                                          net.minecraft.client.renderer.SubmitNodeCollector collector,
                                          Identifier texture, float alpha) {
-        // NEOFORGE_PORT (26.3): Forge additive + disableDepthTest + no cull = the
-        // additive no-cull no-depth layer (same one the world aspect popup uses); the
-        // depth-tested layer hid the frames on/inside the target blocks.
+        
+        
+        
         net.minecraft.client.renderer.rendertype.RenderType type =
                 TCRenderTypes.additiveTexturedNoCullNoDepth(texture);
         int tint = net.minecraft.util.ARGB.colorFromFloat(alpha, 1, 1, 1);
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
-            // NEOFORGE_PORT (crash fix): full vertex for ENTITY pipelines
-            // (overlay + fullbright + normal; see AuraNodeRenderHelper).
+            
+            
             consumer.addVertex(pose, -0.5F, 0.5F, 0).setUv(1, 1).setColor(tint)
                     .setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(pose, 0, 0, 1);
             consumer.addVertex(pose, 0.5F, 0.5F, 0).setUv(1, 0).setColor(tint)
@@ -211,8 +211,8 @@ public class ArchitectOverlayRenderer {
         float g = (float) (0.3 + 0.2 * Math.sin(player.tickCount / 3f + pos.getY()));
         float b = (float) (0.8 + 0.2 * Math.sin(player.tickCount / 2f + pos.getZ()));
         int color = net.minecraft.util.ARGB.colorFromFloat(0.6f, r, g, b);
-        // NEOFORGE_PORT: LevelRenderer.renderLineBox gone with immediate lines;
-        // same 3 thin boxes via shape-outline submits.
+        
+        
         poseStack.pushPose();
         poseStack.translate(pos.getX() + 0.5, pos.getY() + 0.5,
                 pos.getZ() + 0.5);

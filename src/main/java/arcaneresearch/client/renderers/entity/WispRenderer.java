@@ -10,17 +10,17 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.common.entities.monster.EntityWisp;
 
-// NEOFORGE_PORT (26.3): direct EntityRenderer<EntityWisp, State>; billboard
-// quads via SubmitNodeCollector.submitCustomGeometry (verified API) with the
-// new addVertex/setColor/setUv/setOverlay/setLight/setNormal chain (no
-// endVertex). Camera facing via CameraRenderState.orientation (cameraOrientation
-// gone). Quad math/frames/colors 1:1 from Forge.
+
+
+
+
+
 public class WispRenderer extends EntityRenderer<EntityWisp, WispRenderer.State> {
 
     public static class State extends EntityRenderState {

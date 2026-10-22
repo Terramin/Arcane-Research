@@ -19,10 +19,10 @@ import arcaneresearch.common.world.biomes.BiomeHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 proxies/CommonProxy.java.
-// REQUIRED changes only: ResourceLocation -> Identifier, ForgeRegistries -> BuiltInRegistries,
-// ServerLifecycleHooks -> NeoForge package. preInit/init/postInit had no callers in Forge
-// (Arcaneresearch drives setup directly), so their bodies stay empty here as well.
+
+
+
+
 public class CommonProxy implements IProxy {
 
     public static final Map<Identifier, Integer> championModWhitelist = new HashMap<>();

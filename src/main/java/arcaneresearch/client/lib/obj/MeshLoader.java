@@ -1,7 +1,7 @@
 package arcaneresearch.client.lib.obj;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.server.packs.resources.Resource;
 
 import java.io.BufferedReader;
@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MeshLoader {
-    /** Пишут все потоки, грузящие OBJ (бейк, рендер): только синхронный сет. */
+      
     static Set<String> unknownCommands;
 
     static {

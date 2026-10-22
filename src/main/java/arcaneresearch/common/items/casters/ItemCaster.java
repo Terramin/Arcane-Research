@@ -12,7 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity; // NEOFORGE_PORT: needed by getUseDuration(ItemStack,LivingEntity)
+import net.minecraft.world.entity.LivingEntity; 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.SwingAnimation;
@@ -21,11 +21,11 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-// NEOFORGE_PORT (26.x): Forge net.minecraftforge.api.distmarker.* -> net.neoforged.api.distmarker.*.
+
 import arcaneresearch.api.ArcaneresearchInvHelper;
 import arcaneresearch.api.casters.*;
 import arcaneresearch.api.items.IArchitect;
-// NEOFORGE_PORT: CasterItemRenderer (SpecialModelRenderer rework) deferred.
+
 import arcaneresearch.common.lib.utils.BlockUtils;
 import arcaneresearch.common.world.aura.AuraHandler;
 
@@ -51,9 +51,9 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
         return new ItemCaster(props, 0);
     }
 
-    // NEOFORGE_PORT: ItemStack.save(CompoundTag)/ItemStack.of(CompoundTag) removed in 26.x ->
-    // ItemStack.CODEC via NbtOps (same "focus"/"picked" keys; inner shape is codec form).
-    // NEOFORGE_PORT (26.3): registry-aware ops (RegistryNbt) - plain NbtOps dropped enchanted stacks.
+    
+    
+    
     private static ItemStack decodeStack(CompoundTag parent, String key) {
         if (parent == null || !parent.contains(key)) {
             return null;
@@ -193,7 +193,7 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
         if (stack.isEmpty()) {
             return;
         }
-        // NEOFORGE_PORT: COPY + write-back via ArcaneresearchInvHelper (getCustomTag returns a copy).
+        
         CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         encodeStack(root, "focus", focus);
         ArcaneresearchInvHelper.setCustomTag(stack, root);
@@ -331,7 +331,7 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
                             storePickedBlock(stack, picked);
                             return InteractionResult.SUCCESS;
                         }
-                        // NEOFORGE_PORT: swing(hand) -> swing(hand, SwingAnimation.DEFAULT, false).
+                        
                         player.swing(hand, SwingAnimation.DEFAULT, false);
                         return InteractionResult.PASS;
                     }
@@ -342,8 +342,8 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
         return InteractionResult.PASS;
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // pass/success/fail holders -> InteractionResult.PASS/SUCCESS/FAIL.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -397,8 +397,8 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
         return InteractionResult.SUCCESS;
     }
 
-    // NEOFORGE_PORT: inventoryTick is server-only in 26.x (ServerLevel + EquipmentSlot, no
-    // isSelected/slotId); "held" mirrors the Forge check (main hand or offhand holds this stack).
+    
+    
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
 
@@ -457,21 +457,21 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
                     }
                 }
             }
-            // NEOFORGE_PORT: Forge PacketHandler.sendToPlayer(PacketAuraToClient) 1:1
-            // (payload ported + registered; helper preserved).
+            
+            
             arcaneresearch.common.lib.network.PacketHandler.sendToPlayer(
                     new arcaneresearch.common.lib.network.misc.PacketAuraToClient(base, vis, flux), serverPlayer);
         }
 
     }
 
-    // NEOFORGE_PORT: getUseDuration now takes the using entity.
+    
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 72000;
     }
 
-    // NEOFORGE_PORT: UseAnim -> ItemUseAnimation.
+    
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
         return ItemUseAnimation.BOW;
@@ -494,14 +494,14 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
                     return !oldSort.equals(newSort);
                 }
             }
-            // NEOFORGE_PORT: isSameItemSameTags removed -> isSameItemSameComponents.
+            
             return !ItemStack.isSameItemSameComponents(oldFocus, newFocus);
         }
         return oldStack.getItem() != newStack.getItem();
     }
 
-    // NEOFORGE_PORT: appendHoverText 5-arg (TooltipContext, TooltipDisplay, Consumer<Component>);
-    // Level for focus info comes from context.level() (nullable, as ItemFocus allows).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
@@ -522,7 +522,7 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
                     .copy()
                     .withStyle(ChatFormatting.BOLD, ChatFormatting.ITALIC, ChatFormatting.GREEN));
 
-            // NEOFORGE_PORT: addFocusInformation still takes List<Component> -> buffer then accept.
+            
             java.util.List<Component> focusInfo = new java.util.ArrayList<>();
             focus.addFocusInformation(focusStack, context.level(), focusInfo, flag);
             for (Component lineComponent : focusInfo) {
@@ -535,10 +535,10 @@ public class ItemCaster extends Item implements ICaster, IArchitect {
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
 
-    // NEOFORGE_PORT (26.3): Item.initializeClient(Consumer<IClientItemExtensions>) was removed in
-    // 26.x; the dead no-op (a client-only type in a common class) is gone. Forge wired
-    // CasterItemRenderer (BEWLR) there; in 26.x the same render (base gauntlet mesh + focus
-    // overlay per display context) is data-driven: assets/arcaneresearch/items/caster_basic.json
-    // (minecraft:composite + arcaneresearch:caster_focus special layer, see
-    // CasterFocusSpecialRenderer + SpecialItemModels).
+    
+    
+    
+    
+    
+    
 }

@@ -14,11 +14,11 @@ import arcaneresearch.Arcaneresearch;
 import java.util.Collection;
 import java.util.List;
 
-// NEOFORGE_PORT (26.3): client levels expose only RecipeAccess (propertySet +
-// stonecutterRecipes) — no recipe query API. The sanctioned client source is the
-// RecipeMap delivered by RecipesReceivedEvent (same approach as the JEI-side
-// lookup; structural pattern only, own implementation).
-// Server code must use ServerLevel.recipeAccess()/server RecipeManager instead.
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public final class ClientRecipeCache {
 
@@ -30,11 +30,11 @@ public final class ClientRecipeCache {
     @SubscribeEvent
     public static void onRecipesReceived(RecipesReceivedEvent event) {
         map = event.getRecipeMap() != null ? event.getRecipeMap() : RecipeMap.EMPTY;
-        // NEOFORGE_PORT (26.3) FIX: with the synced recipes available, refresh the client's
-        // potion aspects with real brewing reagent data. 1.20.1 Forge had static PotionBrewing
-        // on the client; a remote-server 26.3 client fell back to MAGIC 5 / ALCHEMY 5 for
-        // thaumometer/JEI aspect display. Registration is an idempotent map overwrite keyed
-        // identically to the content-setup pass (AspectHelper.registerObjectTag).
+        
+        
+        
+        
+        
         if (map.values() != null && !map.values().isEmpty()) {
             try {
                 arcaneresearch.common.config.ConfigAspects.registerPotionAspects(map.values());
@@ -56,8 +56,8 @@ public final class ClientRecipeCache {
         return map.byType(type).stream().map(RecipeHolder::value).toList();
     }
 
-    // NEOFORGE_PORT: RecipeManager.byKey(ResourceKey) removed with the manager on the
-    // client; RecipeMap.byKey(ResourceKey) is the 26.x source (nullable -> Optional).
+    
+    
     public static java.util.Optional<RecipeHolder<?>> byKey(net.minecraft.resources.Identifier id) {
         if (id == null) {
             return java.util.Optional.empty();
@@ -66,13 +66,13 @@ public final class ClientRecipeCache {
                 net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, id)));
     }
 
-    /**
-     * Result ItemStack for recipe-book/search display (Forge getResultItem parity).
-     * Arcane recipes use the legacy no-arg helper; vanilla results resolve through
-     * Recipe.display() ItemStackSlotDisplay (tag/other displays -> context resolve).
-     * The resolveForFirstStack fallback mirrors renderCraftingRecipe's output path,
-     * so bookmark icons always match the modal grid output.
-     */
+     
+
+
+
+
+
+ 
     public static net.minecraft.world.item.ItemStack displayResultStack(Recipe<?> recipe) {
         if (recipe == null) {
             return null;

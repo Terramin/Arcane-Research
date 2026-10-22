@@ -44,7 +44,7 @@ public class WandTriggers implements IWandTriggerManager {
                     net.minecraft.world.level.block.Blocks.OBSIDIAN.defaultBlockState());
         } catch (Exception ignored) {
         }
-        // TC4 ConfigRecipes: событие окулуса висело на blockEldritch meta 0 (алтарь)
+        
         try {
             WandTriggerRegistry.registerWandBlockTrigger(new WandTriggers(), 6,
                     arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_ALTAR.get().defaultBlockState());
@@ -63,7 +63,7 @@ public class WandTriggers implements IWandTriggerManager {
     }
 
     private static void sendBamf(Level level, BlockPos pos, int color, boolean sound, boolean flair) {
-        // NEOFORGE_PORT: Forge TargetPoint removed -> PacketHandler.sendToNear(packet, level, x, y, z, range).
+        
         PacketHandler.sendToNear(new PacketFXBlockBamf(pos, color, sound, flair, null),
                 level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 32.0D);
     }
@@ -256,9 +256,9 @@ public class WandTriggers implements IWandTriggerManager {
         setBlockSparkle(level, pos.offset(1, -1, -1), Blocks.BEDROCK.defaultBlockState());
         setBlockSparkle(level, pos.offset(1, -1, 1), Blocks.BEDROCK.defaultBlockState());
         setBlockSparkle(level, pos.offset(-1, -1, 1), Blocks.BEDROCK.defaultBlockState());
-        // NEOFORGE_PORT: Forge built ad-hoc DirectionProperty("facing") per pillar via
-        // withIfHas (exceptions swallowed). 26.x: pillarArcane is BlockPillarTC with
-        // FACING = BlockStateProperties.HORIZONTAL_FACING -- same directions, same helper.
+        
+        
+        
         setBlockSparkle(level, pos.offset(-1, -2, -1),
                 withIfHas(pillar.defaultBlockState(), arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.EAST));
         setBlockSparkle(level, pos.offset(1, -2, -1),
@@ -325,8 +325,8 @@ public class WandTriggers implements IWandTriggerManager {
         BlockState oldTop = level.getBlockState(pos.above());
         level.setBlock(pos, base, 0);
         level.setBlock(pos.above(), top, 0);
-        // NEOFORGE_PORT: Level.neighborChanged(pos, block, fromPos) removed in 26.x;
-        // NeighborUpdater takes Orientation instead (null = unknown source).
+        
+        
         level.neighborChanged(pos, thaumatorium, null);
         level.neighborChanged(pos.above(), thaumatorium, null);
         level.sendBlockUpdated(pos, oldBase, base, 0);
@@ -435,7 +435,7 @@ public class WandTriggers implements IWandTriggerManager {
     }
 
     private static boolean createOculus(ItemStack stack, Player player, Level level, BlockPos pos) {
-        // Делегируем настоящему ритуалу (гейт LEGACYOCULUS/OCULUS внутри)
+        
         return arcaneresearch.common.lib.aura.EldritchOculusRitual.createOculus(stack, player, level, pos);
     }
 

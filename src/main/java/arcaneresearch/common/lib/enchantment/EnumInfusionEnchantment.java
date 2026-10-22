@@ -44,7 +44,7 @@ public enum EnumInfusionEnchantment {
     }
 
     public static ListTag getInfusionEnchantmentTagList(ItemStack stack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same NBT_KEY list shape).
+        
         if (stack == null || stack.isEmpty()
                 || !arcaneresearch.api.ArcaneresearchInvHelper.hasCustomTag(stack)) {
             return null;
@@ -97,7 +97,7 @@ public enum EnumInfusionEnchantment {
             return;
         }
 
-        // NEOFORGE_PORT: getOrCreateCustomTag returns a copy; written back at every exit.
+        
         CompoundTag stackTag = arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         ListTag nbttaglist;
 
@@ -158,7 +158,7 @@ public enum EnumInfusionEnchantment {
         if (nbttaglist.isEmpty()) {
             stackTag.remove(NBT_KEY);
         }
-        // NEOFORGE_PORT: stackTag is a copy; write it back (remove path included).
+        
         arcaneresearch.api.ArcaneresearchInvHelper.setCustomTag(stack, stackTag);
     }
 

@@ -7,13 +7,13 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.EldritchCrabRenderer;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>; helm flag via State.
+
 public class EldritchCrabModel extends EntityModel<EldritchCrabRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -120,8 +120,8 @@ public class EldritchCrabModel extends EntityModel<EldritchCrabRenderer.State> {
         float limbSwingAmount = state.walkAnimationSpeed;
         float ageInTicks = state.ageInTicks;
         this.showHelm = state.helm;
-        // NEOFORGE_PORT (26.3): the 8-float renderToBuffer (helm XOR bare tail) is dead;
-        // the final root render draws every visible part, so toggle visibility here.
+        
+        
         this.tailHelm.visible = state.helm;
         this.tailBare.visible = !state.helm;
         setRot(this.rrLeg1, 0.0f, 0.2094395f, 0.4363323f);
@@ -163,7 +163,7 @@ public class EldritchCrabModel extends EntityModel<EldritchCrabRenderer.State> {
         this.lClaw1.xRot = -Mth.sin(ticks / 4.1f) * 0.125f;
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
         if (this.showHelm) {

@@ -19,20 +19,20 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.discovered.client.HexNoteTableRenderer;
 import arcaneresearch.discovered.client.HexResearchTableScreen;
 
-/**
- * Регистрации hex-стола (стадия 2): пара MAIN/SIDE, тайл, тип меню,
- * сборки через salis mundus. Всё через события, файлы проекта
- * не трогаются. Имена: {@code hex_note_table} (пара, без предмета).
- *
- * NEOFORGE_PORT (как DiscoveredTableSetup): RegisterEvent с MOD-bus,
- * Registries.*, Identifier.fromNamespaceAndPath, Properties с setId,
- * BlockEntityType — конструктором, MenuType — IMenuTypeExtension.create
- * (буфер RegistryFriendlyByteBuf — меню принимает его);
- * MenuScreens.register -&gt; RegisterMenuScreensEvent;
- * ItemBlockRenderTypes.setRenderLayer удалён в 26.x -&gt; render_type
- * в JSON-моделях (hex_note_table.json уже с minecraft:cutout);
- * BER — EntityRenderersEvent.RegisterRenderers (стол 1 + стол 2).
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class HexTableRegistry {
 
@@ -79,7 +79,7 @@ public class HexTableRegistry {
             }
         }
 
-        /** Объёмные перья столов (BER): стол 1 всегда, стол 2 при инструментах. */
+          
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
             try {

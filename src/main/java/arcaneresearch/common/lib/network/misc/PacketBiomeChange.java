@@ -19,10 +19,10 @@ import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketBiomeChange.java (PLAY_TO_CLIENT).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:biome_change".
+
+
+
+
 public class PacketBiomeChange implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketBiomeChange> TYPE =
@@ -76,8 +76,8 @@ public class PacketBiomeChange implements CustomPacketPayload {
         ctx.enqueueWork(() -> handleClient(packet, ctx.player()));
     }
 
-    // Level from the packet context player; section recompile via client
-    // FXDispatcher (server-safe signature, client flow only).
+    
+    
     private static void handleClient(PacketBiomeChange packet, Player player) {
         if (player == null) return;
         Level level = player.level();
@@ -87,7 +87,7 @@ public class PacketBiomeChange implements CustomPacketPayload {
 
         Identifier biomeRL = Identifier.parse(packet.biomeId);
         var biomeRegistry = level.registryAccess().lookupOrThrow(Registries.BIOME);
-        // NEOFORGE_PORT: Registry.getHolder removed -> HolderGetter.get (Optional).
+        
         Holder<Biome> biomeHolder = biomeRegistry.get(ResourceKey.create(Registries.BIOME, biomeRL)).orElse(null);
 
         if (biomeHolder == null) return;
@@ -106,9 +106,9 @@ public class PacketBiomeChange implements CustomPacketPayload {
                 biomes.set(bx, by, bz, biomeHolder);
             }
 
-            // NEOFORGE_PORT: LevelRenderer.setBlocksDirty removed in 26.x;
-            // sections recompile through ClientLevel.setSectionDirtyWithNeighbors
-            // (client bridge keeps this class free of client types).
+            
+            
+            
             FXDispatcher.INSTANCE.markChunkSectionDirty(level, pos);
         }
     }

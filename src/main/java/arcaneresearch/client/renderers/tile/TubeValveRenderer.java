@@ -20,8 +20,8 @@ import arcaneresearch.client.models.block.TubeValveModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.essentia.TileTubeValve;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (facing-rotated valve ring + rod).
+
+
 public class TubeValveRenderer implements BlockEntityRenderer<TileTubeValve, TubeValveRenderer.State> {
 
     private static final Identifier TEXTURE =

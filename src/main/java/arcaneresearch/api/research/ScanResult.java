@@ -2,13 +2,13 @@ package arcaneresearch.api.research;
 
 import net.minecraft.world.entity.Entity;
 
-/**
- * Результат сканирования цели таумометром.
- * Порт {@code thaumcraft.api.research.ScanResult} (TC 4.2.3.5):
- * {@code type} 1 — блок/предмет ({@code id/meta} не используются нашим
- * сканом — цель задаётся позицией), 2 — сущность, 3 — явление
- * ({@code phenomena}, в ядре только {@code "NODE"+id}).
- */
+ 
+
+
+
+
+
+ 
 public class ScanResult {
 
     public byte type = 0;

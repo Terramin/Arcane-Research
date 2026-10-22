@@ -20,17 +20,17 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.lib.network.PacketHandler;
 
-/**
- * Клиент изучил цель (удержание завершено) — сервер проверяет и выдаёт.
- * Порт клиентской половины {@code ItemThaumometer.onUsingTick} (срыв при
- * смене цели — на клиенте) + {@code PacketScannedToServer.onMessage} +
- * серверной {@code ScanManager.completeScan} (TC 4.2.3.5).
- *
- * NEOFORGE_PORT: SimpleChannel(ScanNetwork) -&gt; CustomPacketPayload
- * (ручной StreamCodec: kind байтом, позиция — long, сущность — id + tag;
- * порядок полей 1:1). serverLevel() -&gt; level() (серверный контекст).
- * Payload id "arcaneresearch:scan_study_complete".
- */
+ 
+
+
+
+
+
+
+
+
+
+ 
 public class MsgStudyComplete implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgStudyComplete> TYPE =
@@ -103,7 +103,7 @@ public class MsgStudyComplete implements CustomPacketPayload {
             Level level = player.level();
             String key = ScanTargets.scannedKey(level, target, player);
             if (ScanWallet.hasScanned(player, key)) {
-                // Паритет isValidScanTarget: повторный скан ничего не даёт.
+                
                 return;
             }
             AspectList aspects = ScanTargets.aspectsFor(level, target, player);
@@ -112,13 +112,13 @@ public class MsgStudyComplete implements CustomPacketPayload {
                 return;
             }
             if (!ScanTargets.validScan(player, aspects)) {
-                // Паритет tc.discoveryerror: родители не открыты.
+                
                 player.sendSystemMessage(
                         Component.literal("Unknown object: undiscovered components"), true);
                 return;
             }
-            // Порт checkAndSyncAspectKnowledge (без софт-капов Config):
-            // новое открытие +2 к пулу, пометка известного.
+            
+            
             AspectList granted = new AspectList();
             try {
                 for (Aspect aspect : aspects.getAspects()) {
@@ -149,15 +149,15 @@ public class MsgStudyComplete implements CustomPacketPayload {
         });
     }
 
-    /**
-     * Серверная re-проверка прицела (античит): луч из глаз на RANGE обязан
-     * упереться в ту же цель, что прислал клиент.
-     */
+     
+
+
+ 
     private static ScanTargets.Target validate(ServerPlayer player, MsgStudyComplete msg) {
         try {
             Level level = player.level();
-            // NEOFORGE_PORT (26.3): pos is a packed long here; 0L is the valid
-            // BlockPos(0,0,0) (Forge checked pos != null, always set for kinds 1/3).
+            
+            
             if (msg.kind == 1 || msg.kind == 3) {
                 BlockPos blockPos = BlockPos.of(msg.pos);
                 if (player.getEyePosition().distanceTo(
@@ -167,8 +167,8 @@ public class MsgStudyComplete implements CustomPacketPayload {
                 BlockHitResult hit = ScanTargets.blockRay(level, player, ScanTargets.RANGE);
                 if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(blockPos)) {
                     if (msg.kind == 3) {
-                        // Узел: луч обязан упереться в ту же позицию, тайл — INode
-                        // (паритет re-read в generateNodeAspects).
+                        
+                        
                         try {
                             if (level.getBlockEntity(blockPos)
                                     instanceof arcaneresearch.common.lib.aura.INode) {

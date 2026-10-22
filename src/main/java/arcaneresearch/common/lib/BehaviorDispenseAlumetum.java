@@ -11,11 +11,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import arcaneresearch.common.entities.projectile.EntityAlumentum;
 
-// NEOFORGE_PORT: AbstractProjectileDispenseBehavior removed in 26.x (ProjectileDispenseBehavior now
-// requires a ProjectileItem). The old base is replicated 1:1 on top of DefaultDispenseItemBehavior:
-// execute = dispense position (center + facing * 0.7), shoot with power 1.1 / uncertainty 6.0,
-// spawn, shrink; playSound = level event 1002 (projectile launch); smoke animation (2000) from the base.
-// getProjectile kept with the same signature.
+
+
+
+
+
 public class BehaviorDispenseAlumetum extends DefaultDispenseItemBehavior {
     public static void register() {
         DispenserBlock.registerBehavior(arcaneresearch.init.ModItems.ALUMENTUM.get(), new BehaviorDispenseAlumetum());
@@ -37,8 +37,8 @@ public class BehaviorDispenseAlumetum extends DefaultDispenseItemBehavior {
         return stack;
     }
 
-    // NEOFORGE_PORT (26.3): Forge AbstractProjectileDispenseBehavior.playSound -> level event 1002
-    // (the port's bare DispenseItemBehavior played no sound and no smoke).
+    
+    
     @Override
     protected void playSound(BlockSource source) {
         source.level().levelEvent(1002, source.pos(), 0);

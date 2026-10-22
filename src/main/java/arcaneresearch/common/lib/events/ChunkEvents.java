@@ -23,9 +23,9 @@ public class ChunkEvents {
     private static final String ARCANERESEARCH_DATA_KEY = "Arcaneresearch";
     private static final String SEALS_KEY = "seals";
 
-    // NEOFORGE_PORT: chunk seal persistence moved to the SEAL_DATA chunk
-    // attachment (ChunkDataEvent data is an immutable record in 26.x).
-    // Same content as the Forge "Arcaneresearch"/"seals" NBT.
+    
+    
+    
     public record SealChunkData(java.util.List<CompoundTag> seals) {
         public SealChunkData() {
             this(new java.util.ArrayList<>());
@@ -36,18 +36,18 @@ public class ChunkEvents {
                         .xmap(SealChunkData::new, SealChunkData::seals);
     }
 
-    // NEOFORGE_PORT: the Forge handler wrote "Arcaneresearch"/"seals" into the mutable
-    // ChunkDataEvent.Save NBT (event.getData().put(...)). 26.x serializes chunk attachments
-    // before that event fires and setData() re-dirties the chunk, so the snapshot is taken
-    // on the server tick instead (ServerEvents#writeChunkAttachments, see the note there).
-    // Writing it here made ChunkMap.saveAllChunks() loop until the heap was exhausted.
+    
+    
+    
+    
+    
 
     @SubscribeEvent
     public static void onChunkLoad(ChunkDataEvent.Load event) {
-        // NEOFORGE_PORT (26.3): ChunkMap posts ChunkDataEvent.Load with the ImposterProtoChunk
-        // returned by SerializableChunkData.read(); it inherits ChunkAccess.getLevel() == null,
-        // so event.getLevel() is null for every full chunk read from disk and no seal was ever
-        // restored. Forge 1.20.1 posted the bare LevelChunk. Take the level from the wrapped chunk.
+        
+        
+        
+        
         Level level = event.getLevel() instanceof Level l ? l
                 : event.getChunk() instanceof net.minecraft.world.level.chunk.ImposterProtoChunk imposter
                 ? imposter.getWrapped().getLevel() : null;
@@ -74,9 +74,9 @@ public class ChunkEvents {
         }
     }
 
-    // NEOFORGE_PORT (26.3): Forge 1.20.1 fired ChunkWatchEvent.Watch after the chunk packet was
-    // sent (ChunkMap.playerLoadedChunk). Since chunk send pacing, Watch fires when the chunk is
-    // only queued and Sent is the "after transmission" event, so the seal sync listens to Sent.
+    
+    
+    
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Sent event) {
         ServerPlayer player = event.getPlayer();

@@ -22,30 +22,30 @@ import java.util.function.Consumer;
 
 public class ItemCrimsonBlade extends Item implements IWarpingGear {
 
-    // NEOFORGE_PORT: Forge Tier -> ToolMaterial record; canonical definition lives in
-    // ArcaneresearchToolMaterials (values verbatim from Forge CRIMSON_VOID_TIER:
-    // uses 200, speed 8.0, bonus 3.5, level 4, enchant 20, repair void ingot).
-    // Field name kept so existing references keep resolving.
+    
+    
+    
+    
     public static final ToolMaterial CRIMSON_VOID_TIER = ArcaneresearchToolMaterials.TOOLMAT_CRIMSON_VOID;
 
     public ItemCrimsonBlade(Item.Properties props) {
-        // NEOFORGE_PORT: SwordItem REMOVED in 26.x -> plain Item with .sword(material, damage, speed).
+        
         super(props
                 .rarity(Rarity.EPIC)
                 .sword(CRIMSON_VOID_TIER, 3, -2.4F));
     }
 
-    // NEOFORGE_PORT: isValidRepairItem(ItemStack, ItemStack) REMOVED from Item in 26.x;
-    // repair is now data-driven via the ToolMaterial repairItems tag (repairs_void)
-    // -> REPAIRABLE component, so no override is needed (or possible).
+    
+    
+    
 
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
         if (stack.isDamaged() && entity != null && entity.tickCount % 20 == 0
-                // NEOFORGE_PORT (26.3): Forge only ticked the player inventory (mob gear never
-                // reached inventoryTick); 26.3 EntityEquipment.tick also ticks mob equipment.
+                
+                
                 && entity instanceof Player) {
             stack.setDamageValue(stack.getDamageValue() - 1);
         }

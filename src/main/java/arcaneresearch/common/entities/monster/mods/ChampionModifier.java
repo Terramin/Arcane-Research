@@ -6,15 +6,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge common/entities/monster/mods/ChampionModifier.java.
-// REQUIRED changes (vanilla 26.x, verified in 26.3.0.23-beta jar):
-//   - AttributeModifier is now a RECORD (Identifier id, double amount, Operation) —
-//     the old (UUID, String name, double, Operation) ctor is gone. Operation.ADDITION
-//     (flat add) is now Operation.ADD_VALUE.
-//     Modifier ids are now arcaneresearch:champion/<name> (names were unique already,
-//     so identity semantics are preserved).
-//   - getPersistentData()/putInt preserved (Entity#getPersistentData still exists).
-// Field/method names, order, ids, amounts, localized keys unchanged.
+
+
+
+
+
+
+
+
+
 public class ChampionModifier {
 
     public static final ChampionModifier[] MODS;
@@ -77,7 +77,7 @@ public class ChampionModifier {
 
     public static int getChampionId(LivingEntity entity) {
         if (entity == null) return -1;
-        // NEOFORGE_PORT: CompoundTag.getInt() now returns Optional -> getIntOr(key, 0).
+        
         return entity.getPersistentData().getIntOr("arcaneresearch_champion", 0) - 1;
     }
 

@@ -1,18 +1,18 @@
 package arcaneresearch.common.config;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ambient.Bat;
-import net.minecraft.world.entity.animal.parrot.Parrot; // NEOFORGE_PORT: subpackage
+import net.minecraft.world.entity.animal.parrot.Parrot; 
 import net.minecraft.world.entity.monster.Blaze;
-import net.minecraft.world.entity.monster.Enderman; // NEOFORGE_PORT: Enderman -> Enderman
+import net.minecraft.world.entity.monster.Enderman; 
 import net.minecraft.world.entity.monster.Ghast;
-import net.minecraft.world.entity.monster.spider.Spider; // NEOFORGE_PORT: subpackage
+import net.minecraft.world.entity.monster.spider.Spider; 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.registries.BuiltInRegistries; // NEOFORGE_PORT: was ForgeRegistries
+import net.minecraft.core.registries.BuiltInRegistries; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
@@ -55,7 +55,7 @@ public class ConfigResearch {
         initWarp();
 
         for (String cat : TC_CATEGORIES) {
-            // NEOFORGE_PORT: Identifier(String,String) ctor private -> fromNamespaceAndPath.
+            
             ArcaneresearchApi.registerResearchLocation(Identifier.fromNamespaceAndPath("arcaneresearch", "research/" + cat.toLowerCase()));
         }
         ArcaneresearchApi.registerResearchLocation(Identifier.fromNamespaceAndPath("arcaneresearch", "research/scans"));
@@ -63,12 +63,12 @@ public class ConfigResearch {
         Arcaneresearch.LOGGER.info("Research categories and JSON locations registered");
     }
 
-    /**
-     * Enchantment scans (datapack registry — needs RegistryAccess, so server start,
-     * same as pech book trades). Forge enumerated ForgeRegistries.ENCHANTMENTS here.
-     */
-    // Enchantments are a datapack registry: scannables are rebuilt per server start
-    // (previous server's holders removed so repeated world loads never duplicate them).
+     
+
+
+ 
+    
+    
     private static final java.util.List<ScanEnchantment> enchantmentScans = new java.util.ArrayList<>();
 
     public static void initEnchantmentScans(net.minecraft.core.HolderLookup.Provider registries) {
@@ -169,9 +169,9 @@ public class ConfigResearch {
 
         ScanningManager.addScannableThing(new ScanGeneric());
 
-        // NEOFORGE_PORT: enchantments are datapack-driven in 26.x (no BuiltIn registry);
-        // their scans register at server start (initEnchantmentScans, registryAccess).
-        // NEOFORGE_PORT: Registry.holders() gone -> listElements() (HolderLookup API).
+        
+        
+        
         for (var holder : BuiltInRegistries.MOB_EFFECT.listElements().toList()) {
             if (holder != null) {
                 ScanningManager.addScannableThing(new ScanPotion(holder));
@@ -249,7 +249,7 @@ public class ConfigResearch {
         ScanningManager.addScannableThing(new ScanItem("f_TELEPORT", new ItemStack(Items.ENDER_PEARL)));
         ScanningManager.addScannableThing(new ScanItem("f_BRAIN", new ItemStack(ModItems.ZOMBIE_BRAIN.get())));
         ScanningManager.addScannableThing(new ScanItem("f_arrow", new ItemStack(Items.ARROW)));
-        // NEOFORGE_PORT: projectiles moved to subpackages in 26.x (verified in 26.3 jar).
+        
         ScanningManager.addScannableThing(new ScanEntity("f_arrow",
                 net.minecraft.world.entity.projectile.arrow.AbstractArrow.class, true));
         ScanningManager.addScannableThing(new ScanEntity("f_fireball",
@@ -258,8 +258,8 @@ public class ConfigResearch {
                 net.minecraft.world.entity.projectile.LlamaSpit.class, true));
         ScanningManager.addScannableThing(new ScanItem("f_VOIDSEED", new ItemStack(ModItems.VOID_SEED.get())));
         ScanningManager.addScannableThing(new ScanItem("f_MATCLAY", new ItemStack(Items.CLAY_BALL)));
-        // NEOFORGE_PORT: dyed terracotta grouped in Blocks.DYED_TERRACOTTA (ColorCollection,
-        // lowercase color accessors, verified in 26.3 jar); same 17 blocks.
+        
+        
         var dyedTerracotta = Blocks.DYED_TERRACOTTA;
         ScanningManager.addScannableThing(new ScanBlock("f_MATCLAY",
                 Blocks.TERRACOTTA, dyedTerracotta.white(), dyedTerracotta.orange(),
@@ -310,11 +310,11 @@ public class ConfigResearch {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) return;
 
-        // NEOFORGE_PORT: ResourceKey.location() -> identifier() in 26.x.
+        
         Identifier dimKey = player.level().dimension().identifier();
 
-        // NEOFORGE_PORT (26.3): Forge displayClientMessage(msg, true) = action-bar overlay ->
-        // sendOverlayMessage (was sendSystemMessage = chat).
+        
+        
         if (!knowledge.isResearchKnown("m_hellandback") && dimKey.getPath().contains("nether")) {
             knowledge.addResearch("m_hellandback");
             knowledge.sync(serverPlayer);
@@ -341,8 +341,8 @@ public class ConfigResearch {
                                 net.minecraft.network.chat.Component.translatable("got.deepdown").getString()));
             }
 
-            // NEOFORGE_PORT (26.3): Level.getMaxBuildHeight() (= minY + height, exclusive top, 320 in the
-            // overworld) gone -> getMaxY() + 1 (same value; dimensionType().height() was 384).
+            
+            
             int worldHeight = player.level().getMaxY() + 1;
             if (player.getY() > worldHeight * 0.4 && !knowledge.isResearchKnown("m_uphigh")) {
                 knowledge.addResearch("m_uphigh");

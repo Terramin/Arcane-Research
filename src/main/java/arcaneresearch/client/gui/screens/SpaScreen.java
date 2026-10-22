@@ -1,13 +1,13 @@
 package arcaneresearch.client.gui.screens;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +37,8 @@ public class SpaScreen extends AbstractContainerScreen<SpaMenu> {
         super(menu, playerInventory, title, 176, 166);
     }
 
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent; hover tooltips live here
-    // (old render() bodies, deferred tooltip calls).
+    
+    
     private void renderHoverTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int mhx = mouseX - (this.leftPos + MIX_HOVER_X);
         int mhy = mouseY - (this.topPos + MIX_HOVER_Y);
@@ -63,7 +63,7 @@ public class SpaScreen extends AbstractContainerScreen<SpaMenu> {
     }
 
     @Override
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();
         double mouseY = event.y();
@@ -86,7 +86,7 @@ public class SpaScreen extends AbstractContainerScreen<SpaMenu> {
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int x = this.leftPos;
         int y = this.topPos;
 
@@ -109,9 +109,9 @@ public class SpaScreen extends AbstractContainerScreen<SpaMenu> {
     }
 
     private void renderFluid(GuiGraphicsExtractor graphics, int x, int y, net.neoforged.neoforge.fluids.FluidStack stack) {
-        // NEOFORGE_PORT: IClientFluidTypeExtensions.getStillTexture/getTintColor removed in 26.3
-        // (fluid visuals are data-driven now); still sprite + tint resolved from the same
-        // constants ClientFluidModels wires (ModFluids) + vanilla water/lava.
+        
+        
+        
         TextureAtlasSprite sprite = fluidStillSprite(stack);
         int tint = fluidTint(stack);
         graphics.pose().pushMatrix();

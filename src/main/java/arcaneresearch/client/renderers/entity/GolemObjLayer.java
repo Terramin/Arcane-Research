@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
@@ -28,15 +28,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// NEOFORGE_PORT (26.3): RenderLayer<State, GolemModel>, submit() instead of
-// render(). All entity reads come from GolemRenderer.State (filled in extract).
-// Ghost/translucent/xray passes preserved (were setGhost/clearGhost + double
-// renderObjParts in the renderer). Each OBJ group is emitted via
-// SubmitNodeCollector.submitCustomGeometry with a pose-seeded working stack
-// (nodes snapshot the pose at submit time, so sequential push/pop math stays
-// valid); ObjModel.renderGroup keeps its (PoseStack, VertexConsumer) shape,
-// only its vertex chain changed. Held/carried items use pre-resolved
-// ItemStackRenderStates from the renderer.
+
+
+
+
+
+
+
+
+
 public class GolemObjLayer extends RenderLayer<GolemRenderer.State, GolemModel> {
 
     private static final Identifier BASE_MODEL =
@@ -81,9 +81,9 @@ public class GolemObjLayer extends RenderLayer<GolemRenderer.State, GolemModel> 
             return;
         }
         fillCache(state);
-        // NEOFORGE_PORT (26.3): layers run inside LivingEntityRenderer's model flip
-        // (scale(-1,-1,1) + translate(0,-1.501,0)); 1.20.1 drew the OBJ y-up from the
-        // feet, so undo it. Invisible golems draw nothing unless the ghost pass applies.
+        
+        
+        
         poseStack.pushPose();
         poseStack.translate(0.0F, 1.501F, 0.0F);
         poseStack.scale(-1.0F, -1.0F, 1.0F);
@@ -182,7 +182,7 @@ public class GolemObjLayer extends RenderLayer<GolemRenderer.State, GolemModel> 
                         base.renderGroup(work, consumer, "waist", flashLight, OverlayTexture.NO_OVERLAY,
                                 ghostR * tintR, ghostG * tintG, ghostB * tintB, ghostA));
                 if (entity.getGolemColor() > 0) {
-                    // NEOFORGE_PORT: getTextureDiffuseColors() float[] -> getTextureDiffuseColor() int.
+                    
                     int diffuse = net.minecraft.world.item.DyeColor.byId(entity.getGolemColor() - 1)
                             .getTextureDiffuseColor();
                     float fr = ((diffuse >> 16) & 0xFF) / 255.0F * ghostR * tintR;

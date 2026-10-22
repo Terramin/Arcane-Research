@@ -15,14 +15,14 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import arcaneresearch.init.ModEntities;
 
-/**
- * Hilltop stones worldgen structure, ported from TC4 WorldGenHilltopStones.
- * 7x7 paved platform high on hills (y >= 85) with a center wisp spawner,
- * slab and dungeon chest, plus random-height side pillars with vines.
- * TC4 mapping: cosmeticSolid:1 -> arcaneresearch:ancient_stone,
- * netherrack stays vanilla, chest loot -> vanilla simple dungeon table,
- * spawner entity -> arcaneresearch:wisp.
- */
+ 
+
+
+
+
+
+
+ 
 public final class HilltopStonesStructure {
     public static final String PAVEMENT = "arcaneresearch:ancient_stone";
 
@@ -126,12 +126,12 @@ public final class HilltopStonesStructure {
         }
     }
 
-    /** Feature wrapper; registration lives outside this folder. */
-    // NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-    // NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-    // WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-    // features are placed from code with fixed params (never deserialized from datapacks),
-    // registry-id dispatch resolves the registered instance on load.
+      
+    
+    
+    
+    
+    
     public static class Feature implements net.minecraft.world.level.levelgen.feature.Feature {
         public static final MapCodec<Feature> CODEC =
                 MapCodec.unit(new Feature());

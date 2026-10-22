@@ -2,19 +2,19 @@ package arcaneresearch.client.gui.screens;
 import arcaneresearch.common.menu.AuraTotemMenu;
 import arcaneresearch.common.tiles.aura.AuraTotemTile;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import arcaneresearch.api.aspects.Aspect;
 
-/**
- * Totem fuel screen, ported from TC5 GuiAuraTotem.
- * Dedicated gui_auratotem.png backdrop with an aspect-tinted charge bar.
- */
+ 
+
+
+ 
 public class AuraTotemScreen extends AbstractContainerScreen<AuraTotemMenu> {
     private static final Identifier BACKDROP =
             Identifier.fromNamespaceAndPath(arcaneresearch.Arcaneresearch.MODID, "textures/gui/gui_auratotem.png");
@@ -25,7 +25,7 @@ public class AuraTotemScreen extends AbstractContainerScreen<AuraTotemMenu> {
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         graphics.blit(RenderPipelines.GUI_TEXTURED, BACKDROP, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         Container totem = this.menu.getTotem();
         int width = totem instanceof AuraTotemTile tile ? tile.getTimeScaled(48) : this.menu.getLastTime();

@@ -11,9 +11,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
-// NEOFORGE_PORT: Forge capability plumbing removed (see getFluidHandler below).
-import net.neoforged.neoforge.transfer.fluid.FluidResource; // NEOFORGE_PORT: fluid caps via transfer
-import arcaneresearch.common.lib.fluid.ArcaneresearchFluidTank; // NEOFORGE_PORT: FluidTank removed
+
+import net.neoforged.neoforge.transfer.fluid.FluidResource; 
+import arcaneresearch.common.lib.fluid.ArcaneresearchFluidTank; 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IAspectContainer;
@@ -35,9 +35,9 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
 
     public static final int MAX_ASPECTS = 500;
     public static final int TANK_CAPACITY = 1000;
-    // NEOFORGE_PORT: FluidTank removed -> shared ArcaneresearchFluidTank (water-only validator,
-    // same 1000 cap, same FluidName/Amount NBT keys). Exposure via getFluidHandler (any side,
-    // as before), wired in ModBlockEntities.registerCapabilities.
+    
+    
+    
     private final ArcaneresearchFluidTank tank = new ArcaneresearchFluidTank(TANK_CAPACITY,
             stack -> stack.getFluid() == Fluids.WATER);
 
@@ -196,8 +196,8 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         for (int a = 0; a < stacksize; ++a) {
             CrucibleRecipeType recipe = ArcaneresearchCraftingManager.findMatchingCrucibleRecipe(aspects, item, player, level);
             if (recipe != null && tank.getFluidAmount() > 0) {
-                // NEOFORGE_PORT: assemble(RecipeInput) single-arg in 26.x; crucible output
-                // ignores the input (result.copy()), so an empty input is passed.
+                
+                
                 ItemStack out = recipe.assemble(new net.minecraft.world.item.crafting.RecipeInput() {
                     @Override
                     public ItemStack getItem(int index) {
@@ -313,10 +313,10 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         spillAll();
     }
 
-    // NEOFORGE_PORT (26.3): reference BlockCrucible.onRemove called spillAll() (flux +
-    // drain) before removal. The port's BlockCrucible.affectNeighborsAfterRemoval runs after
-    // LevelChunk already removed this tile, so it never found it. LevelChunk calls this only
-    // when the block actually changes (server side), with the tile still present.
+    
+    
+    
+    
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
         spillAll();
@@ -414,8 +414,8 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         return out;
     }
 
-    // NEOFORGE_PORT: BlockEntity.getRenderBoundingBox removed in 26.x; this override
-    // returned exactly the default single-block box, so dropping it changes nothing.
+    
+    
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1);

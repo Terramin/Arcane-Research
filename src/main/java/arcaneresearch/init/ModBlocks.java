@@ -11,9 +11,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries; // NEOFORGE_PORT: was ForgeRegistries
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
-// NEOFORGE_PORT: DeferredBlock<Block> -> DeferredBlock<Block> below.
+import net.minecraft.core.registries.Registries; 
+import net.minecraft.resources.Identifier; 
+
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.common.blocks.basic.*;
@@ -53,11 +53,11 @@ public class ModBlocks {
     public static final DeferredBlock<Block> ANCIENT_STONE_GLYPHED = registerBlock("ancient_stone_glyphed",
             props -> BlockStoneTC.create(props, false));
 
-    /**
-     * Плита обсидиана TC4 (blockCosmeticSolid мет 0/1, текстура
-     * "obsidiantile") — мостовая элдритч-кольца. Аналогичная запись в
-     * рефе — ModBlocks.OBSIDIAN_TILE.
-     */
+     
+
+
+
+ 
     public static final DeferredBlock<Block> OBSIDIAN_TILE = registerBlock("obsidian_tile",
             props -> new Block(props
                     .requiresCorrectToolForDrops()
@@ -691,7 +691,7 @@ public class ModBlocks {
             java.util.function.Function<BlockBehaviour.Properties, T> block,
             java.util.function.BiFunction<T, net.minecraft.world.item.Item.Properties, BlockItem> itemFactory) {
         DeferredBlock<T> blockObj = BLOCKS.registerBlock(name, block);
-        // NEOFORGE_PORT: keep the block's name/lang key like registerSimpleBlockItem does.
+        
         BLOCK_ITEMS.registerItem(name, props -> itemFactory.apply(blockObj.get(), props.useBlockDescriptionPrefix()));
         return blockObj;
     }
@@ -701,16 +701,16 @@ public class ModBlocks {
         return BLOCKS.registerBlock(name, block);
     }
 
-    /**
-     * Привязка саженцев и цветов к ванильному горшку: ПКМ растением
-     * по пустому горшку ставит соответствующий potted-вариант.
-     * Вызывать в commonSetup (карта горшка статическая, обе стороны).
-     */
+     
+
+
+
+ 
     public static void addFlowerPotPlants() {
-        // NEOFORGE_PORT (26.x): FlowerPotBlock.addPlant(ResourceLocation, ...) was removed.
-        // The potted-plant mapping is now registered by the NeoForge FlowerPotBlock
-        // constructor (emptyPot + plant suppliers), which the POTTED_* registrations
-        // above already use. Nothing left to do here.
+        
+        
+        
+        
     }
 
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {

@@ -9,22 +9,22 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import arcaneresearch.discovered.table.DiscoveredTableBlock;
 
-/**
- * Сборка hex-пары из двух проектных одиночных столов: кликнутый — MAIN,
- * сосед — SIDE (та же схема, что клик чернилами у стола 1). Инициатор —
- * клик таумометром ({@code MsgStudyTable}); salis-пути нет.
- *
- * NEOFORGE_PORT: isClientSide-поле -&gt; isClientSide().
- */
+ 
+
+
+
+
+
+ 
 public final class HexTableFormer {
 
     private HexTableFormer() {
     }
 
-    /**
-     * Собрать пару из одиночного стола под кликом: кликнутый — MAIN,
-     * сосед — SIDE. Возвращает сторону соседа (null — не из чего).
-     */
+     
+
+
+ 
     public static Direction findPairSide(Level level, BlockPos pos) {
         if (!(level.getBlockState(pos).getBlock() instanceof DiscoveredTableBlock)) {
             return null;
@@ -32,7 +32,7 @@ public final class HexTableFormer {
         return findNeighbourSingle(level, pos);
     }
 
-    /** Поставить MAIN/SIDE со звуком (только сервер). */
+      
     public static boolean form(Level level, BlockPos pos, Direction side) {
         if (level.isClientSide() || HexTableRegistry.NOTE_BLOCK == null || side == null) {
             return false;
@@ -54,7 +54,7 @@ public final class HexTableFormer {
         return true;
     }
 
-    /** Соседний проектный одиночный стол по горизонтали (первый найденный). */
+      
     private static Direction findNeighbourSingle(Level level, BlockPos pos) {
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             if (level.getBlockState(pos.relative(dir)).getBlock() instanceof DiscoveredTableBlock) {

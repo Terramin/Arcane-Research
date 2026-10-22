@@ -9,19 +9,19 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.registries.BuiltInRegistries;
 
-/**
- * Shared helpers for the TC4/TC5 structure ports.
- * Blocks are resolved by string id so no Mod* imports are needed here.
- * Everything below runs on LevelAccessor so the same code serves
- * worldgen features and in-world rituals.
- */
+ 
+
+
+
+
+ 
 public final class StructureHelper {
     private StructureHelper() {
     }
 
-    /** Resolves "modid:path" to its default state, air when absent. */
+      
     public static BlockState state(String id) {
-        // NEOFORGE_PORT: ForgeRegistries.BLOCKS.getValue -> BuiltInRegistries.BLOCK.getValue.
+        
         Block block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(id));
         if (block == null || block == Blocks.AIR) {
             return Blocks.AIR.defaultBlockState();
@@ -29,13 +29,13 @@ public final class StructureHelper {
         return block.defaultBlockState();
     }
 
-    /** True when generation may overwrite the block (air, replaceable, leaves). */
+      
     public static boolean replaceable(LevelAccessor level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.isAir() || state.canBeReplaced() || state.is(BlockTags.LEAVES);
     }
 
-    /** True for grass/dirt/stone-like ground usable by surface structures. */
+      
     public static boolean isSurfaceGround(BlockState state) {
         return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT)
                 || state.is(Blocks.STONE) || state.is(Blocks.SAND);

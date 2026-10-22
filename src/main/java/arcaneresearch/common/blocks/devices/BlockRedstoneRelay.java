@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -204,17 +204,17 @@ public class BlockRedstoneRelay extends Block implements EntityBlock {
     private void notifyNeighbors(Level level, BlockPos pos, BlockState state) {
         Direction facing = state.getValue(FACING);
         BlockPos outputPos = pos.relative(facing.getOpposite());
-        // NEOFORGE_PORT: Level.neighborChanged(pos, block, fromPos) removed in 26.x;
-        // NeighborUpdater takes Orientation instead of fromPos (null = unknown source,
-        // same as the old direct ping). updateNeighborsAtExceptFromFacing gained the
-        // same trailing Orientation param.
+        
+        
+        
+        
         level.neighborChanged(outputPos, this, null);
         level.updateNeighborsAtExceptFromFacing(outputPos, this, facing, null);
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
 
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -276,8 +276,8 @@ public class BlockRedstoneRelay extends Block implements EntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side, old state + isMoving; new state already swapped: level.getBlockState(pos)).
+        
+        
         if (!isMoving && !state.is(level.getBlockState(pos).getBlock())) {
             super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
 

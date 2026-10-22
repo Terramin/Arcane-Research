@@ -13,10 +13,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketItemKeyToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:item_key_to_server".
+
+
+
+
 public class PacketItemKeyToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketItemKeyToServer> TYPE =

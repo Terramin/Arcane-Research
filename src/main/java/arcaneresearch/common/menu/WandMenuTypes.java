@@ -1,11 +1,11 @@
 package arcaneresearch.common.menu;
 
 import net.minecraft.world.inventory.MenuType;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension; // NEOFORGE_PORT: same create(factory) shape
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension; 
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.minecraft.core.registries.Registries; // NEOFORGE_PORT: was ForgeRegistries
-// NEOFORGE_PORT: RegistryObject<MenuType<X>> -> DeferredHolder<MenuType<?>, MenuType<X>> below.
+import net.minecraft.core.registries.Registries; 
+
 import arcaneresearch.Arcaneresearch;
 
 public class WandMenuTypes {

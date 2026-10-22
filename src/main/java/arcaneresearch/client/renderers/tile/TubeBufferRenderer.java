@@ -20,8 +20,8 @@ import arcaneresearch.client.models.block.TubeValveModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.essentia.TileTubeBuffer;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (choke indicator rods on connected sides).
+
+
 public class TubeBufferRenderer implements BlockEntityRenderer<TileTubeBuffer, TubeBufferRenderer.State> {
 
     private static final Identifier TEXTURE =
@@ -29,7 +29,7 @@ public class TubeBufferRenderer implements BlockEntityRenderer<TileTubeBuffer, T
 
     public static class State extends BlockEntityRenderState {
         public boolean hasLevel;
-        // NEOFORGE_PORT: per-side choke/open + connectivity stashed (level reads forbidden in submit).
+        
         public final boolean[] showRod = new boolean[6];
         public final float[] rodR = new float[6];
         public final float[] rodG = new float[6];

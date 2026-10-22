@@ -118,8 +118,8 @@ public class BlockCondenserLattice extends Block {
             if (!updated.equals(state)) {
                 level.setBlock(pos, updated, 3);
             }
-            // NEOFORGE_PORT: exact changed-neighbor pos no longer provided (Orientation
-            // only); scan neighbors instead (triggers are idempotent recomputes).
+            
+            
             boolean latticeAdjacent = false;
             for (Direction dir : Direction.values()) {
                 BlockState nbState = level.getBlockState(pos.relative(dir));
@@ -137,10 +137,10 @@ public class BlockCondenserLattice extends Block {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
 
 
@@ -186,8 +186,8 @@ public class BlockCondenserLattice extends Block {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {

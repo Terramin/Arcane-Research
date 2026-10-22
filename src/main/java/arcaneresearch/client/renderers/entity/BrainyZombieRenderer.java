@@ -6,14 +6,14 @@ import net.minecraft.client.model.monster.zombie.ZombieModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.EntityBrainyZombie;
 import arcaneresearch.common.entities.monster.EntityGiantBrainyZombie;
 
-// NEOFORGE_PORT (26.3): vanilla ZombieModel/ZombieRenderState (moved packages);
-// giant scale via State (entity switch in extract, applied in scale hook).
+
+
 public class BrainyZombieRenderer extends HumanoidMobRenderer<EntityBrainyZombie, BrainyZombieRenderer.State, ZombieModel<BrainyZombieRenderer.State>> {
 
     public static class State extends ZombieRenderState {
@@ -35,11 +35,11 @@ public class BrainyZombieRenderer extends HumanoidMobRenderer<EntityBrainyZombie
     @Override
     public void extractRenderState(EntityBrainyZombie entity, State state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
-        // NEOFORGE_PORT (26.3): Forge giant.getScale() returned the anger; LivingEntity.getScale()
-        // is final now (SCALE attribute, kept at 1), so read the anger directly.
+        
+        
         state.giantScale = entity instanceof EntityGiantBrainyZombie giant ? giant.getAnger() : 1.0F;
-        // NEOFORGE_PORT (26.3): ZombieModel raises its arms from state.isAggressive, which
-        // only AbstractZombieRenderer fills (Forge read entity.isAggressive() in the model).
+        
+        
         state.isAggressive = entity.isAggressive();
     }
 

@@ -3,7 +3,7 @@ package arcaneresearch.client.fx.other;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Matrix4f;
 import arcaneresearch.Arcaneresearch;
@@ -90,9 +90,9 @@ public final class HemisModel {
             return;
         }
         Matrix4f matrix = poseStack.last().pose();
-        // NEOFORGE_PORT (crash fix): full vertex (overlay + fullbright + normal),
-        // and QUADS topology: each triangle as a degenerate quad (4th = 3rd),
-        // like TurretObjModel.renderGroup.
+        
+        
+        
         int argb = net.minecraft.util.ARGB.color((int) ((a) * 255.0F), (int) ((r) * 255.0F), (int) ((g) * 255.0F), (int) ((b) * 255.0F));
         for (int i = 0; i + 14 < mesh.length; i += 15) {
             for (int k = 0; k < 4; k++) {

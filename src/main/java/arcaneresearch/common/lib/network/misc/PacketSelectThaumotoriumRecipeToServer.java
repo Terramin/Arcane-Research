@@ -14,10 +14,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketSelectThaumotoriumRecipeToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:select_thaumotorium_recipe_to_server".
+
+
+
+
 public class PacketSelectThaumotoriumRecipeToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketSelectThaumotoriumRecipeToServer> TYPE =

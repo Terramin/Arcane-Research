@@ -24,11 +24,11 @@ public class PotionFluxTaint extends MobEffect {
         super(isBadEffect ? MobEffectCategory.HARMFUL : MobEffectCategory.BENEFICIAL, liquidColor);
     }
 
-    // NEOFORGE_PORT: applyEffectTick(LivingEntity,int) -> applyEffectTick(ServerLevel,LivingEntity,int)
-    // returning boolean; hurt(DamageSource,float) -> hurtServer(ServerLevel,DamageSource,float).
-    // NEOFORGE_PORT (26.3): returning false makes MobEffectInstance.tickServer REMOVE the effect.
-    // Forge's void hook never removed it (no damage for undead/1-HP mobs, failed hurt, etc.),
-    // so every path returns true (like vanilla Poison/Wither).
+    
+    
+    
+    
+    
     @Override
     public boolean applyEffectTick(net.minecraft.server.level.ServerLevel level, LivingEntity target, int amplifier) {
         if (target.level().isClientSide()) return true;

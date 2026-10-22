@@ -14,15 +14,15 @@ import arcaneresearch.discovered.table.MsgDupe;
 import arcaneresearch.discovered.table.MsgPlaceAspect;
 import arcaneresearch.init.ModSounds;
 
-/**
- * Ввод hex-стола: клики, drag-and-drop, кнопка соединения.
- * Вынесено из {@link HexResearchTableScreen} без смены поведения:
- * состояние — в экране (package-доступ), возврат false — «не обработано»,
- * экран сам зовёт {@code super} для ванильных слотов.
- *
- * NEOFORGE_PORT: CHANNEL.sendToServer -&gt; PacketHandler.sendToServer;
- * left/top экрана -&gt; leftPos/topPos.
- */
+ 
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class HexTableInput {
 
@@ -32,9 +32,9 @@ public class HexTableInput {
         this.s = screen;
     }
 
-    /** Хит-тест пула 5x5 с учётом страницы; только аспекты с пулом &gt; 0. */
+      
     Aspect poolHit(double mx, double my) {
-        // Без инструментов пул скрыт — брать нечего.
+        
         if (!s.hasTools()) {
             return null;
         }
@@ -66,11 +66,11 @@ public class HexTableInput {
 
     public boolean mouseClicked(double mx, double my, int button) {
         s.refreshNote();
-        // Пул и соединение работают без записки; лист и dupe — по ней.
+        
         if (button != com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT) {
             return false;
         }
-        // Кнопка соединения (паритет: click + combine сразу, сервер молчит).
+        
         if (s.inZone(mx, my, s.guiLeft() + 35, s.guiTop() + 139, 32, 16)) {
             if (s.select1 != null && s.select2 != null
                     && System.nanoTime() - s.lastCombineClick > 200000000L) {
@@ -81,14 +81,14 @@ public class HexTableInput {
             }
             return true;
         }
-        // Кнопка копирования завершённой записки (порт кнопки 5, без перков).
+        
         if (s.note != null && s.note.complete
                 && s.inZone(mx, my, s.guiLeft() + 37, s.guiTop() + 5, 24, 24)) {
             s.sfx(ModSounds.CLACK.get(), 0.4F);
             PacketHandler.sendToServer(new MsgDupe());
             return true;
         }
-        // Страницы пула.
+        
         if (s.inZone(mx, my, s.guiLeft() + 27, s.guiTop() + 121, 24, 8)) {
             if (s.page > 0) {
                 s.page--;
@@ -103,7 +103,7 @@ public class HexTableInput {
             }
             return true;
         }
-        // Очистка слотов соединения (зоны оригинала, строки 784-803).
+        
         if (s.select1 != null && s.inZone(mx, my, s.guiLeft() + 11, s.guiTop() + 137, 16, 16)) {
             s.select1 = null;
             s.sfx(ModSounds.HH_OFF.get(), 0.2F, s.jitterPitch());
@@ -114,7 +114,7 @@ public class HexTableInput {
             s.sfx(ModSounds.HH_OFF.get(), 0.2F, s.jitterPitch());
             return true;
         }
-        // Старт drag из пула.
+        
         Aspect poolAspect = poolHit(mx, my);
         if (poolAspect != null) {
             s.dragging = true;
@@ -124,7 +124,7 @@ public class HexTableInput {
             s.sfx(ModSounds.HH_OFF.get(), 0.2F, s.jitterPitch());
             return true;
         }
-        // Стирание руны игрока (паритет: combine + erase сразу).
+        
         HexUtils.Hex hex = s.sheetHex(mx, my);
         if (hex != null) {
             HexEntry entry = s.note.hexEntries.get(hex.toString());
@@ -157,7 +157,7 @@ public class HexTableInput {
         if (drop == null) {
             return true;
         }
-        // Дроп на свободный гекс (паритет: combine + write сразу).
+        
         HexUtils.Hex hex = s.sheetHex(mx, my);
         if (hex != null) {
             s.sfx(ModSounds.HH_ON.get(), 0.3F);
@@ -165,7 +165,7 @@ public class HexTableInput {
             PacketHandler.sendToServer(new MsgPlaceAspect(hex.q, hex.r, drop.getTag()));
             return true;
         }
-        // Дроп в слоты соединения: зоны 32x32 вокруг иконок (строка 683).
+        
         if (s.inZone(mx, my, s.guiLeft() + 4, s.guiTop() + 130, 32, 32)) {
             s.select1 = drop;
             return true;
@@ -174,7 +174,7 @@ public class HexTableInput {
             s.select2 = drop;
             return true;
         }
-        // Дроп на себя в пуле — разложить по слотам.
+        
         Aspect same = poolHit(mx, my);
         if (same != null && same == drop) {
             if (s.select1 == null) {

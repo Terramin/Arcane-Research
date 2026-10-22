@@ -5,12 +5,12 @@ import javax.annotation.Nonnull;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
-// NEOFORGE_PORT: Forge INBTSerializable (net.minecraftforge.common.util) removed in NeoForge —
-//   replaced by ValueIOSerializable (serialize(ValueOutput)/deserialize(ValueInput)).
-//   Network sync still uses CompoundTag NBT via payload codecs (see PacketSyncKnowledge);
-//   disk persistence now uses the ValueIO methods below.
+
+
+
+
 public interface IPlayerKnowledge extends ValueIOSerializable {
-    // NEOFORGE_PORT: kept for NBT clone/sync paths (impls in common.lib.capabilities).
+    
     net.minecraft.nbt.CompoundTag serializeNBT();
 
     void deserializeNBT(net.minecraft.nbt.CompoundTag tag);
@@ -45,11 +45,11 @@ public interface IPlayerKnowledge extends ValueIOSerializable {
 
     boolean hasResearchFlag(@Nonnull String research, @Nonnull EnumResearchFlag flag);
 
-    /**
-     * Предъявленные ПКМ открытия (required_discovery засчитывается
-     * только использованием предмета, из рук в инвентаре — нет).
-     * Портировано из Forge IPlayerKnowledge вместе с пакетом discovered/*.
-     */
+     
+
+
+
+ 
     boolean addPresentedDiscovery(@Nonnull String key);
 
     boolean hasPresentedDiscovery(@Nonnull String key);
@@ -113,7 +113,7 @@ public interface IPlayerKnowledge extends ValueIOSerializable {
 
         POPUP,
 
-        /** Пройдена стадия с required_discovery (тост открытия). */
+          
         DISCOVERY
     }
 }

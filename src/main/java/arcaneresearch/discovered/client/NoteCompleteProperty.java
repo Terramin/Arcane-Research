@@ -18,16 +18,16 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.discovered.note.DiscoveredNoteSetup;
 
-/**
- * Предикат модели {@code arcaneresearch:complete} записки (Forge:
- * {@code DiscoveredNoteSetup.ClientEvents} — ItemProperties.register(noteItem,
- * "complete", isComplete ? 1 : 0); research_notes.json override -&gt; модель discovery).
- *
- * NEOFORGE_PORT (26.3): ItemProperties/overrides удалены -&gt; условное свойство
- * item-модели ({@code minecraft:condition}, property {@code arcaneresearch:complete})
- * в assets/arcaneresearch/items/research_notes.json. Как в Forge — только для
- * предмета записки (у остальных false).
- */
+ 
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public final class NoteCompleteProperty {
 

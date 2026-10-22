@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 
-// NEOFORGE_PORT: camera spiral quad -> base extract path (same math).
+
 public class FXSmokeSpiral extends SingleQuadParticle {
 
     protected float radius;
@@ -22,7 +22,7 @@ public class FXSmokeSpiral extends SingleQuadParticle {
 
     public FXSmokeSpiral(ClientLevel level, double x, double y, double z,
                          float radius, int startAngle, int minY) {
-        super(level, x, y, z, 0, 0, 0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, x, y, z, 0, 0, 0, null); 
 
         this.radius = radius;
         this.startAngle = startAngle;
@@ -51,7 +51,7 @@ public class FXSmokeSpiral extends SingleQuadParticle {
     }
 
     @Override
-    // NEOFORGE_PORT: same spiral math; immediate verts -> state.add (atlas-remapped UVs).
+    
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         Vec3 cameraPos = camera.position();
 

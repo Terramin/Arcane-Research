@@ -11,11 +11,11 @@ public class ItemTripleMeatTreat extends Item {
 
     public ItemTripleMeatTreat(Item.Properties props) {
         super(props
-                // NEOFORGE_PORT: FoodProperties.Builder saturationMod -> saturationModifier,
-                // alwaysEat -> alwaysEdible; MobEffectInstance now takes Holder<MobEffect> and
-                // MobEffects fields already are holders, so the effect itself is unchanged - but
-                // Builder.effect(...) is GONE, so the effect moves to the Consumable component
-                // (Consumable.builder() defaults = 1.6s EAT, verified via bytecode).
+                
+                
+                
+                
+                
                 .food(new FoodProperties.Builder()
                         .nutrition(6)
                         .saturationModifier(0.8f)
@@ -27,6 +27,6 @@ public class ItemTripleMeatTreat extends Item {
                                 .build()));
     }
 
-    // NEOFORGE_PORT: Forge FoodProperties.meat() (wolves eat/breed with it) -> 26.x
-    // #minecraft:meat item tag (data/minecraft/tags/item/meat.json, part of #wolf_food).
+    
+    
 }

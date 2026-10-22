@@ -70,11 +70,11 @@ public class MirrorBlockItem extends BlockItem {
         }
     }
 
-    // NEOFORGE_PORT: Item.getRarity(ItemStack) override removed in 26.x ->
-    // rarity is set via Properties in the constructor (UNCOMMON, Forge parity).
+    
+    
 
-    // NEOFORGE_PORT: appendHoverText signature changed in 26.x
-    // (Level+List) -> (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
@@ -144,7 +144,7 @@ public class MirrorBlockItem extends BlockItem {
         if (!linkValid) {
             ItemStack copy = held.copy();
             copy.setCount(1);
-            // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same keys).
+            
             net.minecraft.nbt.CompoundTag linkTag =
                     arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(copy);
             linkTag.putInt("linkX", pos.getX());

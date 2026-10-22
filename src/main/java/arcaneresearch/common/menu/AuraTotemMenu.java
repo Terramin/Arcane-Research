@@ -18,10 +18,10 @@ import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.menu.slot.LimitedByClassSlot;
 import arcaneresearch.init.ModMenuTypes;
 
-/**
- * Totem fuel menu, ported from TC5 ContainerAuraTotem.
- * One crystal-essence slot plus player inventory; charge time synced.
- */
+ 
+
+
+ 
 public class AuraTotemMenu extends AbstractContainerMenu {
     private final Container totem;
     private final ContainerLevelAccess access;

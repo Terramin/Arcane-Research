@@ -35,7 +35,7 @@ public class CasterManager {
 
         total += CuriosCompat.getVisDiscountFromCurios(player);
 
-        // NEOFORGE_PORT: Inventory.armor list removed -> EntityEquipment via getItemBySlot.
+        
         for (EquipmentSlot armorSlot : new EquipmentSlot[]{
                 EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             ItemStack armorStack = player.getItemBySlot(armorSlot);
@@ -44,7 +44,7 @@ public class CasterManager {
             }
         }
 
-        // NEOFORGE_PORT: DeferredHolder<MobEffect, MobEffect> IS a Holder -> pass directly (no .get()).
+        
         MobEffectInstance exhaustEffect = player.getEffect(ModEffects.VIS_EXHAUST);
         MobEffectInstance infectiousEffect = player.getEffect(ModEffects.INFECTIOUS_VIS_EXHAUST);
 
@@ -58,9 +58,9 @@ public class CasterManager {
     }
 
     public static boolean consumeVisFromInventory(Player player, float cost) {
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> indexed access via getItem (same order).
-        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (36 main slots, last first);
-        // getContainerSize() also spans armor/offhand (offhand would be tried first).
+        
+        
+        
         java.util.List<ItemStack> inv = player.getInventory().getNonEquipmentItems();
         for (int slot = inv.size() - 1; slot >= 0; slot--) {
             ItemStack item = inv.get(slot);
@@ -105,7 +105,7 @@ public class CasterManager {
             }
         }
 
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> getItem/setItem (same slots/order).
+        
         net.minecraft.world.entity.player.Inventory playerInv = player.getInventory();
         int invSize = playerInv.getContainerSize();
         for (int slot = 0; slot < 36 && slot < invSize; slot++) {
@@ -219,7 +219,7 @@ public class CasterManager {
             pouchLocations.put(pouchCount, -(curiosPouches.size() + 1));
             curiosPouches.put(-(curiosPouches.size() + 1), ref);
         }
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> getItem (same slots/order).
+        
         net.minecraft.world.entity.player.Inventory playerInv = player.getInventory();
         int invSize = playerInv.getContainerSize();
         for (int slot = 0; slot < 36 && slot < invSize; slot++) {
@@ -257,7 +257,7 @@ public class CasterManager {
             CuriosCompat.setCuriosStack(player, ref, pouch);
             return result;
         }
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> getItem/setItem (same slots/order).
+        
         net.minecraft.world.entity.player.Inventory playerInv = player.getInventory();
         if (pouchSlot >= playerInv.getContainerSize()) {
             return ItemStack.EMPTY;
@@ -291,7 +291,7 @@ public class CasterManager {
 
     private static boolean addFocusToPouch(Player player, ItemStack focus, Map<Integer, Integer> pouchLocations,
                                             Map<Integer, CuriosCompat.CuriosSlotRef> curiosPouches) {
-        // NEOFORGE_PORT: Inventory.items is private in 26.x -> getItem/setItem (same slots/order).
+        
         net.minecraft.world.entity.player.Inventory playerInv = player.getInventory();
         for (Map.Entry<Integer, Integer> entry : pouchLocations.entrySet()) {
             int pouchSlot = entry.getValue();
@@ -397,7 +397,7 @@ public class CasterManager {
     }
 
     public static int getAreaDim(ItemStack stack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same keys).
+        
         CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
         if (tag != null && tag.contains("aread")) {
             return tag.getIntOr("aread", 0);
@@ -430,7 +430,7 @@ public class CasterManager {
     }
 
     public static void setAreaX(ItemStack stack, int area) {
-        // NEOFORGE_PORT: getOrCreateTag()/setTag removed -> COPY + write-back via ArcaneresearchInvHelper.
+        
         CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         tag.putInt("areax", area);
         ArcaneresearchInvHelper.setCustomTag(stack, tag);

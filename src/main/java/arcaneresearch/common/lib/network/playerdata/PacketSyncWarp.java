@@ -12,9 +12,9 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.capabilities.IPlayerWarp;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 
-// NEOFORGE_PORT: 1:1 from Forge .../playerdata/PacketSyncWarp.java (PLAY_TO_CLIENT).
-// Same transport adaptation as PacketSyncKnowledge (see its javadoc).
-// Payload id "arcaneresearch:sync_warp".
+
+
+
 public class PacketSyncWarp implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketSyncWarp> TYPE =

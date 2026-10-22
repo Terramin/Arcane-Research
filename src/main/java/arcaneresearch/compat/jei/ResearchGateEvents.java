@@ -1,10 +1,10 @@
 package arcaneresearch.compat.jei;
 
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.ClientTickEvent; // NEOFORGE_PORT: TickEvent.ClientTickEvent removed -> client ClientTickEvent Pre/Post
+import net.neoforged.neoforge.client.event.ClientTickEvent; 
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber; // NEOFORGE_PORT: was Mod (annotation-only)
+import net.neoforged.fml.common.EventBusSubscriber; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.research.ResearchEvent;
 
@@ -28,7 +28,7 @@ public final class ResearchGateEvents {
         }
     }
 
-    // NEOFORGE_PORT: phased ClientTickEvent -> Post (fires at end of tick).
+    
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         ResearchGate.clientTick();

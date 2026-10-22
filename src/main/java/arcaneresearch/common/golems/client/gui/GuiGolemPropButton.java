@@ -21,8 +21,8 @@ public class GuiGolemPropButton extends Button {
         this.value = value;
     }
 
-    // NEOFORGE_PORT (26.3 render-state rework): renderWidget(GuiGraphics) removed ->
-    // extractContents(GuiGraphicsExtractor).
+    
+    
     @Override
     protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEX, getX() - 2, getY() - 2, 2, 18, 12, 12, 256, 256, 0xFFFFFFFF);

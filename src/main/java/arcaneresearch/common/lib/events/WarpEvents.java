@@ -366,9 +366,9 @@ public class WarpEvents {
             }
 
             living.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 0));
-            // NEOFORGE_PORT: setLastHurtByPlayer(Player) removed -> (Player, memoryTime).
-            // NEOFORGE_PORT (26.3): 1.20.1 setLastHurtByPlayer set lastHurtByPlayerTime = this.tickCount
-            // (not 100) — keep the same kill-credit window.
+            
+            
+            
             living.setLastHurtByPlayer(player, living.tickCount);
 
             if (living instanceof PathfinderMob mob) {

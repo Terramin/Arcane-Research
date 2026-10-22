@@ -25,15 +25,15 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
-// NEOFORGE_PORT: 1:1 logic port from Forge common/lib/crafting/CrystalAspectIngredient.java.
-// 26.x changes (verified in 26.3.0.23-beta jar):
-//   - vanilla Ingredient is FINAL and Forge's AbstractIngredient is gone; NeoForge's
-//     ICustomIngredient (test/items/isSimple/getType) is the replacement, wrapped into
-//     vanilla via `new Ingredient(custom)` at use sites.
-//   - test()/isSimple() logic VERBATIM (crystal-essence item + first-aspect tag match).
-//   - items() exposes the display crystal's holder (was: super(Stream.of(ItemValue))).
-//   - CODEC/STREAM_CODEC/TYPE added; TYPE registered in init/ModIngredientTypes as
-//     arcaneresearch:crystal (same registry name as Forge TYPE_ID).
+
+
+
+
+
+
+
+
+
 public class CrystalAspectIngredient implements ICustomIngredient {
 
     public static final Identifier TYPE_ID =
@@ -103,11 +103,11 @@ public class CrystalAspectIngredient implements ICustomIngredient {
 
     @Override
     public Stream<Holder<Item>> items() {
-        // NEOFORGE_PORT (26.3): must NOT build an ItemStack here. Vanilla calls items()
-        // via Ingredient.updateCustomIngredientValues() during registry/dataset loading
-        // (Ingredient.isEmpty while decoding recipe JSONs), where item components are
-        // not bound yet -> "Components not bound yet" NPE made every
-        // arcaneresearch:infusion/* recipe fail to parse. Only the holder is needed.
+        
+        
+        
+        
+        
         Item crystalItem = BuiltInRegistries.ITEM.getValue(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "crystal_essence"));
         if (crystalItem == null) {

@@ -10,13 +10,13 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT (26.3): camera-facing spinning tinted billboard (Forge body
-// preserved); emissive variants fullbright, others use entity light.
+
+
 public class ArcaneresearchProjectileRenderer<T extends Entity> extends EntityRenderer<T, ArcaneresearchProjectileRenderer.State> {
 
     public static class State extends EntityRenderState {

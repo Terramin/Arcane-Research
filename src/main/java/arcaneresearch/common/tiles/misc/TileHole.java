@@ -125,8 +125,8 @@ public class TileHole extends TileMemory {
         level.setBlock(worldPosition, oldBlock, 3);
 
         if (tileEntityCompound != null && level.getBlockEntity(worldPosition) != null) {
-            // NEOFORGE_PORT: BlockEntity.load(CompoundTag) removed -> TagValueInput + loadCustomOnly
-            // (cf. EldritchOculusRitual).
+            
+            
             try {
                 level.getBlockEntity(worldPosition).loadCustomOnly(
                         net.minecraft.world.level.storage.TagValueInput.create(
@@ -193,7 +193,7 @@ public class TileHole extends TileMemory {
     @Override
     public void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
-        // NEOFORGE_PORT: ValueInput.getShortOr returns int -> cast (fields are short).
+        
         countdown = (short) tag.getShortOr("countdown", (short) 0);
         countdownMax = (short) tag.getShortOr("countdownMax", (short) 0);
         depth = tag.getByteOr("depth", (byte) 0);

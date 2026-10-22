@@ -31,9 +31,9 @@ public class InventoryArcaneWorkbench extends SimpleContainer implements Craftin
         return 3;
     }
 
-    // NEOFORGE_PORT: Forge List<ItemStack> getItems() snapshot override removed —
-    // incompatible with 26.x SimpleContainer.getItems() signature; callers use the
-    // live list / getItem(i) (identical contents).
+    
+    
+    
 
     @Override
     public void setChanged() {

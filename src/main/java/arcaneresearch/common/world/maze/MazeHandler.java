@@ -14,12 +14,12 @@ import java.io.File;
 import net.minecraft.util.RandomSource;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Labyrinth cell store with NBT persistence, adapted from TC5 MazeHandler.
- * generateEldritch builds the room matching the stored cell feature.
- * Chunk dispatch (MazeThread equivalent) and the dimension entry itself
- * are queued; this class is the data + build side.
- */
+ 
+
+
+
+
+ 
 public final class MazeHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -82,8 +82,8 @@ public final class MazeHandler {
     }
 
     public static void loadMaze(ServerLevel level) {
-        // NEOFORGE_PORT: NbtIo File-overload + nullable result gone ->
-        // Path + NbtAccounter (same labyrinth.dat, same "Data" compound).
+        
+        
         clear();
         try {
             java.nio.file.Path file = mazeFile(level).toPath();
@@ -103,7 +103,7 @@ public final class MazeHandler {
         try {
             CompoundTag root = new CompoundTag();
             root.put("Data", writeNBT());
-            // NEOFORGE_PORT: NbtIo.writeCompressed(File) -> writeCompressed(Path).
+            
             net.minecraft.nbt.NbtIo.writeCompressed(root, mazeFile(level).toPath());
         } catch (Exception e) {
             LOGGER.warn("Failed to save labyrinth data", e);
@@ -121,14 +121,14 @@ public final class MazeHandler {
         return false;
     }
 
-    /**
-     * Строит комнату лабиринта. LevelAccessor, а НЕ ServerLevel: во время
-     * генерации мира сюда приходит регион (WorldGenLevel), записи в который
-     * не тянут загрузку соседних чанков. Запись через ServerLevel из
-     * генерации чанка приводила к дедлоку: setBlock ждал генерацию чанка,
-     * генерация строила комнату, комната писала в соседний чанк (см. стек
-     * OuterLandsWatchdog: getChunk/managedBlock внутри setBlock).
-     */
+     
+
+
+
+
+
+
+ 
     public static void generateEldritch(LevelAccessor level, RandomSource random, int cx, int cz) {
         Cell cell = get(new CellLoc(cx, cz));
         if (cell == null) {

@@ -134,18 +134,18 @@ public class EntityCultistLeader extends EntityArcaneresearchBoss implements Ran
         float diff = difficulty.getSpecialMultiplier();
         ItemStack weapon = getMainHandItem();
         if (!weapon.isEmpty() && random.nextFloat() < 0.5f * diff) {
-            // NEOFORGE_PORT: enchantItem(RandomSource, ItemStack, int, boolean) removed ->
-            // (RandomSource, ItemStack, int, RegistryAccess, Optional<HolderSet>) (empty = all).
+            
+            
             EnchantmentHelper.enchantItem(random, weapon, (int) (7.0f + diff * random.nextInt(22)),
                     level().registryAccess(),
-                    // NEOFORGE_PORT (26.3): Forge allowTreasure=false -> only #in_enchanting_table (empty = every enchantment incl. treasure/curses).
+                    
                     level().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
                             .get(net.minecraft.tags.EnchantmentTags.IN_ENCHANTING_TABLE));
         }
     }
 
     @Override
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     protected boolean considersEntityAsAlly(Entity entity) {
         if (entity instanceof EntityCultist || entity instanceof EntityCultistLeader) {
             return true;
@@ -194,7 +194,7 @@ public class EntityCultistLeader extends EntityArcaneresearchBoss implements Ran
     @Override
     public void performRangedAttack(LivingEntity target, float power) {
         if (hasLineOfSight(target)) {
-            // NEOFORGE_PORT: swing(hand) -> swing(hand, SwingAnimation.DEFAULT, false) (26.x).
+            
             swing(InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
             getLookControl().setLookAt(target, 30.0f, 30.0f);
 
@@ -243,7 +243,7 @@ public class EntityCultistLeader extends EntityArcaneresearchBoss implements Ran
         }
     }
 
-    // NEOFORGE_PORT: looting param removed in 26.x (derived from killer's weapon).
+    
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, net.minecraft.world.damagesource.DamageSource source, boolean wasRecentlyHit) {
         super.dropCustomDeathLoot(serverLevel, source, wasRecentlyHit);

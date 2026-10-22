@@ -13,18 +13,18 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
-/**
- * Eldritch ring worldgen structure, ported from TC4 WorldGenEldritchRing.
- * 7x7 paved ring with a center altar, one tall obelisk and four small
- * obelisks. TC4 block mapping used here:
- * cosmeticSolid:1 -> arcaneresearch:ancient_stone,
- * eldritch:0 (altar seat) -> arcaneresearch:eldritch_stone_tile,
- * eldritch:1/2 (obelisk) -> arcaneresearch:eldritch_pillar,
- * eldritch:3 (obelisk cap) -> arcaneresearch:eldritch_stone_tile,
- * banners -> vanilla standing banners facing the altar.
- * The altar tile itself (spawner/eyes logic) lives in EldritchAltarTile;
- * seating it under the center block needs the altar block (outside ask).
- */
+ 
+
+
+
+
+
+
+
+
+
+
+ 
 public final class EldritchRingStructure {
     public static final String PAVEMENT = "arcaneresearch:ancient_stone";
     public static final String ALTAR_SEAT = "arcaneresearch:eldritch_stone_tile";
@@ -80,9 +80,9 @@ public final class EldritchRingStructure {
                         }
                     }
                     if (x == i && z == k) {
-                        // Центр — настоящий алтарь с тайлом (как TC4
-                        // blockEldritch meta 0): в него вставляются глаза
-                        // для ритуала окулуса. Каменная подушка была заглушкой.
+                        
+                        
+                        
                         StructureHelper.set(level, new BlockPos(x, j + 1, z),
                                 StructureHelper.state("arcaneresearch:eldritch_altar"));
                         StructureHelper.set(level, new BlockPos(x, j, z), pavement);
@@ -119,12 +119,12 @@ public final class EldritchRingStructure {
         }
     }
 
-    /** Feature wrapper; registration lives outside this folder. */
-    // NEOFORGE_PORT: Feature is now an interface (no generics, no FeaturePlaceContext /
-    // NoneFeatureConfiguration): implements Feature with MapCodec codec() + place(
-    // WorldGenLevel, ChunkGenerator, RandomSource, BlockPos). Codec is MapCodec.unit(...):
-    // features are placed from code with fixed params (never deserialized from datapacks),
-    // registry-id dispatch resolves the registered instance on load.
+      
+    
+    
+    
+    
+    
     public static class Feature implements net.minecraft.world.level.levelgen.feature.Feature {
         public static final MapCodec<Feature> CODEC =
                 MapCodec.unit(new Feature());

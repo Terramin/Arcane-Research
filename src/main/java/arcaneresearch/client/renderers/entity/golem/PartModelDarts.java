@@ -1,6 +1,6 @@
 package arcaneresearch.client.renderers.entity.golem;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.api.golems.IGolemAPI;
 import arcaneresearch.api.golems.parts.PartModel;

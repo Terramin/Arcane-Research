@@ -16,9 +16,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.entities.EntityFallingTaint;
 
-// NEOFORGE_PORT (26.3): falling block via MovingBlockRenderState +
-// SubmitNodeCollector.submitMovingBlock (vanilla FallingBlockRenderer shape).
-// Block-model context (biome/lighting) filled in extract from the entity level.
+
+
+
 public class FallingTaintRenderer extends EntityRenderer<EntityFallingTaint, FallingTaintRenderer.State> {
 
     public static class State extends EntityRenderState {

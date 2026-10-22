@@ -19,8 +19,8 @@ import org.joml.Vector3f;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.aura.EldritchPortalTile;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (camera-facing animated portal quad).
+
+
 public class EldritchPortalRenderer implements BlockEntityRenderer<EldritchPortalTile, EldritchPortalRenderer.State> {
     private static final Identifier PORTAL_TEX =
             Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/eldritch_portal.png");
@@ -88,8 +88,8 @@ public class EldritchPortalRenderer implements BlockEntityRenderer<EldritchPorta
         return true;
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(EldritchPortalTile blockEntity) {
         return blockEntity.getRenderBoundingBox();

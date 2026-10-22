@@ -111,7 +111,7 @@ public class ItemFocusFire extends ItemFocusBasic {
                                 pack, 1.5F, traj,
                                 arcaneresearch.common.entities.projectile.EntityFocusProjectile.SPECIAL_NONE);
                 level.addFreshEntity(proj);
-                // NEOFORGE_PORT: Level.levelEvent now takes the causing entity first (null = none).
+                
                 level.levelEvent(null, LevelEvent.SOUND_GHAST_WARNING, net.minecraft.core.BlockPos.containing(entity.position()), 0);
             }
         } else {

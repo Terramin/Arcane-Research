@@ -35,8 +35,8 @@ public class ItemGolemPlacer extends Item implements ISealDisplayer {
 
     public static ItemStack createGolemStack(Item item, IGolemProperties props, int xp) {
         ItemStack stack = new ItemStack(item);
-        // NEOFORGE_PORT: stack CompoundTag removed -> CUSTOM_DATA via ArcaneresearchInvHelper.
-        // getOrCreateCustomTag returns a copy, so it must be written back (canonical pattern).
+        
+        
         net.minecraft.nbt.CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         tag.putLong("props", props.toLong());
         if (xp > 0) {
@@ -100,7 +100,7 @@ public class ItemGolemPlacer extends Item implements ISealDisplayer {
                 golem.setRankXp(ArcaneresearchInvHelper.getCustomTag(stack).getIntOr("xp", 0));
             }
 
-            // NEOFORGE_PORT: Mob.restrictTo removed in 26.x -> setHomeTo (same home leash).
+            
             golem.setHomeTo(spawnPos, 32);
 
             golem.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos),
@@ -117,8 +117,8 @@ public class ItemGolemPlacer extends Item implements ISealDisplayer {
         return InteractionResult.FAIL;
     }
 
-    // NEOFORGE_PORT: appendHoverText(Level+List) -> (TooltipContext, TooltipDisplay,
-    // Consumer<Component>) in 26.x; lines collected locally then forwarded (see ItemFocusBasic).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context,
                                 net.minecraft.world.item.component.TooltipDisplay display,

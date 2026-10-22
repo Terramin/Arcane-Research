@@ -10,10 +10,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketMiscStringToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:misc_string_to_server".
+
+
+
+
 public class PacketMiscStringToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketMiscStringToServer> TYPE =
@@ -23,7 +23,7 @@ public class PacketMiscStringToServer implements CustomPacketPayload {
         @Override
         public void encode(ByteBuf buf, PacketMiscStringToServer packet) {
             buf.writeInt(packet.messageId);
-            // NEOFORGE_PORT (26.3): Forge writeUtf(text, 256)/readUtf(256) -> same 256-char cap.
+            
             ByteBufCodecs.stringUtf8(256).encode(buf, packet.text);
         }
 

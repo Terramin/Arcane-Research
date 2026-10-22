@@ -133,7 +133,7 @@ public class TaskHandler {
         if (task.isCompleted() || task.isSuspended()) {
             return;
         }
-        // NEOFORGE_PORT (26.3): client-side guard from Forge 1.20.1 restored (was dropped).
+        
         if (golem.level().isClientSide()) {
             return;
         }

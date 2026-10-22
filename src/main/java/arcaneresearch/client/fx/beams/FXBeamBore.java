@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import net.minecraft.util.ARGB;
 import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-// NEOFORGE_PORT: custom geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXBeamBore extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier BEAM_TEXTURE = Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam.png");
@@ -53,7 +53,7 @@ public class FXBeamBore extends SingleQuadParticle implements BeamEngine.BeamEff
     public FXBeamBore(ClientLevel level, double px, double py, double pz,
                       double tx, double ty, double tz,
                       float r, float g, float b, int maxAge) {
-        super(level, px, py, pz, 0, 0, 0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, px, py, pz, 0, 0, 0, null); 
 
         this.rCol = r;
         this.gCol = g;
@@ -150,8 +150,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
 
     @Override
     public RenderType beamRenderType() {
-        // NEOFORGE_PORT: Forge renderBeam() texture switch by beamType 1:1
-        // (beam1/2/3.png vs beam.png); the bind carries it now.
+        
+        
         return BeamEngine.additiveBeam(switch (beamType) {
             case 1 -> BEAM1_TEXTURE;
             case 2 -> BEAM2_TEXTURE;
@@ -160,19 +160,19 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
         });
     }
 
-            // 26.3 green build: annotation dropped (base signature changed).
+            
     private static final Identifier TC_SHEET_RAW =
             Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
 
     @Override
     public java.util.List<RenderType> beamRenderTypes() {
-        // NEOFORGE_PORT: body (beam texture) + source glow (node texture) + impact (raw sheet).
+        
         return java.util.List.of(beamRenderType(), BeamEngine.additiveBeam(NODE_TEXTURE),
                 BeamEngine.additiveBeam(TC_SHEET_RAW));
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;
@@ -301,8 +301,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
                 {glowSize, glowSize},
                 {glowSize, -glowSize}
         };
-        // NEOFORGE_PORT (26.3): camera.rotation() is now yaw+180 (x flipped vs Forge);
-        // swapped U keeps the Forge sprite orientation (same fix vanilla made).
+        
+        
         float[][] uvs = {
                 {u0, v1},
                 {u0, v0},
@@ -354,8 +354,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
                 {impactSize, impactSize},
                 {impactSize, -impactSize}
         };
-        // NEOFORGE_PORT (26.3): camera.rotation() is now yaw+180 (x flipped vs Forge);
-        // swapped U keeps the Forge sprite orientation (same fix vanilla made).
+        
+        
         float[][] uvs = {
                 {u0, v1},
                 {u0, v0},

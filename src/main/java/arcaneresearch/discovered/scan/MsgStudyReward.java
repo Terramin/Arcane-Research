@@ -16,15 +16,15 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 
-/**
- * Сервер выдал аспекты — клиент показывает анимацию. Порт клиентских половин
- * {@code PacketAspectPool/PacketAspectDiscovery.onMessage} (TC 4.2.3.5):
- * уведомления + летящие иконки + звук подбора.
- *
- * NEOFORGE_PORT: SimpleChannel(ScanNetwork) -&gt; CustomPacketPayload
- * (ручной StreamCodec, порядок полей как в encode/decode 1:1).
- * Payload id "arcaneresearch:scan_study_reward".
- */
+ 
+
+
+
+
+
+
+
+ 
 public class MsgStudyReward implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgStudyReward> TYPE =

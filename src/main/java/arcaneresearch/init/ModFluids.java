@@ -19,19 +19,19 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModFluids.java (same order, same ids, same params).
-// REQUIRED changes only:
-//   DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES / ForgeRegistries.FLUIDS)
-//     -> create(NeoForgeRegistries.FLUID_TYPES / Registries.FLUID)
-//   RegistryObject -> DeferredHolder / DeferredItem (buckets live in ModItems.ITEMS)
-//   ForgeFlowingFluid -> BaseFlowingFluid (identical Properties shape)
-//   ResourceLocation -> Identifier (texture ids preserved verbatim)
-//   initializeClient(IClientFluidTypeExtensions with getStill/getFlowing/getTintColor) REMOVED in 26.3:
-//     still/flow textures + tints are preserved below as constants and wired in
-//     client/ClientFluidModels (RegisterFluidModelsEvent with FluidModel.Unbaked +
-//     BlockTintSources.constant) — same textures, same tint values, same fluids.
-// Gameplay params (density/viscosity/rarity/lightLevel/sounds/slope/level/tickRate,
-// blocks/buckets) preserved verbatim.
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class ModFluids {
 
     public static final DeferredRegister<FluidType> FLUID_TYPES =
@@ -39,8 +39,8 @@ public class ModFluids {
     public static final DeferredRegister<Fluid> FLUIDS =
             DeferredRegister.create(Registries.FLUID, Arcaneresearch.MODID);
 
-    // NEOFORGE_PORT: client visuals preserved (were initializeClient overrides in Forge).
-    // Same textures + same tint values, wired in client/ClientFluidModels.
+    
+    
     public static final Identifier LIQUID_DEATH_STILL =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "block/animatedglow");
     public static final int LIQUID_DEATH_TINT = -263978855;

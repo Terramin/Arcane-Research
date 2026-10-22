@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -21,10 +21,10 @@ import arcaneresearch.client.models.entity.GolemModel;
 import arcaneresearch.common.golems.EntityArcaneresearchGolem;
 import arcaneresearch.common.lib.utils.EntityUtils;
 
-// NEOFORGE_PORT (26.3): MobRenderer<T, S, M>. All entity reads for the OBJ
-// layer (props/material, motion lean, swing, ghost/xray visibility, held and
-// carried items resolved via ItemModelResolver) happen in extractRenderState;
-// GolemObjLayer.submit draws from State only. Ghost/xray passes preserved.
+
+
+
+
 public class GolemRenderer extends MobRenderer<EntityArcaneresearchGolem, GolemRenderer.State, GolemModel> {
 
     public static class State extends LivingEntityRenderState {
@@ -68,8 +68,8 @@ public class GolemRenderer extends MobRenderer<EntityArcaneresearchGolem, GolemR
 
     @Override
     public void extractRenderState(EntityArcaneresearchGolem entity, State state, float partialTicks) {
-        // NEOFORGE_PORT (26.3): 1.20.1 rotated the OBJ by the real body yaw (180 - bodyYaw,
-        // head yaw relative to it); the old body-yaw zeroing here is removed.
+        
+        
         super.extractRenderState(entity, state, partialTicks);
         state.golem = entity;
         state.partialTicks = partialTicks;
@@ -106,15 +106,15 @@ public class GolemRenderer extends MobRenderer<EntityArcaneresearchGolem, GolemR
                         entity.getY() + entity.getBbHeight() / 2.0, entity.getZ());
     }
 
-    // NEOFORGE_PORT (26.3): 1.20.1 Entity.getBoundingBoxForCulling override (inflated box
-    // for held/carried items and large parts) is now a renderer hook.
+    
+    
     @Override
     protected AABB getBoundingBoxForCulling(EntityArcaneresearchGolem entity, float partialTicks) {
         return entity.getCullingBox();
     }
 
-    // NEOFORGE_PORT (26.3): 1.20.1 drew the OBJ outside the living-model transform, rotated
-    // only by 180 - bodyYaw (no death tilt / freeze shake / upside-down name flip).
+    
+    
     @Override
     protected void setupRotations(State state, PoseStack poseStack, float bodyRot, float entityScale) {
         poseStack.rotate(Axis.YP.rotationDegrees(180.0F - bodyRot));

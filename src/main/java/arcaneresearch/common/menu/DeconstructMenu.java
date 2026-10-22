@@ -18,15 +18,15 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-/**
- * Порт {@code thaumcraft.menu.DeconstructionTableMenu} (reforged):
- * слот 0 (64,16) только для предметов с аспектами, инвентарь игрока,
- * синк {@code breaktime}, shift-click, кнопка {@code BUTTON_COLLECT}
- * забирает готовый аспект. Толерантен к отсутствию тайла на клиенте.
- */
+ 
+
+
+
+
+ 
 public class DeconstructMenu extends AbstractContainerMenu {
 
-    /** Кнопка «забрать аспект» — паритет reforged {@code BUTTON_COLLECT}. */
+      
     public static final int BUTTON_COLLECT = 1;
 
     private final BlockPos pos;
@@ -71,7 +71,7 @@ public class DeconstructMenu extends AbstractContainerMenu {
         return tile;
     }
 
-    /** Текущий прогресс разборки для экрана (синк через ContainerData). */
+      
     public int breaktime() {
         return data.get(0);
     }
@@ -80,12 +80,12 @@ public class DeconstructMenu extends AbstractContainerMenu {
         return breaktime() * scale / DeconstructTile.BREAK_TICKS;
     }
 
-    /** Готовый аспект тайла (на клиенте — из синка тайла). */
+      
     public arcaneresearch.api.aspects.Aspect currentAspect() {
         return tile != null ? tile.currentAspect() : null;
     }
 
-    /** Порт {@code clickMenuButton}: кнопка COLLECT забирает аспект в запас. */
+      
     @Override
     public boolean clickMenuButton(Player player, int button) {
         if (button == BUTTON_COLLECT && tile != null && player instanceof ServerPlayer) {
@@ -99,7 +99,7 @@ public class DeconstructMenu extends AbstractContainerMenu {
         return tile != null && tile.stillValid(player);
     }
 
-    /** Shift-click — паритет reforged. */
+      
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
         Slot slot = slots.get(slotIndex);

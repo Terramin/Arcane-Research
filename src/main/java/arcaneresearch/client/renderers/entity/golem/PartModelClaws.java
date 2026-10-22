@@ -1,6 +1,6 @@
 package arcaneresearch.client.renderers.entity.golem;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.api.golems.IGolemAPI;
 import arcaneresearch.api.golems.parts.PartModel;
@@ -16,7 +16,7 @@ public class PartModelClaws extends PartModel {
         if (!partName.startsWith("claw") || GolemRenderContext.poseStack == null) {
             return;
         }
-        // NEOFORGE_PORT: LivingEntity.getAttackAnim gone -> golem swing phase.
+        
         float swing = golem.getGolemEntity() instanceof arcaneresearch.common.golems.EntityArcaneresearchGolem golemEntity
                 ? golemEntity.getArmSwingPhase(partialTicks) : 0.0F;
         float f = swing * 4.1f;

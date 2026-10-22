@@ -16,11 +16,11 @@ import arcaneresearch.common.tiles.TileArcaneresearch;
 
 import java.util.List;
 
-/**
- * Тайл ловушки, порт TC4 TileEldritchTrap: каждые 10-35 тиков бьёт
- * ближайшего игрока в радиусе 3 (2 урона магией + 50% временный варп 1-2)
- * с разрядом-молнией. Лежит в arcaneresearch.arcaneresearch.common.tiles.aura.
- */
+ 
+
+
+
+ 
 public class EldritchTrapTile extends TileArcaneresearch {
     private int count = 20;
 
@@ -68,8 +68,8 @@ public class EldritchTrapTile extends TileArcaneresearch {
             }
             Vec3 eyes = new Vec3(target.getX(), target.getY() + target.getEyeHeight(), target.getZ());
             PacketFXZap zap = new PacketFXZap(center, eyes, 0xFFFFFF, 0.5F);
-            // NEOFORGE_PORT: Forge PacketDistributor.TargetPoint(x,y,z,range,dim) removed ->
-            //   PacketDistributor.sendToPlayersNear(level, except, x, y, z, range, payload).
+            
+            
             if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
                 try {
                     net.neoforged.neoforge.network.PacketDistributor.sendToPlayersNear(

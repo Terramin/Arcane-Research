@@ -22,8 +22,8 @@ public class BlockStabilizer extends BaseEntityBlock {
         super(props
                 .strength(2.0F, 2000.0F)
                 .sound(SoundType.STONE)
-                // Девайс — не куб (рисует TESR): иначе грани соседних блоков,
-                // касающиеся его, отсекаются и соседи выглядят прозрачными.
+                
+                
                 .noOcclusion()
                 .requiresCorrectToolForDrops());
         this.advanced = advanced;
@@ -35,11 +35,11 @@ public class BlockStabilizer extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        // Геометрию рисует StabilizerRenderer (OBJ lock + поршни), куб не нужен.
+        
         return RenderShape.INVISIBLE;
     }
 
-    // NEOFORGE_PORT: 26.x signature is propagatesSkylightDown(BlockState).
+    
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;

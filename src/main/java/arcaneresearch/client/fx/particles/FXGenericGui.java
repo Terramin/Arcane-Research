@@ -32,7 +32,7 @@ public class FXGenericGui extends FXGeneric {
     }
 
 
-    // NEOFORGE_PORT: old render() used 0.1x size; base extract path with override.
+    
     @Override
     public float getQuadSize(float partialTicks) {
         return 0.1f * this.quadSize;

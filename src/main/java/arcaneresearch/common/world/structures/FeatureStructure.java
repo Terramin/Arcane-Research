@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public class FeatureStructure extends Structure {
 
-    // NEOFORGE_PORT: StructureType.codec() is a MapCodec in 26.x (was Codec) - mapCodec form.
+    
     public static final com.mojang.serialization.MapCodec<FeatureStructure> CODEC = RecordCodecBuilder.<FeatureStructure>mapCodec(instance ->
             instance.group(
                     settingsCodec(instance),
@@ -49,16 +49,16 @@ public class FeatureStructure extends Structure {
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
         int min = context.heightAccessor().getMinY();
-        // NEOFORGE_PORT (26.3): getMaxY() is inclusive (= 1.20.1 getMaxBuildHeight() - 1).
+        
         int max = context.heightAccessor().getMaxY() + 1;
         int y = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
                 context.heightAccessor(), context.randomState());
         if (y < min + 2 || y > max - 20) {
-            // Пустотное измерение (Outer Lands на flat-void генераторе, порт
-            // пустого ChunkProviderOuter из TC4): поверхности нет, высота
-            // структуры не важна — комната лабиринта строится на фиксированном
-            // FLOOR_Y. Генерируемся у дна, чтобы бокс оставался валидным.
-            // Обычные миры сюда не попадают (поверхность всегда выше).
+            
+            
+            
+            
+            
             int flat = min + 2;
             if (flat > max - 20) {
                 return Optional.empty();

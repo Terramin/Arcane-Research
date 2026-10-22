@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 
-// NEOFORGE_PORT: camera quad -> base extract path (same math).
+
 public class FXTaintParticle extends SingleQuadParticle {
 
     private float rotationAngle;
@@ -95,7 +95,7 @@ public class FXTaintParticle extends SingleQuadParticle {
     }
 
 
-    // NEOFORGE_PORT: same math as the old render(); immediate verts -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         Vec3 camPos = camera.position();

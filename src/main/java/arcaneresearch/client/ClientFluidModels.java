@@ -10,10 +10,10 @@ import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.init.ModFluids;
 
-// NEOFORGE_PORT: client visuals for Forge 1.20.1 ModFluids.initializeClient overrides.
-// Forge had per-FluidType getStillTexture/getFlowingTexture/getTintColor; 26.3 wires the
-// SAME textures + SAME tint values via RegisterFluidModelsEvent (FluidModel.Unbaked +
-// BlockTintSources.constant). No new textures, no new colors, no behavior change.
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public final class ClientFluidModels {
 

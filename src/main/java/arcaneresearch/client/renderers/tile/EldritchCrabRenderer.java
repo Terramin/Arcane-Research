@@ -19,14 +19,14 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.client.renderers.entity.TurretObjModel;
 
-/**
- * Р РµРЅРґРµСЂ РєСЂР°Р±РѕРІРѕРіРѕ РіРЅРµР·РґР°, РїРѕСЂС‚ TC4 TileEldritchCrabSpawnerRenderer:
- * РІРµРЅС‚-СЂРµС€С‘С‚РєР° (crabvent.obj, РіСЂСѓРїРїР° Vent) РїРѕРІРµСЂС… РєСѓР±Р° Р±Р»РѕРєР°, РїРѕРІРѕСЂРѕС‚
- * РїРѕ facing (РјСЌРїРїРёРЅРі TC4: 0 РІРЅРёР·, 1 РІРІРµСЂС…, 2 СЃРµРІРµСЂ, 3 СЋРі, 4 Р·Р°РїР°Рґ,
- * 5 РІРѕСЃС‚РѕРє вЂ” С‡РµСЂРµР· ForgeDirection; Р·РґРµСЃСЊ РіРѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Рµ 0-3 РєР°Рє
- * Сѓ Р±Р»РѕРєР°). РЎР°Рј Р±Р»РѕРє вЂ” РѕР±С‹С‡РЅС‹Р№ РєСѓР± (РјРѕРґРµР»СЊ). Р›РµР¶РёС‚ РІ arcaneresearch.arcaneresearch.client.renderers.tile.
- * NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1.
- */
+ 
+
+
+
+
+
+
+ 
 public class EldritchCrabRenderer implements BlockEntityRenderer<EldritchCrabTile, EldritchCrabRenderer.State> {
     private static final Identifier VENT_MODEL =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "models/block/crabvent.obj");
@@ -38,11 +38,11 @@ public class EldritchCrabRenderer implements BlockEntityRenderer<EldritchCrabTil
         public byte facing;
     }
 
-    /** Р’РµРЅС‚ РіСЂСѓР·РёРј РѕРґРёРЅ СЂР°Р· (РєР°Рє РєР°Рї РѕР±РµР»РёСЃРєР°): РѕС€РёР±РєР° РєР°Р¶РґС‹Р№ РєР°РґСЂ РЅРµ РЅСѓР¶РЅР°. */
+      
     private static volatile TurretObjModel VENT_OBJ = null;
     private static volatile boolean VENT_TRIED = false;
 
-    /** Double-checked locking: СЂРµРЅРґРµСЂ РјРѕРіСѓС‚ РґС‘СЂРіР°С‚СЊ РїР°СЂР°Р»Р»РµР»СЊРЅРѕ. */
+      
     private static TurretObjModel ventModel() {
         if (!VENT_TRIED) {
             synchronized (EldritchCrabRenderer.class) {
@@ -125,8 +125,8 @@ public class EldritchCrabRenderer implements BlockEntityRenderer<EldritchCrabTil
         return true;
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(EldritchCrabTile blockEntity) {
         return blockEntity.getRenderBoundingBox();

@@ -16,46 +16,46 @@ import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.Camera;
 
-// NEOFORGE_PORT: new registry (no Forge counterpart; Forge drew custom-geometry FX through
-// immediate-mode Particle#render, removed in 26.x). Custom-geometry effects (beams, streams,
-// runes, planes) implement BeamEffect below: they tick here at client-tick rate (same as the
-// old particle engine) and submit world-space quads via SubmitCustomGeometryEvent
-// (the old PARTICLE_SHEET pass equivalent).
+
+
+
+
+
 public final class BeamEngine {
 
     public interface BeamEffect {
-        /** Advance simulation (old Particle#tick body). Return false when finished. */
+          
         boolean beamTick();
 
-        /**
-         * Emit quads with camera-relative coords (same numbers as the old immediate code)
-         * into a fresh identity PoseStack (mirrors the old view-space buffer).
-         */
+         
+
+
+ 
         void emitQuads(VertexConsumer consumer, net.minecraft.client.Camera camera, float partialTicks);
 
-        /** RenderType binding this effect's texture (old setShaderTexture + blend state). */
+          
         RenderType beamRenderType();
 
-        /**
-         * Frame-exact variant (Forge computed the animated frame once from
-         * age+partialTicks and used it for both texture bind and emission).
-         * Effects with animated textures override this; the default keeps the
-         * static bind so existing effects are untouched.
-         */
+         
+
+
+
+
+ 
         default java.util.List<RenderType> beamRenderTypes(float partialTicks) {
             return beamRenderTypes();
         }
 
-        /**
-         * All types this effect emits, in emission order. Multi-texture effects
-         * (beam body + source glow + impact flash) override this plus the typed
-         * emitQuads below; single-texture effects use the defaults.
-         */
+         
+
+
+
+ 
         default java.util.List<RenderType> beamRenderTypes() {
             return java.util.List.of(beamRenderType());
         }
 
-        /** Emit ONLY quads for the given type (default: everything, single-type effects). */
+          
         default void emitQuads(VertexConsumer consumer, net.minecraft.client.Camera camera,
                 float partialTicks, RenderType type) {
             emitQuads(consumer, camera, partialTicks);
@@ -67,8 +67,8 @@ public final class BeamEngine {
     private BeamEngine() {
     }
 
-    // NEOFORGE_PORT (26.3): Forge kept these in the vanilla ParticleEngine, which
-    // is cleared on every level change (setLevel); mirror that here.
+    
+    
     private static net.minecraft.client.multiplayer.ClientLevel trackedLevel;
 
     private static void syncLevel() {
@@ -105,8 +105,8 @@ public final class BeamEngine {
             Minecraft mc = Minecraft.getInstance();
             synchronized (ACTIVE) {
                 syncLevel();
-                // NEOFORGE_PORT (26.3): same gate as vanilla particleEngine.tick()
-                // (frozen while paused or /tick freeze), as in Forge.
+                
+                
                 if (mc.level == null || mc.isPaused() || !mc.level.tickRateManager().runsNormally()) {
                     return;
                 }
@@ -136,7 +136,7 @@ public final class BeamEngine {
             }
             float partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
             net.minecraft.client.Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
-            // Expand (effect, type) pairs in emission order, then group consecutive same-type.
+            
             java.util.List<Job> jobs = new ArrayList<>();
             for (BeamEffect effect : snapshot) {
                 List<RenderType> types;
@@ -169,11 +169,11 @@ public final class BeamEngine {
                 RenderType type, List<Job> batch,
                 net.minecraft.client.Camera camera, float partialTicks) {
             PoseStack poseStack = new PoseStack();
-            // NEOFORGE_PORT (deferred-callback fix): submitCustomGeometry runs the
-            // lambda at feature-render time, AFTER this method returns (see
-            // WandSpecialRenderer.emitWindowed). The caller reuses/clears `batch`,
-            // so the lambda must capture a snapshot, not the live list —
-            // otherwise all but the last batch emit zero quads (invisible beam).
+            
+            
+            
+            
+            
             List<Job> snapshot = new ArrayList<>(batch);
             event.getSubmitNodeCollector().submitCustomGeometry(poseStack, type, (pose, consumer) -> {
                 for (Job job : snapshot) {
@@ -186,8 +186,8 @@ public final class BeamEngine {
         }
     }
 
-    // NEOFORGE_PORT: RenderType has identity equality; cache per texture so batch
-    // grouping and type dispatch (multi-texture effects) compare stable instances.
+    
+    
     private static final java.util.Map<Identifier, RenderType> ADDITIVE_CACHE =
             new java.util.concurrent.ConcurrentHashMap<>();
     private static final java.util.Map<Identifier, RenderType> NORMAL_CACHE =
@@ -197,31 +197,31 @@ public final class BeamEngine {
     private static final java.util.Map<Identifier, RenderType> NORMAL_NOWRITE_CULL_CACHE =
             new java.util.concurrent.ConcurrentHashMap<>();
 
-    /** Additive textured beam look (old blend 770,1 + emissive): explicit LIGHTNING layer. */
+      
     public static RenderType additiveBeam(Identifier texture) {
         return ADDITIVE_CACHE.computeIfAbsent(texture,
                 arcaneresearch.client.renderers.TCRenderTypes::additiveTexturedNoCull);
     }
 
-    /** Alpha-blended textured look (old defaultBlendFunc): explicit TRANSLUCENT layer. */
+      
     public static RenderType normalBeam(Identifier texture) {
         return NORMAL_CACHE.computeIfAbsent(texture,
                 arcaneresearch.client.renderers.TCRenderTypes::translucentPortal);
     }
 
-    /**
-     * Alpha-blended textured look with depth write off (Forge defaultBlendFunc +
-     * depthMask(false): VoidStream ribbon, no cull).
-     */
+     
+
+
+ 
     public static RenderType normalBeamNoDepth(Identifier texture) {
         return NORMAL_NOWRITE_CACHE.computeIfAbsent(texture,
                 arcaneresearch.client.renderers.TCRenderTypes::translucentNoDepthWrite);
     }
 
-    /**
-     * Alpha-blended textured look with depth write off and cull on (Forge
-     * defaultBlendFunc + depthMask(false), cull kept: Sonic cone).
-     */
+     
+
+
+ 
     public static RenderType normalBeamNoDepthCull(Identifier texture) {
         return NORMAL_NOWRITE_CULL_CACHE.computeIfAbsent(texture,
                 arcaneresearch.client.renderers.TCRenderTypes::translucentNoDepthWriteCull);

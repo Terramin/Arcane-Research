@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/config/ModConfig.java.
-// NOTE: Forge had no ForgeConfigSpec here — values are plain statics synced via
-//   syncFlatAliases()/load(); identical approach kept (no spec system to migrate).
+
+
+
 public class ModConfig {
 
     public static float auraSize = 4.0f;
@@ -172,7 +172,7 @@ public class ModConfig {
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), 10, 0);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get()), 10, 0);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), 5, 2);
-        // NEOFORGE_PORT (26.3): Forge loot-bag entry (lesser runic ring) was dropped in the port.
+        
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.RUNIC_RING_LESSER.get()), 5, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), 5, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), 5, 1);
@@ -188,8 +188,8 @@ public class ModConfig {
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.GOLDEN_APPLE, 1), 9, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.BOOK), 10, 0, 1, 2);
 
-        // NEOFORGE_PORT: ForgeRegistries.POTIONS + PotionUtils.setPotion ->
-        // BuiltInRegistries.POTION (values, wrapped as holders) + PotionContents.createItemStack.
+        
+        
         for (net.minecraft.world.item.alchemy.Potion potion : BuiltInRegistries.POTION) {
             var holder = BuiltInRegistries.POTION.wrapAsHolder(potion);
             ArcaneresearchApi.addLootBagItem(net.minecraft.world.item.alchemy.PotionContents.createItemStack(Items.POTION, holder), 2, 0, 1, 2);
@@ -200,7 +200,7 @@ public class ModConfig {
         ItemStack[] commonLoot = {new ItemStack(ModItems.LOOT_BAG_COMMON.get()), new ItemStack(ModItems.THAUMIUM_INGOT.get()), new ItemStack(ModItems.AMBER.get())};
         ItemStack[] uncommonLoot = {new ItemStack(ModItems.LOOT_BAG_UNCOMMON.get()), new ItemStack(ModItems.BAUBLE_AMULET_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get())};
         ItemStack[] rareLoot = {new ItemStack(ModItems.LOOT_BAG_RARE.get()), new ItemStack(ModItems.THAUMONOMICON.get()), new ItemStack(ModItems.THAUMIUM_SWORD.get()), new ItemStack(ModItems.THAUMIUM_AXE.get()), new ItemStack(ModItems.THAUMIUM_HOE.get()), new ItemStack(ModItems.THAUMIUM_PICK.get()), new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), new ItemStack(ModItems.AMULET_VIS_FOUND.get()),
-                // NEOFORGE_PORT (26.3): Forge rare-loot entry dropped in the port.
+                
                 new ItemStack(ModItems.RUNIC_RING_LESSER.get())};
     }
 
@@ -208,7 +208,7 @@ public class ModConfig {
         Arcaneresearch.LOGGER.info("Checking for mod & oredict compatibilities");
         try {
 
-            // NEOFORGE_PORT: ForgeRegistries.ITEMS -> BuiltInRegistries.ITEM (values iterable 1:1).
+            
             for (Item item : BuiltInRegistries.ITEM) {
                 net.minecraft.resources.Identifier id = BuiltInRegistries.ITEM.getKey(item);
                 if (id == null) {
@@ -300,8 +300,8 @@ public class ModConfig {
     }
 
     public static void postInitMisc() {
-        // NEOFORGE_PORT: IPlantable removed in NeoForge; seeds are BlockItems whose block
-        // is plant-like (same replacement as SealHarvest: BushBlock/CropBlock/StemBlock/SaplingBlock).
+        
+        
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof net.minecraft.world.item.BlockItem blockItem) {
                 try {

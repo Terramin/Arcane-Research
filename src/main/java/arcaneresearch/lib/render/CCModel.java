@@ -1,7 +1,7 @@
 package arcaneresearch.lib.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import arcaneresearch.lib.lighting.LC;
 import arcaneresearch.lib.lighting.LightModel;
 import arcaneresearch.lib.render.uv.UV;

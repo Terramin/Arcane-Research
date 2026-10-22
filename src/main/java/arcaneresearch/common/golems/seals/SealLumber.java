@@ -128,7 +128,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
         if (cache.containsKey(task.getId()) && isWoodLog(golem.getGolemWorld(), task.getPos())) {
             return true;
         }
-        // NEOFORGE_PORT (26.3): Forge 1.20.1 does not suspend the task here (it just expires).
+        
         return false;
     }
 

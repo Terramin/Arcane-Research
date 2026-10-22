@@ -19,9 +19,9 @@ import arcaneresearch.common.lib.network.fx.PacketFXBlockBamf;
 import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.common.tiles.aura.TileJarNode;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 common/lib/aura/NodeJarRitual.java (176 lines).
-// Changes: level.isClientSide field -> isClientSide() (kept); level.random -> getRandom();
-// Forge PacketDistributor.TargetPoint -> PacketHandler.sendToNear(packet, level, x, y, z, range).
+
+
+
 public class NodeJarRitual {
     private NodeJarRitual() {
     }
@@ -83,9 +83,9 @@ public class NodeJarRitual {
     }
 
     public static void replaceNodeJar(Level level, BlockPos origin) {
-        // Ритуал банки с узлом: кокон (плиты + стекло) расходуется,
-        // в центре остаётся только банка с узлом. Поэтому сначала снимаем
-        // данные ноды, затем с партиклами разбираем клетку и ставим банку.
+        
+        
+        
         int[][][] blueprint = {
                 {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}},
                 {{2, 2, 2}, {2, 2, 2}, {2, 2, 2}},
@@ -118,8 +118,8 @@ public class NodeJarRitual {
         } catch (Exception e) {
             return;
         }
-        // Разбираем мультиблок с анимацией Bamf на каждом блоке кокона,
-        // как это делают остальные жезловые ритуалы (setBlockSparkle).
+        
+        
         for (int yy = 0; yy < 4; yy++) {
             for (int xx = 0; xx < 3; xx++) {
                 for (int zz = 0; zz < 3; zz++) {
@@ -147,8 +147,8 @@ public class NodeJarRitual {
             jar.setNodeType(nt);
             jar.setId(nid);
             jar.setAnimate(System.currentTimeMillis() + 1000L);
-            // setAnimate уже делает syncTile(true), но дублируем sendBlockUpdated
-            // как в TC4 (block event 9) чтобы гарантировать ререндер.
+            
+            
             jar.syncTile(true);
         }
         sendBamf(level, center, -9999, true, true);
@@ -163,15 +163,15 @@ public class NodeJarRitual {
         if (block == Blocks.GLASS) {
             return true;
         }
-        // любое ванильное стекло (цветное / тонированное) тоже подходит
+        
         return block instanceof net.minecraft.world.level.block.StainedGlassBlock
                 || block instanceof net.minecraft.world.level.block.TintedGlassBlock;
     }
 
     private static void sendBamf(Level level, BlockPos pos, int color, boolean sound, boolean flair) {
         try {
-            // NEOFORGE_PORT: Forge PacketDistributor.TargetPoint removed ->
-            // PacketHandler.sendToNear(packet, level, x, y, z, range) (same 32-block radius).
+            
+            
             PacketHandler.sendToNear(new PacketFXBlockBamf(pos, color, sound, flair, null),
                     level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 32.0D);
         } catch (Exception ignored) {

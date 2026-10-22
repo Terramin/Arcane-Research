@@ -13,15 +13,15 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
 
-/**
- * Client -&gt; Server: сгенерировать hex-поле для проектной записки в слоте.
- * Ключ берётся из {@code DiscoveredNoteData} записки, цели — из
- * {@code HexStages}. Ответ — {@code MsgSyncNote}.
- *
- * NEOFORGE_PORT: SimpleChannel(HexTableNetwork) -&gt; CustomPacketPayload
- * (пустое тело); player.getRandom() жив.
- * Payload id "arcaneresearch:hex_ensure_hex".
- */
+ 
+
+
+
+
+
+
+
+ 
 public class MsgEnsureHex implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgEnsureHex> TYPE =
@@ -70,7 +70,7 @@ public class MsgEnsureHex implements CustomPacketPayload {
             if (key == null || key.isEmpty()) {
                 return;
             }
-            // Мини-игра не запускается без stage-1 на 100% (строгий порядок).
+            
             if (!MsgPlaceAspect.stageOneComplete(stack)) {
                 int pct;
                 try {

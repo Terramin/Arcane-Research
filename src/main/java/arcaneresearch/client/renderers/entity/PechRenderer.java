@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.HumanoidArm;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
@@ -15,10 +15,10 @@ import arcaneresearch.client.models.entity.PechModel;
 import arcaneresearch.client.renderers.entity.mob.PechHeldItemLayer;
 import arcaneresearch.common.entities.monster.EntityPech;
 
-// NEOFORGE_PORT (26.3 render-state rework): MobRenderer<T, S, M); state carries
-// every entity field the old render()/model animation read (pechType for
-// textures, mumble jaw, swing phase, crouch shift, main arm). Hand items come
-// free via ArmedEntityRenderState.extractArmedEntityRenderState.
+
+
+
+
 public class PechRenderer extends MobRenderer<EntityPech, PechRenderer.State, PechModel> {
 
     public static class State extends ArmedEntityRenderState {
@@ -64,7 +64,7 @@ public class PechRenderer extends MobRenderer<EntityPech, PechRenderer.State, Pe
 
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
-        // NEOFORGE_PORT: old render() crouch dip (-0.125) preserved here.
+        
         poseStack.pushPose();
         if (state.crouching) {
             poseStack.translate(0.0F, -0.125F, 0.0F);

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// NEOFORGE_PORT (26.3): trail tube (additive + translucent red passes) via
-// CoreGLE inside submitCustomGeometry; trail points tracked per entity id
-// (same as Forge) and snapshotted into State in extract.
+
+
+
 public class RiftBlastRenderer extends EntityRenderer<EntityRiftBlast, RiftBlastRenderer.State> {
 
     public static class State extends EntityRenderState {
@@ -36,7 +36,7 @@ public class RiftBlastRenderer extends EntityRenderer<EntityRiftBlast, RiftBlast
     }
 
     private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal/end_portal.png"); // NEOFORGE_PORT (26.3): moved
+            Identifier.fromNamespaceAndPath("minecraft", "textures/entity/end_portal/end_portal.png"); 
 
     private static final int TRAIL_LENGTH = 9;
     private static final Map<Integer, Deque<Vec3>> TRAILS = new ConcurrentHashMap<>();
@@ -70,7 +70,7 @@ public class RiftBlastRenderer extends EntityRenderer<EntityRiftBlast, RiftBlast
         if (!trail.isEmpty() && trail.getLast().distanceToSqr(current) > 256.0D) {
             trail.clear();
         }
-        // NEOFORGE_PORT: Level.random protected -> entity random.
+        
         Vec3 sample = current.add(
                 entity.getRandom().nextGaussian() * 0.05,
                 entity.getRandom().nextGaussian() * 0.05,

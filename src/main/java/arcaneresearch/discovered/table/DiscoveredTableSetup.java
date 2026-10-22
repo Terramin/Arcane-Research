@@ -15,17 +15,17 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Регистрация стола записок без правок вне temp/:
- * блок + BlockItem + BlockEntityType + MenuType (RegisterEvent, MOD-bus).
- *
- * NEOFORGE_PORT: net.minecraftforge.* -> net.neoforged.* (EventBusSubscriber
- * без bus = MOD-bus, RegisterEvent с тем же register(ResourceKey, Identifier,
- * Supplier)); ForgeRegistries.Keys.* -> Registries.*; значения через
- * BuiltInRegistries; ResourceLocation -> Identifier;
- * IForgeMenuType.create -> IMenuTypeExtension.create (та же форма фабрики;
- * буфер теперь RegistryFriendlyByteBuf — меню принимает его, см. Menu).
- */
+ 
+
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class DiscoveredTableSetup {
 
@@ -64,8 +64,8 @@ public class DiscoveredTableSetup {
         Identifier id = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, TABLE_ID);
         Identifier singleId = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, SINGLE_TABLE_ID);
         if (event.getRegistryKey().equals(Registries.BLOCK)) {
-            // NEOFORGE_PORT (26.3): direct RegisterEvent does not inject the
-            // id; set it explicitly (same requirement as DeferredRegister).
+            
+            
             block = new CognitionNoteTableBlock(
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
                             .setId(net.minecraft.resources.ResourceKey.create(Registries.BLOCK, id)));
@@ -77,8 +77,8 @@ public class DiscoveredTableSetup {
             Block singleForReg = singleTable;
             event.register(Registries.BLOCK, singleId, () -> singleForReg);
         } else if (event.getRegistryKey().equals(Registries.ITEM)) {
-            // У note_table предмета нет: только двухблочная структура
-            // (ставится кликом чернилами по table).
+            
+            
             if (singleTable != null) {
                 Block tableForItem = singleTable;
                 singleTableItem = new BlockItem(tableForItem, new Item.Properties()

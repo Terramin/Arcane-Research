@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import arcaneresearch.client.fx.BeamEngine;
 import net.minecraft.client.particle.SingleQuadParticle;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +19,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import arcaneresearch.client.fx.particles.TCSprites;
 
-// NEOFORGE_PORT: custom ribbon geometry -> BeamEngine (see BeamEngine.BeamEffect).
+
 public class FXBeamWand extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier BEAM_TEXTURE = Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam.png");
@@ -51,7 +51,7 @@ public class FXBeamWand extends SingleQuadParticle implements BeamEngine.BeamEff
     public FXBeamWand(ClientLevel level, LivingEntity source,
                       double tx, double ty, double tz,
                       float r, float g, float b, int maxAge) {
-        super(level, source.getX(), source.getY(), source.getZ(), 0, 0, 0, null); // NEOFORGE_PORT: sprite unused (custom UVs + raw layer)
+        super(level, source.getX(), source.getY(), source.getZ(), 0, 0, 0, null); 
 
         this.sourceEntity = source;
         this.offset = source.getBbHeight() / 2.0f + 0.25;
@@ -162,7 +162,7 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
 
     @Override
     public RenderType beamRenderType() {
-        // NEOFORGE_PORT: old blendFunc(770, 1) additive + beam texture switch.
+        
         return switch (beamType) {
             case 1 -> BeamEngine.additiveBeam(BEAM1_TEXTURE);
             case 2 -> BeamEngine.additiveBeam(BEAM2_TEXTURE);
@@ -173,12 +173,12 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
 
     @Override
     public java.util.List<RenderType> beamRenderTypes() {
-        // NEOFORGE_PORT: body (beam texture) + impact flash (raw sheet texture).
+        
         return java.util.List.of(beamRenderType(), BeamEngine.additiveBeam(TC_SHEET_RAW));
     }
 
     @Override
-    // NEOFORGE_PORT: BeamEngine drives ticking (engine never sees these).
+    
     public boolean beamTick() {
         tick();
         return !this.removed;
@@ -226,8 +226,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
         if (sourceEntity != null && sourceEntity == mcBeam.player
                 && mcBeam.options.getCameraType().isFirstPerson()) {
 
-            // Кончик жезла — динамически (та же поза, что рендерится).
-            // Луч экскавации (тип 2) — со сдвигом вбок, как верёвка grapple.
+            
+            
             Vec3 tip = null;
             if (sourceEntity instanceof net.minecraft.world.entity.player.Player p) {
                 tip = arcaneresearch.client.lib.events.WandTipHelper.tipWorld(p, partialTicks,
@@ -355,8 +355,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
 
         float impactSize = endMod / 2.0f / (6 - impact);
 
-        // NEOFORGE_PORT: sheet-grid UVs address the RAW sheet texture here
-        // (submitCustomGeometry binds raw textures; no atlas remap needed).
+        
+        
         int frame = age % 16;
         float u0 = frame / 16.0f;
         float u1 = u0 + 0.0625f;
@@ -372,8 +372,8 @@ public void extract(QuadParticleRenderState state, Camera camera, float partialT
                 {impactSize, impactSize},
                 {impactSize, -impactSize}
         };
-        // NEOFORGE_PORT (26.3): camera.rotation() is now yaw+180 (x flipped vs Forge);
-        // swapped U keeps the Forge sprite orientation (same fix vanilla made).
+        
+        
         float[][] uvs = {
                 {u0, v1},
                 {u0, v0},

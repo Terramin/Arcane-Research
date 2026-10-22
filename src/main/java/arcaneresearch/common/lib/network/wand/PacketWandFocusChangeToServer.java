@@ -12,11 +12,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/wand/PacketWandFocusChangeToServer.java (PLAY_TO_SERVER).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with StreamCodec.composite (wire order identical to old encode/decode:
-// legacy leading int 0, playerId, focus).
-// Payload id "arcaneresearch:wand_focus_change_to_server".
+
+
+
+
+
 public class PacketWandFocusChangeToServer implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketWandFocusChangeToServer> TYPE =
@@ -57,7 +57,7 @@ public class PacketWandFocusChangeToServer implements CustomPacketPayload {
     public static void handle(PacketWandFocusChangeToServer msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             ServerPlayer player = (ServerPlayer) ctx.player();
-            // playerId 0 = не указан (старые вызовы без игрока): верим сендеру.
+            
             if (player != null && msg.playerId != 0 && player.getId() != msg.playerId) {
                 player = null;
                 net.minecraft.world.level.Level level = ctx.player().level();

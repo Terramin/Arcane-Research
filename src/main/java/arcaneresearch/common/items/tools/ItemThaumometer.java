@@ -40,15 +40,15 @@ public class ItemThaumometer extends ItemTC {
     private static final double SCAN_RANGE = 9.0;
     private static final double HIGHLIGHT_RANGE = 16.0;
 
-    /**
-     * Длительность изучения (тики удержания ПКМ). Порт
-     * {@code ItemThaumometer.func_77626_a} (TC 4.2.3.5): 25 тиков,
-     * срабатывание при остатке &lt;= 5, т.е. ~20 тиков на одной цели.
-     */
+     
+
+
+
+ 
     private static final int STUDY_DURATION = 25;
     private static final int STUDY_COMPLETE_AT = 5;
 
-    /** Захваченная цель на время удержания, отдельно на сторону (SP: общий класслоадер). */
+      
     private static final java.util.Map<java.util.UUID, String> CLIENT_KEY = new java.util.HashMap<>();
     private static final java.util.Map<java.util.UUID, String> SERVER_KEY = new java.util.HashMap<>();
 
@@ -60,21 +60,21 @@ public class ItemThaumometer extends ItemTC {
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity user) {
-        // NEOFORGE_PORT: getUseDuration now takes the using entity.
+        
         return STUDY_DURATION;
     }
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        // NEOFORGE_PORT: UseAnim -> ItemUseAnimation.
+        
         return ItemUseAnimation.NONE;
     }
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        // NEOFORGE_PORT: InteractionResultHolder removed -> InteractionResult.
+        
         ItemStack stack = player.getItemInHand(hand);
-        // Во второй руке прибор не работает: ни скана, ни использования.
+        
         if (hand == InteractionHand.OFF_HAND) {
             return InteractionResult.PASS;
         }
@@ -85,23 +85,23 @@ public class ItemThaumometer extends ItemTC {
                     ModSounds.SCAN.get(), SoundSource.PLAYERS, 0.5f, 1.0f);
             drawFX(level, player);
         }
-        // Мгновенного скана больше нет: эффект — только после удержания
-        // (см. onUsingTick). Проектное дополнение temp-изучению.
+        
+        
         player.startUsingItem(hand);
         return InteractionResult.CONSUME;
     }
 
-    /**
-     * Порт {@code ItemThaumometer.onUsingTick} (TC 4.2.3.5): цель
-     * захватывается на первом тике ({@code startScan}), смена цели срывает
-     * изучение, при остатке {@code <= 5} — однократный скан сервера.
-     */
+     
+
+
+
+ 
     @Override
     public void onUseTick(Level tickLevel, LivingEntity entity, ItemStack stack, int count) {
         if (!(entity instanceof Player player)) {
             return;
         }
-        // Страховка: изучение из второй руки (перекладка на ходу) — стопаем.
+        
         if (player.getOffhandItem() == stack) {
             player.stopUsingItem();
             return;
@@ -110,7 +110,7 @@ public class ItemThaumometer extends ItemTC {
                 tickLevel.isClientSide() ? CLIENT_KEY : SERVER_KEY;
         String key = steadyKey(tickLevel, player);
         if (count >= STUDY_DURATION) {
-            // Первый тик: захват цели. Пустота — сразу отмена.
+            
             if (key.isEmpty()) {
                 player.stopUsingItem();
                 return;
@@ -120,7 +120,7 @@ public class ItemThaumometer extends ItemTC {
         }
         String held = keys.get(player.getUUID());
         if (held == null || !held.equals(key)) {
-            // Паритет startScan=null: цель сменилась — изучение сорвано.
+            
             keys.remove(player.getUUID());
             player.stopUsingItem();
             return;
@@ -136,7 +136,7 @@ public class ItemThaumometer extends ItemTC {
 
     @Override
     public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        // NEOFORGE_PORT: void -> boolean in 26.x (true = захват цели сброшен).
+        
         if (entity instanceof Player player) {
             CLIENT_KEY.remove(player.getUUID());
             SERVER_KEY.remove(player.getUUID());
@@ -145,7 +145,7 @@ public class ItemThaumometer extends ItemTC {
         return false;
     }
 
-    /** Ключ стабильности цели (сущность важнее блока). */
+      
     private String steadyKey(Level level, Player player) {
         Entity target = getTargetEntity(level, player, SCAN_RANGE, 0.0f);
         if (target != null) {
@@ -164,8 +164,8 @@ public class ItemThaumometer extends ItemTC {
         super.inventoryTick(stack, level, entity, slot);
         if (!(entity instanceof Player player)) return;
 
-        // NEOFORGE_PORT: Forge passed (isSelected, slotId) and treated slotId == 0 as held;
-        // the 26.x hook passes an EquipmentSlot instead, so "held" = the stack is in a hand.
+        
+        
         boolean held = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
 
         if (!held) return;
@@ -174,21 +174,21 @@ public class ItemThaumometer extends ItemTC {
             updateAura(stack, level, serverPlayer);
         }
 
-        // NEOFORGE_PORT: Forge also ran highlightScannables client-side here every
-        // 5 ticks, but Item.inventoryTick is server-only in 26.x. The client phase
-        // drives it instead (ClientEvents.onClientTickPre -> clientTick below),
-        // same held check + same 5-tick gate as Forge.
+        
+        
+        
+        
     }
 
-    // NEOFORGE_PORT: client-phase driver for the Forge inventoryTick client branch.
-    // Called every client tick; runs highlightScannables when a thaumometer is held
-    // and player.tickCount % 5 == 0 (Forge 1:1). Minecraft access stays in client
-    // classes (ClientEvents); this method itself only takes level/player.
-    // NEOFORGE_PORT: parameter is Level, not ClientLevel: 26.x no longer strips @OnlyIn
-    // members at runtime, so a client-only type in a common class signature makes the
-    // dedicated server fail to link this class (NoClassDefFoundError: ClientLevel from
-    // ModItems.<clinit>). The body only uses Level methods; the caller (ClientEvents,
-    // client-only) passes mc.level.
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void clientTick(Level level, Player player) {
         if (player.tickCount % 5 != 0) {
             return;
@@ -224,11 +224,11 @@ public class ItemThaumometer extends ItemTC {
             if ((ac.getFlux() > ac.getVis() || ac.getFlux() > ac.getBase() / 3)
                     && !ArcaneresearchCapabilities.knowsResearch(player, "FLUX")) {
                 ResearchManager.startResearchWithPopup(player, "FLUX");
-                // NEOFORGE_PORT: Player.displayClientMessage REMOVED -> sendOverlayMessage (action bar).
+                
                 player.sendOverlayMessage(
                         Component.translatable("research.FLUX.warn").withStyle(ChatFormatting.DARK_PURPLE));
             }
-            // NEOFORGE_PORT: PacketAuraToClient ported + registered (1:1 ctor).
+            
             PacketHandler.sendToPlayer(new PacketAuraToClient(ac), player);
         }
     }
@@ -255,8 +255,8 @@ public class ItemThaumometer extends ItemTC {
         }
     }
 
-    // NEOFORGE_PORT: static so the client tick driver (clientTick above, called
-    // from ClientEvents) can reach it; body is Forge 1:1 (no instance state used).
+    
+    
     @OnlyIn(Dist.CLIENT)
     public static void highlightScannables(Level level, Player player) {
         Entity target = getTargetEntity(level, player, HIGHLIGHT_RANGE, 5.0f);

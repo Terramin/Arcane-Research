@@ -23,35 +23,35 @@ import arcaneresearch.discovered.table.HexResearchNoteData;
 import arcaneresearch.discovered.table.HexResearchTableMenu;
 import arcaneresearch.discovered.table.HexUtils;
 
-/**
- * Порт {@code thaumcraft.client.gui.GuiResearchTable} (TC 4.2.3.5) на
- * ванильный экран.
- *
- * Хаб: состояние + меню + синк. Раскладка 1-в-1 (логические 255x255):
- * пул аспектов слева, пергамент 150x150, слоты комбинирования + кнопка,
- * пагинация. Знаки координат из декомпила местами ненадёжны, поэтому
- * хит-зоны и отрисовка заданы из одних констант — консистентность
- * гарантирована. Ввод — {@link HexTableInput}, отрисовка — {@link HexTableDraw}.
- *
- * Отличия от оригинала (серверная привязка к реальному тайлу —
- * вопрос отдельно):
- * <ul>
- *   <li>Контейнер — собственный ({@link HexResearchTableMenu} на
- *   {@code SimpleContainer}), дупликация и сдача записки отсутствуют.</li>
- *   <li>Пул — из записки ({@link HexResearchGame}); стирание всегда
- *   возвращает аспект; чернила тратятся при наличии, иначе ход свободен.</li>
- *   <li>Линии связей — повёрнутыми заливками (без GL-линий); орбы —
- *   заливкой (нет ParticleEngine).</li>
- * </ul>
- *
- * NEOFORGE_PORT (26.3 render-state): GuiGraphics -&gt; GuiGraphicsExtractor;
- * render()/renderBg -&gt; extractBackground (слоты/переносимый предмет рисует
- * фреймворк — ручной renderMenuSlots/renderCarried удалён, иначе двойной
- * рендер); тултипы — deferred setComponentTooltipForNextFrame;
- * mouseClicked(MouseButtonEvent, boolean) / mouseDragged(MouseButtonEvent,
- * double, double) / mouseReleased(MouseButtonEvent); left/top -&gt;
- * leftPos/topPos; размеры в конструктор; RenderSystem-бленд удалён.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchTableMenu> {
 
@@ -69,16 +69,16 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
     Aspect dragged;
     double dragX;
     double dragY;
-    /** Запрос генерации hex-поля уже отправлен (ждём MsgSyncNote). */
+      
     boolean hexRequested;
-    /** Копия слота записки для сброса флага при смене предмета. */
+      
     ItemStack lastSlotCopy = ItemStack.EMPTY;
 
-    /**
-     * Кэш порядка пула на кадр: построение (обход + сортировка всех аспектов)
-     * дорого для 4-6 вызовов за кадр — считается один раз в extractBackground.
-     * Вне кадра (клики) — свежий расчёт.
-     */
+     
+
+
+
+ 
     private List<Aspect> poolCache;
 
     private final HexTableDraw draw;
@@ -92,7 +92,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         refreshNote();
     }
 
-    /** Записка живёт в слоте 1 меню (синхронизируется ваниллой). */
+      
     void refreshNote() {
         try {
             this.note = HexResearchNoteData.getData(menu.getSlot(1).getItem());
@@ -104,7 +104,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
     @Override
     protected void init() {
         super.init();
-        // Снимок хранилища для отображения пула (кошелёк + бонус тайла).
+        
         try {
             PacketHandler.sendToServer(new arcaneresearch.discovered.scan.MsgWalletRequest());
         } catch (Exception ignored) {
@@ -115,13 +115,13 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         return minecraft != null ? minecraft.player : null;
     }
 
-    /** Доступ к protected-полям Screen из хелперов того же пакета. */
+      
     net.minecraft.client.gui.Font font() {
         return font;
     }
 
-    /** NEOFORGE_PORT: leftPos/topPos protected в AbstractContainerScreen и недоступны
-     * из хелперов (не наследники); геттеры для HexTableDraw/HexTableInput (те же значения). */
+     
+ 
     public int guiLeft() {
         return leftPos;
     }
@@ -142,10 +142,10 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         return HexResearchGame.isKnown(player(), aspect);
     }
 
-    /** Известные игроку аспекты (источник пула — кошелёк/бонус). */
+      
     private List<Aspect> poolOrder() {
-        // Сортировка — проектным AspectList.getAspectsSortedByName
-        // (тот же пузырёк по getTag, что getAspectsSorted в TC 4.2.3.5).
+        
+        
         arcaneresearch.api.aspects.AspectList known = new arcaneresearch.api.aspects.AspectList();
         for (Aspect aspect : Aspect.aspects.values()) {
             if (aspect != null && known(aspect)) {
@@ -166,17 +166,17 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         return Math.max(0, (count - 20) / 5);
     }
 
-    /** Количество аспекта для отображения: зеркало хранилища (кошелёк). */
+      
     int shownAmount(Aspect aspect) {
         return arcaneresearch.discovered.scan.ScanWallet.viewAmount(aspect);
     }
 
-    /** Бонус аспекта с тайла открытого стола. */
+      
     int shownBonus(Aspect aspect) {
         return arcaneresearch.discovered.scan.ScanWallet.viewBonus(aspect);
     }
 
-    /** Годных инструментов в слоте (иначе пул скрыт, ходы запрещены). */
+      
     boolean hasTools() {
         try {
             ItemStack tools = menu.getSlot(0).getItem();
@@ -187,7 +187,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         }
     }
 
-    /** Серверное состояние ({@code MsgSyncNote}): применяется поверх локального. */
+      
     public void applySync(CompoundTag tag) {
         if (tag == null) {
             return;
@@ -195,8 +195,8 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         if (note != null) {
             note.readFromNBT(tag);
         } else {
-            // Записки ещё не было (генерация с нуля): собираем из пакета,
-            // иначе состояние теряется и создание выглядит сломанным.
+            
+            
             HexResearchNoteData created = new HexResearchNoteData();
             created.readFromNBT(tag);
             if (created.key != null && !created.key.isEmpty()) {
@@ -206,10 +206,10 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         hexRequested = false;
     }
 
-    /**
-     * Просьба серверу сгенерировать hex-поле для проектной записки в слоте
-     * (ключ — из её DiscoveredNoteData). Один запрос до ответа.
-     */
+     
+
+
+ 
     private void requestHexField() {
         if (hexRequested) {
             return;
@@ -230,7 +230,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         sfx(event, volume, 1.0F);
     }
 
-    /** Паритет pitch-джиттера оригинала (hhoff/erase: 1.0 + rand * 0.1). */
+      
     void sfx(SoundEvent event, float volume, float pitch) {
         Player player = player();
         if (player != null && player.level() != null && event != null) {
@@ -251,7 +251,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         return mx >= x && mx < x + w && my >= y && my < y + h;
     }
 
-    /** Пиксель -&gt; гекс поля (координаты относительно центра листа). */
+      
     HexUtils.Hex sheetHex(double mx, double my) {
         HexUtils.Hex hex = new HexUtils.Pixel(mx - (leftPos + HexTableDraw.CX),
                 my - (topPos + HexTableDraw.CY)).toHex(HexTableDraw.HEX);
@@ -261,7 +261,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         return null;
     }
 
-    // ---- input: делегаты в HexTableInput (super — для ванильных слотов) ----
+    
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
@@ -281,19 +281,19 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
                 || super.mouseReleased(event);
     }
 
-    // ---- render ----
+    
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mx, int my, float partialTick) {
-        // NEOFORGE_PORT (26.3): super already draws the 1.20.1 renderBackground dim
-        // (AbstractContainerScreen.isInGameUi -> extractTransparentBackground);
-        // a second fillGradient here doubled the darkening.
+        
+        
+        
         super.extractBackground(graphics, mx, my, partialTick);
         draw.drawTableBackground(graphics);
-        // Кэш порядка пула на кадр (см. poolView).
+        
         poolCache = poolOrder();
         refreshNote();
-        // Слот сменился — разрешаем новый запрос генерации.
+        
         try {
             ItemStack slotNow = menu.getSlot(1).getItem();
             if (!ItemStack.matches(slotNow, lastSlotCopy)) {
@@ -307,8 +307,8 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         } else {
             hexRequested = false;
         }
-        // Авто-сброс селектов с пустым хранилищем (паритет drawAspects),
-        // а также при убранных инструментах.
+        
+        
         if (!hasTools()) {
             select1 = null;
             select2 = null;
@@ -323,7 +323,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
         draw.drawDupe(graphics);
         draw.drawPool(graphics, mx, my);
         draw.drawCombineUi(graphics);
-        // Без записки — только пул и соединение, лист скрыт.
+        
         if (note != null) {
             draw.drawSheet(graphics, mx, my);
         }
@@ -331,7 +331,7 @@ public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchT
 
         draw.drawHover(graphics, mx, my);
         draw.drawInkWarning(graphics);
-        // Кэш живёт только кадр (иначе клики увидят протухший порядок).
+        
         poolCache = null;
     }
 

@@ -40,7 +40,7 @@ public class ItemGrappleGun extends Item implements IRechargable {
     }
 
     public boolean isLoaded(ItemStack stack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA via ArcaneresearchInvHelper (COPY semantics).
+        
         CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
         if (tag != null) {
             return tag.getByteOr("loaded", (byte) 0) == 1;
@@ -49,7 +49,7 @@ public class ItemGrappleGun extends Item implements IRechargable {
     }
 
     public void setLoaded(ItemStack stack, boolean loaded) {
-        // NEOFORGE_PORT: getOrCreateTag() REMOVED -> get copy, mutate, write back.
+        
         CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         tag.putByte("loaded", (byte) (loaded ? 1 : 0));
         ArcaneresearchInvHelper.setCustomTag(stack, tag);
@@ -92,8 +92,8 @@ public class ItemGrappleGun extends Item implements IRechargable {
             }
         }
 
-        // NEOFORGE_PORT: InteractionResultHolder.sidedSuccess REMOVED (and use() now returns
-        // plain InteractionResult); SUCCESS preserves the both-sides-success semantics.
+        
+        
         return InteractionResult.SUCCESS;
     }
 

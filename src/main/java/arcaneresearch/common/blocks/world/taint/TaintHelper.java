@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-// NEOFORGE_PORT: IPlantable removed in NeoForge (see instanceof VegetationBlock below).
+
 import arcaneresearch.api.aura.AuraHelper;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintSeed;
@@ -122,9 +122,9 @@ public class TaintHelper {
                 (level.isEmptyBlock(target) ||
                         bs.canBeReplaced() ||
                         block instanceof FlowerBlock ||
-                        // NEOFORGE_PORT (26.3): Forge IPlantable == 1.20.1 BushBlock (now VegetationBlock:
-                        // flowers, grass, saplings, crops, mushrooms...) + CactusBlock + SugarCaneBlock.
-                        // 26.x BushBlock is only the "bush" block.
+                        
+                        
+                        
                         block instanceof net.minecraft.world.level.block.VegetationBlock ||
                         block instanceof net.minecraft.world.level.block.CactusBlock ||
                         block instanceof net.minecraft.world.level.block.SugarCaneBlock) &&
@@ -226,7 +226,7 @@ public class TaintHelper {
                 && level.getRandom().nextFloat() < ModConfig.taintSpreadRate / 100.0f * 0.33f
                 && isAtTaintSeedEdge(level, target)) {
             EntityTaintSeed seed = new EntityTaintSeed(level);
-            // NEOFORGE_PORT (26.3): Forge moveTo(x, y, z, yaw, pitch) == snapTo (also sets old pos/rot).
+            
             seed.snapTo(target.getX() + 0.5, target.above().getY(), target.getZ() + 0.5,
                     level.getRandom().nextFloat() * 360.0f, 0.0f);
             if (seed.checkSpawnRules(level, net.minecraft.world.entity.EntitySpawnReason.EVENT)) {

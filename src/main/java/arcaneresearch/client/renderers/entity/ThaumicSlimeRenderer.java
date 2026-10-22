@@ -7,14 +7,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 import net.minecraft.client.renderer.entity.state.SlimeRenderState;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.EntityThaumicSlime;
 
-// NEOFORGE_PORT (26.3): vanilla SlimeModel/SlimeOuterLayer/SlimeRenderState
-// (squish/size); shadow radius via getShadowRadius hook, squish via scale hook.
+
+
 public class ThaumicSlimeRenderer extends MobRenderer<EntityThaumicSlime, SlimeRenderState, SlimeModel> {
 
     private static final Identifier TEXTURE =

@@ -5,7 +5,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber; // NEOFORGE_PORT: was Mod
+import net.neoforged.fml.common.EventBusSubscriber; 
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -18,7 +18,7 @@ public class WandClientEvents {
     private static final WandRenderingHandler WAND_HANDLER = new WandRenderingHandler();
     private static final WandHudHandler HUD_HANDLER = new WandHudHandler();
 
-    // NEOFORGE_PORT: RenderGuiEvent removed in 26.x -> GuiLayer.
+    
     public static final GuiLayer WAND_LAYER = (graphics, deltaTracker) -> {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) {

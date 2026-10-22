@@ -26,8 +26,8 @@ import arcaneresearch.common.tiles.misc.TileBanner;
 
 import java.awt.*;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (texture select, facing/wave animation, aspect icon).
+
+
 public class BannerRenderer implements BlockEntityRenderer<TileBanner, BannerRenderer.State> {
 
     private static final Identifier TEX_CULT =
@@ -133,8 +133,8 @@ public class BannerRenderer implements BlockEntityRenderer<TileBanner, BannerRen
             model.renderTabs(work, consumer, light, OverlayTexture.NO_OVERLAY, fr, fg, fb, 1.0f);
         });
 
-        // NEOFORGE_PORT (26.3): geometry is emitted later (deferred) and the model is
-        // shared, so the per-banner wave rotation is applied inside the callback.
+        
+        
         final float waveRx = state.waveRx;
         collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
             PoseStack work = bridge(pose);
@@ -170,7 +170,7 @@ public class BannerRenderer implements BlockEntityRenderer<TileBanner, BannerRen
                                   int x, int y, int packedLight, float alpha) {
         if (aspect == null) return;
 
-        // NEOFORGE_PORT (Forge 1:1): Вырезка фона через общий helper — как в world popup.
+        
         Identifier texture = UtilsFX.strippedAspectTexture(aspect.getImage());
         RenderType type = TCRenderTypes.translucentPortal(texture);
 
@@ -201,8 +201,8 @@ public class BannerRenderer implements BlockEntityRenderer<TileBanner, BannerRen
                 .setNormal(pose, 0, 0, 1);
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(TileBanner blockEntity) {
         return blockEntity.getRenderBoundingBox();

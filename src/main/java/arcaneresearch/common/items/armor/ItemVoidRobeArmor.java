@@ -25,19 +25,19 @@ import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.items.IVisDiscountGear;
 import arcaneresearch.api.items.IWarpingGear;
 
-// NEOFORGE_PORT: ArmorItem REMOVED in 26.x (verified via javap) -> plain Item with
-// .humanoidArmor(material, type). ArmorItem.Type -> ArmorType; the worn piece is tracked in
-// the armorType field (Item no longer knows its own slot).
-// NEOFORGE_PORT: DyeableLeatherItem REMOVED in 26.x -> dyed color is DataComponents.DYED_COLOR
-// (DyedItemColor, verified via javap); getColor/setColor/clearColor/hasCustomColor below are kept
-// as plain methods on the same semantics (default color when the component is absent).
+
+
+
+
+
+
 public class ItemVoidRobeArmor extends Item
         implements IVisDiscountGear, IGoggles, IRevealer, IWarpingGear, IRunicArmor {
 
-    /**
-     * Паритет TC4: вся таум-броня — IRunicArmor с нулевым базовым зарядом
-     * (пул собирается из TC.RUNIC от рунического аугмента).
-     */
+     
+
+
+ 
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
@@ -45,14 +45,14 @@ public class ItemVoidRobeArmor extends Item
 
     private static final int DEFAULT_COLOR = 6961280;
 
-    // NEOFORGE_PORT: replaces the removed ArmorItem.getType() for per-piece logic.
+    
     private final ArmorType armorType;
 
     public ItemVoidRobeArmor(Item.Properties props, ArmorType type) {
-        // NEOFORGE_PORT: super(material, type, props) -> super(props.humanoidArmor(material, type)).
+        
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_VOIDROBE, type)
-                // NEOFORGE_PORT (26.3): humanoidArmor() uses vanilla per-slot units (11/16/15/13);
-                // Forge indexed {13,15,16,11} by ArmorItem.Type ordinal -> restore Forge durability.
+                
+                
                 .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(
                         ArcaneresearchArmorMaterials.ARMORMAT_VOIDROBE, type))
                 .stacksTo(1)
@@ -76,24 +76,24 @@ public class ItemVoidRobeArmor extends Item
         return armorType;
     }
 
-    // NEOFORGE_PORT: Forge isValidRepairItem accepted the void metal ingot item (or the material match).
-    // Item.isValidRepairItem was removed in 26.x (verified via javap - repair is now data-driven
-    // via the ArmorMaterial repairIngredient tag); ARMORMAT_VOIDROBE maps to the repairs_void data
-    // tag (void metal ingot, as Forge used), so no override is needed (or possible).
+    
+    
+    
+    
 
-    // NEOFORGE_PORT: Forge armor-model/texture parity -> arcaneresearch.client.ArmorClientSetup.
+    
 
     @Override
-    // NEOFORGE_PORT: inventoryTick(ItemStack, Level, Entity, int, boolean) REMOVED in 26.x ->
-    // inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot) (server-only hook, so the old
-    // !level.isClientSide() guard is implied).
-    // NEOFORGE_PORT: LivingEntity.getArmorSlots() REMOVED in 26.x (verified via javap) ->
-    // iterate HEAD/CHEST/LEGS/FEET with getItemBySlot.
+    
+    
+    
+    
+    
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
-        // NEOFORGE_PORT (26.3): Forge only ticked the player inventory (mob gear never reached
-        // inventoryTick); 26.3 EntityEquipment.tick also ticks mob equipment -> players only.
+        
+        
         if (stack.isDamaged() && entity.tickCount % 20 == 0
                 && entity instanceof Player living) {
             stack.setDamageValue(stack.getDamageValue() - 1);
@@ -127,7 +127,7 @@ public class ItemVoidRobeArmor extends Item
         return 3;
     }
 
-    // NEOFORGE_PORT: Forge armor-model/texture parity -> arcaneresearch.client.ArmorClientSetup.
+    
 
     public int getColor(ItemStack stack) {
         return DyedItemColor.getOrDefault(stack, DEFAULT_COLOR);
@@ -158,8 +158,8 @@ public class ItemVoidRobeArmor extends Item
                     clearColor(stack);
                     LayeredCauldronBlock.lowerFillLevel(state, level, pos);
                 }
-                // NEOFORGE_PORT: InteractionResult.sidedSuccess(boolean) REMOVED in 26.x ->
-                // (client ? SUCCESS : CONSUME), the same convention as the other ported useOn methods.
+                
+                
                 return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
             }
         }

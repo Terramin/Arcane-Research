@@ -38,10 +38,10 @@ public class ScanSky implements IScanThing {
 
         Level level = player.level();
 
-        // NEOFORGE_PORT (26.3): Level.getDayTime gone -> getOverworldClockTime (the
-        // overworld world-clock = old day time: follows /time set and sleep skips,
-        // and drives the vanilla moon-phase timeline). getGameTime never skips, so
-        // angle/day/phase drifted from the visible sky after the first slept night.
+        
+        
+        
+        
         int yaw = (int) (player.getYRot() + 90.0f) % 360;
         int pitch = (int) Math.abs(player.getXRot());
         int celestialAngle = (int) ((level.getOverworldClockTime() / 24000.0 + 0.25) * 360.0) % 360;
@@ -108,8 +108,8 @@ public class ScanSky implements IScanThing {
     }
 
     private boolean hasScribingTools(Player player) {
-        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (the same
-        // 36 main slots; getContainerSize() would also count armor/offhand, unlike Forge).
+        
+        
         for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.getItem() instanceof IScribeTools) {
                 return true;

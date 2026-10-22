@@ -15,8 +15,8 @@ import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.entities.projectile.EntityGolemDart;
 
-// NEOFORGE_PORT (26.3): arrow-quad dart via per-quad submitCustomGeometry
-// emissions (rotations differ per quad, baked eagerly). UV layout 1:1.
+
+
 public class GolemDartRenderer extends EntityRenderer<EntityGolemDart, GolemDartRenderer.State> {
 
     public static class State extends EntityRenderState {

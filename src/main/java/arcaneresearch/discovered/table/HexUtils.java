@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-/**
- * Порт {@code thaumcraft.common.lib.utils.HexUtils} (TC 4.2.3.5, 1.7.10).
- * Акскиальная гекс-геометрия мини-игры исследовательского стола 1-в-1:
- * соседи, axial&lt;-&gt;pixel (flat-top), кубическое округление,
- * кольцо, случайное распределение целей, генерация сплошного поля.
- *
- * NEOFORGE_PORT: чистый java-класс, без изменений (1:1 из Forge 1.20.1).
- */
+ 
+
+
+
+
+
+
+ 
 public class HexUtils {
 
     static final int[][] NEIGHBOURS = {{1, 0}, {1, -1}, {0, -1}, {-1, 0}, {-1, 1}, {0, 1}};
@@ -83,13 +83,13 @@ public class HexUtils {
             this.y = y;
         }
 
-        /**
-         * Дословный порт оригинала (включая {@code -y}): вместе с порядком
-         * слотов {@code getRoundedHex(qq, rr) -> getRoundedCubicHex(qq, rr,
-         * -qq-rr).toHex() -> Hex(x, z)} это даёт точный инверс
-         * {@link Hex#toPixel} (проверено подстановкой центров гексов).
-         * «Исправление» знака на +y зеркалит выбор по вертикали.
-         */
+         
+
+
+
+
+
+ 
         public Hex toHex(int size) {
             double qq = 0.6666666666666666D * this.x / size;
             double rr = (0.3333333333333333D * Math.sqrt(3.0D) * -this.y - 0.3333333333333333D * this.x) / size;

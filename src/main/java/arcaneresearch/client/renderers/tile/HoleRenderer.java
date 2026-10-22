@@ -17,13 +17,13 @@ import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.tiles.misc.TileHole;
 import arcaneresearch.init.ModBlocks;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (void face on each solid-neighbour side, end-portal shader quad).
+
+
 public class HoleRenderer implements BlockEntityRenderer<TileHole, HoleRenderer.State> {
 
     public static class State extends BlockEntityRenderState {
         public boolean hasLevel;
-        // NEOFORGE_PORT: per-face solidity stashed (level reads forbidden in submit).
+        
         public boolean[] solid = new boolean[6];
     }
 
@@ -43,7 +43,7 @@ public class HoleRenderer implements BlockEntityRenderer<TileHole, HoleRenderer.
         if (state.hasLevel) {
             for (Direction face : Direction.values()) {
                 BlockState adjacentState = tile.getLevel().getBlockState(tile.getBlockPos().relative(face));
-                // NEOFORGE_PORT: isSolidRender(level, pos) -> no-arg (cached).
+                
                 state.solid[face.ordinal()] = adjacentState.isSolidRender()
                         && !adjacentState.is(ModBlocks.HOLE.get());
             }
@@ -78,8 +78,8 @@ public class HoleRenderer implements BlockEntityRenderer<TileHole, HoleRenderer.
 
             poseStack.translate(0, 0, -0.499);
             float half = 0.5f;
-            // NEOFORGE_PORT: Forge СЃР»Р°Р» С‚РѕР»СЊРєРѕ РїРѕР·РёС†РёРё (POSITION-С„РѕСЂРјР°С‚ РїРѕСЂС‚Р°Р»Р°);
-            // С€РµР№РґРµСЂ СЃС‡РёС‚Р°РµС‚ РїСЂРѕРµРєС†РёСЋ СЃР°Рј вЂ” С‚РѕС‚ Р¶Рµ РјРёРЅРёРјСѓРј.
+            
+            
             collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
                 consumer.addVertex(pose, -half, -half, 0);
                 consumer.addVertex(pose, half, -half, 0);

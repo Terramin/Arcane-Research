@@ -40,7 +40,7 @@ public class FocusPouchScreen extends AbstractContainerScreen<FocusPouchMenu> {
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         int x = this.leftPos;
         int y = this.topPos;
 

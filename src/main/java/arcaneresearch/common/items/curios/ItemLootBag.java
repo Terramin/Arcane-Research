@@ -43,8 +43,8 @@ public class ItemLootBag extends Item {
         return tier;
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // InteractionResultHolder.sidedSuccess(stack, client) -> InteractionResult.SUCCESS.
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -74,9 +74,9 @@ public class ItemLootBag extends Item {
         return arcaneresearch.common.lib.utils.Utils.generateLoot(tier.ordinal(), level.getRandom(), level.registryAccess());
     }
 
-    // NEOFORGE_PORT: OnlyIn/Dist moved to net.neoforged.api.distmarker; appendHoverText signature
-    // changed in 26.x (ItemStack, Level, List) -> (ItemStack, TooltipContext, TooltipDisplay,
-    // Consumer, TooltipFlag).
+    
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

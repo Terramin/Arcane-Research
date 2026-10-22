@@ -6,15 +6,15 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Port of Thaumic Inventory Scanning (BlayTheNinth, MIT) network plumbing.
- * Lets a player scan by hovering targets inside container menus.
- *
- * NEOFORGE_PORT: Forge SimpleChannel("arcaneresearch:invscan") -&gt; CustomPacketPayload
- * регистр (тот же modid/version "1", что у PacketHandler/ScanNetwork;
- * playToServer для обоих сообщений; payload-id "invscan_slot"/"invscan_self").
- * Отправка клиентом — PacketHandler.sendToServer (ClientPacketDistributor).
- */
+ 
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class InvScanNetwork {
 

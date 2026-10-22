@@ -2,19 +2,19 @@ package arcaneresearch.client;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber; // NEOFORGE_PORT: was Mod
+import net.neoforged.fml.common.EventBusSubscriber; 
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.gui.screens.WandFocusPouchScreen;
 import arcaneresearch.common.menu.WandMenuTypes;
 
-// NEOFORGE_PORT: FMLClientSetupEvent.enqueueWork(MenuScreens/EntityRenderers
-// .register) -> RegisterMenuScreensEvent/RegisterRenderers (same pairs).
-// ItemWand.initializeClient(Consumer) is DEAD in 26.x (Item.initializeClient
-// removed): the first-person use animation (WandUseAnimation.HAND_EXTENSION,
-// applyForgeHandTransform hook itself still exists) must be registered here
-// via RegisterClientExtensionsEvent, otherwise the wand has no use animation.
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class WandClientSetup {
     @SubscribeEvent
@@ -62,8 +62,8 @@ public class WandClientSetup {
                 arcaneresearch.common.entities.WandEntities.HELLBAT.get(),
                 arcaneresearch.client.renderers.entity.FireBatRenderer::new);
 
-        // NEOFORGE_PORT: Forge registered these via direct BlockEntityRenderers.register
-        // here; 26.x equivalent is event.registerBlockEntityRenderer (same pairs).
+        
+        
         event.registerBlockEntityRenderer(
                 arcaneresearch.common.blocks.aura.AuraBlockEntities.AURA_NODE.get(),
                 arcaneresearch.client.renderers.tile.AuraNodeRenderer::new);

@@ -11,7 +11,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.EntityHellbat;
 import arcaneresearch.common.entities.projectile.*;
 
-// NEOFORGE_PORT: 1:1 entries; RegistryObject -> DeferredHolder, build(String) -> build(ResourceKey).
+
 public class WandEntities {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(Registries.ENTITY_TYPE, Arcaneresearch.MODID);

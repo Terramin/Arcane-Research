@@ -67,7 +67,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public boolean getSingleplayer() {
-        // NEOFORGE_PORT: Minecraft.isSingleplayer removed -> hasSingleplayerServer (same meaning).
+        
         return Minecraft.getInstance().hasSingleplayerServer();
     }
 

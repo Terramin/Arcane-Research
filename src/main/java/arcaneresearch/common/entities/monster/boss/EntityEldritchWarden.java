@@ -134,11 +134,11 @@ public class EntityEldritchWarden extends EntityArcaneresearchBoss implements Ra
         });
     }
 
-    /**
-     * Во Внешних землях надзиратель агрится только на игроков
-     * (иначе режет стражей и культистов лабиринта). В остальных
-     * измерениях поведение обычное.
-     */
+     
+
+
+
+ 
     private boolean isOuterLandsOnlyPlayers() {
         try {
             return level().dimension().equals(
@@ -207,8 +207,8 @@ public class EntityEldritchWarden extends EntityArcaneresearchBoss implements Ra
         return super.finalizeSpawn(level, difficulty, spawnType, spawnData);
     }
 
-    // NEOFORGE_PORT: getEyeHeight is final in Entity (26.x); 3.1 set in
-    // ModEntities ELDRITCH_WARDEN builder (.eyeHeight(3.1)).
+    
+    
 
     @Override
     protected void customServerAiStep(net.minecraft.server.level.ServerLevel serverLevel) {
@@ -337,7 +337,7 @@ public class EntityEldritchWarden extends EntityArcaneresearchBoss implements Ra
             BlockState below = level().getBlockState(checkPos.below());
             BlockState at = level().getBlockState(checkPos);
 
-            // NEOFORGE_PORT (26.3): BlockState.blocksMotion() removed; it was isSolid() minus cobweb/bamboo sapling.
+            
             if (below.isSolid() && !below.is(net.minecraft.world.level.block.Blocks.COBWEB)
                     && !below.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING)
                     && !(at.isSolid() && !at.is(net.minecraft.world.level.block.Blocks.COBWEB)

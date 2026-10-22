@@ -8,11 +8,11 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.fx.FXDispatcher;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXNodeBolt.java (PLAY_TO_CLIENT).
-// Fields/ctor preserved verbatim (two endpoints + server seed so the fractal shape
-// is identical on all clients); transport -> CustomPacketPayload with manual
-// StreamCodec (wire order identical to old encode/decode: 6 doubles, long).
-// Payload id "arcaneresearch:fx_node_bolt".
+
+
+
+
+
 public class PacketFXNodeBolt implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXNodeBolt> TYPE =

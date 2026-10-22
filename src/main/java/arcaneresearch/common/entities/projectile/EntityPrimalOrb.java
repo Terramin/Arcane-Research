@@ -47,8 +47,8 @@ public class EntityPrimalOrb extends ThrowableItemProjectile {
         return Items.SNOWBALL;
     }
 
-    // NEOFORGE_PORT: getGravity() removed in 26.x (getGravity is final);
-    // near-zero gravity preserved via getDefaultGravity (verified via javap on Entity).
+    
+    
     @Override
     protected double getDefaultGravity() {
         return 0.001D;

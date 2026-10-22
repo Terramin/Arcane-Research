@@ -102,8 +102,8 @@ public class GolemInteractionHelper {
     }
 
     private static void dropSomeItems(FakePlayer fp, IGolemAPI golem) {
-        // NEOFORGE_PORT (26.3): getContainerSize() now also spans the equipment slots
-        // (armor/offhand/body); 1.20.1 walked Inventory.items only (the 36 main slots).
+        
+        
         for (int i = 0; i < fp.getInventory().getNonEquipmentItems().size(); i++) {
             ItemStack stack = fp.getInventory().getItem(i);
             if (!stack.isEmpty()) {
@@ -120,7 +120,7 @@ public class GolemInteractionHelper {
             }
         }
 
-        // NEOFORGE_PORT: Inventory.armor list gone -> equipment slots.
+        
         for (net.minecraft.world.entity.EquipmentSlot slot : new net.minecraft.world.entity.EquipmentSlot[]{
                 net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
                 net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) {

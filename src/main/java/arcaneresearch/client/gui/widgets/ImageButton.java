@@ -2,13 +2,13 @@ package arcaneresearch.client.gui.widgets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
-import net.minecraft.util.ARGB; // NEOFORGE_PORT: tint via blit color
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
+import net.minecraft.util.ARGB; 
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 
 import java.awt.*;
 import java.util.function.Consumer;
@@ -58,7 +58,7 @@ public class ImageButton extends AbstractWidget {
         return description;
     }
 
-    // NEOFORGE_PORT: renderWidget -> extractWidgetRenderState.
+    
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         Font font = Minecraft.getInstance().font;
@@ -78,7 +78,7 @@ public class ImageButton extends AbstractWidget {
             alpha = 0.9f;
         }
 
-        // NEOFORGE_PORT: tint baked into blit color (same values as the shader tint).
+        
         int tint = ARGB.colorFromFloat(alpha,
                 brightness * (c.getRed() / 255.0f),
                 brightness * (c.getGreen() / 255.0f),
@@ -98,7 +98,7 @@ public class ImageButton extends AbstractWidget {
             }
 
             graphics.pose().pushMatrix();
-            // NEOFORGE_PORT: Forge translate(x, y, 0) + scale(0.5) kept (2D stack: 2-arg).
+            
             graphics.pose().translate(getX(), getY());
             graphics.pose().scale(0.5f, 0.5f);
             graphics.centeredText(font, Component.translatable(text), 0, -4, textColor);
@@ -106,9 +106,9 @@ public class ImageButton extends AbstractWidget {
         }
     }
 
-    // NEOFORGE_PORT (26.3): screens hit-test children via isMouseOver (getChildAt) and
-    // swallow the click on the first hit; Forge's mouseClicked ignored hidden buttons,
-    // so a hidden button must not report hover (else it eats clicks meant for slots).
+    
+    
+    
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
 
@@ -116,7 +116,7 @@ public class ImageButton extends AbstractWidget {
                 mouseY >= getY() - height / 2 && mouseY < getY() + height / 2;
     }
 
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();

@@ -96,7 +96,7 @@ public class EntityCultist extends Monster {
     }
 
     @Override
-    // NEOFORGE_PORT: Entity.isAlliedTo(Entity) final in 26.x -> considersEntityAsAlly (same body).
+    
     protected boolean considersEntityAsAlly(Entity entity) {
 
         if (entity instanceof EntityCultist) {

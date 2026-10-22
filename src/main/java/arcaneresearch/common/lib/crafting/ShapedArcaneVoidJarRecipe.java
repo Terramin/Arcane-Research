@@ -16,10 +16,10 @@ import arcaneresearch.init.ModBlocks;
 import java.util.List;
 import java.util.Optional;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/crafting/ShapedArcaneVoidJarRecipe.java.
-// Only the 26.x recipe shape changed: parent ctor takes List<Optional<Ingredient>>,
-// assemble(IArcaneWorkbench) single-arg, codecs map through the parent codec and rewrap
-// (same JSON keys as arcane_workbench_shaped). Jar-NBT copy logic VERBATIM.
+
+
+
+
 public class ShapedArcaneVoidJarRecipe extends ShapedArcaneRecipe {
 
     public static final MapCodec<ShapedArcaneVoidJarRecipe> MAP_CODEC =
@@ -55,9 +55,9 @@ public class ShapedArcaneVoidJarRecipe extends ShapedArcaneRecipe {
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack in = container.getItem(i);
             if (!in.isEmpty() && Block.byItem(in.getItem()) == ModBlocks.JAR_NORMAL.get()) {
-                // NEOFORGE_PORT (26.3): Forge res.setTag(in.getTag().copy()) REPLACED the result's
-                // whole NBT (essentia/label custom data, but also custom name, enchantments...).
-                // Component equivalent: rebuild the result on the jar's full component patch.
+                
+                
+                
                 net.minecraft.core.component.DataComponentPatch inPatch = in.getComponentsPatch();
                 if (!inPatch.isEmpty()) {
                     res = new ItemStack(res.typeHolder(), res.getCount(), inPatch);
@@ -73,8 +73,8 @@ public class ShapedArcaneVoidJarRecipe extends ShapedArcaneRecipe {
         return Serializer.INSTANCE;
     }
 
-    // NEOFORGE_PORT: kept so existing references keep resolving; the registered
-    // serializer instance is SERIALIZER above.
+    
+    
     public static class Serializer {
         public static final RecipeSerializer<ShapedArcaneVoidJarRecipe> INSTANCE = SERIALIZER;
     }

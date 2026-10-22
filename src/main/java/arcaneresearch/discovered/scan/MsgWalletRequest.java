@@ -18,15 +18,15 @@ import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.discovered.table.HexNoteTableTile;
 import arcaneresearch.discovered.table.HexResearchTableMenu;
 
-/**
- * Клиент -&gt; сервер: «дай снимок хранилища» (при открытии GUI).
- * Ответ — {@link MsgWalletSync}: кошелёк игрока + бонус тайла открытого
- * меню (у прототипа без тайла бонус пуст).
- *
- * NEOFORGE_PORT: SimpleChannel(ScanNetwork) -&gt; CustomPacketPayload
- * (пустое тело; порядок регистрации — в ScanNetwork).
- * Payload id "arcaneresearch:scan_wallet_request".
- */
+ 
+
+
+
+
+
+
+
+ 
 public class MsgWalletRequest implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgWalletRequest> TYPE =
@@ -59,7 +59,7 @@ public class MsgWalletRequest implements CustomPacketPayload {
         });
     }
 
-    /** Отправить игроку снимок (после каждой мутации пула). */
+      
     public static void push(ServerPlayer player) {
         if (player == null) {
             return;

@@ -76,8 +76,8 @@ public class SmelterMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        // Плавильни трёх типов (basic/thaumium/void) — общий BlockSmelter,
-        // поэтому сверяемся с блоком именно этой печи, а не только basic.
+        
+        
         return stillValid(access, player, blockEntity.getBlockState().getBlock());
     }
 

@@ -18,8 +18,8 @@ import net.neoforged.api.distmarker.Dist;
 import org.joml.Vector3f;
 import arcaneresearch.common.tiles.crafting.TileVoidSiphon;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge renderVoidBox() body 1:1
-// (two nested end-portal boxes; custom GL types -> vanilla endPortal()).
+
+
 public class VoidSiphonRenderer implements BlockEntityRenderer<TileVoidSiphon, VoidSiphonRenderer.State> {
 
     public static class State extends BlockEntityRenderState {
@@ -68,8 +68,8 @@ public class VoidSiphonRenderer implements BlockEntityRenderer<TileVoidSiphon, V
         poseStack.pushPose();
         poseStack.translate(0.5, height, 0.5);
 
-        // NEOFORGE_PORT: custom void types gone; vanilla endPortal() shader
-        // (same portal look; additive/translucent split approximated by one pass).
+        
+        
         RenderType type = RenderTypes.endPortal();
 
         for (Direction face : Direction.values()) {
@@ -107,7 +107,7 @@ public class VoidSiphonRenderer implements BlockEntityRenderer<TileVoidSiphon, V
     }
 
     private static void portalVert(VertexConsumer consumer, PoseStack.Pose pose, float x, float y) {
-        // NEOFORGE_PORT: Forge СЃР»Р°Р» С‚РѕР»СЊРєРѕ РїРѕР·РёС†РёРё (POSITION-С„РѕСЂРјР°С‚ РїРѕСЂС‚Р°Р»Р°).
+        
         consumer.addVertex(pose, x, y, 0);
     }
 }

@@ -10,16 +10,16 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.RandomSource;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.projectile.EntityEldritchOrb;
 
-// NEOFORGE_PORT (26.3): tendril fan + billboard sprite via submitCustomGeometry.
-// Seeded-random rotation sequence preserved 1:1 (each tendril gets its own
-// emission with the pose baked eagerly, since snapshots are per-submit).
+
+
+
 public class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb, EldritchOrbRenderer.State> {
 
     public static class State extends EntityRenderState {

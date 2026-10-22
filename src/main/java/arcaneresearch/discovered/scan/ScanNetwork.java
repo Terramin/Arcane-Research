@@ -6,16 +6,16 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 import arcaneresearch.Arcaneresearch;
 
-/**
- * Регистрация сети изучения таумометром. Свои сообщения, регистрация
- * пакетов проекта не тронута.
- *
- * NEOFORGE_PORT: отдельный SimpleChannel "hex_scan" -&gt; те же payload-id
- * в общем реестре мода (свой RegisterPayloadHandlersEvent-регистратор,
- * тот же modid/version "1", что у PacketHandler; типы не пересекаются).
- * Отправки: сервер -&gt; PacketHandler.sendToPlayer, клиент -&gt;
- * PacketHandler.sendToServer (см. Msg*).
- */
+ 
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class ScanNetwork {
 

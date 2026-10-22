@@ -15,10 +15,10 @@ import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.helper.TintHelper;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): тинт записки/открытия цветом аспекта (@tint1).
-// Паритет цвета — TintHelper.researchNoteColor (зеркало Forge noteColor 1:1).
-// Тинты позиционные (индекс слоя = tintIndex): items/research_notes.json и
-// items/discovery.json объявляют "tints": [constant white, arcaneresearch:note].
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class NoteTintSources {
 

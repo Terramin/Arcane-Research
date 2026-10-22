@@ -11,14 +11,14 @@ import org.joml.Vector3f;
 import arcaneresearch.client.fx.BeamEngine;
 import net.minecraft.client.Camera;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 (fields/tick/setters kept).
-// REQUIRED changes (verified via javap on MC 26.3):
-//   TextureSheetParticle removed -> SingleQuadParticle (keeps rCol/gCol/bCol/alpha/roll/
-//   oRoll/quadSize/sprite + tick fields xo/x/y/z/xd/move/onGround/age/lifetime/remove).
-//   Custom render(VertexConsumer,Camera,float) removed -> base extract() submits the quad
-//   (same camera-facing math lives in vanilla now).
-//   getRenderType() -> getGroup() (SINGLE_QUADS; the old sheet types are gone, see FXGeneric).
-//   Fullbright (old PARTICLE_SHEET_LIT via layer==1) -> getLightCoords override below.
+
+
+
+
+
+
+
+
 public class ArcaneresearchParticle extends SingleQuadParticle {
 
     protected float startR, startG, startB;
@@ -113,9 +113,9 @@ public class ArcaneresearchParticle extends SingleQuadParticle {
         this.quadSize = Mth.lerp(progress, this.startScale, this.endScale);
     }
 
-    // NEOFORGE_PORT: quad submission moved to SingleQuadParticle.extract (same math in vanilla).
-    // Fullbright for any non-zero layer (Forge base: layer == 0 -> TRANSLUCENT
-    // world-lit, else PARTICLE_SHEET_LIT).
+    
+    
+    
     @Override
     protected int getLightCoords(float partialTicks) {
         if (layer != 0) {
@@ -129,8 +129,8 @@ public class ArcaneresearchParticle extends SingleQuadParticle {
         return ParticleRenderType.SINGLE_QUADS;
     }
 
-    // NEOFORGE_PORT: fallback full-sheet UVs (concrete subclasses override per-cell);
-    // never NPEs on the unused null sprite.
+    
+    
     @Override
     protected float getU0() {
         return 0.0f;
@@ -153,9 +153,9 @@ public class ArcaneresearchParticle extends SingleQuadParticle {
 
     @Override
     public SingleQuadParticle.Layer getLayer() {
-        // NEOFORGE_PORT: per-layer dispatch restored (was collapsed to translucent:
-        // every glow particle rendered alpha-blended with a dark fringe).
-        // layerFor maps 0/4 -> additive, 2/3 -> depth-tested fallbacks, else normal.
+        
+        
+        
         return TCSprites.layerFor(layer);
     }
 
@@ -246,7 +246,7 @@ public class ArcaneresearchParticle extends SingleQuadParticle {
         return this;
     }
 
-    /** Camera-facing quad corners for BeamEngine-style custom emission (old render math). */
+      
     protected Vector3f[] quadCorners(float partialTicks, Quaternionf quaternion, float size, Vec3 cameraPos) {
         float x = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
         float y = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());

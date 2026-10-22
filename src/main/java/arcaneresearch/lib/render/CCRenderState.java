@@ -1,6 +1,6 @@
 package arcaneresearch.lib.render;
 
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import arcaneresearch.lib.colour.ColourRGBA;
 import arcaneresearch.lib.lighting.LC;
 import arcaneresearch.lib.lighting.LightMatrix;
@@ -296,8 +296,8 @@ public class CCRenderState {
         changeTexture(Identifier.parse(texture));
     }
 
-    // NEOFORGE_PORT (26.3 render rework): RenderSystem.setShaderTexture removed — texture
-    // binding is per-draw via pipeline/blit. Kept for API parity; stores last texture only.
+    
+    
     public static Identifier lastTexture;
     public static void changeTexture(Identifier texture) {
         lastTexture = texture;

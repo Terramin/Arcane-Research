@@ -228,7 +228,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
         ProvisionRequest pr = task.getLinkedProvision();
 
         boolean b = pr != null && golem instanceof EntityArcaneresearchGolem tcGolem &&
-                // NEOFORGE_PORT: Forge isWithinRestriction -> 26.x isWithinHome (same check).
+                
                 ((pr.getSeal() != null && tcGolem.isWithinHome(pr.getSeal().getSealPos().pos)) ||
                         (pr.getEntity() != null && tcGolem.isWithinHome(pr.getEntity().blockPosition())) ||
                         (pr.getPos() != null && tcGolem.isWithinHome(pr.getPos())));

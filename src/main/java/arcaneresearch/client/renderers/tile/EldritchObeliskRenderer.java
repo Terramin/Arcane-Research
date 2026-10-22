@@ -22,16 +22,16 @@ import arcaneresearch.client.renderers.entity.TurretObjModel;
 
 import java.util.Random;
 
-/**
- * Р РµРЅРґРµСЂ РѕР±РµР»РёСЃРєР°, РїРѕСЂС‚ TC4 TileEldritchObeliskRenderer 1:1 (С‡РµСЂРµР· TC5):
- * 4 РїРѕСЂС‚Р°Р»СЊРЅС‹Рµ СЃС‚РµРЅС‹ (16 СЃР»РѕС‘РІ РІР±Р»РёР·Рё, СЃС‚Р°С‚РёС‡РЅС‹Р№ РєРІР°Рґ РІРґР°Р»Рё),
- * 4 Р±РѕРєРѕРІС‹Рµ РіСЂР°РЅРё РїР°СЂСЏС‰РµРіРѕ РїРёР»РѕРЅР° 1x1x3 + 2 РєР°РїР° РёР· obelisk_cap.obj.
- * РџРёР»РѕРЅ Р»РµРІРёС‚РёСЂСѓРµС‚: y+1+bob, bob = sin(time/10)*0.1+0.1.
- * Р’Рѕ Р’РЅРµС€РЅРёС… Р·РµРјР»СЏС… (РїСѓС‚СЊ РґРёРјРµРЅС€РЅР° СЃРѕРґРµСЂР¶РёС‚ "outer") вЂ” С‚РµРєСЃС‚СѓСЂС‹ _2.
- * Р›РµР¶РёС‚ РІ arcaneresearch.arcaneresearch.client.renderers.tile.
- * NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
- * via submitCustomGeometry.
- */
+ 
+
+
+
+
+
+
+
+
+ 
 public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObeliskTile, EldritchObeliskRenderer.State> {
     private static final Identifier CAP_MODEL =
             Identifier.fromNamespaceAndPath("arcaneresearch", "models/obj/obelisk_cap.obj");
@@ -60,11 +60,11 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
         public double bz;
     }
 
-    /** РљР°Рї РіСЂСѓР·РёРј РѕРґРёРЅ СЂР°Р·: TurretObjModel.load РєР°Р¶РґС‹Р№ РєР°РґСЂ РїСЂРё Р±РёС‚РѕРј СЂРµСЃСѓСЂСЃРµ СЃРїР°РјРёС‚ РѕС€РёР±РєР°РјРё. */
+      
     private static volatile TurretObjModel CAP_MODEL_OBJ = null;
     private static volatile boolean CAP_MODEL_TRIED = false;
 
-    /** Double-checked locking: СЂРµРЅРґРµСЂ РјРѕРіСѓС‚ РґС‘СЂРіР°С‚СЊ РїР°СЂР°Р»Р»РµР»СЊРЅРѕ. */
+      
     private static TurretObjModel capModel() {
         if (!CAP_MODEL_TRIED) {
             synchronized (EldritchObeliskRenderer.class) {
@@ -127,7 +127,7 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
 
         boolean outer = false;
         try {
-            // NEOFORGE_PORT: dimension().location() -> dimension().identifier().
+            
             outer = tile.getLevel().dimension().identifier().getPath().contains("outer");
         } catch (Exception ignored) {
         }
@@ -146,7 +146,7 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
         float bob = state.bob;
         boolean inRange = state.inRange;
 
-        // 4 РїРѕСЂС‚Р°Р»СЊРЅС‹Рµ СЃС‚РµРЅС‹ TC4 (drawPlaneZNeg/ZPos/XNeg/XPos, height 3).
+        
         try {
             renderWall(poseStack, collector, state, 0.0F, 1.0F + bob, 0.0F, 0.0F, 3, inRange);
             renderWall(poseStack, collector, state, 0.0F, 1.0F + bob, 0.0F, 180.0F, 3, inRange);
@@ -158,10 +158,10 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
         Identifier sideTex = state.outer ? SIDE_OUTER : SIDE;
         Identifier capTex = state.outer ? CAP_OUTER : CAP;
 
-        // 4 Р±РѕРєРѕРІС‹Рµ РіСЂР°РЅРё РїРёР»РѕРЅР° TC4 (renderSide, 1x1x3).
-        // РўРµРєСЃС‚СѓСЂР° РїРѕР»СѓРїСЂРѕР·СЂР°С‡РЅР°СЏ (25+ СѓСЂРѕРІРЅРµР№ Р°Р»СЊС„С‹), РІ TC4 СЂРёСЃРѕРІР°Р»Р°СЃСЊ
-        // Р±Р»РµРЅРґРѕРј SRC_ALPHA/ONE_MINUS_SRC_ALPHA РїРѕРІРµСЂС… РїРѕСЂС‚Р°Р»Р° вЂ” РїРѕСЌС‚РѕРјСѓ
-        // entityTranslucent, Р° РЅРµ cutout: cutout РіР»СѓС€РёР» РїРѕСЂС‚Р°Р» РіСЂР°РЅСЏРјРё.
+        
+        
+        
+        
         try {
             RenderType sideType = TCRenderTypes.translucentPortal(sideTex);
             int light = state.lightCoords;
@@ -169,8 +169,8 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
                 poseStack.pushPose();
                 poseStack.translate(0.5F, 1.0F + bob, 0.5F);
                 poseStack.rotate(Axis.YP.rotationDegrees(a * 90));
-                // Р“СЂР°РЅРё РЅР° РІРѕР»РѕСЃРѕРє (0.005) СЃРЅР°СЂСѓР¶Рё СЃС‚РµРЅ: СЃС‚СЂРѕРіРѕ РІРїРµСЂРµРґРё РІСЃРµС…
-                // СЃР»РѕС‘РІ РїРѕСЂС‚Р°Р»Р°, РґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅРѕ, Р±РµР· РєРѕРїР»Р°РЅР°СЂРЅРѕРіРѕ С„Р»РёРєР°.
+                
+                
                 poseStack.translate(0.0D, 0.0D, -0.505D);
                 quad(poseStack, collector, sideType, light, -0.5F, 0.0F, 0.5F, 3.0F);
                 poseStack.popPose();
@@ -178,12 +178,12 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
         } catch (Throwable ignored) {
         }
 
-        // 2 Р»РµС‚Р°СЋС‰РёС… РєР°РїР°-РїРёР»РѕРЅР° TC4 (model.renderPart("Cap") СЃРЅРёР·Сѓ Рё СЃРІРµСЂС…Сѓ).
-        // Р’ TC4 РІРµСЃСЊ СѓР·РµР» РіСЂР°РЅРµР№+РєР°РїРѕРІ СЂРёСЃРѕРІР°Р»СЃСЏ СЃ РІРєР»СЋС‡С‘РЅРЅС‹Рј Р±Р»РµРЅРґРѕРј
-        // (glEnable BLEND, blendFunc SRC_ALPHA/ONE_MINUS_SRC_ALPHA), РїРѕСЌС‚РѕРјСѓ
-        // РєР°РїС‹ вЂ” РїРѕР»СѓРїСЂРѕР·СЂР°С‡РЅС‹Рј С‚РёРїРѕРј РґР»СЏ С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ (golemGhost:
-        // translucent + depth write + LEQUAL, РєР°Рє Сѓ РѕСЂРёРіРёРЅР°Р»Р°),
-        // Р° РЅРµ opaque-cutout.
+        
+        
+        
+        
+        
+        
         try {
             TurretObjModel cap = capModel();
             if (cap != null) {
@@ -241,19 +241,19 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
                 RenderType type = i == 1
                         ? TCRenderTypes.additiveTexturedNoCull(tex)
                         : TCRenderTypes.translucentPortal(tex);
-                // TC4 РєСЂСѓС‚РёР» РўР•РљРЎРўРЈР РЈ С‡РµСЂРµР· texgen (EYE_LINEAR + GL_TEXTURE
-                // РјР°С‚СЂРёС†Р°): СѓР·РѕСЂ РїСЂРёРІСЏР·Р°РЅ Рє РњРР РЈ, Р° РЅРµ Рє РіСЂР°РЅРё вЂ” РёРЅР°С‡Рµ РѕРЅ
-                // С‚РµС‡С‘С‚ РїРѕ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РєР°Рє Р¶РёРґРєРѕСЃС‚СЊ. Р“РµРѕРјРµС‚СЂРёСЏ РІСЃРµС… 16 СЃР»РѕС‘РІ
-                // СЃС‚СЂРѕРіРѕ РєРѕРїР»Р°РЅР°СЂРЅР°; UV СЃС‡РёС‚Р°РµРј РёР· РјРёСЂРѕРІС‹С… РєРѕРѕСЂРґРёРЅР°С‚ РІРµСЂС€РёРЅ.
+                
+                
+                
+                
                 float angleDeg = (i * i * 4321 + i * 9) * 2.0F;
                 float[][] uvs = portalUvs(state, x, y, z, yaw, height, scroll, uvScale, angleDeg, i);
                 poseStack.pushPose();
                 poseStack.translate(0.5F + x, y, 0.5F + z);
                 poseStack.rotate(Axis.YP.rotationDegrees(yaw));
-                // РЎС‚СЂРѕРіРѕ РєРѕРїР»Р°РЅР°СЂРЅРѕ РєР°Рє РІ TC4: РїРѕСЂСЏРґРѕРє СЂРµС€Р°СЋС‚ РїР°СЃСЃС‹ Р±СѓС„РµСЂРѕРІ
-                // (СЃС‚РµРЅС‹ в†’ РіСЂР°РЅРё в†’ РєР°РїС‹), РґРµС‚РµСЂРјРёРЅРёСЂРѕРІР°РЅРЅРѕ, Р±РµР· РјРµСЂС†Р°РЅРёСЏ.
-                // Р­РїСЃРёР»РѕРЅС‹ С‚СѓС‚ С‚РѕР»СЊРєРѕ СЂР°СЃСЃР»Р°РёРІР°Р»Рё РїР»РѕСЃРєРѕСЃС‚Рё Рё РґР°РІР°Р»Рё
-                // В«Р°РЅРёРјРёСЂРѕРІР°РЅРЅС‹РµВ» z-fight РїСЏС‚РЅР° Р±РµР· РїСЂРѕР·СЂР°С‡РЅРѕСЃС‚Рё.
+                
+                
+                
+                
                 poseStack.translate(0.0F, 0.0F, 0.5F);
                 float hw = 0.5F;
                 final float fr = r * brightness, fg = g * brightness, fb = b * brightness;
@@ -266,16 +266,16 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
                 poseStack.popPose();
             }
         } else {
-            // Р”Р°Р»СЊРЅРёР№ РєРІР°Рґ TC4 С‚РѕР¶Рµ Р±С‹Р» РіР»СѓС…РёРј, РЅРѕ С‚РµРєСЃС‚СѓСЂР° particlefield32
-            // РїРѕР»РЅРѕСЃС‚СЊСЋ РЅРµРїСЂРѕР·СЂР°С‡РЅР°СЏ вЂ” РєР°С‚-Р°СѓС‚ РґР°РІР°Р» Р¶С‘СЃС‚РєРёР№ РїР°РЅС†РёСЂСЊ РІРґР°Р»Рё.
-            // Р‘Р»РµРЅРґ + Р°Р»СЊС„Р° 0.65: РІСѓР°Р»СЊ РІРјРµСЃС‚Рѕ С‰РёС‚Р°, Р±Р»РµРЅРґ С‚РµРїРµСЂСЊ РІРµР·РґРµ.
+            
+            
+            
             RenderType type = TCRenderTypes.translucentPortal(PARTICLEFIELD32);
             poseStack.pushPose();
             poseStack.translate(0.5F + x, y, 0.5F + z);
             poseStack.rotate(Axis.YP.rotationDegrees(yaw));
-            // NEOFORGE_PORT (26.3): Forge far quad sits at z = +0.5 (wall face), vquad
-            // emits z = 0 — shift like the in-range branch (else the 4 walls cross
-            // through the obelisk centre).
+            
+            
+            
             poseStack.translate(0.0F, 0.0F, 0.5F);
             collector.submitCustomGeometry(poseStack, type, (pose, consumer) -> {
                 vquad(consumer, pose, -0.5F, 0.0F, 1.0F, 1.0F, 0.5F, 0.5F, 0.5F, 0.65F);
@@ -290,7 +290,7 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
     private static void vquad(VertexConsumer consumer, PoseStack.Pose pose,
                               float x, float y, float u, float v,
                               float r, float g, float b, float a) {
-        // NEOFORGE_PORT: z=0 (РїРѕР·Р° СѓР¶Рµ СЃРґРІРёРЅСѓС‚Р° РЅР° +0.5, РєР°Рє РІС‹Р·РѕРІС‹ translate РІ Forge).
+        
         consumer.addVertex(pose, x, y, 0.0F)
                 .setColor(r, g, b, a)
                 .setUv(u, v)
@@ -299,12 +299,12 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
                 .setNormal(pose, 0.0F, 0.0F, 1.0F);
     }
 
-    /**
-     * UV РїРѕСЂС‚Р°Р»СЊРЅРѕР№ СЃС‚РµРЅС‹ TC4: planar-РїСЂРѕРµРєС†РёСЏ РјРёСЂРѕРІС‹С… РєРѕРѕСЂРґРёРЅР°С‚ РІРµСЂС€РёРЅС‹
-     * (Р·Р°РјРµРЅР° texgen EYE_LINEAR) + СЃРєСЂРѕР»Р» РІСЂРµРјРµРЅРё + СЃС‚Р°С‚РёС‡РЅС‹Р№ РїРѕРІРѕСЂРѕС‚ СЃР»РѕСЏ.
-     * РЈР·РѕСЂ СЃС‚РѕРёС‚ РІ РјРёСЂРµ, Р° РЅРµ С‚РµС‡С‘С‚ РїРѕ РіСЂР°РЅРё. РџРѕСЂСЏРґРѕРє СѓРіР»РѕРІ:
-     * (-hw,0),(-hw,h),(hw,h),(hw,0) вЂ” РєР°Рє РіРµРѕРјРµС‚СЂРёСЏ РІС‹С€Рµ.
-     */
+     
+
+
+
+
+ 
     private static float[][] portalUvs(State state,
                                        float x, float y, float z, float yaw, int height,
                                        float scroll, float uvScale, float angleDeg, int layer) {
@@ -365,8 +365,8 @@ public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObel
         return true;
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(EldritchObeliskTile blockEntity) {
         return blockEntity.getRenderBoundingBox();

@@ -16,8 +16,8 @@ import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.entities.projectile.EntityBottleTaint;
 import arcaneresearch.init.ModItems;
 
-// NEOFORGE_PORT (26.3): spinning bottle via pre-resolved ItemStackRenderState
-// (old ItemRenderer.renderStatic gone); yaw/spin via State.
+
+
 public class BottleTaintRenderer extends EntityRenderer<EntityBottleTaint, BottleTaintRenderer.State> {
 
     public static class State extends EntityRenderState {

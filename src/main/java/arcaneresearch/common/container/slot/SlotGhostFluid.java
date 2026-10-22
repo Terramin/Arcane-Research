@@ -18,8 +18,8 @@ public class SlotGhostFluid extends SlotGhost {
 
     @Override
     public boolean mayPlace(ItemStack stack) {
-        // NEOFORGE_PORT: ForgeCapabilities.FLUID_HANDLER_ITEM -> Capabilities.Fluid.ITEM,
-        // queried via ItemAccess.forStack (transfer rework; query alone doesn't mutate).
+        
+        
         return !stack.isEmpty()
                 && net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack)
                         .getCapability(Capabilities.Fluid.ITEM) != null;

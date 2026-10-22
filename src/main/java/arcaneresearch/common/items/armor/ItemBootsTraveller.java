@@ -22,44 +22,44 @@ import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.items.IRechargable;
 import arcaneresearch.api.items.RechargeHelper;
 
-// NEOFORGE_PORT: ArmorItem REMOVED in 26.x (verified via javap) -> plain Item with
-// .humanoidArmor(material, type). ForgeMod.STEP_HEIGHT_ADDITION -> vanilla Attributes.STEP_HEIGHT.
+
+
 public class ItemBootsTraveller extends Item implements IRechargable, IRunicArmor {
 
-    /**
-     * Паритет TC4: вся таум-броня — IRunicArmor с нулевым базовым зарядом
-     * (пул собирается из TC.RUNIC от рунического аугмента).
-     */
+     
+
+
+ 
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
 
-    // NEOFORGE_PORT: AttributeModifier(UUID, ...) REMOVED -> (Identifier, amount, Operation);
-    // Operation.ADDITION -> ADD_VALUE (verified via javap).
+    
+    
     private static final Identifier STEP_ID =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "traveller_step");
 
     private static final double STEP_BONUS = 0.4;
 
     public ItemBootsTraveller(Item.Properties props) {
-        // NEOFORGE_PORT: super(material, Type.BOOTS, props) -> super(props.humanoidArmor(material, ArmorType.BOOTS)).
+        
         super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_SPECIAL, ArmorType.BOOTS)
-                // Forge isValidRepairItem: leather or the material's enchanted fabric.
+                
                 .repairable(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath(arcaneresearch.Arcaneresearch.MODID, "repairs_traveller_boots")))
                 .stacksTo(1)
                 .durability(350)
                 .rarity(Rarity.RARE));
     }
 
-    // NEOFORGE_PORT: Forge isValidRepairItem (leather || material match) -> REPAIRABLE
-    // component with the repairs_traveller_boots tag (leather + #repairs_enchanted_fabric).
+    
+    
 
-    // NEOFORGE_PORT: Forge armor-model/texture parity -> arcaneresearch.client.ArmorClientSetup.
+    
 
     @Override
-    // NEOFORGE_PORT: inventoryTick(ItemStack, Level, Entity, int, boolean) REMOVED in 26.x ->
-    // inventoryTick(ItemStack, ServerLevel, Entity, EquipmentSlot) (server-only hook).
+    
+    
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
         if (!(entity instanceof Player player)) {
@@ -68,9 +68,9 @@ public class ItemBootsTraveller extends Item implements IRechargable, IRunicArmo
         boolean worn = player.getItemBySlot(EquipmentSlot.FEET) == stack;
         boolean hasCharge = RechargeHelper.getCharge(stack) > 0;
 
-        // NEOFORGE_PORT: level is ServerLevel so the old !level.isClientSide() guard is implied.
-        // NBT root tag -> CUSTOM_DATA via ArcaneresearchInvHelper (getCustomTag returns a COPY,
-        // so the mutated tag is written back with setCustomTag).
+        
+        
+        
         if (worn && entity.tickCount % 20 == 0) {
             CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
             int e = root.getIntOr("energy", 0);
@@ -89,7 +89,7 @@ public class ItemBootsTraveller extends Item implements IRechargable, IRunicArmo
         if (step != null) {
             boolean present = step.getModifier(STEP_ID) != null;
             if (stepApplies && !present) {
-                // NEOFORGE_PORT: AttributeModifier is a record (id, amount, op); no name.
+                
                 step.addTransientModifier(new AttributeModifier(
                         STEP_ID, STEP_BONUS, AttributeModifier.Operation.ADD_VALUE));
             } else if (!stepApplies && present) {
@@ -100,9 +100,9 @@ public class ItemBootsTraveller extends Item implements IRechargable, IRunicArmo
         applyMovementAssist(player, worn && hasCharge);
     }
 
-    // NEOFORGE_PORT: Forge ran this movement assist on both sides from inventoryTick. The 26.x
-    // inventoryTick is server-only while player movement is client-authoritative, so the local
-    // player's half is driven from PlayerTickEvent (ClientMotion below). Logic is 1:1.
+    
+    
+    
     private static void applyMovementAssist(Player player, boolean active) {
         if (active && !player.getAbilities().flying && player.zza > 0.0F) {
             if (player.onGround()) {

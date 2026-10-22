@@ -31,7 +31,7 @@ public class SlotPotion extends Slot {
             return false;
         }
         try {
-            // NEOFORGE_PORT: PotionUtils removed -> PotionContents component (holders compared).
+            
             PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
             var potion = contents != null ? contents.potion().orElse(null) : null;
             return potion != null && !potion.equals(net.minecraft.world.item.alchemy.Potions.WATER)

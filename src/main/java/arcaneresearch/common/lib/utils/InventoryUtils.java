@@ -141,8 +141,8 @@ public class InventoryUtils {
         int amount = stack.getCount();
         int removed = 0;
 
-        // NEOFORGE_PORT: IItemHandler slot ops -> transfer ResourceHandler in a root
-        // transaction (simulate = uncommitted, same observable behavior as Forge).
+        
+        
         if (inventory != null) {
             try (var tx = Transaction.openRoot()) {
                 for (int slot = 0; slot < inventory.size(); slot++) {
@@ -199,8 +199,8 @@ public class InventoryUtils {
         }
 
         int count = item.getCount();
-        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (the
-        // same 36-slot list; getContainerSize() would also walk armor/offhand/body).
+        
+        
         net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
         for (int slot = 0; slot < playerItems.size(); slot++) {
             ItemStack slotStack = playerItems.get(slot);
@@ -230,7 +230,7 @@ public class InventoryUtils {
         }
 
         int remaining = amount;
-        // NEOFORGE_PORT (26.3): main 36 slots only, as Inventory.items in the reference.
+        
         net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
         for (int slot = 0; slot < playerItems.size(); slot++) {
             ItemStack slotStack = playerItems.get(slot);
@@ -256,12 +256,12 @@ public class InventoryUtils {
         }
 
         int needed = stack.getCount();
-        // NEOFORGE_PORT: stack CompoundTag removed -> CUSTOM_DATA presence via helper.
+        
         ArcaneresearchInvHelper.InvFilter filter = new ArcaneresearchInvHelper.InvFilter(false,
                 !ArcaneresearchInvHelper.hasCustomTag(stack), useTagMatch, false)
                 .setRelaxedNBT();
 
-        // NEOFORGE_PORT (26.3): main 36 slots only, as Inventory.items in the reference.
+        
         net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
         for (int slot = 0; slot < playerItems.size(); slot++) {
             ItemStack slotStack = playerItems.get(slot);
@@ -304,8 +304,8 @@ public class InventoryUtils {
     }
 
     public static int getPlayerSlotFor(Player player, ItemStack stack) {
-        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (main
-        // 36 slots, same indices; getContainerSize() would also return armor/offhand).
+        
+        
         net.minecraft.core.NonNullList<ItemStack> playerItems = player.getInventory().getNonEquipmentItems();
         for (int i = 0; i < playerItems.size(); i++) {
             ItemStack slotStack = playerItems.get(i);
@@ -328,8 +328,8 @@ public class InventoryUtils {
         if (ItemsTC.enchantedPlaceholder == null || required.getItem() != ItemsTC.enchantedPlaceholder) {
             return false;
         }
-        // NEOFORGE_PORT: EnchantmentHelper.getEnchantments(Map) removed; ItemEnchantments
-        // component holds Holder-keyed entries (same matching semantics).
+        
+        
         net.minecraft.world.item.enchantment.ItemEnchantments req =
                 net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantmentsForCrafting(required);
         boolean match = !req.isEmpty();
@@ -369,10 +369,10 @@ public class InventoryUtils {
         }
 
         if (filter.useOre && !stack0.isEmpty()) {
-            // NEOFORGE_PORT: ItemStack.getTags() removed; shared-tag check via the
-            // item holder's tag stream (same semantics: any common tag matches).
-            // NEOFORGE_PORT (26.3): like the reference, a shared tag is an early match
-            // only; without one fall through to the exact item/NBT/damage check.
+            
+            
+            
+            
             if (stack0.getItem().builtInRegistryHolder().tags().anyMatch(stack1::is)) {
                 return true;
             }
@@ -383,8 +383,8 @@ public class InventoryUtils {
             if (filter.relaxedNBT) {
                 nbtMatch = ArcaneresearchInvHelper.areItemStackTagsEqualRelaxed(stack0, stack1);
             } else {
-                // NEOFORGE_PORT (26.3): 1.20.1 "!hasTag()" meant no NBT at all (enchantments,
-                // name, damage...), i.e. an empty component patch - not just "no CUSTOM_DATA".
+                
+                
                 nbtMatch = ItemStack.isSameItemSameComponents(stack0, stack1) ||
                         (stack0.getComponentsPatch().isEmpty() && stack1.getComponentsPatch().isEmpty());
             }
@@ -405,7 +405,7 @@ public class InventoryUtils {
     public static ItemStack findFirstMatchFromFilter(NonNullList<ItemStack> filterStacks, boolean blacklist,
                                                      ResourceHandler<ItemResource> inv, Direction face, ArcaneresearchInvHelper.InvFilter filter, boolean leaveOne) {
         slotLoop:
-        // NEOFORGE_PORT: IItemHandler slot ops -> transfer (size + ItemUtil.getStack).
+        
         for (int slot = 0; slot < inv.size(); slot++) {
             ItemStack slotStack = ItemUtil.getStack(inv, slot);
             if (slotStack.isEmpty() || slotStack.getCount() <= 0) continue;
@@ -568,10 +568,10 @@ public class InventoryUtils {
         ItemStack result = ItemStack.EMPTY;
 
         if (input instanceof Ingredient ingredient) {
-            // NEOFORGE_PORT: Ingredient.getItems() removed -> Holder stream (plain stacks).
-            // NEOFORGE_PORT (26.3): resolve the ingredient's SlotDisplay first so custom
-            // ingredients keep their components (aspect crystals etc.), as getItems() kept
-            // NBT; item/stack/tag displays need no context. Plain holders as fallback.
+            
+            
+            
+            
             java.util.List<ItemStack> stacks = java.util.List.of();
             try {
                 stacks = ingredient.display()
@@ -614,7 +614,7 @@ public class InventoryUtils {
 
             @SuppressWarnings("unchecked")
             TagKey<Item> itemTag = (TagKey<Item>) tag;
-            // NEOFORGE_PORT: Registry.getTag removed -> getTagOrEmpty (same holders).
+            
             java.util.List<net.minecraft.core.Holder<Item>> tagList = new java.util.ArrayList<>();
             net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(itemTag).forEach(tagList::add);
             if (!tagList.isEmpty()) {
@@ -628,7 +628,7 @@ public class InventoryUtils {
 
     @Nullable
     public static ResourceHandler<ItemResource> getItemHandler(Level level, BlockPos pos, Direction side) {
-        // NEOFORGE_PORT: Forge capability lookup -> shared transfer helper (same nullable contract).
+        
         return ArcaneresearchInvHelper.getItemHandlerAt(level, pos, side);
     }
 }

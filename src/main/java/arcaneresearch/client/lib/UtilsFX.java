@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Matrix4f;
@@ -27,36 +27,36 @@ public class UtilsFX {
     public static final Identifier NODE_TEXTURE =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/auranodes.png");
 
-    /** Кэш обработанных текстур аспектов: оригинал → приглушённый (90% прозрачности подложки). */
+      
     private static final java.util.Map<Identifier, Identifier> STRIPPED_ASPECT_CACHE =
             new java.util.concurrent.ConcurrentHashMap<>();
 
-    /** Кэш полностью вырезанных (старый режим) — для {@link #cutoutAspectTexture}. */
+      
     private static final java.util.Map<Identifier, Identifier> CUTOUT_ASPECT_CACHE =
             new java.util.concurrent.ConcurrentHashMap<>();
 
-    /**
-     * Текстуры аспектов с приглушённым фоном: тёмная подложка НЕ вырезается,
-     * а остаётся видимой на 10% (90% прозрачности). Основной режим для всех,
-     * кто рисует иконки аспектов (GUI + мир).
-     */
+     
+
+
+
+ 
     public static Identifier strippedAspectTexture(Identifier texture) {
         return processedAspectTexture(texture, STRIPPED_ASPECT_CACHE, "stripped", false);
     }
 
-    /**
-     * ПОЛНАЯ ВЫРЕЗКА фона (старый режим): тёмная подложка теряет альфу целиком.
-     * Прямого использования в порт-фичах нет — оставлен отдельно, как отмеченный
-     * запасной вариант (пометка: паритет полной вырезки world popup).
-     */
+     
+
+
+
+ 
     public static Identifier cutoutAspectTexture(Identifier texture) {
         return processedAspectTexture(texture, CUTOUT_ASPECT_CACHE, "cutout", true);
     }
 
-    /**
-     * Общая обрабтка текстуры аспекта: находит тёмную подложку по яркости и
-     * приглушает её — semi (90% прозрачности) или fullCutout (полное удаление).
-     */
+     
+
+
+ 
     private static Identifier processedAspectTexture(Identifier texture,
                                                            java.util.Map<Identifier, Identifier> cache,
                                                            String prefix, boolean fullCutout) {
@@ -70,11 +70,11 @@ public class UtilsFX {
                 try (var in = resource.get().open()) {
                     com.mojang.blaze3d.platform.NativeImage image =
                             com.mojang.blaze3d.platform.NativeImage.read(in);
-                    // FIX (aspect icons): record the pixel size for both the original
-                    // and (below) the processed texture id. AspectRenderer.renderColoredTexture
-                    // blits with explicit dims and skipped drawing entirely when the map
-                    // was empty -> aspect icons never rendered. The processed image keeps
-                    // the same pixel size, so one read serves both ids.
+                    
+                    
+                    
+                    
+                    
                     arcaneresearch.client.lib.AspectRenderer.registerTextureDims(
                             texture, image.getWidth(), image.getHeight());
                     boolean touched = false;
@@ -84,12 +84,12 @@ public class UtilsFX {
                             int lum = ((pixel & 0xFF) + ((pixel >> 8) & 0xFF)
                                     + ((pixel >> 16) & 0xFF)) / 3;
                             if (lum < 16) {
-                                // тёмная подложка: полная вырезка или 90% прозрачности
+                                
                                 int a = fullCutout ? 0 : (pixel >>> 24) / 10;
                                 image.setPixel(x, y, (pixel & 0x00FFFFFF) | (a << 24));
                                 touched = true;
                             } else if (lum < 48) {
-                                // тёмная окантовка — плавный спад: от приглушения до полной непрозрачности
+                                
                                 float k = (float) (lum - 16) / 32;
                                 float fade = fullCutout ? k : 0.1f + 0.9f * k;
                                 int a = (int) ((pixel >>> 24) * fade);
@@ -136,7 +136,7 @@ public class UtilsFX {
     public static boolean hideStackOverlay = false;
 
     public static void rotateToPlayer(PoseStack poseStack) {
-        // NEOFORGE_PORT: GameRenderer.getMainCamera() -> mainCamera() (returns Camera).
+        
         poseStack.rotate(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
     }
 
@@ -207,7 +207,7 @@ public class UtilsFX {
     public static void drawQuad(PoseStack poseStack, VertexConsumer builder,
                                 Vector p1, Vector p2, Vector p3, Vector p4,
                                 int packedLight, float r, float g, float b, float a) {
-        // NEOFORGE_PORT: new VertexConsumer chain (no endVertex).
+        
         PoseStack.Pose pose = poseStack.last();
         builder.addVertex(pose, p1.getX(), p1.getY(), p1.getZ()).setColor(r, g, b, a).setUv(0.0F, 0.0F)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
@@ -274,7 +274,7 @@ public class UtilsFX {
 
     public static void drawTexturedQuad(GuiGraphicsExtractor graphics, float x, float y,
                                         float u, float v, float w, float h, float z) {
-        // NEOFORGE_PORT: immediate Tesselator gone in 26.3 -> no-op (callers: none).
+        
     }
 
     public static void drawTexturedQuad(GuiGraphicsExtractor graphics, float x, float y,
@@ -284,7 +284,7 @@ public class UtilsFX {
 
     public static void drawTexturedQuadF(GuiGraphicsExtractor graphics, float x, float y,
                                          float u, float v, float w, float h, float z) {
-        // NEOFORGE_PORT: immediate Tesselator gone in 26.3 -> no-op (callers: none).
+        
     }
 
     public static void drawTexturedQuadF(GuiGraphicsExtractor graphics, float x, float y,
@@ -293,12 +293,12 @@ public class UtilsFX {
     }
 
     public static void drawTexturedQuadFull(GuiGraphicsExtractor graphics, float x, float y) {
-        // NEOFORGE_PORT: immediate Tesselator gone in 26.3 -> no-op (callers: none).
+        
     }
 
     public static void drawTexturedQuadFull(GuiGraphicsExtractor graphics, Identifier texture,
                                             float x, float y) {
-        // NEOFORGE_PORT: setShaderTexture gone in 26.3 -> no-op (callers: none).
+        
     }
 
     public static void renderItemInGUI(GuiGraphicsExtractor graphics, ItemStack stack, int x, int y, int z) {
@@ -324,7 +324,7 @@ public class UtilsFX {
         float f4 = f3 + 1.0F / gridY;
         float s = scale * 0.5F;
         Matrix4f matrix = poseStack.last().pose();
-        // NEOFORGE_PORT (26.3): Forge vertex(matrix, ...) - the pose matrix was dropped (quad ignored the PoseStack).
+        
         builder.addVertex(matrix, -s, s, 0.0F)
                 .setColor(red, green, blue, alpha).setUv(f2, f4)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight)
@@ -360,8 +360,8 @@ public class UtilsFX {
                                           int gridX, int gridY, int frame, float scale,
                                           float red, float green, float blue,
                                           int packedLight, int blend, float alpha) {
-        // NEOFORGE_PORT: buffers.getBuffer gone (submit-system); same quad via
-        // submitCustomGeometry (blend 1 -> additive, else translucent portal).
+        
+        
         net.minecraft.client.renderer.rendertype.RenderType type = blend == 1
                 ? arcaneresearch.client.renderers.TCRenderTypes.additiveTextured(texture)
                 : arcaneresearch.client.renderers.TCRenderTypes.translucentPortal(texture);
@@ -474,7 +474,7 @@ public class UtilsFX {
 
     public static void drawGradientRect(GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2,
                                         int colorStart, int colorEnd) {
-        // NEOFORGE_PORT: fillGradient z-arg gone in 26.3.
+        
         graphics.fillGradient(x1, y1, x2, y2, colorStart, colorEnd);
     }
 
@@ -492,7 +492,7 @@ public class UtilsFX {
 
     public static boolean renderItemStackShaded(GuiGraphicsExtractor graphics, ItemStack stack,
                                                 int x, int y, String tooltip, float shade) {
-        // NEOFORGE_PORT: setShaderColor gone in 26.3 (per-blit tint) -> plain draw.
+        
         return renderItemStack(graphics, stack, x, y, tooltip);
     }
 

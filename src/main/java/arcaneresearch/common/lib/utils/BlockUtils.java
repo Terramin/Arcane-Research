@@ -37,11 +37,11 @@ public class BlockUtils {
 
     private static boolean removeBlock(Level level, Player player, BlockPos pos, boolean canHarvest) {
         BlockState state = level.getBlockState(pos);
-        // NEOFORGE_PORT (26.3): Forge 1.20.1's IForgeBlock.onDestroyedByPlayer called
-        // playerWillDestroy itself (destroy particles, piglin anger, BLOCK_DESTROY game
-        // event, other half of doors/beds/double plants...). NeoForge 26 moved that call
-        // out to ServerPlayerGameMode.destroyBlock, so make it here, then remove the block
-        // through the (still existing) onDestroyedByPlayer hook like the reference.
+        
+        
+        
+        
+        
         state.getBlock().playerWillDestroy(level, pos, state, player);
         boolean removed = state.onDestroyedByPlayer(level, pos, player, player.getMainHandItem().copy(),
                 canHarvest, level.getFluidState(pos));
@@ -51,10 +51,10 @@ public class BlockUtils {
         return removed;
     }
 
-    // NEOFORGE_PORT (26.3): true while harvestBlock runs Block.playerDestroy. In 26.x the
-    // drop path (CommonHooks.handleBlockDrops -> BlockDropsEvent) also pops the block's
-    // XP; in Forge 1.20.1 it dropped none (XP came only from the break event), so
-    // harvestBlock zeroes that XP and pops the reference amount itself.
+    
+    
+    
+    
     private static boolean suppressDropXp = false;
 
     @net.neoforged.fml.common.EventBusSubscriber(modid = arcaneresearch.Arcaneresearch.MODID)
@@ -86,11 +86,11 @@ public class BlockUtils {
             return false;
         }
 
-        // NEOFORGE_PORT (26.3): ForgeHooks.onBlockBreakEvent -> CommonHooks.fireBlockBreak
-        // (same pre-cancel rules: tool can't destroy block, adventure/spectator). The
-        // NeoForge event no longer carries exp, so compute it as Forge's BreakEvent
-        // constructor did: 0 unless the main-hand tool is correct for drops, else the
-        // block's exp drop for that tool (silk touch -> 0).
+        
+        
+        
+        
+        
         int exp = 0;
         if (!skipEvent) {
             BlockState eventState = level.getBlockState(pos);
@@ -132,7 +132,7 @@ public class BlockUtils {
 
                 ItemStack effectiveTool = tool;
 
-                // NEOFORGE_PORT: Enchantments.* are ResourceKeys in 26.x; resolve Holders once.
+                
                 var enchantments = level.registryAccess()
                         .lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);
                 var fortuneHolder = enchantments.getOrThrow(
@@ -157,9 +157,9 @@ public class BlockUtils {
                     }
                 }
 
-                // NEOFORGE_PORT (26.3): Block.playerDestroy still exists (BLOCK_MINED stat,
-                // food exhaustion, block overrides like ice -> water); call it as the
-                // reference did, with the drop-path XP suppressed (see suppressDropXp).
+                
+                
+                
                 suppressDropXp = true;
                 try {
                     block.playerDestroy(serverLevel, serverPlayer, pos, state, blockEntity, effectiveTool);
@@ -342,8 +342,8 @@ public class BlockUtils {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
 
-        // NEOFORGE_PORT (26.3): 1.20.1 BushBlock (base of flowers, saplings, crops, grass,
-        // mushrooms...) is VegetationBlock now; 26.x BushBlock is only the "bush" block.
+        
+        
         return block instanceof net.minecraft.world.level.block.VegetationBlock ||
                 block instanceof net.minecraft.world.level.block.CropBlock ||
                 block instanceof net.minecraft.world.level.block.StemBlock ||
@@ -430,7 +430,7 @@ public class BlockUtils {
                                              Level level, BlockPos pos) {
         ItemStack dropped = ItemStack.EMPTY;
         try {
-            // NEOFORGE_PORT: getCloneItemStack now needs the breaking player (nullable here).
+            
             ItemStack clone = state.getBlock().getCloneItemStack(level, pos, state, false, null);
             if (clone != null && !clone.isEmpty()) {
                 dropped = clone.copy();
@@ -513,8 +513,8 @@ public class BlockUtils {
 
         BlockHitResult result = level.clip(new ClipContext(
                 sourceVec, targetVec,
-                // NEOFORGE_PORT (26.3): ClipContext(..., Entity) NPEs on null now
-                // (CollisionContext.of switch); 1.20.1 mapped null to the empty context.
+                
+                
                 ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE,
                 net.minecraft.world.phys.shapes.CollisionContext.empty()));
 

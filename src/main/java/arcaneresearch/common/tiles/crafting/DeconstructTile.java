@@ -27,31 +27,31 @@ import net.minecraft.world.level.storage.ValueOutput;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Порт {@code thaumcraft.common.tiles.TileDeconstructionTable} (TC 4.2.3.5).
- *
- * <p>Цикл 1-в-1: предмет со аспект-тегами в единственном слоте разбирается
- * {@code BREAK_TICKS} тиков ({@code breaktime} 40&rarr;0), затем
- * {@code breakItem()}: теги предмета ({@code getObjectTags} уже включает
- * бонусные — паритет {@code getObjectTags + getBonusTags}) жмутся до
- * праймалов ({@code reduceToPrimals} — порт
- * {@code ResearchManager.reduceToPrimals}); с шансом
- * {@code rand(80) < primals.visSize()} выпадает случайный праймал-аспект
- * в поле {@code aspect}, из стака съедается 1 шт. Забрать аспект —
- * {@link #claimAspect(Player)} (паритет кнопки контейнера TC4:
- * {@code +1} в пул знаний).</p>
- *
- * <p>NEOFORGE_PORT: level.isClientSide -&gt; isClientSide(); level.random -&gt; getRandom();
- * writeSyncNBT/readSyncNBT -&gt; ValueOutput/ValueInput (putInt/getIntOr/putString/getStringOr);
- * net.minecraftforge.* -&gt; net.neoforged.*. Отправка MsgWalletSync — через
- * PacketHandler.sendToPlayer (паритет MsgWalletRequest, ScanNetwork — только
- * регистратор payload-типов; см. отчёт).</p>
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class DeconstructTile extends TileArcaneresearchInventory implements MenuProvider {
 
-    /** Паритет {@code breaktime = 40} в TC4. */
+      
     public static final int BREAK_TICKS = 40;
-    /** Паритет {@code nextInt(80)} в {@code breakItem}. */
+      
     private static final int DROP_ROLL = 80;
 
     private int breaktime;
@@ -101,17 +101,17 @@ public class DeconstructTile extends TileArcaneresearchInventory implements Menu
         return breaktime * scale / BREAK_TICKS;
     }
 
-    /** Паритет {@code getTags}: теги объекта + бонусные (менеджер уже суммирует). */
+      
     public static AspectList tagsOf(ItemStack stack) {
         return ArcaneresearchCraftingManager.getObjectTags(stack);
     }
 
-    /** Паритет {@code hasAspects}: предмет разбирается столом. */
+      
     public static boolean hasAspects(ItemStack stack) {
         return !stack.isEmpty() && tagsOf(stack).size() > 0;
     }
 
-    /** Серверный тик — порт {@code func_145845_h}. */
+      
     public void serverTick() {
         if (level == null || level.isClientSide()) {
             return;
@@ -144,7 +144,7 @@ public class DeconstructTile extends TileArcaneresearchInventory implements Menu
         return tags != null && tags.size() > 0;
     }
 
-    /** Порт {@code breakItem()}: разобрать 1 шт. в случайный праймал-аспект. */
+      
     private void breakItem() {
         if (!canBreak()) {
             return;
@@ -166,12 +166,12 @@ public class DeconstructTile extends TileArcaneresearchInventory implements Menu
         syncTile(false);
     }
 
-    /**
-     * Забрать готовый аспект в запас (паритет ветки {@code button == 1}
-     * в {@code ContainerDeconstructionTable}: {@code +1} в пул).
-     *
-     * @return аспект, если был забран, иначе null.
-     */
+     
+
+
+
+
+ 
     public Aspect claimAspect(Player player) {
         if (aspect == null || player == null) {
             return null;
@@ -188,7 +188,7 @@ public class DeconstructTile extends TileArcaneresearchInventory implements Menu
         return taken;
     }
 
-    /** Порт {@code ResearchManager.reduceToPrimals}: жать составные до праймалов. */
+      
     public static AspectList reduceToPrimals(AspectList in) {
         AspectList out = new AspectList();
         if (in == null) {

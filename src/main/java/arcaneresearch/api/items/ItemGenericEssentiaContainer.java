@@ -40,7 +40,7 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
 
     @Override
     public AspectList getAspects(ItemStack itemstack) {
-        // NEOFORGE_PORT: stack root-tag storage -> DataComponents.CUSTOM_DATA (same NBT shape).
+        
         CustomData data = itemstack.get(DataComponents.CUSTOM_DATA);
         if (data != null) {
             AspectList aspects = new AspectList();
@@ -52,8 +52,8 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
 
     @Override
     public void setAspects(ItemStack itemstack, AspectList aspects) {
-        // NEOFORGE_PORT (26.3): Forge wrote "Aspects" INTO the existing root tag (other keys kept);
-        // CustomData.update merges the same way instead of replacing the whole custom data.
+        
+        
         CustomData.update(DataComponents.CUSTOM_DATA, itemstack, tag -> aspects.writeToNBT(tag));
     }
 
@@ -62,8 +62,8 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
         return false;
     }
 
-    // NEOFORGE_PORT: inventoryTick(ItemStack,Level,Entity,int,boolean) ->
-    // inventoryTick(ItemStack,ServerLevel,Entity,EquipmentSlot); slot filter unused here.
+    
+    
     @Override
     public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.Entity entity, net.minecraft.world.entity.EquipmentSlot slot) {
         if (!stack.has(DataComponents.CUSTOM_DATA)) {
@@ -73,7 +73,7 @@ public class ItemGenericEssentiaContainer extends Item implements IEssentiaConta
         super.inventoryTick(stack, level, entity, slot);
     }
 
-    // NEOFORGE_PORT: Item.onCraftedBy(ItemStack, Level, Player) dropped Level in 26.x.
+    
     @Override
     public void onCraftedBy(ItemStack stack, Player player) {
         Level level = player.level();

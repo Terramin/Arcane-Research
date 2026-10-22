@@ -2,13 +2,13 @@ package arcaneresearch.client.gui.widgets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
-import net.minecraft.util.ARGB; // NEOFORGE_PORT: tint via blit color
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
+import net.minecraft.util.ARGB; 
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.casters.NodeSetting;
 
@@ -30,7 +30,7 @@ public class SpinnerWidget extends AbstractWidget {
         return setting;
     }
 
-    // NEOFORGE_PORT: renderWidget -> extractWidgetRenderState.
+    
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         Font font = Minecraft.getInstance().font;
@@ -39,7 +39,7 @@ public class SpinnerWidget extends AbstractWidget {
                 && mouseY >= getY() && mouseY < getY() + height;
         float brightness = hovered ? 1.0f : 0.9f;
 
-        // NEOFORGE_PORT: tint baked into blit color (same brightness).
+        
         int tint = ARGB.colorFromFloat(brightness, brightness, brightness, brightness);
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, getX(), getY(), 20, 0, 10, 10, 256, 256, tint);
 
@@ -50,9 +50,9 @@ public class SpinnerWidget extends AbstractWidget {
         graphics.text(font, valueText, textX, getY() + 1, 0xFFFFFFFF, true);
     }
 
-    // NEOFORGE_PORT (26.3): screens route clicks only to the child whose isMouseOver hits
-    // (getChildAt), not to every child as in 1.20.1; the "+" arrow sits right of the
-    // widget box (x + width .. +10), so widen the hit box or "+" never gets the click.
+    
+    
+    
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         return this.visible && this.active
@@ -60,7 +60,7 @@ public class SpinnerWidget extends AbstractWidget {
                 && mouseY >= getY() && mouseY < getY() + height;
     }
 
-    // NEOFORGE_PORT: mouse coords/button via MouseButtonEvent.
+    
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         double mouseX = event.x();

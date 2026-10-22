@@ -69,18 +69,18 @@ import arcaneresearch.client.models.armor.ThaumiumArmorModel;
 import arcaneresearch.client.models.armor.VoidArmorModel;
 import arcaneresearch.client.models.armor.VoidRobeArmorModel;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 Arcaneresearch.java (registration ORDER preserved).
-// REQUIRED changes only:
-//   ctor (IEventBus, ModContainer) instead of FMLJavaModLoadingContext;
-//   MinecraftForge -> NeoForge; ResourceLocation -> Identifier;
-//   registerIngredientTypes/RegisterEvent/CraftingHelper -> ModIngredientTypes.register(bus);
-//   ForgeMod.STEP_HEIGHT_ADDITION -> Attributes.STEP_HEIGHT;
-//   render-layer setup -> model-JSON render_type (see TODO in onClientSetup);
-//   ItemProperties.register -> select/range property events (see TODO in onClientSetup);
-//   EntityRenderers/MenuScreens direct calls -> RegisterRenderers/RegisterMenuScreensEvent;
-//   onAddPackFinders -> event.addPackFinders helper;
-//   item/block colors -> ItemTintSource/BlockTintSource data system (see TODOs);
-//   ModifyBakingResult (BakedModel gone) -> model-system rework (see TODO).
+
+
+
+
+
+
+
+
+
+
+
+
 @Mod(Arcaneresearch.MODID)
 public class Arcaneresearch {
 
@@ -98,11 +98,11 @@ public class Arcaneresearch {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::processIMC);
         modEventBus.addListener(this::registerEntityAttributes);
-        // NEOFORGE_PORT: network payloads (RegisterPayloadHandlersEvent, mod bus).
+        
         modEventBus.addListener(PacketHandler::register);
-        // NEOFORGE_PORT (26.3): block capabilities (Forge per-tile getCapability: item/fluid/energy).
-        // ModBlockEntities.registerCapabilities was never subscribed -> hoppers/pipes/everfull urn
-        // never saw any mod tile handler.
+        
+        
+        
         modEventBus.addListener(ModBlockEntities::registerCapabilities);
 
         ModFluids.FLUID_TYPES.register(modEventBus);
@@ -126,22 +126,22 @@ public class Arcaneresearch {
         arcaneresearch.common.blocks.aura.AuraBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModRecipeTypes.RECIPE_TYPES.register(modEventBus);
         ModRecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
-        // NEOFORGE_PORT: replaces registerIngredientTypes/RegisterEvent/CraftingHelper
-        // (CrystalAspectIngredient arcaneresearch:crystal + NBTTC arcaneresearch:nbt_test).
+        
+        
         ModIngredientTypes.register(modEventBus);
         ModLootModifiers.LOOT_MODIFIERS.register(modEventBus);
         ModFeatures.FEATURES.register(modEventBus);
         ModStructures.STRUCTURE_TYPES.register(modEventBus);
         ModStructures.STRUCTURE_PIECE_TYPES.register(modEventBus);
-        // NEOFORGE_PORT: without this the ATTACHMENT_TYPES holders stay unbound and
-        // every player login dies with "Trying to access unbound value ... knowledge".
+        
+        
         arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
-        // NEOFORGE_PORT: Forge auto-subscribed AuraChunkHandler via
-        // @Mod.EventBusSubscriber(bus = FORGE); without this call chunk
-        // load/save events never fire, aura never generates and
-        // AuraHandler.drainVis() always returns 0 -> wands never recharge.
+        
+        
+        
+        
         arcaneresearch.common.world.aura.AuraChunkHandler.register();
 
     }
@@ -151,8 +151,8 @@ public class Arcaneresearch {
     }
 
     private void registerEntityAttributes(final EntityAttributeModificationEvent event) {
-        // NEOFORGE_PORT: ForgeMod.STEP_HEIGHT_ADDITION removed -> vanilla STEP_HEIGHT (Holder);
-        // 26.3: EntityType statics moved to EntityTypes (verified in 26.3 jar).
+        
+        
         if (!event.has(net.minecraft.world.entity.EntityTypes.PLAYER, Attributes.STEP_HEIGHT)) {
             event.add(net.minecraft.world.entity.EntityTypes.PLAYER, Attributes.STEP_HEIGHT);
         }
@@ -169,39 +169,39 @@ public class Arcaneresearch {
         ArcaneresearchApi.internalMethods = new InternalMethodHandler();
         LOGGER.info("Initialized ArcaneresearchApi internal methods");
 
-        // NEOFORGE_PORT: Forge PacketHandler.init() (SimpleChannel build on FMLCommonSetup)
-        // -> payload registrar is a mod-bus RegisterPayloadHandlersEvent listener
-        // (wired in ctor); nothing to do here.
-        // NOTE: NO content setup here — DeferredHolders (items/components) are not yet
-        // bound during commonSetup in 26.x and any ItemStack creation crashes bootstrap
-        // with "Components not bound yet". Everything runs in runContentSetupOnce()
-        // at server start instead (fires on integrated server too).
+        
+        
+        
+        
+        
+        
+        
     }
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
 
-        // Normally already done by onDefaultComponentsBound (server data load); kept as a
-        // safety net so the trade tables below exist before they are extended.
+        
+        
         runContentSetupOnce();
 
-        // NEOFORGE_PORT: enchanted-book pech trades need datapack enchantment holders,
-        // unavailable at commonSetup; appended here (same entries/costs as Forge).
+        
+        
         arcaneresearch.common.config.ConfigEntities.initPechBookTrades(event.getServer().registryAccess());
-        // NEOFORGE_PORT: same for enchantment scannables (were static ForgeRegistries loop).
+        
         arcaneresearch.common.config.ConfigResearch.initEnchantmentScans(event.getServer().registryAccess());
-        // NEOFORGE_PORT (26.3): potion reagent aspects need the datapack brewing recipes (Forge:
-        // static PotionBrewing at setup) -> recomputed once the server and its recipes exist.
+        
+        
         arcaneresearch.common.config.ConfigAspects.registerPotionAspects();
 
         LOGGER.info("Arcaneresearch server starting");
     }
 
-    // NEOFORGE_PORT: content setup trigger. A client connected to a dedicated server never
-    // sees ServerStartingEvent, so foci, golem parts, seals, research, aspects etc. were never
-    // registered there (Thaumonomicon/JEI/golem rendering broken in multiplayer). This event
-    // fires once item components are bound: on server data load and on the client when it
-    // joins a remote world; shouldUpdateStaticData() skips the duplicate singleplayer call.
+    
+    
+    
+    
+    
     @SubscribeEvent
     public void onDefaultComponentsBound(net.neoforged.neoforge.event.DefaultDataComponentsBoundEvent event) {
         if (event.shouldUpdateStaticData()) {
@@ -211,11 +211,11 @@ public class Arcaneresearch {
 
     private static boolean contentSetupDone = false;
 
-    // NEOFORGE_PORT: since 26.1 item components bind only when world resources load
-    // (before that ANY ItemStack creation crashes with "Components not bound yet" -
-    // verified: commonSetup is too early). So the whole Forge commonSetup content
-    // block runs once, as soon as components are bound (see onDefaultComponentsBound).
-    // Every consumer (GUI, JEI, recipes, tabs, ticks) runs strictly after that.
+    
+    
+    
+    
+    
     private static synchronized void runContentSetupOnce() {
         if (contentSetupDone) {
             return;
@@ -270,10 +270,10 @@ public class Arcaneresearch {
 
         arcaneresearch.common.lib.BehaviorDispenseAlumetum.register();
 
-        // NEOFORGE_PORT: research JSON parsing (Forge: ConfigResearch.postInit at server start)
-        // must follow ConfigResearch.init (categories + JSON locations). The JSON ships in the
-        // jar, so it is parsed once here; repeated per-world parsing only logged duplicates
-        // and never happened at all on clients of a dedicated server.
+        
+        
+        
+        
         ConfigResearch.postInit();
 
         LOGGER.info("Arcaneresearch setup complete!");
@@ -369,9 +369,9 @@ public class Arcaneresearch {
             if (event.getPackType() != PackType.CLIENT_RESOURCES) {
                 return;
             }
-            // NEOFORGE_PORT: Forge 1:1 (findResource + PathPackResources + null-check).
-            // The addPackFinders() helper is NOT used: it feeds a null pack into the
-            // repository when metadata is unreadable (hard crash at startup).
+            
+            
+            
             event.addRepositorySource(packConsumer -> {
                 try {
                     java.nio.file.Path packPath = findLegacyPackPath();
@@ -419,21 +419,21 @@ public class Arcaneresearch {
             LOGGER.info("Arcaneresearch client setup");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
 
-            // NEOFORGE_PORT (render layers): the ~50 ItemBlockRenderTypes.setRenderLayer calls
-            // are gone in 26.x: the chunk layer is derived per quad from the sprite's alpha
-            // (FaceBakery.computeMaterialTransparency -> cutout/translucent automatically),
-            // and "force_translucent" textures cover the rest (jars: models/block/jar_*.json).
-            // NEOFORGE_PORT (item predicates): the ItemProperties.register calls live in
-            // client/renderers/item/ItemModelProperties (select properties over data components).
+            
+            
+            
+            
+            
+            
 
         }
 
         @SubscribeEvent
         public static void onRegisterItemModelProperties(RegisterSelectItemModelPropertyEvent event) {
-            // Паритет ItemBowBone (1.7.10): иконки натяжения костяного лука.
-            // Ванильный ItemProperties регистрирует "pulling"/"pull" только на Items.BOW,
-            // поэтому для своего лука предикаты регистрируются вручную.
-            // Пороги: j >= 13 → bonebow_pulling_2; j > 7 → _1; j > 0 → _0.
+            
+            
+            
+            
             event.register(
                     Identifier.fromNamespaceAndPath("minecraft", "pulling"),
                     BoneBowPulling.TYPE
@@ -446,7 +446,7 @@ public class Arcaneresearch {
 
         @SubscribeEvent
         public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
-            // NEOFORGE_PORT: MenuScreens.register -> RegisterMenuScreensEvent (same pairs as Forge).
+            
             event.register(arcaneresearch.init.ModMenuTypes.GOLEM_BUILDER.get(),
                     arcaneresearch.client.gui.screens.GolemBuilderScreen::new);
             event.register(arcaneresearch.init.ModMenuTypes.ARCANE_WORKBENCH.get(),
@@ -457,7 +457,7 @@ public class Arcaneresearch {
                     arcaneresearch.client.gui.screens.SmelterScreen::new);
             event.register(arcaneresearch.init.ModMenuTypes.RESEARCH_TABLE.get(),
                     arcaneresearch.client.gui.screens.ResearchTableScreen::new);
-            // NEOFORGE_PORT (Forge e45d90b): TempDeconClient's screen registration moved here.
+            
             event.register(arcaneresearch.init.ModMenuTypes.DECONSTRUCTION_TABLE.get(),
                     arcaneresearch.client.gui.screens.DeconstructScreen::new);
             event.register(arcaneresearch.init.ModMenuTypes.FOCAL_MANIPULATOR.get(),
@@ -634,8 +634,8 @@ public class Arcaneresearch {
 
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            // NEOFORGE_PORT (render phase): every renderer below is ported to the 26.x
-            // BlockEntityRenderer<T,S>/EntityRenderer<T,S> render-state + submit API.
+            
+            
             event.registerBlockEntityRenderer(
                 ModBlockEntities.JAR.get(),
                 arcaneresearch.client.renderers.tile.JarRenderer::new
@@ -665,7 +665,7 @@ public class Arcaneresearch {
                 arcaneresearch.client.renderers.tile.JarRenderer::new
             );
 
-            // NEOFORGE_PORT (Forge e45d90b): TempDeconClient's renderer registration moved here.
+            
             event.registerBlockEntityRenderer(
                 ModBlockEntities.DECONSTRUCTION_TABLE.get(),
                 arcaneresearch.client.renderers.tile.DeconstructTileRenderer::new
@@ -969,7 +969,7 @@ public class Arcaneresearch {
                     ModEntities.BOTTLE_TAINT.get(),
                     arcaneresearch.client.renderers.entity.BottleTaintRenderer::new
             );
-            // Паритет Forge: первородная стрела (TC4 parity).
+            
             event.registerEntityRenderer(
                     ModEntities.PRIMAL_ARROW.get(),
                     arcaneresearch.client.renderers.entity.PrimalArrowRenderer::new
@@ -988,13 +988,13 @@ public class Arcaneresearch {
             KeyHandler.registerKeyMappings(event);
         }
 
-        // NEOFORGE_PORT (26.3): Forge registered enchantment scannables in initScannables on both
-        // sides; in the port they need RegistryAccess (datapack registry) and were only built at
-        // ServerStartingEvent, so a client of a dedicated/LAN server never knew them (HUD /
-        // thaumometer "still scannable"). Rebuilt here from the client's registries after login
-        // (idempotent: initEnchantmentScans clears the previous set). Skipped for the integrated
-        // server connection, whose (shared static) set the server already built at start.
-        // Game-bus event; this subscriber class is client-dist only.
+        
+        
+        
+        
+        
+        
+        
         @SubscribeEvent
         public static void onClientLoggingIn(net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.LoggingIn event) {
             if (event.getConnection().isMemoryConnection()) {
@@ -1013,48 +1013,48 @@ public class Arcaneresearch {
         @SubscribeEvent
         public static void onModifyBakingResult(
                 net.neoforged.neoforge.client.event.ModelEvent.ModifyBakingResult event) {
-            // NEOFORGE_PORT: Forge replaced per-variant crystal models with
-            // CrystalBakedModel here; in 26.3 this is wired via
-            // RegisterBlockStateModels (CrystalModelRegistration, custom model
-            // type "arcaneresearch:crystal" in the crystal_* blockstates).
+            
+            
+            
+            
             LOGGER.info("Crystal models wired via RegisterBlockStateModels");
         }
 
         @SubscribeEvent
         public static void onRegisterItemColors(
                 net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.ItemTintSources event) {
-            // NEOFORGE_PORT (tint rework): 26.3 item tints are data-driven ItemTintSource
-            // (vanilla models declare "tints"). Forge lambdas converted (same colors/order):
-            // DONE: foci x3 (arcaneresearch:focus) + golem_placer (arcaneresearch:golem_material)
-            // -> FocusGolemTintSources; robes x6 -> vanilla minecraft:dye with the Forge default.
-            // DONE: phial (aspect[0] @tint1) -> PhialTintSources (arcaneresearch:phial).
-            // DONE: labels (aspect @tint1) -> LabelTintSources (arcaneresearch:label).
-            // DONE: jars (aspect[0] @tint1) -> JarTintSources (arcaneresearch:jar_aspect),
-            // wired per fill-variant in assets/arcaneresearch/items/jar_{normal,void}.json.
-            // DONE: nitor x16 (getColorValue) -> client/renderers/item/NitorTintSources
-            // (arcaneresearch:nitor), wired in assets/arcaneresearch/items/nitor_*.json.
-            // DONE: candles x16 (dye map color) -> CandleTintSources (arcaneresearch:candle).
-            // DONE: banners x17 (dye @tint1, aspect @tint2) -> BannerTintSources
-            // (arcaneresearch:banner_dye/aspect + constant white @tint0).
-            // DONE: leaves x2 + grass_ambient -> FoliageTintSources (arcaneresearch:leaf/grass_ambient).
-            // DONE: crystal_essence (aspect[0]) + crystals x7 (fixed color) ->
-            // client/renderers/item/CrystalTintSources (arcaneresearch:crystal_aspect),
-            // wired in assets/arcaneresearch/items/crystal_*.json.
-            // DONE: wand focus tint -> focus-group vertex color in WandSpecialRenderer
-            // (custom geometry has no tintIndex pipeline; Forge tintIndex-1 contract kept).
-            // DONE: wisp essence (aspect[0] color, else aspect cycle) ->
-            // WispEssenceTintSources (arcaneresearch:essence_aspect), wired in
-            // assets/arcaneresearch/items/wisp_essence.json.
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             LOGGER.info("Item tints registered (ItemTintSource, 26.3 data-driven)");
         }
 
         @SubscribeEvent
         public static void onRegisterBlockColors(
                 net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.BlockTintSources event) {
-            // NEOFORGE_PORT: 26.3 block tints are BlockTintSource lists. Crystals:
-            // Forge lambda parity (aspect color for tintIndex 0 quads).
-            // Opaque OR: Forge BlockColors ignored alpha (RGB only); 26.3 tint
-            // layers are ARGB, so alpha is forced for the same visible result.
+            
+            
+            
+            
             event.register(java.util.List.of((net.minecraft.client.color.block.BlockTintSource) state -> {
                 if (state.getBlock() instanceof arcaneresearch.common.blocks.world.ore.BlockCrystalTC crystal) {
                     return 0xFF000000 | crystal.getAspect().getColor();
@@ -1068,9 +1068,9 @@ public class Arcaneresearch {
                     arcaneresearch.init.ModBlocks.CRYSTAL_ORDER.get(),
                     arcaneresearch.init.ModBlocks.CRYSTAL_ENTROPY.get(),
                     arcaneresearch.init.ModBlocks.CRYSTAL_FLUX.get());
-            // NEOFORGE_PORT: Forge onRegisterBlockColors nitor entries 1:1
-            // (per-block getColorValue(), any tintIndex). Opaque OR: same
-            // ARGB transport adaptation as crystals above.
+            
+            
+            
             event.register(java.util.List.of((net.minecraft.client.color.block.BlockTintSource) state -> {
                 if (state.getBlock() instanceof arcaneresearch.common.blocks.misc.BlockNitor nitor) {
                     return 0xFF000000 | nitor.getColorValue();
@@ -1093,8 +1093,8 @@ public class Arcaneresearch {
                     arcaneresearch.init.ModBlocks.NITOR_GREEN.get(),
                     arcaneresearch.init.ModBlocks.NITOR_RED.get(),
                     arcaneresearch.init.ModBlocks.NITOR_BLACK.get());
-            // NEOFORGE_PORT: Forge onRegisterBlockColors candle entries 1:1
-            // (dye map color, any tintIndex). Opaque OR: same ARGB adaptation.
+            
+            
             event.register(java.util.List.of((net.minecraft.client.color.block.BlockTintSource) state -> {
                 if (state.getBlock() instanceof arcaneresearch.common.blocks.basic.BlockCandle candle) {
                     return 0xFF000000 | candle.getColor().getMapColor().col;
@@ -1117,9 +1117,9 @@ public class Arcaneresearch {
                     arcaneresearch.init.ModBlocks.CANDLE_GREEN.get(),
                     arcaneresearch.init.ModBlocks.CANDLE_RED.get(),
                     arcaneresearch.init.ModBlocks.CANDLE_BLACK.get());
-            // NEOFORGE_PORT: Forge onRegisterBlockColors banner entries 1:1
-            // (dye map color, null dye i.e. crimson cult -> COLOR_RED; aspect plays
-            // no role in-world, same as Forge). Opaque OR: same ARGB adaptation.
+            
+            
+            
             event.register(java.util.List.of((net.minecraft.client.color.block.BlockTintSource) state -> {
                 if (state.getBlock() instanceof arcaneresearch.common.blocks.basic.BlockBannerTC banner) {
                     net.minecraft.world.item.DyeColor dye = banner.getDyeColor();
@@ -1145,9 +1145,9 @@ public class Arcaneresearch {
                     arcaneresearch.init.ModBlocks.BANNER_RED.get(),
                     arcaneresearch.init.ModBlocks.BANNER_BLACK.get(),
                     arcaneresearch.init.ModBlocks.BANNER_CRIMSON_CULT.get());
-            // NEOFORGE_PORT: Forge grass_ambient entry 1:1 (biome grass color in
-            // world, GrassColor.get(0.5, 1.0) fallback). colorInWorld override carries
-            // the level/pos branch (verified BlockTintSource shape in the 26.3 jar).
+            
+            
+            
             event.register(java.util.List.of(new net.minecraft.client.color.block.BlockTintSource() {
                 @Override
                 public int color(net.minecraft.world.level.block.state.BlockState state) {
@@ -1164,10 +1164,10 @@ public class Arcaneresearch {
                     return color(state);
                 }
             }), arcaneresearch.init.ModBlocks.GRASS_AMBIENT.get());
-            // NEOFORGE_PORT: Forge leaves entries 1:1 (silverwood always white,
-            // greatwood biome foliage color, FoliageColor default fallback).
-            // FoliageColor.getDefaultColor() is gone in 26.x; FOLIAGE_DEFAULT holds
-            // the same value (verified constant in the 26.3 client jar).
+            
+            
+            
+            
             event.register(java.util.List.of(new net.minecraft.client.color.block.BlockTintSource() {
                 @Override
                 public int color(net.minecraft.world.level.block.state.BlockState state) {
@@ -1192,10 +1192,10 @@ public class Arcaneresearch {
             }),
                     arcaneresearch.init.ModBlocks.GREATWOOD_LEAVES.get(),
                     arcaneresearch.init.ModBlocks.SILVERWOOD_LEAVES.get());
-            // NEOFORGE_PORT: Forge tube_filter entry 1:1 (tile TileTubeFilter
-            // aspectFilter color; tintIndex 1 in Forge maps to the filter faces here,
-            // same as the jar liquid faces). colorInWorld override carries the
-            // level/pos/tile branch (verified BlockTintSource shape in the 26.3 jar).
+            
+            
+            
+            
             event.register(java.util.List.of(new net.minecraft.client.color.block.BlockTintSource() {
                 @Override
                 public int color(net.minecraft.world.level.block.state.BlockState state) {
@@ -1215,8 +1215,8 @@ public class Arcaneresearch {
                     return 0xFFFFFFFF;
                 }
             }), arcaneresearch.init.ModBlocks.TUBE_FILTER.get());
-            // NEOFORGE_PORT: Forge stabilizer entry 1:1 (tintIndex 0 = energy colour from the
-            // tile, colorMultiplier(0) without world context; other indices untinted).
+            
+            
             event.register(java.util.List.of(new net.minecraft.client.color.block.BlockTintSource() {
                 @Override
                 public int color(net.minecraft.world.level.block.state.BlockState state) {
@@ -1234,8 +1234,8 @@ public class Arcaneresearch {
                     return color(state);
                 }
             }), arcaneresearch.init.ModBlocks.STABILIZER.get());
-            // NEOFORGE_PORT: Forge inlay entry 1:1 (TintHelper.inlayChargeColor: tintIndex 0 from
-            // the CHARGE state property).
+            
+            
             event.register(java.util.List.of((net.minecraft.client.color.block.BlockTintSource) state -> {
                 if (state.getBlock() instanceof arcaneresearch.common.blocks.devices.BlockInlay
                         && state.hasProperty(arcaneresearch.common.blocks.devices.BlockInlay.CHARGE)) {
@@ -1247,8 +1247,8 @@ public class Arcaneresearch {
             LOGGER.info("Block tints registered (BlockTintSource, 26.3)");
         }
 
-        // Bone bow pulling/pull item model properties (ported from Forge ItemProperties.register).
-        // Vanilla registers "pulling"/"pull" only for Items.BOW; our bow registers them explicitly.
+        
+        
         record BoneBowPulling() implements SelectItemModelProperty<Float> {
             public static final SelectItemModelProperty.Type<BoneBowPulling, Float> TYPE =
                     SelectItemModelProperty.Type.create(MapCodec.unit(new BoneBowPulling()), Codec.FLOAT);
@@ -1308,10 +1308,10 @@ public class Arcaneresearch {
         }
     }
 
-    // NEOFORGE_PORT: client-only helpers (Minecraft/ClientLevel) must not live in
-    // the outer mod class: JVM verification of Arcaneresearch on a dedicated
-    // server resolves them at link time -> NoClassDefFoundError: ClientLevel
-    // during mod construction (@OnlyIn no longer strips in NeoForge 26).
-    // They had no direct callers left (PacketSealToClient uses
-    // Proxies.get().getClientLevel()); client code belongs in arcaneresearch.client.*.
+    
+    
+    
+    
+    
+    
 }

@@ -36,8 +36,8 @@ public class ItemFocusPouch extends Item implements ICurioItem {
                 .rarity(Rarity.UNCOMMON));
     }
 
-    // NEOFORGE_PORT: use() now returns InteractionResult (holder removed);
-    // NetworkHooks.openScreen REMOVED -> ServerPlayer.openMenu(provider, extraDataWriter).
+    
+    
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -65,9 +65,9 @@ public class ItemFocusPouch extends Item implements ICurioItem {
 
     public NonNullList<ItemStack> getInventory(ItemStack item) {
         NonNullList<ItemStack> stackList = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
-        // NEOFORGE_PORT: ContainerHelper.loadAllItems(CompoundTag, ...) removed in 26.x ->
-        // ItemStack.CODEC via NbtOps (same "Items" list + "Slot" entries shape).
-        // NEOFORGE_PORT (26.3): registry-aware ops (RegistryNbt) - plain NbtOps dropped enchanted stacks.
+        
+        
+        
         CompoundTag root = ArcaneresearchInvHelper.getCustomTag(item);
         if (root == null) {
             return stackList;
@@ -121,10 +121,10 @@ public class ItemFocusPouch extends Item implements ICurioItem {
         return false;
     }
 
-    // NEOFORGE_PORT: getShareTag REMOVED in 26.x; component sync (CUSTOM_DATA included)
-    // is automatic, so no override is needed.
+    
+    
 
-    // NEOFORGE_PORT: appendHoverText 5-arg (TooltipContext, TooltipDisplay, Consumer<Component>).
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {

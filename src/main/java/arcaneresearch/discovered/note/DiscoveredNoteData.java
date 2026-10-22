@@ -15,49 +15,49 @@ import arcaneresearch.api.ArcaneresearchInvHelper;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 
-/**
- * Данные исследовательской записки (свиток), порт в паритете с:
- * - TC3 {@code thaumcraft.common.research.ResearchNoteData} (tags/progress/failedTags, getTotalProgress, getTagProgress)
- * - reforged {@code thaumcraft.research.ResearchNoteData} (key/tags/progress/failed, read/create/toNote)
- *
- * Адаптация под Forge 1.20.1: вместо DataComponent (reforged, неофордж 26.x)
- * используется обычный NBT-тег {@code DiscoveredNote} на стаке. Требуемые количества
- * аспектов ({@code need}) хранятся прямо в NBT, т.к. у ResearchEntry проекта
- * нет аспект-стоимости (в отличие от reforged ResearchItem.tags).
- *
- * NEOFORGE_PORT: ItemStack NBT (hasTag/getTag/getOrCreateTag) удалён в 26.x ->
- * DataComponents.CUSTOM_DATA через ArcaneresearchInvHelper
- * (getCustomTag/getOrCreateCustomTag/setCustomTag); NBT-формат 1:1.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class DiscoveredNoteData {
 
     public static final String NBT_ROOT = "DiscoveredNote";
 
-    /** Ключ исследования (research key), может быть null у пустой записки. */
+      
     public String key;
-    /** Аспекты записки по порядку. */
+      
     public Aspect[] tags = new Aspect[0];
-    /** Сколько нужно по каждому аспекту (параллельно tags). */
+      
     public int[] need = new int[0];
-    /** Сколько уже изучено (параллельно tags). */
+      
     public int[] have = new int[0];
-    /**
-     * Неудачные попытки по тегам аспектов (0..100), паритет TC3 {@code failedTags}.
-     * В TC3 индексировалось числовым id аспекта; здесь ключ — строковый тег,
-     * т.к. у Aspect проекта нет числового id. Используется столом исследования.
-     */
+     
+
+
+
+ 
     public Map<String, Byte> failed = new HashMap<>();
 
-    /**
-     * Стадии мини-игр записки: {@code stage1} ставит стол записок при
-     * прогрессе 100%, {@code stage2} — hex-стол при победе. Порядок не важен.
-     * Завершена записка ({@link #isComplete}) только при обеих стадиях
-     * (для исследований с hex-стадией).
-     */
+     
+
+
+
+
+ 
     public boolean stage1;
     public boolean stage2;
 
-    // ------------------------------------------------------------------ IO
+    
 
     public static boolean hasNote(ItemStack stack) {
         if (stack.isEmpty()) {
@@ -67,7 +67,7 @@ public class DiscoveredNoteData {
         return custom != null && custom.contains(NBT_ROOT);
     }
 
-    /** Паритет reforged {@code ResearchNoteData.read}. */
+      
     public static DiscoveredNoteData read(ItemStack stack) {
         DiscoveredNoteData data = new DiscoveredNoteData();
         if (!hasNote(stack)) {
@@ -87,7 +87,7 @@ public class DiscoveredNoteData {
         for (int i = 0; i < tagList.size(); i++) {
             Aspect aspect = Aspect.getAspect(tagList.getStringOr(i, ""));
             if (aspect == null) {
-                continue; // неизвестный тег — пропускаем, как UNKNOWN в reforged
+                continue; 
             }
             tags.add(aspect);
             needs.add(i < needList.size() ? Math.max(0, needList.getIntOr(i, 0)) : 0);
@@ -101,19 +101,19 @@ public class DiscoveredNoteData {
             data.failed.put(k, fail.getByteOr(k, (byte) 0));
         }
         data.stage1 = root.getBooleanOr("stage1", false);
-        // Совместимость со старым флагом: hex ставился победой hex-мини-игры.
+        
         data.stage2 = root.getBooleanOr("stage2", false) || root.getBooleanOr("hex", false);
         return data;
     }
 
-    /** Паритет reforged {@code updateData} + {@code toNote}. */
+      
     public static void write(ItemStack stack, DiscoveredNoteData data) {
-        // MERGE, а не замена слоя: в том же слое живёт hex-поле
-        // (единый NBT-слой записки), затирать его нельзя.
-        // getCustomTag уже возвращает отсоединённую копию — правим и пишем назад.
-        // NEOFORGE_PORT: custom бывает null на свежих стаках (CUSTOM_DATA ещё нет);
-        // поля записки пишутся в SUB-тег NBT_ROOT (так их читает read()),
-        // соседи верхнего уровня (hex-поле) сохраняются.
+        
+        
+        
+        
+        
+        
         CompoundTag custom = ArcaneresearchInvHelper.getCustomTag(stack);
         if (custom == null) {
             custom = new CompoundTag();
@@ -143,13 +143,13 @@ public class DiscoveredNoteData {
         root.put("fail", fail);
         custom.put(NBT_ROOT, root);
         ArcaneresearchInvHelper.setCustomTag(stack, custom);
-        // NEOFORGE_PORT: Item.getRarity override removed in 26.x (паритет TC3:
-        // notes/uncommon, discovery/rare) -> RARITY data component, пересчёт при записи.
+        
+        
         stack.set(net.minecraft.core.component.DataComponents.RARITY,
                 data.isComplete() ? net.minecraft.world.item.Rarity.RARE : net.minecraft.world.item.Rarity.UNCOMMON);
     }
 
-    /** Паритет reforged {@code ResearchNoteData.create(key)} + TC3 {@code createNote}. */
+      
     public static DiscoveredNoteData create(String key, AspectList required) {
         DiscoveredNoteData data = new DiscoveredNoteData();
         data.key = key;
@@ -166,9 +166,9 @@ public class DiscoveredNoteData {
         return data;
     }
 
-    // ------------------------------------------------------------------ math
+    
 
-    /** Паритет TC3 {@code getTotalProgress} (суммы have/need вместо rr.tags). */
+      
     public float getTotalProgress() {
         float done = 0.0F;
         float total = 0.0F;
@@ -188,7 +188,7 @@ public class DiscoveredNoteData {
         return !requiresHex(key) || (stage1 && stage2);
     }
 
-    /** Исследование требует hex-стадию (есть стадия с {@code "hex": true}). */
+      
     public static boolean requiresHex(String key) {
         if (key == null || key.isEmpty()) {
             return false;
@@ -212,7 +212,7 @@ public class DiscoveredNoteData {
         return false;
     }
 
-    /** Первое исследование, чья стадия требует это открытие. */
+      
     private static arcaneresearch.api.research.ResearchEntry requiringResearch(String discoveryKey) {
         try {
             for (arcaneresearch.api.research.ResearchCategory category :
@@ -241,7 +241,7 @@ public class DiscoveredNoteData {
         return null;
     }
 
-    /** Паритет TC3 {@code getTagProgress}. */
+      
     public float getTagProgress(Aspect tag) {
         if (tag == null) {
             return 0.0F;
@@ -256,7 +256,7 @@ public class DiscoveredNoteData {
         return 0.0F;
     }
 
-    /** Неудача 0..100 по тегу (для стола исследования, паритет TC3 failedTags). */
+      
     public byte getFailed(String aspectTag) {
         Byte b = failed.get(aspectTag);
         return b == null ? 0 : b.byteValue();

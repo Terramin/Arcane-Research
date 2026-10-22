@@ -79,10 +79,10 @@ public class CuriosCompat {
         return !findCuriosItems(player, s -> !s.isEmpty() && s.getItem() == item).isEmpty();
     }
 
-    /**
-     * Предметы только из curio-слотов головы (identifier "head"):
-     * очки работают либо в шлеме, либо здесь.
-     */
+     
+
+
+ 
     public static List<ItemStack> findHeadSlotItems(Player player, Predicate<ItemStack> predicate) {
         List<ItemStack> result = new ArrayList<>();
         if (!isCuriosLoaded() || player == null) {

@@ -24,14 +24,14 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-/**
- * Aura totem base, ported from TC5 TileAuraTotem.
- * Burns crystal essence to run the aura magnet; pole blocks below widen
- * the working zones. Deviations from TC5: shard fuel replaced by crystal
- * essence (no shard items in this port), particles via FXDispatcher.
- * The totem block itself (with the pole type variants) is an outside ask;
- * poles are detected by block id plus a "type" property when present.
- */
+ 
+
+
+
+
+
+
+ 
 public class AuraTotemTile extends TileArcaneresearchInventory implements MenuProvider {
     public static final String TOTEM_ID = "arcaneresearch:aura_totem";
 
@@ -181,8 +181,8 @@ public class AuraTotemTile extends TileArcaneresearchInventory implements MenuPr
         this.zonePure = 0;
         BlockPos pos = this.worldPosition.below();
         int scanned = 0;
-        // 1:1 with TC5: only pole segments advance the counter, heads are
-        // transparent to the scan.
+        
+        
         while (isTotemBlock(level, pos) && scanned < 5) {
             String variant = poleVariant(level, pos);
             if ("POLE_OUTER".equals(variant)) {
@@ -210,7 +210,7 @@ public class AuraTotemTile extends TileArcaneresearchInventory implements MenuPr
     }
 
     static String poleVariant(Level level, BlockPos pos) {
-// NEOFORGE_PORT: StateHolder.getValues now Stream<Property.Value<?>> in 26.3.
+
         for (net.minecraft.world.level.block.state.properties.Property.Value<?> entry
                 : (Iterable<net.minecraft.world.level.block.state.properties.Property.Value<?>>) level.getBlockState(pos).getValues()::iterator) {
             if (entry.property().getName().equals("type") && entry.value() instanceof Enum) {

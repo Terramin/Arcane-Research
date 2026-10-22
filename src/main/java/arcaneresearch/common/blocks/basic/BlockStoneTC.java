@@ -13,8 +13,8 @@ public class BlockStoneTC extends BlockTC {
     private final boolean canSpawnMobs;
 
     public BlockStoneTC(Properties properties, boolean canSpawnMobs) {
-        // NEOFORGE_PORT: Forge isValidSpawn override (returned canSpawnMobs) -> 26.x
-        // Properties.isValidSpawn predicate (the block-level override hook is gone).
+        
+        
         super(properties.isValidSpawn((state, level, pos, type) -> canSpawnMobs));
         this.canSpawnMobs = canSpawnMobs;
     }

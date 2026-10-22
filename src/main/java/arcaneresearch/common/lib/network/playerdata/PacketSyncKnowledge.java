@@ -14,14 +14,14 @@ import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.ResearchEntry;
 
-// NEOFORGE_PORT: 1:1 from Forge .../playerdata/PacketSyncKnowledge.java (PLAY_TO_CLIENT).
-// Payload (CompoundTag NBT) + client logic preserved verbatim.
-// REQUIRED transport changes only:
-//   - encode/decode/handle(Supplier<NetworkEvent.Context>) triple (+NetworkEvent import)
-//     -> CustomPacketPayload { TYPE, STREAM_CODEC, type() } + handle(msg, IPayloadContext).
-//   - STREAM_CODEC maps the same NBT via ByteBufCodecs.COMPOUND_TAG (no FriendlyByteBuf methods).
-//   - Payload id "arcaneresearch:sync_knowledge" (Forge used one "main" channel + numeric ids;
-//     see PacketHandler order table for the full id mapping).
+
+
+
+
+
+
+
+
 public class PacketSyncKnowledge implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketSyncKnowledge> TYPE =
@@ -47,8 +47,8 @@ public class PacketSyncKnowledge implements CustomPacketPayload {
 
             for (String key : knowledge.getResearchList()) {
                 knowledge.clearResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.POPUP);
-                // NEOFORGE_PORT (discovered/*, Forge 1:1): флаг DISCOVERY тоже
-                // одноразовый — чистится при отправке.
+                
+                
                 knowledge.clearResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.DISCOVERY);
             }
         } else {
@@ -80,7 +80,7 @@ public class PacketSyncKnowledge implements CustomPacketPayload {
                     }
                     knowledge.clearResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.POPUP);
                 }
-                // NEOFORGE_PORT (discovered/*, Forge 1:1): тост предъявленного открытия.
+                
                 if (knowledge.hasResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.DISCOVERY)) {
                     ResearchEntry entry = ResearchCategories.getResearch(key);
                     if (entry != null) {
@@ -92,8 +92,8 @@ public class PacketSyncKnowledge implements CustomPacketPayload {
         }
     }
 
-    // NEOFORGE_PORT: toast construction lives in the client class (ResearchToast.show*);
-    // a Toast-typed expression here made the dedicated server fail to link this packet.
+    
+    
     private static void showResearchToast(ResearchEntry entry) {
         arcaneresearch.client.gui.ResearchToast.show(entry);
     }

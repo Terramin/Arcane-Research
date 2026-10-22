@@ -20,15 +20,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-// NEOFORGE_PORT: gameplay logic 1:1 from Forge api/crafting/ShapelessArcaneRecipe.java.
-// 26.x changes only:
-//   Identifier replaces Identifier; Ingredient.EMPTY is gone (empty entries are
-//   skipped at parse, ingredients stay a plain List<Ingredient> via ArrayList).
-//   assemble(IArcaneWorkbench) single-arg; canCraftInDimensions/getResultItem(
-//   RegistryAccess)/getId removed from the vanilla interface (getId/getIngredients/
-//   getResultItem kept as legacy helpers declared on IArcaneRecipe).
-//   placementInfo() via PlacementInfo.create (mirrors vanilla ShapelessRecipe).
-//   Matching algorithm (count + RecipeMatcher) VERBATIM, including the crystal check.
+
+
+
+
+
+
+
+
+
 public class ShapelessArcaneRecipe implements IArcaneRecipe {
 
     private String research;
@@ -72,8 +72,8 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
     private static List<Ingredient> parseShapeless(Object[] recipe) {
         List<Ingredient> ingredients = new ArrayList<>();
         for (Object in : recipe) {
-            // NEOFORGE_PORT (26.3): Forge expanded ONLY NonNullList entries into separate
-            // ingredients; any other Collection goes to getIngredient() as ONE OR-ingredient.
+            
+            
             if (in instanceof net.minecraft.core.NonNullList) {
                 for (Object o : (Collection<?>) in) {
                     Ingredient ing = ArcaneresearchApiHelper.getIngredient(o);
@@ -184,13 +184,13 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
     }
 
     @Override
-    public RecipeSerializer<arcaneresearch.common.lib.crafting.ShapelessArcaneRecipe> getSerializer() { // NEOFORGE_PORT: Recipe bound requires concrete type
+    public RecipeSerializer<arcaneresearch.common.lib.crafting.ShapelessArcaneRecipe> getSerializer() { 
 
         return arcaneresearch.common.lib.crafting.ShapelessArcaneRecipe.Serializer.INSTANCE;
     }
 
     @Override
-    public RecipeType<IArcaneRecipe> getType() { // NEOFORGE_PORT: Recipe bound requires concrete type
+    public RecipeType<IArcaneRecipe> getType() { 
         return ModRecipeTypes.ARCANE_WORKBENCH.get();
     }
 }

@@ -16,10 +16,10 @@ import arcaneresearch.common.world.structures.FeatureStructure;
 import arcaneresearch.common.world.structures.FeatureStructurePiece;
 import arcaneresearch.common.world.structures.PoolStructure;
 
-// NEOFORGE_PORT: 1:1 from Forge 1.20.1 init/ModStructures.java (same order, same registry names).
-// REQUIRED changes only:
-//   RegistryObject -> DeferredHolder (registries themselves are vanilla Registries,
-//   already used in Forge, so DeferredRegister.create calls are unchanged).
+
+
+
+
 public class ModStructures {
 
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES =
@@ -42,7 +42,7 @@ public class ModStructures {
                 }
             });
 
-    // NEOFORGE_PORT: StructureType is a functional interface over MapCodec (was Codec supplier).
+    
     private static <S extends Structure> StructureType<S> explicitCodec(
             com.mojang.serialization.MapCodec<S> codec) {
         return () -> codec;

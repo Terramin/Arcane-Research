@@ -7,7 +7,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
@@ -15,8 +15,8 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.TaintacleRenderer;
 import arcaneresearch.common.entities.monster.tainted.EntityTaintacle;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>; tip/anim inputs via renderer State
-// (chainLengthFor runs in extract). Tip constants visible for the renderer.
+
+
 public class TaintacleModel extends EntityModel<TaintacleRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -155,11 +155,11 @@ public class TaintacleModel extends EntityModel<TaintacleRenderer.State> {
         float fi = flail + ((ht > 0.0f) ? mod : (-mod));
 
         this.base.xRot = 0.0f;
-        // NEOFORGE_PORT: base submit renders root() directly (the old recursive
-        // renderToBuffer has no submit path); the per-level 0.88 shrink moves
-        // into part scales (same compounding as the pose-stack version).
-        // NEOFORGE_PORT (26.3): Forge scaled before each child's translate, so the
-        // offsets shrink by 0.88 too (part scale applies only after the offset).
+        
+        
+        
+        
+        
         for (int i = 0; i < MAX_SEGMENTS; i++) {
             this.segments[i].xScale = 0.88F;
             this.segments[i].yScale = 0.88F;
@@ -182,10 +182,10 @@ public class TaintacleModel extends EntityModel<TaintacleRenderer.State> {
         }
     }
 
-    // NEOFORGE_PORT: custom recursive segment rendering kept (base root render
-    // would double-draw); old @Override dropped (base is final with tint int).
-    // The 0.88 shrink now also lives in setupAnim part scales, so base submit
-    // draws the same shape.
+    
+    
+    
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
                                int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {

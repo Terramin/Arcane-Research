@@ -52,7 +52,7 @@ public class ItemCrystalEssence extends Item implements IEssentiaContainerItem {
 
     @Override
     public AspectList getAspects(ItemStack stack) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same NBT shape).
+        
         net.minecraft.world.item.component.CustomData data =
                 stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
         if (data != null) {
@@ -65,8 +65,8 @@ public class ItemCrystalEssence extends Item implements IEssentiaContainerItem {
 
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
-        // NEOFORGE_PORT (26.3): Forge wrote into the existing root tag (other keys kept) ->
-        // CustomData.update merges instead of replacing the whole component.
+        
+        
         net.minecraft.world.item.component.CustomData.update(
                 net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, aspects::writeToNBT);
     }
@@ -81,8 +81,8 @@ public class ItemCrystalEssence extends Item implements IEssentiaContainerItem {
         AspectList aspects = getAspects(stack);
         if (aspects != null && aspects.size() > 0) {
             Aspect aspect = aspects.getAspects()[0];
-            // NEOFORGE_PORT: per-stack getDescriptionId(stack) removed in 26.x;
-            // no-arg key formats identically (see ItemTCBase precedent).
+            
+            
             return Component.translatable(getDescriptionId(), aspect.getName());
         }
         return super.getName(stack);

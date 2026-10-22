@@ -48,63 +48,63 @@ import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.common.lib.aura.INode;
 import arcaneresearch.common.lib.utils.EntityUtils;
 
-/**
- * Порт отображения таумометра в руках из 1.7.10 в NeoForge 26.3
- * (паритет Forge 1.20.1 {@code ThaumometerHandRenderer}).
- *
- * Оригинал: {@code thaumcraft.client.renderers.item.ItemThaumometerRenderer}
- * (IItemRenderer, типы EQUIPPED_FIRST_PERSON / EQUIPPED / INVENTORY,
- * модель {@code textures/models/scanner.obj} + {@code scanner.png} +
- * экран {@code scanscreen.png} + сетка аспектов + название цели).
- *
- * <ul>
- *   <li>EQUIPPED_FIRST_PERSON: кастомная поза, обе руки игрока, модель в
- *   масштабе 2x, наклон за взглядом и сдвиг по equippedProgress. Здесь —
- *   {@code RenderHandEvent} (единственный способ кастомизировать вид от 1-го
- *   лица); руки — как ванильная карта ({@code renderTwoHandedMap}/
- *   {@code renderMapHand} из {@code FirstPersonHandsAndItemsRenderer}, те же
- *   числа), модель — напрямую {@code scanner.obj} через {@link TurretObjModel}
- *   (flipV=true как {@code flip_v} в thaumometer.json), экран и оверлей —
- *   квадами + {@code submitText}.</li>
- *   <li>EQUIPPED и INVENTORY: покрываются {@code display} трансформами
- *   thaumometer.json, код не нужен.</li>
- *   <li>Экран: квад scanscreen 2.5x с мерцанием яркости
- *   {@code 190 + sin(ticks) * 10 + 10}.</li>
- *   <li>Оверлей: doScan + аспекты только если уже просканировано
- *   (hasBeenScanned -&gt; {@code !isThingStillScannable}), сетка 5 в ряд с
- *   треугольной упаковкой, имя под экраном, тип ноды сверху.</li>
- *   <li>doScan: pointed entity -&gt; raytrace блока -&gt; scan-хендлеры;
- *   запасной источник — ScanPopupRenderer (его пишет
- *   ItemThaumometer.highlightScannables в тике).</li>
- * </ul>
- *
- * NEOFORGE_PORT (26.3 render-state):
- * - {@code RenderHandEvent} несёт {@code PoseStack + SubmitNodeCollector +
- *   PlayerRenderState} (проверено javadoc 26.3.0.64: getPoseStack,
- *   getSubmitNodeCollector, getPlayerState, getSwingProgress,
- *   getEquipProgress, getPackedLight, getPartialTick, getItemStack;
- *   {@code MultiBufferSource} и {@code getMultiBufferSource} удалены).
- * - Руки: {@code AvatarRenderer.renderRightHand/renderLeftHand(poseStack,
- *   collector, light, skin, sleeve)} + {@code ClientHooks.
- *   renderSpecificFirstPersonArm} (та же пара, что ванильный
- *   {@code renderPlayerHand}).
- * - Тело прибора: кастомная геометрия {@code scanner.obj} через
- *   {@code TCRenderTypes.objSolidFlat} (зарегистрирован; Forge-вариант шёл
- *   через {@code ItemRenderer.renderStatic} FIXED + компенсация translate
- *   +0.5/scale 1/0.6 — итог равен сырому OBJ в масштабе 0.4, что здесь и
- *   подаётся напрямую).
- * - Экран/иконки: {@code RenderTypes.text} квадами color+uv+light (тот же
- *   минимальный набор, что ванильная карта в
- *   {@code FirstPersonHandsAndItemsRenderer.renderMap}).
- * - Текст: {@code collector.submitText(pose, x, y, seq, shadow, mode,
- *   light, color, bg, outline)} (порядок — light СРАЗУ после mode,
- *   затем color/bg/outline; см. {@code OrderedSubmitNodeCollector}).
- * - {@code PoseStack.mulPose} -&gt; {@code rotateDegrees}; {@code Font.
- *   drawInBatch} -&gt; {@code submitText}.
- * - Pick-block: {@code Block.getCloneItemStack} удалён -&gt;
- *   {@code BlockState.getCloneItemStack(pos, level, true, player)} (тот же
- *   вызов, что {@code ScanTargets.pickStack}).
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class ThaumometerHandRenderer {
 
@@ -119,7 +119,7 @@ public class ThaumometerHandRenderer {
 
     private static final double SCAN_RANGE = 10.0D;
 
-    /** Тиков глушить взмах вокруг старта/конца использования. */
+      
     private static final int SWING_QUIET_TICKS = 8;
     private static int useStartTick = -1000;
     private static int useEndTick = -1000;
@@ -135,7 +135,7 @@ public class ThaumometerHandRenderer {
                 if (!scannerTried) {
                     scannerTried = true;
                     try {
-                        // Паритет thaumometer.json (flip_v: true).
+                        
                         scannerObj = TurretObjModel.load(SCANNER_MODEL, true);
                     } catch (Throwable ignored) {
                         scannerObj = null;
@@ -156,8 +156,8 @@ public class ThaumometerHandRenderer {
         }
         boolean off = event.getHand() == InteractionHand.OFF_HAND;
         if (off && isThaumometer(player.getMainHandItem())) {
-            // Риг в основной руке уже рисует обе руки сам — давим
-            // ванильный проход второй руки (иначе предмет парит рядом).
+            
+            
             event.setCanceled(true);
             return;
         }
@@ -166,11 +166,11 @@ public class ThaumometerHandRenderer {
             return;
         }
         if (off) {
-            // Таумометр во второй руке: обычный ванильный предмет,
-            // без рига (и без работы — см. ItemThaumometer.use).
+            
+            
             return;
         }
-        // Паритет: оригинал рисовал кастом только от 1-го лица.
+        
         if (!mc.options.getCameraType().isFirstPerson()) {
             return;
         }
@@ -180,13 +180,13 @@ public class ThaumometerHandRenderer {
         SubmitNodeCollector collector = event.getSubmitNodeCollector();
         PlayerRenderState playerState = event.getPlayerState();
         int light = event.getPackedLight();
-        // Пока идёт изучение (предмет используется) взмаха нет: рука жёстко
-        // зафиксирована, иначе каждый зажим ПКМ дёргает прибор.
-        // Плюс окна перехода: взмах от нажатия проскакивает раньше флага
-        // использования, а взмах завершения — позже его снятия.
+        
+        
+        
+        
         boolean using = player.isUsingItem() && isThaumometer(player.getUseItem());
-        // Фронт нажатия ПКМ с таумометром: взмах от нажатия идёт раньше флага
-        // использования — глушим от фронта, а не от флага.
+        
+        
         boolean useDown = mc.options.keyUse.isDown()
                 && (isThaumometer(player.getMainHandItem())
                         || isThaumometer(player.getOffhandItem()));
@@ -203,58 +203,58 @@ public class ThaumometerHandRenderer {
         float swing = (using || inWindow) ? 0.0F : event.getSwingProgress();
         pose.pushPose();
 
-        // Экранная привязка как в оригинале (EQUIPPED_FIRST_PERSON: фиксированная
-        // поза прибора + лишь 0.1 от дельты взгляда и сдвиг по equippedProgress).
-        // Наклона за питчем как у карты здесь нет — только покачивание при взмахе.
+        
+        
+        
         float sqrtSwing = Mth.sqrt(swing);
         float ySwing = -0.2F * Mth.sin(swing * Mth.PI);
         float zSwing = -0.4F * Mth.sin(sqrtSwing * Mth.PI);
         pose.translate(0.0F, -ySwing / 2.0F, zSwing);
 
-        // Руки в том же фиксированном риге (ванила renderTwoHandedMap; в оригинале
-        // руки тоже рисовались вместе с прибором из двух проходов).
-        // Общий жёсткий риг: фиксированная поза (паритет EQUIPPED_FIRST_PERSON),
-        // руки и прибор едут как одно целое; вместо наклона за питчем —
-        // лишь 0.1 от дельты взгляда, поэтому прибор всегда по центру,
-        // а не уезжает вниз при поднятой голове.
+        
+        
+        
+        
+        
+        
         pose.translate(0.0F, 0.04F + event.getEquipProgress() * -1.2F, -0.72F);
         pose.rotateDegrees(Axis.XP, (player.getXRot() - player.xRotO) * 0.1F);
         pose.rotateDegrees(Axis.YP, (player.getYRot() - player.yRotO) * 0.1F);
         pose.pushPose();
         pose.rotateDegrees(Axis.YP, 90.0F);
-        // Риг — только основная рука (вторая давится выше): зеркала не нужно.
+        
         renderMapHand(pose, collector, light, HumanoidArm.RIGHT, playerState);
         renderMapHand(pose, collector, light, HumanoidArm.LEFT, playerState);
-        // Прибор в том же риге: фиксированная поза, линза смотрит в камеру.
+        
         pose.popPose();
         pose.pushPose();
         pose.rotateDegrees(Axis.XP, Mth.sin(sqrtSwing * Mth.PI) * 8.0F);
         pose.rotateDegrees(Axis.XP, 80.0F);
         pose.scale(0.4F, 0.4F, 0.4F);
-        // Тело прибора: сырой scanner.obj в масштабе 0.4. Паритет Forge
-        // renderStatic FIXED (display scale 0.6 + центрирование T(-0.5)) с
-        // компенсацией translate +0.5 / scale 1/0.6: итог равен сырому OBJ.
+        
+        
+        
         TurretObjModel scanner = scannerModel();
         if (scanner != null) {
             RenderType bodyType = TCRenderTypes.objSolidFlat(SCANNER_TEX);
-            // NEOFORGE_PORT (линза): стекло экрана — полупрозрачное.
-            // objSolidFlat (ENTITY_CUTOUT: alpha-test без бленда) делал линзу
-            // глухой. Паритет Forge (ITEM-бейкинг гнал pane через
-            // полупрозрачный проход) — сырой ENTITY_TRANSLUCENT без
-            // пересборки ColorTargetState (деривация TRANSLUCENT гасит
-            // геометрию, см. TCRenderTypes).
+            
+            
+            
+            
+            
+            
             RenderType paneType = TCRenderTypes.translucentPortal(SCANSCREEN);
             emitGroup(pose, collector, bodyType, scanner, "scanner", light);
             emitGroup(pose, collector, paneType, scanner, "screen", light);
             emitGroup(pose, collector, paneType, scanner, "screen_back", light);
         }
 
-        // Экран: оригинал translate(0, 0.11, 0) + квад scanscreen 2.5
-        // (renderQuadCenteredFromTexture, brightness flicker, blend 771).
-        // Чуть выше стекла линзы (стекло y=0.004, верх рамки y=0.1): оверлей
-        // лежит в рамке, а не парит над ней.
-        // Только XP(90), без ZP(180): глифы шрифта запечены в GUI-ориентации
-        // (+Y вниз), разворот на 180 давал текст вверх ногами.
+        
+        
+        
+        
+        
+        
         pose.pushPose();
         pose.translate(0.0F, 0.02F, 0.0F);
         pose.rotateDegrees(Axis.XP, 90.0F);
@@ -264,13 +264,13 @@ public class ThaumometerHandRenderer {
                 0.0F, 0.0F, 1.0F, 1.0F, 255, 255, 255, 255, flick);
 
         renderScanOverlay(mc, player, level, pose, collector, flick);
-        pose.popPose(); // экран
+        pose.popPose(); 
 
-        pose.popPose(); // прибор
-        pose.popPose(); // база
+        pose.popPose(); 
+        pose.popPose(); 
     }
 
-    // ---- скан-оверлей: порт строк 165-284 оригинала ----
+    
 
     private static void renderScanOverlay(Minecraft mc, Player player, Level level,
             PoseStack pose, SubmitNodeCollector collector, int flick) {
@@ -278,10 +278,10 @@ public class ThaumometerHandRenderer {
         if (target == null) {
             return;
         }
-        // Имя/аспекты уже разрешены с учётом "просканировано ли"
-        // (паритет hasBeenScanned -> скрыть аспекты у нового объекта).
+        
+        
         if (target.node != null) {
-            // Порт строк 213-224: тип и модификатор ноды сверху.
+            
             String t = "nodetype." + target.node.getNodeType();
             if (target.node.getNodeModifier() != null) {
                 t = t + ", " + target.node.getNodeModifier();
@@ -299,7 +299,7 @@ public class ThaumometerHandRenderer {
 
         AspectList aspects = target.aspects;
         if (aspects != null && aspects.size() > 0) {
-            // Порт строк 243-265: треугольная сетка 5/4/3..., иконки 16px.
+            
             int posX = 0;
             int posY = 0;
             int aa = aspects.size();
@@ -313,8 +313,8 @@ public class ThaumometerHandRenderer {
                 pose.scale(0.01125F, 0.01125F, 0.01125F);
                 int px = -baseX + posX * 16;
                 int py = -8 + posY * 16;
-                // Паритет проекта: неизвестный игроку аспект — _unknown.png,
-                // иконки — через вырезку фона UtilsFX.strippedAspectTexture.
+                
+                
                 boolean known = ArcaneresearchCapabilities.isResearchKnown(player,
                         "!" + aspect.getTag().toLowerCase(java.util.Locale.ROOT));
                 Identifier icon = known
@@ -353,8 +353,8 @@ public class ThaumometerHandRenderer {
         if (text == null || text.isEmpty()) {
             text = "?";
         }
-        // Порт строк 267-282: имя под экраном, translate(0,-0.25,0)
-        // с ужимкой при ширине > 90.
+        
+        
         pose.pushPose();
         pose.translate(0.0F, -0.25F, -0.01F);
         Font font = mc.font;
@@ -370,7 +370,7 @@ public class ThaumometerHandRenderer {
         pose.popPose();
     }
 
-    /** Прямой порт ItemThaumometerRenderer.doScan: сущность -> блок -> запасной таргет тика. */
+      
     private static Target resolveTarget(Player player, Level level) {
         Entity pointed = null;
         try {
@@ -394,7 +394,7 @@ public class ThaumometerHandRenderer {
                     ? AspectHelper.getObjectAspects(stack)
                     : AspectHelper.getEntityAspects(pointed);
             if (aspects != null && ScanningManager.isThingStillScannable(player, pointed)) {
-                aspects = null; // паритет hasBeenScanned: новое показываем без аспектов
+                aspects = null; 
             }
             return new Target(name, aspects, null);
         }
@@ -416,9 +416,9 @@ public class ThaumometerHandRenderer {
                 if (be instanceof INode n) {
                     node = n;
                 }
-                // NEOFORGE_PORT (26.3): player-aware NeoForge hook first (parity with
-                // Forge getCloneItemStack(state, hit, level, pos, player); same call as
-                // ScanTargets.pickStack), then the plain state variant as fallback.
+                
+                
+                
                 ItemStack stack = ItemStack.EMPTY;
                 try {
                     stack = state.getCloneItemStack(pos, level, true, player);
@@ -451,7 +451,7 @@ public class ThaumometerHandRenderer {
             }
         }
 
-        // Запасной путь: цели, которые ItemThaumometer.highlightScannables пишет в тике.
+        
         Object cur = ScanPopupRenderer.getCurrentTarget(player);
         AspectList aspects = ScanPopupRenderer.getCurrentAspects(player);
         if (cur == null) {
@@ -480,21 +480,21 @@ public class ThaumometerHandRenderer {
     private record Target(String name, AspectList aspects, INode node) {
     }
 
-    /** Используемый предмет — таумометр (изучение идёт, взмах гасится). */
+      
     private static boolean isThaumometer(ItemStack stack) {
         return stack != null && !stack.isEmpty() && stack.getItem() instanceof ItemThaumometer;
     }
 
-    /** Мерцание яркости экрана: порт строки 160/171 (190 + sin(ticks) * 10 + 10). */
+      
     private static int flicker(Player player) {
         float s = Mth.sin((player.tickCount + player.level().getRandom().nextInt(2)) * 0.7F);
         return (int) (190.0F + s * 10.0F + 10.0F);
     }
 
-    /**
-     * Паритет ванильной карты ({@code FirstPersonHandsAndItemsRenderer.
-     * renderMapHand}): руки без двойной трансформации.
-     */
+     
+
+
+ 
     private static void renderMapHand(PoseStack pose, SubmitNodeCollector collector,
             int light, HumanoidArm arm, PlayerRenderState playerState) {
         AvatarRenderState avatar = playerState.avatarRenderState;
@@ -542,10 +542,10 @@ public class ThaumometerHandRenderer {
         });
     }
 
-    /**
-     * NEOFORGE_PORT: минимальный набор text-пайплайна (как ванильная карта в
-     * {@code FirstPersonHandsAndItemsRenderer.renderMap}: color + uv + light).
-     */
+     
+
+
+ 
     private static void quad(PoseStack pose, SubmitNodeCollector collector, RenderType type,
             float x0, float y0, float x1, float y1, float z,
             float u0, float v0, float u1, float v1,

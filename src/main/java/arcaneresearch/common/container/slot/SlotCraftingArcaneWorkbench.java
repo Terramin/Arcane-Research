@@ -61,11 +61,11 @@ public class SlotCraftingArcaneWorkbench extends Slot {
     protected void checkTakeAchievements(ItemStack stack) {
         if (amountCrafted > 0) {
             stack.onCraftedBy(player, amountCrafted);
-            // NEOFORGE_PORT: ForgeEventFactory removed -> EventHooks (see menu/slot/ArcaneWorkbenchResultSlot).
+            
             net.neoforged.neoforge.event.EventHooks.firePlayerCraftingEvent(player, stack, craftMatrix);
         }
         Container result = this.container;
-        // NEOFORGE_PORT: RecipeHolder -> RecipeCraftingHolder, recipe is a Holder (see ArcaneWorkbenchResultSlot).
+        
         if (result instanceof net.minecraft.world.inventory.RecipeCraftingHolder recipeHolder) {
             var recipe = recipeHolder.getRecipeUsed();
             if (recipe != null && !recipe.value().isSpecial()) {
@@ -80,10 +80,10 @@ public class SlotCraftingArcaneWorkbench extends Slot {
     public void onTake(Player thePlayer, ItemStack stack) {
         checkTakeAchievements(stack);
         IArcaneRecipe recipe = ArcaneresearchCraftingManager.findMatchingArcaneRecipe(craftMatrix, thePlayer);
-        // NEOFORGE_PORT: ForgeHooks -> CommonHooks (import swapped by port script).
+        
         CommonHooks.setCraftingPlayer(thePlayer);
-        // NEOFORGE_PORT: vanilla getRecipeFor takes CraftingInput and returns
-        // Optional<RecipeHolder<CraftingRecipe>> (see ArcaneWorkbenchResultSlot).
+        
+        
         java.util.List<ItemStack> remaining;
         if (recipe != null && craftMatrix instanceof IArcaneWorkbench workbench) {
             remaining = recipe.getRemainingItems(workbench);
@@ -101,7 +101,7 @@ public class SlotCraftingArcaneWorkbench extends Slot {
             var gridCopy = ArcaneWorkbenchMenu.gridOnlyCopy(
                     (AbstractContainerMenu) thePlayer.containerMenu, craftMatrix);
             var gridInput = gridCopy.asCraftInput();
-            // NEOFORGE_PORT: Level.getRecipeManager removed in 26.3 -> server RecipeManager.
+            
             var recipeOpt = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, gridInput, level);
             if (recipeOpt.isPresent()) {
                 remaining = recipeOpt.get().value().getRemainingItems(gridInput);

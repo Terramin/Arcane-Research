@@ -1,16 +1,16 @@
 package arcaneresearch.client.gui.screens;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ContainerInput; // NEOFORGE_PORT: ClickType -> ContainerInput
+import net.minecraft.world.inventory.ContainerInput; 
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -162,7 +162,7 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 
         if (selectedSlot >= 0 && selectedSlot < 81) {
@@ -269,7 +269,7 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        // NEOFORGE_PORT (26.3): key values are SDL scancodes now (GLFW 256 never matched) -> isEscape().
+        
         if (event.isEscape() && searchField.isFocused()) {
             searchField.setFocused(false);
             return super.keyPressed(event);

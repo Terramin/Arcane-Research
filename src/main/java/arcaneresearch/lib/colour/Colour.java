@@ -24,9 +24,9 @@ public abstract class Colour implements Copyable<Colour> {
         a = colour.a;
     }
 
-    // NEOFORGE_PORT (26.3 render rework): RenderSystem.setShaderColor removed вЂ” tint is
-    // now per-vertex/per-blit (see blit(..., tint) pattern). Kept as no-op for API parity;
-    // callers that need tint must pass colour explicitly at the draw call.
+    
+    
+    
     public void glColour() {
     }
 

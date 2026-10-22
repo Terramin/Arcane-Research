@@ -179,8 +179,8 @@ public class BlockBannerTC extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
@@ -225,7 +225,7 @@ public class BlockBannerTC extends Block implements EntityBlock {
 
         if (be instanceof TileBanner banner && banner.getAspect() != null) {
             String aspectTag = banner.getAspect().getTag();
-            // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).
+            
             net.minecraft.world.item.component.CustomData.update(
                     net.minecraft.core.component.DataComponents.CUSTOM_DATA, drop,
                     tag -> tag.putString("aspect", aspectTag));
@@ -239,10 +239,10 @@ public class BlockBannerTC extends Block implements EntityBlock {
         ItemStack stack = new ItemStack(this);
         BlockEntity be = level.getBlockEntity(pos);
 
-        // NEOFORGE_PORT (26.3): no includeData guard - the 1.20.1 override always copied the aspect.
+        
         if (be instanceof TileBanner banner && banner.getAspect() != null) {
             String aspectTag = banner.getAspect().getTag();
-            // NEOFORGE_PORT: stack root tag -> DataComponents.CUSTOM_DATA (same NBT shape).
+            
             net.minecraft.world.item.component.CustomData.update(
                     net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack,
                     tag -> tag.putString("aspect", aspectTag));

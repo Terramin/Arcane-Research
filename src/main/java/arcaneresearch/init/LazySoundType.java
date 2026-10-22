@@ -6,11 +6,11 @@ import net.minecraft.world.level.block.SoundType;
 
 import java.util.function.Supplier;
 
-// NEOFORGE_PORT: Forge's ForgeSoundType (volume/pitch + 5 deferred SoundEvent suppliers)
-// has no NeoForge equivalent; vanilla SoundType stores direct SoundEvents, which cannot
-// be resolved at class-init time (SOUND_EVENT registry binds after BLOCK). This subclass
-// keeps the exact Forge semantics: volume/pitch eager, sounds resolved lazily via
-// suppliers (the DeferredHolder method refs), getters overridden (non-final in 26.x).
+
+
+
+
+
 public class LazySoundType extends SoundType {
 
     private final Supplier<SoundEvent> breakSound;

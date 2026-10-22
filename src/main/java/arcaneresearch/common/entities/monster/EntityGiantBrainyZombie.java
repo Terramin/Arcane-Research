@@ -73,13 +73,13 @@ public class EntityGiantBrainyZombie extends EntityBrainyZombie {
         }
     }
 
-    // NEOFORGE_PORT (26.3): LivingEntity.getScale()/getDimensions() are final. In Forge getScale()
-    // returned the anger (babies included) and LivingEntity.getDimensions already scaled by it, so the
-    // getDimensions override (scale(anger) again) gave type size * anger^2, with eye height from
-    // getStandingEyeHeight = 1.74 * anger (-0.81 baby). Rebuilt via getDefaultDimensions; the SCALE
-    // attribute stays 1 (it would scale a second time and is persisted). As in Forge the box only
-    // follows the anger on refreshDimensions (hurt / pose change), not while it decays.
-    // Renderers must read getAnger() for the old getScale() value.
+    
+    
+    
+    
+    
+    
+    
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
         float anger = getAnger();
@@ -97,8 +97,8 @@ public class EntityGiantBrainyZombie extends EntityBrainyZombie {
 
     @Override
     protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel serverLevel, DamageSource source, boolean wasRecentlyHit) {
-        // NEOFORGE_PORT: looting param removed in 26.x; derived from the killer's weapon
-        // (Enchantments.LOOTING level), same value the old caller passed.
+        
+        
         int looting = arcaneresearch.common.lib.utils.EntityUtils.getLootingLevel(serverLevel, source);
 
         for (int a = 0; a < 6; a++) {

@@ -25,8 +25,8 @@ public class ItemCharmUndying extends Item implements ICurioItem {
             return curiosCharms.get(0);
         }
 
-        // NEOFORGE_PORT (26.3): Forge scanned Inventory.items (the 36 main slots only);
-        // getNonEquipmentItems() is that list (getContainerSize() also spans armor/offhand).
+        
+        
         for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.getItem() instanceof ItemCharmUndying) {
                 return stack;

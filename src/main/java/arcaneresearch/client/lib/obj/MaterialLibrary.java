@@ -1,7 +1,7 @@
 package arcaneresearch.client.lib.obj;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.server.packs.resources.Resource;
 import org.joml.Vector3f;
 

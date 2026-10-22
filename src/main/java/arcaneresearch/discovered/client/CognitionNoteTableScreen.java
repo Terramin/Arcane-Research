@@ -25,22 +25,22 @@ import arcaneresearch.discovered.note.DiscoveredNotes;
 import arcaneresearch.discovered.table.CognitionNoteTableMenu;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
 
-/**
- * Экран стола записок, полный порт reforged ResearchTableScreen
- * (он же TC3 GuiResearchTable): фон 240x242, спрайт кнопки 15x15,
- * спрайт safe-тоггла 29x7, теги входов через AspectRenderer, круговая
- * диаграмма исследования с линиями нестабильности, попап-пергамент,
- * тултипы тегов с процентами. Кнопки — зоны кликов с кулдауном.
- *
- * NEOFORGE_PORT (26.3 render-state): GuiGraphics -> GuiGraphicsExtractor;
- * renderBg -> extractBackground; renderLabels -> extractLabels (пустой);
- * тултипы рисуются в конце extractBackground (отдельного оверрайда
- * renderTooltip у суперкласса больше нет); render() не оверрайдится
- * (фреймворк); mouseClicked(MouseButtonEvent, boolean); pose 2D
- * (pushMatrix/translate(x,y)/scale(x,y)/popMatrix); blit с
- * RenderPipelines.GUI_TEXTURED; drawString -> text; popup-текст через
- * pose-масштаб + text (drawInBatch/bufferSource удалены).
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionNoteTableMenu> {
 
     private static final Identifier BG =
@@ -57,7 +57,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
     private final List<Aspect> diagramTags = new ArrayList<>();
 
     public CognitionNoteTableScreen(CognitionNoteTableMenu menu, Inventory inventory, Component title) {
-        // NEOFORGE_PORT: 26.x screen size via 5-arg super ctor (was imageWidth/imageHeight fields).
+        
         super(menu, inventory, title, 240, 242);
         inventoryLabelY = 148;
     }
@@ -68,9 +68,9 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        // NEOFORGE_PORT (26.3): super already draws the 1.20.1 renderBackground dim
-        // (AbstractContainerScreen.isInGameUi -> extractTransparentBackground);
-        // a second fillGradient here doubled the darkening.
+        
+        
+        
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         GuiBlitHelper.blit(graphics, BG, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         GuiBlitHelper.blit(graphics, BG, leftPos + 76, topPos + 40, 241, buttonActive() ? 0 : 15, 15, 15, 256, 256);
@@ -86,8 +86,8 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             pose.pushMatrix();
             pose.translate(leftPos + 65.0F, topPos + 142.0F);
             pose.scale(0.65F, 0.65F);
-            // NEOFORGE_PORT (26.3): ARGB color — 1.20.1 Font forced alpha 0xFF,
-            // text() skips alpha-0 colors.
+            
+            
             graphics.text(font, mode, -font.width(mode) / 2, 0, 0xFFAEAE5E, false);
             pose.popMatrix();
         }
@@ -119,11 +119,11 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         return DiscoveredNoteData.read(note);
     }
 
-    /**
-     * Круговая диаграмма исследования, порт reforged drawResearchData:
-     * теги по кругу (радиус 15+40*прогресс), линии нестабильности,
-     * рамки завершённых. UNKNOWN — иконка _unknown.png.
-     */
+     
+
+
+
+ 
     private void drawResearchData(GuiGraphicsExtractor graphics, DiscoveredNoteData note, int x, int y) {
         coords.clear();
         diagramTags.clear();
@@ -190,10 +190,10 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         }
     }
 
-    /**
-     * Паритет TC3: попап-пергамент с longText растёт при наведении
-     * на зону 17x17 (+103,+12): 0.05 -> 0.48, шифр при прогрессе <0.5.
-     */
+     
+
+
+ 
     private void drawPopup(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int hx = mouseX - leftPos - 103;
         int hy = mouseY - topPos - 12;
@@ -223,8 +223,8 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         if (desc == null) {
             return;
         }
-        // Низ не режем: масштаб и ширина переноса подбираются совместно,
-        // центрирование 80-y — паритет TC3 GuiResearchTable.
+        
+        
         DiscoveredNoteText.Fit fit = DiscoveredNoteText.parchmentFit(
                 font, desc, data.getTotalProgress() < 0.5F, 130, 1.0F, 150.0F, 0.5F);
         List<FormattedCharSequence> lines = fit.lines();
@@ -286,10 +286,10 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         return super.mouseClicked(event, doubleClick);
     }
 
-    /** Тултипы кнопок/тегов/диаграммы (раньше renderTooltip-оверрайд). */
+      
     private void renderNoteTooltips(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        // NEOFORGE_PORT: Forge renderTooltip body; immediate overloads gone ->
-        // deferred setTooltipForNextFrame / setComponentTooltipForNextFrame.
+        
+        
         int x = mouseX - leftPos;
         int y = mouseY - topPos;
         if (x >= 76 && x < 91 && y >= 40 && y < 55) {

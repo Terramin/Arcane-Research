@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -24,11 +24,11 @@ import arcaneresearch.common.entities.projectile.EntityGrapple;
 import arcaneresearch.lib.CoreGLE;
 import arcaneresearch.lib.GLEEmitter;
 
-// NEOFORGE_PORT (26.3): head prop via seeded model emission, glow billboard
-// via camera orientation, rope tube via CoreGLE/GLEEmitter (chain already
-// ported) inside submitCustomGeometry. Rope points computed eagerly in submit
-// from the state (thrower/grapple interp positions); camera first-person
-// branch preserved.
+
+
+
+
+
 public class GrappleRenderer extends EntityRenderer<EntityGrapple, GrappleRenderer.State> {
 
     public static class State extends EntityRenderState {
@@ -75,8 +75,8 @@ public class GrappleRenderer extends EntityRenderer<EntityGrapple, GrappleRender
         computeRope(entity, state, partialTicks);
     }
 
-    // NEOFORGE_PORT: rope tube points computed eagerly here (both entities
-    // available); emission happens in submit from the baked arrays.
+    
+    
     private static void computeRope(EntityGrapple grapple, State state, float partialTicks) {
         state.hasRope = false;
         Entity owner = grapple.getOwner();
@@ -97,7 +97,7 @@ public class GrappleRenderer extends EntityRenderer<EntityGrapple, GrappleRender
             tx += px + look.x / 5.0;
             ty += thrower.getEyeHeight() / 2.6 + look.y / 5.0;
             tz += pz + look.z / 5.0;
-            // NEOFORGE_PORT (26.3): Forge bound the rope end to the held wand's tip.
+            
             if (thrower instanceof net.minecraft.world.entity.player.Player player
                     && Minecraft.getInstance().getCameraEntity() == thrower
                     && player.getItemInHand(grapple.getHand()).getItem()

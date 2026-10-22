@@ -34,9 +34,9 @@ public class SealHandler {
 
     private static int tickCount = 0;
 
-    // NEOFORGE_PORT (26.3): ItemStack.CODEC needs RegistryOps for dynamic-registry components
-    // (enchantments, trims, ...); with plain NbtOps such stacks failed to encode and silently
-    // vanished from saved seal data (1.20.1 ItemStack.save/of had no such restriction).
+    
+    
+    
     public static com.mojang.serialization.DynamicOps<net.minecraft.nbt.Tag> nbtOps() {
         net.minecraft.server.MinecraftServer server =
                 net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
@@ -117,7 +117,7 @@ public class SealHandler {
         if (dimSeals != null && !dimSeals.isEmpty()) {
             for (SealEntity se : dimSeals.values()) {
                 if (se.getSeal() != null && se.getSealPos() != null) {
-                    // NEOFORGE_PORT: ChunkPos(BlockPos) ctor removed (record) -> containing().
+                    
         ChunkPos sealChunk = ChunkPos.containing(se.sealPos.pos);
                     if (sealChunk.equals(chunk)) {
                         out.add(se);
@@ -190,7 +190,7 @@ public class SealHandler {
                 net.minecraft.world.level.chunk.LevelChunk chunk =
                         serverLevel.getChunkAt(pos);
                 if (chunk != null) {
-                    // NEOFORGE_PORT: setUnsaved(boolean) removed -> markUnsaved().
+                    
                     chunk.markUnsaved();
                 }
             }
@@ -245,10 +245,10 @@ public class SealHandler {
             }
         }
 
-        // REMOVE-пакет и dirty-марки чанка — только если печать реально была снята.
-        // Раньше они отправлялись при ломании ЛЮБОГО блока (6 вызовов на блок),
-        // что спамило сеть и могло ронять сервер прямо внутри BlockEvent.BreakEvent
-        // (исключение в обработчике -> EventBus.handleException -> LinkageError log4j).
+        
+        
+        
+        
         if (!removed) {
             return;
         }
@@ -256,8 +256,8 @@ public class SealHandler {
         if (!level.isClientSide() && !quiet && level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             try {
                 SealEntity removedSeal = new SealEntity(level, pos, null);
-                // NEOFORGE_PORT: sendToDimension(packet, dimension) ->
-                // PacketDistributor.sendToPlayersInDimension(ServerLevel, payload).
+                
+                
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayersInDimension(
                         serverLevel, new arcaneresearch.common.lib.network.misc.PacketSealToClient(removedSeal));
             } catch (Exception e) {

@@ -97,8 +97,8 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
                         new net.minecraft.world.level.ClipContext(v1, v2,
                                 net.minecraft.world.level.ClipContext.Block.OUTLINE,
                                 net.minecraft.world.level.ClipContext.Fluid.ANY,
-                                // NEOFORGE_PORT (26.3): CollisionContext.of(null) NPEs (type switch);
-                                // 1.20.1 mapped a null entity to CollisionContext.empty().
+                                
+                                
                                 net.minecraft.world.phys.shapes.CollisionContext.empty()));
                 if (hit != null
                         && hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
@@ -215,7 +215,7 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
             }
             byte oldLock = this.nodeLock;
             this.nodeLock = 0;
-            // Порт TC4 TileNode: lock держит только незапитанный стабилизатор.
+            
             BlockPos belowPos = worldPosition.below();
             if (level.getBlockEntity(belowPos) instanceof StabilizerTile stab
                     && !level.hasNeighborSignal(belowPos)) {
@@ -244,29 +244,29 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
         return this.aspectsBase;
     }
 
-    /**
-     * Паритет 1.7.10 BlockAiry.func_149681_a (breakBlock, мета 0): при
-     * разрушении ноды для каждого её аспекта выбрасываются мудровые
-     * эссенции — каждый стак несёт 2 эссенции, число спавнов = amount/10 + 1
-     * при amount &gt;= 5. Новое состояние «не нода» ⇒ дроп; креатив — тоже
-     * дроп, как в оригинале.
-     */
-    // NEOFORGE_PORT: moved here from BlockAuraNode.onRemove (Block.onRemove removed
-    // in 26.x). LevelChunk.setBlockState calls preRemoveSideEffects with the tile
-    // still present, so getAspects() is valid.
+     
+
+
+
+
+
+ 
+    
+    
+    
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState newState) {
-        // NEOFORGE_PORT (26.3): LevelChunk passes the OLD state here and only calls this
-        // when the block changed, so the former "!newState.is(own block)" guard was always
-        // false and the drop never ran. Reference ran it from BlockAuraNode.onRemove.
+        
+        
+        
         if (level != null && !level.isClientSide() && getBlockState().getBlock() instanceof BlockAuraNode) {
             AspectList al = getAspects();
             if (al != null && al.size() > 0) {
                 for (Aspect aspect : al.getAspects()) {
                     int amount = al.getAmount(aspect);
                     if (amount >= 5) {
-                        // паритет: кладём столько же спавнов, сколько стак
-                        // итераций давал цикл a = 0..amount/10
+                        
+                        
                         int stacks = amount / 10 + 1;
                         for (int a = 0; a < stacks; a++) {
                             ItemStack ess = ItemWispEssence.createStack(
@@ -426,8 +426,8 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
         if (getNodeModifier() == NodeModifier.FADING) {
             return change;
         }
-        // Паритет TC4 TileNode.handleDischarge: lock 1 не задирает соседей
-        // вообще (== 1 дословно — у продвинутого поведение то же, что в TC4).
+        
+        
         if (getLock() == 1) {
             return change;
         }
@@ -445,7 +445,7 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
         if (x != 0 || y != 0 || z != 0) {
             BlockPos np = worldPosition.offset(x, y, z);
             if (level.getBlockEntity(np) instanceof AuraNodeTile other) {
-                // Паритет TC4: у ноды под стабилизатором не отнять.
+                
                 if (other.getLock() > 0) {
                     return change;
                 }
@@ -475,10 +475,10 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
                         other.wait = other.regeneration / 2;
                         other.setChanged();
                         AuraFX.nodeSparkle(level, np, a.getColor());
-                        // Паритет TC4 TileNode.handleDischarge: фрактальная дуга
-                        // от жертвы к ноде (там PacketFXBlockZap + nodeBolt).
-                        // NEOFORGE_PORT: Forge TargetPoint(x, y, z, range, dim) ->
-                        // sendToNear(packet, level, x, y, z, range).
+                        
+                        
+                        
+                        
                         if (!level.isClientSide()) {
                             arcaneresearch.common.lib.network.PacketHandler.sendToNear(
                                     new arcaneresearch.common.lib.network.fx.PacketFXNodeBolt(
@@ -645,8 +645,8 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
             Vec3 v2 = new Vec3(tx + 0.5D, ty + 0.5D, tz + 0.5D);
             BlockHitResult mop = level.clip(new ClipContext(v1, v2,
                     ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE,
-                    // NEOFORGE_PORT (26.3): CollisionContext.of(null) NPEs (type switch) and crashed
-                    // the hungry-node server tick; 1.20.1 mapped a null entity to CollisionContext.empty().
+                    
+                    
                     net.minecraft.world.phys.shapes.CollisionContext.empty()));
             if (mop != null && mop.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
                     && mop.getBlockPos().distSqr(worldPosition) < 65536.0D) {
@@ -725,8 +725,8 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
 
     @Override
     protected void readSyncNBT(ValueInput tag) {
-        // NEOFORGE_PORT: Forge body; CompoundTag getters -> ValueInput Or-getters,
-        // AspectsBase list via readTagList helper (same key/shape as writeSyncNBT).
+        
+        
         super.readSyncNBT(tag);
         long prevDrain = this.drainTime;
         try {
@@ -741,7 +741,7 @@ public class AuraNodeTile extends TileArcaneresearch implements INode, IWandable
                     }
                 }
             }
-            // NEOFORGE_PORT: ValueInput has no getShortOr; read via Codec.SHORT (cf. TileAlembic).
+            
             short oldBase = tag.read("nodeVisBase", com.mojang.serialization.Codec.SHORT).orElse((short) 0);
             this.aspectsBase = new AspectList();
             if (oldBase > 0 && al.size() == 0) {

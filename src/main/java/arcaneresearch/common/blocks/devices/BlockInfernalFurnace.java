@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -124,8 +124,8 @@ public class BlockInfernalFurnace extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
@@ -159,20 +159,20 @@ public class BlockInfernalFurnace extends Block implements EntityBlock {
 
     @Override
     public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        // Колесо по горнилу в креативе отдаёт стройблок (обсидиан),
-        // а не саму печь: центр встал на место лавы/жерла.
+        
+        
         return new ItemStack(Blocks.OBSIDIAN);
     }
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         if (!state.is(level.getBlockState(pos).getBlock())) {
-            // NEOFORGE_PORT: inventory dropped by preRemoveSideEffects default; multiblock teardown kept.
+            
             destroyFurnace(level, pos, state, pos);
 
         }
@@ -241,8 +241,8 @@ public class BlockInfernalFurnace extends Block implements EntityBlock {
             } else if (entity instanceof LivingEntity living && !living.fireImmune()) {
                 DamageSources sources = level.damageSources();
                 entity.hurt(sources.lava(), 3.0F);
-                // NEOFORGE_PORT (26.3): setSecondsOnFire(10) == igniteForSeconds(10): only raises
-                // the fire timer and applies Fire Protection (BURNING_TIME), unlike setRemainingFireTicks.
+                
+                
                 entity.igniteForSeconds(10.0F);
             }
         }

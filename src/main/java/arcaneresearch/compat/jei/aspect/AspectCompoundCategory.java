@@ -11,9 +11,9 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphicsExtractor
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
@@ -62,8 +62,8 @@ public class AspectCompoundCategory implements IRecipeCategory<Aspect> {
         return title;
     }
 
-    // NEOFORGE_PORT: IRecipeCategory.getBackground removed in JEI 26.3;
-    // getWidth/getHeight are mandatory instead (background field kept unused).
+    
+    
     @Override
     public int getWidth() {
         return WIDTH;

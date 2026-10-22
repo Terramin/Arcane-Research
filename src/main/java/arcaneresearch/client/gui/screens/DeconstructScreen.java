@@ -19,20 +19,20 @@ import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.common.menu.DeconstructMenu;
 import arcaneresearch.init.ModSounds;
 
-/**
- * Порт {@code thaumcraft.client.screen.DeconstructionTableScreen} (reforged):
- * фон {@code gui_decontable.png}, вертикальная полоса прогресса,
- * выпавший аспект (клик — забрать, паритет TC4), тултип аспекта.
- * Без подписей (паритет reforged).
- *
- * <p>NEOFORGE_PORT (Forge e45d90b dissolved temp.decon ->
- * client/gui/screens/DeconstructScreen.java, typed to DeconstructMenu):
- * Identifier -&gt; Identifier.fromNamespaceAndPath;
- * GuiGraphics -&gt; GuiGraphicsExtractor; blit с RenderPipelines.GUI_TEXTURED;
- * render()/renderLabels -&gt; extractBackground()/extractLabels (тултипы через
- * setComponentTooltipForNextFrame); mouseClicked(MouseButtonEvent, boolean);
- * level.random -&gt; getRandom(); размеры 176x166 в конструктор.</p>
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class DeconstructScreen extends AbstractContainerScreen<DeconstructMenu> {
 
@@ -54,7 +54,7 @@ public class DeconstructScreen extends AbstractContainerScreen<DeconstructMenu> 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mx, int my, float partialTick) {
         super.extractBackground(graphics, mx, my, partialTick);
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos, 0, 0,
                 imageWidth, imageHeight, 256, 256);
         if (menu.breaktime() > 0) {
@@ -78,10 +78,10 @@ public class DeconstructScreen extends AbstractContainerScreen<DeconstructMenu> 
     protected void extractLabels(GuiGraphicsExtractor graphics, int mx, int my) {
     }
 
-    /**
-     * Паритет TC4 {@code mouseClicked}: клик ЛЮБОЙ кнопкой по аспекту
-     * забирает его + {@code playButtonAspect} ({@code hhoff}).
-     */
+     
+
+
+ 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         double mx = event.x();
@@ -89,7 +89,7 @@ public class DeconstructScreen extends AbstractContainerScreen<DeconstructMenu> 
         boolean result;
         if (menu.currentAspect() != null && overAspect(mx, my)
                 && minecraft != null && minecraft.gameMode != null && minecraft.level != null) {
-            // Forge order: collect first (before slot interaction in super).
+            
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, DeconstructMenu.BUTTON_COLLECT);
             Player player = minecraft.player;
             if (player != null && ModSounds.HH_OFF.get() != null) {

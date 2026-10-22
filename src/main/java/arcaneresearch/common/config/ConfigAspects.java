@@ -13,7 +13,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForge;
-import net.minecraft.core.registries.BuiltInRegistries; // NEOFORGE_PORT: was ForgeRegistries
+import net.minecraft.core.registries.BuiltInRegistries; 
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -47,8 +47,8 @@ public class ConfigAspects {
         ArcaneresearchApi.registerEntityTag("minecraft:giant", new AspectList().add(Aspect.UNDEAD, 25).add(Aspect.MAN, 15).add(Aspect.EARTH, 10));
         ArcaneresearchApi.registerEntityTag("minecraft:skeleton", new AspectList().add(Aspect.UNDEAD, 20).add(Aspect.MAN, 5).add(Aspect.EARTH, 5));
         ArcaneresearchApi.registerEntityTag("minecraft:wither_skeleton", new AspectList().add(Aspect.UNDEAD, 25).add(Aspect.MAN, 5).add(Aspect.ENTROPY, 10));
-        // NEOFORGE_PORT (26.3): Forge order - NBT variant first (scan takes the first match, so the
-        // generic entry first meant a charged creeper never gave ENERGY).
+        
+        
         ArcaneresearchApi.registerEntityTag("minecraft:creeper", new AspectList().add(Aspect.PLANT, 15).add(Aspect.FIRE, 15).add(Aspect.ENERGY, 15), new ArcaneresearchApi.EntityTagsNBT("powered", (byte) 1));
         ArcaneresearchApi.registerEntityTag("minecraft:creeper", new AspectList().add(Aspect.PLANT, 15).add(Aspect.FIRE, 15));
         ArcaneresearchApi.registerEntityTag("minecraft:horse", new AspectList().add(Aspect.BEAST, 15).add(Aspect.EARTH, 5).add(Aspect.AIR, 5));
@@ -101,7 +101,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerEntityTag("arcaneresearch:fire_bat", new AspectList().add(Aspect.BEAST, 5).add(Aspect.FLIGHT, 5).add(Aspect.FIRE, 10));
         ArcaneresearchApi.registerEntityTag("arcaneresearch:spell_bat", new AspectList().add(Aspect.BEAST, 5).add(Aspect.FLIGHT, 5).add(Aspect.MAGIC, 10).add(Aspect.AURA, 5));
         ArcaneresearchApi.registerEntityTag("arcaneresearch:wand_hellbat", new AspectList().add(Aspect.BEAST, 5).add(Aspect.FLIGHT, 5).add(Aspect.FIRE, 10).add(Aspect.MAGIC, 5));
-        // NBT-варианты раньше generic: иначе первое совпадение всегда generic.
+        
         ArcaneresearchApi.registerEntityTag("arcaneresearch:pech", new AspectList().add(Aspect.MAN, 10).add(Aspect.AURA, 5).add(Aspect.EXCHANGE, 10).add(Aspect.DESIRE, 5), new ArcaneresearchApi.EntityTagsNBT("PechType", (byte) 0));
         ArcaneresearchApi.registerEntityTag("arcaneresearch:pech", new AspectList().add(Aspect.MAN, 10).add(Aspect.AURA, 5).add(Aspect.EXCHANGE, 10).add(Aspect.AVERSION, 5), new ArcaneresearchApi.EntityTagsNBT("PechType", (byte) 1));
         ArcaneresearchApi.registerEntityTag("arcaneresearch:pech", new AspectList().add(Aspect.MAN, 10).add(Aspect.AURA, 5).add(Aspect.EXCHANGE, 10).add(Aspect.MAGIC, 5), new ArcaneresearchApi.EntityTagsNBT("PechType", (byte) 2));
@@ -138,14 +138,14 @@ public class ConfigAspects {
         ArcaneresearchApi.registerEntityTag("arcaneresearch:wisp", new AspectList().add(Aspect.AURA, 10).add(Aspect.FLIGHT, 5));
     }
 
-    // NEOFORGE_PORT: PotionUtils removed -> PotionContents component (Holder comparison).
-    // The no-manager overload is setup-safe (static potion values only); the manager overload
-    // additionally traverses datapack BrewingRecipes for reagent aspects (runtime).
+    
+    
+    
     public static AspectList getPotionAspects(ItemStack itemstack) {
-        // NEOFORGE_PORT (26.3): Forge read the static PotionBrewing mixes, so reagent aspects were
-        // always available; 26.x brewing is datapack recipes -> use the running server's
-        // RecipeManager when there is one (was always null -> every potion got the
-        // MAGIC 5 / ALCHEMY 5 fallback, incl. TilePotionSprayer costs).
+        
+        
+        
+        
         RecipeManager recipeManager = null;
         net.minecraft.server.MinecraftServer server =
                 net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
@@ -156,20 +156,20 @@ public class ConfigAspects {
     }
 
     public static AspectList getPotionAspects(ItemStack itemstack, RecipeManager recipeManager) {
-        // NEOFORGE_PORT (26.3) FIX: during world creation (DefaultDataComponentsBound phase
-        // in ReloadableServerResources) server may already be reachable but its RecipeManager
-        // is still null -> NPE-less fallback to empty traversal (MAGIC 5 / ALCHEMY 5), which
-        // is the pre-fix behavior at setup time; the real manager is used once the server
-        // fully starts (ServerStartingEvent path / runtime).
+        
+        
+        
+        
+        
         return getPotionAspects(itemstack, recipeManager != null ? recipeManager.getRecipes() : java.util.List.of());
     }
 
-    // NEOFORGE_PORT (26.3) FIX: 1.20.1 Forge had static PotionBrewing on BOTH sides, so a
-    // client of a dedicated/LAN server always resolved real reagent aspects. In 26.x brewing
-    // is datapack-only and a remote client has no RecipeManager -> it fell back to
-    // MAGIC 5 / ALCHEMY 5 (thaumometer scan/JEI aspect display divergence from Forge).
-    // This overload runs on the client with the recipe map synced by RecipesReceivedEvent
-    // (see ClientRecipeCache) - same traversal, same result values as the server.
+    
+    
+    
+    
+    
+    
     public static AspectList getPotionAspects(ItemStack itemstack,
             java.util.Collection<RecipeHolder<?>> recipes) {
         AspectList tmp = new AspectList();
@@ -207,10 +207,10 @@ public class ConfigAspects {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    // NEOFORGE_PORT: PotionBrewing mix registry removed in 26.x; brewing is datapack
-    // BrewingRecipe now. Same traversal semantics (reagents that produce this potion,
-    // recursing into non-water inputs); without a RecipeManager only the graceful
-    // empty-set path is available.
+    
+    
+    
+    
     public static void getPotionReagentsRecursive(Potion potion, HashSet<ItemStack> hashSet) {
     }
 
@@ -219,8 +219,8 @@ public class ConfigAspects {
         getPotionReagentsRecursive(potion, hashSet, recipeManager.getRecipes());
     }
 
-    // NEOFORGE_PORT (26.3) FIX: recipe-map variant for the client (synced RecipeMap) -
-    // same traversal as the server RecipeManager overload.
+    
+    
     public static void getPotionReagentsRecursive(Holder<Potion> potion, HashSet<ItemStack> hashSet,
             java.util.Collection<RecipeHolder<?>> recipes) {
         if (potion == null || recipes == null) {
@@ -247,7 +247,7 @@ public class ConfigAspects {
                         continue;
                     }
                     foundOther = true;
-                    // NEOFORGE_PORT: Ingredient.getItems() removed -> items() stream of Holders.
+                    
                     brew.getReagent().ingredient().items().findFirst()
                             .map(reagentHolder -> new ItemStack(reagentHolder.value()))
                             .filter(option -> !option.isEmpty())
@@ -538,7 +538,7 @@ public class ConfigAspects {
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(Items.ARROW), new AspectList().add(Aspect.AVERSION, 5).add(Aspect.FLIGHT, 3));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Items.SPECTRAL_ARROW), new AspectList().add(Aspect.AVERSION, 5).add(Aspect.FLIGHT, 3).add(Aspect.SENSES, 10).add(Aspect.MAGIC, 5));
-        // NEOFORGE_PORT (26.3): Forge primal-arrow aspects were missing in the port.
+        
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_AIR.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_FIRE.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMAL_ARROW_WATER.get()), new AspectList().add(Aspect.AVERSION, 1).add(Aspect.FLIGHT, 1));
@@ -635,16 +635,16 @@ public class ConfigAspects {
         ArcaneresearchApi.registerEntityTag("minecraft:wandering_trader", new AspectList().add(Aspect.MAN, 15).add(Aspect.EXCHANGE, 10));
         ArcaneresearchApi.registerEntityTag("minecraft:trader_llama", new AspectList().add(Aspect.BEAST, 15).add(Aspect.EXCHANGE, 5));
 
-        // NEOFORGE_PORT: ForgeRegistries.POTIONS removed; BuiltInRegistries.POTION is Iterable
-        // (static values, setup-safe on both sides). Stacks built via PotionContents; reagent
-        // aspects resolve at runtime through the manager overload (datapack BrewingRecipes).
+        
+        
+        
         registerPotionAspects();
     }
 
-    // NEOFORGE_PORT (26.3): Forge registered these once in registerItemAspects with brewing data
-    // already present. Here the content-setup pass runs before any server exists (fallback
-    // aspects), so Arcaneresearch.onServerStarting calls this again with the server's brewing
-    // recipes available (same stacks/keys -> entries are overwritten with the Forge values).
+    
+    
+    
+    
     public static void registerPotionAspects() {
         for (Potion potion : BuiltInRegistries.POTION) {
             Holder<Potion> holder = BuiltInRegistries.POTION.wrapAsHolder(potion);
@@ -659,11 +659,11 @@ public class ConfigAspects {
         }
     }
 
-    // NEOFORGE_PORT (26.3) FIX: client half (TilePotionSprayer costs are server-side, but
-    // thaumometer scan tooltips / JEI aspect accessors run on the client). Runs on the client
-    // when the synced recipe map arrives (ClientRecipeCache); a client of an integrated server
-    // already got correct values via the running-server path - re-registering here is an
-    // idempotent map overwrite, so no duplication.
+    
+    
+    
+    
+    
     public static void registerPotionAspects(java.util.Collection<RecipeHolder<?>> recipes) {
         for (Potion potion : BuiltInRegistries.POTION) {
             Holder<Potion> holder = BuiltInRegistries.POTION.wrapAsHolder(potion);
@@ -719,7 +719,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.THAUMONOMICON.get()), new AspectList().add(Aspect.MIND, 20).add(Aspect.MAGIC, 10).add(Aspect.PLANT, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.THAUMOMETER.get()), new AspectList().add(Aspect.SENSES, 10).add(Aspect.AURA, 10).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SCRIBING_TOOLS.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.CRAFT, 5));
-        // NEOFORGE_PORT (26.3): Forge curio/taint/notes/wand-foci/note aspects were missing in the port.
+        
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOSITY.get()), new AspectList().add(Aspect.MIND, 10).add(Aspect.SENSES, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_ARCANE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.AURA, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_PRESERVED.get()), new AspectList().add(Aspect.LIFE, 10).add(Aspect.DEATH, 5));
@@ -770,7 +770,7 @@ public class ConfigAspects {
         }
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PHIAL_EMPTY.get()), new AspectList().add(Aspect.VOID, 3).add(Aspect.CRYSTAL, 3));
-        // NEOFORGE_PORT (26.3): Forge entry missing in the port.
+        
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.WISP_ESSENCE.get()), new AspectList().add(Aspect.AURA, 2));
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.LOOT_BAG_COMMON.get()), new AspectList().add(Aspect.DESIRE, 10));

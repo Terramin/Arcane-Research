@@ -36,28 +36,28 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 
-/**
- * NEOFORGE_PORT: true 3D isometric structure preview (Thaumonomicon blueprint
- * + bookmark). The 1.20.1 Forge path was GuiGraphics.pose() * 3D ops +
- * BlockRenderDispatcher.renderSingleBlock into a GUI MultiBufferSource — both
- * are gone in 26.x (the GUI pose is a 2D Matrix3x2fStack). The equivalent
- * engine mechanism is the vanilla picture-in-picture system used by the
- * inventory entity/banner previews: submit a PictureInPictureRenderState from
- * the extractor and let a registered PictureInPictureRenderer draw it into an
- * offscreen texture with a full 3D PoseStack + SubmitNodeCollector
- * (RegisterPictureInPictureRenderersEvent, mod bus, client only).
- *
- * <p>Projection (pixel-exact with 1.20.1, whose chain was
- * translate(x, y-10, 200) * scale(s,-s,s) * rotX(25) * rotY(-45) * translate(-center)):
- * A = cos45 = 0.70710678, B = sin45*sin25 = 0.29889, C = cos25 = 0.90631,
- * viewer/depth direction (0.64086, 0.42262, 0.64086). In the pip eye space
- * (screen y grows down, so model y-up is flipped) the frame is realised as
- * S(s) * S(1,-1,-1) * rotX(25) * rotY(-45) * translate(-center); its
- * determinant is positive, so block face winding stays engine-correct, and
- * the depth row maps the same "towards viewer" direction as 1.20.1 did, so
- * the real depth buffer resolves overlapping blocks exactly like Forge did
- * with z=200 in front of the page graphics.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public final class IsoStructurePip {
@@ -65,19 +65,19 @@ public final class IsoStructurePip {
     private IsoStructurePip() {
     }
 
-    /** cos45 */
+      
     private static final float A = 0.70710678f;
-    /** sin45*sin25 */
+      
     private static final float B = 0.29889f;
-    /** cos25 */
+      
     private static final float C = 0.90631f;
 
-    /**
-     * Submits the isometric structure preview as a picture-in-picture state.
-     *
-     * @param parts raw structure parts (node swirl overlay); null = draw only
-     *              the converted block states (bookmark preview behaviour)
-     */
+     
+
+
+
+
+ 
     public static void submit(GuiGraphicsExtractor graphics, BlueprintBlockAccess access,
                               @Nullable Part[][][] parts, int xSize, int ySize, int zSize,
                               int cx, int cy, float boxW, float boxH, float maxS) {
@@ -87,7 +87,7 @@ public final class IsoStructurePip {
         }
     }
 
-    /** Same as {@link #submit} with a fixed GUI-pixels-per-block scale (1.20.1 parity, no box fit). */
+      
     public static void submitFixedScale(GuiGraphicsExtractor graphics, BlueprintBlockAccess access,
                                         @Nullable Part[][][] parts, int xSize, int ySize, int zSize,
                                         int cx, int cy, float scale) {
@@ -104,9 +104,9 @@ public final class IsoStructurePip {
         @Nullable
         final Part[][][] parts;
         final int xSize, ySize, zSize;
-        /** GUI pixels per block, fit computation identical to the 1.20.1-era logic. */
+          
         final float scale;
-        /** Eye-space shift that centres the projected footprint in the box. */
+          
         final float shiftX, shiftY;
         final int x0, y0, x1, y1;
 
@@ -127,14 +127,14 @@ public final class IsoStructurePip {
             this.y1 = y1;
         }
 
-        /**
-         * Records the visible cells once: projected footprint via the 1.20.1
-         * equations px = A*(l-w), py = B*(l+w) - C*h, then fits the Forge
-         * scale (clamped to [3, maxS]) and derives the box centred so that
-         * the projected structure origin stays anchored at (cx, cy) — the
-         * same anchoring as Forge's translate(x, y-10, 200). Returns null if
-         * nothing is visible (e.g. slice build-up has not started yet).
-         */
+         
+
+
+
+
+
+
+ 
         @Nullable
         static State create(BlueprintBlockAccess access, @Nullable Part[][][] parts,
                             int xSize, int ySize, int zSize,
@@ -149,12 +149,12 @@ public final class IsoStructurePip {
                 for (int l = 0; l < xSize; l++) {
                     for (int w = 0; w < zSize; w++) {
                         BlockState state = access.getBlockState(new BlockPos(l, h, w));
-                        // NEOFORGE_PORT: клетка аура-ноды чертежа пуста (AIR
-                        // вместо стекла-заглушки), но её светящийся оверлей
-                        // рисуется на этом же месте — учитываем её в
-                        // footprint, иначе PiP-бокс клипает свечение по краям.
-                        // Маппинг слоёв тот же, что в рендере ниже:
-                        // structure[y] ← parts[ySize - 1 - y].
+                        
+                        
+                        
+                        
+                        
+                        
                         Part part = parts != null ? parts[ySize - 1 - h][l][w] : null;
                         boolean nodeOverlay = part != null && BlueprintBlockAccess.hasNodeOverlay(part);
                         if (state.isAir() && !nodeOverlay) {
@@ -173,18 +173,18 @@ public final class IsoStructurePip {
             if (!any) {
                 return null;
             }
-            // NEOFORGE_PORT (26.3): PiP-текстура жёстко клипает всё вне бокса.
-            // Раньше бокс считался только по углам клеток с допуском +1, а
-            // проекция куба гексагональна и выходит за углы: по px — ±A, по
-            // py — в сумме на C+2B (≈1.5 высоты клетки в проекции). В
-            // 1.20.1 Forge это не резалось (рисование шло свободно на экран),
-            // в PiP поэтому обрезались низ/верх модели. Бокс расширен
-            // симметрично на полный вылет, прежнее центрирование не тронуто.
+            
+            
+            
+            
+            
+            
+            
             double wu = (maxPx - minPx + 1.0) + 2 * A;
             double hu = (maxPy - minPy + 1.0) + C + 2 * B;
             float s;
             if (boxW <= 0.0f || boxH <= 0.0f) {
-                // NEOFORGE_PORT (26.3): fixed per-block scale (1.20.1 used a fixed scale, no box fit).
+                
                 s = maxS;
             } else {
                 s = (float) Math.min(boxW / wu, boxH / hu);
@@ -195,18 +195,18 @@ public final class IsoStructurePip {
                     s = 3.0f;
                 }
             }
-            // translate(-center) remaps the raw projection into the frame
-            // translate(-xSize/2, -ySize/2, -zSize/2) produces here.
+            
+            
             double pxC = (xSize - zSize) / 2.0 * A;
             double pyC = (xSize + zSize) / 2.0 * B;
             float shiftX = (float) ((minPx + maxPx) / 2.0 - pxC) * -s;
             float shiftY = (float) ((minPy + maxPy) / 2.0 - pyC) * -s;
             int width = (int) Math.round(wu * s) + 8;
             int height = (int) Math.round(hu * s) + 8;
-            // The projected cube-centre must land exactly on the GUI anchor
-            // (cx, cy) — Forge's translate(x, y-10, 200). The cube-centre
-            // (eye origin) sits at (shiftX, shiftY) relative to the texture
-            // centre, so the box centre goes to anchor MINUS the shift.
+            
+            
+            
+            
             int bx = Math.round(cx - shiftX);
             int by = Math.round(cy - shiftY);
             int x0 = bx - width / 2;
@@ -307,55 +307,55 @@ public final class IsoStructurePip {
         @Override
         protected void renderToTexture(State state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
             Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
-            // Base frame (from prepare): T(width/2, height/2, 0) * S(k,k,-k),
-            // k = guiScale (state.scale() == 1). Everything below works on
-            // top of it in block units; shift centres the projected footprint.
+            
+            
+            
             poseStack.translate(state.shiftX, state.shiftY, 0.0f);
             poseStack.scale(state.scale, state.scale, state.scale);
-            // S(1,-1,-1): model y-up -> screen-down eye space, cancels the
-            // base -scale on z; determinant positive keeps face winding.
+            
+            
             poseStack.scale(1.0f, -1.0f, -1.0f);
             poseStack.rotateDegrees(Axis.XP, 25.0f);
             poseStack.rotateDegrees(Axis.YP, -45.0f);
             poseStack.translate(-state.xSize / 2.0f, -state.ySize / 2.0f, -state.zSize / 2.0f);
 
-            // Loop and gate identical to the 1.20.1 blueprint (slice build-up
-            // via access.getBlockState) and to the 1:1 port it replaces.
-            // NEOFORGE_PORT: нода рисуется и в пустой клетке (AIR вместо
-            // стекла-заглушки), но скрытые срезом слои гасятся вместе с
-            // блоками (access.isHiddenBySlice), как в 1.20.1 Forge.
-            // NEOFORGE_PORT (26.3 order): светящийся вихрь ноды в 1.20.1
-            // Forge падал в bufferSource() и флашнулся поверх всего; в
-            // submit-системе всё лежит в order(0), и геометрия, рисуемая
-            // в поздней фазе блоков, затирала вихрь непрозрачными лицами.
-            // order(1) рисуется после order(0).
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             OrderedSubmitNodeCollector nodeCollector = submitNodeCollector.order(1);
-            // NEOFORGE_PORT (26.3 pip): биллборд под камеру PiP. В мире квад
-            // фейчит мировую камеру; в изометрии мировой камеры нет, поэтому
-            // кварн отматывает разворот кадра: (Rx·Ry)⁻¹ = Ry(+45)·Rx(-25), и
-            // квад ложится в плоскость вьюера — как биллборд в 1.20.1 Forge.
+            
+            
+            
+            
             Quaternionf pipBillboard = new Quaternionf(Axis.YP.rotationDegrees(45.0f))
                     .mul(new Quaternionf(Axis.XP.rotationDegrees(-25.0f)));
             for (int h = 0; h < state.ySize; h++) {
                 for (int l = 0; l < state.xSize; l++) {
                     for (int w = 0; w < state.zSize; w++) {
                         BlockState blockState = state.access.getBlockState(new BlockPos(l, h, w));
-                        // structure cell (l,h,w) comes from
-                        // parts[ySize - 1 - h][l][w] (BlueprintBlockAccess
-                        // constructor mapping); true aura node swirl.
+                        
+                        
+                        
                         Part part = state.parts != null ? state.parts[state.ySize - 1 - h][l][w] : null;
                         if (!blockState.isAir()) {
                             poseStack.pushPose();
                             poseStack.translate(l, h, w);
                             if (BlueprintBlockAccess.isBerRendered(blockState)) {
-                                // Блоки без статической модели рендерим как в
-                                // мире — через их блок-ентити рендерер.
+                                
+                                
                                 this.submitBlockEntity(blockState, poseStack, submitNodeCollector);
                             } else {
                                 this.blockModelResolver.update(this.blockModel, blockState, DISPLAY_CONTEXT);
-                                // submitMultiLayer: per-quad render types, so the
-                                // translucent node surrogate glass renders like the
-                                // 1.20.1 renderSingleBlock path did.
+                                
+                                
+                                
                                 this.blockModel.submitMultiLayer(poseStack, submitNodeCollector,
                                         LIGHT_FULLBRIGHT, OverlayTexture.NO_OVERLAY, 0);
                             }
@@ -372,15 +372,15 @@ public final class IsoStructurePip {
             }
         }
 
-        /**
-         * NEOFORGE_PORT: аналог 1.20.1 Forge-пути, где такие блоки рисовались
-         * тем же {@code renderSingleBlock}-пайплайном, но с ALTERNATE-моделью
-         * блок-ентити; в 26.3 берётся сам рендерер блок-ентити (render-state
-         * пайплайн). Блок-ентити создаётся без уровня, поэтому
-         * {@code extractBase} даёт fullbright-свет, а публичный флаг
-         * {@code hasLevel} (все BER-стейты мода гейтят submit по нему)
-         * выставляется рефлексией, как настоящий.
-         */
+         
+
+
+
+
+
+
+
+ 
         private void submitBlockEntity(BlockState blockState, PoseStack poseStack,
                                        SubmitNodeCollector submitNodeCollector) {
             if (blockState.getBlock() instanceof EntityBlock entityBlock) {

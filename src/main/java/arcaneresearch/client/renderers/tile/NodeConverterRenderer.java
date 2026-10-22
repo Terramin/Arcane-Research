@@ -21,13 +21,13 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.client.renderers.entity.TurretObjModel;
 
-/**
- * Node converter renderer, ported from TC4 TileNodeConverterRenderer.
- * OBJ lock plus four count-driven pistons, glow overlay tinted by status
- * (green idle, orange charging, red energized).
- * NEOFORGE_PORT (26.3 render-state rework): Forge renderDevice() body 1:1
- * via submitCustomGeometry (PoseStack-bridge emission).
- */
+ 
+
+
+
+
+
+ 
 public class NodeConverterRenderer implements BlockEntityRenderer<NodeConverterTile, NodeConverterRenderer.State> {
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID,
             "models/block/node_converter.obj");
@@ -151,8 +151,8 @@ public class NodeConverterRenderer implements BlockEntityRenderer<NodeConverterT
         return packLight(Math.min(15, Math.max(0, glow >> 4)), 0);
     }
 
-    // NEOFORGE_PORT: LightTexture removed in 26.x; same packing
-    // (block << 4 | sky << 20, as in old LightTexture.pack).
+    
+    
     private static int packLight(int blockLight, int skyLight) {
         return (blockLight & 0xF) << 4 | (skyLight & 0xF) << 20;
     }

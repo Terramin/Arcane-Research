@@ -159,10 +159,10 @@ public class TransducerTile extends TileArcaneresearch {
         }
     }
 
-    /**
-     * Порт TC4 TileNodeConverter.hasStabilizer: стабилизатор двумя ниже,
-     * запитанный редстоуном — не считается (как и сам конвертер без lock).
-     */
+     
+
+
+ 
     private boolean hasStabilizer(Level level) {
         try {
             BlockPos stabPos = worldPosition.offset(0, -2, 0);
@@ -220,7 +220,7 @@ public class TransducerTile extends TileArcaneresearch {
         tag.putInt("tcCount", this.count);
     }
 
-    /** Статус/счётчик нужны и клиентскому BER, не только чанку. */
+      
     @Override
     protected void writeSyncNBT(ValueOutput tag) {
         super.writeSyncNBT(tag);

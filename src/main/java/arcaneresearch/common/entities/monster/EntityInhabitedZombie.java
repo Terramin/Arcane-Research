@@ -61,7 +61,7 @@ public class EntityInhabitedZombie extends Zombie {
         return result;
     }
 
-    // NEOFORGE_PORT: 26.x shouldDropLoot takes the server level.
+    
     @Override
     protected boolean shouldDropLoot(net.minecraft.server.level.ServerLevel level) {
         return false;
@@ -79,14 +79,14 @@ public class EntityInhabitedZombie extends Zombie {
 
     @Override
     protected void tickDeath() {
-        // NEOFORGE_PORT: 1:1 from Forge. 26.x swaps: Entity.moveTo(x,y,z,yaw,pitch) gone ->
-        // setPos + setRot; getCurrentDifficultyAt lives on ServerLevelAccessor;
-        // MobSpawnType -> EntitySpawnReason; RULE_DOMOBLOOT -> MOB_DROPS (ServerLevel rules);
-        // lastHurtByPlayerTime -> getLastHurtByPlayerMemoryTime();
-        // getExperienceReward(ServerLevel, attacker) (mirrors vanilla dropExperience gating).
+        
+        
+        
+        
+        
         if (!level().isClientSide()) {
             EntityEldritchCrab crab = new EntityEldritchCrab(level());
-            // NEOFORGE_PORT (26.3): moveTo(x,y,z,yaw,pitch) -> snapTo (same body incl. old pos/rot).
+            
             crab.snapTo(getX(), getY() + getEyeHeight(), getZ(), getYRot(), getXRot());
             crab.setHelm(true);
             crab.finalizeSpawn((net.minecraft.world.level.ServerLevelAccessor) level(),

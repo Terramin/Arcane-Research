@@ -32,7 +32,7 @@ import java.util.function.Predicate;
 
 public class EntityUtils {
 
-    // NEOFORGE_PORT: modifier ids are Identifiers in 26.x (record ctor).
+    
     public static final net.minecraft.resources.Identifier CHAMPION_HEALTH_ID =
             net.minecraft.resources.Identifier.fromNamespaceAndPath(
                     arcaneresearch.Arcaneresearch.MODID, "champion/health");
@@ -47,7 +47,7 @@ public class EntityUtils {
                     arcaneresearch.Arcaneresearch.MODID, "champion/mighty");
     private static java.lang.reflect.Field floatCounterField = null;
 
-    /** Луч взгляда в блок (общий для таумометра проекта и temp-изучения). */
+      
     public static BlockHitResult blockRay(Level level, Player player, double range) {
         Vec3 eyePos = player.getEyePosition();
         Vec3 targetPos = eyePos.add(player.getLookAngle().scale(range));
@@ -55,8 +55,8 @@ public class EntityUtils {
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, player));
     }
 
-    // NEOFORGE_PORT: dropCustomDeathLoot lost its looting param in 26.x; derive it from
-    // the killer's main-hand item (Enchantments.LOOTING), same value the old caller passed.
+    
+    
     public static int getLootingLevel(net.minecraft.server.level.ServerLevel level,
                                       net.minecraft.world.damagesource.DamageSource source) {
         if (source.getEntity() instanceof LivingEntity killer) {
@@ -219,8 +219,8 @@ public class EntityUtils {
                 pos.getX() - radius, pos.getY() - radius, pos.getZ() - radius,
                 pos.getX() + radius + 1, pos.getY() + radius + 1, pos.getZ() + radius + 1
         );
-        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists and, as in
-        // 1.20.1, filters with EntitySelector.NO_SPECTATORS (the e -> true lookup didn't).
+        
+        
         return level.getEntitiesOfClass(type, box);
     }
 
@@ -295,8 +295,8 @@ public class EntityUtils {
 
         Vec3 direction = entityPos.subtract(center).normalize();
         entity.setDeltaMovement(entity.getDeltaMovement().add(direction.scale(force)));
-        // NEOFORGE_PORT (26.3): Entity.hurtMarked was renamed syncVelocity (still what
-        // makes ServerEntity send the motion packet; setDeltaMovement alone doesn't).
+        
+        
         entity.syncVelocity = true;
     }
 
@@ -306,7 +306,7 @@ public class EntityUtils {
 
         Vec3 direction = center.subtract(entityPos).normalize();
         entity.setDeltaMovement(entity.getDeltaMovement().add(direction.scale(force)));
-        // NEOFORGE_PORT (26.3): hurtMarked -> syncVelocity (see pushAway).
+        
         entity.syncVelocity = true;
     }
 
@@ -386,7 +386,7 @@ public class EntityUtils {
                 && showPopups(viewer.getOffhandItem(), viewer)) {
             return true;
         }
-        // NEOFORGE_PORT: LivingEntity.getArmorSlots gone -> per-slot reads.
+        
         for (net.minecraft.world.entity.EquipmentSlot slot : new net.minecraft.world.entity.EquipmentSlot[]{
                 net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
                 net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) {

@@ -56,8 +56,8 @@ public class BlockSpa extends Block implements EntityBlock {
     }
 
     @Override
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useItemOn (uses held item/hand).
+    
+    
 
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
@@ -71,9 +71,9 @@ public class BlockSpa extends Block implements EntityBlock {
         BlockEntity be = level.getBlockEntity(pos);
 
         if (be instanceof TileSpa spa) {
-            // NEOFORGE_PORT: FluidUtil.interactWithFluidHandler(player, hand, handler) removed ->
-            //   interactWithFluidHandler(player, hand, pos, handler, tx) with caller-owned
-            //   transaction (same pattern as the ported BlockWaterJug).
+            
+            
+            
             try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
                 if (net.neoforged.neoforge.transfer.fluid.FluidUtil.interactWithFluidHandler(
                         player, hand, pos, spa.tank, tx)) {
@@ -130,7 +130,7 @@ public class BlockSpa extends Block implements EntityBlock {
         return true;
     }
 
-    // NEOFORGE_PORT: 26.x added the Direction parameter (comparator side).
+    
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction) {
         BlockEntity be = level.getBlockEntity(pos);

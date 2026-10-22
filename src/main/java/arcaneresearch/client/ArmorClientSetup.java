@@ -30,21 +30,21 @@ import arcaneresearch.client.models.armor.VoidArmorModel;
 import arcaneresearch.client.models.armor.VoidRobeArmorModel;
 import arcaneresearch.init.ModItems;
 
-// NEOFORGE_PORT (26.x armor rework): Forge 1.20.1 drew mod armor via
-// Item.initializeClient -> IClientItemExtensions.getHumanoidArmorModel(entity,
-// stack, slot, original) + ArmorItem.getArmorTexture -> String. In 26.x:
-//  - Item.initializeClient is REMOVED -> extensions register here via
-//    RegisterClientExtensionsEvent (same pattern as WandClientSetup).
-//  - The hook is now getHumanoidArmorModel(stack, layerType, original); pose
-//    copying (crouching/riding/arm poses) is done by the default
-//    getGenericArmorModel via ClientHooks.copyModelProperties (verified via
-//    javap), so only the Forge per-slot part visibility is kept here.
-//  - Textures resolve per equipment-asset LAYER
-//    (assets/arcaneresearch/equipment/*.json, REQUIRED: empty layers render
-//    nothing) with per-item override in getArmorTexture -> classic
-//    textures/entity/armor/*.png paths, so no PNG is moved or duplicated.
-//  - Slot comes from the stack's EQUIPPABLE component (Item no longer knows
-//    its own slot); LEGS -> HUMANOID_LEGGINGS -> inner model, like Forge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class ArmorClientSetup {
 
@@ -56,15 +56,15 @@ public class ArmorClientSetup {
         return Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, path);
     }
 
-    // NEOFORGE_PORT (26.3): Forge chose model/texture by the worn slot (LEGS -> inner);
-    // the slot is the stack's EQUIPPABLE slot (layer type is HUMANOID_BABY for babies).
+    
+    
     private static EquipmentSlot slotOf(ItemStack stack) {
         Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
         return equippable != null ? equippable.slot() : EquipmentSlot.CHEST;
     }
 
-    // Forge parity (every Item*Armor.initializeClient switch 1:1).
-    // NEOFORGE_PORT: HumanoidModel.setAllVisible removed in 26.x -> explicit flags.
+    
+    
     private static void applySlotVisibility(HumanoidModel<?> model, EquipmentSlot slot) {
         model.head.visible = false;
         model.hat.visible = false;
@@ -108,12 +108,12 @@ public class ArmorClientSetup {
         private final ModelLayerLocation innerLocation;
         private final TextureFn textureFn;
         private final boolean forceUntinted;
-        // NEOFORGE_PORT (26.3): one model per slot. Models are drawn after all submits and
-        // getGenericArmorModel copies the vanilla (all-visible) part flags, so a shared
-        // instance would show the last slot's / every part for each worn piece.
+        
+        
+        
         private final EnumMap<EquipmentSlot, HumanoidModel<?>> models = new EnumMap<>(EquipmentSlot.class);
 
-        /** Custom-model armor (Forge initializeClient parity). */
+          
         ArmorExtension(Function<ModelPart, HumanoidModel<?>> outerFactory,
                 ModelLayerLocation outerLocation,
                 Function<ModelPart, HumanoidModel<?>> innerFactory,
@@ -135,7 +135,7 @@ public class ArmorClientSetup {
             this.forceUntinted = forceUntinted;
         }
 
-        /** Vanilla-model armor (Forge texture-only items: goggles, boots). */
+          
         ArmorExtension(TextureFn textureFn, boolean forceUntinted) {
             this(null, null, null, null, textureFn, forceUntinted);
         }
@@ -164,8 +164,8 @@ public class ArmorClientSetup {
             Model replacement = getHumanoidArmorModel(stack, layerType, original);
             if (replacement != original && original instanceof HumanoidModel<?> originalHumanoid
                     && replacement instanceof HumanoidModel<?> replacementHumanoid) {
-                // Default behaviour (pose copy), then restore the Forge per-slot visibility
-                // that copyModelProperties overwrote.
+                
+                
                 net.neoforged.neoforge.client.ClientHooks.copyModelProperties(originalHumanoid, replacementHumanoid);
                 applySlotVisibility(replacementHumanoid, slotOf(stack));
             }
@@ -183,15 +183,15 @@ public class ArmorClientSetup {
         public int getArmorLayerTintColor(ItemStack stack,
                 EquipmentClientInfo.Layer layer, int layerIndex, int dyeColor) {
             if (forceUntinted) {
-                // Forge parity: goggles / traveller boots rendered untinted,
-                // but share the dyeable "special" asset with robes.
+                
+                
                 return -1;
             }
             return IClientItemExtensions.super.getArmorLayerTintColor(stack, layer, layerIndex, dyeColor);
         }
     }
 
-    // Forge parity tables (Item*Armor.getArmorTexture 1:1).
+    
     private static final TextureFn THAUMIUM_TEX = (legs, l) -> tex(legs
             ? "textures/entity/armor/thaumium_2.png" : "textures/entity/armor/thaumium_1.png");
     private static final TextureFn VOID_TEX = (legs, l) -> tex(legs
@@ -204,16 +204,16 @@ public class ArmorClientSetup {
         return tex(isOverlay(l) ? "textures/entity/armor/robes_1_overlay.png"
                 : "textures/entity/armor/robes_1.png");
     };
-    // Forge parity: ItemVoidRobeArmor quirk — the base call (type == null)
-    // returns the *_overlay.png (dyed), the overlay call the plain png.
+    
+    
     private static final TextureFn VOID_ROBE_TEX = (legs, l) -> tex(isOverlay(l)
             ? "textures/entity/armor/void_robe_armor.png"
             : "textures/entity/armor/void_robe_armor_overlay.png");
     private static final TextureFn FORTRESS_TEX =
             (legs, l) -> tex("textures/entity/armor/fortress_armor.png");
-    // NEOFORGE_PORT (26.3): Forge picked zombie_plate_armor.png when worn by
-    // EntityInhabitedZombie; the 26.x hooks carry no entity, so InhabitedZombieRenderer
-    // raises this flag around its (synchronous) submit, where the texture is resolved.
+    
+    
+    
     public static boolean inhabitedZombieWearer;
     private static final TextureFn CULTIST_PLATE_TEX = (legs, l) -> tex(inhabitedZombieWearer
             ? "textures/entity/armor/zombie_plate_armor.png"

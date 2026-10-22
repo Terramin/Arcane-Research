@@ -20,19 +20,19 @@ import javax.annotation.Nullable;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-// NEOFORGE_PORT: 1:1 logic from Forge .../tiles/devices/TileVisGenerator.java.
-// REQUIRED changes (21.9 transfer rework, verified in 26.3.0.23-beta jar):
-//   - implements IEnergyStorage (removed) -> implements EnergyHandler
-//     (getAmountAsLong/getCapacityAsLong/insert/extract). Old no-receive/no-pull
-//     semantics preserved: insert() -> 0, extract() -> 0 (tile PUSHES via outputEnergy).
-//   - LazyOptional + getCapability/invalidateCaps -> removed; exposure via
-//     getEnergyHandler(side) (facing side only, as before), wired in
-//     ModBlockEntities.registerCapabilities.
-//   - Neighbor query: targetTile.getCapability(ENERGY, side):LazyOptional ->
-//     level.getCapability(Energy.BLOCK, pos, side):@Nullable; canReceive()+receiveEnergy()
-//     collapse into one transactional insert (commit only when accepted > 0).
-//   - tag.getInt -> getIntOr (Optional).
-// Recharge/output amounts, facing/enabled rules unchanged.
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class TileVisGenerator extends TileArcaneresearch implements EnergyHandler {
 
     private static final int CAPACITY = 1000;

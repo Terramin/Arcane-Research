@@ -17,13 +17,13 @@ import arcaneresearch.common.items.aura.ItemNodeDevice;
 
 import java.util.function.Consumer;
 
-// NEOFORGE_PORT (26.3): NodeDeviceItemRenderer (BEWLR) -> SpecialModelRenderer.
-// Forge renderByItem() body 1:1 (ground lift, center, per-context applyDisplay,
-// uncenter, device world offset centering, OBJ device, static pistons, per-kind
-// glow, no bubble on the item). The base model (node_device_base) carries no
-// display transforms (Forge builtin/entity had none), so the whole Forge pose
-// is reproduced here via the "preset" param (submit has no display context),
-// wired per-context in the item JSONs (display_context select).
+
+
+
+
+
+
+
 public class NodeDeviceSpecialRenderer implements SpecialModelRenderer<Void> {
 
     private final ItemNodeDevice.Kind kind;
@@ -52,13 +52,13 @@ public class NodeDeviceSpecialRenderer implements SpecialModelRenderer<Void> {
         if ("ground".equals(preset)) {
             poseStack.translate(0.0D, 0.15D, 0.0D);
         }
-        // Центр модели — иначе повороты display уводят девайс вбок.
+        
         poseStack.translate(0.5D, 0.5D, 0.5D);
         applyDisplay(preset, poseStack);
         poseStack.translate(-0.5D, -0.5D, -0.5D);
-        // Центровка по вертикали зависит от кадра девайса: стабилизатор
-        // стоит на земле y 0..0.75 (центр 0.375 → +0.125), конвертер/
-        // трансдьюсер — y 0.25..1.0 (центр 0.625 → -0.1).
+        
+        
+        
         switch (kind) {
             case ADVANCED -> {
                 poseStack.translate(0.0D, 0.125D, 0.0D);
@@ -79,7 +79,7 @@ public class NodeDeviceSpecialRenderer implements SpecialModelRenderer<Void> {
         poseStack.popPose();
     }
 
-    /** Ванильный display блока: ротации в градусах + скейл под контекст (Forge 1:1). */
+      
     private static void applyDisplay(String preset, PoseStack poseStack) {
         switch (preset) {
             case "gui" -> {

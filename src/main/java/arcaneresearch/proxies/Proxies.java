@@ -4,7 +4,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import arcaneresearch.Arcaneresearch;
 
-// NEOFORGE_PORT: 1:1 from Forge (Dist-based proxy selection; only imports changed).
+
 public final class Proxies {
     private static IProxy proxy;
 
@@ -28,7 +28,7 @@ public final class Proxies {
         return proxy;
     }
 
-    // Kept for compat (client setup may override explicitly).
+    
     public static void set(IProxy p) {
         proxy = p;
     }

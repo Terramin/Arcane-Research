@@ -21,14 +21,14 @@ import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.client.renderers.entity.TurretObjModel;
 import arcaneresearch.common.tiles.aura.StabilizerTile;
 
-/**
- * Node stabilizer renderer, ported from TC4 TileNodeStabilizerRenderer.
- * Same lock + four pistons OBJ as the converter (shared geometry in TC4),
- * pistons driven by count/100, glow 50+170*count/37, red pistons and pink
- * bubble for the advanced lattice (lock 2), white bubble otherwise.
- * NEOFORGE_PORT (26.3 render-state rework): Forge renderDevice() body 1:1
- * via submitCustomGeometry.
- */
+ 
+
+
+
+
+
+
+ 
 public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, StabilizerRenderer.State> {
     private static final Identifier MODEL = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID,
             "models/block/node_converter.obj");
@@ -80,9 +80,9 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
         renderDevice(poseStack, collector, count, lock, packedLight, playerTickCount, true);
     }
 
-    /**
-     * @param bubble РїСѓР·С‹СЂСЊ РЅР°Рґ РґРµРІР°Р№СЃРѕРј (РІ РјРёСЂРµ вЂ” РґР°, РЅР° РїСЂРµРґРјРµС‚Рµ вЂ” РЅРµС‚).
-     */
+     
+
+ 
     public static void renderDevice(PoseStack poseStack, SubmitNodeCollector collector,
                                     int count, int lock, int packedLight, int playerTickCount,
                                     boolean bubble) {
@@ -96,9 +96,9 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
                 : new float[]{1.0F, 1.0F, 1.0F};
         int overlay = OverlayTexture.NO_OVERLAY;
 
-        // NEOFORGE_PORT (26.3): Forge stabilizer frame is translate(0.5, 0, 0.5) +
-        // XP(-90) (device stands on the floor, pistons up toward the node); the
-        // converter's (y 1, XP 90) frame drew it upside down.
+        
+        
+        
         poseStack.pushPose();
         poseStack.translate(0.5, 0.0, 0.5);
         poseStack.rotate(Axis.XP.rotationDegrees(-90.0F));
@@ -113,7 +113,7 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
             poseStack.rotate(Axis.YP.rotationDegrees(45.0F));
             poseStack.translate(0.0, 0.0, v);
             emitObj(poseStack, collector, baseType, model, "piston", packedLight, overlay, 1, 1, 1, 1);
-            // Forge glowLight(count, a): per-piston phase offset (a * 5 ticks).
+            
             emitObj(poseStack, collector, overType, model, "piston",
                     glowLight(count, playerTickCount + a * 5), overlay,
                     glow[0], glow[1], glow[2], 1);
@@ -135,7 +135,7 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
             poseStack.rotate(Minecraft.getInstance().gameRenderer.mainCamera().rotation());
             float half = 0.9F;
             collector.submitCustomGeometry(poseStack, bubbleType, (pose, consumer) -> {
-                // NEOFORGE_PORT: same vert/UV order as UtilsFX.renderFacingQuad 1x1f0.
+                
                 quad(consumer, pose, -half, -half, 0, 1, 1, cr, cg, cb, alpha, fullLight);
                 quad(consumer, pose, -half, half, 0, 1, 0, cr, cg, cb, alpha, fullLight);
                 quad(consumer, pose, half, half, 0, 0, 0, cr, cg, cb, alpha, fullLight);
@@ -168,12 +168,12 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
     private static int glowLight(int count, int playerTickCount) {
         float scale = Mth.sin(playerTickCount / 3.0F) * 0.1F + 0.9F;
         int glow = 50 + (int) (170.0F * Math.max(0, count) / 37.0F * scale);
-        // NEOFORGE_PORT: LightTexture removed in 26.x; same packing.
+        
         return (Math.min(15, Math.max(0, glow >> 4)) & 0xF) << 4;
     }
 
-    // NEOFORGE_PORT: render bounds moved from BlockEntity to the renderer in 26.x
-    // (IBlockEntityRendererExtension); forward the tile's Forge-parity culling box.
+    
+    
     @Override
     public net.minecraft.world.phys.AABB getRenderBoundingBox(StabilizerTile blockEntity) {
         return blockEntity.getRenderBoundingBox();

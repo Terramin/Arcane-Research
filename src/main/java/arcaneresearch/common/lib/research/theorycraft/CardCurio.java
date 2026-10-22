@@ -59,8 +59,8 @@ public class CardCurio extends TheorycraftCard {
         Random r = new Random(getSeed());
         List<ItemStack> curios = new ArrayList<>();
 
-        // NEOFORGE_PORT (26.3): Inventory.items is private -> getNonEquipmentItems() (the same
-        // 36 main slots as Forge; getContainerSize() would also include armor/offhand).
+        
+        
         for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && stack.getItem() instanceof arcaneresearch.common.items.curios.ItemCurio) {
                 ItemStack c = stack.copy();

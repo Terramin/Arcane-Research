@@ -1,7 +1,7 @@
 package arcaneresearch.api.research;
 
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.ICancellableEvent; // NEOFORGE_PORT: was  (bus 8.x uses the interface)
+import net.neoforged.bus.api.ICancellableEvent; 
 import net.neoforged.bus.api.Event;
 import arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType;
 

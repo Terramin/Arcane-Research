@@ -12,7 +12,7 @@ import arcaneresearch.api.aspects.AspectList;
 
 public class ScanPopupRenderer {
 
-    /** Р¦РµР»Рё СЃРєР°РЅР°: РїРёС€РµС‚ С‚РёРє/СЌРІРµРЅС‚С‹, С‡РёС‚Р°РµС‚ СЂРµРЅРґРµСЂ вЂ” volatile РґР»СЏ РІРёРґРёРјРѕСЃС‚Рё. */
+      
     public static volatile Entity thaumTarget = null;
 
     public static volatile BlockPos thaumBlockTarget = null;
@@ -33,7 +33,7 @@ public class ScanPopupRenderer {
             if (!state.isAir()) {
                 ItemStack stack = ItemStack.EMPTY;
                 try {
-                    // NEOFORGE_PORT: Block.getCloneItemStack is protected in 26.x -> BlockState accessor.
+                    
                     stack = state.getCloneItemStack(player.level(), thaumBlockTarget, false);
                 } catch (Exception ignored) {
                 }

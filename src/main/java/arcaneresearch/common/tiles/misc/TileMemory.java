@@ -47,7 +47,7 @@ public class TileMemory extends BlockEntity {
     @Override
     protected void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
-        // NEOFORGE_PORT: ValueOutput.put(CompoundTag) gone in 26.3 -> codec store.
+        
         tag.store("oldBlock", CompoundTag.CODEC, NbtUtils.writeBlockState(oldBlock));
         if (tileEntityCompound != null) {
             tag.store("tileData", CompoundTag.CODEC, tileEntityCompound);
@@ -57,7 +57,7 @@ public class TileMemory extends BlockEntity {
     @Override
     public void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
-        // NEOFORGE_PORT: contains/getCompoundOrEmpty/asLookup gone in 26.3 -> codec read.
+        
         oldBlock = tag.read("oldBlock", CompoundTag.CODEC)
                 .map(nbt -> NbtUtils.readBlockState(BuiltInRegistries.BLOCK, nbt))
                 .orElse(Blocks.AIR.defaultBlockState());

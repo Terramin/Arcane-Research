@@ -9,11 +9,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.aura.AuraHelper;
 
-/**
- * Push totem, ported from TC5 TileAuraTotemPush.
- * Drains vis near the totem and releases it far away. Uses the wider
- * pure-damping factor of the original (0.1 vs pull 0.025).
- */
+ 
+
+
+
+ 
 public class AuraTotemPushTile extends AuraTotemTile {
     public AuraTotemPushTile(BlockEntityType<?> tileType, BlockPos pos, BlockState state) {
         super(tileType, pos, state);

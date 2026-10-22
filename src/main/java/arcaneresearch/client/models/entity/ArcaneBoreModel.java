@@ -7,12 +7,12 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.entity.ArcaneBoreRenderer;
 
-// NEOFORGE_PORT (26.3): EntityModel<State>.
+
 public class ArcaneBoreModel extends EntityModel<ArcaneBoreRenderer.State> {
 
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -118,7 +118,7 @@ public class ArcaneBoreModel extends EntityModel<ArcaneBoreRenderer.State> {
         this.base.xRot = state.xRot * ((float) Math.PI / 180F);
     }
 
-    // NEOFORGE_PORT: @Override dropped (base renderToBuffer final, tint int).
+    
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight,
                                int packedOverlay, float red, float green, float blue, float alpha) {
 

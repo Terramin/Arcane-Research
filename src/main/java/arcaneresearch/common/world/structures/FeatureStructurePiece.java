@@ -45,7 +45,7 @@ public class FeatureStructurePiece extends StructurePiece {
     @Override
     public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator generator,
                             RandomSource random, BoundingBox box, ChunkPos chunkPos, BlockPos pos) {
-        // NEOFORGE_PORT: 1:1 from Forge; registryOrThrow removed -> lookupOrThrow + Reference.value().
+        
         PlacedFeature placed = level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE)
                 .getOrThrow(this.featureKey).value();
         placed.place(level, generator, random, this.genPos);

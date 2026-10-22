@@ -20,10 +20,10 @@ import arcaneresearch.common.lib.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-// NEOFORGE_PORT: 1:1 logic from Forge 1.20.1 (points/embers/tick kept).
-// REQUIRED changes: TextureSheetParticle removed -> SingleQuadParticle; per-segment
-// camera quads now emit through QuadParticleRenderState.add (same centers/sizes/UVs/colors).
-// Sheet UV fractions remapped into the stitched sprite (TCSprites); fullbright kept.
+
+
+
+
 public class FXArc extends SingleQuadParticle {
 
     protected static final Identifier BEAM_TEXTURE =
@@ -163,7 +163,7 @@ public class FXArc extends SingleQuadParticle {
         }
     }
 
-    // NEOFORGE_PORT: per-segment camera quads -> state.add (same math as the old render()).
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         if (points.size() < 2) {

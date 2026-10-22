@@ -98,9 +98,9 @@ public class EntityEldritchGolem extends EntityArcaneresearchBoss implements IEl
         this.goalSelector.addGoal(2, new arcaneresearch.common.entities.ai.combat.AILongRangeAttack(this, 3.0, 1.0, 5, 5, 24.0f));
     }
 
-    // NEOFORGE_PORT: getEyeHeight is final in Entity (26.x); height set in
-    // ModEntities ELDRITCH_GOLEM builder (.eyeHeight(3.0)). The Forge headless
-    // bonus (3.33) has no 26.x equivalent and is dropped (FX offsets use 3.0).
+    
+    
+    
 
     @Override
     public void addAdditionalSaveData(ValueOutput tag) {

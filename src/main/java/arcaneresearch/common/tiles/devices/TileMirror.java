@@ -116,8 +116,8 @@ public class TileMirror extends TileArcaneresearch implements Container {
         instability = tag.getIntOr("Instability", tag.getIntOr("instability", 0));
     }
 
-    // NEOFORGE_PORT: ValueInput has no contains(); legacy "linkDim" may be an INT
-    // (dim id) or a STRING (dim location) — Forge tag.contains caught both, so check both.
+    
+    
     private static boolean hasLegacyLinkDim(net.minecraft.world.level.storage.ValueInput tag) {
         if (tag.read("linkDim", com.mojang.serialization.Codec.INT).isPresent()) return true;
         return !tag.getStringOr("linkDim", "").isEmpty();
@@ -147,8 +147,8 @@ public class TileMirror extends TileArcaneresearch implements Container {
     public void saveAdditional(ValueOutput tag) {
         super.saveAdditional(tag);
 
-        // NEOFORGE_PORT: ItemStack.save(CompoundTag) removed -> ItemStack.CODEC list.
-        // Old entries carried a "Slot" byte the reader ignored (order-only append); kept so.
+        
+        
         java.util.List<ItemStack> stacks = new java.util.ArrayList<>();
         for (int i = 0; i < outputStacks.size(); i++) {
             ItemStack stack = outputStacks.get(i);
@@ -347,10 +347,10 @@ public class TileMirror extends TileArcaneresearch implements Container {
 
         try {
             Direction facing = getFacing();
-            // Спавн СНАРУЖИ плиты хитбокса + уверенный толчок наружу:
-            // иначе предмет зависает в плите, portalCooldown спадает,
-            // entityInside втягивает его обратно в outputStacks —
-            // со стороны это выглядит как "появился и пропал".
+            
+            
+            
+            
             double x = worldPosition.getX() + 0.5 + facing.getStepX() * 0.6;
             double y = worldPosition.getY() + 0.25 + facing.getStepY() * 0.6;
             double z = worldPosition.getZ() + 0.5 + facing.getStepZ() * 0.6;

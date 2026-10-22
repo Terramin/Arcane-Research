@@ -106,11 +106,11 @@ public class CraftingEvents {
         return 0;
     }
 
-    // NEOFORGE_PORT: ForgeHooks.getBurnTime(stack, recipeType) + FurnaceFuelBurnTimeEvent
-    //   are gone in 26.x. Vanilla fuel values live in the COOKING_FUEL data component
-    //   (burn time is a ResolvableInt resolved against a LootContext).
-    //   Effective burn = max(custom Forge-era values above, vanilla component value),
-    //   matching the old event behavior (handler only overrode when custom > 0).
+    
+    
+    
+    
+    
     public static int getVanillaBurnTime(net.minecraft.world.level.Level level, ItemStack fuel) {
         if (fuel.isEmpty() || !(level instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
             return 0;
@@ -135,17 +135,17 @@ public class CraftingEvents {
         return Math.max(getBurnTime(fuel), getVanillaBurnTime(level, fuel));
     }
 
-    // NEOFORGE_PORT: ForgeHooks.getCraftingRemainingItem(stack) is gone in 26.x.
-    // Vanilla remainder logic now lives in ItemStack.getCraftingRemainder()
-    // (USE_REMAINDER component -> ItemStackTemplate, null when none).
+    
+    
+    
     public static ItemStack getCraftingRemainingItem(ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
         net.minecraft.world.item.ItemStackTemplate remainder = stack.getCraftingRemainder();
         return remainder != null ? remainder.create() : ItemStack.EMPTY;
     }
 
-    // NEOFORGE_PORT: FurnaceFuelBurnTimeEvent removed (no event/furnace content in 26.x).
-    // Custom fuels are served by getBurnTime/getBurnTimeTotal (called by our furnace tiles);
-    // vanilla fuels keep working via the COOKING_FUEL component (no event needed).
-    // Forge source of truth: onFurnaceFuel(event) { setBurnTime(getBurnTime(stack)) if > 0 }.
+    
+    
+    
+    
 }

@@ -10,10 +10,10 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.EntityEldritchGuardian;
 import arcaneresearch.init.ModItems;
 
-/**
- * Потусторонние глаза падают с элдритч-стражей (25%): ими заряжается
- * алтарь для ритуала окулуса. Лежит в arcaneresearch.arcaneresearch.common.lib.events.
- */
+ 
+
+
+ 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public final class EldritchEyeDrops {
     private EldritchEyeDrops() {

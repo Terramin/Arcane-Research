@@ -12,10 +12,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/fx/PacketFXShield.java (PLAY_TO_CLIENT).
-// Fields/ctors/handleClient logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:fx_shield".
+
+
+
+
 public class PacketFXShield implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketFXShield> TYPE =
@@ -52,8 +52,8 @@ public class PacketFXShield implements CustomPacketPayload {
         ctx.enqueueWork(() -> handleClient(msg, ctx.player()));
     }
 
-    // Level from the packet context player; FX creation in client FXDispatcher
-    // (server-safe signature, client flow only).
+    
+    
     private static void handleClient(PacketFXShield packet, Player player) {
             if (player == null) return;
             Level level = player.level();

@@ -12,10 +12,10 @@ import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.client.models.entity.PechModel;
 import arcaneresearch.client.renderers.entity.PechRenderer;
 
-// NEOFORGE_PORT (26.3): RenderLayer<S, M>, submit() instead of render(); held
-// items come from ArmedEntityRenderState (right/leftHandItemState), submitted
-// via ItemStackRenderState.submit (Thaumaturge PechRenderer oracle pattern).
-// Pose math (bow/shift offsets) 1:1 from Forge.
+
+
+
+
 public class PechHeldItemLayer extends RenderLayer<PechRenderer.State, PechModel> {
 
     public PechHeldItemLayer(RenderLayerParent<PechRenderer.State, PechModel> renderer) {
@@ -25,15 +25,15 @@ public class PechHeldItemLayer extends RenderLayer<PechRenderer.State, PechModel
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int packedLight,
                        PechRenderer.State state, float limbSwing, float partialTicks) {
-        // NEOFORGE_PORT (26.3): Forge drew the item held by each arm on that arm
-        // (left-handed pechs keep the main-hand item on the left); the states are per arm.
+        
+        
         ItemStackRenderState mainHand = state.rightHandItemState;
         ItemStackRenderState offHand = state.leftHandItemState;
         if (mainHand.isEmpty() && offHand.isEmpty()) {
             return;
         }
         poseStack.pushPose();
-        // NEOFORGE_PORT: ModelPart has no young field in 26.x -> state.isBaby.
+        
         if (state.isBaby) {
             poseStack.translate(0.0F, 0.625F, 0.0F);
             poseStack.rotate(com.mojang.math.Axis.XP.rotationDegrees(20.0F));
@@ -53,7 +53,7 @@ public class PechHeldItemLayer extends RenderLayer<PechRenderer.State, PechModel
         poseStack.pushPose();
         getParentModel().translateToHand(state, side, poseStack);
         poseStack.translate(0.0F, -0.1F, 0.0625F);
-        // NEOFORGE_PORT (26.3): bow offset applies to whichever arm holds the bow (Forge parity).
+        
         if (state.getUseItemStackForArm(side).getItem() instanceof BowItem) {
             poseStack.translate(-0.075F, -0.1F, 0.0F);
         }

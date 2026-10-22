@@ -16,7 +16,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityFollowingItem extends EntitySpecialItem implements net.neoforged.neoforge.entity.IEntityWithComplexSpawn {
-    // NEOFORGE_PORT: Forge IEntityAdditionalSpawnData -> NeoForge IEntityWithComplexSpawn (same payload).
+    
 
     private static final EntityDataAccessor<Integer> DATA_TYPE =
             SynchedEntityData.defineId(EntityFollowingItem.class, EntityDataSerializers.INT);

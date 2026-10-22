@@ -30,9 +30,9 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
     @Override
     public void readCustomNBT(CompoundTag nbt) {
         filter = NonNullList.withSize(getFilterSize(), ItemStack.EMPTY);
-        // NEOFORGE_PORT: ContainerHelper.loadAllItems now takes ValueInput; seals persist
-        // through the CompoundTag channel, so stacks round-trip via ItemStack.CODEC
-        // (same "Items" list-of-{Slot, Item} shape as the old helper).
+        
+        
+        
         ListTag items = nbt.getListOrEmpty("Items");
         for (int i = 0; i < items.size(); i++) {
             CompoundTag slotTag = items.getCompoundOrEmpty(i);
@@ -65,7 +65,7 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
 
     @Override
     public void writeCustomNBT(CompoundTag nbt) {
-        // NEOFORGE_PORT: ContainerHelper.saveAllItems now takes ValueOutput; see readCustomNBT.
+        
         ListTag items = new ListTag();
         for (int i = 0; i < filter.size(); i++) {
             ItemStack stack = filter.get(i);

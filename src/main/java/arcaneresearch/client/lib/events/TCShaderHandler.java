@@ -1,7 +1,7 @@
 package arcaneresearch.client.lib.events;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 import arcaneresearch.Arcaneresearch;
@@ -12,13 +12,13 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-// NEOFORGE_PORT (26.3): post effects are server-driven (ServerPlayer
-// addPostEffect/removePostEffect, chains in assets/<ns>/post_effect/*.json,
-// synced via ClientboundPostEffectsPacket). GameRenderer.loadEffect/
-// shutdownEffect/currentEffect are gone, so the Forge client-tick switching
-// becomes a server player-tick driver with the same effect priority.
-// Old Forge Gray/Saturation/ColorScale/Offset params are folded into the new
-// color_convolve ColorConfig matrices (fixed Saturation 1.8 in the shader).
+
+
+
+
+
+
+
 public final class TCShaderHandler {
 
     public static final int SHADER_DESAT = 0;

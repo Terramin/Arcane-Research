@@ -22,9 +22,9 @@ public class ArcaneresearchCraftingManager {
 
     public static final int ASPECT_CAP = 500;
 
-    // NEOFORGE_PORT (26.3): Level.getRecipeManager() + RecipeManager.recipeMap() both
-    // gone. Server path -> ServerLevel.recipeAccess()/server RecipeManager (both expose
-    // getRecipes()); client path -> ClientRecipeCache (RecipesReceivedEvent RecipeMap).
+    
+    
+    
     static java.util.Collection<net.minecraft.world.item.crafting.RecipeHolder<?>> allHolders(Level level) {
         if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             return serverLevel.recipeAccess().getRecipes();
@@ -53,10 +53,10 @@ public class ArcaneresearchCraftingManager {
         return ClientRecipeCache.byType(type);
     }
 
-    // NEOFORGE_PORT (26.3): 1.20.1 synced every recipe to the client; 26.x syncs none unless
-    // requested. Without this ClientRecipeCache stays empty on clients (arcane workbench
-    // screen/menu matching, research-page recipes, client-side crucible lookups). Requests
-    // all recipe types, i.e. the Forge behavior.
+    
+    
+    
+    
     @net.neoforged.fml.common.EventBusSubscriber(modid = arcaneresearch.Arcaneresearch.MODID)
     public static final class RecipeSync {
         private RecipeSync() {
@@ -90,15 +90,15 @@ public class ArcaneresearchCraftingManager {
 
         Level level = player.level();
 
-        // NEOFORGE_PORT: getAllRecipesFor gone in 26.x -> recipeMap().byType(type)
-        // returns Collection<RecipeHolder<T>>; research-gating logic VERBATIM.
+        
+        
         for (net.minecraft.world.item.crafting.RecipeHolder<IArcaneRecipe> holder :
                 holdersOfType(level, ModRecipeTypes.ARCANE_WORKBENCH.get())) {
             IArcaneRecipe arcaneRecipe = holder.value();
             if (arcaneRecipe.matches(workbench, level)) {
 
-                // NEOFORGE_PORT (26.3): datapack recipes are holder-keyed - IArcaneRecipe#getId()
-                // is null for them, so the Forge recipe id comes from the holder key.
+                
+                
                 if (arcaneRecipe.getResearch() != null && arcaneRecipe.getResearch().isEmpty()
                         && isWandGatedRecipe(arcaneRecipe.getId() != null
                                 ? arcaneRecipe.getId() : holder.id().identifier())
@@ -158,8 +158,8 @@ public class ArcaneresearchCraftingManager {
             return null;
         }
 
-        // NEOFORGE_PORT: getAllRecipesFor gone in 26.x -> recipeMap().byType(type)
-        // + holder.value(); research-gating logic VERBATIM.
+        
+        
         for (net.minecraft.world.item.crafting.RecipeHolder<CrucibleRecipeType> holder :
                 holdersOfType(level, ModRecipeTypes.CRUCIBLE.get())) {
             CrucibleRecipeType crucibleRecipe = holder.value();
@@ -190,13 +190,13 @@ public class ArcaneresearchCraftingManager {
     private static final java.util.Set<net.minecraft.resources.Identifier> bridgedCrucibleKeys =
             new java.util.HashSet<>();
 
-    /**
-     * The thaumatorium tile works with code-registered {@link arcaneresearch.api.crafting.CrucibleRecipe}
-     * entries, while content lives in datapack {@link CrucibleRecipeType} JSONs. This bridge converts
-     * the datapack registry into the code catalog (replacing only its own previous output), so every
-     * JSON crucible recipe automatically works in the thaumatorium, including addon datapacks.
-     * Cheap no-op unless the datapack set changed (fingerprint gate).
-     */
+     
+
+
+
+
+
+ 
     public static void ensureCrucibleBridge(@javax.annotation.Nullable Level level) {
         if (level == null) return;
         java.util.List<net.minecraft.world.item.crafting.RecipeHolder<CrucibleRecipeType>> datapack;
@@ -258,8 +258,8 @@ public class ArcaneresearchCraftingManager {
             }
         }
 
-        // NEOFORGE_PORT: getAllRecipesFor gone in 26.x -> recipeMap().byType(type)
-        // + holder.value(); matching logic VERBATIM.
+        
+        
         for (net.minecraft.world.item.crafting.RecipeHolder<InfusionRecipeType> holder :
                 holdersOfType(level, ModRecipeTypes.INFUSION.get())) {
             InfusionRecipeType infusionRecipe = holder.value();
@@ -293,11 +293,11 @@ public class ArcaneresearchCraftingManager {
 
         AspectList aspects = AspectHelper.getObjectAspects(stack);
 
-        // Парити ThaumcraftCraftingManager.getBonusTags (1.7.10): NBT-аспекты
-        // IEssentiaContainerItem (висп-эссенция, фиал, кристалл) объединяются
-        // с зарегистрированными тегами (складываются), а при отсутствии
-        // зарегистрированных — становятся основным содержимым
-        // (прежнее поведение порта сохранено).
+        
+        
+        
+        
+        
         if (stack.getItem() instanceof IEssentiaContainerItem container) {
             if (!container.ignoreContainedAspects()) {
                 AspectList contained = container.getAspects(stack);
@@ -352,12 +352,12 @@ public class ArcaneresearchCraftingManager {
                 return known;
             }
         }
-        // NEOFORGE_PORT: ItemStack.save(CompoundTag) gone -> CODEC encoding
-        // (same purpose: stable per-stack history key).
-        // NEOFORGE_PORT (26.3): registry-aware ops - plain NbtOps cannot encode dynamic-registry
-        // components (enchantments, trims...), so every such stack got the same "" key and was
-        // cut off as a false recursion cycle. Without a server (remote client) or on any other
-        // encode failure the key falls back to item id + component patch, never a shared "".
+        
+        
+        
+        
+        
+        
         net.minecraft.server.MinecraftServer keyServer =
                 net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
         com.mojang.serialization.DynamicOps<net.minecraft.nbt.Tag> keyOps = keyServer != null
@@ -400,8 +400,8 @@ public class ArcaneresearchCraftingManager {
         }
         AspectList ot = cr.getAspects().copy();
         int ss = Math.max(1, cr.getRecipeOutput().getCount());
-        // NEOFORGE_PORT: Ingredient#getItems():ItemStack[] removed in 26.x; items()
-        // exposes Holder<Item> (works for custom ingredients too).
+        
+        
         List<ItemStack> matches = ingredientStacks(cr.getCatalyst());
         ItemStack cat = !matches.isEmpty() ? matches.get(0) : ItemStack.EMPTY;
         if (cat == null || cat.isEmpty()) {
@@ -462,12 +462,12 @@ public class ArcaneresearchCraftingManager {
         }
         AspectList ret = null;
         int value = Integer.MAX_VALUE;
-        // NEOFORGE_PORT: getRecipes() gone with the holder rework -> recipeMap().values()
-        // + holder.value(). Recipe no longer exposes getIngredients()/getResultItem(
-        // RegistryAccess): arcane recipes use the IArcaneRecipe legacy helpers;
-        // vanilla grid recipes use placementInfo().ingredients() for inputs and a
-        // static assemble(CraftingInput.EMPTY) for the output (shaped/shapeless ignore
-        // the input; specials that need input return EMPTY and are skipped below).
+        
+        
+        
+        
+        
+        
         for (net.minecraft.world.item.crafting.RecipeHolder<?> holder :
                 allHolders(level)) {
             net.minecraft.world.item.crafting.Recipe<?> recipe = holder.value();
@@ -524,8 +524,8 @@ public class ArcaneresearchCraftingManager {
         AspectList mid = new AspectList();
         List<ItemStack> remainders = new java.util.ArrayList<>();
         for (Ingredient ingredient : ingredients) {
-            // NEOFORGE_PORT: Ingredient#getItems():ItemStack[] removed; first display
-            // holder rebuilt as a stack (same representative-input sampling as before).
+            
+            
             ItemStack[] stacks = ingredientStacks(ingredient).toArray(ItemStack[]::new);
             if (stacks.length <= 0) {
                 continue;
@@ -574,10 +574,10 @@ public class ArcaneresearchCraftingManager {
         return out;
     }
 
-    // NEOFORGE_PORT (26.3): Forge Ingredient#getItems() returned display stacks WITH their
-    // NBT (crystal aspect, StrictNBT/PartialNBT data). Simple 26.x ingredients only expose
-    // item holders (no data to lose); custom ones (arcaneresearch:crystal,
-    // neoforge:components, ...) carry it only in display(), so that is resolved instead.
+    
+    
+    
+    
     private static List<ItemStack> ingredientStacks(Ingredient ingredient) {
         if (ingredient == null) {
             return List.of();
@@ -648,13 +648,13 @@ public class ArcaneresearchCraftingManager {
 
         net.minecraft.world.item.Item item = stack.getItem();
 
-        // NEOFORGE_PORT: ArmorItem/SwordItem/TieredItem classes removed in 26.x; armor and
-        // weapon stats now come from the EQUIPPABLE/ATTRIBUTE_MODIFIERS/TOOL components
-        // (identical numbers for vanilla gear; same aspect yields as the Forge code).
+        
+        
+        
         var equippable = stack.get(net.minecraft.core.component.DataComponents.EQUIPPABLE);
         var modifiers = stack.get(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS);
         var tool = stack.get(net.minecraft.core.component.DataComponents.TOOL);
-        // NEOFORGE_PORT (26.3): ArmorItem was humanoid armor only (no horse/wolf body armor).
+        
         if (equippable != null && modifiers != null
                 && equippable.slot().getType() == net.minecraft.world.entity.EquipmentSlot.Type.HUMANOID_ARMOR) {
             int defense = (int) modifiers.compute(
@@ -664,10 +664,10 @@ public class ArcaneresearchCraftingManager {
             }
         }
 
-        // NEOFORGE_PORT (26.3): SwordItem#getDamage() was the ATTACK_DAMAGE modifier alone
-        // (material bonus + base, WITHOUT the player's 1.0 base attribute) -> base 0.0.
-        // SwordItem subclasses = #minecraft:swords or anything built by Item.Properties.sword()
-        // (sword_efficient TOOL rule; covers this mod's swords, which are not in the tag).
+        
+        
+        
+        
         if (isSword(stack, tool)) {
             double damage = modifiers != null ? modifiers.compute(
                     net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE, 0.0,
@@ -682,10 +682,10 @@ public class ArcaneresearchCraftingManager {
             result.merge(Aspect.FLIGHT, 5);
         }
 
-        // NEOFORGE_PORT (26.3): TieredItem/Tier#getLevel() are gone, and Tool#defaultMiningSpeed
-        // is 1.0 for every 26.x tool (the material speed lives in a rule), so it cannot stand
-        // in for the tier. The Forge level is recovered from the tool material instead; Forge
-        // formula (level + 1) * 4 unchanged. Non-tiered TOOL holders (shears, mace) get nothing.
+        
+        
+        
+        
         int tierLevel = toolTierLevel(stack, tool);
         if (tierLevel >= 0) {
             result.merge(Aspect.TOOL, (tierLevel + 1) * 4);
@@ -699,10 +699,10 @@ public class ArcaneresearchCraftingManager {
 
         var food = stack.get(net.minecraft.core.component.DataComponents.FOOD);
         if (food != null) {
-            // NEOFORGE_PORT: FoodProperties is a record in 26.x -> nutrition()/saturation().
+            
             result.merge(Aspect.LIFE, food.nutrition());
-            // NEOFORGE_PORT (26.3): saturation() is the absolute value (nutrition * modifier * 2,
-            // FoodConstants.saturationByModifier); Forge compared the MODIFIER with 0.5.
+            
+            
             float saturationModifier = food.nutrition() > 0
                     ? food.saturation() / (food.nutrition() * 2.0f) : 0.0f;
             if (saturationModifier > 0.5f) {
@@ -728,9 +728,9 @@ public class ArcaneresearchCraftingManager {
         return false;
     }
 
-    // Forge Tier#getLevel() per tool material (vanilla values; mod values from the Forge Tier
-    // definitions: thaumium/elemental 3, void/crimson void 4, primal void 5). Copper did not
-    // exist in 1.20.1 and mines like stone -> 1. Holder class = lazy init (no early class load).
+    
+    
+    
     private static final class ToolTiers {
         static final List<java.util.Map.Entry<net.minecraft.world.item.ToolMaterial, Integer>> MATERIALS = List.of(
                 java.util.Map.entry(net.minecraft.world.item.ToolMaterial.WOOD, 0),
@@ -757,12 +757,12 @@ public class ArcaneresearchCraftingManager {
                         net.minecraft.tags.BlockTags.INCORRECT_FOR_NETHERITE_TOOL, 4);
     }
 
-    /**
-     * Forge "instanceof TieredItem ? getTier().getLevel()" (SwordItem + DiggerItem), -1 if not
-     * tiered. Diggers carry ToolMaterial.applyToolProperties' deny-drops rule on an
-     * incorrect_for_*_tool tag, swords the sword rule; the material that built the item is
-     * matched by its repair tag + durability (both copied verbatim from the material).
-     */
+     
+
+
+
+
+ 
     private static int toolTierLevel(ItemStack stack, net.minecraft.world.item.component.Tool tool) {
         if (tool == null) {
             return -1;

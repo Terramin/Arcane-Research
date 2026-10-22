@@ -46,8 +46,8 @@ public class BlockWandWorkbench extends BlockTCDevice implements EntityBlock {
         return RenderShape.MODEL;
     }
 
-    // NEOFORGE_PORT: Block.use(state, level, pos, player, hand, hit) removed in 26.x
-    // -> useWithoutItem (hand unused).
+    
+    
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
@@ -58,13 +58,13 @@ public class BlockWandWorkbench extends BlockTCDevice implements EntityBlock {
     @SuppressWarnings("deprecation")
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         if (!state.is(level.getBlockState(pos).getBlock())) {
-            // NEOFORGE_PORT: contents dropped by preRemoveSideEffects default; comparator update kept.
+            
             level.updateNeighbourForOutputSignal(pos, this);
         }
 

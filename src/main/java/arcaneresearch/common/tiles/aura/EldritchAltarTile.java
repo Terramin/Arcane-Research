@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntitySpawnReason; // NEOFORGE_PORT: was EntitySpawnReason
+import net.minecraft.world.entity.EntitySpawnReason; 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,12 +25,12 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-/**
- * Eldritch altar tile, ported from the 1.8.9 TileEldritchAltar.
- * Spawns clerics once, then knights while clerics watch, or a guardian
- * (spawnType 1). The original maze gate has no counterpart in this port
- * and is skipped; eyes/open state is kept for the renderer.
- */
+ 
+
+
+
+
+ 
 public class EldritchAltarTile extends TileArcaneresearch {
     public boolean spawner = false;
     public byte spawnType = 0;
@@ -38,7 +38,7 @@ public class EldritchAltarTile extends TileArcaneresearch {
     public boolean open = false;
 
     private boolean spawnedClerics = false;
-    /** Страж портала — один на алтарь (TC4): без флага новый лез каждые 40 тиков. */
+      
     private boolean spawnedGuardian = false;
     private int counter = 0;
 
@@ -84,8 +84,8 @@ public class EldritchAltarTile extends TileArcaneresearch {
             return;
         }
         EntityCultistKnight knight = new EntityCultistKnight(ModEntities.CULTIST_KNIGHT.get(), serverLevel);
-        // TC4: MathHelper.func_76136_a(rand, 4, 10) * func_76136_a(rand, -1, 1)
-        // — множитель может быть и 0.
+        
+        
         int x = this.worldPosition.getX() + level.getRandom().nextIntBetweenInclusive(4, 10)
                 * level.getRandom().nextIntBetweenInclusive(-1, 1);
         int y = this.worldPosition.getY() + level.getRandom().nextIntBetweenInclusive(0, 3)
@@ -97,9 +97,9 @@ public class EldritchAltarTile extends TileArcaneresearch {
             return;
         }
         knight.teleportTo(x + 0.5D, y, z + 0.5D);
-        // TC4: checkNoEntityCollision + getEntitiesWithinAABB(...).isEmpty().
-        // NEOFORGE_PORT (26.3): canBeCollidedWith() gained an Entity param; null = the
-        // reference's parameterless check (was wrongly !isRemoved(): any entity blocked spawns).
+        
+        
+        
         if (!level.noCollision(knight)
                 || !serverLevel.getEntities(knight, knight.getBoundingBox(),
                         e -> e != knight && !e.isSpectator() && e.canBeCollidedWith(null)).isEmpty()) {
@@ -114,12 +114,12 @@ public class EldritchAltarTile extends TileArcaneresearch {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        // Один страж на алтарь: иначе после убийства каждые 40 тиков лез
-        // новый и открытый портал «постоянно призывает».
+        
+        
         if (this.spawnedGuardian) {
             return;
         }
-        // Кап: пока страж жив в радиусе — не дублируем.
+        
         AABB box = new AABB(this.worldPosition).inflate(24.0D, 16.0D, 24.0D);
         List<EntityEldritchGuardian> guardians =
                 level.getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(EntityEldritchGuardian.class), box, e -> true);
@@ -139,8 +139,8 @@ public class EldritchAltarTile extends TileArcaneresearch {
             return;
         }
         guardian.teleportTo(x + 0.5D, y, z + 0.5D);
-        // TC4: eg.func_70601_bi() (getCanSpawnHere) — сущности в месте тоже
-        // проверяются (в оригинале — часть вызова).
+        
+        
         if (!level.noCollision(guardian)
                 || !serverLevel.getEntities(guardian, guardian.getBoundingBox(),
                         e -> e != guardian && !e.isSpectator() && e.canBeCollidedWith(null)).isEmpty()) {
@@ -221,13 +221,13 @@ public class EldritchAltarTile extends TileArcaneresearch {
         setChanged();
     }
 
-    /**
-     * Порт TC4 TileEldritchAltar.checkForMaze (смысл, не центровка):
-     * гарантирует готовый главный лабиринт и наличие портал-комнаты
-     * в точке прибытия. Свою раскладку вокруг алтаря НЕ кладёт —
-     * она бы перезаписала карту и развалила коридоры (комнаты строятся
-     * по карте, старые чанки не перестраиваются).
-     */
+     
+
+
+
+
+
+ 
     public boolean checkForMaze() {
         Level level = getLevel();
         if (level == null || level.isClientSide() || !(level instanceof ServerLevel server)) {
@@ -242,7 +242,7 @@ public class EldritchAltarTile extends TileArcaneresearch {
     }
 
     public AABB getRenderBoundingBox() {
-        // 1:1 TC4 (глаза внутри блока).
+        
         return new AABB(this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(),
                 this.worldPosition.getX() + 1, this.worldPosition.getY() + 1,
                 this.worldPosition.getZ() + 1);

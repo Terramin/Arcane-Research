@@ -25,7 +25,7 @@ public class ProvisionRequest {
         this.seal = seal;
         this.stack = stack.copy();
         String s = seal.getSealPos().pos.toString() + seal.getSealPos().face.name() + stack.toString();
-        // NEOFORGE_PORT: hasTag/getTag -> custom-tag helpers (components); hash input identical.
+        
         if (ArcaneresearchInvHelper.hasCustomTag(stack))
             s += ArcaneresearchInvHelper.getCustomTag(stack).toString();
         id = s.hashCode();
@@ -134,7 +134,7 @@ public class ProvisionRequest {
         if (first.getCount() != other.getCount()) return false;
         if (first.getItem() != other.getItem()) return false;
         if (first.getDamageValue() != other.getDamageValue()) return false;
-        // NEOFORGE_PORT: null-safe custom-tag equality (same contract as old getTag() version).
+        
         var firstTag = ArcaneresearchInvHelper.getCustomTag(first);
         var otherTag = ArcaneresearchInvHelper.getCustomTag(other);
         if (firstTag == null && otherTag != null) return false;

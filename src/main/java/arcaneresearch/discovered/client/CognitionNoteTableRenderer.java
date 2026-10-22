@@ -25,23 +25,23 @@ import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
 import arcaneresearch.helper.IDsHelper;
 
-/**
- * Объёмное перо стола записок (стол 1) — та же цепочка, что перо
- * {@code ResearchTableRenderer} (наклонённое {@code renderItemIn2D}):
- * плоское перо из модели убрано, вместо него крест-квады quill.png.
- * Стол записок — писчий всегда, поэтому перо рисуется безусловно
- * (у research_table — только при наличии инструментов).
- *
- * NEOFORGE_PORT (26.3 render-state, паритет ResearchTableRenderer):
- * render(tile, partialTicks, poseStack, buffer, light, overlay) -&gt;
- * createRenderState/extractRenderState/submit; PoseStack.mulPose -&gt;
- * rotate; модель/квады — через submitCustomGeometry + bridge();
- * quill — UtilsFX.renderItemIn2D в том же вызове.
- *
- * НЕ РЕГИСТРИРУЕТСЯ (см. HexTableRegistry.ClientReg): стол 1 в 26.3
- * рисуется JSON-моделями (чернильница/листы/перо запечены в
- * cognition_note_table.json), BER дал бы двойной рендер.
- */
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 @OnlyIn(Dist.CLIENT)
 public class CognitionNoteTableRenderer implements BlockEntityRenderer<CognitionNoteTableTile, CognitionNoteTableRenderer.State> {
 
@@ -49,10 +49,10 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
             IDsHelper.mod("textures/research/quill.png");
     private static final Identifier INKWELL_TEXTURE =
             IDsHelper.mod("textures/block/restable_model.png");
-    /** Стопка чистых листов (TC4 parchment.png). */
+      
     private static final Identifier PARCHMENT_TEXTURE =
             IDsHelper.mod("textures/misc/parchment.png");
-    /** Свиток записки (TC4 restable2.png — та же лента, что у research_table). */
+      
     private static final Identifier SCROLL_TEXTURE =
             IDsHelper.mod("textures/block/research_table_model.png");
 
@@ -118,18 +118,18 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
 
         poseStack.pushPose();
         poseStack.rotate(Axis.XP.rotationDegrees(180));
-        // Чернильница — полупрозрачная (тот же бокс 2..5, 16..18, 2..5 и UV,
-        // что элемент JSON-модели; сам элемент из JSON удалён, иначе будет
-        // двойной рендер). Стол писчий всегда — рисуем безусловно.
+        
+        
+        
         RenderType inkwellType = TCRenderTypes.translucentPortal(INKWELL_TEXTURE);
         int light = state.lightCoords;
         collector.submitCustomGeometry(poseStack, inkwellType, (pose, consumer) -> {
             PoseStack work = bridge(pose);
             drawInkwell(work, consumer, light);
         });
-        // Перо стоит в чернильнице модели (2..5, 16..18, 2..5).
-        // Транслейт — между двумя RX(180), поэтому локальный z идёт
-        // в ту же сторону, что мировой (без зеркала): (-0.28, 0.05, -0.28).
+        
+        
+        
         poseStack.translate(-0.28, 0.05, -0.28);
         poseStack.rotate(Axis.YP.rotationDegrees(60));
         poseStack.translate(0.25f, 0.25f, 0.0f);
@@ -144,16 +144,16 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         });
         poseStack.popPose();
 
-        // Листы на столе — порт TileResearchTableRenderer (строки 72-88):
-        // стопка пергамента веером + свиток записки в цвете её аспектов.
-        // В отличие от оригинала (листы всегда), стопка — при бумаге
-        // в PAPER_SLOT, свиток — при записке в NOTE_SLOT.
+        
+        
+        
+        
         if (state.hasPaper) {
-            // Центр SIDE-половины (локальный +x смотрит по FACING):
-            // мировая точка — центр второй половины столешницы.
-            // NEOFORGE_PORT (26.3): the same UtilsFX.renderQuadCentered call as Forge
-            // (translucentPortal, blend 0) — the hand-rolled paperQuad had a
-            // different UV orientation / winding than the reference quad.
+            
+            
+            
+            
+            
             for (int a = 0; a < 6; a++) {
                 poseStack.pushPose();
                 poseStack.translate(1.0F, -0.01F - a * 0.015F, 0.0F);
@@ -184,7 +184,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         poseStack.popPose();
     }
 
-    /** Плоский лист 1x1 с полным UV (паритет renderQuadCentered). */
+      
     private static void paperQuad(VertexConsumer consumer, PoseStack.Pose pose, int light) {
         consumer.addVertex(pose, -0.5F, -0.5F, 0.0F)
                 .setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(0.0F, 0.0F)
@@ -211,19 +211,19 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         return work;
     }
 
-    /**
-     * Чернильница боксом с UV из модели (текстура 128x64).
-     * Кадр тот же, что у пера (двойной RX): центр (-0.28125, 0.0625,
-     * -0.28125), размер 3x2x3/16. Буфер translucent + правильный обход
-     * граней (верх/низ — против часовой снаружи).
-     */
+     
+
+
+
+
+ 
     private static void drawInkwell(PoseStack pose, VertexConsumer vc, int light) {
         double cx = -0.28125, cy = 0.0625, cz = -0.28125;
         double x0 = cx - 0.09375, x1 = cx + 0.09375;
         double y0 = cy - 0.0625, y1 = cy + 0.0625;
         double z0 = cz - 0.09375, z1 = cz + 0.09375;
-        // Грани: верх получает v1 (v растёт вниз, как в FaceBakery);
-        // у верхней грани v1 — на min z.
+        
+        
         face(vc, pose, light, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0,
                 0.375, 11.0, 0.75, 11.75, 0, 1, 0);
         face(vc, pose, light, x0, y0, z1, x0, y0, z0, x1, y0, z0, x1, y0, z1,
@@ -243,7 +243,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
             double x3, double y3, double z3, double x4, double y4, double z4,
             double u1, double v1, double u2, double v2,
             float nx, float ny, float nz) {
-        // UV модели блока — в юнитах 0..16 на всю текстуру (не в пикселях).
+        
         PoseStack.Pose p = pose.last();
         float uu1 = (float) (u1 / 16.0);
         float vv1 = (float) (v1 / 16.0);
@@ -267,11 +267,11 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
                 .setNormal(p, nx, ny, nz);
     }
 
-    /**
-     * Разворот за FACING пары. База модели — east; локальный +x должен
-     * смотреть по FACING (кадр: RX(180) затем YP): east 0, south 90,
-     * west 180, north 270 — те же числа, что {@code y} в blockstate.
-     */
+     
+
+
+
+ 
     private static void applyRotation(PoseStack poseStack, Direction facing) {
         switch (facing) {
             case SOUTH -> poseStack.rotate(Axis.YP.rotationDegrees(90));

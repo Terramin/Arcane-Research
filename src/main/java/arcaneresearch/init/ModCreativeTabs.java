@@ -7,8 +7,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.registries.DeferredRegister; // NEOFORGE_PORT: was net.minecraftforge
-import net.neoforged.neoforge.registries.DeferredHolder; // NEOFORGE_PORT: was RegistryObject
+import net.neoforged.neoforge.registries.DeferredRegister; 
+import net.neoforged.neoforge.registries.DeferredHolder; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -68,8 +68,8 @@ public class ModCreativeTabs {
                         acceptBlock(output, AuraBlocks.ELDRITCH_ALTAR.get());
                         acceptBlock(output, AuraBlocks.ELDRITCH_CAP.get());
                         acceptBlock(output, AuraBlocks.ELDRITCH_CRAB.get());
-                        // TC4: обелиск — не BlockItem, а свой предмет
-                        // (Eldritch Obelisk Placer).
+                        
+                        
                         output.accept(ModItems.ELDRITCH_OBELISK_PLACER.get());
                         acceptBlock(output, AuraBlocks.ELDRITCH_PORTAL.get());
                         acceptBlock(output, AuraBlocks.ELDRITCH_STAIRS.get());
@@ -271,8 +271,8 @@ public class ModCreativeTabs {
 
                         acceptBlock(output, ModBlocks.BRAIN_BOX.get());
                         acceptBlock(output, ModBlocks.SPA.get());
-                        // NEOFORGE_PORT (26.3): Forge listed GOLEM_BUILDER twice; Forge's tab builder merged the
-                        // duplicate into this FIRST slot, NeoForge throws on duplicates -> kept here only.
+                        
+                        
                         acceptBlock(output, ModBlocks.GOLEM_BUILDER.get());
                         acceptBlock(output, ModBlocks.MIRROR_ITEM.get());
                         acceptBlock(output, ModBlocks.MIRROR_ESSENTIA.get());
@@ -375,8 +375,8 @@ public class ModCreativeTabs {
                                     ModItems.CRYSTAL_ESSENCE.get(), aspect, 1));
                         }
 
-                        // Паритет 1.7.10 ItemWispEssence.func_150895_a: по стаку
-                        // на каждый аспект (2 эссенции).
+                        
+                        
                         for (Aspect aspect : Aspect.aspects.values()) {
                             output.accept(arcaneresearch.common.items.resources.ItemWispEssence.createStack(
                                     ModItems.WISP_ESSENCE.get(), aspect, 1));
@@ -520,7 +520,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.CRIMSON_PRAETOR_CHEST.get());
                         output.accept(ModItems.CRIMSON_PRAETOR_LEGS.get());
 
-                        // Закалённые образцы (TC.RUNIC 5) всей рунной брони (паритет Forge).
+                        
                         output.accept(runicMaxed(ModItems.GOGGLES.get()));
                         output.accept(runicMaxed(ModItems.CLOTH_CHEST.get()));
                         output.accept(runicMaxed(ModItems.CLOTH_LEGS.get()));
@@ -601,9 +601,9 @@ public class ModCreativeTabs {
                                 output.accept(createEnchantedWandStack(rod, cap));
                             }
                         }
-                        // NEOFORGE_PORT (26.3): Forge order - sceptre samples come before the focus items.
-                        // Образцы скипетров (паритет TC4: железо/дерево,
-                        // золото/великое дерево, таумий/дерево серебра).
+                        
+                        
+                        
                         output.accept(createSceptreStack("wood", "iron"));
                         output.accept(createSceptreStack("greatwood", "gold"));
                         output.accept(createSceptreStack("silverwood", "thaumium"));
@@ -628,7 +628,7 @@ public class ModCreativeTabs {
                         output.accept(createGolemStackById(1, 1, 2, 0, 0));
                         output.accept(createGolemStackById(4, 1, 3, 0, 0));
 
-                        // (second Forge GOLEM_BUILDER entry was a no-op duplicate; see after SPA.)
+                        
 
                         output.accept(ModItems.SEAL_BLANK.get());
                         output.accept(ModItems.SEAL_PICKUP.get());
@@ -710,13 +710,13 @@ public class ModCreativeTabs {
         return stack;
     }
 
-    /**
-     * Образец брони с максимальной закалкой (уровень 5 — выше книжных 0-4).
-     */
+     
+
+ 
     private static ItemStack runicMaxed(net.minecraft.world.item.Item item) {
         ItemStack stack = new ItemStack(item);
-        // NEOFORGE_PORT (26.x): ItemStack.getOrCreateTag() removed -> custom NBT via
-        // ArcaneresearchInvHelper (DataComponents.CUSTOM_DATA), same tag shape.
+        
+        
         net.minecraft.nbt.CompoundTag tag =
                 arcaneresearch.api.ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         tag.putByte("TC.RUNIC", (byte) 5);

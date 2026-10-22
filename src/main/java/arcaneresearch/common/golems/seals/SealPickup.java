@@ -52,8 +52,8 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
         }
 
         AABB area = GolemHelper.getBoundsForArea(seal);
-        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists (NO_SPECTATORS filter);
-        // the getEntities(..., e -> true) rewrite also returned spectators.
+        
+        
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, area);
 
         if (!items.isEmpty()) {
@@ -121,8 +121,8 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
         for (Task ticket : localTasks) {
             if (itemEntities.containsKey(ticket.getId()) &&
                     ticket.canGolemPerformTask(golem) &&
-                    // NEOFORGE_PORT: Mob.isWithinRestriction removed in 26.x ->
-                    // same check via the vanilla home (set on placement).
+                    
+                    
                     (!((EntityArcaneresearchGolem) golem).hasHome() ||
                             ((EntityArcaneresearchGolem) golem).isWithinHome(ticket.getEntity().blockPosition()))) {
 

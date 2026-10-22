@@ -7,17 +7,17 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.ARGB;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.entity.SpellBatModel;
 import arcaneresearch.common.entities.monster.EntitySpellBat;
 
-// NEOFORGE_PORT (26.3): MobRenderer<T, S, M>. Translucency via getRenderType
-// hook (was override returning entityTranslucent), fullbright via light
-// hooks + lightCoords, body tint via getModelTint hook (was model multiplying
-// stored tintR/G/B in renderToBuffer).
+
+
+
+
 public class SpellBatRenderer extends MobRenderer<EntitySpellBat, SpellBatRenderer.State, SpellBatModel> {
 
     public static class State extends LivingEntityRenderState {

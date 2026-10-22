@@ -30,18 +30,18 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-// NEOFORGE_PORT: 1:1 logic from Forge .../tiles/devices/TileWaterJug.java.
-// REQUIRED changes (21.9 transfer rework, verified in 26.3.0.23-beta jar):
-//   - FluidTank (removed) -> ArcaneresearchFluidTank (shared transfer base,
-//     water-only validator, same 1000 cap, same FluidName/Amount NBT keys).
-//   - LazyOptional<IFluidHandler> + getCapability/invalidateCaps -> removed; exposure via
-//     getFluidHandler(side) (used by ModBlockEntities.registerCapabilities).
-//     UP side exposes a DRAIN-ONLY view (old WaterJugFluidHandler: fill->0), others null.
-//   - te.getCapability(FLUID_HANDLER, UP):LazyOptional -> level.getCapability(Fluid.BLOCK,
-//     pos, UP):@Nullable + root transactions (commit only when filled>0).
-//   - fill/drain EXECUTE -> boolean execute on the shared tank.
-//   - tag.getIntArray -> Optional -> orElse.
-// Tick/scan/cauldron/bottle logic VERBATIM (amounts 333/25/1000, zones, vis math).
+
+
+
+
+
+
+
+
+
+
+
+
 public class TileWaterJug extends TileArcaneresearch {
 
     public static final int TANK_CAPACITY = 1000;
@@ -50,9 +50,9 @@ public class TileWaterJug extends TileArcaneresearch {
     public final ArcaneresearchFluidTank tank = new ArcaneresearchFluidTank(TANK_CAPACITY,
             stack -> stack.getFluid() == Fluids.WATER);
 
-    // NEOFORGE_PORT (26.3): old WaterJugFluidHandler.drain(EXECUTE) did setChanged() and
-    // syncTile(false) when the jug dropped below full. Restored via a journal whose
-    // root-commit callback receives the pre-transaction "was full" state.
+    
+    
+    
     private final net.neoforged.neoforge.transfer.transaction.SnapshotJournal<Boolean> drainJournal =
             new net.neoforged.neoforge.transfer.transaction.SnapshotJournal<>() {
                 @Override
@@ -81,8 +81,8 @@ public class TileWaterJug extends TileArcaneresearch {
                     return 0;
                 }
 
-                // NEOFORGE_PORT (26.3): DelegatingResourceHandler forwards the index-less
-                // overload straight to the tank, which let pipes fill the jug from UP.
+                
+                
                 @Override
                 public int insert(FluidResource resource, int amount, TransactionContext tx) {
                     return 0;
@@ -213,7 +213,7 @@ public class TileWaterJug extends TileArcaneresearch {
     public void loadAdditional(ValueInput tag) {
         super.loadAdditional(tag);
         handlers.clear();
-        // NEOFORGE_PORT: getIntArray now returns Optional.
+        
         int[] arr = tag.getIntArray("handlers").orElse(new int[0]);
         for (int h : arr) {
             handlers.add(h);
@@ -273,8 +273,8 @@ public class TileWaterJug extends TileArcaneresearch {
         if (te != null) {
             var handler = level.getCapability(Capabilities.Fluid.BLOCK, targetPos, Direction.UP);
             if (handler != null) {
-                // NEOFORGE_PORT: handler.fill(stack, EXECUTE) -> transactional insert,
-                // committed only when something was accepted (same order: fill, then drain own tank).
+                
+                
                 try (var tx = Transaction.openRoot()) {
                     int filled = handler.insert(FluidResource.of(Fluids.WATER), 25, tx);
                     if (filled > 0) {

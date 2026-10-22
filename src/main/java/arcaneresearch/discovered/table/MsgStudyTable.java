@@ -12,16 +12,16 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.discovered.scan.ScanTargets;
 
-/**
- * Клиент -&gt; сервер: собрать hex-пару кликом таумометра (мгновенно, как
- * стол 1 собирается кликом чернил). Сервер перепроверяет: таумометр в руках,
- * дистанция, два одиночных стола рядом.
- *
- * NEOFORGE_PORT: SimpleChannel(HexTableNetwork) -&gt; CustomPacketPayload
- * (позиция — long; сторону приёма различать не нужно — playToServer
- * выполняется только на сервере). player.serverLevel() -&gt; level().
- * Payload id "arcaneresearch:hex_study_table".
- */
+ 
+
+
+
+
+
+
+
+
+ 
 public class MsgStudyTable implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgStudyTable> TYPE =

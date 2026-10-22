@@ -11,8 +11,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.common.tiles.devices.TileMirrorEssentia;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (delegates to MirrorRenderer.renderMirror, as in Forge).
+
+
 public class EssentiaMirrorRenderer implements BlockEntityRenderer<TileMirrorEssentia, EssentiaMirrorRenderer.State> {
 
     public static class State extends BlockEntityRenderState {

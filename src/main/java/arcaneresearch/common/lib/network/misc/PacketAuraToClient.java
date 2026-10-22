@@ -9,10 +9,10 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-// NEOFORGE_PORT: 1:1 from Forge .../network/misc/PacketAuraToClient.java (PLAY_TO_CLIENT).
-// Fields/ctors/handler logic preserved verbatim; transport -> CustomPacketPayload
-// with manual StreamCodec (wire order identical to old encode/decode).
-// Payload id "arcaneresearch:aura_to_client".
+
+
+
+
 public class PacketAuraToClient implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<PacketAuraToClient> TYPE =

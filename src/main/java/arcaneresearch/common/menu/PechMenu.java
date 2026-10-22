@@ -3,7 +3,7 @@ package arcaneresearch.common.menu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
-// NEOFORGE_PORT: net.minecraft.world.ContainerListener removed; plain containerChanged kept below.
+
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,7 +16,7 @@ import arcaneresearch.common.menu.slot.OutputSlot;
 import arcaneresearch.init.ModMenuTypes;
 import arcaneresearch.init.ModSounds;
 
-public class PechMenu extends AbstractContainerMenu /* NEOFORGE_PORT: implements ContainerListener removed */ {
+public class PechMenu extends AbstractContainerMenu    {
 
     private final EntityPech pech;
     private final Player player;
@@ -34,9 +34,9 @@ public class PechMenu extends AbstractContainerMenu /* NEOFORGE_PORT: implements
         pech.trading = true;
 
         this.tradeInventory = new SimpleContainer(5) {
-            // NEOFORGE_PORT: ContainerListener removed in 26.x (FocusPouchMenu
-            // pattern); Forge addListener(this) -> containerChanged parity via
-            // setChanged override (slots call it).
+            
+            
+            
             @Override
             public void setChanged() {
                 super.setChanged();
@@ -72,7 +72,7 @@ public class PechMenu extends AbstractContainerMenu /* NEOFORGE_PORT: implements
         throw new IllegalStateException("Entity is not a Pech");
     }
 
-    // NEOFORGE_PORT: @Override dropped with ContainerListener
+    
 
     public void containerChanged(Container container) {
         broadcastChanges();

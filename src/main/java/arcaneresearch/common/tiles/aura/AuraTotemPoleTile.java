@@ -10,10 +10,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.Level;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
 
-/**
- * Totem pole extension, ported from TC5 TileAuraTotemPole.
- * Proxies its single slot to the totem tile above.
- */
+ 
+
+
+ 
 public class AuraTotemPoleTile extends AuraTotemTile implements WorldlyContainer {
     public AuraTotemPoleTile(BlockEntityType<?> tileType, BlockPos pos, BlockState state) {
         super(tileType, pos, state);

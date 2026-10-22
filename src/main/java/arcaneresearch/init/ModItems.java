@@ -31,12 +31,12 @@ public class ModItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Arcaneresearch.MODID);
 
-// NEOFORGE_PORT: entries ported 1:1 from Forge 1.20.1 ModItems.java (same order/names/suppliers).
-// Transport: DeferredRegister.create(ForgeRegistries.ITEMS) -> DeferredRegister.createItems(MODID);
-// RegistryObject<Item> -> DeferredItem<Item> (same .get()).
-// Spawn eggs: ForgeSpawnEggItem(type, baseColor, spotColor, props) removed -> vanilla SpawnEggItem
-// with new Item.Properties().spawnEgg(type-holder); per-egg base/spot colors have no 26.x equivalent
-// (vanilla eggs are single-sprite now) and were dropped.
+
+
+
+
+
+
 public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaumonomicon",
             props -> new ItemThaumonomicon(props));
 
@@ -46,7 +46,7 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
     public static final DeferredItem<Item> CRIMSON_RITES = ITEMS.registerItem("crimson_rites",
             ItemCrimsonRites::new);
 
-    /** TC4 itemEldritchObject meta 4: свой предмет обелиска (не блок). */
+      
     public static final DeferredItem<Item> ELDRITCH_OBELISK_PLACER = ITEMS.registerItem("eldritch_obelisk_placer",
             arcaneresearch.common.items.misc.ItemEldritchObeliskPlacer::new);
 
@@ -221,9 +221,9 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
     public static final DeferredItem<Item> VOID_SEED = ITEMS.registerItem("void_seed",
             props -> new ItemMaterial(props.rarity(Rarity.RARE)));
 
-    // NEOFORGE_PORT (26.3): Forge registers a plain Item here (nutrition 8, saturationMod 1.0,
-    // meat), NOT ItemTripleMeatTreat (6/0.8/alwaysEat/regen is unused in Forge). meat() ->
-    // #minecraft:meat item tag (data/minecraft/tags/item/meat.json).
+    
+    
+    
     public static final DeferredItem<Item> TRIPLE_MEAT_TREAT = ITEMS.registerItem("triple_meat_treat",
             props -> new Item(props
                     .food(new net.minecraft.world.food.FoodProperties.Builder()
@@ -426,7 +426,7 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
     public static final DeferredItem<Item> BAUBLE_GIRDLE_FANCY = ITEMS.registerItem("bauble_girdle_fancy",
             ItemBauble::girdleFancy);
 
-    // NEOFORGE_PORT: порт Forge ModItems.RUNIC_* (TC4 parity, factories уже берут props).
+    
     public static final DeferredItem<Item> RUNIC_AMULET = ITEMS.registerItem("runic_amulet",
             arcaneresearch.common.items.baubles.ItemRunicBauble::amulet);
 
@@ -487,7 +487,7 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
     public static final DeferredItem<Item> GRAPPLE_GUN = ITEMS.registerItem("grapple_gun",
             ItemGrappleGun::new);
 
-    // NEOFORGE_PORT: порт Forge ModItems.BONE_BOW + 6 PRIMAL_ARROW_* (TC4 parity).
+    
     public static final DeferredItem<Item> BONE_BOW = ITEMS.registerItem("bone_bow",
             arcaneresearch.common.items.tools.ItemBoneBow::new);
 

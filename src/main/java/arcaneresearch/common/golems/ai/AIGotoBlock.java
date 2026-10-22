@@ -68,7 +68,7 @@ public class AIGotoBlock extends AIGoto {
         for (Task task : tasks) {
             if (areGolemTagsValidForTask(task) &&
                     task.canGolemPerformTask(golem) &&
-                    golem.isWithinHome(task.getPos()) /* Forge isWithinRestriction -> 26.x isWithinHome */ &&
+                    golem.isWithinHome(task.getPos())    &&
                     isValidDestination(golem.level(), task.getPos()) &&
                     canEasilyReach(task.getPos())) {
 
@@ -93,7 +93,7 @@ public class AIGotoBlock extends AIGoto {
             BlockPos adjacent = pos.relative(face);
             BlockState state = golem.level().getBlockState(adjacent);
 
-            // NEOFORGE_PORT (26.3): 1.20.1 blocksMotion() = isSolid() except cobweb/bamboo sapling.
+            
             if (!(state.isSolid() && !state.is(net.minecraft.world.level.block.Blocks.COBWEB)
                     && !state.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING))) {
                 double dist = adjacent.distToCenterSqr(golem.getX(), golem.getY(), golem.getZ());

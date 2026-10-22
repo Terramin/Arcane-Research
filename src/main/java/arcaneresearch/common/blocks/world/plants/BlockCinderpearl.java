@@ -16,7 +16,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-// NEOFORGE_PORT (26.3): 1.20.1 BushBlock == 26.x VegetationBlock; 26.x BushBlock is the bonemeal-spreading bush.
+
 public class BlockCinderpearl extends VegetationBlock {
 
     protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 13.0, 14.0);
@@ -44,8 +44,8 @@ public class BlockCinderpearl extends VegetationBlock {
                 state.is(Blocks.TERRACOTTA) ||
                 state.is(BlockTags.TERRACOTTA) ||
                 state.is(BlockTags.SAND) ||
-                // NEOFORGE_PORT (26.3): Forge PlantType.DESERT (getPlantType, gone in 26.x) also let
-                // the reference survive on glazed terracotta via IForgeBlock.canSustainPlant.
+                
+                
                 state.getBlock() instanceof net.minecraft.world.level.block.GlazedTerracottaBlock;
     }
 

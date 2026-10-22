@@ -18,11 +18,11 @@ import arcaneresearch.common.world.structures.StructureHelper;
 
 import net.minecraft.util.RandomSource;
 
-/**
- * Block canvas for maze rooms. All rooms are carved from eldritch stone
- * with ancient-stone floors; contents (spawners, loot, altars) mirror the
- * TC5 room roles. Runs on ServerLevel; dimension entry itself is queued.
- */
+ 
+
+
+
+ 
 public final class MazeRoomCarver {
     public static final String WALL = "arcaneresearch:eldritch_stone_tile";
     public static final String FLOOR = "arcaneresearch:ancient_stone";
@@ -91,8 +91,8 @@ public final class MazeRoomCarver {
         StructureHelper.set(level, pos, Blocks.CHEST.defaultBlockState());
         BlockEntity tile = level.getBlockEntity(pos);
         if (tile instanceof RandomizableContainerBlockEntity container) {
-            // NEOFORGE_PORT: setLootTable(Identifier, seed) split into
-            // setLootTable(ResourceKey) + setLootTableSeed(seed).
+            
+            
             container.setLootTable(net.minecraft.resources.ResourceKey.create(
                     net.minecraft.core.registries.Registries.LOOT_TABLE, loot));
             container.setLootTableSeed(random.nextLong());
@@ -100,8 +100,8 @@ public final class MazeRoomCarver {
     }
 
     public static void dungeonChest(LevelAccessor level, BlockPos pos, RandomSource random) {
-        // NEOFORGE_PORT: BuiltInLootTables entries are ResourceKeys now (no location());
-        // chest() takes Identifier.
+        
+        
         chest(level, pos, BuiltInLootTables.SIMPLE_DUNGEON.identifier(), random);
     }
 
@@ -122,10 +122,10 @@ public final class MazeRoomCarver {
         }
     }
 
-    /**
-     * Урна TC4 (decoUrn/processDecorations): тир по шансу
-     * (10% редкая, 30% необычная, иначе обычная). Блоки самодостаточны.
-     */
+     
+
+
+ 
     public static void urn(LevelAccessor level, BlockPos pos, RandomSource random) {
         float roll = random.nextFloat();
         String id = "arcaneresearch:loot_urn_common";
@@ -137,7 +137,7 @@ public final class MazeRoomCarver {
         StructureHelper.set(level, pos, StructureHelper.state(id));
     }
 
-    /** Настенный кристалл TC4: случайный праймал у твёрдой стены. */
+      
     public static void wallCrystal(LevelAccessor level, BlockPos pos, RandomSource random) {
         if (!level.getBlockState(pos).isAir()) {
             return;
@@ -159,11 +159,11 @@ public final class MazeRoomCarver {
                 StructureHelper.state(crystals[random.nextInt(crystals.length)]));
     }
 
-    /**
-     * Краб-спавнер TC4 в стене лицом в комнату (порт meta 9): занимает клетку
-     * облицовки, перед ним воздух в сторону центра комнаты. Устья коридоров
-     * не трогаем — клетка с воздухом с двух сторон не кандидат.
-     */
+     
+
+
+
+ 
     public static void crabOnWalls(LevelAccessor level, RandomSource random,
                                    int cx, int cz, int y, int count) {
         if (count <= 0) {
@@ -204,7 +204,7 @@ public final class MazeRoomCarver {
         }
     }
 
-    /** Клетка облицовки (eldritch-камень), в которую можно встроить краба. */
+      
     private static boolean isLiningWall(LevelAccessor level, BlockPos pos) {
         try {
             BlockState state = level.getBlockState(pos);
@@ -215,11 +215,11 @@ public final class MazeRoomCarver {
         }
     }
 
-    /**
-     * Направление внутрь комнаты: ровно один горизонтальный сосед — воздух,
-     * и он ближе к центру, чем сама клетка. Второе условие отсекает внешнюю
-     * сторону, а «ровно один» — устья коридоров (там воздух с двух сторон).
-     */
+     
+
+
+
+ 
     private static Direction facingIntoRoom(LevelAccessor level, BlockPos wall, int cx, int cz) {
         int wallDist = Math.abs(wall.getX() - cx) + Math.abs(wall.getZ() - cz);
         Direction found = null;
@@ -266,12 +266,12 @@ public final class MazeRoomCarver {
         }
     }
 
-    /**
-     * Deco-проход TC4 (GenCommon ids 2/21): урны на полу и редкие крабовые
-     * спавнеры В СТЕНАХ лицом в комнату (в гнезде всегда 2, иначе шанс
-     * 1/50 на одного). В полу крабов больше нет. Ловушки тут
-     * не разбрасываются — в TC4 они ставились только ареной замка.
-     */
+     
+
+
+
+
+ 
     public static void decorate(LevelAccessor level, RandomSource random,
                                 int x1, int y, int z1, int x2, int z2, boolean nest) {
         for (int x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
@@ -318,12 +318,12 @@ public final class MazeRoomCarver {
         return false;
     }
 
-    /** Ловушка TC4 на пол. */
+      
     public static void trap(LevelAccessor level, BlockPos pos) {
         StructureHelper.set(level, pos, StructureHelper.state("arcaneresearch:eldritch_trap"));
     }
 
-    /** Обелиск TC4 (genObelisk): база с тайлом + 4 невидимых тела (meta 2). */
+      
     public static void obelisk(LevelAccessor level, BlockPos pos, int height) {
         StructureHelper.set(level, pos, StructureHelper.state("arcaneresearch:eldritch_obelisk"));
         BlockState body = StructureHelper.state("arcaneresearch:eldritch_obelisk_body");
@@ -337,10 +337,10 @@ public final class MazeRoomCarver {
         }
     }
 
-    /**
-     * Элдритч-ступени TC4 (id 10 обычные, 11 перевёрнутые):
-     * мета N=3/S=2/E=0/W=1 низ, N=7/S=6/E=4/W=5 верх.
-     */
+     
+
+
+ 
     public static void stairs(LevelAccessor level, BlockPos pos,
                               net.minecraft.core.Direction facing, boolean top) {
         try {

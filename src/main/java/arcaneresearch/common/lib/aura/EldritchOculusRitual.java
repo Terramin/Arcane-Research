@@ -17,15 +17,15 @@ import arcaneresearch.common.lib.wands.WandResearchHelper;
 import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.common.tiles.aura.TileJarNode;
 
-/**
- * Ритуал окулуса, порт TC4 WandManager.createOculus (верbatim).
- * Клик жезлом БЕЗ фокуса по алтарю с 4 глазами, пока над ним
- * тёмная нода и готов лабиринт: жезл ест 100 каждого праймала,
- * алтарь открывается, нода исчезает, НА ЕЁ МЕСТЕ встаёт портал.
- * Ничего лишнего, как в 1.7.10: ни шаблонов, ни бонус-нод, ни вспышек
- * (лишния для оригинала приставки вырезаны).
- * Лежит в arcaneresearch.arcaneresearch.common.lib.aura.
- */
+ 
+
+
+
+
+
+
+
+ 
 public final class EldritchOculusRitual {
     private EldritchOculusRitual() {
     }
@@ -37,18 +37,18 @@ public final class EldritchOculusRitual {
         try {
             BlockEntity be = level.getBlockEntity(pos);
             BlockEntity above = level.getBlockEntity(pos.above());
-            // TC4: tile instanceof TileEldritchAltar && eyes == 4 && !isOpen.
+            
             if (!(be instanceof EldritchAltarTile altar)
                     || altar.getEyes() != 4 || altar.isOpen()) {
                 return false;
             }
-            // TC4: node instanceof TileNode (не банка) с типом DARK.
+            
             if (!(above instanceof INode node) || above instanceof TileJarNode
                     || node.getNodeType() != NodeType.DARK) {
                 return false;
             }
-            // TC4 performTrigger (событие 6): досмотр OCULUS; в этом порту
-            // ключ называется LEGACYOCULUS — принимаем оба варианта.
+            
+            
             if (!WandResearchHelper.isResearchComplete(player, "LEGACYOCULUS")
                     && !WandResearchHelper.isResearchComplete(player, "OCULUS")) {
                 return false;
@@ -56,9 +56,9 @@ public final class EldritchOculusRitual {
             if (!altar.checkForMaze()) {
                 return false;
             }
-            // TC4: itemstack.getItem() instanceof ItemWandCasting
-            // (путь performTrigger — только жезл; фокус — гейт вызывающего
-            // ItemWandCasting.onUse, тут проверяем так же).
+            
+            
+            
             if (stack.isEmpty() || !(stack.getItem() instanceof IWand wand)) {
                 return false;
             }
@@ -75,11 +75,11 @@ public final class EldritchOculusRitual {
             if (!wand.consumeAllVis(stack, player, cost, false, true)) {
                 return false;
             }
-            // TC4: world.playSoundEffect(..., "thaumcraft:wand", 1.0F, 1.0F).
+            
             level.playSound(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
                     WandSounds.wand(), SoundSource.PLAYERS, 1.0F, 1.0F);
-            // TC4: setOpen(true); удалить ноду; blockEldritchPortal на её месте;
-            // синк тайла + notify блока. Больше ничего.
+            
+            
             altar.setOpen(true);
             level.removeBlock(pos.above(), false);
             level.setBlockAndUpdate(pos.above(), AuraBlocks.ELDRITCH_PORTAL.get().defaultBlockState());

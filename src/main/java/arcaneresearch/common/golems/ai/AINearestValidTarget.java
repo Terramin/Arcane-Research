@@ -43,7 +43,7 @@ public class AINearestValidTarget<T extends LivingEntity> extends TargetGoal {
         setFlags(EnumSet.of(Flag.TARGET));
         targetingConditions = TargetingConditions.forCombat()
                 .range(getFollowDistance())
-                // NEOFORGE_PORT: Selector takes (entity, level) in 26.3.
+                
                 .selector((entity, level) -> combinedSelector().test(entity));
     }
 
@@ -71,7 +71,7 @@ public class AINearestValidTarget<T extends LivingEntity> extends TargetGoal {
             return false;
         }
         boolean friendly = attacker instanceof ITargets targets && targets.getTargetFriendly();
-        // NEOFORGE_PORT: OwnableEntity.getOwnerUUID gone in 26.3 -> owner reference UUID.
+        
         java.util.UUID ownerId = attacker instanceof OwnableEntity ownable
                 && ownable.getOwnerReference() != null ? ownable.getOwnerReference().getUUID() : null;
         if (ownerId != null) {
@@ -135,7 +135,7 @@ public class AINearestValidTarget<T extends LivingEntity> extends TargetGoal {
         targetingConditions = TargetingConditions.forCombat()
                 .range(getFollowDistance())
                 .selector((entity, level) -> combinedSelector().test(entity));
-        // NEOFORGE_PORT: Level.getNearbyEntities moved to ServerEntityGetter in 26.3.
+        
         net.minecraft.server.level.ServerLevel serverLevel = getServerLevel(mob);
         List<T> list = serverLevel.getNearbyEntities(targetClass, targetingConditions, mob,
                 mob.getBoundingBox().inflate(getFollowDistance(), 4.0, getFollowDistance()));
@@ -182,7 +182,7 @@ public class AINearestValidTarget<T extends LivingEntity> extends TargetGoal {
         if (!isGoodTarget(mob, target, checkSightOnly, mustSee)) {
             return false;
         }
-        // NEOFORGE_PORT: Mob.hasRestriction/isWithinRestriction -> 26.x hasHome/isWithinHome.
+        
         return !mob.hasHome() || mob.isWithinHome(target.blockPosition());
     }
 }

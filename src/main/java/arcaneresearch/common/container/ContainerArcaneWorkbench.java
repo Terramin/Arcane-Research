@@ -108,22 +108,22 @@ public abstract class ContainerArcaneWorkbench extends AbstractContainerMenu {
             boolean hasCrystals = hasRequiredCrystals(craftMatrix, arcaneRecipe.getCrystals());
 
             if (hasVis && hasCrystals) {
-                // NEOFORGE_PORT: 26.x setRecipeUsed takes RecipeHolder (arcane matches are
-                // values, vanilla book doesn't track them) + assemble(T) single-arg.
+                
+                
                 craftResult.setRecipeUsed(null);
                 result = arcaneRecipe.assemble(craftMatrix);
             }
         } else {
-            // NEOFORGE_PORT: Level.getRecipeManager removed in 26.3 -> server RecipeManager
-            // (mirrors the ported twin ArcaneWorkbenchMenu.slotChangedCraftingGrid).
+            
+            
             var vanillaRecipe = level.getServer().getRecipeManager()
                     .getRecipeFor(RecipeType.CRAFTING, gridOnlyCopy(menu, craftMatrix).asCraftInput(), level);
 
             if (vanillaRecipe.isPresent()) {
                 boolean limited = level instanceof net.minecraft.server.level.ServerLevel sl && sl.getGameRules().get(
                         net.minecraft.world.level.gamerules.GameRules.LIMITED_CRAFTING);
-                // NEOFORGE_PORT: getRecipeFor returns Optional<RecipeHolder<CraftingRecipe>>
-                // in 26.x (holder access via .value()/.id()); assemble(input) single-arg.
+                
+                
                 if (!limited || serverPlayer.getRecipeBook().contains(vanillaRecipe.get().id())) {
                     craftResult.setRecipeUsed(vanillaRecipe.get());
                     result = vanillaRecipe.get().value().assemble(craftMatrix.asCraftInput());

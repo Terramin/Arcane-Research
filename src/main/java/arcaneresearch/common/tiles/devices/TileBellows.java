@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
-// NEOFORGE_PORT: ObfuscationReflectionHelper removed (plain reflection used instead).
+
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.common.tiles.essentia.TileSmelter;
 import arcaneresearch.init.ModBlockEntities;
@@ -83,9 +83,9 @@ public class TileBellows extends TileArcaneresearch {
     }
 
     private static void speedUpFurnace(AbstractFurnaceBlockEntity furnace) {
-        // NEOFORGE_PORT: ObfuscationReflectionHelper removed in NeoForge (26.x is deobfuscated).
-        // Plain reflection against official field names (cookingTimer/cookingTotalTime);
-        // same fault-tolerant try/catch as before.
+        
+        
+        
         try {
             var progressField = AbstractFurnaceBlockEntity.class.getDeclaredField("cookingTimer");
             progressField.setAccessible(true);

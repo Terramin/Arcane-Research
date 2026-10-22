@@ -23,7 +23,7 @@ public class NodeStackData {
     public static ItemStack create(Item item, NodeType type, NodeModifier modifier,
                                    AspectList aspects, AspectList base) {
         ItemStack stack = new ItemStack(item);
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same keys/shape).
+        
         CompoundTag tag = new CompoundTag();
         if (aspects != null) {
             aspects.writeToNBT(tag, "Aspects");
@@ -70,7 +70,7 @@ public class NodeStackData {
         tile.setNodeType(readType(tag));
         NodeModifier mod = readModifier(tag);
         tile.setNodeModifier(mod);
-        // TC4 ItemJarNode хранил nodeid — восстанавливаем чтобы не терять привязку
+        
         if (tag.contains("nodeId")) {
             tile.setId(tag.getStringOr("nodeId", ""));
         } else if (tag.contains("nodeid")) {
@@ -193,7 +193,7 @@ public class NodeStackData {
             } else {
                 tooltip.add(NodeNames.typeName(type));
             }
-            // TC4 ItemJarNode показывал состав аспектов в тултипе
+            
             AspectList aspects = readAspects(stack);
             if (aspects != null && aspects.size() > 0) {
                 for (Aspect aspect : aspects.getAspectsSortedByAmount()) {

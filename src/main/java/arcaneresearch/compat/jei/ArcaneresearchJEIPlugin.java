@@ -8,7 +8,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApi;
@@ -53,10 +53,10 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
     public static final RecipeType<AspectSourcesCategory.Sources> ASPECT_SOURCES_TYPE =
             RecipeType.create(Arcaneresearch.MODID, "aspect_sources", AspectSourcesCategory.Sources.class);
 
-    // NEOFORGE_PORT (26.3): JEI 15 defaulted IRecipeCategory.getRegistryName(recipe) to
-    // Recipe.getId() (output-slot "Recipe ID" tooltip line). 26.x recipe objects no longer
-    // carry their key and JEI only reads RecipeHolder ids, so the holder keys are kept here
-    // and the arcane/crucible/infusion categories return them from getIdentifier.
+    
+    
+    
+    
     private static volatile java.util.Map<Object, Identifier> recipeIds = java.util.Map.of();
 
     public static Identifier recipeId(Object recipe) {
@@ -77,7 +77,7 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
 
     @Override
     public void registerIngredients(IModIngredientRegistration registration) {
-        // NEOFORGE_PORT: JEI 26.3 register requires Codec<V> (5th arg); AspectList.CODEC added for parity.
+        
         registration.register(AspectIngredient.TYPE, AspectIngredient.createAll(),
                 new AspectIngredient.Helper(), new AspectIngredientRenderer(),
                 arcaneresearch.api.aspects.AspectList.CODEC);
@@ -107,10 +107,10 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
             return;
         }
 
-        // NEOFORGE_PORT: client levels expose no recipe query API in 26.3
-        // (Level.getRecipeManager + RecipeManager.recipeMap both gone; ClientLevel
-        // .recipeAccess() is RecipeAccess without getRecipes). JEI runs on the client,
-        // so recipes come from ClientRecipeCache (RecipesReceivedEvent RecipeMap).
+        
+        
+        
+        
         java.util.Collection<net.minecraft.world.item.crafting.RecipeHolder<?>> holders =
                 arcaneresearch.common.lib.crafting.ClientRecipeCache.values();
 

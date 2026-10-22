@@ -44,8 +44,8 @@ public class EntityTurretFocus extends EntityOwnedConstruct {
 
     public EntityTurretFocus(EntityType<? extends EntityTurretFocus> type, Level level, BlockPos pos, Direction face) {
         this(type, level);
-        // NEOFORGE_PORT (26.3): Entity.moveTo(x,y,z,yaw,pitch) -> snapTo (same body; teleportTo
-        // is server-only and leaves the old rotation in yRotO/xRotO).
+        
+        
         this.snapTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 0.0F, 0.0F);
         setFacing(face);
     }

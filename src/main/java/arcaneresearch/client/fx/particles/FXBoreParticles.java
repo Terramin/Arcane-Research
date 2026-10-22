@@ -18,7 +18,7 @@ import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 import net.minecraft.resources.Identifier;
 
-// NEOFORGE_PORT: block/item debris quad -> base extract (vanilla sprite sources).
+
 public class FXBoreParticles extends ArcaneresearchParticle {
 
     private final BlockState blockState;
@@ -39,8 +39,8 @@ public class FXBoreParticles extends ArcaneresearchParticle {
         this.side = side;
 
         this.setSprite(pickBlockSprite(state));
-        // NEOFORGE_PORT: Forge removed the particle when the block sprite fetch
-        // threw (no fallback quad); keep that contract for the throw path.
+        
+        
         if (this.sprite == null) {
             this.remove();
             return;
@@ -118,8 +118,8 @@ public class FXBoreParticles extends ArcaneresearchParticle {
         if (this.blockState == null || this.level.getBlockState(pos) != this.blockState) {
             if (this.itemStack != null) {
                 try {
-                    // NEOFORGE_PORT: ItemColors removed in 26.x (item tints are data-driven
-                    // ItemTintSources now); debris keeps base color (visual-verify pass).
+                    
+                    
                     applyItemTintFallback(this.itemStack);
                 } catch (Exception ignored) {}
             }
@@ -129,8 +129,8 @@ public class FXBoreParticles extends ArcaneresearchParticle {
             return this;
         }
         try {
-            // NEOFORGE_PORT: BlockColors.getColor removed in 26.x (tints are data-driven
-            // BlockTintSources now); colorAsTerrainParticle is the debris-particle entry.
+            
+            
             net.minecraft.client.color.block.BlockTintSource tint =
                     Minecraft.getInstance().getBlockColors().getTintSource(this.blockState, 0);
             if (tint != null) {
@@ -144,8 +144,8 @@ public class FXBoreParticles extends ArcaneresearchParticle {
     }
 
     private void applyItemTintFallback(ItemStack stack) {
-        // NEOFORGE_PORT: best-effort parity for dyed items (the only tint readable
-        // without the removed ItemColors registry).
+        
+        
         net.minecraft.world.item.component.DyedItemColor dyed =
                 stack.get(net.minecraft.core.component.DataComponents.DYED_COLOR);
         if (dyed != null) {
@@ -211,20 +211,20 @@ public class FXBoreParticles extends ArcaneresearchParticle {
 
 
 
-    // NEOFORGE_PORT: BlockRenderDispatcher/ItemRenderer particle icons removed; block debris
-    // uses the block particle material sprite, item debris the item model particle material.
+    
+    
     private static net.minecraft.client.renderer.texture.TextureAtlasSprite pickBlockSprite(
             net.minecraft.world.level.block.state.BlockState state) {
         try {
             return net.minecraft.client.Minecraft.getInstance().getModelManager()
                     .getBlockStateModelSet().getParticleMaterial(state).sprite();
         } catch (Exception e) {
-            return null; // guarded by getU0..V1/getLayer above
+            return null; 
         }
     }
 
-    // NEOFORGE_PORT (26.3): Forge getModel(item).getParticleIcon() -> the item model's
-    // particle material (vanilla BreakingItemParticle path); also right for block items.
+    
+    
     private static net.minecraft.client.renderer.texture.TextureAtlasSprite pickItemSprite(
             net.minecraft.world.item.ItemStack item, ClientLevel level,
             net.minecraft.util.RandomSource random) {
@@ -237,12 +237,12 @@ public class FXBoreParticles extends ArcaneresearchParticle {
                     state.pickParticleMaterial(random);
             return material != null ? material.sprite() : null;
         } catch (Exception e) {
-            return null; // guarded by getU0..V1/getLayer above
+            return null; 
         }
     }
 
-    // NEOFORGE_PORT (26.3): Forge render() 1:1 — half-size 0.1 * quadSize, alpha
-    // always 1.0 (setTCAlpha ignored), u0/u1 order of the Forge vertex table.
+    
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         Vec3 cameraPos = camera.position();
@@ -262,8 +262,8 @@ public class FXBoreParticles extends ArcaneresearchParticle {
         return net.minecraft.client.particle.ParticleRenderType.SINGLE_QUADS;
     }
 
-    // NEOFORGE_PORT: sprite fetch can fail pre-reload; guard so a missing sprite
-    // falls back to the sheet instead of NPEing (practically unreachable in-game).
+    
+    
     @Override
     protected float getU0() {
         return this.sprite != null ? this.sprite.getU0() : 0.0f;

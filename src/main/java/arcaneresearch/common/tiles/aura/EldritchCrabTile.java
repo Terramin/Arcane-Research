@@ -5,7 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason; // NEOFORGE_PORT: was EntitySpawnReason
+import net.minecraft.world.entity.EntitySpawnReason; 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,17 +22,17 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-/**
- * Тайл крабового спавнера, порт TC4 TileEldritchCrabSpawner:
- * при игроке в 16 блоках и меньше 6 крабов в 32 — спавнит краба
- * в сторону facing. Частицы вентиляции пропущены (клиентский
- * прокси TC4), логика и NBT — дословно. Лежит в arcaneresearch.arcaneresearch.common.tiles.aura.
- */
+ 
+
+
+
+
+ 
 public class EldritchCrabTile extends TileArcaneresearch {
     public int count = 150;
     private int ticks = 0;
     private byte facing = 0;
-    /** Счётчик продувки вента TC4 (клиент, взводится событием блока 1). */
+      
     private int venting = 0;
 
     public EldritchCrabTile(BlockEntityType<?> tileType, BlockPos pos, BlockState state) {
@@ -47,7 +47,7 @@ public class EldritchCrabTile extends TileArcaneresearch {
         tile.clientTick();
     }
 
-    /** TC4 receiveClientEvent(1): продувка вента 20 тиков. */
+      
     public void onVentEvent() {
         this.venting = 20;
     }
@@ -57,8 +57,8 @@ public class EldritchCrabTile extends TileArcaneresearch {
         if (level == null || level.isClientSide()) {
             return;
         }
-        // На мирной сложности гнездо не спавнит (как ванильные спавнеры
-        // мобов; живые крабы при этом исчезают сами — Monster despawn).
+        
+        
         if (level.getDifficulty() == net.minecraft.world.Difficulty.PEACEFUL) {
             return;
         }
@@ -117,7 +117,7 @@ public class EldritchCrabTile extends TileArcaneresearch {
         if (!(level instanceof net.minecraft.server.level.ServerLevel server)) {
             return;
         }
-        // Мэппинг TC6 (0 север, 1 юг, 2 запад, 3 восток), не 2D-значения.
+        
         Direction dir = switch (this.facing & 3) {
             case 1 -> Direction.SOUTH;
             case 2 -> Direction.WEST;
@@ -158,7 +158,7 @@ public class EldritchCrabTile extends TileArcaneresearch {
         }
     }
 
-    /** TC4 drawVent: дымок из решётки в сторону facing. */
+      
     @OnlyIn(Dist.CLIENT)
     protected void drawVent() {
         Level level = getLevel();

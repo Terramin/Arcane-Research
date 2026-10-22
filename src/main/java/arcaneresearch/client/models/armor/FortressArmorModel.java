@@ -5,7 +5,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was Identifier
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
@@ -163,7 +163,7 @@ public class FortressArmorModel extends HumanoidModel<net.minecraft.client.rende
 
         PartDefinition head = root.addOrReplaceChild("head",
                 CubeListBuilder.create(), PartPose.ZERO);
-        // NEOFORGE_PORT (26.3): hat is head.getChild (was root child in 1.20.1).
+        
         head.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
 
         PartDefinition body = root.addOrReplaceChild("body",
@@ -414,7 +414,7 @@ public class FortressArmorModel extends HumanoidModel<net.minecraft.client.rende
     }
 
     @Override
-    // NEOFORGE_PORT (26.3): HumanoidModel<State>; walk/yaw/pitch via state.
+    
     public void setupAnim(net.minecraft.client.renderer.entity.state.HumanoidRenderState state) {
         super.setupAnim(state);
         float limbSwing = state.walkAnimationPos;
@@ -422,8 +422,8 @@ public class FortressArmorModel extends HumanoidModel<net.minecraft.client.rende
         float ageInTicks = state.ageInTicks;
         float netHeadYaw = state.yRot;
         float headPitch = state.xRot;
-        // NEOFORGE_PORT (26.3): Forge called applyVariant from getHumanoidArmorModel with the
-        // wearer's armor; the 26.x hook has no entity, so read the worn stacks from the state.
+        
+        
         int setCount = 0;
         for (net.minecraft.world.item.ItemStack worn : new net.minecraft.world.item.ItemStack[]{
                 state.headEquipment, state.chestEquipment, state.legsEquipment, state.feetEquipment}) {

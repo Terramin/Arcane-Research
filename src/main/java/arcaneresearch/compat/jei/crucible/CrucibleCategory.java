@@ -9,13 +9,13 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import mezz.jei.api.gui.builder.ITooltipBuilder; // NEOFORGE_PORT: getTooltipStrings -> getTooltip
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipelineExtractor
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import mezz.jei.api.gui.builder.ITooltipBuilder; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient; // NEOFORGE_PORT: catalyst null-guard (Forge fell back to Ingredient.EMPTY; Neo decodes absent catalyst as null)
+import net.minecraft.world.item.crafting.Ingredient; 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -84,8 +84,8 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
         return title;
     }
 
-    // NEOFORGE_PORT: IRecipeCategory.getBackground removed in JEI 26.3;
-    // getWidth/getHeight are mandatory instead (background field kept unused).
+    
+    
     @Override
     public int getWidth() {
         return WIDTH;
@@ -104,14 +104,14 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CrucibleRecipeType recipe, IFocusGroup focuses) {
 
-        // NEOFORGE_PORT: catalyst may be null in Neo (no Ingredient.EMPTY fallback); guard like InfusionCategory central item.
+        
         Ingredient catalyst = recipe.getCatalyst();
         if (catalyst != null && !catalyst.isEmpty()) {
             builder.addSlot(RecipeIngredientRole.INPUT, OX - 65, OY - 57)
                     .addIngredients(catalyst);
         }
 
-        // NEOFORGE_PORT: Neo CrucibleRecipeType.getResultItem() is no-arg.
+        
         builder.addSlot(RecipeIngredientRole.OUTPUT, OX - 9, OY - 51)
                 .addItemStack(recipe.getResultItem());
     }
@@ -122,8 +122,8 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(OX, OY);
         guiGraphics.pose().scale(2f, 2f);
-        // NEOFORGE_PORT (26.3): Forge blit(tex, x, y, u, v, w, h) assumed a 256x256 sheet
-        // (UVs are in 256-space; the 512px overlay is a 2x asset) -> 256, 256 like RecipeRenderer.
+        
+        
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -29, 0, 3, 56, 17, 256, 256);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -12, 0, 20, 56, 48, 256, 256);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -25, -26, 100, 84, 11, 13, 256, 256);
@@ -147,8 +147,8 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
         tooltip.addAll(JeiResearch.tooltip(recipe.getResearch(), mouseX, mouseY, WIDTH));
     }
 
-    // NEOFORGE_PORT (26.3): JEI 15 default getRegistryName(recipe) was Recipe.getId();
-    // 26.x only reads RecipeHolder ids (see ArcaneresearchJEIPlugin.recipeId).
+    
+    
     @Override
     public Identifier getIdentifier(CrucibleRecipeType recipe) {
         return ArcaneresearchJEIPlugin.recipeId(recipe);

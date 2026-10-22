@@ -1,14 +1,14 @@
 package arcaneresearch.client.gui.screens;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor; // NEOFORGE_PORT: was GuiGraphics
-import net.minecraft.client.renderer.RenderPipelines; // NEOFORGE_PORT: blit needs a pipeline
+import net.minecraft.client.gui.GuiGraphicsExtractor; 
+import net.minecraft.client.renderer.RenderPipelines; 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier; // NEOFORGE_PORT: was ResourceLocation
+import net.minecraft.resources.Identifier; 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ContainerInput; // NEOFORGE_PORT: was ClickType
+import net.minecraft.world.inventory.ContainerInput; 
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
@@ -275,7 +275,7 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
 
         if (slot instanceof GhostSlot && menu.getSeal().getSeal() instanceof ISealConfigFilter) {
             if (minecraft != null && minecraft.gameMode != null && minecraft.player != null) {
-                // NEOFORGE_PORT: handleInventoryMouseClick -> handleContainerInput (ClickType -> ContainerInput).
+                
                 minecraft.gameMode.handleContainerInput(
                         menu.containerId, slotId, mouseButton, type, minecraft.player);
             }
@@ -284,14 +284,14 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
         super.slotClicked(slot, slotId, mouseButton, type);
     }
 
-    // NEOFORGE_PORT: checkHotbarKeyPressed(int, int) -> (KeyEvent); still disabled (as in Forge).
+    
     @Override
     protected boolean checkHotbarKeyPressed(net.minecraft.client.input.KeyEvent event) {
         return false;
     }
 
-    // NEOFORGE_PORT: Forge render() tail (filter counts + tag tooltips, drawn
-    // over slots after super.render) - called from extractContents (absolute coords).
+    
+    
     private void renderFilterCounts(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 
         if (currentCategory == ISealGui.CAT_FILTER
@@ -319,7 +319,7 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
-        // NEOFORGE_PORT (26.3): no extra dim - super.extractBackground already draws the in-game gradient (was drawn twice).
+        
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + middleX - 80, topPos + middleY - 80, 96, 0, 160, 160, 256, 256);
 
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos, topPos + 143, 0, 167, 176, 89, 256, 256);
@@ -339,7 +339,7 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
         graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + middleX + 17, topPos + middleY + 3, 2, 18, 12, 12, 256, 256);
         int color = menu.getColor();
         if (color >= 1 && color <= 16) {
-            // NEOFORGE_PORT: getTextureDiffuseColors() float[] -> getTextureDiffuseColor() int.
+            
             int diffuse = DyeColor.byId(color - 1).getTextureDiffuseColor();
             int tint = net.minecraft.util.ARGB.colorFromFloat(1.0f,
                     ((diffuse >> 16) & 0xFF) / 255.0f,
@@ -417,10 +417,10 @@ public class SealScreen extends AbstractContainerScreen<SealMenu> {
     protected void extractLabels(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     }
 
-    // NEOFORGE_PORT (26.3): filter counts moved out of extractLabels - that pass is
-    // translated by (leftPos, topPos) and runs before slots, so the absolute coords were
-    // offset twice and the counts hidden under items. Drawn after the slots instead
-    // (Forge: after super.render, untranslated).
+    
+    
+    
+    
     @Override
     public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractContents(graphics, mouseX, mouseY, partialTick);

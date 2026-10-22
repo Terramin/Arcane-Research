@@ -62,8 +62,8 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
         }
 
         AABB area = GolemHelper.getBoundsForArea(seal);
-        // NEOFORGE_PORT (26.3): getEntitiesOfClass(Class, AABB) still exists (NO_SPECTATORS filter);
-        // the getEntities(..., e -> true) rewrite also returned spectators.
+        
+        
         List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, area);
 
         if (!entities.isEmpty()) {

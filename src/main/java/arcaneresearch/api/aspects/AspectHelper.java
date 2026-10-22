@@ -24,8 +24,8 @@ public class AspectHelper {
             return null;
         }
 
-        // NEOFORGE_PORT (26.3): 1.20.1 keyed by the whole NBT tag (potions, enchantments, custom
-        // keys...); the component patch is its 26.x equivalent (CUSTOM_DATA alone merged potions).
+        
+        
         String specificKey = componentKey(stack);
         if (specificKey != null) {
             AspectList specific = objectTags.get(itemId + "#" + specificKey);
@@ -54,7 +54,7 @@ public class AspectHelper {
         }
     }
 
-    /** Stable key of the stack's component patch (null when it has none, like !hasTag()). */
+      
     private static String componentKey(ItemStack stack) {
         net.minecraft.core.component.DataComponentPatch patch = stack.getComponentsPatch();
         if (patch.isEmpty()) {

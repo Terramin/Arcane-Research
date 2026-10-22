@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty; // NEOFORGE_PORT: EnumProperty<Direction> folded into EnumProperty<Direction>
+import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -137,17 +137,17 @@ public class BlockTaintFeature extends DirectionalBlock implements ITaintBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean isMoving) {
-        // NEOFORGE_PORT: Block.onRemove removed in 26.x -> affectNeighborsAfterRemoval
-        // (server-side removal hook with the old state + isMoving; the new state is
-        // already in the chunk: level.getBlockState(pos)). Inventory drops are automatic
-        // now (BlockEntity.preRemoveSideEffects default drops Container contents).
+        
+        
+        
+        
         super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
         if (!state.is(level.getBlockState(pos).getBlock()) && !level.isClientSide()) {
             RandomSource random = level.getRandom();
             if (random.nextFloat() < 0.333f) {
 
                 Entity crawler = new EntityTaintCrawler(level);
-                // NEOFORGE_PORT (26.3): Forge moveTo(x, y, z, yaw, pitch) == snapTo (also sets old pos/rot).
+                
                 crawler.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, random.nextInt(360), 0.0f);
                 level.addFreshEntity(crawler);
             } else {
@@ -164,7 +164,7 @@ public class BlockTaintFeature extends DirectionalBlock implements ITaintBlock {
         return player.hasCorrectToolForDrops(state);
     }
 
-    // NEOFORGE_PORT: Forge getLightBlock -> 26.x getLightDampening(state).
+    
     @Override
     protected int getLightDampening(BlockState state) {
         return 0;

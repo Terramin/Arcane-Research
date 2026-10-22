@@ -22,8 +22,8 @@ import arcaneresearch.common.tiles.essentia.TileJar;
 
 import java.awt.*;
 
-// NEOFORGE_PORT (26.3 render-state rework): Forge render() body 1:1
-// (lid brace/extension, animated liquid box, facing label + aspect icon).
+
+
 public class JarRenderer implements BlockEntityRenderer<TileJar, JarRenderer.State> {
 
     private static final Identifier LIQUID_TEXTURE =
@@ -147,7 +147,7 @@ public class JarRenderer implements BlockEntityRenderer<TileJar, JarRenderer.Sta
         float maxV = (frame + 1) / (float) LIQUID_FRAMES;
 
         RenderType type = TCRenderTypes.translucentPortal(LIQUID_TEXTURE);
-        // NEOFORGE_PORT: same 6 quads as Forge addQuad (bottom/top/4 sides).
+        
         emitQuad(poseStack, collector, type,
                 minX, minY, minZ, maxX, minY, maxZ,
                 0, -1, 0, r, g, b, a, light, minU, maxU, minV, maxV);
@@ -240,7 +240,7 @@ public class JarRenderer implements BlockEntityRenderer<TileJar, JarRenderer.Sta
         poseStack.scale(0.03f, 0.03f, 0.03f);
 
         Color color = new Color(aspect.getColor());
-        // NEOFORGE_PORT (Forge 1:1): aspect bg stripped via the shared helper.
+        
         RenderType iconType = TCRenderTypes.translucentPortal(UtilsFX.strippedAspectTexture(aspect.getImage()));
         float r = color.getRed() / 255f;
         float g = color.getGreen() / 255f;

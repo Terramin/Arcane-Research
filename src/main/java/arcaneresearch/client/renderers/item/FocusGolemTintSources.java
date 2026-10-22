@@ -18,10 +18,10 @@ import arcaneresearch.common.golems.GolemProperties;
 import arcaneresearch.common.items.casters.ItemFocus;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors entries for the foci
-// (focus_1 / focus_blank / focus_advanced: TintHelper.focusColor on every layer) and the
-// golem placer (TintHelper.golemMaterialColor: material item colour from the "props" long).
-// Same values as Forge; opaque OR because 26.x tint layers are ARGB (see PhialTintSources).
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class FocusGolemTintSources {
 
@@ -32,9 +32,9 @@ public class FocusGolemTintSources {
         event.register(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "caster_focus_color"), CasterFocusTint.MAP_CODEC);
     }
 
-    // NEOFORGE_PORT (26.3): Forge item colour for CASTER_BASIC
-    // (TintHelper.casterFocusColor: tintindex 1 = focus gem of caster_gauntlet_focus,
-    // coloured with the inserted focus' colour; no focus -> untinted).
+    
+    
+    
     public record CasterFocusTint() implements ItemTintSource {
         public static final MapCodec<CasterFocusTint> MAP_CODEC = MapCodec.unit(new CasterFocusTint());
 

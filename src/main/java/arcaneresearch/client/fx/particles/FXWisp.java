@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 
-// NEOFORGE_PORT: custom per-frame math -> extract() override (same math).
+
 public class FXWisp extends SingleQuadParticle {
 
     protected Entity target;
@@ -82,13 +82,13 @@ public class FXWisp extends SingleQuadParticle {
     }
 
 
-    // NEOFORGE_PORT: getLightColor -> getLightCoords (same fullbright contract).
+    
     @Override
     protected int getLightCoords(float partialTick) {
         return 0xF000F0;
     }
 
-    // NEOFORGE_PORT: same math as the old render(); immediate verts -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         net.minecraft.world.entity.Entity viewEntity = net.minecraft.client.Minecraft.getInstance().getCameraEntity();
@@ -137,7 +137,7 @@ public class FXWisp extends SingleQuadParticle {
 
     @Override
 public SingleQuadParticle.Layer getLayer() {
-        // NEOFORGE_PORT: blendMode switch preserved (additive vs normal sheet layers).
+        
         return blendMode == 1 ? TCSprites.additive() : TCSprites.translucent();
     }
 

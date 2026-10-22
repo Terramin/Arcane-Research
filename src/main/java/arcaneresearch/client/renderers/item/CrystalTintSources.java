@@ -17,17 +17,17 @@ import arcaneresearch.common.blocks.world.ore.BlockCrystalTC;
 import arcaneresearch.common.items.resources.ItemCrystalEssence;
 import org.jspecify.annotations.Nullable;
 
-// NEOFORGE_PORT (26.3): Forge Arcaneresearch.onRegisterItemColors crystal entries 1:1.
-// Forge bound two lambdas (RegisterColorHandlersEvent.Item, now removed):
-//   crystal_essence -> aspects[0] color (any tintIndex), else white;
-//   7 crystal block items -> fixed Aspect color each (any tintIndex).
-// 26.x item tints are data-driven ItemTintSource records wired per item via the
-// "tints" array in assets/arcaneresearch/items/crystal_*.json (index = tintIndex,
-// same verified pattern as WandTintSources). One source covers all 8 items with
-// identical values (essence reads the stack aspect, blocks read their fixed aspect).
-// Opaque OR (0xFF000000 |): Forge ItemColors ignored alpha (RGB only); 26.3 tint
-// layers are ARGB, so alpha is forced for the same visible result (same transport
-// adaptation as the crystal BlockTintSource in Arcaneresearch).
+
+
+
+
+
+
+
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class CrystalTintSources {
 

@@ -11,10 +11,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-// NEOFORGE_PORT (26.3): sap/shock effect blocks are .air(), and 26.3 Entity.checkInsideBlocks
-// skips air, so BlockEffect.entityInside never ran (Eldritch Warden sap field, curse focus sap).
-// Re-create the 1.20.1 checkInsideBlocks pass (entity box deflated by 1e-7, every tick the entity
-// moves physically) for these blocks only.
+
+
+
+
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public final class EffectBlockEvents {
     private EffectBlockEvents() {

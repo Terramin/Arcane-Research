@@ -21,13 +21,13 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-/**
- * Node converter tile, ported from TC4 TileNodeConverter.
- * Sits above an aura node with a stabilizer two below; over time it drains
- * the node and converts it into an energized node. Removing the stabilizer
- * from an energized setup detonates the node (BlockAiry.explodify), the
- * airy staging itself is skipped since airy blocks do not exist here.
- */
+ 
+
+
+
+
+
+ 
 public class NodeConverterTile extends TileArcaneresearch {
     public int count = -1;
     public int status = 0;
@@ -270,7 +270,7 @@ public class NodeConverterTile extends TileArcaneresearch {
         if (level == null) {
             return false;
         }
-        // Порт TC4: запитанный стабилизатор не считается.
+        
         BlockPos stabPos = this.worldPosition.below(2);
         BlockEntity tile = level.getBlockEntity(stabPos);
         return tile instanceof StabilizerTile && !level.hasNeighborSignal(stabPos);

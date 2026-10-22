@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Quaternionf;
 
-// NEOFORGE_PORT: fixed-orientation quad -> extract() with custom quaternion.
+
 public class FXBlockRunes extends SingleQuadParticle {
 
     protected double offsetX;
@@ -81,7 +81,7 @@ public class FXBlockRunes extends SingleQuadParticle {
     }
 
 
-    // NEOFORGE_PORT: getLightColor -> getLightCoords (same fullbright contract).
+    
     @Override
     protected int getLightCoords(float partialTick) {
         return 0xF000F0;
@@ -92,7 +92,7 @@ public class FXBlockRunes extends SingleQuadParticle {
         return net.minecraft.client.particle.ParticleRenderType.SINGLE_QUADS;
     }
 
-    // NEOFORGE_PORT: same math as the old render(); fixed quat -> state.add.
+    
     @Override
     public void extract(QuadParticleRenderState state, Camera camera, float partialTicks) {
         Vec3 cameraPos = camera.position();
@@ -112,9 +112,9 @@ public class FXBlockRunes extends SingleQuadParticle {
 
         org.joml.Quaternionf quaternion = new org.joml.Quaternionf();
         quaternion.rotateY((float) Math.toRadians(rotation));
-        // NEOFORGE_PORT (26.3): Forge corners were +-0.5*size with UV corners
-        // (-,+)u1v1 (+,+)u1v0 (+,-)u0v0 (-,-)u0v1; the 26.3 quad (+-1, other UV
-        // order) matches that only with +90 deg extra Z, swapped V and half scale.
+        
+        
+        
         quaternion.rotateZ((float) Math.toRadians(90.0f + 90.0f));
 
         float ox = (float) this.offsetX;

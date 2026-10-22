@@ -4,7 +4,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IAspectContainer;
 
-// NEOFORGE_PORT: 1:1 from Forge common/lib/aura/INode.java (api-only deps).
+
 public interface INode extends IAspectContainer {
     AspectList getAspectsBase();
 

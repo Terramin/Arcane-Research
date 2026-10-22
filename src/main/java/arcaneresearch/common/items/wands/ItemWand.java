@@ -41,16 +41,16 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
     private final DecimalFormat formatter = new DecimalFormat("#######.#");
 
     public ItemWand(Properties props) {
-        // NEOFORGE_PORT: getRarity(stack) override removed in 26.x -> rarity in Properties.
+        
         super(props.stacksTo(1).rarity(Rarity.UNCOMMON));
     }
 
-    // NEOFORGE_PORT: тот же хук, что в Forge (WandUseAnimation.HAND_EXTENSION);
-    // без @Override (см. BlockHungryChestItem: initializeClient убран из Item в 26.x).
+    
+    
 
-    // NEOFORGE_PORT: ItemStack.save(CompoundTag)/ItemStack.of(CompoundTag) removed in 26.x ->
-    // ItemStack.CODEC via NbtOps (same "focus" key; inner shape is codec form).
-    // NEOFORGE_PORT (26.3): registry-aware ops (RegistryNbt) - plain NbtOps dropped enchanted stacks.
+    
+    
+    
     private static ItemStack decodeStack(CompoundTag parent, String key) {
         if (parent == null || !parent.contains(key)) {
             return ItemStack.EMPTY;
@@ -96,7 +96,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
     }
 
     private int getVisInternal(ItemStack stack, Aspect aspect) {
-        // NEOFORGE_PORT: stack root tag -> CUSTOM_DATA (same per-aspect int keys).
+        
         if (stack.isEmpty() || aspect == null) {
             return 0;
         }
@@ -148,7 +148,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
     }
 
     private void storeVisInternal(ItemStack stack, Aspect aspect, int amount) {
-        // NEOFORGE_PORT: COPY + write-back via ArcaneresearchInvHelper (getCustomTag returns a copy).
+        
         CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
         root.putInt(aspect.getTag(), amount);
         ArcaneresearchInvHelper.setCustomTag(stack, root);
@@ -321,7 +321,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         return root != null && root.contains("sceptre");
     }
 
-    /** Паритет TC4 (NBT-флаг "sceptre"): превратить жезл в скипетр. */
+      
     public static void setSceptre(ItemStack stack) {
         if (!stack.isEmpty()) {
             CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
@@ -348,8 +348,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
                 return cap;
             }
         }
-        // NEOFORGE_PORT: registry may not be inited yet when data-driven
-        // callers (recipes, archaeology) query a fresh wand; init is idempotent.
+        
+        
         WandItems.initWands();
         return WandRegistry.WAND_CAP_IRON;
     }
@@ -372,12 +372,12 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
                 rod.getOnUpdate().onUpdate(stack, player);
             }
             if (player.tickCount % 5 == 0) {
-                // NEOFORGE_PORT (26.3): 26.x passes an EquipmentSlot instead of Forge's
-                // (compartment index, isSelected). Rebuild Forge's values: main inventory ->
-                // index in Inventory.items (selected only for the held hotbar slot, which 26.x
-                // ticks as MAINHAND); armor -> FEET..HEAD = 0..3; offhand -> 0; Forge's
-                // isSelected was "index == selected hotbar slot" for every compartment. This keeps
-                // the NODETAPPER bonus for wands anywhere in the hotbar (index < 9) and offhand.
+                
+                
+                
+                
+                
+                
                 net.minecraft.world.entity.player.Inventory inv = player.getInventory();
                 int slotId = -1;
                 if (slot == EquipmentSlot.MAINHAND) {
@@ -451,7 +451,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public Component getName(ItemStack stack) {
-        // NEOFORGE_PORT: getDescriptionId(stack) is final in 26.x -> getName override (same body).
+        
         try {
             WandCap cap = getCap(stack);
             WandRod rod = getRod(stack);
@@ -511,7 +511,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        // NEOFORGE_PORT: InteractionResultHolder removed in 26.x -> InteractionResult.
+        
         ItemStack stack = player.getItemInHand(hand);
         BlockHitResult hit = Item.getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
 
@@ -532,9 +532,9 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
             WandManager.setCooldown(player, focus.getActivationCooldown(getFocusStack(stack)));
             if (focus.onFocusActivation(stack, level, player, hit, 0)) {
                 consumeAllVis(stack, player, focus.getVisCost(stack), level.isClientSide(), false);
-                // NEOFORGE_PORT (26.3): Forge-verbatim cast-pulse hook for the first-person
-                // animation (dropped in the port); ClientRunHelper no-ops on the dedicated
-                // server and the client class is only resolved inside the lambda.
+                
+                
+                
                 arcaneresearch.helper.ClientRunHelper.runOnClient(
                         () -> arcaneresearch.client.renderers.item.WandUseAnimation.noteCast(hand));
             }
@@ -602,8 +602,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
-        // NEOFORGE_PORT: void -> boolean in 26.x (verified signature via javap on Item);
-        // body 1:1, true when the stop-use was handled.
+        
+        
         if (entity instanceof Player player) {
             IWandable target = getObjectInUse(stack, level);
             if (target != null) {
@@ -617,15 +617,15 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        // NEOFORGE_PORT: UseAnim -> ItemUseAnimation.
+        
         return ItemUseAnimation.BOW;
     }
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        // NEOFORGE_PORT: getUseDuration now takes the using entity; 72000 as in Forge
-        // (bow-like "infinite" for the game, but float-exact; MAX_VALUE breaks
-        // BOW use-animation math with its float step of 256).
+        
+        
+        
         return 72000;
     }
 
@@ -636,7 +636,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
-        // NEOFORGE_PORT: IItemExtension hand-aware variant; base Item returns false.
+        
         ItemStack focusStack = getFocusStack(stack);
         if (!focusStack.isEmpty() && !WandManager.isOnCooldown(entity)) {
             WandManager.setCooldown(entity, getFocus(stack).getActivationCooldown(focusStack));
@@ -645,8 +645,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         return false;
     }
 
-    // NEOFORGE_PORT: no @Override (no such method on Item in 26.x; wired via
-    // ToolEvents.wandBlockStartBreak - BreakBlockEvent, LOWEST, skips cancelled - same body as Forge).
+    
+    
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
         ItemFocusBasic focus = getFocus(stack);
         if (focus != null && !WandManager.isOnCooldown(player)) {
@@ -718,8 +718,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         return false;
     }
 
-    // Level for focus info comes from context.level() (nullable, as ItemFocusBasic allows).
-    // Shift state via sided proxy (server returns false; tooltips only render on client).
+    
+    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag flag) {
@@ -769,8 +769,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         if (cap != null) {
             tooltip.accept(Component.literal(ChatFormatting.GOLD + Component.translatable("item.capacity.text").getString()
                     + " " + getMaxVis(stack) + "§r"));
-            // NEOFORGE_PORT: Forge insert order was capacity, rechargemult, chargebonus
-            // (second add(insert+1) lands before the first); appends here keep that order.
+            
+            
             if (cap.getRechargeMultiplier() != 1.0F) {
                 tooltip.accept(Component.literal(ChatFormatting.AQUA
                         + Component.translatable("item.rechargemult.text").getString() + " x"
@@ -787,7 +787,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
             tooltip.accept(Component.literal(ChatFormatting.BOLD.toString() + ChatFormatting.ITALIC
                     + ChatFormatting.GREEN + focusStack.getHoverName().getString()));
             if (shift && focusStack.getItem() instanceof ItemFocusBasic basic) {
-                // NEOFORGE_PORT: addFocusInformation still takes List<Component> -> buffer then accept.
+                
                 List<Component> focusInfo = new ArrayList<>();
                 basic.addFocusInformation(focusStack, tooltipLevel, focusInfo, flag);
                 for (Component lineComponent : focusInfo) {
