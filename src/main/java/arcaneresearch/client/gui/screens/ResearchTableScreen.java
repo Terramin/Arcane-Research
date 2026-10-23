@@ -245,7 +245,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         Random r = new Random(55L);
         if (sheets > 0 && !data.isComplete()) {
             for (int a = 0; a < sheets; a++) {
-                drawSheet(graphics, xx + 65, yy + 100, 6.0f, r, 1.0f, 1.0f, null, partialTick);
+                drawSheet(graphics, xx + 65, yy + 100, 6.0f, r, 1.0f, 1.0f, null, 0.1f + a * 0.05f, partialTick);
             }
             boolean highlight = false;
             int var7 = mouseX - (25 + xx);
@@ -256,20 +256,22 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
             pose.pushPose();
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, highlight ? 1.0f : 0.5f);
             RenderSystem.enableBlend();
-            pose.translate(xx + 65, yy + 100, 0);
+            pose.translate(xx + 65, yy + 100, 3.0f);
             float scale = highlight ? 1.75f : 1.5f;
             pose.scale(scale, scale, 1.0f);
             drawTexturedQuadFull(graphics, TX_QUESTION, -8, -8);
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             pose.popPose();
         }
+        int savedSheet = 0;
         for (Long seed : data.savedCards) {
             r = new Random(seed);
-            drawSheet(graphics, xx + 191, yy + 100, 6.0f, r, 1.0f, 1.0f, null, partialTick);
+            drawSheet(graphics, xx + 191, yy + 100, 6.0f, r, 1.0f, 1.0f, null, 1.5f + Math.min(savedSheet, 20) * 0.05f, partialTick);
+            savedSheet++;
         }
         if (lastDraw != null) {
             r = new Random(lastDraw.card.getSeed());
-            drawSheet(graphics, xx + 191, yy + 100, 6.0f, r, 1.0f, 1.0f, lastDraw, partialTick);
+            drawSheet(graphics, xx + 191, yy + 100, 6.0f, r, 1.0f, 1.0f, lastDraw, 1.5f + Math.min(savedSheet, 20) * 0.05f, partialTick);
         }
         updateCategoryTotals();
         drawCategoryProgress(graphics, mouseX, mouseY);
@@ -277,12 +279,16 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
     }
     private void drawSheet(GuiGraphics graphics, float x, float y, float scale, Random r,
                            float alpha, float tilt, ResearchTableData.CardChoice cardChoice,
-                           float partialTick) {
+                           float z, float partialTick) {
         PoseStack pose = graphics.pose();
-        pose.pushPose();
+        boolean depthWasOn = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
+        boolean depthMaskWasOn = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
         RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
+        pose.pushPose();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha);
-        pose.translate(x + r.nextGaussian(), y + r.nextGaussian(), 0);
+        pose.translate(x + r.nextGaussian(), y + r.nextGaussian(), z);
         pose.scale(scale, scale, 1.0f);
         float rotation = (float) (r.nextGaussian() * tilt);
         pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rotation));
@@ -301,6 +307,10 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         pose.popPose();
+        RenderSystem.depthMask(depthMaskWasOn);
+        if (!depthWasOn) {
+            RenderSystem.disableDepthTest();
+        }
     }
     private void drawCardContent(GuiGraphics graphics, ResearchTableData.CardChoice cardChoice,
                                  float partialTick) {
@@ -339,6 +349,9 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         ItemStack[] items = card.getRequiredItems();
         if (items != null) {
             pose.pushPose();
+            // Items must live on the same depth plane as the sheet they are printed on,
+            // otherwise they always pop in front of the cards above them.
+            pose.translate(0.0f, 0.0f, 0.25f);
             for (int a = 0; a < items.length; a++) {
                 pose.pushPose();
                 pose.scale(0.125f, 0.125f, 1.0f);
@@ -347,7 +360,7 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                     pose.translate(-9 * items.length + 18 * a, 35, 0);
                     drawTexturedQuadFull(graphics, TX_QUESTION, 0, 0);
                 } else {
-                    arcaneresearch.client.gui.GuiRenderHelper.renderItem(graphics, items[a], -9 * items.length + 18 * a, 35);
+                    arcaneresearch.client.gui.GuiRenderHelper.renderItemOnLayer(graphics, items[a], -9 * items.length + 18 * a, 35, 0.25f);
                     try {
                         if (card.getRequiredItemsConsumed()[a]) {
                             pose.pushPose();
@@ -357,9 +370,16 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
                             RenderSystem.enableBlend();
                             RenderSystem.defaultBlendFunc();
                             boolean depthWasOn = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
-                            RenderSystem.disableDepthTest();
+                            boolean maskWasOn = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
+                            if (depthWasOn) {
+                                RenderSystem.disableDepthTest();
+                            }
+                            RenderSystem.depthMask(false);
                             graphics.blit(TX_BASE, 0, 0, 64, 120, 16, 16);
-                            if (depthWasOn) RenderSystem.enableDepthTest();
+                            RenderSystem.depthMask(maskWasOn);
+                            if (depthWasOn) {
+                                RenderSystem.enableDepthTest();
+                            }
                             pose.popPose();
                         }
                     } catch (Exception ignored) {
@@ -507,9 +527,12 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
             }
             float alpha = cardActive[a] ? 1.0f : (1.0f - cardZoomIn[a]);
             float tilt = Math.max(1.0f - cardZoomOut[a], cardZoomIn[a]);
+            // Later cards lie on top of earlier ones; a card being picked up rises above the rest.
+            // Spacing is wider than an item model's depth extent so icons never poke through the next card.
+            float cardZ = 40.0f + a * 12.0f + cardHover[a] * 8.0f + cardZoomIn[a] * 40.0f;
             drawSheet(graphics, fx, yy + 100,
                     6.0f + cardZoomOut[a] * 2.0f - cardZoomIn[a] * 2.0f + cardHover[a],
-                    r, alpha, tilt, cardChoice, partialTick);
+                    r, alpha, tilt, cardChoice, cardZ, partialTick);
             if (cardSelected && cardActive[a] && cardZoomIn[a] >= 1.0f && prevZoomIn < 1.0f) {
                 playWrite();
                 cardChoices.clear();
