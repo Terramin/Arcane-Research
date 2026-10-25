@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -20,6 +22,9 @@ import arcaneresearch.api.internal.DummyInternalMethodHandler;
 import arcaneresearch.api.internal.IInternalMethodHandler;
 import arcaneresearch.api.internal.WeightedRandomLoot;
 import arcaneresearch.api.research.IScanEventHandler;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
+
 public class ArcaneresearchApi {
     public static IInternalMethodHandler internalMethods = new DummyInternalMethodHandler();
     public static void registerResearchLocation(ResourceLocation loc) {
@@ -147,9 +152,9 @@ public class ArcaneresearchApi {
     }
     public static void registerObjectTag(String tagName, AspectList aspects) {
         try {
-            ResourceLocation tagLoc = new ResourceLocation(tagName);
-            net.minecraft.tags.TagKey<Item> tagKey = net.minecraft.tags.ItemTags.create(tagLoc);
-            var tag = net.minecraftforge.registries.ForgeRegistries.ITEMS.tags().getTag(tagKey);
+            ResourceLocation tagLoc = ResourceLocation.tryParse(tagName);
+            TagKey<Item> tagKey = ItemTags.create(tagLoc);
+            var tag = ForgeRegistries.ITEMS.tags().getTag(tagKey);
             if (tag.isBound()) {
                 for (Item item : tag) {
                     registerObjectTag(new ItemStack(item), aspects.copy());
@@ -179,9 +184,9 @@ public class ArcaneresearchApi {
     }
     public static void registerComplexObjectTag(String tagName, AspectList aspects) {
         try {
-            ResourceLocation tagLoc = new ResourceLocation(tagName);
-            net.minecraft.tags.TagKey<Item> tagKey = net.minecraft.tags.ItemTags.create(tagLoc);
-            var tag = net.minecraftforge.registries.ForgeRegistries.ITEMS.tags().getTag(tagKey);
+            ResourceLocation tagLoc = ResourceLocation.parse(tagName);
+            TagKey<Item> tagKey = ItemTags.create(tagLoc);
+            var tag = ForgeRegistries.ITEMS.tags().getTag(tagKey);
             if (tag.isBound()) {
                 for (Item item : tag) {
                     registerComplexObjectTag(new ItemStack(item), aspects.copy());
@@ -211,7 +216,7 @@ public class ArcaneresearchApi {
         CommonInternals.scanEntities.add(new EntityTags(entityName, aspects, nbt));
         if (nbt == null || nbt.length == 0) {
             try {
-                AspectHelper.registerEntityTag(new ResourceLocation(entityName), aspects);
+                AspectHelper.registerEntityTag(ResourceLocation.parse(entityName), aspects);
             } catch (Exception e) {}
         }
     }

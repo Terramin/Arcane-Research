@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.wands.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -8,30 +9,46 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.api.casters.FocusPackage;
+import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.api.wands.FocusUpgradeType;
 import arcaneresearch.api.wands.IWand;
 import arcaneresearch.api.wands.ItemFocusBasic;
 import arcaneresearch.common.entities.WandEntities;
 import arcaneresearch.common.entities.projectile.EntityEmber;
+import arcaneresearch.common.entities.projectile.EntityFocusProjectile;
+import arcaneresearch.common.items.casters.foci.FocusEffectFire;
 import arcaneresearch.common.lib.wands.WandSounds;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class ItemFocusFire extends ItemFocusBasic {
+
     private static final AspectList COST_BASE = new AspectList().add(Aspect.FIRE, 2);
     private static final AspectList COST_BEAM = new AspectList().add(Aspect.FIRE, 2).add(Aspect.ORDER, 2);
     private static final AspectList COST_BALL = new AspectList().add(Aspect.FIRE, 8).add(Aspect.ENTROPY, 8);
-    public static FocusUpgradeType fireball = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/fireball.png"),
+
+    public static final FocusUpgradeType fireball = new FocusUpgradeType(
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/fireball.png"),
             "focus.upgrade.fireball.name", "focus.upgrade.fireball.text",
             new AspectList().add(Aspect.DARKNESS, 1));
-    public static FocusUpgradeType firebeam = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/firebeam.png"),
+    public static final FocusUpgradeType firebeam = new FocusUpgradeType(
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/firebeam.png"),
             "focus.upgrade.firebeam.name", "focus.upgrade.firebeam.text",
             new AspectList().add(Aspect.ENERGY, 1).add(Aspect.AIR, 1));
-    private long soundDelay = 0L;
+
+    // Per-player таймер звука: общий экземпляр предмета не должен шарить таймер между игроками
+    private static final Map<UUID, Long> SOUND_DELAY = new HashMap<>();
+
     public ItemFocusFire() {
         super("fire", 15028484);
     }
+
     @Override
     public AspectList getVisCost(ItemStack focusstack) {
         if (isUpgradedWith(focusstack, fireball)) {
@@ -42,84 +59,92 @@ public class ItemFocusFire extends ItemFocusBasic {
         }
         return COST_BASE.copy();
     }
+
     @Override
     public boolean canBePlacedInTurret() {
         return true;
     }
+
     @Override
     public float getTurretCorrection(ItemStack focusstack) {
         return isUpgradedWith(focusstack, fireball) ? 3.0F : 0.0F;
     }
+
     @Override
     public float getTurretRange(ItemStack focusstack) {
         return isUpgradedWith(focusstack, fireball) ? 32.0F
                 : (isUpgradedWith(focusstack, firebeam) ? 16.0F : 12.0F);
     }
+
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
         return isUpgradedWith(focusstack, fireball) ? 1000 : 0;
     }
+
     @Override
     public boolean isVisCostPerTick(ItemStack focusstack) {
         return !isUpgradedWith(focusstack, fireball);
     }
+
     @Override
     public WandFocusAnimation getAnimation(ItemStack focusstack) {
         return isUpgradedWith(focusstack, fireball) ? WandFocusAnimation.WAVE : WandFocusAnimation.CHARGE;
     }
+
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
         if (!(wandstack.getItem() instanceof IWand wand)) {
             return false;
         }
         ItemStack focusStack = wand.getFocusStack(wandstack);
+        int potency = wand.getFocusPotency(wandstack);
+
         if (isUpgradedWith(focusStack, fireball)) {
             if (!level.isClientSide) {
-                arcaneresearch.api.casters.FocusPackage pack =
-                        new arcaneresearch.api.casters.FocusPackage(entity);
-                pack.setPower(1.0F + wand.getFocusPotency(wandstack) * 0.25F);
-                arcaneresearch.common.items.casters.foci.FocusEffectFire fire =
-                        new arcaneresearch.common.items.casters.foci.FocusEffectFire();
+                FocusPackage pack = new FocusPackage(entity);
+                pack.setPower(1.0F + potency * 0.25F);
+                FocusEffectFire fire = new FocusEffectFire();
                 fire.initialize();
-                if (fire.getSetting("power") != null) {
-                    fire.getSetting("power").setValue(
-                            Math.min(5, 1 + wand.getFocusPotency(wandstack)));
+                var powerSetting = fire.getSetting("power");
+                if (powerSetting != null) {
+                    powerSetting.setValue(Math.min(5, 1 + potency));
                 }
-                if (fire.getSetting("duration") != null) {
-                    fire.getSetting("duration").setValue(
-                            isUpgradedWith(focusStack, FocusUpgradeType.alchemistsfire) ? 3 : 1);
+                var durationSetting = fire.getSetting("duration");
+                if (durationSetting != null) {
+                    durationSetting.setValue(isUpgradedWith(focusStack, FocusUpgradeType.alchemistsfire) ? 3 : 1);
                 }
                 fire.setPackage(pack);
                 pack.addNode(fire);
-                net.minecraft.world.phys.Vec3 eye = entity.getEyePosition();
-                net.minecraft.world.phys.Vec3 look = entity.getLookAngle();
-                arcaneresearch.api.casters.Trajectory traj =
-                        new arcaneresearch.api.casters.Trajectory(eye, look);
-                arcaneresearch.common.entities.projectile.EntityFocusProjectile proj =
-                        new arcaneresearch.common.entities.projectile.EntityFocusProjectile(
-                                pack, 1.5F, traj,
-                                arcaneresearch.common.entities.projectile.EntityFocusProjectile.SPECIAL_NONE);
+                Vec3 eye = entity.getEyePosition();
+                Vec3 look = entity.getLookAngle();
+                Trajectory traj = new Trajectory(eye, look);
+                EntityFocusProjectile proj = new EntityFocusProjectile(
+                        pack, 1.5F, traj, EntityFocusProjectile.SPECIAL_NONE);
                 level.addFreshEntity(proj);
                 level.levelEvent(LevelEvent.SOUND_GHAST_WARNING, BlockPos.containing(entity.position()), 0);
             }
         } else {
-            if (!level.isClientSide && soundDelay < System.currentTimeMillis()) {
-                level.playSound(null, entity.blockPosition(), WandSounds.fireloop(), SoundSource.PLAYERS,
-                        0.33F, 2.0F);
-                soundDelay = System.currentTimeMillis() + 500L;
+            long now = System.currentTimeMillis();
+            Long lastSound = SOUND_DELAY.get(entity.getUUID());
+            if (!level.isClientSide && (lastSound == null || lastSound < now)) {
+                level.playSound(null, entity.blockPosition(), WandSounds.fireloop(),
+                        SoundSource.PLAYERS, 0.33F, 2.0F);
+                SOUND_DELAY.put(entity.getUUID(), now + 500L);
             }
             if (!level.isClientSide) {
-                float scatter = isUpgradedWith(focusStack, firebeam) ? 0.25F : 15.0F;
-                for (int a = 0; a < 2 + wand.getFocusPotency(wandstack); a++) {
+                boolean beam = isUpgradedWith(focusStack, firebeam);
+                float scatter = beam ? 0.25F : 15.0F;
+                int count = 2 + potency;
+                for (int a = 0; a < count; a++) {
                     EntityEmber orb = new EntityEmber(WandEntities.EMBER.get(), level, entity, scatter);
-                    orb.damage = 2 + wand.getFocusPotency(wandstack);
-                    if (isUpgradedWith(focusStack, firebeam)) {
+                    orb.damage = 2 + potency;
+                    if (beam) {
                         orb.damage += 0.5F;
                         orb.damage *= 1.5F;
                         orb.duration = 30;
                     }
                     orb.firey = getUpgradeLevel(focusStack, FocusUpgradeType.alchemistsfire);
-                    net.minecraft.world.phys.Vec3 motion = orb.getDeltaMovement();
+                    Vec3 motion = orb.getDeltaMovement();
                     orb.setPos(orb.getX() + motion.x, orb.getY() + motion.y, orb.getZ() + motion.z);
                     level.addFreshEntity(orb);
                 }
@@ -127,14 +152,17 @@ public class ItemFocusFire extends ItemFocusBasic {
         }
         return true;
     }
+
     @Override
     public boolean canApplyUpgrade(ItemStack focusstack, Player player, FocusUpgradeType type, int rank) {
-        if (type.equals(FocusUpgradeType.alchemistsfire) && isUpgradedWith(focusstack, fireball)
+        if (type.equals(FocusUpgradeType.alchemistsfire)
+                && isUpgradedWith(focusstack, fireball)
                 && isUpgradedWith(focusstack, FocusUpgradeType.alchemistsfire)) {
             return false;
         }
         return true;
     }
+
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
         switch (rank) {

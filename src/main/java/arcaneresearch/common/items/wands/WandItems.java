@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.wands;
+
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.DeferredRegister;
@@ -7,6 +8,7 @@ import net.minecraftforge.registries.RegistryObject;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.items.wands.foci.*;
 import arcaneresearch.common.lib.wands.WandRegistry;
+
 public class WandItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, Arcaneresearch.MODID);
@@ -27,15 +29,17 @@ public class WandItems {
     public static final RegistryObject<Item> WAND_FOCUS_PECH = ITEMS.register("wand_focus_pech", ItemFocusPech::new);
     public static final RegistryObject<Item> WAND_PECH_BLAST = ITEMS.register("wand_pech_blast",
             () -> new Item(new Item.Properties()));
+
     private WandItems() {
     }
+
     public static ItemStack createWandStack() {
-        try {
-            return new ItemStack(WAND.get());
-        } catch (Exception e) {
-            return new ItemStack(new ItemWand());
+        if (!WAND.isPresent()) {
+            return ItemStack.EMPTY;
         }
+        return new ItemStack(WAND.get());
     }
+
     public static void initWands() {
         WandRegistry.initWands();
         WandTriggers.registerTriggers();

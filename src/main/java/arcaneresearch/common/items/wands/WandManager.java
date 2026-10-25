@@ -1,5 +1,8 @@
 package arcaneresearch.common.items.wands;
+
+import arcaneresearch.common.items.baubles.ItemAmuletVis;
 import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,78 +20,107 @@ import arcaneresearch.common.items.wands.foci.ItemFocusTrade;
 import arcaneresearch.common.lib.wands.WandResearchHelper;
 import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.init.ModEffects;
+import net.minecraftforge.fml.ModList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import top.theillusivec4.curios.api.CuriosApi;
-import java.util.HashMap;
-import java.util.TreeMap;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class WandManager {
+    private static final Logger LOGGER = LogManager.getLogger("Arcaneresearch/WandManager");
+
     static HashMap<Integer, Long> cooldownServer = new HashMap<>();
     static HashMap<Integer, Long> cooldownClient = new HashMap<>();
-    public WandTriggers triggers = new WandTriggers();
+
+    @SuppressWarnings("resource")
+    private static boolean isClientSide(LivingEntity entity) {
+        return entity.level().isClientSide;
+    }
+
     public static int getBaseChargeRate(Player player, boolean currentItem, int slot) {
-        if (WandResearchHelper.isResearchComplete(player, "NODETAPPER2") && slot < 9) {
-            return 3;
-        }
-        if (WandResearchHelper.isResearchComplete(player, "NODETAPPER1") && slot < 9) {
-            return 2;
+        if (slot < 9) {
+            if (WandResearchHelper.isResearchComplete(player, "NODETAPPER2")) {
+                return 3;
+            }
+            if (WandResearchHelper.isResearchComplete(player, "NODETAPPER1")) {
+                return 2;
+            }
         }
         return currentItem ? 1 : 0;
     }
+
     public static float getTotalVisDiscount(Player player, Aspect aspect) {
         if (player == null) {
             return 0.0F;
         }
+
         int total = 0;
-        final int[] curiosTotal = {0};
-        try {
-            CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach((slotId, slotHandler) -> {
-                for (int i = 0; i < slotHandler.getStacks().getSlots(); i++) {
-                    ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
-                    if (!worn.isEmpty() && worn.getItem() instanceof IVisDiscountGear gear) {
-                        curiosTotal[0] += gear.getVisDiscount(worn, player);
+
+        if (ModList.get().isLoaded("curios")) {
+            final int[] curiosTotal = {0};
+            try {
+                CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach((slotId, slotHandler) -> {
+                    for (int i = 0; i < slotHandler.getStacks().getSlots(); i++) {
+                        ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
+                        if (!worn.isEmpty() && worn.getItem() instanceof IVisDiscountGear gear) {
+                            curiosTotal[0] += gear.getVisDiscount(worn, player);
+                        }
                     }
-                }
-            }));
-        } catch (Exception ignored) {
+                }));
+            } catch (Exception e) {
+                LOGGER.warn("Failed to scan Curios for {}", player.getName().getString(), e);
+            }
+            total += curiosTotal[0];
         }
-        total += curiosTotal[0];
+
         for (ItemStack armor : player.getInventory().armor) {
             if (!armor.isEmpty() && armor.getItem() instanceof IVisDiscountGear gear) {
                 total += gear.getVisDiscount(armor, player);
             }
         }
-        MobEffectInstance visExhaust = null;
-        MobEffectInstance infectious = null;
-        try {
-            visExhaust = player.getEffect(ModEffects.VIS_EXHAUST.get());
-            infectious = player.getEffect(ModEffects.INFECTIOUS_VIS_EXHAUST.get());
-        } catch (Exception ignored) {
+
+        if (ModEffects.VIS_EXHAUST.isPresent() && ModEffects.INFECTIOUS_VIS_EXHAUST.isPresent()) {
+            MobEffectInstance visExhaust = player.getEffect(ModEffects.VIS_EXHAUST.get());
+            MobEffectInstance infectious = player.getEffect(ModEffects.INFECTIOUS_VIS_EXHAUST.get());
+            if (visExhaust != null || infectious != null) {
+                int level1 = visExhaust != null ? visExhaust.getAmplifier() : -1;
+                int level2 = infectious != null ? infectious.getAmplifier() : -1;
+                total -= (Math.max(level1, level2) + 1) * 10;
+            }
         }
-        if (visExhaust != null || infectious != null) {
-            int level1 = visExhaust == null ? 0 : visExhaust.getAmplifier();
-            int level2 = infectious == null ? 0 : infectious.getAmplifier();
-            total -= (Math.max(level1, level2) + 1) * 10;
-        }
+
         return total / 100.0F;
     }
+
     public static boolean consumeVisFromInventory(Player player, AspectList cost) {
-        try {
-            final boolean[] done = {false};
-            CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach(
-                    (slotId, slotHandler) -> {
-                        for (int i = 0; i < slotHandler.getStacks().getSlots() && !done[0]; i++) {
+        if (ModList.get().isLoaded("curios")) {
+            try {
+                final boolean[] done = {false};
+                CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
+                    if (done[0]) return;
+                    for (var slotHandler : handler.getCurios().values()) {
+                        for (int i = 0; i < slotHandler.getStacks().getSlots(); i++) {
                             ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
                             if (!worn.isEmpty()
-                                    && worn.getItem() instanceof arcaneresearch.common.items.baubles.ItemAmuletVis amulet
-                                    && amulet.consumeAllVis(worn, player, cost, true, true)) {
+                                    && worn.getItem() instanceof ItemAmuletVis amulet
+                                    && amulet.consumeAllVis(worn, player, cost, false, true)) {
                                 done[0] = true;
+                                break;
                             }
                         }
-                    }));
-            if (done[0]) {
-                return true;
+                        if (done[0]) break;
+                    }
+                });
+                if (done[0]) {
+                    return true;
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Failed to consume vis from Curios for {}", player.getName().getString(), e);
             }
-        } catch (Exception ignored) {
         }
+
         NonNullList<ItemStack> inv = player.getInventory().items;
         for (int a = inv.size() - 1; a >= 0; a--) {
             ItemStack stack = inv.get(a);
@@ -99,39 +131,44 @@ public class WandManager {
         }
         return false;
     }
+
     public static void changeFocus(ItemStack wandStack, Level level, Player player, String focus) {
         if (!(wandStack.getItem() instanceof IWand wand)) {
             return;
         }
+
         TreeMap<String, Integer> foci = new TreeMap<>();
         HashMap<Integer, Integer> pouches = new HashMap<>();
-        int pouchcount = 0;
         ItemStack item = ItemStack.EMPTY;
-        java.util.List<CurioPouchRef> curioPouches = new java.util.ArrayList<>();
-        final int[] pouchCountBox = {0};
+        List<CurioPouchRef> curioPouches = new ArrayList<>();
+        AtomicInteger pouchCounter = new AtomicInteger();
+
         try {
             CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach((slotId, slotHandler) -> {
                 for (int i = 0; i < slotHandler.getStacks().getSlots(); i++) {
                     ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
                     if (!worn.isEmpty() && worn.getItem() instanceof ItemFocusPouch pouch) {
-                        pouchCountBox[0]++;
+                        int pouchId = pouchCounter.incrementAndGet();
                         curioPouches.add(new CurioPouchRef(slotHandler, i));
                         NonNullList<ItemStack> pinv = pouch.getInventory(worn);
                         for (int q = 0; q < pinv.size(); q++) {
                             ItemStack f = pinv.get(q);
                             if (!f.isEmpty() && f.getItem() instanceof ItemFocusBasic basic) {
-                                foci.put(basic.getSortingHelper(f), q + pouchCountBox[0] * 1000);
+                                foci.put(basic.getSortingHelper(f), q + pouchId * 1000);
                             }
                         }
                     }
                 }
             }));
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            LOGGER.warn("Failed to scan Curios pouches for {}", player.getName().getString(), e);
         }
-        pouchcount = pouchCountBox[0];
+
+        int pouchcount = pouchCounter.get();
         for (int ci = 0; ci < curioPouches.size(); ci++) {
             pouches.put(ci + 1, -1000 - ci);
         }
+
         NonNullList<ItemStack> inv = player.getInventory().items;
         for (int a = 0; a < inv.size(); a++) {
             item = inv.get(a);
@@ -150,7 +187,8 @@ public class WandManager {
                 }
             }
         }
-        if (focus.equals("REMOVE") || foci.isEmpty()) {
+
+        if ("REMOVE".equals(focus) || foci.isEmpty()) {
             if (wand.getFocus(wandStack) != null
                     && (addFocusToPouch(player, wand.getFocusStack(wandStack).copy(), pouches, curioPouches)
                     || player.getInventory().add(wand.getFocusStack(wandStack).copy()))) {
@@ -160,6 +198,7 @@ public class WandManager {
             }
             return;
         }
+
         if (focus != null) {
             String newkey = focus;
             if (!foci.containsKey(newkey)) {
@@ -169,23 +208,26 @@ public class WandManager {
                 newkey = foci.firstKey();
             }
             int loc = foci.get(newkey);
+
             if (loc < 1000 && loc >= 0) {
                 item = inv.get(loc).copy();
             } else {
                 int pid = loc / 1000;
-                if (pouches.containsKey(pid)) {
-                    int pouchslot = pouches.get(pid);
-                    int focusslot = loc - pid * 1000;
-                    if (pouchslot <= -1000) {
-                        CurioPouchRef ref = curioPouches.get(-1000 - pouchslot);
-                        ItemStack pouch = ref.handler().getStacks().getStackInSlot(ref.slot()).copy();
-                        item = fetchFocusFromCurioPouch(player, focusslot, pouch, ref);
-                    } else {
-                        ItemStack pouch = inv.get(pouchslot).copy();
-                        item = fetchFocusFromPouch(player, focusslot, pouch, pouchslot);
-                    }
+                if (!pouches.containsKey(pid)) {
+                    return;
+                }
+                int pouchslot = pouches.get(pid);
+                int focusslot = loc - pid * 1000;
+                if (pouchslot <= -1000) {
+                    CurioPouchRef ref = curioPouches.get(-1000 - pouchslot);
+                    ItemStack pouch = ref.handler().getStacks().getStackInSlot(ref.slot()).copy();
+                    item = fetchFocusFromCurioPouch(player, focusslot, pouch, ref);
+                } else {
+                    ItemStack pouch = inv.get(pouchslot).copy();
+                    item = fetchFocusFromPouch(player, focusslot, pouch, pouchslot);
                 }
             }
+
             if (!item.isEmpty()) {
                 if (loc < 1000 && loc >= 0) {
                     player.getInventory().setItem(loc, ItemStack.EMPTY);
@@ -193,13 +235,16 @@ public class WandManager {
             } else {
                 return;
             }
+
             level.playSound(null, player.blockPosition(), WandSounds.cameraticls(),
                     SoundSource.PLAYERS, 0.3F, 1.0F);
+
             if (wand.getFocus(wandStack) != null
                     && (addFocusToPouch(player, wand.getFocusStack(wandStack).copy(), pouches, curioPouches)
                     || player.getInventory().add(wand.getFocusStack(wandStack).copy()))) {
                 wand.setFocus(wandStack, null);
             }
+
             if (wand.getFocus(wandStack) == null) {
                 wand.setFocus(wandStack, item);
             } else if (!addFocusToPouch(player, item, pouches, curioPouches)) {
@@ -207,6 +252,7 @@ public class WandManager {
             }
         }
     }
+
     private static ItemStack fetchFocusFromPouch(Player player, int focusid, ItemStack pouch, int pouchslot) {
         ItemStack focus = ItemStack.EMPTY;
         if (!(pouch.getItem() instanceof ItemFocusPouch pouchItem)) {
@@ -228,6 +274,7 @@ public class WandManager {
         }
         return focus;
     }
+
     private static ItemStack fetchFocusFromCurioPouch(Player player, int focusid, ItemStack pouch,
                                                       CurioPouchRef ref) {
         ItemStack focus = ItemStack.EMPTY;
@@ -247,8 +294,9 @@ public class WandManager {
         }
         return focus;
     }
+
     private static boolean addFocusToPouch(Player player, ItemStack focus, HashMap<Integer, Integer> pouches,
-                                           java.util.List<CurioPouchRef> curioPouches) {
+                                           List<CurioPouchRef> curioPouches) {
         for (int pouchslot : pouches.values()) {
             if (pouchslot < 0) {
                 continue;
@@ -285,6 +333,7 @@ public class WandManager {
         }
         return false;
     }
+
     public static void toggleMisc(ItemStack stack, Level level, Player player) {
         if (!(stack.getItem() instanceof IWand wand)) {
             return;
@@ -328,96 +377,141 @@ public class WandManager {
             }
         }
     }
+
     public static int getAreaDim(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains("aread")) {
-            return stack.getTag().getInt("aread");
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("aread")) {
+            return tag.getInt("aread");
         }
         return 0;
     }
+
     public static int getAreaX(ItemStack stack) {
-        if (!(stack.getItem() instanceof IWand wand) || wand.getFocus(stack) == null) {
+        if (!(stack.getItem() instanceof IWand wand)) {
             return 1;
         }
-        if (stack.hasTag() && stack.getTag().contains("areax")) {
-            int a = stack.getTag().getInt("areax");
-            if (a > wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack))) {
-                a = wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack));
+        ItemFocusBasic focus = wand.getFocus(stack);
+        if (focus == null) {
+            return 1;
+        }
+
+        ItemStack focusStack = wand.getFocusStack(stack);
+        int maxArea = focus.getMaxAreaSize(focusStack);
+
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("areax")) {
+            int a = tag.getInt("areax");
+            if (a > maxArea) {
+                a = maxArea;
             }
             return a;
         }
-        return wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack));
+        return maxArea;
     }
+
     public static int getAreaY(ItemStack stack) {
-        if (!(stack.getItem() instanceof IWand wand) || wand.getFocus(stack) == null) {
+        if (!(stack.getItem() instanceof IWand wand)) {
             return 1;
         }
-        if (stack.hasTag() && stack.getTag().contains("areay")) {
-            int a = stack.getTag().getInt("areay");
-            if (a > wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack))) {
-                a = wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack));
+        ItemFocusBasic focus = wand.getFocus(stack);
+        if (focus == null) {
+            return 1;
+        }
+
+        ItemStack focusStack = wand.getFocusStack(stack);
+        int maxArea = focus.getMaxAreaSize(focusStack);
+
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("areay")) {
+            int a = tag.getInt("areay");
+            if (a > maxArea) {
+                a = maxArea;
             }
             return a;
         }
-        return wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack));
+        return maxArea;
     }
+
     public static int getAreaZ(ItemStack stack) {
-        if (!(stack.getItem() instanceof IWand wand) || wand.getFocus(stack) == null) {
+        if (!(stack.getItem() instanceof IWand wand)) {
             return 1;
         }
-        if (stack.hasTag() && stack.getTag().contains("areaz")) {
-            int a = stack.getTag().getInt("areaz");
-            if (a > wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack))) {
-                a = wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack));
+        ItemFocusBasic focus = wand.getFocus(stack);
+        if (focus == null) {
+            return 1;
+        }
+
+        ItemStack focusStack = wand.getFocusStack(stack);
+        int maxArea = focus.getMaxAreaSize(focusStack);
+
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains("areaz")) {
+            int a = tag.getInt("areaz");
+            if (a > maxArea) {
+                a = maxArea;
             }
             return a;
         }
-        return wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack));
+        return maxArea;
     }
+
     public static void setAreaX(ItemStack stack, int area) {
-        if (stack.hasTag()) {
-            stack.getTag().putInt("areax", area);
-        }
+        stack.getOrCreateTag().putInt("areax", area);
     }
+
     public static void setAreaY(ItemStack stack, int area) {
-        if (stack.hasTag()) {
-            stack.getTag().putInt("areay", area);
-        }
+        stack.getOrCreateTag().putInt("areay", area);
     }
+
     public static void setAreaZ(ItemStack stack, int area) {
-        if (stack.hasTag()) {
-            stack.getTag().putInt("areaz", area);
-        }
+        stack.getOrCreateTag().putInt("areaz", area);
     }
+
     public static void setAreaDim(ItemStack stack, int dim) {
-        if (stack.hasTag()) {
-            stack.getTag().putInt("aread", dim);
-        }
+        stack.getOrCreateTag().putInt("aread", dim);
     }
+
+    private static long cdToMillis(int cd) {
+        return cd * 50L;
+    }
+
     static boolean isOnCooldown(LivingEntity entity) {
-        if (entity.level().isClientSide && cooldownClient.containsKey(entity.getId())) {
-            return cooldownClient.get(entity.getId()) > System.currentTimeMillis();
-        }
-        if (!entity.level().isClientSide && cooldownServer.containsKey(entity.getId())) {
-            return cooldownServer.get(entity.getId()) > System.currentTimeMillis();
-        }
-        return false;
+        Map<Integer, Long> map = isClientSide(entity) ? cooldownClient : cooldownServer;
+        Long end = map.get(entity.getId());
+        return end != null && end > System.currentTimeMillis();
     }
+
     public static float getCooldown(LivingEntity entity) {
-        if (entity.level().isClientSide && cooldownClient.containsKey(entity.getId())) {
-            return (float) (cooldownClient.get(entity.getId()) - System.currentTimeMillis()) / 1000.0F;
+        Map<Integer, Long> map = isClientSide(entity) ? cooldownClient : cooldownServer;
+        Long end = map.get(entity.getId());
+        if (end == null) {
+            return 0.0F;
         }
-        return 0.0F;
+
+        long remaining = end - System.currentTimeMillis();
+        return remaining > 0 ? (float) remaining / 1000.0F : 0.0F;
     }
+
     public static void setCooldown(LivingEntity entity, int cd) {
-        if (cd == 0) {
+        if (cd <= 0) {
             cooldownClient.remove(entity.getId());
             cooldownServer.remove(entity.getId());
-        } else if (entity.level().isClientSide) {
-            cooldownClient.put(entity.getId(), System.currentTimeMillis() + cd);
+            return;
+        }
+
+        long endTime = System.currentTimeMillis() + cdToMillis(cd);
+        if (isClientSide(entity)) {
+            cooldownClient.put(entity.getId(), endTime);
         } else {
-            cooldownServer.put(entity.getId(), System.currentTimeMillis() + cd);
+            cooldownServer.put(entity.getId(), endTime);
         }
     }
+
+    public static void clearCooldown(LivingEntity entity) {
+        cooldownClient.remove(entity.getId());
+        cooldownServer.remove(entity.getId());
+    }
+
     private record CurioPouchRef(
             top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler handler, int slot) {
     }
