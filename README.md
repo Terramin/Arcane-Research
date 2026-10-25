@@ -6,7 +6,8 @@ Ported version for Minecraft 1.20.1 Forge
 
 > ## Port is \\\\\\\~99% complete
 
-> Forge 47.3.0 + JEI + Curios
+> 26.3 NeoForge 26.3.0.94 + JEI 31.16.0.86 + Curios 17.0.0-beta.3+26.3
+> 1.20.1 Forge 47.4.28 + JEI + Curios
 
 > New content will be added, and mechanics will be expanded.
 >
