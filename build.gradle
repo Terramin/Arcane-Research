@@ -2,7 +2,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'net.minecraftforge.gradle' version '6.0.54'
     // Parchment mappings plugin - provides human-readable parameter names
     // Note: Requires Java 17-21. Uncomment when using compatible Java version:
     // id 'org.parchmentmc.librarian.forgegradle' version '1.+'
@@ -110,9 +110,9 @@ dependencies {
 
     // JEI (Just Enough Items) for recipe viewing in dev environment
     // API for compile, full mod for runtime
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.2.0.27")
-    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.2.0.27")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.2.0.27")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:${jei_version}")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

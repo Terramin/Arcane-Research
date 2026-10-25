@@ -81,11 +81,11 @@ description='''${mod_description}'''
 
 # Curios API dependency (replaces Baubles).
 # Required: bauble items implement ICurioItem directly (see Curios docs "Creating a Curio").
-# Upper bound excludes the broken 5.14.1 (missing AccessorEntity in mixins.json).
+# 5.14.1+ fixes slot modifiers and invalid stacks on inventory save.
 [[dependencies.${mod_id}]]
     modId="curios"
     mandatory=true
-    versionRange="[5.14.0,5.14.1)"
+    versionRange="[5.14.1,)"
     ordering="AFTER"
     side="BOTH"
 
