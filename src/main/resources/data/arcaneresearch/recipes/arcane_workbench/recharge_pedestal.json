@@ -1,0 +1,31 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "RECHARGEPEDESTAL",
+  "vis": 100,
+  "crystals": {
+    "aer": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    " R ",
+    "DID",
+    "SSS"
+  ],
+  "key": {
+    "R": {
+      "item": "arcaneresearch:vis_resonator"
+    },
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "I": {
+      "tag": "forge:ingots/gold"
+    },
+    "S": {
+      "tag": "forge:stone"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:recharge_pedestal"
+  }
+}

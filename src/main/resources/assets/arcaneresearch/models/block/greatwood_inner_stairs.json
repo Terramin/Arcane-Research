@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "arcaneresearch:block/plank_greatwood",
+    "top": "arcaneresearch:block/plank_greatwood",
+    "side": "arcaneresearch:block/plank_greatwood"
+  }
+}

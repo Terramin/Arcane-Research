@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NSN",
+    "S S",
+    "NSN"
+  ],
+  "key": {
+    "N": {"item": "arcaneresearch:brass_nugget"},
+    "S": {"tag": "forge:rods/wooden"}
+  },
+  "result": {
+    "item": "arcaneresearch:jar_brace",
+    "count": 2
+  }
+}

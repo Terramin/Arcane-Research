@@ -1,0 +1,28 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "WORKBENCHCHARGER",
+  "vis": 200,
+  "crystals": {
+    "aer": 2,
+    "ordo": 2
+  },
+  "pattern": [
+    " R ",
+    "W W",
+    "I I"
+  ],
+  "key": {
+    "R": {
+      "item": "arcaneresearch:vis_resonator"
+    },
+    "W": {
+      "item": "arcaneresearch:greatwood_planks"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:arcane_workbench_charger"
+  }
+}

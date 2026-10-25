@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "arcaneresearch:quartz_stuff",
+  "ingredients": [
+    {"item": "minecraft:quartz"}
+  ],
+  "result": {
+    "item": "arcaneresearch:quartz_nugget",
+    "count": 9
+  }
+}

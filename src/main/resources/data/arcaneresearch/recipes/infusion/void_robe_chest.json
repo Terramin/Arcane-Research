@@ -1,0 +1,27 @@
+{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:void_stuff",
+  "research": "VOIDROBEARMOR",
+  "instability": 6,
+  "input": {
+    "item": "arcaneresearch:void_chest"
+  },
+  "ingredients": [
+    { "item": "arcaneresearch:cloth_chest" },
+    { "item": "arcaneresearch:plate_void" },
+    { "item": "arcaneresearch:plate_void" },
+    { "item": "arcaneresearch:salis_mundus" },
+    { "item": "arcaneresearch:enchanted_fabric" },
+    { "tag": "forge:leather" }
+  ],
+  "aspects": {
+    "metallum": 35,
+    "praemunio": 35,
+    "potentia": 25,
+    "alienis": 25,
+    "vacuos": 35
+  },
+  "result": {
+    "item": "arcaneresearch:void_robe_chest"
+  }
+}

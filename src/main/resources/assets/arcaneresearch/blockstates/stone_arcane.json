@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "": [
+            { "model": "arcaneresearch:block/arcane_stone" },
+            { "model": "arcaneresearch:block/arcane_stone", "x": 90 },
+            { "model": "arcaneresearch:block/arcane_stone", "y": 90 },
+            { "model": "arcaneresearch:block/arcane_stone", "x": 90, "y": 90 }
+        ]
+    }
+}

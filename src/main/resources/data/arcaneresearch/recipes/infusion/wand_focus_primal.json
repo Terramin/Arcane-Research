@@ -1,0 +1,29 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSPRIMAL",
+  "instability": 6,
+  "center": {
+    "item": "arcaneresearch:primordial_pearl"
+  },
+  "ingredients": [
+    { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "type": "arcaneresearch:crystal", "aspect": "aqua" },
+    { "type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" },
+    { "type": "arcaneresearch:crystal", "aspect": "perditio" },
+    { "item": "minecraft:quartz" },
+    { "item": "minecraft:quartz" }
+  ],
+  "aspects": {
+    "aer": 100,
+    "ignis": 100,
+    "aqua": 100,
+    "terra": 100,
+    "ordo": 100,
+    "perditio": 100
+  },
+  "result": {
+    "item": "arcaneresearch:wand_focus_primal"
+  }
+}

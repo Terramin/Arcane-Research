@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "SEALCOLLECT",
+  "catalyst": {
+    "item": "arcaneresearch:blank_seal"
+  },
+  "aspects": {
+    "desiderium": 10
+  },
+  "result": {
+    "item": "arcaneresearch:seal_pickup",
+    "count": 1
+  }
+}

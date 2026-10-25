@@ -1,0 +1,70 @@
+package arcaneresearch.common.tiles.aura;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.Level;
+import arcaneresearch.api.aura.AuraHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+public class AuraTotemPushTile extends AuraTotemTile {
+    public AuraTotemPushTile(BlockEntityType<?> tileType, BlockPos pos, BlockState state) {
+        super(tileType, pos, state);
+    }
+    @Override
+    protected void performMagnet() {
+        Level level = getLevel();
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        int x1 = Mth.randomBetweenInclusive(level.random, -this.zoneInner, this.zoneInner);
+        int z1 = Mth.randomBetweenInclusive(level.random, -this.zoneInner, this.zoneInner);
+        int x2 = 0;
+        int z2 = 0;
+        int cc = 0;
+        while (cc < 100 && x2 >= -this.zoneInner && x2 <= this.zoneInner && z2 >= -this.zoneInner
+                && z2 <= this.zoneInner) {
+            x2 = Mth.randomBetweenInclusive(level.random, -(this.zoneInner + this.zoneOuter + 1),
+                    this.zoneInner + this.zoneOuter + 1);
+            z2 = Mth.randomBetweenInclusive(level.random, -(this.zoneInner + this.zoneOuter + 1),
+                    this.zoneInner + this.zoneOuter + 1);
+            cc++;
+        }
+        if (cc >= 100) {
+            return;
+        }
+        int x = this.worldPosition.getX() + x1 * 16;
+        int z = this.worldPosition.getZ() + z1 * 16;
+        if (AuraHelper.drainVis(level, new BlockPos(x, 0, z), 1.0F, false) > 0.0F) {
+            float tc = 0.0125F * (this.zoneInner + this.zoneOuter + 2) - 0.1F * this.zonePure;
+            x = this.worldPosition.getX() + x2 * 16;
+            z = this.worldPosition.getZ() + z2 * 16;
+            if (level.random.nextFloat() < tc) {
+                AuraHelper.polluteAura(level, this.worldPosition, 1.0F, true);
+            } else {
+                AuraHelper.addVis(level, new BlockPos(x, 0, z), 1.0F);
+            }
+        }
+    }
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    protected void drawEffect() {
+        super.drawEffect();
+        Level level = getLevel();
+        if (level == null || !level.isClientSide) {
+            return;
+        }
+        double sx = this.worldPosition.getX() + 0.5D
+                + (level.random.nextFloat() - level.random.nextFloat()) * (5 + this.zoneOuter);
+        double sy = this.worldPosition.getY() + level.random.nextInt(4) - level.random.nextInt(3);
+        double sz = this.worldPosition.getZ() + 0.5D
+                + (level.random.nextFloat() - level.random.nextFloat()) * (5 + this.zoneOuter);
+        arcaneresearch.client.fx.FXDispatcher.INSTANCE.drawWispyMotes(
+                this.worldPosition.getX() + 0.5D, this.worldPosition.getY() + 0.5D,
+                this.worldPosition.getZ() + 0.5D,
+                (sx - this.worldPosition.getX()) * 0.05D,
+                (sy - this.worldPosition.getY()) * 0.05D,
+                (sz - this.worldPosition.getZ()) * 0.05D,
+                40, 0.0F);
+    }
+}

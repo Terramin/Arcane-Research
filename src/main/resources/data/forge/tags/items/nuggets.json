@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_nugget",
+    "arcaneresearch:nugget_copper",
+    "arcaneresearch:nugget_tin",
+    "arcaneresearch:nugget_silver",
+    "arcaneresearch:nugget_lead",
+    "arcaneresearch:quicksilver_nugget",
+    "arcaneresearch:thaumium_nugget",
+    "arcaneresearch:void_metal_nugget",
+    "arcaneresearch:brass_nugget",
+    "arcaneresearch:quartz_nugget",
+    "arcaneresearch:nugget_rareearth"
+  ]
+}

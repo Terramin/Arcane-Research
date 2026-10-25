@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item": "arcaneresearch:phial_empty"},
+    {"item": "minecraft:feather"},
+    {"tag": "forge:dyes/black"}
+  ],
+  "result": {
+    "item": "arcaneresearch:scribing_tools",
+    "count": 1
+  }
+}

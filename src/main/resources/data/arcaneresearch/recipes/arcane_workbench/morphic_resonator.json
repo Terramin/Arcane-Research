@@ -1,0 +1,28 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "BASEALCHEMY",
+  "vis": 50,
+  "crystals": {
+    "aer": 1,
+    "ignis": 1
+  },
+  "pattern": [
+    " G ",
+    "BSB",
+    " G "
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:glass_panes"
+    },
+    "B": {
+      "item": "arcaneresearch:plate_brass"
+    },
+    "S": {
+      "item": "arcaneresearch:nugget_rareearth"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:morphic_resonator"
+  }
+}

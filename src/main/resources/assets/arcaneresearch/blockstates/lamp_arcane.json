@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=down,enabled=false": { "model": "arcaneresearch:block/lamp_arcane" },
+    "facing=down,enabled=true": { "model": "arcaneresearch:block/lamp_arcane_on" },
+    "facing=up,enabled=false": { "model": "arcaneresearch:block/lamp_arcane", "x": 180 },
+    "facing=up,enabled=true": { "model": "arcaneresearch:block/lamp_arcane_on", "x": 180 },
+    "facing=north,enabled=false": { "model": "arcaneresearch:block/lamp_arcane", "x": 90, "y": 180 },
+    "facing=north,enabled=true": { "model": "arcaneresearch:block/lamp_arcane_on", "x": 90, "y": 180 },
+    "facing=south,enabled=false": { "model": "arcaneresearch:block/lamp_arcane", "x": 90 },
+    "facing=south,enabled=true": { "model": "arcaneresearch:block/lamp_arcane_on", "x": 90 },
+    "facing=east,enabled=false": { "model": "arcaneresearch:block/lamp_arcane", "x": 90, "y": 270 },
+    "facing=east,enabled=true": { "model": "arcaneresearch:block/lamp_arcane_on", "x": 90, "y": 270 },
+    "facing=west,enabled=false": { "model": "arcaneresearch:block/lamp_arcane", "x": 90, "y": 90 },
+    "facing=west,enabled=true": { "model": "arcaneresearch:block/lamp_arcane_on", "x": 90, "y": 90 }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:tube_normal",
+    "arcaneresearch:tube_restricted",
+    "arcaneresearch:tube_filter",
+    "arcaneresearch:tube_valve",
+    "arcaneresearch:tube_buffer",
+    "arcaneresearch:tube_oneway"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "arcaneresearch:crucible",
+  "group": "arcaneresearch:void_stuff",
+  "research": "ESSENTIASMELTERVOID",
+  "catalyst": {
+    "type": "arcaneresearch:crystal",
+    "aspect": "vitium"
+  },
+  "aspects": {
+    "vacuos": 10,
+    "tenebrae": 10,
+    "alienis": 5
+  },
+  "result": {
+    "item": "arcaneresearch:void_seed"
+  }
+}

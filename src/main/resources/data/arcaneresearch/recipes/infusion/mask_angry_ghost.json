@@ -1,0 +1,25 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FORTRESSMASK",
+  "instability": 8,
+  "center": {
+    "item": "arcaneresearch:fortress_helm"
+  },
+  "ingredients": [
+    { "item": "minecraft:white_dye" },
+    { "item": "arcaneresearch:plate_iron" },
+    { "tag": "forge:leather" },
+    { "item": "minecraft:dead_bush" },
+    { "item": "minecraft:wither_skeleton_skull" },
+    { "item": "arcaneresearch:plate_iron" }
+  ],
+  "aspects": {
+    "perditio": 80,
+    "mortuus": 80,
+    "praemunio": 20
+  },
+  "result": {
+    "item": "arcaneresearch:fortress_helm",
+    "nbt": "{mask:1}"
+  }
+}

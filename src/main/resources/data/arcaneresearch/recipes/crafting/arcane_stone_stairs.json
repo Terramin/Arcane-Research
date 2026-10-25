@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "K  ",
+    "KK ",
+    "KKK"
+  ],
+  "key": {
+    "K": {"item": "arcaneresearch:arcane_stone"}
+  },
+  "result": {
+    "item": "arcaneresearch:arcane_stone_stairs",
+    "count": 4
+  }
+}

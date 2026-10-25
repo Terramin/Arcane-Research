@@ -1,0 +1,11 @@
+{
+  "type": "arcaneresearch:feature",
+  "feature": "arcaneresearch:greatwood_nest",
+  "box_half_width": 12,
+  "box_height_up": 34,
+  "box_height_down": 6,
+  "biomes": "#arcaneresearch:greatwood_nest",
+  "spawn_overrides": {},
+  "step": "vegetal_decoration",
+  "terrain_adaptation": "none"
+}

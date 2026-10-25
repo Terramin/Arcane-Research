@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "enabled=false": { "model": "arcaneresearch:block/dioptra_off" },
+    "enabled=true": { "model": "arcaneresearch:block/dioptra" }
+  }
+}

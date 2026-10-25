@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "arcaneresearch:block/log_taintwood_top",   
+        "up": "arcaneresearch:block/log_taintwood_top",
+        "down": "arcaneresearch:block/log_taintwood_top",
+        "north": "arcaneresearch:block/log_taintwood_0",
+        "south": "arcaneresearch:block/log_taintwood_0",
+        "east": "arcaneresearch:block/log_taintwood_0",
+        "west": "arcaneresearch:block/log_taintwood_0"
+    }
+}

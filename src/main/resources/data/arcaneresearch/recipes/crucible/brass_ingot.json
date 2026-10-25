@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "group": "arcaneresearch:brass_stuff",
+  "research": "METALLURGY@1",
+  "catalyst": {
+    "item": "minecraft:iron_ingot"
+  },
+  "aspects": {
+    "instrumentum": 5
+  },
+  "result": {
+    "item": "arcaneresearch:brass_ingot"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "GRAPPLEGUN",
+  "vis": 75,
+  "crystals": {
+    "aer": 1,
+    "ignis": 1
+  },
+  "pattern": [
+    "  S",
+    "TII",
+    " BW"
+  ],
+  "key": {
+    "S": {
+      "item": "arcaneresearch:grapple_gun_spool"
+    },
+    "T": {
+      "item": "arcaneresearch:grapple_gun_tip"
+    },
+    "I": {
+      "item": "arcaneresearch:plate_iron"
+    },
+    "B": {
+      "item": "arcaneresearch:plate_brass"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:grapple_gun"
+  }
+}

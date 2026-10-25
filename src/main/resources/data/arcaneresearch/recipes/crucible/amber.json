@@ -1,0 +1,13 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "UNLOCKALCHEMY",
+  "catalyst": {
+    "tag": "forge:slimeballs"
+  },
+  "aspects": {
+    "vinculum": 5
+  },
+  "result": {
+    "item": "arcaneresearch:amber"
+  }
+}

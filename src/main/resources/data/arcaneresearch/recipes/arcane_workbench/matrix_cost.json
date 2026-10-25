@@ -1,0 +1,29 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INFUSIONBOOST",
+  "vis": 500,
+  "crystals": {
+    "aer": 1,
+    "aqua": 1,
+    "perditio": 1
+  },
+  "pattern": [
+    "SAS",
+    "AGA",
+    "SAS"
+  ],
+  "key": {
+    "S": {
+      "item": "arcaneresearch:arcane_stone"
+    },
+    "A": {
+      "item": "arcaneresearch:alumentum"
+    },
+    "G": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:matrix_cost"
+  }
+}

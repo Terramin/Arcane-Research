@@ -1,0 +1,14 @@
+{
+  "type": "arcaneresearch:crucible",
+  "research": "METALPURIFICATION",
+  "catalyst": {
+    "tag": "forge:ores/copper"
+  },
+  "aspects": {
+    "metallum": 5,
+    "ordo": 5
+  },
+  "result": {
+    "item": "arcaneresearch:cluster_copper"
+  }
+}

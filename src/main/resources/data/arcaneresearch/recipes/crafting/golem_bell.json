@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " QQ",
+    " QQ",
+    "S  "
+  ],
+  "key": {
+    "S": {"tag": "forge:rods/wooden"},
+    "Q": {"tag": "forge:gems/quartz"}
+  },
+  "result": {
+    "item": "arcaneresearch:golem_bell",
+    "count": 1
+  }
+}

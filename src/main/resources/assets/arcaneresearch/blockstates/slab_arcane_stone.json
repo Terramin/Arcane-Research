@@ -1,0 +1,19 @@
+{
+    "forge_marker": 1,
+    "variants": {
+        "half": { 
+            "bottom": { "model": "minecraft:half_slab" }, 
+            "top": { "model": "minecraft:upper_slab" } 
+        },
+        "variant": {
+            "default": {
+                "textures": {
+                    "particle": "arcaneresearch:blocks/arcane_stone_1",
+                    "bottom": "arcaneresearch:blocks/arcane_stone_1",
+                    "top": "arcaneresearch:blocks/arcane_stone_2",
+                    "side": "arcaneresearch:blocks/arcane_stone_3"
+                }
+            }
+        }        
+    }
+}

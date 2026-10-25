@@ -1,0 +1,42 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "CURIOSITYBAND",
+  "instability": 5,
+  "center": {
+    "item": "arcaneresearch:bauble_girdle_fancy"
+  },
+  "ingredients": [
+    {
+      "tag": "forge:gems/emerald"
+    },
+    {
+      "item": "minecraft:writable_book"
+    },
+    {
+      "tag": "forge:gems/emerald"
+    },
+    {
+      "item": "minecraft:writable_book"
+    },
+    {
+      "tag": "forge:gems/emerald"
+    },
+    {
+      "item": "minecraft:writable_book"
+    },
+    {
+      "tag": "forge:gems/emerald"
+    },
+    {
+      "item": "minecraft:writable_book"
+    }
+  ],
+  "aspects": {
+    "cognitio": 150,
+    "vacuos": 50,
+    "vinculum": 100
+  },
+  "result": {
+    "item": "arcaneresearch:curiosity_band"
+  }
+}

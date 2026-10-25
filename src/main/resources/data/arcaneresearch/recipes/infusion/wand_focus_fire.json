@@ -1,0 +1,26 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYFOCUSFIRE",
+  "instability": 4,
+  "center": {
+    "item": "minecraft:glass"
+  },
+  "ingredients": [
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:blaze_powder" }
+  ],
+  "aspects": {
+    "ignis": 250,
+    "potentia": 25,
+    "praecantatio": 50
+  },
+  "result": {
+    "item": "arcaneresearch:wand_focus_fire"
+  }
+}

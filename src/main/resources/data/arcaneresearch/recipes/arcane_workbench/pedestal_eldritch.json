@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INFUSIONELDRITCH",
+  "vis": 150,
+  "pattern": [
+    "SSS",
+    " B ",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "arcaneresearch:eldritch_stone_slab"
+    },
+    "B": {
+      "item": "arcaneresearch:eldritch_stone_tile"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:pedestal_eldritch"
+  }
+}

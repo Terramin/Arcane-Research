@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {"item": "arcaneresearch:silverwood_log"},
+  "result": "minecraft:charcoal",
+  "experience": 0.5,
+  "cookingtime": 200
+}

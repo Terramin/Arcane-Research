@@ -1,0 +1,46 @@
+{
+
+    "forge_marker": 1,
+    "variants": {
+        "brass": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_brass" }
+        },
+        "copper": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_copper" }
+        },        
+        "lead": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_lead" }
+        },        
+        "quicksilver": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_quicksilver" }
+        },
+        "silver": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_silver" }
+        },
+        "thaumium": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_thaumium" }
+        },
+        "tin": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_tin" }
+        },
+        "void": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_void" }
+        },
+        "quartz": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/nugget_quartz" }
+        },
+        "rareearth": {
+            "model": "forge:item-layer", "transform": "forge:default-item",
+            "textures": { "layer0": "arcaneresearch:items/rare_earth" }
+        }
+    }
+}

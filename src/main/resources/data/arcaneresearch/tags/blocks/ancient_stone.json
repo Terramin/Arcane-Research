@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:ancient_stone",
+    "arcaneresearch:ancient_stone_tile",
+    "arcaneresearch:ancient_rock",
+    "arcaneresearch:ancient_stone_glyphed",
+    "arcaneresearch:ancient_pedestal_doorway",
+    "arcaneresearch:ancient_stone_slab",
+    "arcaneresearch:ancient_stone_stairs"
+  ]
+}

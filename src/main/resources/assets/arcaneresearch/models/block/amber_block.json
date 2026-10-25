@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "arcaneresearch:block/amber_side",
+    "end": "arcaneresearch:block/amber_top"
+  }
+}

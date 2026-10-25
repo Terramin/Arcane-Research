@@ -1,0 +1,21 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INFUSIONANCIENT",
+  "vis": 150,
+  "pattern": [
+    "SSS",
+    " B ",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "arcaneresearch:ancient_stone_slab"
+    },
+    "B": {
+      "item": "arcaneresearch:ancient_stone"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:pedestal_ancient"
+  }
+}

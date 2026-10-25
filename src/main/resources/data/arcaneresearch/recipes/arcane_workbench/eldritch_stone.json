@@ -1,0 +1,26 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "INFUSIONELDRITCH",
+  "vis": 50,
+  "crystals": {
+    "tenebrae": 1,
+    "terra": 1
+  },
+  "pattern": [
+    "SSS",
+    "SOS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:eldritch_stone",
+    "count": 8
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "arcaneresearch:infusion_enchantment",
+  "enchantment": "REFINING",
+  "aspects": {
+    "ordo": 80,
+    "permutatio": 60
+  },
+  "components": [
+    { "item": "minecraft:enchanted_book" },
+    { "item": "arcaneresearch:salis_mundus" }
+  ]
+}
