@@ -1,9 +1,0 @@
-{
-    "variants": {
-        "type=push": { "model": "arcaneresearch:block/aura_totem_push" },
-        "type=pull": { "model": "arcaneresearch:block/aura_totem_pull" },
-        "type=pole_outer": { "model": "arcaneresearch:block/aura_totem_pole_outer" },
-        "type=pole_inner": { "model": "arcaneresearch:block/aura_totem_pole_inner" },
-        "type=pole_pure": { "model": "arcaneresearch:block/aura_totem_pole_pure" }
-    }
-}

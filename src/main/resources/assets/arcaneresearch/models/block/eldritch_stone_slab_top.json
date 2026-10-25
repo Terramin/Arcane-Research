@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "arcaneresearch:block/eldritch_stone_1",
-    "top": "arcaneresearch:block/eldritch_stone_1",
-    "side": "arcaneresearch:block/eldritch_stone_1"
-  }
-}

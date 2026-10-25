@@ -1,6 +1,0 @@
-{
-    "parent": "arcaneresearch:item/bone_bow",
-    "textures": {
-        "layer0": "arcaneresearch:item/bonebow_pulling_0"
-    }
-}

@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "bottom": "arcaneresearch:block/levitator_bottom",
-    "top": "arcaneresearch:block/levitator_top_off",
-    "side": "arcaneresearch:block/levitator_side_off"
-  }
-}

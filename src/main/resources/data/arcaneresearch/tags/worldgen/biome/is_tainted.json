@@ -1,5 +1,0 @@
-{
-  "replace": false,
-  "values": [],
-  "comment": "Original Thaumcraft 6 had no tainted biome - taint spreads as blocks/entities, not biome. This tag is kept for compatibility with isTaintedBiome() checks."
-}

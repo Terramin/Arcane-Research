@@ -1,8 +1,0 @@
-{
-    "parent": "block/inner_stairs",
-    "textures": {
-        "bottom": "arcaneresearch:block/ancient_tile",
-        "top": "arcaneresearch:block/ancient_tile",
-        "side": "arcaneresearch:block/ancient_tile"
-    }
-}

@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "arcaneresearch:item/celestial/sheet",
-    "layer1": "arcaneresearch:item/celestial/stars3"
-  }
-}

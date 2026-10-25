@@ -1,6 +1,0 @@
-{
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "arcaneresearch:block/base_wood_grain"
-    }
-}

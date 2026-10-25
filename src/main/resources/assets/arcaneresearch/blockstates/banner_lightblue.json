@@ -1,7 +1,0 @@
-{
-    "variants": {
-        "inventory": { "model": "arcaneresearch:banner" }, 
-        "normal": { "model": "arcaneresearch:banner" }
-    }
-
-}

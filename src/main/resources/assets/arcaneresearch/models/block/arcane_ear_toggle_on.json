@@ -1,8 +1,0 @@
-{
-  "parent": "arcaneresearch:block/arcane_ear_on",
-  "ambientocclusion": false,
-  "textures": {
-    "particle": "arcaneresearch:block/arcane_ear_toggle_on",
-    "side": "arcaneresearch:block/arcane_ear_toggle_on"
-  }
-}

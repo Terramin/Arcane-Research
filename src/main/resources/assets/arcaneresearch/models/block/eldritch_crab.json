@@ -1,7 +1,0 @@
-{
-    "parent": "minecraft:block/cube_all",
-    "textures": {
-        "all": "arcaneresearch:block/eldritch_stone_2",
-        "particle": "arcaneresearch:block/eldritch_stone_2"
-    }
-}
