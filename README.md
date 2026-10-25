@@ -22,12 +22,14 @@ The repository sources live in version-specific branches:
 | Version | Branch | Source code |
 |---|---|---|
 | Forge 1.20.1 | [`forge/1.20.1`](https://github.com/Terramin/Arcane-Research/tree/forge/1.20.1) | [Browse](https://github.com/Terramin/Arcane-Research/tree/forge/1.20.1/src) |
+| Forge 1.20.1 (addon thaumictinker in dev)| [`forge/1.20.1`](https://github.com/Terramin/Arcane-Research/tree/forge/thaumictinker/1.20.1) | [Browse](https://github.com/Terramin/Arcane-Research/tree/forge/thaumictinker/1.20.1/src) |
 | NeoForge 26.3 | [`neoforge/26.3`](https://github.com/Terramin/Arcane-Research/tree/neoforge/26.3) | [Browse](https://github.com/Terramin/Arcane-Research/tree/neoforge/26.3/src) |
 
 Clone a specific branch:
 
 ```sh
 git clone -b forge/1.20.1 https://github.com/Terramin/Arcane-Research.git
+git clone -b forge/thaumictinker/1.20.1 https://github.com/Terramin/Arcane-Research.git
 git clone -b neoforge/26.3 https://github.com/Terramin/Arcane-Research.git
 ```
 
