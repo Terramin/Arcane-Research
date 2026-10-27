@@ -21,18 +21,11 @@ public class WandCap {
     public static LinkedHashMap<String, WandCap> caps = new LinkedHashMap<>();
 
     public WandCap(String tag, float discount, int charge, ItemStack item, int craftCost, Identifier texture) {
-        setTag(tag);
-        this.baseCostModifier = discount;
-        this.specialCostModifierAspects = null;
-        this.texture = texture;
-        this.item = item;
-        this.chargeBonus = charge;
-        setCraftCost(craftCost);
-        caps.put(tag, this);
+        this(tag, discount, charge, null, discount, item, craftCost, texture);
     }
 
     public WandCap(String tag, float discount, int charge, List<Aspect> specialAspects, float discountSpecial,
-            ItemStack item, int craftCost, Identifier texture) {
+                   ItemStack item, int craftCost, Identifier texture) {
         setTag(tag);
         this.baseCostModifier = discount;
         this.specialCostModifierAspects = specialAspects;

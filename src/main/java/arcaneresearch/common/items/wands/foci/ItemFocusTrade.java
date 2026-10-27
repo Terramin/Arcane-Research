@@ -1,6 +1,5 @@
 package arcaneresearch.common.items.wands.foci;
 
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -27,6 +26,7 @@ import arcaneresearch.api.wands.ItemFocusBasic;
 import arcaneresearch.common.items.wands.WandManager;
 import arcaneresearch.common.lib.events.ServerEvents;
 import arcaneresearch.common.lib.utils.BlockUtils;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 
@@ -137,7 +137,7 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
     
     
     @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
+    public boolean onEntitySwing(@NonNull ItemStack stack, LivingEntity entity, @NonNull InteractionHand hand) {
         if (entity.level().isClientSide() || !(entity instanceof Player player)) {
             return false;
         }
@@ -157,9 +157,7 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
             
             
             CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
-            ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), picked.copy()).result().ifPresent(encoded -> {
-                root.put("picked", encoded);
-            });
+            ItemStack.CODEC.encodeStart(arcaneresearch.common.lib.utils.RegistryNbt.ops(), picked.copy()).result().ifPresent(encoded -> root.put("picked", encoded));
             ArcaneresearchInvHelper.setCustomTag(stack, root);
         }
     }
@@ -277,27 +275,14 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
 
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
-        switch (rank) {
-            case 1:
-            case 2:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.enlarge};
-            case 3:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.enlarge,
-                        FocusUpgradeType.treasure, FocusUpgradeType.architect};
-            case 4:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.enlarge};
-            case 5:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.enlarge,
-                        FocusUpgradeType.silktouch};
-            default:
-                break;
-        }
-        return null;
-    }
-
-    @Override
-    public boolean onFocusBlockStartBreak(ItemStack wandstack, BlockPos pos, Player player) {
-        return false;
+        return switch (rank) {
+            case 1, 2, 4 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.enlarge};
+            case 3 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.enlarge,
+                    FocusUpgradeType.treasure, FocusUpgradeType.architect};
+            case 5 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.enlarge,
+                    FocusUpgradeType.silktouch};
+            default -> null;
+        };
     }
 
     @Override

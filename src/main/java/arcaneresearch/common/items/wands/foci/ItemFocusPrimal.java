@@ -18,10 +18,30 @@ import arcaneresearch.common.lib.wands.WandSounds;
 import java.util.Random;
 
 public class ItemFocusPrimal extends ItemFocusBasic {
-    public static FocusUpgradeType seeker = new FocusUpgradeType(
+    public static final FocusUpgradeType seeker = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/seeker.png"),
             "focus.upgrade.seeker.name", "focus.upgrade.seeker.text",
             new AspectList().add(Aspect.SENSES, 1).add(Aspect.MIND, 1));
+
+    private static final long COST_WINDOW_MS = 200L;
+    private static long cachedWindow = -1L;
+    private static AspectList cachedCost = null;
+
+    private static synchronized AspectList getWindowCost() {
+        long window = System.currentTimeMillis() / COST_WINDOW_MS;
+        if (window != cachedWindow) {
+            cachedWindow = window;
+            Random rand = new Random(window);
+            cachedCost = new AspectList()
+                    .add(Aspect.WATER, 10 + rand.nextInt(5) * 2)
+                    .add(Aspect.AIR, 10 + rand.nextInt(5) * 2)
+                    .add(Aspect.EARTH, 10 + rand.nextInt(5) * 2)
+                    .add(Aspect.FIRE, 10 + rand.nextInt(5) * 2)
+                    .add(Aspect.ORDER, 10 + rand.nextInt(5) * 2)
+                    .add(Aspect.ENTROPY, 10 + rand.nextInt(5) * 2);
+        }
+        return cachedCost.copy();
+    }
 
     public ItemFocusPrimal(net.minecraft.world.item.Item.Properties props) {
         super("primal", 10854849, props);
@@ -29,10 +49,7 @@ public class ItemFocusPrimal extends ItemFocusBasic {
 
     @Override
     public AspectList getVisCost(ItemStack focusstack) {
-        Random rand = new Random(System.currentTimeMillis() / 200L);
-        return new AspectList().add(Aspect.WATER, 10 + rand.nextInt(5) * 2).add(Aspect.AIR, 10 + rand.nextInt(5) * 2)
-                .add(Aspect.EARTH, 10 + rand.nextInt(5) * 2).add(Aspect.FIRE, 10 + rand.nextInt(5) * 2)
-                .add(Aspect.ORDER, 10 + rand.nextInt(5) * 2).add(Aspect.ENTROPY, 10 + rand.nextInt(5) * 2);
+        return getWindowCost();
     }
 
     @Override
@@ -50,32 +67,29 @@ public class ItemFocusPrimal extends ItemFocusBasic {
         if (!(wandstack.getItem() instanceof IWand wand)) {
             return false;
         }
-        if (!level.isClientSide()) {
-            EntityPrimalOrb orb = new EntityPrimalOrb(WandEntities.PRIMAL_ORB.get(), level, entity,
-                    isUpgradedWith(wand.getFocusStack(wandstack), seeker));
-            orb.setPos(entity.getX(), entity.getEyeY() - 0.1D, entity.getZ());
-            orb.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 1.5F, 1.0F);
-            level.addFreshEntity(orb);
-            level.playSound(null, orb.blockPosition(), WandSounds.ice(), SoundSource.PLAYERS, 0.3F,
-                    0.8F + level.getRandom().nextFloat() * 0.1F);
+        if (level.isClientSide()) {
+            return true;
         }
+        if (!WandEntities.PRIMAL_ORB.isBound()) {
+            return false;
+        }
+
+        EntityPrimalOrb orb = new EntityPrimalOrb(WandEntities.PRIMAL_ORB.get(), level, entity,
+                isUpgradedWith(wand.getFocusStack(wandstack), seeker));
+        orb.setPos(entity.getX(), entity.getEyeY() - 0.1D, entity.getZ());
+        orb.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 1.5F, 1.0F);
+        level.addFreshEntity(orb);
+        level.playSound(null, entity.blockPosition(), WandSounds.ice(), SoundSource.PLAYERS, 0.3F,
+                0.8F + level.getRandom().nextFloat() * 0.1F);
         return true;
     }
 
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
-        switch (rank) {
-            case 1:
-            case 2:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal};
-            case 3:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, seeker};
-            case 4:
-            case 5:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal};
-            default:
-                break;
-        }
-        return null;
+        return switch (rank) {
+            case 1, 2, 4, 5 -> new FocusUpgradeType[]{FocusUpgradeType.frugal};
+            case 3 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, seeker};
+            default -> null;
+        };
     }
 }

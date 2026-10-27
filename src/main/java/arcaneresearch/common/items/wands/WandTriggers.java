@@ -1,5 +1,4 @@
 package arcaneresearch.common.items.wands;
-import arcaneresearch.common.lib.aura.EldritchOculusRitual;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,7 +43,7 @@ public class WandTriggers implements IWandTriggerManager {
                     net.minecraft.world.level.block.Blocks.OBSIDIAN.defaultBlockState());
         } catch (Exception ignored) {
         }
-        
+
         try {
             WandTriggerRegistry.registerWandBlockTrigger(new WandTriggers(), 6,
                     arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_ALTAR.get().defaultBlockState());
@@ -62,9 +61,8 @@ public class WandTriggers implements IWandTriggerManager {
         return state;
     }
 
-    private static void sendBamf(Level level, BlockPos pos, int color, boolean sound, boolean flair) {
-        
-        PacketHandler.sendToNear(new PacketFXBlockBamf(pos, color, sound, flair, null),
+    private static void sendBamf(Level level, BlockPos pos, int color, boolean sound) {
+        PacketHandler.sendToNear(new PacketFXBlockBamf(pos, color, sound, true, null),
                 level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 32.0D);
     }
 
@@ -163,7 +161,7 @@ public class WandTriggers implements IWandTriggerManager {
         } catch (Exception ignored) {
         }
         level.addFreshEntity(dropped);
-        sendBamf(level, pos, -9999, true, true);
+        sendBamf(level, pos, -9999, true);
         level.playSound(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, WandSounds.wand(),
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         return true;
@@ -181,7 +179,7 @@ public class WandTriggers implements IWandTriggerManager {
         }
         level.removeBlock(pos, false);
         level.setBlockAndUpdate(pos, crucible.defaultBlockState());
-        sendBamf(level, pos, -9999, true, true);
+        sendBamf(level, pos, -9999, true);
         level.playSound(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, WandSounds.wand(),
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         return true;
@@ -256,9 +254,8 @@ public class WandTriggers implements IWandTriggerManager {
         setBlockSparkle(level, pos.offset(1, -1, -1), Blocks.BEDROCK.defaultBlockState());
         setBlockSparkle(level, pos.offset(1, -1, 1), Blocks.BEDROCK.defaultBlockState());
         setBlockSparkle(level, pos.offset(-1, -1, 1), Blocks.BEDROCK.defaultBlockState());
-        
-        
-        
+
+
         setBlockSparkle(level, pos.offset(-1, -2, -1),
                 withIfHas(pillar.defaultBlockState(), arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.EAST));
         setBlockSparkle(level, pos.offset(1, -2, -1),
@@ -273,18 +270,18 @@ public class WandTriggers implements IWandTriggerManager {
             matrix.setChanged();
             level.sendBlockUpdated(pos, first, level.getBlockState(pos), 3);
         }
-        sendBamf(level, pos, -9999, true, true);
+        sendBamf(level, pos, -9999, true);
         level.playSound(null, pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D, WandSounds.wand(),
                 SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
     private static void setBlockSparkle(Level level, BlockPos pos, BlockState state) {
         level.setBlockAndUpdate(pos, state);
-        sendBamf(level, pos, -9999, false, true);
+        sendBamf(level, pos, -9999, false);
     }
 
     public static boolean createThaumatorium(ItemStack stack, Player player, Level level, BlockPos pos,
-                                              Direction side) {
+                                             Direction side) {
         if (!(stack.getItem() instanceof IWand wand)) {
             return false;
         }
@@ -325,14 +322,14 @@ public class WandTriggers implements IWandTriggerManager {
         BlockState oldTop = level.getBlockState(pos.above());
         level.setBlock(pos, base, 0);
         level.setBlock(pos.above(), top, 0);
-        
-        
+
+
         level.neighborChanged(pos, thaumatorium, null);
         level.neighborChanged(pos.above(), thaumatorium, null);
         level.sendBlockUpdated(pos, oldBase, base, 0);
         level.sendBlockUpdated(pos.above(), oldTop, top, 0);
-        sendBamf(level, pos, -9999, true, true);
-        sendBamf(level, pos.above(), -9999, true, true);
+        sendBamf(level, pos, -9999, true);
+        sendBamf(level, pos.above(), -9999, true);
         level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), WandSounds.wand(), SoundSource.PLAYERS, 1.0F,
                 1.0F);
         return true;
@@ -435,7 +432,7 @@ public class WandTriggers implements IWandTriggerManager {
     }
 
     private static boolean createOculus(ItemStack stack, Player player, Level level, BlockPos pos) {
-        
+
         return arcaneresearch.common.lib.aura.EldritchOculusRitual.createOculus(stack, player, level, pos);
     }
 
@@ -455,7 +452,7 @@ public class WandTriggers implements IWandTriggerManager {
 
     @Override
     public boolean performTrigger(Level level, ItemStack wand, Player player, BlockPos pos, Direction side,
-                                   int event) {
+                                  int event) {
         switch (event) {
             case 0:
                 return createThaumonomicon(wand, player, level, pos);

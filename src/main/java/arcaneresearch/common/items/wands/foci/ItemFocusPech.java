@@ -16,11 +16,12 @@ import arcaneresearch.common.entities.projectile.EntityPechBlast;
 import arcaneresearch.common.lib.wands.WandSounds;
 
 public class ItemFocusPech extends ItemFocusBasic {
+
     private static final AspectList COST = new AspectList().add(Aspect.EARTH, 2).add(Aspect.ENTROPY, 2).add(Aspect.WATER, 2);
     private static final AspectList COST_ALL = new AspectList().add(Aspect.AIR, 1).add(Aspect.FIRE, 1)
             .add(Aspect.EARTH, 1).add(Aspect.ORDER, 1).add(Aspect.ENTROPY, 1).add(Aspect.WATER, 1);
 
-    public static FocusUpgradeType nightshade = new FocusUpgradeType(
+    public static final FocusUpgradeType nightshade = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/nightshade.png"),
             "focus.upgrade.nightshade.name", "focus.upgrade.nightshade.text",
             new AspectList().add(Aspect.LIFE, 1).add(Aspect.FLUX, 1).add(Aspect.ENERGY, 1));
@@ -57,35 +58,30 @@ public class ItemFocusPech extends ItemFocusBasic {
         if (level.isClientSide()) {
             return true;
         }
+
+        ItemStack focusStack = wand.getFocusStack(wandstack);
+        int potency = wand.getFocusPotency(wandstack);
+        int extend = wand.getFocusExtend(wandstack);
+        boolean nightshadeOn = isUpgradedWith(focusStack, nightshade);
+
         EntityPechBlast blast = new EntityPechBlast(WandEntities.PECH_BLAST.get(), level, entity,
-                wand.getFocusPotency(wandstack), wand.getFocusExtend(wandstack),
-                isUpgradedWith(wand.getFocusStack(wandstack), nightshade));
+                potency, extend, nightshadeOn);
         blast.setPos(entity.getX(), entity.getEyeY() - 0.1D, entity.getZ());
         blast.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 1.5F, 1.0F);
         level.addFreshEntity(blast);
-        level.playSound(null, blast.blockPosition(), WandSounds.ice(), SoundSource.PLAYERS, 0.4F,
+        level.playSound(null, entity.blockPosition(), WandSounds.ice(), SoundSource.PLAYERS, 0.4F,
                 1.0F + level.getRandom().nextFloat() * 0.1F);
         return true;
     }
 
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
-        switch (rank) {
-            case 1:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
-            case 2:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.extend};
-            case 3:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
-            case 4:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.extend};
-            case 5:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, nightshade};
-            default:
-                break;
-        }
-        return null;
+        return switch (rank) {
+            case 1, 3 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
+            case 2, 4 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
+                    FocusUpgradeType.extend};
+            case 5 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, nightshade};
+            default -> null;
+        };
     }
 }

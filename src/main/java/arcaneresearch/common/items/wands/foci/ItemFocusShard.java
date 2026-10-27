@@ -17,13 +17,19 @@ import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.common.lib.wands.WandTargets;
 
 public class ItemFocusShard extends ItemFocusBasic {
+
     private static final AspectList COST = new AspectList().add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(Aspect.AIR, 1);
     private static final AspectList COST_P = new AspectList().add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(Aspect.WATER, 1).add(Aspect.AIR, 1);
 
-    public static FocusUpgradeType persistant = new FocusUpgradeType(
+    public static final FocusUpgradeType persistant = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/persistant.png"),
             "focus.upgrade.persistant.name", "focus.upgrade.persistant.text",
             new AspectList().add(Aspect.PROTECT, 1).add(Aspect.AVERSION, 1).add(Aspect.ENERGY, 1));
+
+    private static final FocusUpgradeType[] RANK_1_TO_4 = {
+            FocusUpgradeType.frugal, FocusUpgradeType.potency};
+    private static final FocusUpgradeType[] RANK_5 = {
+            FocusUpgradeType.frugal, FocusUpgradeType.potency, persistant};
 
     public ItemFocusShard(net.minecraft.world.item.Item.Properties props) {
         super("shard", 10037693, props);
@@ -31,10 +37,7 @@ public class ItemFocusShard extends ItemFocusBasic {
 
     @Override
     public AspectList getVisCost(ItemStack focusstack) {
-        if (isUpgradedWith(focusstack, persistant)) {
-            return COST_P.copy();
-        }
-        return COST.copy();
+        return isUpgradedWith(focusstack, persistant) ? COST_P.copy() : COST.copy();
     }
 
     @Override
@@ -53,35 +56,32 @@ public class ItemFocusShard extends ItemFocusBasic {
             return false;
         }
         Entity pointed = WandTargets.getPointedEntity(level, entity, 0.0D, 32.0D, 1.1F);
-        if (pointed instanceof LivingEntity target) {
-            if (!level.isClientSide()) {
-                EntityHomingShard blast = new EntityHomingShard(level, entity,
-                        target, wand.getFocusPotency(wandstack),
-                        isUpgradedWith(wand.getFocusStack(wandstack), persistant));
-                blast.setPos(entity.getX(), entity.getEyeY() - 0.1D, entity.getZ());
-                blast.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 1.5F, 1.0F);
-                level.addFreshEntity(blast);
-                level.playSound(null, blast.blockPosition(), WandSounds.scan(), SoundSource.PLAYERS, 0.3F,
-                        1.1F + level.getRandom().nextFloat() * 0.1F);
-            }
+        if (!(pointed instanceof LivingEntity target)) {
+            return false;
+        }
+        if (level.isClientSide()) {
             return true;
         }
-        return false;
+
+        ItemStack focusStack = wand.getFocusStack(wandstack);
+        int potency = wand.getFocusPotency(wandstack);
+        boolean persistentOn = isUpgradedWith(focusStack, persistant);
+
+        EntityHomingShard blast = new EntityHomingShard(level, entity, target, potency, persistentOn);
+        blast.setPos(entity.getX(), entity.getEyeY() - 0.1D, entity.getZ());
+        blast.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 1.5F, 1.0F);
+        level.addFreshEntity(blast);
+        level.playSound(null, entity.blockPosition(), WandSounds.scan(), SoundSource.PLAYERS, 0.3F,
+                1.1F + level.getRandom().nextFloat() * 0.1F);
+        return true;
     }
 
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
-        switch (rank) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
-            case 5:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, persistant};
-            default:
-                break;
-        }
-        return null;
+        return switch (rank) {
+            case 1, 2, 3, 4 -> RANK_1_TO_4;
+            case 5 -> RANK_5;
+            default -> null;
+        };
     }
 }

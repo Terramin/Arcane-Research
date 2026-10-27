@@ -74,11 +74,9 @@ public class ItemFocusShock extends ItemFocusBasic {
                 }
                 Vec3 tip = arcaneresearch.client.lib.events.WandTipHelper.tipWorld(
                         (Player) caster, partial);
-                if (tip != null) {
-                    px = tip.x;
-                    py = tip.y;
-                    pz = tip.z;
-                }
+                px = tip.x;
+                py = tip.y;
+                pz = tip.z;
             } catch (Throwable ignored) {
             }
         }
@@ -146,7 +144,6 @@ public class ItemFocusShock extends ItemFocusBasic {
     }
 
     public void doLightningBolt(ItemStack stack, LivingEntity caster, int count) {
-        
         if (!(stack.getItem() instanceof IWand wand)) {
             return;
         }
@@ -160,7 +157,7 @@ public class ItemFocusShock extends ItemFocusBasic {
             double py = caster.getBoundingBox().minY + caster.getBbHeight() / 2.0F + 0.25D
                     + look.y * 10.0D;
             double pz = caster.getZ() + look.z * 10.0D;
-            if (mop != null && mop.getType() == HitResult.Type.BLOCK) {
+            if (mop.getType() == HitResult.Type.BLOCK) {
                 px = mop.getLocation().x;
                 py = mop.getLocation().y;
                 pz = mop.getLocation().z;
@@ -189,13 +186,16 @@ public class ItemFocusShock extends ItemFocusBasic {
             shootLightning(level, caster, px, py, pz);
             return;
         }
+        net.minecraft.server.level.ServerLevel serverLevel =
+                (net.minecraft.server.level.ServerLevel) level;
         level.playSound(null, caster.blockPosition(), WandSounds.shock(), SoundSource.PLAYERS, 0.25F, 1.0F);
         if (pointed instanceof LivingEntity target
-                && (!(target instanceof Player) || !(caster instanceof Player)
-                
-                || (level instanceof net.minecraft.server.level.ServerLevel pvpLevel && pvpLevel.isPvpAllowed()))) {
+                && (!(target instanceof Player) || !(caster instanceof Player) || serverLevel.isPvpAllowed())) {
+
             int chain = getUpgradeLevel(wand.getFocusStack(stack), chainlightning) * 2;
-            target.hurt(caster.damageSources().lightningBolt(), (chain > 0 ? 6 : 4) + potency);
+            target.hurtServer(serverLevel, caster.damageSources().lightningBolt(),
+                    (chain > 0 ? 6 : 4) + potency);
+
             if (chain > 0) {
                 chain += getUpgradeLevel(wand.getFocusStack(stack), FocusUpgradeType.enlarge) * 2;
                 LivingEntity center = target;
@@ -206,12 +206,14 @@ public class ItemFocusShock extends ItemFocusBasic {
                     List<Entity> nearby = level.getEntitiesOfClass(Entity.class,
                             new AABB(center.getX() - 8.0D, center.getY() - 8.0D, center.getZ() - 8.0D,
                                     center.getX() + 8.0D, center.getY() + 8.0D, center.getZ() + 8.0D),
-                            e -> e instanceof LivingEntity && !hitIds.contains(e.getId()) && !e.isRemoved()
-                                    && !(e instanceof Player && caster instanceof Player
-                                    && (!(level instanceof net.minecraft.server.level.ServerLevel pvpLevel2) || !pvpLevel2.isPvpAllowed()))
-                                    
-                                    && !(e instanceof OwnableEntity own && own.getOwnerReference() != null
-                                    && own.getOwnerReference().getUUID() != null
+                            e -> e instanceof LivingEntity
+                                    && !hitIds.contains(e.getId())
+                                    && !e.isRemoved()
+                                    && !(e instanceof Player
+                                    && caster instanceof Player
+                                    && !serverLevel.isPvpAllowed())
+                                    && !(e instanceof OwnableEntity own
+                                    && own.getOwnerReference() != null
                                     && own.getOwnerReference().getUUID().equals(caster.getUUID())));
                     double best = Double.MAX_VALUE;
                     Entity closest = null;
@@ -222,19 +224,16 @@ public class ItemFocusShock extends ItemFocusBasic {
                             closest = e;
                         }
                     }
-                    if (closest == null) {
+                    if (!(closest instanceof LivingEntity livingClosest)) {
                         break;
                     }
                     PacketHandler.sendToNear(
                             new PacketFXZap(center.position(), closest.position(), 0xFFFFFF, 1.0F),
                             level, center.getX(), center.getY(), center.getZ(), 64.0D);
                     hitIds.add(closest.getId());
-                    closest.hurt(caster.damageSources().lightningBolt(), 4 + potency);
-                    if (closest instanceof LivingEntity living) {
-                        center = living;
-                    } else {
-                        break;
-                    }
+                    livingClosest.hurtServer(serverLevel,
+                            caster.damageSources().lightningBolt(), 4 + potency);
+                    center = livingClosest;
                 }
             }
         }
@@ -242,29 +241,19 @@ public class ItemFocusShock extends ItemFocusBasic {
 
     @Override
     public boolean canApplyUpgrade(ItemStack focusstack, Player player, FocusUpgradeType type, int rank) {
-        if (type.equals(FocusUpgradeType.enlarge) && !isUpgradedWith(focusstack, chainlightning)
-                && !isUpgradedWith(focusstack, earthshock)) {
-            return false;
-        }
-        return true;
+        return !type.equals(FocusUpgradeType.enlarge) || isUpgradedWith(focusstack, chainlightning)
+                || isUpgradedWith(focusstack, earthshock);
     }
 
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
-        switch (rank) {
-            case 1:
-            case 2:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
-            case 3:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, chainlightning,
-                        earthshock};
-            case 4:
-            case 5:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.enlarge};
-            default:
-                break;
-        }
-        return null;
+        return switch (rank) {
+            case 1, 2 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
+            case 3 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, chainlightning,
+                    earthshock};
+            case 4, 5 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
+                    FocusUpgradeType.enlarge};
+            default -> null;
+        };
     }
 }

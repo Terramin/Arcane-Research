@@ -9,8 +9,8 @@ import arcaneresearch.common.items.wands.foci.*;
 import arcaneresearch.common.lib.wands.WandRegistry;
 
 public class WandItems {
-    
-    
+
+
     public static final DeferredRegister.Items ITEMS =
             DeferredRegister.createItems(Arcaneresearch.MODID);
 
@@ -32,17 +32,16 @@ public class WandItems {
     public static final DeferredItem<Item> WAND_FOCUS_PECH = ITEMS.registerItem("wand_focus_pech", ItemFocusPech::new);
 
     public static final DeferredItem<Item> WAND_PECH_BLAST = ITEMS.registerItem("wand_pech_blast",
-            props -> new Item(props));
+            Item::new);
 
     private WandItems() {
     }
 
     public static ItemStack createWandStack() {
-        try {
-            return new ItemStack(WAND.get());
-        } catch (Exception e) {
-            return new ItemStack(new ItemWand(new Item.Properties()));
+        if (!WAND.isBound()) {
+            return ItemStack.EMPTY;
         }
+        return new ItemStack(WAND.get());
     }
 
     public static void initWands() {

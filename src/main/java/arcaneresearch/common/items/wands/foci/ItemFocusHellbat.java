@@ -23,19 +23,20 @@ import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.common.lib.wands.WandTargets;
 
 public class ItemFocusHellbat extends ItemFocusBasic {
+
     private static final AspectList COST_BASE = new AspectList().add(Aspect.FIRE, 10).add(Aspect.ENTROPY, 5).add(Aspect.AIR, 5);
     private static final AspectList COST_BOMB = new AspectList().add(Aspect.FIRE, 5).add(Aspect.ENTROPY, 10).add(Aspect.AIR, 5);
     private static final AspectList COST_DEVIL = new AspectList().add(Aspect.FIRE, 5).add(Aspect.ENTROPY, 5).add(Aspect.AIR, 5).add(Aspect.EARTH, 5);
 
-    public static FocusUpgradeType batbombs = new FocusUpgradeType(
+    public static final FocusUpgradeType batbombs = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/batbombs.png"),
             "focus.upgrade.batbombs.name", "focus.upgrade.batbombs.text",
             new AspectList().add(Aspect.ENERGY, 1).add(Aspect.TRAP, 1));
-    public static FocusUpgradeType devilbats = new FocusUpgradeType(
+    public static final FocusUpgradeType devilbats = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/devilbats.png"),
             "focus.upgrade.devilbats.name", "focus.upgrade.devilbats.text",
             new AspectList().add(Aspect.PROTECT, 1));
-    public static FocusUpgradeType vampirebats = new FocusUpgradeType(
+    public static final FocusUpgradeType vampirebats = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/vampirebats.png"),
             "focus.upgrade.vampirebats.name", "focus.upgrade.vampirebats.text",
             new AspectList().add(Aspect.DESIRE, 1).add(Aspect.LIFE, 1));
@@ -98,7 +99,7 @@ public class ItemFocusHellbat extends ItemFocusBasic {
 
                 bat.setPersistenceRequired();
                 if (level.addFreshEntity(bat)) {
-                    
+
                     level.levelEvent(null, 2004, new BlockPos((int) px, (int) py, (int) pz), 0);
                     level.playSound(null, bat.blockPosition(), WandSounds.ice(), SoundSource.PLAYERS, 0.2F,
                             0.95F + level.getRandom().nextFloat() * 0.1F);
@@ -114,27 +115,16 @@ public class ItemFocusHellbat extends ItemFocusBasic {
 
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
-        switch (rank) {
-            case 1:
-            case 2:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
-            case 3:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, batbombs, devilbats};
-            case 4:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
-            case 5:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, vampirebats};
-            default:
-                break;
-        }
-        return null;
+        return switch (rank) {
+            case 1, 2, 4 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency};
+            case 3 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, batbombs, devilbats};
+            case 5 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency, vampirebats};
+            default -> null;
+        };
     }
 
     @Override
     public boolean canApplyUpgrade(ItemStack focusstack, Player player, FocusUpgradeType type, int rank) {
-        if (type.equals(vampirebats) && !WandResearchHelper.isResearchComplete(player, "VAMPBAT")) {
-            return false;
-        }
-        return true;
+        return !type.equals(vampirebats) || WandResearchHelper.isResearchComplete(player, "VAMPBAT");
     }
 }

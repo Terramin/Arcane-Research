@@ -6,11 +6,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.CommonHooks;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
@@ -32,9 +31,10 @@ import arcaneresearch.common.lib.wands.WandSounds;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class ItemFocusExcavation extends ItemFocusBasic {
-    public static FocusUpgradeType dowsing = new FocusUpgradeType(
+    public static final FocusUpgradeType dowsing = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/dowsing.png"), "focus.upgrade.dowsing.name",
             "focus.upgrade.dowsing.text", new AspectList().add(Aspect.CRAFT, 1));
     static HashMap<String, Long> soundDelay = new HashMap<>();
@@ -45,6 +45,13 @@ public class ItemFocusExcavation extends ItemFocusBasic {
     static HashMap<String, Object> beam = new HashMap<>();
     public ItemFocusExcavation(net.minecraft.world.item.Item.Properties props) {
         super("excavate", 409606, props);
+    }
+
+    private static void resetTracker(String key) {
+        lastX.put(key, Integer.MAX_VALUE);
+        lastY.put(key, Integer.MAX_VALUE);
+        lastZ.put(key, Integer.MAX_VALUE);
+        breakcount.put(key, 0.0F);
     }
 
     @Override
@@ -73,22 +80,19 @@ public class ItemFocusExcavation extends ItemFocusBasic {
     }
 
     @Override
-    public int getActivationCooldown(ItemStack focusstack) {
-        return 0;
-    }
-
-    @Override
     public boolean onFocusActivation(ItemStack stack, Level level, LivingEntity caster, HitResult hit, int count) {
         if (!(stack.getItem() instanceof IWand wand) || !(caster instanceof Player player)) {
             return false;
         }
         String name = player.getName().getString();
         String key = (level.isClientSide() ? "R" : "S") + name;
-        soundDelay.putIfAbsent(key, 0L);
+        if (!level.isClientSide()) {
+            soundDelay.putIfAbsent(key, 0L);
+        }
         breakcount.putIfAbsent(key, 0.0F);
-        lastX.putIfAbsent(key, 0);
-        lastY.putIfAbsent(key, 0);
-        lastZ.putIfAbsent(key, 0);
+        lastX.putIfAbsent(key, Integer.MAX_VALUE);
+        lastY.putIfAbsent(key, Integer.MAX_VALUE);
+        lastZ.putIfAbsent(key, Integer.MAX_VALUE);
 
         BlockHitResult mop = BlockUtils.getTargetBlock(level, caster, false);
         Vec3 look = caster.getLookAngle();
@@ -96,15 +100,14 @@ public class ItemFocusExcavation extends ItemFocusBasic {
         double ty = caster.getY() + caster.getEyeHeight() + look.y * 10.0D;
         double tz = caster.getZ() + look.z * 10.0D;
         int impact = 0;
-        if (mop != null && mop.getType() == HitResult.Type.BLOCK) {
+        if (mop.getType() == HitResult.Type.BLOCK) {
             tx = mop.getLocation().x;
             ty = mop.getLocation().y;
             tz = mop.getLocation().z;
             impact = 5;
             if (!level.isClientSide() && soundDelay.get(key) < System.currentTimeMillis()) {
                 level.playSound(null, BlockPos.containing(tx, ty, tz),
-                        WandSounds.rumble(),
-                        net.minecraft.sounds.SoundSource.PLAYERS, 0.3F, 1.0F);
+                        WandSounds.rumble(), SoundSource.PLAYERS, 0.3F, 1.0F);
                 soundDelay.put(key, System.currentTimeMillis() + 1200L);
             }
         } else {
@@ -114,7 +117,7 @@ public class ItemFocusExcavation extends ItemFocusBasic {
             beam.put(key, WandFX.beamCont(level, caster, tx, ty, tz, 2, 65382,
                     false, impact > 0 ? 2.0F : 0.0F, beam.get(key), impact));
         }
-        if (mop != null && mop.getType() == HitResult.Type.BLOCK
+        if (mop.getType() == HitResult.Type.BLOCK
                 && player.mayUseItemAt(mop.getBlockPos(), mop.getDirection(), stack)) {
             BlockPos target = mop.getBlockPos();
             BlockState bs = level.getBlockState(target);
@@ -145,10 +148,7 @@ public class ItemFocusExcavation extends ItemFocusBasic {
                                 breakNeighbour(player, target, bs, stack);
                             }
                         }
-                        lastX.put(key, Integer.MAX_VALUE);
-                        lastY.put(key, Integer.MAX_VALUE);
-                        lastZ.put(key, Integer.MAX_VALUE);
-                        breakcount.put(key, 0.0F);
+                        resetTracker(key);
                     } else {
                         breakcount.put(key, bc + speed);
                     }
@@ -160,10 +160,7 @@ public class ItemFocusExcavation extends ItemFocusBasic {
                 }
             }
         } else {
-            lastX.put(key, Integer.MAX_VALUE);
-            lastY.put(key, Integer.MAX_VALUE);
-            lastZ.put(key, Integer.MAX_VALUE);
-            breakcount.put(key, 0.0F);
+            resetTracker(key);
         }
         return true;
     }
@@ -174,13 +171,10 @@ public class ItemFocusExcavation extends ItemFocusBasic {
             return false;
         }
         ServerLevel server = serverPlayer.level();
-        
-        
+
         var breakEvent = new net.neoforged.neoforge.event.level.block.BreakBlockEvent(
                 server, pos, bs, serverPlayer);
-        
-        
-        
+
         breakEvent.setCanceled(serverPlayer.blockActionRestricted(server, pos,
                 serverPlayer.gameMode.getGameModeForPlayer()));
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(breakEvent);
@@ -213,22 +207,17 @@ public class ItemFocusExcavation extends ItemFocusBasic {
         return true;
     }
 
-    boolean breakNeighbour(LivingEntity caster, BlockPos pos, BlockState bs, ItemStack stack) {
+    private boolean breakNeighbour(LivingEntity caster, BlockPos pos, BlockState bs, ItemStack stack) {
         if (!(caster instanceof Player player)) {
             return false;
         }
-        ArrayList<Direction> faces = new ArrayList<>();
-        faces.add(Direction.DOWN);
-        faces.add(Direction.EAST);
-        faces.add(Direction.NORTH);
-        faces.add(Direction.SOUTH);
-        faces.add(Direction.UP);
-        faces.add(Direction.WEST);
+        Level level = caster.level();
+        List<Direction> faces = new ArrayList<>(List.of(Direction.values()));
         Collections.shuffle(faces);
-        Collections.shuffle(faces);
+
         for (Direction dir : faces) {
-            if (caster.level().getBlockState(pos.relative(dir)) == bs
-                    && excavate(caster.level(), stack, player, bs, pos.relative(dir))) {
+            BlockPos target = pos.relative(dir);
+            if (level.getBlockState(target) == bs && excavate(level, stack, player, bs, target)) {
                 return true;
             }
         }
@@ -237,25 +226,16 @@ public class ItemFocusExcavation extends ItemFocusBasic {
 
     @Override
     public FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank) {
-        switch (rank) {
-            case 1:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.treasure};
-            case 2:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.enlarge};
-            case 3:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.treasure, dowsing};
-            case 4:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.enlarge};
-            case 5:
-                return new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
-                        FocusUpgradeType.treasure, FocusUpgradeType.silktouch};
-            default:
-                break;
-        }
-        return null;
+        return switch (rank) {
+            case 1 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
+                    FocusUpgradeType.treasure};
+            case 2, 4 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
+                    FocusUpgradeType.enlarge};
+            case 3 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
+                    FocusUpgradeType.treasure, dowsing};
+            case 5 -> new FocusUpgradeType[]{FocusUpgradeType.frugal, FocusUpgradeType.potency,
+                    FocusUpgradeType.treasure, FocusUpgradeType.silktouch};
+            default -> null;
+        };
     }
 }

@@ -176,7 +176,7 @@ public class ArcaneresearchApi {
 
     public static void registerObjectTag(String tagName, AspectList aspects) {
         try {
-            Identifier tagLoc = Identifier.parse(tagName);
+            Identifier tagLoc = Identifier.tryParse(tagName);
             net.minecraft.tags.TagKey<Item> tagKey = net.minecraft.tags.ItemTags.create(tagLoc);
             
             

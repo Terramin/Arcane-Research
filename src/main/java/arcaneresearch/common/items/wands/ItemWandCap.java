@@ -6,6 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import arcaneresearch.api.ArcaneresearchInvHelper;
 import arcaneresearch.api.wands.WandCap;
+import org.jspecify.annotations.NonNull;
 
 public class ItemWandCap extends Item {
     public static final String TAG = "cap";
@@ -15,7 +16,7 @@ public class ItemWandCap extends Item {
     }
 
     public static String getCapTag(ItemStack stack) {
-        
+
         CompoundTag root = ArcaneresearchInvHelper.getCustomTag(stack);
         if (root != null && root.contains(TAG)) {
             String tag = root.getStringOr(TAG, "");
@@ -28,10 +29,7 @@ public class ItemWandCap extends Item {
 
     public static WandCap getCap(ItemStack stack) {
         String tag = getCapTag(stack);
-        if (tag != null) {
-            return WandCap.caps.get(tag);
-        }
-        return null;
+        return tag != null ? WandCap.caps.get(tag) : null;
     }
 
     public static float getCapIndex(ItemStack stack) {
@@ -39,7 +37,7 @@ public class ItemWandCap extends Item {
         if (tag != null) {
             int i = 0;
             for (String key : WandCap.caps.keySet()) {
-                if (key.equals(tag)) {
+                if (tag.equals(key)) {
                     return (float) i;
                 }
                 i++;
@@ -49,19 +47,24 @@ public class ItemWandCap extends Item {
     }
 
     public static ItemStack createStack(WandCap cap) {
+        if (!WandItems.WAND_CAP.isBound()) {
+            return ItemStack.EMPTY;
+        }
+
         ItemStack stack = new ItemStack(WandItems.WAND_CAP.get());
         if (cap != null) {
-            CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
-            root.putString(TAG, cap.getTag());
-            ArcaneresearchInvHelper.setCustomTag(stack, root);
+            String capTag = cap.getTag();
+            if (capTag != null && !capTag.isEmpty()) {
+                CompoundTag root = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
+                root.putString(TAG, capTag);
+                ArcaneresearchInvHelper.setCustomTag(stack, root);
+            }
         }
         return stack;
     }
 
-    
-    
     @Override
-    public Component getName(ItemStack stack) {
+    public @NonNull Component getName(@NonNull ItemStack stack) {
         String tag = getCapTag(stack);
         if (tag != null) {
             return Component.translatable("item.arcaneresearch.wand_cap." + tag);
