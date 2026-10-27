@@ -1,7 +1,9 @@
 package arcaneresearch.discovered.scan;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -11,26 +13,35 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.discovered.table.HexNoteTableTile;
 import arcaneresearch.discovered.table.HexResearchTableMenu;
+
 public class MsgWalletRequest {
     public MsgWalletRequest() {
     }
+
     public MsgWalletRequest(FriendlyByteBuf buf) {
     }
+
     public void encode(FriendlyByteBuf buf) {
     }
+
     public static void handle(MsgWalletRequest msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            if (!ctx.get().getDirection().getReceptionSide().isServer()) {
+        NetworkEvent.Context context = ctx == null ? null : ctx.get();
+        if (context == null) {
+            return;
+        }
+        context.enqueueWork(() -> {
+            if (!context.getDirection().getReceptionSide().isServer()) {
                 return;
             }
-            ServerPlayer player = ctx.get().getSender();
+            ServerPlayer player = context.getSender();
             if (player == null) {
                 return;
             }
             push(player);
         });
-        ctx.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
+
     public static void push(ServerPlayer player) {
         if (player == null) {
             return;
@@ -43,11 +54,19 @@ public class MsgWalletRequest {
                 if (inv instanceof HexNoteTableTile tile) {
                     AspectList list = tile.getBonus();
                     if (list != null) {
-                        for (Aspect aspect : list.getAspects()) {
-                            if (aspect != null) {
+                        Aspect[] aspects = list.getAspects();
+                        if (aspects != null) {
+                            for (Aspect aspect : aspects) {
+                                if (aspect == null) {
+                                    continue;
+                                }
+                                String key = aspect.getTag();
+                                if (key == null) {
+                                    continue;
+                                }
                                 int amount = list.getAmount(aspect);
                                 if (amount > 0) {
-                                    bonus.put(aspect.getTag(), amount);
+                                    bonus.put(key, amount);
                                 }
                             }
                         }
@@ -56,7 +75,10 @@ public class MsgWalletRequest {
             }
         } catch (Exception ignored) {
         }
-        ScanNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                new MsgWalletSync(wallet, bonus));
+        try {
+            ScanNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                    new MsgWalletSync(wallet, bonus));
+        } catch (Exception ignored) {
+        }
     }
 }

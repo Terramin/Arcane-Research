@@ -1,5 +1,7 @@
 package arcaneresearch.discovered.client;
+
 import java.util.List;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
@@ -10,22 +12,34 @@ import arcaneresearch.discovered.table.MsgDupe;
 import arcaneresearch.discovered.table.MsgPlaceAspect;
 import arcaneresearch.init.ModSounds;
 import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
+
 @OnlyIn(Dist.CLIENT)
 public class HexTableInput {
     private final HexResearchTableScreen s;
+
     public HexTableInput(HexResearchTableScreen screen) {
         this.s = screen;
     }
+
     Aspect poolHit(double mx, double my) {
-        if (!s.hasTools()) {
+        if (s == null || !s.hasTools()) {
             return null;
         }
         List<Aspect> order = s.poolView();
-        int drawn = 0;
+        if (order == null) {
+            return null;
+        }
+        int skip = s.page * 5;
+        if (skip < 0) {
+            skip = 0;
+        }
+        int baseX = s.left + HexTableDraw.POOL_X;
+        int baseY = s.top + HexTableDraw.POOL_Y;
+        int idx = 0;
         int shown = 0;
         for (Aspect aspect : order) {
-            if (drawn < s.page * 5) {
-                drawn++;
+            if (idx < skip) {
+                idx++;
                 continue;
             }
             if (shown >= 25) {
@@ -33,19 +47,22 @@ public class HexTableInput {
             }
             int xx = shown / 5 * 16;
             int yy = shown % 5 * 16;
-            if (s.inZone(mx, my, s.left + HexTableDraw.POOL_X + xx,
-                    s.top + HexTableDraw.POOL_Y + yy, 16, 16)) {
-                if (s.shownAmount(aspect) + s.shownBonus(aspect) > 0) {
+            if (s.inZone(mx, my, baseX + xx, baseY + yy, 16, 16)) {
+                if (aspect != null && s.shownAmount(aspect) + s.shownBonus(aspect) > 0) {
                     return aspect;
                 }
                 return null;
             }
-            drawn++;
+            idx++;
             shown++;
         }
         return null;
     }
+
     public boolean mouseClicked(double mx, double my, int button) {
+        if (s == null) {
+            return false;
+        }
         s.refreshNote();
         if (button != 0) {
             return false;
@@ -74,7 +91,9 @@ public class HexTableInput {
             return true;
         }
         if (s.inZone(mx, my, s.left + 51, s.top + 121, 24, 8)) {
-            if (s.page < s.lastPage(s.poolView().size())) {
+            List<Aspect> pool = s.poolView();
+            int poolSize = pool == null ? 0 : pool.size();
+            if (s.page < s.lastPage(poolSize)) {
                 s.page++;
                 s.sfx(ModSounds.KEY.get(), 0.3F);
             }
@@ -100,7 +119,7 @@ public class HexTableInput {
             return true;
         }
         HexUtils.Hex hex = s.sheetHex(mx, my);
-        if (hex != null) {
+        if (hex != null && s.note != null) {
             HexEntry entry = s.note.hexEntries.get(hex.toString());
             if (entry != null && entry.type == 2) {
                 s.sfx(ModSounds.HH_ON.get(), 0.3F);
@@ -111,7 +130,11 @@ public class HexTableInput {
         }
         return false;
     }
+
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+        if (s == null) {
+            return false;
+        }
         if (s.dragging) {
             s.dragX = mx;
             s.dragY = my;
@@ -119,7 +142,11 @@ public class HexTableInput {
         }
         return false;
     }
+
     public boolean mouseReleased(double mx, double my, int button) {
+        if (s == null) {
+            return false;
+        }
         if (!s.dragging || button != 0) {
             return false;
         }
@@ -131,9 +158,12 @@ public class HexTableInput {
         }
         HexUtils.Hex hex = s.sheetHex(mx, my);
         if (hex != null) {
-            s.sfx(ModSounds.HH_ON.get(), 0.3F);
-            s.sfx(ModSounds.WRITE.get(), 0.2F);
-            HexTableNetwork.CHANNEL.sendToServer(new MsgPlaceAspect(hex.q, hex.r, drop.getTag()));
+            String tag = drop.getTag();
+            if (tag != null) {
+                s.sfx(ModSounds.HH_ON.get(), 0.3F);
+                s.sfx(ModSounds.WRITE.get(), 0.2F);
+                HexTableNetwork.CHANNEL.sendToServer(new MsgPlaceAspect(hex.q, hex.r, tag));
+            }
             return true;
         }
         if (s.inZone(mx, my, s.left + 4, s.top + 130, 32, 32)) {
@@ -154,10 +184,17 @@ public class HexTableInput {
         }
         return true;
     }
+
     private void doCombine() {
+        if (s == null) {
+            return;
+        }
         if (s.select1 != null && s.select2 != null) {
-            HexTableNetwork.CHANNEL.sendToServer(
-                    new MsgCombine(s.select1.getTag(), s.select2.getTag()));
+            String t1 = s.select1.getTag();
+            String t2 = s.select2.getTag();
+            if (t1 != null && t2 != null) {
+                HexTableNetwork.CHANNEL.sendToServer(new MsgCombine(t1, t2));
+            }
         }
         s.select1 = null;
         s.select2 = null;

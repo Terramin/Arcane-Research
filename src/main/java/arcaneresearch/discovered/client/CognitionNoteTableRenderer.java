@@ -1,4 +1,5 @@
 package arcaneresearch.discovered.client;
+
 import arcaneresearch.helper.IDsHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -12,10 +13,17 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.client.lib.UtilsFX;
+import arcaneresearch.client.models.block.ResearchTableModel;
+import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
+import arcaneresearch.helper.TintHelper;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class CognitionNoteTableRenderer implements BlockEntityRenderer<CognitionNoteTableTile> {
     private static final ResourceLocation QUILL_TEXTURE =
@@ -26,72 +34,118 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
             IDsHelper.mod("textures/misc/parchment.png");
     private static final ResourceLocation SCROLL_TEXTURE =
             IDsHelper.mod("textures/block/research_table_model.png");
-    private final arcaneresearch.client.models.block.ResearchTableModel scrollModel;
+
+    private final ResearchTableModel scrollModel;
+
     public CognitionNoteTableRenderer(BlockEntityRendererProvider.Context context) {
-        this.scrollModel = new arcaneresearch.client.models.block.ResearchTableModel(
-                context.bakeLayer(arcaneresearch.client.models.block.ResearchTableModel.LAYER_LOCATION));
+        ResearchTableModel model = null;
+        if (context != null) {
+            try {
+                var baked = context.bakeLayer(ResearchTableModel.LAYER_LOCATION);
+                model = new ResearchTableModel(baked);
+            } catch (Exception ignored) {
+            }
+        }
+        this.scrollModel = model;
     }
+
     @Override
-    public void render(CognitionNoteTableTile tile, float partialTicks, PoseStack poseStack,
-            MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        poseStack.pushPose();
-        poseStack.translate(0.5, 1.0, 0.5);
-        poseStack.mulPose(Axis.XP.rotationDegrees(180));
-        applyRotation(poseStack, tile.getBlockState().getValue(HorizontalDirectionalBlock.FACING));
-        poseStack.pushPose();
-        poseStack.mulPose(Axis.XP.rotationDegrees(180));
-        drawInkwell(poseStack, buffer, packedLight);
-        poseStack.translate(-0.28, 0.05, -0.28);
-        poseStack.mulPose(Axis.YP.rotationDegrees(60));
-        poseStack.translate(0.25f, 0.25f, 0.0f);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180));
-        poseStack.translate(-0.25f, -0.25f, 0.0f);
-        poseStack.scale(0.5f, 0.5f, 0.5f);
-        VertexConsumer quillBuffer = buffer.getBuffer(RenderType.entityTranslucent(QUILL_TEXTURE));
-        UtilsFX.renderItemIn2D(QUILL_TEXTURE, 0.0625f, quillBuffer, poseStack, packedLight);
-        poseStack.popPose();
+    public void render(@NotNull CognitionNoteTableTile tile, float partialTicks, @NotNull PoseStack poseStack,
+                       @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        Direction facing = Direction.NORTH;
         try {
-            ItemStack paper = tile.getItem(CognitionNoteTableTile.PAPER_SLOT);
-            if (paper != null && !paper.isEmpty()) {
-                for (int a = 0; a < 6; a++) {
-                    poseStack.pushPose();
-                    poseStack.translate(1.0F, -0.01F - a * 0.015F, 0.0F);
-                    poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(15 + a % 3 * 2));
-                    poseStack.scale(0.5F, 0.6F, 0.6F);
-                    UtilsFX.renderQuadCentered(poseStack, buffer, PARCHMENT_TEXTURE,
-                            1.0F, 1.0F, 1.0F, 1.0F, packedLight, 0, 1.0F);
-                    poseStack.popPose();
-                }
+            BlockState state = tile.getBlockState();
+            if (state.hasProperty(HorizontalDirectionalBlock.FACING)) {
+                facing = state.getValue(HorizontalDirectionalBlock.FACING);
             }
         } catch (Exception ignored) {
         }
+
+        poseStack.pushPose();
         try {
-            ItemStack note = tile.getItem(CognitionNoteTableTile.NOTE_SLOT);
+            poseStack.translate(0.5, 1.0, 0.5);
+            poseStack.mulPose(Axis.XP.rotationDegrees(180));
+            applyRotation(poseStack, facing);
+
+            poseStack.pushPose();
+            try {
+                poseStack.mulPose(Axis.XP.rotationDegrees(180));
+                try {
+                    drawInkwell(poseStack, buffer, packedLight);
+                } catch (Exception ignored) {
+                }
+                poseStack.translate(-0.28, 0.05, -0.28);
+                poseStack.mulPose(Axis.YP.rotationDegrees(60));
+                poseStack.translate(0.25f, 0.25f, 0.0f);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+                poseStack.translate(-0.25f, -0.25f, 0.0f);
+                poseStack.scale(0.5f, 0.5f, 0.5f);
+                try {
+                    VertexConsumer quillBuffer =
+                            buffer.getBuffer(RenderType.entityTranslucent(QUILL_TEXTURE));
+                    UtilsFX.renderItemIn2D(QUILL_TEXTURE, 0.0625f, quillBuffer, poseStack, packedLight);
+                } catch (Exception ignored) {
+                }
+            } finally {
+                poseStack.popPose();
+            }
+
+            ItemStack paper = null;
+            try {
+                paper = tile.getItem(CognitionNoteTableTile.PAPER_SLOT);
+            } catch (Exception ignored) {
+            }
+            if (paper != null && !paper.isEmpty()) {
+                for (int a = 0; a < 6; a++) {
+                    poseStack.pushPose();
+                    try {
+                        poseStack.translate(1.0F, -0.01F - a * 0.015F, 0.0F);
+                        poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+                        poseStack.mulPose(Axis.ZP.rotationDegrees(15 + a % 3 * 2));
+                        poseStack.scale(0.5F, 0.6F, 0.6F);
+                        UtilsFX.renderQuadCentered(poseStack, buffer, PARCHMENT_TEXTURE,
+                                1.0F, 1.0F, 1.0F, 1.0F, packedLight, 0, 1.0F);
+                    } catch (Exception ignored) {
+                    } finally {
+                        poseStack.popPose();
+                    }
+                }
+            }
+
+            ItemStack note = null;
+            try {
+                note = tile.getItem(CognitionNoteTableTile.NOTE_SLOT);
+            } catch (Exception ignored) {
+            }
             if (note != null && !note.isEmpty()
-                    && note.getItem() instanceof arcaneresearch.discovered.note.ItemDiscoveredResearchNote) {
+                    && note.getItem() instanceof ItemDiscoveredResearchNote
+                    && scrollModel != null) {
                 int color = 0xFFFFFF;
                 try {
-                    arcaneresearch.discovered.note.DiscoveredNoteData data =
-                            arcaneresearch.discovered.note.DiscoveredNoteData.read(note);
-                    color = arcaneresearch.helper.TintHelper.researchNoteColor(note, 1, data);
+                    DiscoveredNoteData data = DiscoveredNoteData.read(note);
+                    color = TintHelper.researchNoteColor(note, 1, data);
                 } catch (Exception ignored) {
                 }
                 float r = ((color >> 16) & 0xFF) / 255.0F;
                 float g = ((color >> 8) & 0xFF) / 255.0F;
                 float b = (color & 0xFF) / 255.0F;
                 poseStack.pushPose();
-                poseStack.translate(0.125, 0.0, -0.125);
-                VertexConsumer scrollBuffer =
-                        buffer.getBuffer(RenderType.entityCutout(SCROLL_TEXTURE));
-                scrollModel.renderScroll(poseStack, scrollBuffer, packedLight,
-                        packedOverlay, r, g, b, 1.0f);
-                poseStack.popPose();
+                try {
+                    poseStack.translate(0.125, 0.0, -0.125);
+                    VertexConsumer scrollBuffer =
+                            buffer.getBuffer(RenderType.entityCutout(SCROLL_TEXTURE));
+                    scrollModel.renderScroll(poseStack, scrollBuffer, packedLight,
+                            packedOverlay, r, g, b, 1.0f);
+                } catch (Exception ignored) {
+                } finally {
+                    poseStack.popPose();
+                }
             }
-        } catch (Exception ignored) {
+        } finally {
+            poseStack.popPose();
         }
-        poseStack.popPose();
     }
+
     private static void drawInkwell(PoseStack pose, MultiBufferSource buffer, int light) {
         double cx = -0.28125, cy = 0.0625, cz = -0.28125;
         double x0 = cx - 0.09375, x1 = cx + 0.09375;
@@ -99,28 +153,29 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         double z0 = cz - 0.09375, z1 = cz + 0.09375;
         VertexConsumer vc = buffer.getBuffer(RenderType.entityTranslucent(INKWELL_TEXTURE));
         face(vc, pose, light, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0,
-                0.375, 11.0, 0.75, 11.75, 0, 1, 0);
+                0.375, 11.0, 0.75, 0, 1, 0);
         face(vc, pose, light, x0, y0, z1, x0, y0, z0, x1, y0, z0, x1, y0, z1,
-                0.75, 11.0, 1.125, 11.75, 0, -1, 0);
+                0.75, 11.0, 1.125, 0, -1, 0);
         face(vc, pose, light, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1,
-                0.375, 12.25, 0.75, 11.75, 0, 0, 1);
+                0.375, 12.25, 0.75, 0, 0, 1);
         face(vc, pose, light, x1, y0, z0, x0, y0, z0, x0, y1, z0, x1, y1, z0,
-                1.125, 12.25, 1.5, 11.75, 0, 0, -1);
+                1.125, 12.25, 1.5, 0, 0, -1);
         face(vc, pose, light, x1, y0, z1, x1, y0, z0, x1, y1, z0, x1, y1, z1,
-                0.0, 12.25, 0.375, 11.75, 1, 0, 0);
+                0.0, 12.25, 0.375, 1, 0, 0);
         face(vc, pose, light, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0,
-                0.75, 12.25, 1.125, 11.75, -1, 0, 0);
+                0.75, 12.25, 1.125, -1, 0, 0);
     }
+
     private static void face(VertexConsumer vc, PoseStack pose, int light,
-            double x1, double y1, double z1, double x2, double y2, double z2,
-            double x3, double y3, double z3, double x4, double y4, double z4,
-            double u1, double v1, double u2, double v2,
-            float nx, float ny, float nz) {
+                             double x1, double y1, double z1, double x2, double y2, double z2,
+                             double x3, double y3, double z3, double x4, double y4, double z4,
+                             double u1, double v1, double u2,
+                             float nx, float ny, float nz) {
         org.joml.Matrix4f matrix = pose.last().pose();
         float uu1 = (float) (u1 / 16.0);
         float vv1 = (float) (v1 / 16.0);
         float uu2 = (float) (u2 / 16.0);
-        float vv2 = (float) (v2 / 16.0);
+        float vv2 = (float) (11.75 / 16.0);
         vc.vertex(matrix, (float) x1, (float) y1, (float) z1)
                 .color(1.0F, 1.0F, 1.0F, 1.0F).uv(uu1, vv1)
                 .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light)
@@ -138,7 +193,11 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
                 .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light)
                 .normal(nx, ny, nz).endVertex();
     }
+
     private static void applyRotation(PoseStack poseStack, Direction facing) {
+        if (facing == null) {
+            return;
+        }
         switch (facing) {
             case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(90));
             case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(180));

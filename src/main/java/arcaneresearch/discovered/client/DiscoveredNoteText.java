@@ -1,26 +1,40 @@
 package arcaneresearch.discovered.client;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
+
 public final class DiscoveredNoteText {
+    private static final Pattern IMG_PATTERN = Pattern.compile("(?is)<img\\b[^>]*>.*?</img>");
+    private static final Pattern BR_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
+    private static final Pattern WS_PATTERN = Pattern.compile("\\s+");
+
     private DiscoveredNoteText() {
     }
+
     public record Fit(List<FormattedCharSequence> lines, float scale) {
     }
+
     public static List<FormattedCharSequence> parchmentLines(Font font, Component desc,
-            boolean scrambled, int wrapWidth, int maxLines) {
+                                                             boolean scrambled, int wrapWidth, int maxLines) {
+        if (font == null) {
+            return new ArrayList<>();
+        }
         List<FormattedCharSequence> out = splitParas(font, desc, scrambled, wrapWidth);
         if (maxLines >= 0 && out.size() > maxLines) {
             return new ArrayList<>(out.subList(0, maxLines));
         }
         return out;
     }
+
     public static Fit parchmentFit(Font font, Component desc, boolean scrambled,
-            int baseWrap, float baseScale, float availH, float minScale) {
-        if (desc == null || availH <= 0.0F) {
+                                   int baseWrap, float baseScale, float availH, float minScale) {
+        if (font == null || desc == null || availH <= 0.0F) {
             return new Fit(List.of(), minScale);
         }
         int lh = font.lineHeight;
@@ -41,28 +55,46 @@ public final class DiscoveredNoteText {
                 hi = mid;
             }
         }
-        int maxFit = (int) (availH / (lh * lo));
+        float denom = lh * lo;
+        int maxFit = denom > 0.0F ? (int) (availH / denom) : Integer.MAX_VALUE;
+        if (maxFit < 0) {
+            maxFit = 0;
+        }
         if (best.size() > maxFit) {
-            best = new ArrayList<>(best.subList(0, Math.max(0, maxFit)));
+            best = new ArrayList<>(best.subList(0, maxFit));
         }
         return new Fit(best, lo);
     }
+
     private static int wrapFor(int baseWrap, float baseScale, float scale) {
-        return Math.min(512, Math.max(24, Math.round(baseWrap * baseScale / scale)));
+        if (!(scale > 0.0F)) {
+            return 512;
+        }
+        float w = baseWrap * baseScale / scale;
+        if (!(w > 0.0F)) {
+            return 24;
+        }
+        int rounded = Math.round(w);
+        return Math.min(512, Math.max(24, rounded));
     }
+
     private static List<FormattedCharSequence> splitParas(Font font, Component desc,
-            boolean scrambled, int wrapWidth) {
+                                                          boolean scrambled, int wrapWidth) {
         List<FormattedCharSequence> out = new ArrayList<>();
-        if (desc == null) {
+        if (font == null || desc == null) {
             return out;
         }
         String raw = desc.getString();
-        if (raw == null || raw.isEmpty()) {
+        if (raw.isEmpty()) {
             return out;
         }
-        raw = raw.replaceAll("(?is)<img\\b[^>]*>.*?</img>", " ");
-        for (String para : raw.split("(?i)<br\\s*/?>")) {
-            String text = para.strip().replaceAll("\\s+", " ");
+        raw = IMG_PATTERN.matcher(raw).replaceAll(" ");
+        String[] paras = BR_PATTERN.split(raw);
+        for (String para : paras) {
+            if (para == null) {
+                continue;
+            }
+            String text = WS_PATTERN.matcher(para.strip()).replaceAll(" ");
             if (text.isEmpty()) {
                 continue;
             }

@@ -1,4 +1,5 @@
 package arcaneresearch.discovered.note;
+
 import arcaneresearch.helper.IDsHelper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -15,25 +16,31 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
+
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.discovered.table.DiscoveredTableResearch;
 import arcaneresearch.discovered.table.DiscoveredTableSetup;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DiscoveredNoteSetup {
     public static final String NOTE_ID = "research_notes";
     public static final String DISCOVERY_ID = "discovery";
     private static Item noteItem;
     private static Item discoveryItem;
+
     public static Item getNoteItem() {
         return noteItem != null ? noteItem : Item.byId(0);
     }
+
     public static Item getDiscoveryItem() {
         return discoveryItem != null ? discoveryItem : Item.byId(0);
     }
+
     @SubscribeEvent
     public static void onRegisterItems(RegisterEvent event) {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS)) {
@@ -47,6 +54,7 @@ public class DiscoveredNoteSetup {
             discoveryItem = ForgeRegistries.ITEMS.getValue(IDsHelper.mod(DISCOVERY_ID));
         }
     }
+
     @SubscribeEvent
     public static void onCreativeTab(BuildCreativeModeTabContentsEvent event) {
         ResourceKey<CreativeModeTab> tab = ResourceKey.create(Registries.CREATIVE_MODE_TAB,
@@ -65,6 +73,7 @@ public class DiscoveredNoteSetup {
             }
         }
     }
+
     private static final List<String> NOTE_KEYS = Arrays.asList(
             "ALUMENTUM", "ARCANESPA", "BATHSALTS", "BOOTSTRAVELLER", "CENTRIFUGE",
             "FOCUSADVANCED", "FOCUSBOLT", "FOCUSBREAK", "FOCUSCLOUD", "FOCUSCURSE",
@@ -73,6 +82,7 @@ public class DiscoveredNoteSetup {
             "FOCUSSPELLBAT", "FOCUSSPLIT", "INFUSION", "INFUSIONBOOST", "INFUSIONSTABLE",
             "METALPURIFICATION", "POTIONSPRAYER", "RECHARGEPEDESTAL", "SANESOAP",
             "THAUMATORIUM", "VISAMULET", "VISBATTERY", "WORKBENCHCHARGER");
+
     private static ItemStack makeNote(String key) {
         AspectList required = DiscoveredTableResearch.requiredAspects(key);
         if (required == null || required.size() <= 0) {
@@ -80,6 +90,7 @@ public class DiscoveredNoteSetup {
         }
         return DiscoveredNotes.createNote(key, required);
     }
+
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void onItemColors(RegisterColorHandlersEvent.Item event) {
@@ -92,6 +103,7 @@ public class DiscoveredNoteSetup {
             event.register(tint, discoveryItem);
         }
     }
+
     private static int noteColor(ItemStack stack, int tintIndex) {
         try {
             return arcaneresearch.helper.TintHelper.researchNoteColor(
@@ -100,6 +112,7 @@ public class DiscoveredNoteSetup {
             return 0xFFFFFF;
         }
     }
+
     @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD,
             value = net.minecraftforge.api.distmarker.Dist.CLIENT)
     public static class ClientEvents {

@@ -1,8 +1,10 @@
 package arcaneresearch.discovered.client;
+
 import arcaneresearch.helper.GuiBlitHelper;
 import arcaneresearch.helper.IDsHelper;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -19,6 +21,8 @@ import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 import arcaneresearch.discovered.table.CognitionNoteTableMenu;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
+import org.jetbrains.annotations.NotNull;
+
 public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionNoteTableMenu> {
     private static final ResourceLocation BG =
             IDsHelper.mod("textures/gui/guiresearchtable.png");
@@ -26,30 +30,38 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             IDsHelper.mod("textures/misc/parchment.png");
     private static final ResourceLocation UNKNOWN_ICON =
             IDsHelper.mod("textures/aspects/_unknown.png");
+
     private float popupScale = 0.05F;
     private long buttonCooldown;
     private final List<int[]> coords = new ArrayList<>();
     private final List<Aspect> diagramTags = new ArrayList<>();
+    private final List<Float> diagramProgress = new ArrayList<>();
+    private ItemStack cachedNoteSource = ItemStack.EMPTY;
+    private DiscoveredNoteData cachedNoteData;
+
     public CognitionNoteTableScreen(CognitionNoteTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         imageWidth = 240;
         imageHeight = 242;
         inventoryLabelY = 148;
     }
+
     private boolean buttonActive() {
         return buttonCooldown <= System.currentTimeMillis() && isResearchActive();
     }
+
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(@NotNull GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         GuiBlitHelper.blit(graphics, BG, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
         GuiBlitHelper.blit(graphics, BG, leftPos + 76, topPos + 40, 241, buttonActive() ? 0 : 15, 15, 15, 256, 256);
-        GuiBlitHelper.blit(graphics, BG, leftPos + 51, topPos + 130, menu.isSafe() ? 109 : 87, 246, 29, 7, 256, 256);
+        boolean safe = menu.isSafe();
+        GuiBlitHelper.blit(graphics, BG, leftPos + 51, topPos + 130, safe ? 109 : 87, 246, 29, 7, 256, 256);
         int safeX = mouseX - leftPos - 51;
         int safeY = mouseY - topPos - 130;
         if (safeX >= 0 && safeY >= 0 && safeX < 29 && safeY < 7) {
-            String mode = menu.isSafe()
-                    ? Component.translatable("gui.arcaneresearch.cognition.cursory").getString()
-                    : Component.translatable("gui.arcaneresearch.cognition.thorough").getString();
+            String mode = Component.translatable(safe
+                    ? "gui.arcaneresearch.cognition.cursory"
+                    : "gui.arcaneresearch.cognition.thorough").getString();
             graphics.pose().pushPose();
             graphics.pose().translate(leftPos + 65.0F, topPos + 142.0F, 0.0F);
             graphics.pose().scale(0.65F, 0.65F, 1.0F);
@@ -62,53 +74,69 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             if (aspect == null) {
                 continue;
             }
-            float opacity = note != null && note.getFailed(aspect.getTag()) >= 10 ? 0.15F : 1.0F;
+            String tag = aspect.getTag();
+            float opacity = note != null && tag != null && note.getFailed(tag) >= 10 ? 0.15F : 1.0F;
             AspectRenderer.drawAspect(graphics, leftPos + 48, topPos + 32 + 16 * a,
                     aspect, menu.getTagAmount(a), (int) menu.getTagBonus(a), opacity, false);
         }
         drawResearchData(graphics, note, leftPos + 167, topPos + 76);
         drawPopup(graphics, mouseX, mouseY);
     }
+
     private DiscoveredNoteData noteData() {
         ItemStack note = menu.getNoteStack();
-        if (!(note.getItem() instanceof ItemDiscoveredResearchNote)) {
+        if (note == null || note.isEmpty() || !(note.getItem() instanceof ItemDiscoveredResearchNote)) {
+            cachedNoteSource = ItemStack.EMPTY;
+            cachedNoteData = null;
             return null;
         }
-        return DiscoveredNoteData.read(note);
+        if (!ItemStack.matches(note, cachedNoteSource)) {
+            cachedNoteSource = note.copy();
+            cachedNoteData = DiscoveredNoteData.read(note);
+        }
+        return cachedNoteData;
     }
+
     private void drawResearchData(GuiGraphics graphics, DiscoveredNoteData note, int x, int y) {
         coords.clear();
         diagramTags.clear();
+        diagramProgress.clear();
         if (note == null || note.key == null) {
             return;
         }
+        Aspect[] tags = note.tags;
+        if (tags == null) {
+            return;
+        }
         float total = note.getTotalProgress();
-        for (Aspect tag : note.tags) {
+        for (Aspect tag : tags) {
             if (tag == null) {
                 continue;
             }
             float progress = note.getTagProgress(tag);
             if (progress > 0.0F || total >= 0.5F) {
                 diagramTags.add(tag);
+                diagramProgress.add(progress);
             }
         }
         if (diagramTags.isEmpty()) {
             return;
         }
-        float slice = 360.0F / diagramTags.size();
+        int count = diagramTags.size();
+        float slice = 360.0F / count;
         float rotation = -90.0F;
-        for (Aspect tag : diagramTags) {
-            float radius = 15.0F + 40.0F * note.getTagProgress(tag);
+        for (int a = 0; a < count; a++) {
+            float progress = diagramProgress.get(a);
+            float radius = 15.0F + 40.0F * progress;
             int px = (int) (x + Mth.cos(rotation / 180.0F * Mth.PI) * radius) - 8;
             int py = (int) (y + Mth.sin(rotation / 180.0F * Mth.PI) * radius) - 8;
             rotation += slice;
             coords.add(new int[]{px, py});
         }
-        for (int a = 0; a < diagramTags.size(); a++) {
+        for (int a = 0; a < count; a++) {
             Aspect shown = diagramTags.get(a);
-            float progress = note.getTagProgress(shown);
-            if (progress < 0.3F && total < 0.75F
-                    || progress < 0.2F && total < 0.75F) {
+            float progress = diagramProgress.get(a);
+            if (progress < 0.3F && total < 0.75F) {
                 GuiBlitHelper.blit(graphics, UNKNOWN_ICON, coords.get(a)[0], coords.get(a)[1],
                         0, 0, 16, 16, 16, 16);
             } else {
@@ -116,13 +144,13 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
                         shown, 0, 0, 1.0F, false);
             }
         }
-        if (diagramTags.size() > 1) {
-            for (int a = 0; a < diagramTags.size(); a++) {
-                float instability = 1.0F - (note.getTagProgress(diagramTags.get(a)) + total) / 2.0F;
+        if (count > 1) {
+            for (int a = 0; a < count; a++) {
+                float instability = 1.0F - (diagramProgress.get(a) + total) / 2.0F;
                 int[] point = coords.get(a);
                 DiscoveredGuiLines.unstable(graphics, x, y, point[0] + 8, point[1] + 8, instability, 0.5F);
-                if (diagramTags.size() > 2) {
-                    for (int b = a + 1; b < diagramTags.size(); b++) {
+                if (count > 2) {
+                    for (int b = a + 1; b < count; b++) {
                         int[] other = coords.get(b);
                         DiscoveredGuiLines.unstable(graphics, other[0] + 8, other[1] + 8,
                                 point[0] + 8, point[1] + 8, instability, 0.5F);
@@ -130,8 +158,8 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
                 }
             }
         }
-        for (int a = 0; a < diagramTags.size(); a++) {
-            if (note.getTagProgress(diagramTags.get(a)) >= 1.0F) {
+        for (int a = 0; a < count; a++) {
+            if (diagramProgress.get(a) >= 1.0F) {
                 int px = coords.get(a)[0];
                 int py = coords.get(a)[1];
                 DiscoveredGuiLines.unstable(graphics, px - 1, py - 1, px - 1, py + 17, 0.3F, 1.0F);
@@ -141,6 +169,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             }
         }
     }
+
     private void drawPopup(GuiGraphics graphics, int mouseX, int mouseY) {
         int hx = mouseX - leftPos - 103;
         int hy = mouseY - topPos - 12;
@@ -158,12 +187,8 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         if (popupScale <= 0.05F) {
             return;
         }
-        ItemStack note = menu.getNoteStack();
-        if (!(note.getItem() instanceof ItemDiscoveredResearchNote)) {
-            return;
-        }
-        DiscoveredNoteData data = DiscoveredNoteData.read(note);
-        if (data.key == null) {
+        DiscoveredNoteData data = noteData();
+        if (data == null || data.key == null) {
             return;
         }
         Component desc = describe(data.key);
@@ -190,21 +215,23 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         }
         graphics.pose().popPose();
     }
+
     private boolean isResearchActive() {
-        ItemStack note = menu.getNoteStack();
-        boolean paper = menu.getSlot(CognitionNoteTableTile.PAPER_SLOT).hasItem();
         if (menu.getTagAspect(0) == null) {
             return false;
         }
-        if (note.isEmpty()) {
-            return paper;
+        ItemStack note = menu.getNoteStack();
+        if (note == null || note.isEmpty()) {
+            return menu.getSlot(CognitionNoteTableTile.PAPER_SLOT).hasItem();
         }
-        return note.getItem() instanceof ItemDiscoveredResearchNote
-                && !DiscoveredNoteData.read(note).isComplete();
+        DiscoveredNoteData data = noteData();
+        return data != null && !data.isComplete();
     }
+
     private Component describe(String key) {
         return DiscoveredNotes.researchText(key);
     }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0 && minecraft != null && minecraft.gameMode != null) {
@@ -225,8 +252,9 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
+
     @Override
-    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderTooltip(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderTooltip(graphics, mouseX, mouseY);
         int x = mouseX - leftPos;
         int y = mouseY - topPos;
@@ -240,11 +268,15 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             if (aspect == null) {
                 continue;
             }
+            String tag = aspect.getTag();
+            if (tag == null) {
+                continue;
+            }
             int ix = leftPos + 48;
             int iy = topPos + 32 + i * 16;
             if (mouseX >= ix && mouseX < ix + 16 && mouseY >= iy && mouseY < iy + 16) {
                 List<Component> lines = new ArrayList<>();
-                lines.add(Component.translatable("tc.aspect." + aspect.getTag()));
+                lines.add(Component.translatable("tc.aspect." + tag));
                 graphics.renderTooltip(font, lines, java.util.Optional.empty(), mouseX, mouseY);
             }
         }
@@ -252,13 +284,18 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         if (note == null || note.key == null) {
             return;
         }
-        for (int a = 0; a < diagramTags.size() && a < coords.size(); a++) {
+        int limit = Math.min(diagramTags.size(), coords.size());
+        for (int a = 0; a < limit; a++) {
             int mx = mouseX - coords.get(a)[0];
             int my = mouseY - coords.get(a)[1];
             if (mx >= 0 && my >= 0 && mx < 16 && my < 16) {
                 Aspect aspect = diagramTags.get(a);
+                String tag = aspect.getTag();
+                if (tag == null) {
+                    continue;
+                }
                 List<Component> lines = new ArrayList<>(
-                        List.of(Component.translatable("tc.aspect." + aspect.getTag())));
+                        List.of(Component.translatable("tc.aspect." + tag)));
                 float progress = note.getTagProgress(aspect);
                 if (progress > 0.333332F) {
                     lines.add(Component.literal(String.valueOf((int) (progress * 100.0F)))
@@ -268,11 +305,13 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             }
         }
     }
+
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
     }
+
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);

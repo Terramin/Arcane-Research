@@ -1,4 +1,5 @@
 package arcaneresearch.discovered.client;
+
 import arcaneresearch.helper.GuiBlitHelper;
 import arcaneresearch.helper.IDsHelper;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import arcaneresearch.discovered.table.HexResearchGame;
 import arcaneresearch.discovered.table.HexResearchNoteData;
 import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
 import arcaneresearch.discovered.table.HexUtils;
+
 @OnlyIn(Dist.CLIENT)
 public class HexTableDraw {
     static final ResourceLocation PARCHMENT =
@@ -44,8 +46,10 @@ public class HexTableDraw {
     static final int HEX = 9;
     static final int POOL_X = 10;
     static final int POOL_Y = 40;
+
     private static final java.text.DecimalFormat POOL_AMOUNT_FORMAT =
             new java.text.DecimalFormat("#######.##");
+
     private static class Rune {
         int q;
         int r;
@@ -53,18 +57,22 @@ public class HexTableDraw {
         long decay;
         int idx;
     }
+
     private final HexResearchTableScreen s;
     private final java.util.HashMap<String, HexUtils.Hex[]> lines = new java.util.HashMap<>();
     private final ArrayList<String> highlight = new ArrayList<>();
     private final java.util.HashMap<String, Rune> runes = new java.util.HashMap<>();
     private long lastRuneCheck;
+
     public HexTableDraw(HexResearchTableScreen screen) {
         this.s = screen;
     }
+
     void drawTableBackground(GuiGraphics graphics) {
         GuiBlitHelper.blit(graphics, TABLE_BG, s.left, s.top, 0, 0, 255, 167, 256, 256);
         GuiBlitHelper.blit(graphics, TABLE_BG, s.left + 40, s.top + 167, 0, 166, 184, 88, 256, 256);
     }
+
     void renderMenuSlots(GuiGraphics graphics, int mx, int my) {
         Slot hovered = null;
         for (Slot slot : s.slots()) {
@@ -88,13 +96,19 @@ public class HexTableDraw {
             }
         }
     }
+
     void renderCarried(GuiGraphics graphics, int mx, int my) {
-        ItemStack menuCarried = s.menu.getCarried();
-        if (!menuCarried.isEmpty()) {
-            graphics.renderItem(menuCarried, mx - 8, my - 8);
-            graphics.renderItemDecorations(s.font(), menuCarried, mx - 8, my - 8);
+        if (s.menu == null) {
+            return;
         }
+        ItemStack menuCarried = s.menu.getCarried();
+        if (menuCarried.isEmpty()) {
+            return;
+        }
+        graphics.renderItem(menuCarried, mx - 8, my - 8);
+        graphics.renderItemDecorations(s.font(), menuCarried, mx - 8, my - 8);
     }
+
     void drawDupe(GuiGraphics graphics) {
         if (s.note != null && s.note.complete) {
             RenderSystem.enableBlend();
@@ -102,42 +116,64 @@ public class HexTableDraw {
             GuiBlitHelper.blit(graphics, TABLE_BG, s.left + 37, s.top + 5, 232, 200, 24, 24, 256, 256);
         }
     }
+
     void drawPool(GuiGraphics graphics, int mx, int my) {
         if (!s.hasTools()) {
             return;
         }
         List<Aspect> order = s.poolView();
-        int drawn = 0;
+        if (order == null) {
+            return;
+        }
+        int skip = s.page * 5;
+        if (skip < 0) {
+            skip = 0;
+        }
+        int baseX = s.left + POOL_X;
+        int baseY = s.top + POOL_Y;
+        int idx = 0;
         int shown = 0;
         for (Aspect aspect : order) {
-            if (drawn < s.page * 5) {
-                drawn++;
+            if (idx < skip) {
+                idx++;
                 continue;
             }
             if (shown >= 25) {
                 break;
             }
-            int x = s.left + POOL_X + shown / 5 * 16;
-            int y = s.top + POOL_Y + shown % 5 * 16;
+            if (aspect == null) {
+                idx++;
+                shown++;
+                continue;
+            }
+            int x = baseX + shown / 5 * 16;
+            int y = baseY + shown % 5 * 16;
             int amount = s.shownAmount(aspect);
             int bonus = s.shownBonus(aspect);
             boolean faded = amount <= 0 && bonus <= 0;
             drawPoolTag(graphics, x, y, aspect, amount, bonus, faded ? 0.33F : 1.0F);
-            drawn++;
+            idx++;
             shown++;
         }
     }
+
     private void drawPoolTag(GuiGraphics graphics, int x, int y, Aspect aspect,
-            int amount, int bonus, float alpha) {
+                             int amount, int bonus, float alpha) {
+        if (aspect == null) {
+            return;
+        }
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         AspectRenderer.drawAspect(graphics, x, y, aspect, 0, 0, alpha, false);
+        if (amount <= 0 && bonus <= 0) {
+            return;
+        }
+        graphics.pose().pushPose();
+        graphics.pose().translate(x, y, 0.0F);
+        graphics.pose().scale(0.5F, 0.5F, 1.0F);
         if (amount > 0) {
             String text = POOL_AMOUNT_FORMAT.format(amount);
             int sw = s.font().width(text);
-            graphics.pose().pushPose();
-            graphics.pose().translate(x, y, 0.0F);
-            graphics.pose().scale(0.5F, 0.5F, 1.0F);
             int tx = 32 - sw;
             int ty = 32 - s.font().lineHeight;
             graphics.drawString(s.font(), text, tx - 1, ty, 0x000000, false);
@@ -145,18 +181,15 @@ public class HexTableDraw {
             graphics.drawString(s.font(), text, tx, ty - 1, 0x000000, false);
             graphics.drawString(s.font(), text, tx, ty + 1, 0x000000, false);
             graphics.drawString(s.font(), text, tx, ty, 0xFFFFFF, false);
-            graphics.pose().popPose();
         }
         if (bonus > 0) {
             String text = "+" + bonus;
-            graphics.pose().pushPose();
-            graphics.pose().translate(x, y, 0.0F);
-            graphics.pose().scale(0.5F, 0.5F, 1.0F);
             graphics.drawString(s.font(), text, 1, 1, 0x000000, false);
             graphics.drawString(s.font(), text, 0, 0, 0xFFFF00, false);
-            graphics.pose().popPose();
         }
+        graphics.pose().popPose();
     }
+
     void drawCombineUi(GuiGraphics graphics) {
         int bx = s.left + 35;
         int by = s.top + 139;
@@ -169,7 +202,9 @@ public class HexTableDraw {
         RenderSystem.blendFunc(770, 1);
         drawOrbSprite(graphics, bx + 8, by, rainbowOrb(orbTick(), bx, by));
         RenderSystem.defaultBlendFunc();
-        if (s.page < s.lastPage(s.poolView().size())) {
+        List<Aspect> pool = s.poolView();
+        int poolSize = pool == null ? 0 : pool.size();
+        if (s.page < s.lastPage(poolSize)) {
             GuiBlitHelper.blit(graphics, TABLE_BG, s.left + 51, s.top + 121, 208, 208, 24, 8, 256, 256);
         }
         if (s.page > 0) {
@@ -178,11 +213,13 @@ public class HexTableDraw {
         drawSelectSlot(graphics, s.left + 13, s.top + 139, s.select1);
         drawSelectSlot(graphics, s.left + 71, s.top + 139, s.select2);
     }
+
     private void drawSelectSlot(GuiGraphics graphics, int x, int y, Aspect aspect) {
         if (aspect != null) {
             AspectRenderer.drawAspect(graphics, x, y, aspect);
         }
     }
+
     private void drawOrbSprite(GuiGraphics graphics, int x, int y, int rgb) {
         int part = (int) (orbTick() % 8);
         int u = 128 + part * 32;
@@ -191,12 +228,14 @@ public class HexTableDraw {
         GuiBlitHelper.blit(graphics, ORB, x, y, u, 128, 16, 16, 256, 256);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
+
     private static int rainbowOrb(long tick, float x, float y) {
         float r = 0.7F + (float) Math.sin((tick + x) / 10.0F) * 0.15F + 0.15F;
         float g = 0.7F + (float) Math.sin((tick + x + y) / 11.0F) * 0.15F + 0.15F;
         float b = 0.7F + (float) Math.sin((tick + y) / 12.0F) * 0.15F + 0.15F;
         return (0xFF << 24) | ((int) (r * 255.0F) << 16) | ((int) (g * 255.0F) << 8) | (int) (b * 255.0F);
     }
+
     private long orbTick() {
         Player player = s.player();
         if (player != null) {
@@ -204,10 +243,15 @@ public class HexTableDraw {
         }
         return gameTick();
     }
+
     private long gameTick() {
-        return s.minecraft() != null && s.minecraft().level != null
-                ? s.minecraft().level.getGameTime() : 0;
+        var mc = s.minecraft();
+        if (mc == null || mc.level == null) {
+            return 0;
+        }
+        return mc.level.getGameTime();
     }
+
     void drawSheet(GuiGraphics graphics, int mx, int my) {
         HexResearchNoteData note = s.note;
         int sx = s.left + SHEET_X;
@@ -218,18 +262,21 @@ public class HexTableDraw {
         }
         tickRunes();
         HexResearchGame.visualize(note, s::known, lines, highlight);
-        long tick = s.minecraft() != null && s.minecraft().level != null
-                ? s.minecraft().level.getGameTime() : 0;
+        var mc = s.minecraft();
+        long tick = mc != null && mc.level != null ? mc.level.getGameTime() : 0;
+        int baseX = s.left + CX;
+        int baseY = s.top + CY;
         for (HexUtils.Hex[] pair : lines.values()) {
+            if (pair == null || pair.length < 2 || pair[0] == null || pair[1] == null) {
+                continue;
+            }
             HexUtils.Pixel p1 = pair[0].toPixel(HEX);
             HexUtils.Pixel p2 = pair[1].toPixel(HEX);
-            drawLine(graphics, (float) (s.left + CX + p1.x), (float) (s.top + CY + p1.y),
-                    (float) (s.left + CX + p2.x), (float) (s.top + CY + p2.y), tick);
+            drawLine(graphics, (float) (baseX + p1.x), (float) (baseY + p1.y),
+                    (float) (baseX + p2.x), (float) (baseY + p2.y), tick);
         }
         HexUtils.Hex hover = s.sheetHex(mx, my);
         if (!note.complete) {
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
             for (String k : note.hexes.keySet()) {
                 HexUtils.Hex hex = note.hexes.get(k);
                 HexEntry entry = note.hexEntries.get(k);
@@ -237,8 +284,8 @@ public class HexTableDraw {
                     continue;
                 }
                 HexUtils.Pixel pix = hex.toPixel(HEX);
-                int hx = (int) (s.left + CX + pix.x);
-                int hy = (int) (s.top + CY + pix.y);
+                int hx = (int) (baseX + pix.x);
+                int hy = (int) (baseY + pix.y);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.25F);
@@ -259,8 +306,8 @@ public class HexTableDraw {
                 continue;
             }
             HexUtils.Pixel pix = hex.toPixel(HEX);
-            int ix = (int) (s.left + CX + pix.x) - 8;
-            int iy = (int) (s.top + CY + pix.y) - 8;
+            int ix = (int) (baseX + pix.x) - 8;
+            int iy = (int) (baseY + pix.y) - 8;
             boolean bright = entry.type == 1 || highlight.contains(k);
             if (!s.known(entry.aspect)) {
                 RenderSystem.enableBlend();
@@ -293,25 +340,27 @@ public class HexTableDraw {
             RenderSystem.defaultBlendFunc();
             RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, Math.max(0.0F, alpha));
             graphics.pose().pushPose();
-            graphics.pose().translate(s.left + CX + pix.x, s.top + CY + pix.y, 0.0F);
+            graphics.pose().translate(baseX + pix.x, baseY + pix.y, 0.0F);
             graphics.pose().mulPose(Axis.ZP.rotation(-(float) Math.PI / 2.0F));
             GuiBlitHelper.blit(graphics, SCRIPT, -5, -5, rune.idx * 16, 0, 10, 10, 256, 16);
             graphics.pose().popPose();
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
     }
+
     private void tickRunes() {
         HexResearchNoteData note = s.note;
         long now = System.currentTimeMillis();
         runes.values().removeIf(rune -> rune.decay < now);
-        if (now - lastRuneCheck < 250 || s.minecraft() == null || note == null) {
+        var mc = s.minecraft();
+        if (now - lastRuneCheck < 250 || mc == null || note == null) {
             return;
         }
         lastRuneCheck = now;
-        double rx = (s.minecraft().level != null
-                ? s.minecraft().level.random.nextDouble() : Math.random()) * 120.0 - 60.0;
-        double ry = (s.minecraft().level != null
-                ? s.minecraft().level.random.nextDouble() : Math.random()) * 120.0 - 60.0;
+        double rx = (mc.level != null
+                ? mc.level.random.nextDouble() : Math.random()) * 120.0 - 60.0;
+        double ry = (mc.level != null
+                ? mc.level.random.nextDouble() : Math.random()) * 120.0 - 60.0;
         HexUtils.Hex hex = new HexUtils.Pixel(rx, ry).toHex(HEX);
         String k = hex.toString();
         if (!note.hexes.containsKey(k) || runes.containsKey(k)) {
@@ -325,8 +374,9 @@ public class HexTableDraw {
         rune.idx = (int) (Math.random() * 16.0);
         runes.put(k, rune);
     }
+
     private void drawSheetAspect(GuiGraphics graphics, int x, int y, Aspect aspect,
-            float alpha, boolean grayscale) {
+                                 float alpha, boolean grayscale) {
         graphics.pose().pushPose();
         graphics.pose().translate(x + 8.0F, y + 8.0F, 0.0F);
         graphics.pose().scale(0.85F, 0.85F, 1.0F);
@@ -334,6 +384,7 @@ public class HexTableDraw {
         AspectRenderer.drawAspect(graphics, 0, 0, aspect, 0, 0, alpha, grayscale);
         graphics.pose().popPose();
     }
+
     private void drawLine(GuiGraphics graphics, float x1, float y1, float x2, float y2, long tick) {
         float dx = x2 - x1;
         float dy = y2 - y1;
@@ -352,6 +403,7 @@ public class HexTableDraw {
         graphics.pose().popPose();
         RenderSystem.defaultBlendFunc();
     }
+
     void renderDragOrb(GuiGraphics graphics) {
         if (s.dragging && s.dragged != null) {
             RenderSystem.enableBlend();
@@ -360,55 +412,74 @@ public class HexTableDraw {
             RenderSystem.defaultBlendFunc();
         }
     }
+
     void drawHover(GuiGraphics graphics, int mx, int my) {
         List<Aspect> order = s.poolView();
-        int drawn = 0;
-        int shown = 0;
-        for (Aspect aspect : order) {
-            if (drawn < s.page * 5) {
-                drawn++;
-                continue;
+        if (order != null) {
+            int skip = s.page * 5;
+            if (skip < 0) {
+                skip = 0;
             }
-            if (shown >= 25) {
-                break;
-            }
-            int x = s.left + POOL_X + shown / 5 * 16;
-            int y = s.top + POOL_Y + shown % 5 * 16;
-            if (s.inZone(mx, my, x, y, 16, 16)) {
-                ArrayList<Component> tip = new ArrayList<>();
-                tip.add(Component.literal(aspect.getName()));
-                tip.add(Component.literal(aspect.getLocalizedDescription()));
-                if (s.shownBonus(aspect) > 0) {
-                    tip.add(Component.translatable("tooltip.arcaneresearch.hexbonus",
-                            s.shownBonus(aspect)));
+            int baseX = s.left + POOL_X;
+            int baseY = s.top + POOL_Y;
+            int idx = 0;
+            int shown = 0;
+            for (Aspect aspect : order) {
+                if (idx < skip) {
+                    idx++;
+                    continue;
                 }
-                graphics.renderTooltip(s.font(), tip, java.util.Optional.empty(), mx, my - 8);
-                if (!aspect.isPrimal() && aspect.getComponents() != null
-                        && aspect.getComponents().length >= 2) {
-                    RenderSystem.enableBlend();
-                    RenderSystem.defaultBlendFunc();
-                    int textLines = 0;
-                    for (net.minecraft.network.chat.Component line : tip) {
-                        textLines += Math.max(1, s.font().split(line, 170).size());
-                    }
-                    int boxH = 8 + Math.max(0, textLines - 1) * 10;
-                    int iy = Math.max(my + 8, my - 20 + boxH + 4);
-                    Aspect[] comp = aspect.getComponents();
-                    if (s.known(comp[0])) {
-                        AspectRenderer.drawAspect(graphics, mx + 8, iy, comp[0]);
-                    } else {
-                        GuiBlitHelper.blit(graphics, UNKNOWN, mx + 8, iy, 0, 0, 16, 16, 16, 16);
-                    }
-                    if (s.known(comp[1])) {
-                        AspectRenderer.drawAspect(graphics, mx + 26, iy, comp[1]);
-                    } else {
-                        GuiBlitHelper.blit(graphics, UNKNOWN, mx + 26, iy, 0, 0, 16, 16, 16, 16);
-                    }
+                if (shown >= 25) {
+                    break;
                 }
-                return;
+                if (aspect == null) {
+                    idx++;
+                    shown++;
+                    continue;
+                }
+                int x = baseX + shown / 5 * 16;
+                int y = baseY + shown % 5 * 16;
+                if (s.inZone(mx, my, x, y, 16, 16)) {
+                    ArrayList<Component> tip = new ArrayList<>();
+                    tip.add(Component.literal(aspect.getName()));
+                    tip.add(Component.literal(aspect.getLocalizedDescription()));
+                    int bonus = s.shownBonus(aspect);
+                    if (bonus > 0) {
+                        tip.add(Component.translatable("tooltip.arcaneresearch.hexbonus", bonus));
+                    }
+                    graphics.renderTooltip(s.font(), tip, java.util.Optional.empty(), mx, my - 8);
+                    if (!aspect.isPrimal()) {
+                        Aspect[] comp = aspect.getComponents();
+                        if (comp != null && comp.length >= 2) {
+                            RenderSystem.enableBlend();
+                            RenderSystem.defaultBlendFunc();
+                            int textLines = 0;
+                            for (Component line : tip) {
+                                textLines += Math.max(1, s.font().split(line, 170).size());
+                            }
+                            int boxH = 8 + Math.max(0, textLines - 1) * 10;
+                            int iy = Math.max(my + 8, my - 20 + boxH + 4);
+                            if (comp[0] != null) {
+                                if (s.known(comp[0])) {
+                                    AspectRenderer.drawAspect(graphics, mx + 8, iy, comp[0]);
+                                } else {
+                                    GuiBlitHelper.blit(graphics, UNKNOWN, mx + 8, iy, 0, 0, 16, 16, 16, 16);
+                                }
+                            }
+                            if (comp[1] != null) {
+                                if (s.known(comp[1])) {
+                                    AspectRenderer.drawAspect(graphics, mx + 26, iy, comp[1]);
+                                } else {
+                                    GuiBlitHelper.blit(graphics, UNKNOWN, mx + 26, iy, 0, 0, 16, 16, 16, 16);
+                                }
+                            }
+                        }
+                    }
+                    return;
+                }
+                idx++;
+                shown++;
             }
-            drawn++;
-            shown++;
         }
         if (s.select1 != null && s.inZone(mx, my, s.left + 13, s.top + 139, 16, 16)) {
             graphics.renderTooltip(s.font(), aspectTip(s.select1),
@@ -428,12 +499,14 @@ public class HexTableDraw {
             }
         }
     }
+
     private static ArrayList<Component> aspectTip(Aspect aspect) {
         ArrayList<Component> tip = new ArrayList<>();
         tip.add(Component.literal(aspect.getName()));
         tip.add(Component.literal(aspect.getLocalizedDescription()));
         return tip;
     }
+
     @Deprecated(forRemoval = true)
     void drawPickDebug(GuiGraphics graphics, int mx, int my) {
         if (!Screen.hasShiftDown() || s.note == null) {
@@ -446,7 +519,11 @@ public class HexTableDraw {
                 + " d=" + dx + "," + dy;
         graphics.drawString(s.font(), text, mx + 12, my - 12, 0xFFFF55, true);
     }
+
     void drawInkWarning(GuiGraphics graphics) {
+        if (s.menu == null) {
+            return;
+        }
         ItemStack tools;
         try {
             tools = s.menu.getSlot(0).getItem();
@@ -456,14 +533,15 @@ public class HexTableDraw {
         if (!tools.isEmpty() && tools.getDamageValue() < tools.getMaxDamage()) {
             return;
         }
+        var font = s.font();
         java.util.List<Component> tip = new java.util.ArrayList<>();
         tip.add(Component.literal("No scribing tools"));
         tip.add(Component.literal("Place tools in the top-left slot"));
         int w = 0;
         for (Component line : tip) {
-            w = Math.max(w, s.font().width(line));
+            w = Math.max(w, font.width(line));
         }
-        graphics.renderTooltip(s.font(), tip, java.util.Optional.empty(),
+        graphics.renderTooltip(font, tip, java.util.Optional.empty(),
                 s.left + 157 - w, s.top + 84);
     }
 }

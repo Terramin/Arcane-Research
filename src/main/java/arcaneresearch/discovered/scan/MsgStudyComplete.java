@@ -1,5 +1,7 @@
 package arcaneresearch.discovered.scan;
+
 import java.util.function.Supplier;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -12,21 +14,28 @@ import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
+
 public class MsgStudyComplete {
     private byte kind;
     private BlockPos pos;
     private int entityId;
     private String entityType;
+
     public MsgStudyComplete() {
     }
+
     public MsgStudyComplete(ScanTargets.Target target) {
-        if (target.kind == ScanTargets.Kind.BLOCK) {
+        if (target == null || target.kind == null) {
+            this.kind = 0;
+            return;
+        }
+        if (target.kind == ScanTargets.Kind.BLOCK && target.pos != null) {
             this.kind = 1;
             this.pos = target.pos;
-        } else if (target.kind == ScanTargets.Kind.NODE) {
+        } else if (target.kind == ScanTargets.Kind.NODE && target.pos != null) {
             this.kind = 3;
             this.pos = target.pos;
-        } else if (target.kind == ScanTargets.Kind.ENTITY) {
+        } else if (target.kind == ScanTargets.Kind.ENTITY && target.entity != null) {
             this.kind = 2;
             this.entityId = target.entity.getId();
             this.entityType = target.entity.getType().getDescriptionId();
@@ -34,30 +43,52 @@ public class MsgStudyComplete {
             this.kind = 0;
         }
     }
+
     public void encode(FriendlyByteBuf buf) {
+        if (buf == null) {
+            return;
+        }
+        if ((kind == 1 || kind == 3) && pos == null) {
+            kind = 0;
+        }
+        if (kind == 2 && entityType == null) {
+            entityType = "";
+        }
         buf.writeByte(kind);
         if (kind == 1 || kind == 3) {
             buf.writeBlockPos(pos);
         } else if (kind == 2) {
             buf.writeInt(entityId);
-            buf.writeUtf(entityType == null ? "" : entityType, 128);
+            buf.writeUtf(entityType, 128);
         }
     }
+
     public MsgStudyComplete(FriendlyByteBuf buf) {
+        if (buf == null) {
+            kind = 0;
+            return;
+        }
         kind = buf.readByte();
         if (kind == 1 || kind == 3) {
             pos = buf.readBlockPos();
         } else if (kind == 2) {
             entityId = buf.readInt();
             entityType = buf.readUtf(128);
+        } else {
+            kind = 0;
         }
     }
+
     public static void handle(MsgStudyComplete msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            if (!ctx.get().getDirection().getReceptionSide().isServer()) {
+        NetworkEvent.Context context = ctx == null ? null : ctx.get();
+        if (context == null || msg == null) {
+            return;
+        }
+        context.enqueueWork(() -> {
+            if (!context.getDirection().getReceptionSide().isServer()) {
                 return;
             }
-            ServerPlayer player = ctx.get().getSender();
+            ServerPlayer player = context.getSender();
             if (player == null) {
                 return;
             }
@@ -67,11 +98,15 @@ public class MsgStudyComplete {
             }
             Level level = player.serverLevel();
             String key = ScanTargets.scannedKey(level, target, player);
+            if (key.isEmpty()) {
+                player.displayClientMessage(Component.literal("Unknown object"), true);
+                return;
+            }
             if (ScanWallet.hasScanned(player, key)) {
                 return;
             }
             AspectList aspects = ScanTargets.aspectsFor(level, target, player);
-            if (aspects == null || aspects.size() <= 0) {
+            if (aspects == null || aspects.aspects.isEmpty()) {
                 player.displayClientMessage(Component.literal("Unknown object"), true);
                 return;
             }
@@ -103,16 +138,23 @@ public class MsgStudyComplete {
             } catch (Exception ignored) {
             }
             ScanWallet.markScanned(player, key);
-            if (granted.size() > 0) {
-                ScanNetwork.CHANNEL.send(
-                        net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> player),
-                        new MsgStudyReward(granted));
+            if (!granted.aspects.isEmpty()) {
+                try {
+                    ScanNetwork.CHANNEL.send(
+                            net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> player),
+                            new MsgStudyReward(granted));
+                } catch (Exception ignored) {
+                }
             }
             MsgWalletRequest.push(player);
         });
-        ctx.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
+
     private static ScanTargets.Target validate(ServerPlayer player, MsgStudyComplete msg) {
+        if (player == null || msg == null) {
+            return null;
+        }
         try {
             Level level = player.serverLevel();
             if (msg.kind == 1 && msg.pos != null) {
@@ -121,7 +163,7 @@ public class MsgStudyComplete {
                     return null;
                 }
                 BlockHitResult hit = ScanTargets.blockRay(level, player, ScanTargets.RANGE);
-                if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(msg.pos)) {
+                if (hit.getType() == HitResult.Type.BLOCK && msg.pos.equals(hit.getBlockPos())) {
                     return new ScanTargets.Target(
                             ScanTargets.Kind.BLOCK, msg.pos, null, "");
                 }
@@ -133,7 +175,7 @@ public class MsgStudyComplete {
                     return null;
                 }
                 BlockHitResult hit = ScanTargets.blockRay(level, player, ScanTargets.RANGE);
-                if (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(msg.pos)) {
+                if (hit.getType() == HitResult.Type.BLOCK && msg.pos.equals(hit.getBlockPos())) {
                     try {
                         if (level.getBlockEntity(msg.pos)
                                 instanceof arcaneresearch.common.lib.aura.INode) {
@@ -147,8 +189,11 @@ public class MsgStudyComplete {
             }
             if (msg.kind == 2) {
                 Entity entity = level.getEntity(msg.entityId);
-                if (entity == null || !entity.isAlive()
-                        || !entity.getType().getDescriptionId().equals(msg.entityType)) {
+                if (entity == null || !entity.isAlive()) {
+                    return null;
+                }
+                if (msg.entityType == null
+                        || !msg.entityType.equals(entity.getType().getDescriptionId())) {
                     return null;
                 }
                 if (player.getEyePosition().distanceTo(entity.position())
