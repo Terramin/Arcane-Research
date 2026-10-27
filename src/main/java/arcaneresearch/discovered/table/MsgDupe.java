@@ -1,45 +1,56 @@
 package arcaneresearch.discovered.table;
+
 import java.util.ArrayList;
 import java.util.function.Supplier;
+
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.discovered.scan.ScanWallet;
+import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
-import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.discovered.table.DiscoveredTableResearch;
-import arcaneresearch.discovered.scan.ScanWallet;
-import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
+
 public class MsgDupe {
     public MsgDupe() {
     }
+
     public MsgDupe(FriendlyByteBuf buf) {
     }
+
     public void encode(FriendlyByteBuf buf) {
     }
+
     public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+        NetworkEvent.Context context = ctx.get();
+        context.enqueueWork(() -> {
+            ServerPlayer player = context.getSender();
             if (player == null) {
                 return;
             }
-            HexResearchTableMenu menu =
-                    player.containerMenu instanceof HexResearchTableMenu m ? m : null;
-            if (menu == null) {
+            if (!(player.containerMenu instanceof HexResearchTableMenu menu)) {
                 return;
             }
             ItemStack source = menu.getSlot(1).getItem();
-            if (!HexResearchTableMenu.isNoteStack(source)) {
+            if (source.isEmpty() || !HexResearchTableMenu.isNoteStack(source)) {
                 return;
             }
-            HexResearchNoteData note = HexResearchNoteData.getData(source);
-            if (note == null || !note.complete) {
+            HexResearchNoteData note;
+            try {
+                note = HexResearchNoteData.getData(source);
+            } catch (Exception e) {
                 return;
             }
+            if (note == null || !note.complete || note.hexEntries == null) {
+                return;
+            }
+
             ArrayList<Aspect> targets = new ArrayList<>();
             for (HexEntry entry : note.hexEntries.values()) {
                 if (entry != null && entry.type == 1 && entry.aspect != null
@@ -47,46 +58,63 @@ public class MsgDupe {
                     targets.add(entry.aspect);
                 }
             }
+
             AspectList required = null;
-            try {
-                required = DiscoveredTableResearch.requiredAspects(note.key);
-            } catch (Exception ignored) {
+            if (note.key != null && !note.key.isEmpty()) {
+                try {
+                    required = DiscoveredTableResearch.requiredAspects(note.key);
+                } catch (Exception ignored) {
+                }
             }
-            for (Aspect target : targets) {
+
+            final int size = targets.size();
+            final int[] costs = new int[size];
+            for (int i = 0; i < size; i++) {
                 int amount = 1;
                 try {
-                    if (required != null && required.getAmount(target) > 0) {
-                        amount = required.getAmount(target);
+                    if (required != null) {
+                        int a = required.getAmount(targets.get(i));
+                        if (a > 0) {
+                            amount = a;
+                        }
                     }
                 } catch (Exception ignored) {
                 }
-                if (ScanWallet.getAmount(player, target) < amount + note.copies) {
-                    player.displayClientMessage(Component.literal("Not enough aspects to copy"), true);
+                costs[i] = amount + note.copies;
+            }
+
+            for (int i = 0; i < size; i++) {
+                try {
+                    if (ScanWallet.getAmount(player, targets.get(i)) < costs[i]) {
+                        player.displayClientMessage(
+                                Component.literal("Not enough aspects to copy"), true);
+                        return;
+                    }
+                } catch (Exception e) {
                     return;
                 }
             }
+
             Inventory inv = player.getInventory();
-            if (!inv.contains(new ItemStack(Items.PAPER))) {
+            if (!hasItem(inv, Items.PAPER)) {
                 player.displayClientMessage(Component.literal("Need paper to copy"), true);
                 return;
             }
-            if (!inv.contains(new ItemStack(Items.INK_SAC))) {
+            if (!hasItem(inv, Items.INK_SAC)) {
                 player.displayClientMessage(Component.literal("Need ink sac to copy"), true);
                 return;
             }
             if (!consumeOne(inv, Items.PAPER) || !consumeOne(inv, Items.INK_SAC)) {
                 return;
             }
-            for (Aspect target : targets) {
-                int amount = 1;
+
+            for (int i = 0; i < size; i++) {
                 try {
-                    if (required != null && required.getAmount(target) > 0) {
-                        amount = required.getAmount(target);
-                    }
+                    ScanWallet.remove(player, targets.get(i), costs[i]);
                 } catch (Exception ignored) {
                 }
-                ScanWallet.remove(player, target, amount + note.copies);
             }
+
             note.copies++;
             ItemStack copy = source.copy();
             HexResearchNoteData.updateData(copy, note);
@@ -100,9 +128,19 @@ public class MsgDupe {
                     new MsgSyncNote(note));
             HexEconomy.push(player);
         });
-        ctx.get().setPacketHandled(true);
+        context.setPacketHandled(true);
     }
-    private static boolean consumeOne(Inventory inv, net.minecraft.world.item.Item item) {
+
+    private static boolean hasItem(Inventory inv, Item item) {
+        for (ItemStack stack : inv.items) {
+            if (!stack.isEmpty() && stack.is(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean consumeOne(Inventory inv, Item item) {
         for (ItemStack stack : inv.items) {
             if (!stack.isEmpty() && stack.is(item)) {
                 stack.shrink(1);

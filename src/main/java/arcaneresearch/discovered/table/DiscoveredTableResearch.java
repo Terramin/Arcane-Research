@@ -1,5 +1,7 @@
 package arcaneresearch.discovered.table;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
@@ -15,24 +17,35 @@ import arcaneresearch.api.research.ResearchStage;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
-import arcaneresearch.discovered.note.DiscoveredNotes;
+
 public final class DiscoveredTableResearch {
+    private static final Aspect[] EMPTY_ASPECTS = new Aspect[0];
+    private static final int[] EMPTY_INTS = new int[0];
+
     private DiscoveredTableResearch() {
     }
+
     private static List<String> orderedTags;
+
     public static synchronized List<String> orderedTags() {
         if (orderedTags == null) {
             orderedTags = new ArrayList<>(new TreeSet<>(Aspect.aspects.keySet()));
         }
         return orderedTags;
     }
+
     public static int aspectIndex(Aspect aspect) {
         if (aspect == null) {
             return 0;
         }
-        int i = orderedTags().indexOf(aspect.getTag());
+        String tag = aspect.getTag();
+        if (tag == null) {
+            return 0;
+        }
+        int i = Collections.binarySearch(orderedTags(), tag);
         return i < 0 ? 0 : i + 1;
     }
+
     public static Aspect aspectByIndex(int index) {
         List<String> order = orderedTags();
         if (index <= 0 || index > order.size()) {
@@ -40,9 +53,10 @@ public final class DiscoveredTableResearch {
         }
         return Aspect.getAspect(order.get(index - 1));
     }
+
     public static AspectList requiredAspects(String key) {
         AspectList exact = DiscoveredResearchAspects.get(key);
-        if (exact != null && exact.size() > 0) {
+        if (exact != null && !exact.aspects.isEmpty()) {
             return exact;
         }
         ResearchEntry entry = ResearchCategories.getResearch(key);
@@ -53,11 +67,12 @@ public final class DiscoveredTableResearch {
             return null;
         }
         ResearchCategory category = ResearchCategories.getResearchCategory(entry.getCategory());
-        if (category == null || category.formula == null || category.formula.size() <= 0) {
+        if (category == null || category.formula == null || category.formula.aspects.isEmpty()) {
             return null;
         }
         return category.formula.copy();
     }
+
     public static ResearchEntry requiringResearch(String discoveryKey) {
         if (discoveryKey == null) {
             return null;
@@ -79,6 +94,7 @@ public final class DiscoveredTableResearch {
         }
         return null;
     }
+
     public static boolean hasDiscoveryRequirement(ResearchEntry entry) {
         if (entry == null || entry.getStages() == null) {
             return false;
@@ -90,12 +106,13 @@ public final class DiscoveredTableResearch {
         }
         return false;
     }
+
     public static boolean isDiscoverySpent(Player player, String discoveryKey) {
         if (player == null || discoveryKey == null) {
             return false;
         }
-        if (ArcaneresearchCapabilities.getKnowledge(player)
-                .map(k -> k.hasPresentedDiscovery(discoveryKey)).orElse(false)) {
+        var knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+        if (knowledge.map(k -> k.hasPresentedDiscovery(discoveryKey)).orElse(false)) {
             return true;
         }
         boolean needed = false;
@@ -103,8 +120,7 @@ public final class DiscoveredTableResearch {
             if (entry.getStages() == null) {
                 continue;
             }
-            int current = ArcaneresearchCapabilities.getKnowledge(player)
-                    .map(k -> k.getResearchStage(entry.getKey()) - 1).orElse(-2);
+            int current = knowledge.map(k -> k.getResearchStage(entry.getKey()) - 1).orElse(-2);
             ResearchStage[] stages = entry.getStages();
             for (int i = 0; i < stages.length; i++) {
                 if (stages[i] == null || stages[i].getDiscovery() == null) {
@@ -122,6 +138,7 @@ public final class DiscoveredTableResearch {
         }
         return needed;
     }
+
     public static List<String> discoveryKeys() {
         LinkedHashSet<String> out = new LinkedHashSet<>();
         for (ResearchEntry entry : allEntries()) {
@@ -141,6 +158,7 @@ public final class DiscoveredTableResearch {
         }
         return new ArrayList<>(out);
     }
+
     public static List<ResearchEntry> allEntries() {
         List<ResearchEntry> out = new ArrayList<>();
         for (ResearchCategory category : ResearchCategories.researchCategories.values()) {
@@ -150,7 +168,17 @@ public final class DiscoveredTableResearch {
         }
         return out;
     }
+
     public static String findMatchingResearch(Player player, Aspect[] tags, int[] amounts) {
+        if (player == null) {
+            return null;
+        }
+        if (tags == null) {
+            tags = EMPTY_ASPECTS;
+        }
+        if (amounts == null) {
+            amounts = EMPTY_INTS;
+        }
         int bestMatch = 0;
         String best = null;
         for (ResearchEntry entry : allEntries()) {
@@ -186,7 +214,11 @@ public final class DiscoveredTableResearch {
         }
         return best;
     }
+
     public static String findLostResearch(Player player) {
+        if (player == null) {
+            return null;
+        }
         List<String> choices = new ArrayList<>();
         for (ResearchEntry entry : allEntries()) {
             if (!entry.hasMeta(ResearchEntry.EnumResearchMeta.HIDDEN)) {
@@ -211,14 +243,26 @@ public final class DiscoveredTableResearch {
         }
         return choices.get(player.getRandom().nextInt(choices.size()));
     }
+
     public static int researchIterations(int amount) {
         return 1 + amount / 2;
     }
+
     public static boolean progressTableResearch(Level level, Player researcher, ItemStack note,
-            int baseChance, int baseLoss, Aspect[] inTags, int[] inAmounts) {
+                                                int baseChance, int baseLoss, Aspect[] inTags, int[] inAmounts) {
+        if (level == null || researcher == null || note == null) {
+            return false;
+        }
+        if (inTags == null) {
+            inTags = EMPTY_ASPECTS;
+        }
+        if (inAmounts == null) {
+            inAmounts = EMPTY_INTS;
+        }
         if (baseLoss <= 0) {
             baseLoss = 1;
         }
+        var rng = level.getRandom();
         DiscoveredNoteData data = DiscoveredNoteData.read(note);
         if (data.key == null) {
             String key = findLostResearch(researcher);
@@ -235,7 +279,7 @@ public final class DiscoveredTableResearch {
         for (Aspect tag : inTags) {
             if (tag != null && !contains(data.tags, tag) && data.getFailed(tag.getTag()) < 100) {
                 data.addFailed(tag.getTag(),
-                        (byte) Math.round((2 + level.getRandom().nextInt(baseLoss)) / 10.0F));
+                        (byte) Math.round((2 + rng.nextInt(baseLoss)) / 10.0F));
             }
         }
         boolean progressed = false;
@@ -257,7 +301,7 @@ public final class DiscoveredTableResearch {
             float chance = baseChance / 100.0F;
             int tries = researchIterations(entry < inAmounts.length ? inAmounts[entry] : 0);
             for (int a = 0; a < tries; a++) {
-                if (level.getRandom().nextFloat() <= chance) {
+                if (rng.nextFloat() <= chance) {
                     int want = t < data.need.length ? data.need[t] : 0;
                     int got = t < data.have.length ? data.have[t] : 0;
                     if (got < want) {
@@ -275,7 +319,11 @@ public final class DiscoveredTableResearch {
         DiscoveredNoteData.write(note, data);
         return progressed;
     }
+
     private static boolean contains(Aspect[] tags, Aspect tag) {
+        if (tags == null) {
+            return false;
+        }
         for (Aspect t : tags) {
             if (t == tag) {
                 return true;

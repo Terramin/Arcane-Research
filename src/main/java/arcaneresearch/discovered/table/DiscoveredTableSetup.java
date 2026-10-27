@@ -1,4 +1,5 @@
 package arcaneresearch.discovered.table;
+
 import arcaneresearch.helper.IDsHelper;
 import arcaneresearch.helper.MenuHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import arcaneresearch.Arcaneresearch;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DiscoveredTableSetup {
     public static final String TABLE_ID = "cognition_note_table";
@@ -21,21 +23,27 @@ public class DiscoveredTableSetup {
     private static Item singleTableItem;
     private static BlockEntityType<CognitionNoteTableTile> entityType;
     private static MenuType<CognitionNoteTableMenu> menuType;
+
     public static Block getBlock() {
         return block;
     }
+
     public static Block getSingleTable() {
         return singleTable;
     }
+
     public static Item getSingleTableItem() {
         return singleTableItem;
     }
+
     public static BlockEntityType<CognitionNoteTableTile> getEntityType() {
         return entityType;
     }
+
     public static MenuType<CognitionNoteTableMenu> getMenuType() {
         return menuType;
     }
+
     @SubscribeEvent
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void onRegister(RegisterEvent event) {

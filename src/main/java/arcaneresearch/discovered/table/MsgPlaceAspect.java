@@ -1,5 +1,7 @@
 package arcaneresearch.discovered.table;
+
 import java.util.function.Supplier;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,25 +11,30 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.init.ModSounds;
+
 public class MsgPlaceAspect {
     private final int q;
     private final int r;
     private final String aspectTag;
+
     public MsgPlaceAspect(int q, int r, String aspectTag) {
         this.q = q;
         this.r = r;
         this.aspectTag = aspectTag != null ? aspectTag : "";
     }
+
     public MsgPlaceAspect(FriendlyByteBuf buf) {
         this.q = buf.readInt();
         this.r = buf.readInt();
         this.aspectTag = buf.readUtf();
     }
+
     public void encode(FriendlyByteBuf buf) {
         buf.writeInt(q);
         buf.writeInt(r);
         buf.writeUtf(aspectTag);
     }
+
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
@@ -91,8 +98,8 @@ public class MsgPlaceAspect {
                 damageInk(player, menu);
                 if (HexResearchGame.checkCompletion(note, a -> HexResearchGame.isKnown(player, a))) {
                     try {
-                        arcaneresearch.discovered.note.DiscoveredNoteData discovered =
-                                arcaneresearch.discovered.note.DiscoveredNoteData.read(source);
+                        arcaneresearch.discovered.note.DiscoveredNoteData discovered;
+                        discovered = arcaneresearch.discovered.note.DiscoveredNoteData.read(source);
                         if (discovered.key != null && discovered.key.equals(note.key)) {
                             discovered.stage2 = true;
                             arcaneresearch.discovered.note.DiscoveredNoteData.write(source, discovered);
@@ -111,6 +118,7 @@ public class MsgPlaceAspect {
         });
         ctx.get().setPacketHandled(true);
     }
+
     static boolean stageOneComplete(ItemStack stack) {
         try {
             arcaneresearch.discovered.note.DiscoveredNoteData data =
@@ -123,6 +131,7 @@ public class MsgPlaceAspect {
             return false;
         }
     }
+
     private static int stageOnePercent(ItemStack stack) {
         try {
             return (int) (arcaneresearch.discovered.note.DiscoveredNoteData.read(stack)
@@ -131,6 +140,7 @@ public class MsgPlaceAspect {
             return 0;
         }
     }
+
     private static void damageInk(ServerPlayer player, HexResearchTableMenu menu) {
         if (menu == null) {
             return;

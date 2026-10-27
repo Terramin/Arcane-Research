@@ -5,13 +5,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-/**
- * Reflective access to AbstractContainerScreen internals (leftPos/topPos/hoveredSlot/imageWidth/imageHeight).
- * Uses SRG names that are mapped at runtime both in dev (official mappings)
- * and in production, so no access transformer is required.
- * If field access fails, leftPos/topPos fall back to being computed from
- * screen.width/height and imageWidth/imageHeight.
- */
+
 public final class ScreenAccess {
     private static final Logger LOGGER = LoggerFactory.getLogger("arcaneresearch.invscan");
     private static final Field HOVERED_SLOT;

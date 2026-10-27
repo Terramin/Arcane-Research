@@ -1,6 +1,8 @@
 package arcaneresearch.invscan;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -10,9 +12,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -26,20 +28,19 @@ import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.discovered.scan.ScanTargets;
 import arcaneresearch.discovered.scan.ScanWallet;
 import arcaneresearch.helper.RegsHelper;
-/**
- * Port of Thaumic Inventory Scanning (BlayTheNinth, MIT) client logic:
- * hold a Thaumometer on the cursor and hover items in any container (or
- * yourself in the inventory screen) to scan them after a short hold.
- */
+
 @OnlyIn(Dist.CLIENT)
 public final class InvScanClient {
+
     private static final int SCAN_TICKS = 20;
     private static final int PLAYER_X1 = 26;
     private static final int PLAYER_Y1 = 8;
     private static final int PLAYER_X2 = 75;
     private static final int PLAYER_Y2 = 78;
     private static final String SELF_SUBJECT = "self";
+
     private static final Set<String> LOCAL_SCANNED = new HashSet<>();
+
     private static int mouseX;
     private static int mouseY;
     private static String scanKey = "";
@@ -47,20 +48,35 @@ public final class InvScanClient {
     private static int scanTicks;
     private static boolean attempted;
     private static boolean subjectIsSelf;
+
+    private static AspectList cachedSelfAspects;
+    private static boolean cachedSelfAspectsValid;
+
     private InvScanClient() {
     }
+
     private static void reset() {
         scanKey = "";
         subjectAspects = null;
         scanTicks = 0;
         attempted = false;
+        subjectIsSelf = false;
+        cachedSelfAspectsValid = false;
     }
+
+    private static void resetAll() {
+        reset();
+        LOCAL_SCANNED.clear();
+    }
+
     private static boolean hasBeenScanned(Player player, String key) {
         return LOCAL_SCANNED.contains(key) || ScanWallet.hasScanned(player, key);
     }
+
     private static boolean holdingThaumometer(AbstractContainerScreen<?> screen) {
         return screen.getMenu().getCarried().getItem() instanceof ItemThaumometer;
     }
+
     private static AbstractContainerScreen<?> activeScreen(Minecraft minecraft) {
         if (minecraft.screen instanceof AbstractContainerScreen<?> screen
                 && !(screen instanceof CreativeModeInventoryScreen)
@@ -69,9 +85,8 @@ public final class InvScanClient {
         }
         return null;
     }
+
     private static boolean hoveringSelf(AbstractContainerScreen<?> screen, Player player) {
-        // Разрешаем любые экраны с родным инвентарным меню (в т.ч. заменённые модами),
-        // зона игрока в верстаке слотов не содержит, поэтому hoveredSlot не проверяем.
         if (screen.getMenu() != player.inventoryMenu) {
             return false;
         }
@@ -79,41 +94,63 @@ public final class InvScanClient {
         int y = mouseY - ScreenAccess.topPos(screen);
         return x >= PLAYER_X1 && x < PLAYER_X2 && y >= PLAYER_Y1 && y < PLAYER_Y2;
     }
+
+    private static AspectList getSelfAspects(Player player) {
+        if (!cachedSelfAspectsValid) {
+            cachedSelfAspects = ScanTargets.entityAspects(player);
+            cachedSelfAspectsValid = true;
+        }
+        return cachedSelfAspects;
+    }
+
     private static boolean resolveSubject(AbstractContainerScreen<?> screen, Player player) {
         boolean self = hoveringSelf(screen, player);
-        AspectList aspects;
         String key;
+        Slot slot = null;
+
         if (self) {
-            aspects = ScanTargets.entityAspects(player);
             key = SELF_SUBJECT;
         } else {
-            Slot slot = ScreenAccess.hoveredSlot(screen);
+            slot = ScreenAccess.hoveredSlot(screen);
             if (slot == null || slot.getItem().isEmpty() || slot instanceof ResultSlot
                     || !slot.mayPickup(player)) {
                 return false;
             }
-            ItemStack stack = slot.getItem();
-            aspects = AspectHelper.getObjectAspects(stack);
-            key = String.valueOf(slot.index) + ":" + RegsHelper.itemKey(stack.getItem());
+            key = slot.index + ":" + RegsHelper.itemKey(slot.getItem().getItem());
         }
         if (key.equals(scanKey)) {
             return true;
         }
         scanKey = key;
-        subjectAspects = aspects;
         subjectIsSelf = self;
+        subjectAspects = self ? getSelfAspects(player)
+                : AspectHelper.getObjectAspects(slot.getItem());
         scanTicks = 0;
         attempted = false;
         return true;
     }
+
     private static boolean scannable(Player player) {
         return subjectAspects != null && subjectAspects.size() > 0
                 && !hasBeenScanned(player, scanKey);
     }
+
     @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID,
             bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     public static class ForgeEvents {
+
         @SubscribeEvent
+        public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+            resetAll();
+        }
+
+        @SubscribeEvent
+        public static void onClone(ClientPlayerNetworkEvent.Clone event) {
+            reset();
+        }
+
+        @SubscribeEvent
+        @SuppressWarnings("resource")
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase != TickEvent.Phase.END) {
                 return;
@@ -144,13 +181,13 @@ public final class InvScanClient {
                             0.2F,
                             0.45F + player.getRandom().nextFloat() * 0.1F,
                             false);
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    Arcaneresearch.LOGGER.debug("InvScan: tick sound failed", e);
                 }
             }
             if (scanTicks >= SCAN_TICKS) {
                 attempted = true;
-                if (subjectAspects != null
-                        && ScanTargets.validScan(player, subjectAspects)) {
+                if (subjectAspects != null && ScanTargets.validScan(player, subjectAspects)) {
                     if (subjectIsSelf) {
                         InvScanNetwork.CHANNEL.sendToServer(new MsgScanSelf());
                     } else {
@@ -165,10 +202,11 @@ public final class InvScanClient {
                 scanTicks = 0;
             }
         }
+
         @SubscribeEvent
         public static void onScreenRender(ScreenEvent.Render.Post event) {
-            mouseX = (int) event.getMouseX();
-            mouseY = (int) event.getMouseY();
+            mouseX = event.getMouseX();
+            mouseY = event.getMouseY();
             if (!(event.getScreen() instanceof AbstractContainerScreen<?> screen)) {
                 return;
             }
@@ -180,6 +218,7 @@ public final class InvScanClient {
                 drawSelfAspects(event.getGuiGraphics(), minecraft.player);
             }
         }
+
         private static void drawProgress(GuiGraphics graphics, Minecraft minecraft) {
             float progress = scanTicks / (float) SCAN_TICKS;
             StringBuilder text = new StringBuilder(
@@ -194,11 +233,12 @@ public final class InvScanClient {
             graphics.drawString(minecraft.font, text.toString(),
                     mouseX, mouseY - 30, 0xFFFFAA00, true);
         }
+
         private static void drawSelfAspects(GuiGraphics graphics, Player player) {
             if (!hasBeenScanned(player, InvScanServer.SELF_KEY)) {
                 return;
             }
-            AspectList aspects = ScanTargets.entityAspects(player);
+            AspectList aspects = getSelfAspects(player);
             if (aspects == null || aspects.size() <= 0) {
                 return;
             }
@@ -207,8 +247,8 @@ public final class InvScanClient {
                 if (aspect == null) {
                     continue;
                 }
-                int x = mouseX + 17 + index * 18 - 8;
-                int y = mouseY + 7 - 33 - 8;
+                int x = mouseX + 9 + index * 18;
+                int y = mouseY - 34;
                 graphics.fill(x - 1, y - 1, x + 17, y + 17, 0x66000000);
                 int amount = aspects.getAmount(aspect);
                 boolean known = ScanTargets.known(player, aspect);

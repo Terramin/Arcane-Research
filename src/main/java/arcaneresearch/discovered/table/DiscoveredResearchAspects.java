@@ -1,12 +1,16 @@
 package arcaneresearch.discovered.table;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
+
 public final class DiscoveredResearchAspects {
     private static final Map<String, AspectList> MAP = new LinkedHashMap<>();
+
     static {
         register("ALUMENTUM", new AspectList()
                 .add(Aspect.ENERGY, 8)
@@ -156,17 +160,21 @@ public final class DiscoveredResearchAspects {
                 .add(Aspect.MAGIC, 8)
                 .add(Aspect.TOOL, 4));
     }
+
     private DiscoveredResearchAspects() {
     }
+
     public static void register(String key, AspectList required) {
         if (key != null && required != null) {
             MAP.put(key, required);
         }
     }
+
     public static AspectList get(String key) {
         AspectList list = MAP.get(key);
         return list == null ? null : list.copy();
     }
+
     @Deprecated
     public static List<String> keys() {
         List<String> out = new ArrayList<>();

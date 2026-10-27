@@ -1,20 +1,23 @@
 package arcaneresearch.discovered.table;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import arcaneresearch.discovered.table.DiscoveredTableBlock;
+
 public final class HexTableFormer {
     private HexTableFormer() {
     }
+
     public static Direction findPairSide(Level level, BlockPos pos) {
         if (!(level.getBlockState(pos).getBlock() instanceof DiscoveredTableBlock)) {
             return null;
         }
         return findNeighbourSingle(level, pos);
     }
+
     public static boolean form(Level level, BlockPos pos, Direction side) {
         if (level.isClientSide() || HexTableRegistry.NOTE_BLOCK == null || side == null) {
             return false;
@@ -35,6 +38,7 @@ public final class HexTableFormer {
         level.playSound(null, pos, SoundType.WOOD.getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.9F);
         return true;
     }
+
     private static Direction findNeighbourSingle(Level level, BlockPos pos) {
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             if (level.getBlockState(pos.relative(dir)).getBlock() instanceof DiscoveredTableBlock) {

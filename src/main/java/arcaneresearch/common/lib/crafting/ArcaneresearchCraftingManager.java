@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.crafting;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -15,17 +16,22 @@ import arcaneresearch.api.crafting.IArcaneRecipe;
 import arcaneresearch.api.crafting.IArcaneWorkbench;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.init.ModRecipeTypes;
+
 import java.util.List;
+
 public class ArcaneresearchCraftingManager {
     public static final int ASPECT_CAP = 500;
     private static final List<InfusionRecipeType> dynamicInfusionRecipes = new java.util.ArrayList<>();
+
     public static void registerDynamicInfusionRecipe(InfusionRecipeType recipe) {
         dynamicInfusionRecipes.add(recipe);
     }
+
     public static void registerDynamicRecipes() {
         dynamicInfusionRecipes.clear();
         dynamicInfusionRecipes.add(new InfusionRunicAugmentRecipe());
     }
+
     public static IArcaneRecipe findMatchingArcaneRecipe(CraftingContainer matrix, Player player) {
         if (player == null || matrix == null) {
             return null;
@@ -58,6 +64,7 @@ public class ArcaneresearchCraftingManager {
         }
         return null;
     }
+
     private static boolean isWandGatedRecipe(ResourceLocation id) {
         if (id == null || !"arcaneresearch".equals(id.getNamespace())) {
             return false;
@@ -65,6 +72,7 @@ public class ArcaneresearchCraftingManager {
         String path = id.getPath();
         return path.startsWith("wand_cap_") || path.equals("wand_wood_iron");
     }
+
     public static ItemStack findMatchingArcaneRecipeResult(CraftingContainer matrix, Player player) {
         IArcaneRecipe recipe = findMatchingArcaneRecipe(matrix, player);
         if (recipe != null && matrix instanceof IArcaneWorkbench workbench) {
@@ -72,14 +80,17 @@ public class ArcaneresearchCraftingManager {
         }
         return ItemStack.EMPTY;
     }
+
     public static AspectList findMatchingArcaneRecipeCrystals(CraftingContainer matrix, Player player) {
         IArcaneRecipe recipe = findMatchingArcaneRecipe(matrix, player);
         return recipe != null ? recipe.getCrystals() : null;
     }
+
     public static int findMatchingArcaneRecipeVis(CraftingContainer matrix, Player player) {
         IArcaneRecipe recipe = findMatchingArcaneRecipe(matrix, player);
         return recipe != null ? recipe.getVis() : 0;
     }
+
     public static CrucibleRecipeType findMatchingCrucibleRecipe(AspectList crucibleAspects,
                                                                 ItemStack catalyst,
                                                                 Player player,
@@ -102,6 +113,7 @@ public class ArcaneresearchCraftingManager {
         }
         return null;
     }
+
     public static List<CrucibleRecipeType> findCrucibleRecipesForCatalyst(ItemStack catalyst, Level level) {
         return level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.CRUCIBLE.get())
                 .stream()
@@ -110,9 +122,11 @@ public class ArcaneresearchCraftingManager {
                 .filter(recipe -> recipe.catalystMatches(catalyst))
                 .toList();
     }
+
     private static int bridgedCrucibleFingerprint = 0;
     private static final java.util.Set<net.minecraft.resources.ResourceLocation> bridgedCrucibleKeys =
             new java.util.HashSet<>();
+
     public static void ensureCrucibleBridge(@javax.annotation.Nullable Level level) {
         if (level == null) return;
         java.util.List<CrucibleRecipeType> datapack;
@@ -158,6 +172,7 @@ public class ArcaneresearchCraftingManager {
             bridgedCrucibleFingerprint = fingerprint;
         }
     }
+
     public static InfusionRecipeType findMatchingInfusionRecipe(List<ItemStack> pedestalItems,
                                                                 ItemStack centralItem,
                                                                 Player player,
@@ -193,6 +208,7 @@ public class ArcaneresearchCraftingManager {
         }
         return null;
     }
+
     public static AspectList getObjectTags(ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
             return new AspectList();
@@ -223,14 +239,17 @@ public class ArcaneresearchCraftingManager {
         aspects = getBonusTags(stack, aspects);
         return capAspects(aspects, ASPECT_CAP);
     }
+
     public static void registerObjectAspects(ItemStack stack, AspectList aspects) {
         if (stack != null && !stack.isEmpty() && aspects != null) {
             AspectHelper.registerObjectTag(stack, aspects);
         }
     }
+
     public static AspectList generateTags(ItemStack stack) {
         return generateTags(stack, new java.util.ArrayList<>());
     }
+
     public static AspectList generateTags(ItemStack stack, java.util.ArrayList<String> history) {
         if (history == null) {
             history = new java.util.ArrayList<>();
@@ -259,6 +278,7 @@ public class ArcaneresearchCraftingManager {
         }
         return null;
     }
+
     private static AspectList getTagsRecursive(ItemStack stack, java.util.ArrayList<String> history) {
         if (stack == null || stack.isEmpty()) {
             return null;
@@ -269,6 +289,7 @@ public class ArcaneresearchCraftingManager {
         }
         return generateTags(stack, history);
     }
+
     private static AspectList generateTagsFromCrucibleRecipes(ItemStack stack,
                                                               java.util.ArrayList<String> history) {
         arcaneresearch.api.crafting.CrucibleRecipe cr =
@@ -301,6 +322,7 @@ public class ArcaneresearchCraftingManager {
         }
         return out;
     }
+
     private static AspectList generateTagsFromInfusionRecipes(ItemStack stack,
                                                               java.util.ArrayList<String> history) {
         arcaneresearch.api.crafting.InfusionRecipe cr =
@@ -328,6 +350,7 @@ public class ArcaneresearchCraftingManager {
         }
         return null;
     }
+
     private static AspectList generateTagsFromCraftingRecipes(ItemStack stack,
                                                               java.util.ArrayList<String> history) {
         Level level = craftingLevel();
@@ -376,6 +399,7 @@ public class ArcaneresearchCraftingManager {
         }
         return ret;
     }
+
     private static AspectList getAspectsFromIngredients(NonNullList<Ingredient> ingredients,
                                                         ItemStack recipeOut,
                                                         java.util.ArrayList<String> history) {
@@ -429,6 +453,7 @@ public class ArcaneresearchCraftingManager {
         }
         return out;
     }
+
     private static AspectList generateTagsFromRecipes(ItemStack stack,
                                                       java.util.ArrayList<String> history) {
         AspectList ret = generateTagsFromCrucibleRecipes(stack, history);
@@ -447,6 +472,7 @@ public class ArcaneresearchCraftingManager {
         fallback.add(Aspect.ENTROPY, 1);
         return fallback;
     }
+
     private static Level craftingLevel() {
         try {
             net.minecraft.server.MinecraftServer server =
@@ -458,6 +484,7 @@ public class ArcaneresearchCraftingManager {
         }
         return null;
     }
+
     private static AspectList getBonusTags(ItemStack stack, AspectList sourceTags) {
         AspectList result = new AspectList();
         if (stack == null || stack.isEmpty()) {
@@ -506,6 +533,7 @@ public class ArcaneresearchCraftingManager {
         }
         return result;
     }
+
     private static AspectList capAspects(AspectList source, int maxAmount) {
         if (source == null) {
             return new AspectList();

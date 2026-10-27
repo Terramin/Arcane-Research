@@ -1,4 +1,5 @@
 package arcaneresearch.discovered.table;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -22,8 +23,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import arcaneresearch.api.items.IScribeTools;
+import org.jetbrains.annotations.NotNull;
+
 public class DiscoveredTableBlock extends Block {
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
+
+    private static final VoxelShape SHAPE_Z = makeShape(false);
+    private static final VoxelShape SHAPE_X = makeShape(true);
+
     public DiscoveredTableBlock() {
         super(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.WOOD)
@@ -32,22 +39,23 @@ public class DiscoveredTableBlock extends Block {
                 .noOcclusion());
         registerDefaultState(stateDefinition.any().setValue(AXIS, Direction.Axis.Z));
     }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AXIS);
     }
+
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
         return defaultBlockState().setValue(AXIS, context.getHorizontalDirection().getAxis());
     }
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+
+    private static VoxelShape makeShape(boolean rot) {
         double[][] boxes = {
                 {0, 12, 0, 16, 16, 16},
                 {10, 0, 6, 14, 12, 10},
                 {2, 0, 6, 6, 12, 10},
                 {0, 0, 4, 16, 4, 12}};
-        boolean rot = state.getValue(AXIS) == Direction.Axis.X;
         VoxelShape shape = Shapes.empty();
         for (double[] b : boxes) {
             double x1 = b[0], y1 = b[1], z1 = b[2], x2 = b[3], y2 = b[4], z2 = b[5];
@@ -57,9 +65,15 @@ public class DiscoveredTableBlock extends Block {
         }
         return shape;
     }
+
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand, BlockHitResult hit) {
+    public @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        return state.getValue(AXIS) == Direction.Axis.X ? SHAPE_X : SHAPE_Z;
+    }
+
+    @Override
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player,
+                                          @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack held = player.getItemInHand(hand);
         if (!(held.getItem() instanceof IScribeTools)) {
             return InteractionResult.PASS;
@@ -68,7 +82,8 @@ public class DiscoveredTableBlock extends Block {
         if (side == null) {
             return InteractionResult.PASS;
         }
-        if (level.isClientSide) {
+        boolean client = level.isClientSide;
+        if (client) {
             return InteractionResult.SUCCESS;
         }
         BlockPos sidePos = pos.relative(side);
@@ -86,8 +101,9 @@ public class DiscoveredTableBlock extends Block {
             held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
         }
         level.playSound(null, pos, SoundType.WOOD.getPlaceSound(), SoundSource.BLOCKS, 1.0F, 0.9F);
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(client);
     }
+
     private static Direction findNeighbourTable(Level level, BlockPos pos) {
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos neighbour = pos.relative(dir);

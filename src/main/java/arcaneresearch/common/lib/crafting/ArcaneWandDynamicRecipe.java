@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.crafting;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -21,32 +22,47 @@ import arcaneresearch.common.items.wands.ItemWandCap;
 import arcaneresearch.common.items.wands.WandItems;
 import arcaneresearch.common.lib.wands.WandResearchHelper;
 import arcaneresearch.init.ModRecipeTypes;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
 public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
+
     private final String capTag;
     private final String rodTag;
     private final AspectList crystals;
     private final int vis;
     private final boolean sceptre;
+
     private ArcaneWandDynamicRecipe(String capTag, String rodTag, AspectList crystals, int vis) {
         this(capTag, rodTag, crystals, vis, false);
     }
+
     private ArcaneWandDynamicRecipe(String capTag, String rodTag, AspectList crystals, int vis,
-                                     boolean sceptre) {
+                                    boolean sceptre) {
         this.capTag = capTag;
         this.rodTag = rodTag;
         this.crystals = crystals;
         this.vis = vis;
         this.sceptre = sceptre;
     }
+
     public static ArcaneWandDynamicRecipe match(CraftingContainer matrix, Player player) {
         if (matrix == null) {
             return null;
         }
+        ArcaneWandDynamicRecipe normal = tryMatchNormal(matrix, player);
+        if (normal != null) {
+            return normal;
+        }
+        return matchSceptre(matrix, player);
+    }
+
+    private static ArcaneWandDynamicRecipe tryMatchNormal(CraftingContainer matrix, Player player) {
         try {
             if (!ArcaneWandRecipe.matches(matrix, null)) {
-                return matchSceptre(matrix, player);
+                return null;
             }
             ItemStack result = ArcaneWandRecipe.getCraftingResult(matrix);
             if (result.isEmpty() || !(result.getItem() instanceof IWand wand)) {
@@ -70,6 +86,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
             return null;
         }
     }
+
     public static ArcaneWandDynamicRecipe matchSceptre(CraftingContainer matrix, Player player) {
         if (matrix == null) {
             return null;
@@ -100,6 +117,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
             return null;
         }
     }
+
     static boolean researchAllows(Player player, String key) {
         if (player == null || key == null) {
             return true;
@@ -113,12 +131,9 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         }
         return WandResearchHelper.isResearchComplete(player, key);
     }
+
     public static List<ArcaneWandDynamicRecipe> allPairs() {
         List<ArcaneWandDynamicRecipe> out = new ArrayList<>();
-        try {
-            WandItems.initWands();
-        } catch (Exception ignored) {
-        }
         for (WandRod rod : WandRod.rods.values()) {
             for (WandCap cap : WandCap.caps.values()) {
                 if (rod.getTag().equals("wood") && cap.getTag().equals("iron")) {
@@ -134,6 +149,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         }
         return out;
     }
+
     public static ArcaneWandDynamicRecipe forPair(WandCap cap, WandRod rod) {
         AspectList cost = new AspectList();
         int vis = 0;
@@ -151,6 +167,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         }
         return new ArcaneWandDynamicRecipe(cap.getTag(), rod.getTag(), cost, vis);
     }
+
     public static ArcaneWandDynamicRecipe forSceptre(WandCap cap, WandRod rod) {
         AspectList cost = new AspectList();
         int vis = 0;
@@ -168,6 +185,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         }
         return new ArcaneWandDynamicRecipe(cap.getTag(), rod.getTag(), cost, vis, true);
     }
+
     public static boolean hasWandAccess(Player player) {
         if (player == null) {
             return true;
@@ -179,6 +197,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
             return false;
         }
     }
+
     private ItemStack buildWand() {
         ItemStack out = WandItems.createWandStack();
         if (out.getItem() instanceof IWand w) {
@@ -190,86 +209,112 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         }
         return out;
     }
+
     @Override
-    public boolean matches(IArcaneWorkbench container, Level level) {
-        return true;
+    public boolean matches(@NotNull IArcaneWorkbench container, @NotNull Level level) {
+        return false;
     }
+
     @Override
-    public ItemStack assemble(IArcaneWorkbench container, RegistryAccess registryAccess) {
+    public @NotNull ItemStack assemble(@NotNull IArcaneWorkbench container, @NotNull RegistryAccess registryAccess) {
         return buildWand();
     }
+
     @Override
     public boolean canCraftInDimensions(int width, int height) {
         return width >= 3 && height >= 3;
     }
+
     @Override
-    public ItemStack getResultItem(RegistryAccess registryAccess) {
+    public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) {
         return buildWand();
     }
+
     @Override
-    public ResourceLocation getId() {
-        return new ResourceLocation("arcaneresearch",
+    public @NotNull ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath("arcaneresearch",
                 (sceptre ? "sceptre_dynamic_" : "wand_dynamic_") + rodTag + "_" + capTag);
     }
+
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return ShapedArcaneRecipe.Serializer.INSTANCE;
     }
+
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return ModRecipeTypes.ARCANE_WORKBENCH.get();
     }
+
     @Override
-    public NonNullList<Ingredient> getIngredients() {
+    public @NotNull NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> out = NonNullList.withSize(9, Ingredient.EMPTY);
         try {
             WandCap cap = WandCap.caps.get(capTag);
             WandRod rod = WandRod.rods.get(rodTag);
             if (sceptre) {
                 if (cap != null) {
-                    out.set(1, Ingredient.of(ItemWandCap.createStack(cap)));
-                    out.set(5, Ingredient.of(ItemWandCap.createStack(cap)));
-                    out.set(6, Ingredient.of(ItemWandCap.createStack(cap)));
+                    ItemStack capStack = ItemWandCap.createStack(cap);
+                    if (!capStack.isEmpty()) {
+                        Ingredient capIng = Ingredient.of(capStack);
+                        out.set(1, capIng);
+                        out.set(5, capIng);
+                        out.set(6, capIng);
+                    }
                 }
                 if (rod != null) {
-                    out.set(4, Ingredient.of(rod.getItem().copy()));
+                    ItemStack rodStack = rod.getItem().copy();
+                    if (!rodStack.isEmpty()) {
+                        out.set(4, Ingredient.of(rodStack));
+                    }
                 }
-                try {
+                if (arcaneresearch.init.ModItems.SALIS_MUNDUS.isPresent()) {
                     out.set(2, Ingredient.of(
                             new ItemStack(arcaneresearch.init.ModItems.SALIS_MUNDUS.get())));
-                } catch (Exception ignored) {
                 }
                 return out;
             }
             if (cap != null) {
-                out.set(2, Ingredient.of(ItemWandCap.createStack(cap)));
-                out.set(6, Ingredient.of(ItemWandCap.createStack(cap)));
+                ItemStack capStack = ItemWandCap.createStack(cap);
+                if (!capStack.isEmpty()) {
+                    Ingredient capIng = Ingredient.of(capStack);
+                    out.set(2, capIng);
+                    out.set(6, capIng);
+                }
             }
             if (rod != null) {
-                out.set(4, Ingredient.of(rod.getItem().copy()));
+                ItemStack rodStack = rod.getItem().copy();
+                if (!rodStack.isEmpty()) {
+                    out.set(4, Ingredient.of(rodStack));
+                }
             }
         } catch (Exception ignored) {
         }
         return out;
     }
+
     @Override
-    public String getGroup() {
+    public @NotNull String getGroup() {
         return "wand";
     }
+
     @Override
     public boolean isSpecial() {
         return true;
     }
+
     @Override
     public int getVis() {
         return vis;
     }
+
     @Override
     public String getResearch() {
         return "";
     }
+
     @Override
     public AspectList getCrystals() {
-        return crystals;
+        return crystals.copy();
     }
 }

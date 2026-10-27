@@ -1,11 +1,12 @@
 package arcaneresearch.invscan;
-import net.minecraft.network.chat.Component;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
+import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -17,19 +18,20 @@ import arcaneresearch.discovered.scan.ScanNetwork;
 import arcaneresearch.discovered.scan.ScanTargets;
 import arcaneresearch.discovered.scan.ScanWallet;
 import arcaneresearch.helper.RegsHelper;
-/**
- * Server-side validation and completion of inventory hovers scans.
- * Mirrors the grant logic of MsgStudyComplete for item stacks and the player itself.
- */
+
 public final class InvScanServer {
+
     public static final String KEY_PREFIX = "T:";
     public static final String SELF_KEY = KEY_PREFIX + "self";
+
     private InvScanServer() {
     }
+
     private static boolean holdingThaumometerOnCursor(ServerPlayer player) {
         AbstractContainerMenu menu = player.containerMenu;
-        return menu != null && menu.getCarried().getItem() instanceof ItemThaumometer;
+        return menu.getCarried().getItem() instanceof ItemThaumometer;
     }
+
     public static void handleSlot(ServerPlayer player, int containerId, int index) {
         if (player == null || !holdingThaumometerOnCursor(player)) {
             return;
@@ -50,6 +52,7 @@ public final class InvScanServer {
         AspectList aspects = AspectHelper.getObjectAspects(stack);
         completeScan(player, key, aspects);
     }
+
     public static void handleSelf(ServerPlayer player) {
         if (player == null || !holdingThaumometerOnCursor(player)) {
             return;
@@ -63,38 +66,43 @@ public final class InvScanServer {
         AspectList aspects = ScanTargets.entityAspects(player);
         completeScan(player, SELF_KEY, aspects);
     }
+
     private static void completeScan(ServerPlayer player, String key, AspectList aspects) {
         if (aspects == null || aspects.size() <= 0) {
-            player.displayClientMessage(Component.literal("Unknown object"), true);
+            Arcaneresearch.LOGGER.debug("InvScan: scan for {} produced no aspects", key);
             return;
         }
         if (!ScanTargets.validScan(player, aspects)) {
-            player.displayClientMessage(
-                    Component.literal("Unknown object: undiscovered components"), true);
+            Arcaneresearch.LOGGER.debug("InvScan: validScan rejected {}", key);
             return;
         }
+
         AspectList granted = new AspectList();
-        try {
-            for (Aspect aspect : aspects.getAspects()) {
-                if (aspect == null) {
-                    continue;
-                }
-                int amount = aspects.getAmount(aspect);
-                if (!ScanTargets.known(player, aspect)) {
-                    try {
-                        ArcaneresearchApi.internalMethods.progressResearch(
-                                player, "!" + aspect.getTag());
-                    } catch (Exception ignored) {
-                    }
-                    amount += 2;
-                }
-                if (amount > 0) {
-                    ScanWallet.add(player, aspect, amount);
-                    granted.add(aspect, amount);
-                }
+        for (Aspect aspect : aspects.getAspects()) {
+            if (aspect == null) {
+                continue;
             }
-        } catch (Exception ignored) {
+            int amount = aspects.getAmount(aspect);
+
+            if (!ScanTargets.known(player, aspect)) {
+                String tag = aspect.getTag();
+                if (tag != null) {
+                    try {
+                        ArcaneresearchApi.internalMethods.progressResearch(player, "!" + tag);
+                    } catch (Exception e) {
+                        Arcaneresearch.LOGGER.warn(
+                                "InvScan: progressResearch failed for aspect '{}'", tag, e);
+                    }
+                }
+                amount += 2;
+            }
+
+            if (amount > 0) {
+                ScanWallet.add(player, aspect, amount);
+                granted.add(aspect, amount);
+            }
         }
+
         ScanWallet.markScanned(player, key);
         if (granted.size() > 0) {
             ScanNetwork.CHANNEL.send(
