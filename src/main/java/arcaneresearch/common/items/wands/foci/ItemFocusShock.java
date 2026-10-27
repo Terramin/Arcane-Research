@@ -129,7 +129,8 @@ public class ItemFocusShock extends ItemFocusBasic {
         if (isUpgradedWith(focusStack, earthshock)) {
             if (!level.isClientSide()) {
                 EntityShockOrb orb = new EntityShockOrb(WandEntities.SHOCK_ORB.get(), level, entity);
-                orb.setPos(entity.getX(), entity.getEyeY() - 0.1D, entity.getZ());
+                Vec3 spawn = handSpawn(entity);
+                orb.setPos(spawn.x, spawn.y, spawn.z);
                 orb.shootFromRotation(entity, entity.getXRot(), entity.getYRot(), 0.0F, 1.5F, 1.0F);
                 orb.area += getUpgradeLevel(focusStack, FocusUpgradeType.enlarge) * 2;
                 orb.damage += (int) (wand.getFocusPotency(wandstack) * 1.33D);
@@ -143,13 +144,37 @@ public class ItemFocusShock extends ItemFocusBasic {
         return true;
     }
 
+    /**
+     * Server-side approximation of the wand crystal position (the server never sees the
+     * first-person model): slightly in front of the eyes, offset to the wand hand. Used so the
+     * earthshock orb leaves from the wand instead of the player's face.
+     */
+    private static Vec3 handSpawn(LivingEntity caster) {
+        Vec3 look = caster.getLookAngle();
+        Vec3 right = new Vec3(-look.z, 0.0D, look.x);
+        if (right.lengthSqr() < 1.0E-6D) {
+            right = new Vec3(1.0D, 0.0D, 0.0D);
+        } else {
+            right = right.normalize();
+        }
+        boolean mainWand = caster.getMainHandItem().getItem() instanceof IWand;
+        boolean rightArm = mainWand == (caster.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT);
+        double side = rightArm ? 0.30D : -0.30D;
+        return new Vec3(caster.getX(), caster.getEyeY() - 0.1D, caster.getZ())
+                .add(look.scale(0.35D))
+                .add(right.scale(side));
+    }
+
     public void doLightningBolt(ItemStack stack, LivingEntity caster, int count) {
         if (!(stack.getItem() instanceof IWand wand)) {
             return;
         }
         Level level = caster.level();
         int potency = wand.getFocusPotency(stack);
-        Entity pointed = WandTargets.getPointedEntity(level, caster, 0.0D, 20.0D, 1.1F);
+        // Point-blank fallback: an eye-ray misses a mob that is touching the caster, which
+        // made close-range casts deal no damage (and the client beam point at nothing).
+        Entity pointed = WandTargets.getPointedEntityOrClose(level, caster, 0.0D, 20.0D, 1.1F,
+                2.5D, 0.35D);
         if (level.isClientSide()) {
             BlockHitResult mop = BlockUtils.getTargetBlock(level, caster, false);
             Vec3 look = caster.getLookAngle();

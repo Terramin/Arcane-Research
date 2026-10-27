@@ -82,12 +82,88 @@ public final class WandUseAnimation {
                     lastEquipOff = equipProgress;
                     lastSwingOff = swingProgress;
                 }
+                if (result) {
+                    captureTip(poseStack, arm, stack, hand);
+                }
                 return result;
             } catch (Exception e) {
                 return false;
             }
         }
     };
+
+    /**
+     * The exact view-space matrix of the focus crystal (wand tip) of the first-person wand,
+     * captured during the hand render. Rebuilding the pose offline (equip/swing/bob/unused
+     * partial tick) could drift away from what is actually drawn; the beam then started
+     * beside/behind the wand instead of on its tip. Two slots so both hands are covered.
+     */
+    private static final Tip TIP_MAIN = new Tip();
+    private static final Tip TIP_OFF = new Tip();
+    private static final long TIP_MAX_AGE_NS = 250_000_000L;
+
+    public static final class Tip {
+        private final org.joml.Matrix4f matrix = new org.joml.Matrix4f();
+        private float tipY = 1.16F;
+        private long stamp;
+        private boolean valid;
+
+        public boolean fresh() {
+            return this.valid && System.nanoTime() - this.stamp <= TIP_MAX_AGE_NS;
+        }
+
+        public boolean project(float modelDx, float modelDy, float modelDz, org.joml.Vector3f out) {
+            if (!fresh()) {
+                return false;
+            }
+            org.joml.Vector4f p = new org.joml.Vector4f(0.5F + modelDx, this.tipY + modelDy,
+                    0.5F + modelDz, 1.0F);
+            this.matrix.transform(p);
+            out.set(p.x, p.y, p.z);
+            return true;
+        }
+    }
+
+    public static boolean projectTip(InteractionHand hand, float modelDx, float modelDy, float modelDz,
+                                     org.joml.Vector3f out) {
+        return tip(hand).project(modelDx, modelDy, modelDz, out);
+    }
+
+    private static Tip tip(InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND ? TIP_MAIN : TIP_OFF;
+    }
+
+    private static void captureTip(PoseStack pose, HumanoidArm arm, ItemStack stack, InteractionHand hand) {
+        try {
+            if (stack.isEmpty() || !(stack.getItem() instanceof IWand wand)) {
+                return;
+            }
+            boolean right = arm == HumanoidArm.RIGHT;
+            float tipY = wand.getFocus(stack) != null ? 1.16F : 1.125F;
+            PoseStack tipPose = new PoseStack();
+            tipPose.last().pose().set(pose.last().pose());
+            // Same first-person display transform as models/item/wand.json (and solveTip):
+            // rot [0,-90,25], trans [1.13,3.2,1.13]x0.0625, scale 0.68, then ItemRenderer's -0.5.
+            tipPose.translate((right ? 1.13F : -1.13F) * 0.0625F, 3.2F * 0.0625F, 1.13F * 0.0625F);
+            tipPose.rotate(Axis.YP.rotationDegrees(right ? -90.0F : 90.0F));
+            tipPose.rotate(Axis.ZP.rotationDegrees(right ? 25.0F : -25.0F));
+            tipPose.scale(0.68F, 0.68F, 0.68F);
+            tipPose.translate(-0.5F, -0.5F, -0.5F);
+            org.joml.Vector3f probe = new org.joml.Vector3f(0.5F, tipY, 0.5F);
+            tipPose.last().pose().transformPosition(probe);
+            if (probe.z > -0.05F || probe.lengthSquared() < 0.04F || probe.lengthSquared() > 6.25F) {
+                // Sanity check only: a sane crystal sits in front of the camera, 0.2..2.5 blocks away.
+                return;
+            }
+            Tip tip = tip(hand);
+            tip.matrix.set(tipPose.last().pose());
+            tip.tipY = tipY;
+            tip.stamp = System.nanoTime();
+            tip.valid = true;
+        } catch (Throwable ignored) {
+            // Rendering must never fail because of the cosmetic tip probe.
+        }
+    }
 
     private WandUseAnimation() {
     }

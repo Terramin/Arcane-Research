@@ -81,10 +81,17 @@ public final class WandTipHelper {
             } catch (Exception ignored) {
             }
             if (first) {
+                // Preferred: the matrix captured while the hand was actually rendered.
+                Vec3 live = liveTip(player, modelDx, modelDy, modelDz);
+                if (live != null) {
+                    return live;
+                }
                 Vec3 tip = solveTip(player, partialTicks, modelDx, modelDy, modelDz);
                 if (tip != null) {
                     return tip;
                 }
+            } else {
+                return thirdPersonTip(player, partialTicks);
             }
             Vec3 eye = player.getEyePosition(partialTicks);
             Vec3 look = player.getViewVector(partialTicks);
@@ -107,6 +114,65 @@ public final class WandTipHelper {
 
 
  
+    /**
+     * In third person the hand pose is not rendered through the first-person pipeline, so the
+     * tip is approximated from the player's body: the crystal sits in the wand hand, slightly
+     * to the side, ahead of the chest and above it. Much closer to the visible wand than the
+     * old "one block in front of the eyes" fallback.
+     */
+    private static Vec3 thirdPersonTip(Player player, float partialTicks) {
+        Vec3 look = player.getViewVector(partialTicks);
+        Vec3 right = new Vec3(-look.z, 0.0D, look.x);
+        if (right.lengthSqr() < 1.0E-6D) {
+            right = new Vec3(1.0D, 0.0D, 0.0D);
+        } else {
+            right = right.normalize();
+        }
+        double side = isRightHand(player) ? 0.32D : -0.32D;
+        Vec3 base = new Vec3(player.getX(), player.getY() + player.getEyeHeight() * 0.8D, player.getZ());
+        return base.add(look.scale(0.55D)).add(right.scale(side)).add(0.0D, 0.1D, 0.0D);
+    }
+
+    private static Vec3 liveTip(Player player, float modelDx, float modelDy, float modelDz) {
+        InteractionHand hand = heldWandHand(player);
+        if (hand == null) {
+            return null;
+        }
+        Vec3 world = viewToWorld(player, hand, modelDx, modelDy, modelDz);
+        if (world != null) {
+            return world;
+        }
+        InteractionHand other = hand == InteractionHand.MAIN_HAND
+                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        return viewToWorld(player, other, modelDx, modelDy, modelDz);
+    }
+
+    private static InteractionHand heldWandHand(Player player) {
+        if (player.getMainHandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
+            return InteractionHand.MAIN_HAND;
+        }
+        if (player.getOffhandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
+            return InteractionHand.OFF_HAND;
+        }
+        return null;
+    }
+
+    private static Vec3 viewToWorld(Player player, InteractionHand hand,
+                                    float modelDx, float modelDy, float modelDz) {
+        org.joml.Vector3f view = new org.joml.Vector3f();
+        if (!arcaneresearch.client.renderers.item.WandUseAnimation.projectTip(hand,
+                modelDx, modelDy, modelDz, view)) {
+            return null;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        Camera camera = mc.gameRenderer.mainCamera();
+        // 26.3 camera.rotation() already maps the hand pose frame into world space (no x/z flip).
+        org.joml.Vector3f v = new org.joml.Vector3f(view.x, view.y, view.z);
+        v.rotate(camera.rotation());
+        Vec3 pos = camera.position();
+        return new Vec3(pos.x + v.x, pos.y + v.y, pos.z + v.z);
+    }
+
     private static Vec3 solveTip(Player player, float partialTicks,
                                    float modelDx, float modelDy, float modelDz) {
         try {

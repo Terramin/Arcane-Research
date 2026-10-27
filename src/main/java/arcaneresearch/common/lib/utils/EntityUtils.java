@@ -80,7 +80,10 @@ public class EntityUtils {
                 .expandTowards(lookVec.scale(range)).inflate(padding);
         List<Entity> list = level.getEntities(entity, box);
         Entity pointed = null;
-        double best = 0.0;
+        // 0.0 used to double as both "nothing found yet" and "the eye is inside this box",
+        // so a point-blank target was silently replaced by any further hit along the ray.
+        double best = Double.MAX_VALUE;
+        boolean bestContained = false;
         for (Entity candidate : list) {
             if (eyePos.distanceTo(candidate.position()) < minrange) {
                 continue;
@@ -97,20 +100,26 @@ public class EntityUtils {
             }
             float border = Math.max(0.8f, candidate.getPickRadius());
             AABB candidateBox = candidate.getBoundingBox().inflate(border);
-            if (candidateBox.contains(eyePos)) {
-                if (0.0 < best || best == 0.0) {
-                    pointed = candidate;
-                    best = 0.0;
-                }
+            // A box that swallows the eye only counts when the body is actually in front of us,
+            // otherwise a mob standing behind the caster would steal the hit.
+            boolean contained = candidateBox.contains(eyePos)
+                    && candidate.position().subtract(eyePos).dot(lookVec) > 0.0D;
+            double dist;
+            if (contained) {
+                // Point-blank: the eye is already inside the target, prefer the closest body.
+                dist = eyePos.distanceTo(candidate.position());
             } else {
                 var intercept = candidateBox.clip(eyePos, endVec);
-                if (intercept.isPresent()) {
-                    double dist = eyePos.distanceTo(intercept.get());
-                    if (dist < best || best == 0.0) {
-                        pointed = candidate;
-                        best = dist;
-                    }
+                if (intercept.isEmpty()) {
+                    continue;
                 }
+                dist = eyePos.distanceTo(intercept.get());
+            }
+            if (pointed == null || (contained && !bestContained)
+                    || (contained == bestContained && dist < best)) {
+                pointed = candidate;
+                best = dist;
+                bestContained = contained;
             }
         }
         return pointed;
@@ -124,7 +133,8 @@ public class EntityUtils {
                 .expandTowards(lookVec.scale(range)).inflate(padding);
         List<Entity> list = level.getEntities(ignoreEntity, box);
         net.minecraft.world.phys.EntityHitResult pointed = null;
-        double best = 0.0;
+        double best = Double.MAX_VALUE;
+        boolean bestContained = false;
         for (Entity candidate : list) {
             if (startVec.distanceTo(candidate.position()) < minrange) {
                 continue;
@@ -141,20 +151,26 @@ public class EntityUtils {
             }
             float border = Math.max(0.8f, candidate.getPickRadius());
             AABB candidateBox = candidate.getBoundingBox().inflate(border);
-            if (candidateBox.contains(startVec)) {
-                if (0.0 < best || best == 0.0) {
-                    pointed = new net.minecraft.world.phys.EntityHitResult(candidate, candidate.position());
-                    best = 0.0;
-                }
+            boolean contained = candidateBox.contains(startVec)
+                    && candidate.position().subtract(startVec).dot(lookVec) > 0.0D;
+            double dist;
+            Vec3 hitPos;
+            if (contained) {
+                dist = startVec.distanceTo(candidate.position());
+                hitPos = candidate.position();
             } else {
                 var intercept = candidateBox.clip(startVec, endVec);
-                if (intercept.isPresent()) {
-                    double dist = startVec.distanceTo(intercept.get());
-                    if (dist < best || best == 0.0) {
-                        pointed = new net.minecraft.world.phys.EntityHitResult(candidate, intercept.get());
-                        best = dist;
-                    }
+                if (intercept.isEmpty()) {
+                    continue;
                 }
+                dist = startVec.distanceTo(intercept.get());
+                hitPos = intercept.get();
+            }
+            if (pointed == null || (contained && !bestContained)
+                    || (contained == bestContained && dist < best)) {
+                pointed = new net.minecraft.world.phys.EntityHitResult(candidate, hitPos);
+                best = dist;
+                bestContained = contained;
             }
         }
         return pointed;

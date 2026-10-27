@@ -31,7 +31,10 @@ public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect 
     protected static final Identifier BEAM_TEXTURE =
             Identifier.fromNamespaceAndPath("arcaneresearch", "textures/misc/essentia.png");
     protected static final double BEHIND_START = 1.0;
-    protected static final double FIRST_PERSON_DIST = 1.0;
+    // Only stretch a "tail" back through the camera when the bolt really starts on top of it.
+    // The wand tip sits ~1 block away, so the old 1.0 threshold randomly glued the bolt to the
+    // screen centre (looked like the lightning came from the face instead of the wand).
+    protected static final double FIRST_PERSON_DIST = 0.4;
     protected float beamWidth;
     protected List<Vec3> points = new ArrayList<>();
     protected List<Float> pointWidths = new ArrayList<>();
@@ -157,7 +160,9 @@ public class FXBolt extends SingleQuadParticle implements BeamEngine.BeamEffect 
     public void emitQuads(VertexConsumer consumer, Camera camera, float partialTicks) {
         calculatePoints(partialTicks);
 
-        if (points.size() <= 2) {
+        // A bolt shorter than ~1 block collapses to a start/end pair (steps = 2). It used to
+        // be skipped entirely, which is why point-blank casts drew no lightning at all.
+        if (points.size() < 2) {
             return;
         }
 
