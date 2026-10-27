@@ -1,63 +1,57 @@
 package arcaneresearch.common.world.maze;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.util.RandomSource;
+
 public class MazeGenerator {
-    int width = 0;
-    int height = 0;
-    long seed = 0L;
-    RandomSource rand = null;
+    int width;
+    int height;
+    long seed;
+    RandomSource rand;
     public int[][] grid;
+
+    private final java.util.Random shuffleRand = new java.util.Random();
+
     public static final int N = 1;
     public static final int S = 2;
     public static final int E = 4;
     public static final int W = 8;
     public static final int A = 16;
     public static final int B = 32;
+
     public static int getOPP(int in) {
-        switch (in) {
-            case 1:
-                return 2;
-            case 2:
-                return 1;
-            case 4:
-                return 8;
-            case 8:
-                return 4;
-            default:
-                return -99;
-        }
+        return switch (in) {
+            case 1 -> 2;
+            case 2 -> 1;
+            case 4 -> 8;
+            case 8 -> 4;
+            default -> -99;
+        };
     }
+
     public static int getDX(int in) {
-        switch (in) {
-            case 1:
-                return 0;
-            case 2:
-                return 0;
-            case 4:
-                return 1;
-            case 8:
-                return -1;
-            default:
-                return -99;
-        }
+        return switch (in) {
+            case 1, 2 -> 0;
+            case 4 -> 1;
+            case 8 -> -1;
+            default -> -99;
+        };
     }
+
     public static int getDY(int in) {
-        switch (in) {
-            case 1:
-                return -1;
-            case 2:
-                return 1;
-            case 4:
-                return 0;
-            case 8:
-                return 0;
-            default:
-                return -99;
-        }
+        return switch (in) {
+            case 1 -> -1;
+            case 2 -> 1;
+            case 4, 8 -> 0;
+            default -> -99;
+        };
     }
+
     public MazeGenerator(int width, int height, long seed) {
         this.width = width;
         this.height = height;
@@ -70,48 +64,54 @@ public class MazeGenerator {
             }
         }
     }
+
     private static class Loc {
         int x;
         int y;
+
         Loc(int x, int y) {
             this.x = x;
             this.y = y;
         }
     }
+
     public boolean generate() {
+        if (this.width < 3 || this.height < 3) {
+            return false;
+        }
+
         int bx = 0;
         int by = 0;
         switch (this.rand.nextInt(4)) {
-            case 0:
-                bx = 0;
-                by = 0;
-                break;
-            case 1:
-                bx = this.width - 2;
-                by = this.height - 2;
-                break;
-            case 2:
-                bx = this.width - 2;
-                by = 0;
+            case 1: bx = this.width - 2; by = this.height - 2; break;
+            case 2: bx = this.width - 2;
                 break;
             case 3:
-                bx = 0;
-                by = this.height - 2;
-                break;
-            default:
-                break;
+                by = this.height - 2; break;
+            default: break;
         }
         this.grid[by][bx] = 512;
         this.grid[by][bx + 1] = 768;
         this.grid[by + 1][bx] = 1024;
         this.grid[by + 1][bx + 1] = 1280;
+
         int px = 1 + this.width / 2;
         int py = 1 + this.height / 2;
         this.grid[py][px] = 256;
+
         ArrayList<Loc> cells = new ArrayList<>();
         int l = (this.width + this.height) / 4;
         for (int z = 0; z < l; z++) {
             int w = 1 + this.rand.nextInt(3);
+            // Clamp w so that (width - w) and (height - w) stay > 0,
+            // preventing nextInt(0) IllegalArgumentException.
+            int maxW = Math.min(this.width - 1, this.height - 1);
+            if (w > maxW) {
+                w = maxW;
+            }
+            if (w < 1) {
+                w = 1;
+            }
             if (w > 2) {
                 l--;
             }
@@ -125,25 +125,32 @@ public class MazeGenerator {
                 }
             }
         }
-        List<Integer> directions = Arrays.asList(Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(4), Integer.valueOf(8));
-        java.util.Collections.shuffle(directions, new java.util.Random(this.rand.nextLong()));
-        int xx = px + getDX(directions.get(0).intValue());
-        int yy = py + getDY(directions.get(0).intValue());
-        this.grid[py][px] = this.grid[py][px] | directions.get(0).intValue();
+
+        List<Integer> directions = Arrays.asList(1, 2, 4, 8);
+        shuffle(directions);
+
+        int dir0 = directions.get(0);
+        int xx = px + getDX(dir0);
+        int yy = py + getDY(dir0);
+        if (xx < 1 || xx >= this.width - 1 || yy < 1 || yy >= this.height - 1) {
+            return false;
+        }
+        this.grid[py][px] = this.grid[py][px] | dir0;
         if (this.grid[yy][xx] < 0) {
             this.grid[yy][xx] = 0;
         }
-        this.grid[yy][xx] = this.grid[yy][xx] | getOPP(directions.get(0).intValue());
+        this.grid[yy][xx] = this.grid[yy][xx] | getOPP(dir0);
         cells.add(new Loc(xx, yy));
+
         boolean success = false;
         while (!cells.isEmpty()) {
             int index = getNextIndex(cells.size());
             int x = cells.get(index).x;
             int y = cells.get(index).y;
-            java.util.Collections.shuffle(directions, new java.util.Random(this.rand.nextLong()));
+            shuffle(directions);
             boolean carved = false;
-            for (Iterator<Integer> iterator = directions.iterator(); iterator.hasNext();) {
-                int dir = iterator.next().intValue();
+            for (Integer direction : directions) {
+                int dir = direction;
                 int nx = x + getDX(dir);
                 int ny = y + getDY(dir);
                 if (0 < nx && nx < this.width - 1 && 0 < ny && ny < this.height - 1) {
@@ -166,6 +173,7 @@ public class MazeGenerator {
         if (!success) {
             return false;
         }
+
         for (int aa = 0; aa < this.height; aa++) {
             for (int bb = 0; bb < this.width; bb++) {
                 if (this.grid[aa][bb] < 0) {
@@ -173,27 +181,31 @@ public class MazeGenerator {
                 }
             }
         }
-        java.util.Collections.shuffle(directions, new java.util.Random(this.rand.nextLong()));
-        for (Iterator<Integer> i$ = directions.iterator(); i$.hasNext();) {
-            int dir = i$.next().intValue();
+
+        shuffle(directions);
+        for (Integer direction : directions) {
+            int dir = direction;
             int nx = px + getDX(dir);
             int ny = py + getDY(dir);
-            if (0 < nx && nx < this.width - 1 && 0 < ny && ny < this.height - 1 && this.grid[ny][nx] > 0 && this.rand.nextBoolean()) {
+            if (0 < nx && nx < this.width - 1 && 0 < ny && ny < this.height - 1
+                    && this.grid[ny][nx] > 0 && this.rand.nextBoolean()) {
                 this.grid[ny][nx] = this.grid[ny][nx] | getOPP(dir);
                 this.grid[py][px] = this.grid[py][px] | dir;
             }
         }
-        java.util.Collections.shuffle(directions, new java.util.Random(this.rand.nextLong()));
+
+        shuffle(directions);
         boolean connected = false;
         int ax;
         outer:
         for (ax = 0; ax < 2; ax++) {
             for (int ay = 0; ay < 2; ay++) {
-                for (Iterator<Integer> iterator = directions.iterator(); iterator.hasNext();) {
-                    int dir = iterator.next().intValue();
+                for (Integer direction : directions) {
+                    int dir = direction;
                     int nx = bx + ax + getDX(dir);
                     int ny = by + ay + getDY(dir);
-                    if (0 < nx && nx < this.width - 1 && 0 < ny && ny < this.height - 1 && this.grid[ny][nx] > 0
+                    if (0 < nx && nx < this.width - 1 && 0 < ny && ny < this.height - 1
+                            && this.grid[ny][nx] > 0
                             && new Cell((short) this.grid[ny][nx]).feature == 0) {
                         this.grid[ny][nx] = this.grid[ny][nx] | getOPP(dir);
                         this.grid[by + ay][bx + ax] = this.grid[by + ay][bx + ax] | dir;
@@ -203,27 +215,29 @@ public class MazeGenerator {
                 }
             }
         }
+
         if (!connected) {
-            List<Integer> directions2 = Arrays.asList(Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(4), Integer.valueOf(8));
-            java.util.Collections.shuffle(directions2, new java.util.Random(this.rand.nextLong()));
+            List<Integer> directions2 = Arrays.asList(1, 2, 4, 8);
+            shuffle(directions2);
             success = false;
             outer2:
             for (int m = 0; m < 2; m++) {
                 for (int ay = 0; ay < 2; ay++) {
-                    for (Iterator<Integer> iterator = directions2.iterator(); iterator.hasNext();) {
-                        int dir2 = iterator.next().intValue();
+                    for (Integer integer : directions2) {
+                        int dir2 = integer;
                         int qx = bx + m + getDX(dir2);
                         int qy = by + ay + getDY(dir2);
-                        if (0 < qx && qx < this.width - 1 && 0 < qy && qy < this.height - 1 && this.grid[qy][qx] == 0) {
+                        if (0 < qx && qx < this.width - 1 && 0 < qy && qy < this.height - 1
+                                && this.grid[qy][qx] == 0) {
                             cells.add(new Loc(qx, qy));
                             while (!cells.isEmpty()) {
                                 int index = getNextIndex(cells.size());
                                 int x = cells.get(index).x;
                                 int y = cells.get(index).y;
-                                java.util.Collections.shuffle(directions, new java.util.Random(this.rand.nextLong()));
+                                shuffle(directions);
                                 boolean carved = false;
-                                for (Iterator<Integer> iterator1 = directions.iterator(); iterator1.hasNext();) {
-                                    int dir = iterator1.next().intValue();
+                                for (Integer direction : directions) {
+                                    int dir = direction;
                                     int nx = x + getDX(dir);
                                     int ny = y + getDY(dir);
                                     if (0 < nx && nx < this.width - 1 && 0 < ny && ny < this.height - 1) {
@@ -259,6 +273,7 @@ public class MazeGenerator {
                 return false;
             }
         }
+
         for (int i = 0; i < this.height; i++) {
             for (int bb = 0; bb < this.width; bb++) {
                 Cell cell = new Cell((short) this.grid[i][bb]);
@@ -268,17 +283,19 @@ public class MazeGenerator {
                 }
             }
         }
+
         ArrayList<CellLoc> deadEndsloc = new ArrayList<>();
         for (int k = 0; k < this.height; k++) {
             for (int bb = 0; bb < this.width; bb++) {
                 Cell cell = new Cell((short) this.grid[k][bb]);
-                int exits = (cell.north ? 1 : 0) + (cell.south ? 1 : 0) + (cell.east ? 1 : 0) + (cell.west ? 1 : 0);
+                int exits = (cell.north ? 1 : 0) + (cell.south ? 1 : 0)
+                        + (cell.east ? 1 : 0) + (cell.west ? 1 : 0);
                 if (exits == 1 && cell.feature == 0) {
                     deadEndsloc.add(new CellLoc(k, bb));
                 }
             }
         }
-        if (deadEndsloc.size() == 0) {
+        if (deadEndsloc.isEmpty()) {
             return false;
         }
         int r = this.rand.nextInt(deadEndsloc.size());
@@ -287,7 +304,8 @@ public class MazeGenerator {
         c.feature = 6;
         this.grid[ll.x][ll.z] = c.pack();
         deadEndsloc.remove(r);
-        if (deadEndsloc.size() > 0) {
+
+        if (!deadEndsloc.isEmpty()) {
             int count = 0;
             while (count < deadEndsloc.size() * 0.75D) {
                 int m = this.rand.nextInt(deadEndsloc.size());
@@ -295,18 +313,10 @@ public class MazeGenerator {
                 Cell cell = new Cell((short) this.grid[cellLoc.x][cellLoc.z]);
                 if (cell.feature == 0) {
                     switch (this.rand.nextInt(5)) {
-                        case 0:
-                            cell.feature = 7;
-                            break;
-                        case 1:
-                            cell.feature = 8;
-                            break;
-                        case 2:
-                            cell.feature = 9;
-                            break;
-                        default:
-                            cell.feature = 11;
-                            break;
+                        case 0: cell.feature = 7; break;
+                        case 1: cell.feature = 8; break;
+                        case 2: cell.feature = 9; break;
+                        default: cell.feature = 11; break;
                     }
                     this.grid[cellLoc.x][cellLoc.z] = cell.pack();
                     deadEndsloc.remove(m);
@@ -314,33 +324,21 @@ public class MazeGenerator {
                 }
             }
         }
+
         for (int j = 0; j < this.height; j++) {
             for (int bb = 0; bb < this.width; bb++) {
                 c = new Cell((short) this.grid[j][bb]);
-                if (c.feature == 0 && (c.north || c.south || c.west || c.east) && this.rand.nextBoolean()) {
+                if (c.feature == 0 && (c.north || c.south || c.west || c.east)
+                        && this.rand.nextBoolean()) {
                     switch (this.rand.nextInt(10)) {
-                        case 0:
-                            c.feature = 8;
-                            break;
+                        case 0: c.feature = 8; break;
                         case 1:
-                        case 2:
-                            c.feature = 10;
-                            break;
-                        case 3:
-                            c.feature = 21;
-                            break;
-                        case 4:
-                            c.feature = 22;
-                            break;
-                        case 5:
-                            c.feature = 23;
-                            break;
-                        case 6:
-                            c.feature = 24;
-                            break;
-                        default:
-                            c.feature = 11;
-                            break;
+                        case 2: c.feature = 10; break;
+                        case 3: c.feature = 21; break;
+                        case 4: c.feature = 22; break;
+                        case 5: c.feature = 23; break;
+                        case 6: c.feature = 24; break;
+                        default: c.feature = 11; break;
                     }
                     this.grid[j][bb] = c.pack();
                 }
@@ -348,6 +346,12 @@ public class MazeGenerator {
         }
         return true;
     }
+
+    private void shuffle(List<Integer> list) {
+        this.shuffleRand.setSeed(this.rand.nextLong());
+        Collections.shuffle(list, this.shuffleRand);
+    }
+
     private int getNextIndex(int ceil) {
         float r = this.rand.nextFloat();
         if (r <= 0.45F) {

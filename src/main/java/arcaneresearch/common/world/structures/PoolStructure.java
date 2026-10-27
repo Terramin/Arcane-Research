@@ -1,4 +1,5 @@
 package arcaneresearch.common.world.structures;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,10 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import arcaneresearch.init.ModStructures;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Optional;
+
 public class PoolStructure extends Structure {
     public static final Codec<PoolStructure> CODEC = RecordCodecBuilder.<PoolStructure>create(instance ->
             instance.group(
@@ -28,6 +32,7 @@ public class PoolStructure extends Structure {
                     Codec.INT.fieldOf("min_y").forGetter((PoolStructure s) -> s.minY),
                     Codec.INT.fieldOf("max_y").forGetter((PoolStructure s) -> s.maxY)
             ).apply(instance, PoolStructure::new));
+
     private final Holder<StructureTemplatePool> startPool;
     private final int maxDepth;
     private final int yOffset;
@@ -35,6 +40,7 @@ public class PoolStructure extends Structure {
     private final int flatVariance;
     private final int minY;
     private final int maxY;
+
     public PoolStructure(StructureSettings settings, Holder<StructureTemplatePool> startPool, int maxDepth,
                          int yOffset, int flatRadius, int flatVariance, int minY, int maxY) {
         super(settings);
@@ -46,36 +52,56 @@ public class PoolStructure extends Structure {
         this.minY = minY;
         this.maxY = maxY;
     }
+
     @Override
-    public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+    public @NotNull Optional<GenerationStub> findGenerationPoint(@NotNull GenerationContext context) {
         ChunkPos chunkPos = context.chunkPos();
         ChunkGenerator chunkGenerator = context.chunkGenerator();
         LevelHeightAccessor heightAccessor = context.heightAccessor();
         RandomState randomState = context.randomState();
+
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
-        int surfaceY = chunkGenerator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        int surfaceY = chunkGenerator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                heightAccessor, randomState);
         int groundY = surfaceY - 1;
-        if (groundY < this.minY || groundY > this.maxY) {
+
+        int minY = this.minY;
+        int maxY = this.maxY;
+        if (groundY < minY || groundY > maxY) {
             return Optional.empty();
         }
+        // world bounds — groundY может выйти за них, даже если прошёл проверку minY/maxY
+        if (groundY < heightAccessor.getMinBuildHeight()
+                || groundY >= heightAccessor.getMaxBuildHeight()) {
+            return Optional.empty();
+        }
+
         NoiseColumn column = chunkGenerator.getBaseColumn(x, z, heightAccessor, randomState);
         BlockState topState = column.getBlock(groundY);
-        if (topState.liquid() || !topState.isSolid()) {
+        if (!topState.getFluidState().isEmpty() || !topState.canOcclude()) {
             return Optional.empty();
         }
+
         int r = this.flatRadius;
-        int[] corners = {
-                chunkGenerator.getBaseHeight(x - r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState),
-                chunkGenerator.getBaseHeight(x + r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState),
-                chunkGenerator.getBaseHeight(x - r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState),
-                chunkGenerator.getBaseHeight(x + r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState)
-        };
-        for (int h : corners) {
-            if (Math.abs(h - surfaceY) > this.flatVariance) {
-                return Optional.empty();
-            }
+        int flatVariance = this.flatVariance;
+        int h00 = chunkGenerator.getBaseHeight(x - r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h00 - surfaceY) > flatVariance) {
+            return Optional.empty();
         }
+        int h10 = chunkGenerator.getBaseHeight(x + r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h10 - surfaceY) > flatVariance) {
+            return Optional.empty();
+        }
+        int h01 = chunkGenerator.getBaseHeight(x - r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h01 - surfaceY) > flatVariance) {
+            return Optional.empty();
+        }
+        int h11 = chunkGenerator.getBaseHeight(x + r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h11 - surfaceY) > flatVariance) {
+            return Optional.empty();
+        }
+
         BlockPos structurePos = new BlockPos(x, groundY + this.yOffset, z);
         return JigsawPlacement.addPieces(
                 context,
@@ -87,8 +113,9 @@ public class PoolStructure extends Structure {
                 Optional.empty(),
                 80);
     }
+
     @Override
-    public StructureType<?> type() {
+    public @NotNull StructureType<?> type() {
         return ModStructures.POOL.get();
     }
 }

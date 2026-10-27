@@ -1,39 +1,76 @@
 package arcaneresearch.common.world.maze;
+
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class MazePersistence {
+
     private MazePersistence() {
     }
-    private static boolean isOuter(ServerLevel level) {
-        return level.dimension().equals(MazeFeature.DIMENSION);
+
+    private static ServerLevel outerLevel(LevelEvent event) {
+        if (event == null) {
+            return null;
+        }
+        if (!(event.getLevel() instanceof ServerLevel level)) {
+            return null;
+        }
+        ResourceKey<Level> mazeDim = MazeFeature.DIMENSION;
+        return mazeDim.equals(level.dimension()) ? level : null;
     }
+
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !isOuter(level)) {
+        ServerLevel level = outerLevel(event);
+        if (level == null) {
             return;
         }
-        if (!MazeHandler.labyrinth.isEmpty()) {
+        if (MazeHandler.labyrinth != null && !MazeHandler.labyrinth.isEmpty()) {
             return;
         }
-        MazeHandler.loadMaze(level);
+        try {
+            MazeHandler.loadMaze(level);
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.error("[Arcaneresearch] maze load failed for {}", level.dimension().location(), e);
+        }
     }
+
     @SubscribeEvent
     public static void onLevelSave(LevelEvent.Save event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !isOuter(level)) {
+        ServerLevel level = outerLevel(event);
+        if (level == null) {
             return;
         }
-        MazeHandler.saveMaze(level);
+        try {
+            MazeHandler.saveMaze(level);
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.error("[Arcaneresearch] maze save failed for {}", level.dimension().location(), e);
+        }
     }
+
     @SubscribeEvent
     public static void onLevelUnload(LevelEvent.Unload event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !isOuter(level)) {
+        ServerLevel level = outerLevel(event);
+        if (level == null) {
             return;
         }
-        MazeHandler.saveMaze(level);
-        MazeHandler.clear();
+        try {
+            MazeHandler.saveMaze(level);
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.error("[Arcaneresearch] maze unload-save failed for {}",
+                    level.dimension().location(), e);
+        } finally {
+            try {
+                MazeHandler.clear();
+            } catch (Exception e) {
+                Arcaneresearch.LOGGER.error("[Arcaneresearch] maze clear failed", e);
+            }
+        }
     }
 }
