@@ -19,7 +19,7 @@ import java.util.Random;
 public class FXBolt extends TextureSheetParticle {
     protected static final ResourceLocation BEAM_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/essentia.png");
     protected static final double BEHIND_START = 1.0;
-    protected static final double FIRST_PERSON_DIST = 1.0;
+    protected static final double FIRST_PERSON_DIST = 0.4;
     protected float beamWidth;
     protected List<Vec3> points = new ArrayList<>();
     protected List<Float> pointWidths = new ArrayList<>();
@@ -93,7 +93,7 @@ public class FXBolt extends TextureSheetParticle {
     @Override
     public void render(@NotNull VertexConsumer ignored, @NotNull Camera camera, float partialTicks) {
         calculatePoints(partialTicks);
-        if (points.size() <= 2) {
+        if (points.size() < 2) {
             return;
         }
         Vec3 cameraPos = camera.getPosition();

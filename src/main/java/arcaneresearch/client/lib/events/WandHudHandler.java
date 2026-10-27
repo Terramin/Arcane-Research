@@ -126,7 +126,7 @@ public class WandHudHandler {
                     int w = mc.font.width(secs) / 2;
                     graphics.pose().pushPose();
                     graphics.pose().scale(0.5F, 0.5F, 1.0F);
-                    graphics.pose().translate(0.0F, 0.0F, 200.0F);
+                    graphics.pose().translate(0.0F, 0.0F, 300.0F);
                     graphics.drawString(mc.font, secs, -w, -4, 0xFFFFFF, true);
                     graphics.pose().popPose();
                 }

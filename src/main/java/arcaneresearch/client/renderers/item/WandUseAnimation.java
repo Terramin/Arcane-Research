@@ -36,9 +36,81 @@ public final class WandUseAnimation {
                 lastEquipOff = equipProgress;
                 lastSwingOff = swingProgress;
             }
+            if (result) {
+                captureTip(poseStack, player, arm, stack, hand);
+            }
             return result;
         }
     };
+    private static final Tip TIP_MAIN = new Tip();
+    private static final Tip TIP_OFF = new Tip();
+    private static final long TIP_MAX_AGE_NS = 250_000_000L;
+
+    public static final class Tip {
+        private final org.joml.Matrix4f matrix = new org.joml.Matrix4f();
+        private float tipY = 1.16F;
+        private long stamp;
+        private boolean valid;
+
+        public boolean fresh() {
+            return this.valid && System.nanoTime() - this.stamp <= TIP_MAX_AGE_NS;
+        }
+
+        public boolean project(float modelDx, float modelDy, float modelDz, org.joml.Vector3f out) {
+            if (!fresh()) {
+                return false;
+            }
+            org.joml.Vector4f p = new org.joml.Vector4f(0.5F + modelDx, this.tipY + modelDy,
+                    0.5F + modelDz, 1.0F);
+            this.matrix.transform(p);
+            out.set(p.x, p.y, p.z);
+            return true;
+        }
+    }
+
+    public static boolean projectTip(InteractionHand hand, float modelDx, float modelDy, float modelDz,
+                                     org.joml.Vector3f out) {
+        return tip(hand).project(modelDx, modelDy, modelDz, out);
+    }
+
+    private static Tip tip(InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND ? TIP_MAIN : TIP_OFF;
+    }
+
+    private static void captureTip(PoseStack pose, LocalPlayer player, HumanoidArm arm, ItemStack stack,
+                                   InteractionHand hand) {
+        try {
+            if (stack.isEmpty() || !(stack.getItem() instanceof IWand wand)) {
+                return;
+            }
+            Minecraft mc = Minecraft.getInstance();
+            net.minecraft.world.item.ItemDisplayContext ctx = arm == HumanoidArm.RIGHT
+                    ? net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+                    : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+            var transforms = mc.getItemRenderer().getModel(stack, player.level(), player, 0).getTransforms();
+            net.minecraft.client.renderer.block.model.ItemTransform transform = transforms.getTransform(ctx);
+            if (transform == net.minecraft.client.renderer.block.model.ItemTransform.NO_TRANSFORM) {
+                return;
+            }
+            float tipY = wand.getFocus(stack) != null ? 1.16F : 1.125F;
+            PoseStack tipPose = new PoseStack();
+            tipPose.last().pose().set(pose.last().pose());
+            tipPose.last().normal().set(pose.last().normal());
+            transform.apply(arm == HumanoidArm.LEFT, tipPose);
+            tipPose.translate(-0.5F, -0.5F, -0.5F);
+            org.joml.Vector3f probe = new org.joml.Vector3f(0.5F, tipY, 0.5F);
+            tipPose.last().pose().transformPosition(probe);
+            if (probe.z > -0.05F || probe.lengthSquared() < 0.04F || probe.lengthSquared() > 6.25F) {
+                return;
+            }
+            Tip tip = tip(hand);
+            tip.matrix.set(tipPose.last().pose());
+            tip.tipY = tipY;
+            tip.stamp = System.nanoTime();
+            tip.valid = true;
+        } catch (Throwable ignored) {
+        }
+    }
     private WandUseAnimation() {
     }
     public static void noteCast(InteractionHand hand) {

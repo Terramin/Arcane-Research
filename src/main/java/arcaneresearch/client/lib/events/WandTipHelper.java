@@ -60,10 +60,16 @@ public final class WandTipHelper {
             } catch (Exception ignored) {
             }
             if (first) {
+                Vec3 live = liveTip(player, modelDx, modelDy, modelDz);
+                if (live != null) {
+                    return live;
+                }
                 Vec3 tip = solveTip(player, partialTicks, modelDx, modelDy, modelDz);
                 if (tip != null) {
                     return tip;
                 }
+            } else {
+                return thirdPersonTip(player, partialTicks);
             }
             Vec3 eye = player.getEyePosition(partialTicks);
             Vec3 look = player.getViewVector(partialTicks);
@@ -77,6 +83,56 @@ public final class WandTipHelper {
                 return new Vec3(player.getX(), player.getY() + 1.0D, player.getZ());
             }
         }
+    }
+    private static Vec3 thirdPersonTip(Player player, float partialTicks) {
+        Vec3 look = player.getViewVector(partialTicks);
+        Vec3 right = new Vec3(-look.z, 0.0D, look.x);
+        if (right.lengthSqr() < 1.0E-6D) {
+            right = new Vec3(1.0D, 0.0D, 0.0D);
+        } else {
+            right = right.normalize();
+        }
+        double side = isRightHand(player) ? 0.32D : -0.32D;
+        Vec3 base = new Vec3(player.getX(), player.getY() + player.getEyeHeight() * 0.8D, player.getZ());
+        return base.add(look.scale(0.55D)).add(right.scale(side)).add(0.0D, 0.1D, 0.0D);
+    }
+    private static Vec3 liveTip(Player player, float modelDx, float modelDy, float modelDz) {
+        InteractionHand hand = heldWandHand(player);
+        if (hand == null) {
+            return null;
+        }
+        Vec3 world = viewToWorld(player, hand, modelDx, modelDy, modelDz);
+        if (world != null) {
+            return world;
+        }
+        InteractionHand other = hand == InteractionHand.MAIN_HAND
+                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        return viewToWorld(player, other, modelDx, modelDy, modelDz);
+    }
+    private static InteractionHand heldWandHand(Player player) {
+        if (player.getMainHandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
+            return InteractionHand.MAIN_HAND;
+        }
+        if (player.getOffhandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
+            return InteractionHand.OFF_HAND;
+        }
+        return null;
+    }
+    private static Vec3 viewToWorld(Player player, InteractionHand hand,
+                                    float modelDx, float modelDy, float modelDz) {
+        org.joml.Vector3f view = new org.joml.Vector3f();
+        if (!arcaneresearch.client.renderers.item.WandUseAnimation.projectTip(hand,
+                modelDx, modelDy, modelDz, view)) {
+            return null;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        Camera camera = mc.gameRenderer.getMainCamera();
+        // 1.20.1 camera.rotation() maps the (x/z flipped) view frame used by the hand pose
+        // into world space, hence the inversions; 26.3 does not need them.
+        org.joml.Vector3f v = new org.joml.Vector3f(-view.x, view.y, -view.z);
+        v.rotate(camera.rotation());
+        Vec3 pos = camera.getPosition();
+        return new Vec3(pos.x + v.x, pos.y + v.y, pos.z + v.z);
     }
     private static Vec3 solveTip(Player player, float partialTicks,
                                    float modelDx, float modelDy, float modelDz) {
@@ -122,15 +178,6 @@ public final class WandTipHelper {
             }
             arcaneresearch.api.wands.IWand wand =
                     (arcaneresearch.api.wands.IWand) handStack.getItem();
-            // 26.3-паритет: display-трансформ кончика зафиксирован константами
-            // (26.3 WandTipHelper не читает запечённую модель, а хардкодит
-            // WandTransforms firstperson: rot [0,-90,25],
-            // trans [1.13,3.2,1.13]x0.0625, scale 0.68 — те же числа, что и в
-            // models/item/wand.json). Порядок T-R-S и зеркало левой руки
-            // (translation.x и rotation.y/z в минус) — дословно
-            // ItemTransform.apply, затем translate(-0.5) как
-            // ItemRenderer.render (сверено с 26.3-жезловым решателем: без
-            // -0.5 старт отрывался от кристалла фокуса).
             boolean right = arm == HumanoidArm.RIGHT;
             float dtx = (right ? 1.13F : -1.13F) * 0.0625F;
             float dty = 3.2F * 0.0625F;
