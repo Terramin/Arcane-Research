@@ -103,7 +103,12 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
         }
         RecipeManager recipeManager = mc.level.getRecipeManager();
 
-        List<IArcaneRecipe> arcaneRecipes = new ArrayList<>();
+        List<IArcaneRecipe> arcaneRecipes = new ArrayList<>(recipeManager
+                .getAllRecipesFor(ModRecipeTypes.ARCANE_WORKBENCH.get())
+                .stream()
+                .filter(r -> r instanceof IArcaneRecipe)
+                .map(r -> (IArcaneRecipe) r)
+                .toList());
         try {
             var pairs = ArcaneWandDynamicRecipe.allPairs();
             for (var r : pairs) {

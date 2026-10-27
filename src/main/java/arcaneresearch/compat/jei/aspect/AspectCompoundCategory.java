@@ -85,6 +85,21 @@ public class AspectCompoundCategory implements IRecipeCategory<Aspect> {
     }
 
     @Override
+    public IDrawable getBackground() {
+        return background;
+    }
+
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull Aspect recipe, @NotNull IFocusGroup focuses) {
         AspectList output = new AspectList();
         output.add(recipe, 1);

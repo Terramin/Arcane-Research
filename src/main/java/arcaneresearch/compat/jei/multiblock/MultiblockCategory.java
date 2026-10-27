@@ -65,6 +65,16 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     }
 
     @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public IDrawable getIcon() {
         return icon;
     }

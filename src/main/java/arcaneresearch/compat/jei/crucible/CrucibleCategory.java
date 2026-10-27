@@ -114,6 +114,21 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     }
 
     @Override
+    public IDrawable getBackground() {
+        return background;
+    }
+
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CrucibleRecipeType recipe, @NotNull IFocusGroup focuses) {
         Ingredient catalyst = recipe.getCatalyst();
         if (catalyst != null && !catalyst.isEmpty()) {

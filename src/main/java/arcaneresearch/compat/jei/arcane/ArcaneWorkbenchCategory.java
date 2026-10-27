@@ -70,6 +70,21 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
     }
 
     @Override
+    public IDrawable getBackground() {
+        return background;
+    }
+
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull IArcaneRecipe recipe, @NotNull IFocusGroup focuses) {
         Minecraft mc = Minecraft.getInstance();
         RegistryAccess registryAccess = mc.level != null

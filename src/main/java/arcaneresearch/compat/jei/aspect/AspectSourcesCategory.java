@@ -136,6 +136,21 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
     }
 
     @Override
+    public IDrawable getBackground() {
+        return background;
+    }
+
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public void draw(@NotNull Sources recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics,
                      double mouseX, double mouseY) {
         if (background != null) {
