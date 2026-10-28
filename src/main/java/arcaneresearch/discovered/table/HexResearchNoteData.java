@@ -37,8 +37,8 @@ public class HexResearchNoteData {
 
     public String key;
     public int color;
-    public HashMap<String, HexEntry> hexEntries = new HashMap<>();
-    public HashMap<String, HexUtils.Hex> hexes = new HashMap<>();
+    public final HashMap<String, HexEntry> hexEntries = new HashMap<>();
+    public final HashMap<String, HexUtils.Hex> hexes = new HashMap<>();
     public boolean complete;
     public int copies;
 
@@ -47,14 +47,17 @@ public class HexResearchNoteData {
     }
 
     public void writeToNBT(CompoundTag nbt) {
+        if (nbt == null) {
+            return;
+        }
         nbt.putString("key", key != null ? key : "");
         nbt.putInt("color", color);
         nbt.putBoolean("complete", complete);
         nbt.putInt("copies", copies);
         ListTag grid = new ListTag();
-        for (String k : hexEntries.keySet()) {
-            HexUtils.Hex hex = hexes.get(k);
-            HexEntry entry = hexEntries.get(k);
+        for (HashMap.Entry<String, HexEntry> e : hexEntries.entrySet()) {
+            HexEntry entry = e.getValue();
+            HexUtils.Hex hex = hexes.get(e.getKey());
             if (hex == null || entry == null) {
                 continue;
             }
@@ -81,7 +84,8 @@ public class HexResearchNoteData {
         complete = nbt.getBooleanOr("complete", false);
         copies = nbt.getIntOr("copies", 0);
         ListTag grid = nbt.getListOrEmpty("hexgrid");
-        for (int i = 0; i < grid.size(); i++) {
+        final int n = grid.size();
+        for (int i = 0; i < n; i++) {
             CompoundTag cell = grid.getCompoundOrEmpty(i);
             int q = cell.getByteOr("hexq", (byte) 0);
             int r = cell.getByteOr("hexr", (byte) 0);
@@ -94,8 +98,9 @@ public class HexResearchNoteData {
                 }
             }
             HexUtils.Hex hex = new HexUtils.Hex(q, r);
-            hexes.put(hex.toString(), hex);
-            hexEntries.put(hex.toString(), new HexEntry(aspect, type));
+            String hexKey = hex.toString();
+            hexes.put(hexKey, hex);
+            hexEntries.put(hexKey, new HexEntry(aspect, type));
         }
     }
 

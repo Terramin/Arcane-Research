@@ -201,7 +201,8 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
 
     @Override
     public Component getDisplayName() {
-        return DiscoveredTableSetup.getBlock().getName();
+        var block = DiscoveredTableSetup.getBlock();
+        return block == null ? Component.empty() : block.getName();
     }
 
     @Nullable
@@ -231,18 +232,27 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
     }
 
     public Aspect getTag(int i) {
+        if (i < 0 || i >= tags.length) {
+            return null;
+        }
         recalcIfNeeded();
-        return i >= 0 && i < tags.length ? tags[i] : null;
+        return tags[i];
     }
 
     public int getTagAmount(int i) {
+        if (i < 0 || i >= tagAmounts.length) {
+            return 0;
+        }
         recalcIfNeeded();
-        return i >= 0 && i < tagAmounts.length ? tagAmounts[i] : 0;
+        return tagAmounts[i];
     }
 
     public float getTagBonus(int i) {
+        if (i < 0 || i >= tagBonus.length) {
+            return 0.0F;
+        }
         recalcIfNeeded();
-        return i >= 0 && i < tagBonus.length ? tagBonus[i] : 0.0F;
+        return tagBonus[i];
     }
 
     public void recalcIfNeeded() {
@@ -396,11 +406,12 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
     }
 
     private void addBonus(String tag, int amount) {
-        if (amount <= 0) {
+        if (amount <= 0 || tag == null) {
             return;
         }
         for (int i = 0; i < tags.length; i++) {
-            if (tags[i] != null && tags[i].getTag().equals(tag)) {
+            Aspect t = tags[i];
+            if (t != null && tag.equals(t.getTag())) {
                 tagBonus[i] = Math.min(MAX_TAG_BONUS, tagBonus[i] + amount);
             }
         }
@@ -434,8 +445,8 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
                     stack.shrink(1);
                 }
             }
+            setChanged();
         }
-        setChanged();
     }
 
      
@@ -464,10 +475,12 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
                 DiscoveredTableResearch.progressTableResearch(level, player, note,
                         baseChance, baseLoss, tags.clone(), amounts);
             }
-        } else if (note.getItem() instanceof ItemDiscoveredResearchNote
-                && !DiscoveredNoteData.read(note).isComplete()) {
-            progressed = DiscoveredTableResearch.progressTableResearch(level, player, note,
-                    baseChance, baseLoss, tags.clone(), amounts);
+        } else if (note.getItem() instanceof ItemDiscoveredResearchNote) {
+            DiscoveredNoteData data = DiscoveredNoteData.read(note);
+            if (!data.isComplete()) {
+                progressed = DiscoveredTableResearch.progressTableResearch(level, player, note,
+                        baseChance, baseLoss, tags.clone(), amounts);
+            }
         }
         
         
@@ -476,10 +489,12 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
             progressed = true;
         }
         note = items.get(NOTE_SLOT);
-        if (note.getItem() instanceof ItemDiscoveredResearchNote
-                && DiscoveredNoteData.read(note).isComplete()) {
-            items.set(NOTE_SLOT, DiscoveredNotes.toDiscovery(note));
-            progressed = true;
+        if (note.getItem() instanceof ItemDiscoveredResearchNote) {
+            DiscoveredNoteData data = DiscoveredNoteData.read(note);
+            if (data.isComplete()) {
+                items.set(NOTE_SLOT, DiscoveredNotes.toDiscovery(note));
+                progressed = true;
+            }
         }
         setChanged();
         return progressed;
@@ -516,8 +531,9 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
                 if (tag == null) {
                     continue;
                 }
-                int want = t < data.need.length ? data.need[t] : 0;
-                int got = t < data.have.length ? Math.min(data.have[t], want) : 0;
+                int want = data.need != null && t < data.need.length ? data.need[t] : 0;
+                int got = data.have != null && t < data.have.length
+                        ? Math.min(data.have[t], want) : 0;
                 while (got < want) {
                     boolean consumed = false;
                     for (int i = 0; i < INPUT_COUNT; i++) {

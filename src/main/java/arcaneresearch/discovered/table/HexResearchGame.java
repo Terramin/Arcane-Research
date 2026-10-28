@@ -2,36 +2,20 @@ package arcaneresearch.discovered.table;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-
-import net.minecraft.world.entity.player.Player;
+import java.util.Set;
 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
 
- 
+import net.minecraft.world.entity.player.Player;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 public class HexResearchGame {
 
     public enum PlaceResult {
@@ -62,6 +46,9 @@ public class HexResearchGame {
         data.color = color;
         data.complete = false;
         data.copies = 0;
+        if (random == null) {
+            random = new Random();
+        }
 
         List<Aspect> clean = new ArrayList<>();
         if (targets != null) {
@@ -77,13 +64,15 @@ public class HexResearchGame {
 
         HashMap<String, HexUtils.Hex> field = HexUtils.generateHexes(radius);
         for (HexUtils.Hex hex : field.values()) {
-            data.hexes.put(hex.toString(), hex);
-            data.hexEntries.put(hex.toString(), new HexEntry(null, 0));
+            String hk = hex.toString();
+            data.hexes.put(hk, hex);
+            data.hexEntries.put(hk, new HexEntry(null, 0));
         }
 
         if (!clean.isEmpty()) {
             ArrayList<HexUtils.Hex> ring = HexUtils.distributeRingRandomly(radius, clean.size(), random);
-            for (int i = 0; i < clean.size() && i < ring.size(); i++) {
+            final int n = Math.min(clean.size(), ring.size());
+            for (int i = 0; i < n; i++) {
                 String k = ring.get(i).toString();
                 if (data.hexEntries.containsKey(k)) {
                     data.hexEntries.put(k, new HexEntry(clean.get(i), 1));
@@ -97,7 +86,8 @@ public class HexResearchGame {
         ArrayList<String> keys = new ArrayList<>(data.hexes.keySet());
         while (blanks > 0 && tries < 200 && !keys.isEmpty()) {
             tries++;
-            String k = keys.get(random.nextInt(keys.size()));
+            int idx = random.nextInt(keys.size());
+            String k = keys.get(idx);
             HexEntry entry = data.hexEntries.get(k);
             if (entry == null || entry.type != 0) {
                 continue;
@@ -108,7 +98,9 @@ public class HexResearchGame {
             }
             data.hexes.remove(k);
             data.hexEntries.remove(k);
-            keys.remove(k);
+            int last = keys.size() - 1;
+            keys.set(idx, keys.get(last));
+            keys.remove(last);
             blanks--;
         }
 
@@ -124,16 +116,19 @@ public class HexResearchGame {
 
  
     private static boolean canRemove(HexResearchNoteData data, HexUtils.Hex cell) {
+        final int[][] nb = HexUtils.NEIGHBOURS;
         for (int d = 0; d < 6; d++) {
-            HexUtils.Hex neighbour = cell.getNeighbour(d);
-            HexEntry entry = data.hexEntries.get(neighbour.toString());
+            int nq = cell.q + nb[d][0];
+            int nr = cell.r + nb[d][1];
+            HexEntry entry = data.hexEntries.get(nq + ":" + nr);
             if (entry == null || entry.type != 1) {
                 continue;
             }
             int count = 0;
             for (int d2 = 0; d2 < 6; d2++) {
-                HexUtils.Hex nn = neighbour.getNeighbour(d2);
-                if (data.hexes.containsKey(nn.toString())) {
+                int nnq = nq + nb[d2][0];
+                int nnr = nr + nb[d2][1];
+                if (data.hexes.containsKey(nnq + ":" + nnr)) {
                     count++;
                     if (count >= 2) {
                         break;
@@ -157,7 +152,7 @@ public class HexResearchGame {
         if (data == null || data.complete || aspect == null) {
             return PlaceResult.NO_HEX;
         }
-        String k = new HexUtils.Hex(q, r).toString();
+        String k = q + ":" + r;
         if (!data.hexes.containsKey(k)) {
             return PlaceResult.NO_HEX;
         }
@@ -172,6 +167,9 @@ public class HexResearchGame {
       
     public static PlaceResult placeAspect(HexResearchNoteData data, AspectList pool,
             int q, int r, Aspect aspect) {
+        if (aspect == null) {
+            return PlaceResult.NO_HEX;
+        }
         if (pool == null || pool.getAmount(aspect) <= 0) {
             return PlaceResult.NO_POOL;
         }
@@ -213,45 +211,46 @@ public class HexResearchGame {
  
     public static boolean checkCompletion(HexResearchNoteData data, HasAspect has) {
         if (data == null || data.complete) {
-            return data != null && data.complete;
+            return data != null;
         }
-        ArrayList<String> main = new ArrayList<>();
-        for (String k : data.hexEntries.keySet()) {
-            HexEntry entry = data.hexEntries.get(k);
+        Set<String> main = new HashSet<>();
+        for (Map.Entry<String, HexEntry> e : data.hexEntries.entrySet()) {
+            HexEntry entry = e.getValue();
             if (entry != null && entry.type == 1) {
-                main.add(k);
+                main.add(e.getKey());
             }
         }
-        ArrayList<String> checked = new ArrayList<>();
-        ArrayList<String> remains = new ArrayList<>();
+        Set<String> checked = new HashSet<>();
+        Set<String> remains = new HashSet<>();
         if (!main.isEmpty()) {
-            HexUtils.Hex start = data.hexes.get(main.get(0));
+            HexUtils.Hex start = data.hexes.get(main.iterator().next());
             if (start != null) {
                 checkConnections(data, start, checked, main, remains, has);
             }
         }
-        if (main.isEmpty()) {
-            for (String k : new ArrayList<>(data.hexEntries.keySet())) {
-                HexEntry entry = data.hexEntries.get(k);
-                if (entry != null && entry.type != 1 && !remains.contains(k)) {
-                    data.hexEntries.remove(k);
-                    data.hexes.remove(k);
-                }
-            }
-            data.complete = true;
-            return true;
+        if (!main.isEmpty()) {
+            return false;
         }
-        return false;
+        Iterator<Map.Entry<String, HexEntry>> it = data.hexEntries.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, HexEntry> e = it.next();
+            HexEntry entry = e.getValue();
+            if (entry != null && entry.type != 1 && !remains.contains(e.getKey())) {
+                it.remove();
+                data.hexes.remove(e.getKey());
+            }
+        }
+        data.complete = true;
+        return true;
     }
 
     private static void checkConnections(HexResearchNoteData data, HexUtils.Hex hex,
-            ArrayList<String> checked, ArrayList<String> main,
-            ArrayList<String> remains, HasAspect has) {
+                                         Set<String> checked, Set<String> main,
+                                         Set<String> remains, HasAspect has) {
         String me = hex.toString();
-        if (checked.contains(me)) {
+        if (!checked.add(me)) {
             return;
         }
-        checked.add(me);
         remains.add(me);
         HexEntry entry = data.hexEntries.get(me);
         if (entry == null || entry.aspect == null) {
@@ -286,12 +285,17 @@ public class HexResearchGame {
         if (a1 == null || a2 == null) {
             return false;
         }
-        if (!a1.isPrimal() && a1.getComponents() != null && a1.getComponents().length >= 2
-                && (a1.getComponents()[0] == a2 || a1.getComponents()[1] == a2)) {
-            return true;
+        if (!a1.isPrimal()) {
+            Aspect[] c1 = a1.getComponents();
+            if (c1 != null && c1.length >= 2 && (c1[0] == a2 || c1[1] == a2)) {
+                return true;
+            }
         }
-        return !a2.isPrimal() && a2.getComponents() != null && a2.getComponents().length >= 2
-                && (a2.getComponents()[0] == a1 || a2.getComponents()[1] == a1);
+        if (!a2.isPrimal()) {
+            Aspect[] c2 = a2.getComponents();
+            return c2 != null && c2.length >= 2 && (c2[0] == a1 || c2[1] == a1);
+        }
+        return false;
     }
 
      
@@ -300,33 +304,35 @@ public class HexResearchGame {
  
     public static void visualize(HexResearchNoteData data, HasAspect has,
             HashMap<String, HexUtils.Hex[]> lines, ArrayList<String> highlight) {
+        if (lines == null || highlight == null) {
+            return;
+        }
         lines.clear();
         highlight.clear();
         if (data == null) {
             return;
         }
-        for (String k : data.hexEntries.keySet()) {
-            HexEntry entry = data.hexEntries.get(k);
-            HexUtils.Hex hex = data.hexes.get(k);
+        for (Map.Entry<String, HexEntry> e : data.hexEntries.entrySet()) {
+            HexEntry entry = e.getValue();
+            HexUtils.Hex hex = data.hexes.get(e.getKey());
             if (entry == null || hex == null || entry.type != 1 || entry.aspect == null) {
                 continue;
             }
             if (has != null && !has.has(entry.aspect)) {
                 continue;
             }
-            ArrayList<String> checked = new ArrayList<>();
+            Set<String> checked = new HashSet<>();
             visualizeFrom(data, hex, checked, lines, highlight, has);
         }
     }
 
     private static void visualizeFrom(HexResearchNoteData data, HexUtils.Hex hex,
-            ArrayList<String> checked, HashMap<String, HexUtils.Hex[]> lines,
-            ArrayList<String> highlight, HasAspect has) {
+                                      Set<String> checked, HashMap<String, HexUtils.Hex[]> lines,
+                                      ArrayList<String> highlight, HasAspect has) {
         String me = hex.toString();
-        if (checked.contains(me)) {
+        if (!checked.add(me)) {
             return;
         }
-        checked.add(me);
         HexEntry entry = data.hexEntries.get(me);
         if (entry == null || entry.aspect == null) {
             return;

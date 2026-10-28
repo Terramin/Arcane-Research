@@ -1,6 +1,0 @@
- 
-
-
-
- 
-package arcaneresearch.discovered.note;

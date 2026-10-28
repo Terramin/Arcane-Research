@@ -93,15 +93,23 @@ public class MsgCombine implements CustomPacketPayload {
             } catch (Exception e) {
                 return;
             }
-            if (!HexResearchTableMenu.isInkStack(tools)
+            if (tools.isEmpty()
+                    || !HexResearchTableMenu.isInkStack(tools)
                     || tools.getDamageValue() >= tools.getMaxDamage()) {
                 player.sendSystemMessage(Component.literal("Need scribing tools"), true);
                 return;
             }
             
             
-            boolean paid1 = HexEconomy.takeAspect(player, menu, a1);
-            boolean paid2 = HexEconomy.takeAspect(player, menu, a2);
+            boolean paid1;
+            boolean paid2;
+            try {
+                paid1 = HexEconomy.takeAspect(player, menu, a1);
+                paid2 = HexEconomy.takeAspect(player, menu, a2);
+            } catch (Exception e) {
+                HexEconomy.push(player);
+                return;
+            }
             if (!paid1 || !paid2) {
                 player.sendSystemMessage(Component.literal("No research points"), true);
                 HexEconomy.push(player);
@@ -120,19 +128,27 @@ public class MsgCombine implements CustomPacketPayload {
             }
             
             
-            boolean known = HexResearchGame.isKnown(player, result);
+            boolean known;
+            try {
+                known = HexResearchGame.isKnown(player, result);
+            } catch (Exception e) {
+                HexEconomy.push(player);
+                return;
+            }
             if (!known) {
                 try {
                     ArcaneresearchApi.internalMethods.progressResearch(player, "!" + result.getTag());
                 } catch (Exception ignored) {
                 }
             }
-            ScanWallet.add(player, result, known ? 1 : 3);
+            int amount = known ? 1 : 3;
+            ScanWallet.add(player, result, amount);
             AspectList granted = new AspectList();
-            granted.add(result, known ? 1 : 3);
-            
-            
-            PacketHandler.sendToPlayer(new MsgStudyReward(granted), player);
+            granted.add(result, amount);
+            try {
+                PacketHandler.sendToPlayer(new MsgStudyReward(granted), player);
+            } catch (Exception ignored) {
+            }
             HexEconomy.push(player);
         });
     }

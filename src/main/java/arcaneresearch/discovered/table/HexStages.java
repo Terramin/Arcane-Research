@@ -27,6 +27,8 @@ import arcaneresearch.discovered.table.DiscoveredTableResearch;
  
 public class HexStages {
 
+    private static final int DEFAULT_COLOR = 0x888888;
+
       
     public static String findOpenable(Player player) {
         List<String> keys = openableKeys(player);
@@ -51,25 +53,32 @@ public class HexStages {
         
         try {
             for (ResearchEntry entry : DiscoveredTableResearch.allEntries()) {
-                if (entry == null || entry.getStages() == null) {
+                if (entry == null) {
                     continue;
                 }
                 ResearchStage[] stages = entry.getStages();
+                if (stages == null) {
+                    continue;
+                }
+                String key = entry.getKey();
+                if (key == null || key.isEmpty()) {
+                    continue;
+                }
                 boolean hex = false;
-                for (int i = 0; i < stages.length; i++) {
-                    if (stages[i] != null && stages[i].isHex()) {
+                for (ResearchStage stage : stages) {
+                    if (stage != null && stage.isHex()) {
                         hex = true;
                         break;
                     }
                 }
-                if (!hex || knowledge.isResearchComplete(entry.getKey())) {
+                if (!hex || knowledge.isResearchComplete(key)) {
                     continue;
                 }
-                if (!ResearchManager.doesPlayerHaveRequisites(player, entry.getKey())) {
+                if (!ResearchManager.doesPlayerHaveRequisites(player, key)) {
                     continue;
                 }
-                if (!out.contains(entry.getKey())) {
-                    out.add(entry.getKey());
+                if (!out.contains(key)) {
+                    out.add(key);
                 }
             }
         } catch (Exception ignored) {
@@ -79,6 +88,9 @@ public class HexStages {
 
       
     public static List<Aspect> targetsFor(String researchKey) {
+        if (researchKey == null || researchKey.isEmpty()) {
+            return new ArrayList<>(0);
+        }
         ArrayList<Aspect> out = new ArrayList<>();
         try {
             AspectList required = DiscoveredTableResearch.requiredAspects(researchKey);
@@ -97,12 +109,15 @@ public class HexStages {
       
     public static int colorFor(String researchKey) {
         List<Aspect> targets = targetsFor(researchKey);
-        if (!targets.isEmpty() && targets.get(0) != null) {
+        if (!targets.isEmpty()) {
             try {
-                return targets.get(0).getColor();
+                Aspect first = targets.get(0);
+                if (first != null) {
+                    return first.getColor();
+                }
             } catch (Exception ignored) {
             }
         }
-        return 0x888888;
+        return DEFAULT_COLOR;
     }
 }

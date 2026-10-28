@@ -53,13 +53,16 @@ public class HexTableRegistry {
             Block noteForReg = NOTE_BLOCK;
             event.register(Registries.BLOCK, id, () -> noteForReg);
         } else if (event.getRegistryKey().equals(Registries.BLOCK_ENTITY_TYPE)) {
-            if (NOTE_BLOCK != null) {
-                BlockEntityType<HexNoteTableTile> beType =
-                        new BlockEntityType<>(HexNoteTableTile::new, NOTE_BLOCK);
-                BlockEntityType<HexNoteTableTile> beForReg = beType;
-                event.register(Registries.BLOCK_ENTITY_TYPE, id, () -> beForReg);
-                TILE = beType;
+            if (NOTE_BLOCK == null) {
+                Arcaneresearch.LOGGER.error(
+                        "Cannot register BlockEntityType: NOTE_BLOCK is null. Registration order issue.");
+                return;
             }
+            BlockEntityType<HexNoteTableTile> beType =
+                    new BlockEntityType<>(HexNoteTableTile::new, NOTE_BLOCK);
+            BlockEntityType<HexNoteTableTile> beForReg = beType;
+            event.register(Registries.BLOCK_ENTITY_TYPE, id, () -> beForReg);
+            TILE = beType;
         } else if (event.getRegistryKey().equals(Registries.MENU)) {
             MenuType<HexResearchTableMenu> menu = IMenuTypeExtension.create(
                     (containerId, inventory, buf) -> new HexResearchTableMenu(
@@ -86,13 +89,17 @@ public class HexTableRegistry {
                 event.registerBlockEntityRenderer(
                         arcaneresearch.discovered.table.DiscoveredTableSetup.getEntityType(),
                         arcaneresearch.discovered.client.CognitionNoteTableRenderer::new);
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Arcaneresearch.LOGGER.warn("Failed to register CognitionNoteTableRenderer", e);
             }
             try {
                 if (TILE != null) {
                     event.registerBlockEntityRenderer(TILE, HexNoteTableRenderer::new);
+                } else {
+                    Arcaneresearch.LOGGER.warn("Cannot register HexNoteTableRenderer: TILE is null.");
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                Arcaneresearch.LOGGER.warn("Failed to register HexNoteTableRenderer", e);
             }
         }
     }

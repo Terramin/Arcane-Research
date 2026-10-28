@@ -45,6 +45,15 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
 
     public CognitionNoteTableMenu(int id, Inventory playerInventory, CognitionNoteTableTile tile) {
         super(DiscoveredTableSetup.getMenuType(), id);
+        if (tile == null) {
+            throw new IllegalStateException("CognitionNoteTableTile is null");
+        }
+        if (playerInventory == null) {
+            throw new IllegalStateException("Player inventory is null");
+        }
+        if (tile.getLevel() == null) {
+            throw new IllegalStateException("CognitionNoteTableTile has no level");
+        }
         this.tile = tile;
         this.access = ContainerLevelAccess.create(tile.getLevel(), tile.getBlockPos());
         this.data = new SimpleContainerData(DATA_COUNT);
@@ -67,7 +76,7 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
         
         
         try {
-            if (tile.getLevel() != null && !tile.getLevel().isClientSide()) {
+            if (!tile.getLevel().isClientSide()) {
                 tile.recalcIfNeeded();
             }
         } catch (Exception ignored) {
@@ -75,26 +84,41 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
     }
 
     private static CognitionNoteTableTile getTile(Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+        if (playerInventory == null || buf == null) {
+            throw new IllegalStateException("Missing inventory or buffer");
+        }
         return getTile(playerInventory, buf.readBlockPos());
     }
 
     private static CognitionNoteTableTile getTile(Inventory playerInventory, BlockPos pos) {
+        if (playerInventory == null || pos == null) {
+            throw new IllegalStateException("Missing inventory, player or position");
+        }
         BlockEntity be = playerInventory.player.level().getBlockEntity(pos);
-        if (be instanceof CognitionNoteTableTile tile) {
-            return tile;
+        if (be instanceof CognitionNoteTableTile t) {
+            return t;
         }
         throw new IllegalStateException("No CognitionNoteTableTile at " + pos);
     }
 
     public Aspect getTagAspect(int i) {
+        if (i < 0 || i >= CognitionNoteTableTile.INPUT_COUNT) {
+            return null;
+        }
         return DiscoveredTableResearch.aspectByIndex(data.get(i));
     }
 
     public int getTagAmount(int i) {
+        if (i < 0 || i >= CognitionNoteTableTile.INPUT_COUNT) {
+            return 0;
+        }
         return data.get(5 + i);
     }
 
     public float getTagBonus(int i) {
+        if (i < 0 || i >= CognitionNoteTableTile.INPUT_COUNT) {
+            return 0.0F;
+        }
         return data.get(10 + i) / 100.0F;
     }
 
@@ -107,7 +131,8 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
     }
 
     public ItemStack getNoteStack() {
-        return getSlot(CognitionNoteTableTile.NOTE_SLOT).getItem();
+        Slot slot = getSlot(CognitionNoteTableTile.NOTE_SLOT);
+        return slot.getItem();
     }
 
     public CognitionNoteTableTile getTable() {
@@ -116,7 +141,7 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
 
     @Override
     public void broadcastChanges() {
-        if (tile.getLevel() != null && !tile.getLevel().isClientSide()) {
+        if (tile != null && tile.getLevel() != null && !tile.getLevel().isClientSide()) {
             tile.recalcIfNeeded();
             for (int i = 0; i < CognitionNoteTableTile.INPUT_COUNT; i++) {
                 data.set(i, DiscoveredTableResearch.aspectIndex(tile.getTag(i)));
@@ -132,11 +157,14 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id == 0 && tile.canResearch()) {
+        if (tile == null) {
+            return false;
+        }
+        if (id == BUTTON_RESEARCH && tile.canResearch()) {
             tile.startResearch(player);
             return true;
         }
-        if (id == 1) {
+        if (id == BUTTON_TOGGLE_SAFE) {
             tile.toggleSafe();
             return true;
         }
@@ -145,40 +173,47 @@ public class CognitionNoteTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(access, player, DiscoveredTableSetup.getBlock());
+        net.minecraft.world.level.block.Block block = DiscoveredTableSetup.getBlock();
+        if (block == null) {
+            return false;
+        }
+        return stillValid(access, player, block);
     }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        ItemStack result = ItemStack.EMPTY;
+        int totalSlots = slots.size();
+        if (index < 0 || index >= totalSlots) {
+            return ItemStack.EMPTY;
+        }
         Slot slot = slots.get(index);
-        if (slot != null && slot.hasItem()) {
-            ItemStack inSlot = slot.getItem();
-            result = inSlot.copy();
-            if (index < CognitionNoteTableTile.SIZE) {
-                if (!moveItemStackTo(inSlot, CognitionNoteTableTile.SIZE, slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else {
-                if (inSlot.getItem() instanceof ItemDiscoveredResearchNote) {
-                    if (!moveItemStackTo(inSlot, CognitionNoteTableTile.NOTE_SLOT,
-                            CognitionNoteTableTile.NOTE_SLOT + 1, false)) {
-                        return ItemStack.EMPTY;
-                    }
-                } else if (inSlot.is(Items.PAPER)) {
-                    if (!moveItemStackTo(inSlot, CognitionNoteTableTile.PAPER_SLOT,
-                            CognitionNoteTableTile.PAPER_SLOT + 1, false)) {
-                        return ItemStack.EMPTY;
-                    }
-                } else if (!moveItemStackTo(inSlot, 0, CognitionNoteTableTile.INPUT_COUNT, false)) {
-                    return ItemStack.EMPTY;
-                }
+        if (slot == null || !slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack inSlot = slot.getItem();
+        ItemStack result = inSlot.copy();
+        int containerSize = CognitionNoteTableTile.SIZE;
+        if (index < containerSize) {
+            if (!moveItemStackTo(inSlot, containerSize, totalSlots, true)) {
+                return ItemStack.EMPTY;
             }
-            if (inSlot.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
+        } else if (inSlot.getItem() instanceof ItemDiscoveredResearchNote) {
+            if (!moveItemStackTo(inSlot, CognitionNoteTableTile.NOTE_SLOT,
+                    CognitionNoteTableTile.NOTE_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
             }
+        } else if (inSlot.is(Items.PAPER)) {
+            if (!moveItemStackTo(inSlot, CognitionNoteTableTile.PAPER_SLOT,
+                    CognitionNoteTableTile.PAPER_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (!moveItemStackTo(inSlot, 0, CognitionNoteTableTile.INPUT_COUNT, false)) {
+            return ItemStack.EMPTY;
+        }
+        if (inSlot.isEmpty()) {
+            slot.setByPlayer(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
         }
         return result;
     }

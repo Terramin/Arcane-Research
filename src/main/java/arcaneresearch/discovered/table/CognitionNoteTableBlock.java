@@ -49,6 +49,19 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
 
+    private static final double[][] BOXES_MAIN = {
+            {0, 12, 0, 16, 16, 16},
+            {2, 0, 2, 6, 12, 6},
+            {2, 0, 10, 6, 12, 14},
+            {4, 2, 6, 16, 6, 10},
+            {2, 16, 2, 5, 18, 5}};
+
+    private static final double[][] BOXES_SIDE = {
+            {0, 12, 0, 16, 16, 16},
+            {10, 0, 2, 14, 12, 6},
+            {10, 0, 10, 14, 12, 14},
+            {0, 2, 6, 12, 6, 10}};
+
      
 
 
@@ -62,18 +75,7 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
  
     private static VoxelShape shapeFor(Part part, Direction facing) {
         Direction eff = part == Part.SIDE ? facing.getOpposite() : facing;
-        double[][] boxes = part == Part.MAIN
-                ? new double[][]{
-                        {0, 12, 0, 16, 16, 16},
-                        {2, 0, 2, 6, 12, 6},
-                        {2, 0, 10, 6, 12, 14},
-                        {4, 2, 6, 16, 6, 10},
-                        {2, 16, 2, 5, 18, 5}}
-                : new double[][]{
-                        {0, 12, 0, 16, 16, 16},
-                        {10, 0, 2, 14, 12, 6},
-                        {10, 0, 10, 14, 12, 14},
-                        {0, 2, 6, 12, 6, 10}};
+        double[][] boxes = part == Part.MAIN ? BOXES_MAIN : BOXES_SIDE;
         VoxelShape shape = Shapes.empty();
         for (double[] b : boxes) {
             shape = Shapes.or(shape, rotBox(b, eff));
@@ -170,10 +172,12 @@ public class CognitionNoteTableBlock extends Block implements EntityBlock {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide()) {
-            BlockPos partner = partnerPos(pos, state);
-            if (level.getBlockState(partner).getBlock() instanceof CognitionNoteTableBlock
-                    && DiscoveredTableSetup.getSingleTable() != null) {
-                level.setBlock(partner, DiscoveredTableSetup.getSingleTable().defaultBlockState(), 3);
+            Block single = DiscoveredTableSetup.getSingleTable();
+            if (single != null) {
+                BlockPos partner = partnerPos(pos, state);
+                if (level.getBlockState(partner).getBlock() instanceof CognitionNoteTableBlock) {
+                    level.setBlock(partner, single.defaultBlockState(), 3);
+                }
             }
         }
         return super.playerWillDestroy(level, pos, state, player);

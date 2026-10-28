@@ -57,10 +57,17 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         if (matrix == null) {
             return null;
         }
-        try {
+        ArcaneWandDynamicRecipe normal = tryMatchNormal(matrix, player);
+        if (normal != null) {
+            return normal;
+        }
+        return matchSceptre(matrix, player);
+    }
 
+    private static ArcaneWandDynamicRecipe tryMatchNormal(CraftingContainer matrix, Player player) {
+        try {
             if (!ArcaneWandRecipe.matches(matrix, null)) {
-                return matchSceptre(matrix, player);
+                return null;
             }
             ItemStack result = ArcaneWandRecipe.getCraftingResult(matrix);
             if (result.isEmpty() || !(result.getItem() instanceof IWand wand)) {
@@ -134,10 +141,6 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
 
     public static List<ArcaneWandDynamicRecipe> allPairs() {
         List<ArcaneWandDynamicRecipe> out = new ArrayList<>();
-        try {
-            WandItems.initWands();
-        } catch (Exception ignored) {
-        }
         for (WandRod rod : WandRod.rods.values()) {
             for (WandCap cap : WandCap.caps.values()) {
 
@@ -217,8 +220,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
 
     @Override
     public boolean matches(IArcaneWorkbench container, Level level) {
-
-        return true;
+        return false;
     }
 
     @Override
@@ -254,32 +256,39 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
             WandCap cap = WandCap.caps.get(capTag);
             WandRod rod = WandRod.rods.get(rodTag);
             if (sceptre) {
-                
-                
                 if (cap != null) {
-                    out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
-                    out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
-                    out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
+                    ItemStack capStack = ItemWandCap.createStack(cap);
+                    if (!capStack.isEmpty()) {
+                        Ingredient capIng = new Ingredient(new IngredientNBTTC(capStack));
+                        out.add(capIng);
+                        out.add(capIng);
+                        out.add(capIng);
+                    }
                 }
                 if (rod != null) {
-                    out.add(new Ingredient(new IngredientNBTTC(rod.getItem())));
+                    ItemStack rodStack = rod.getItem();
+                    if (!rodStack.isEmpty()) {
+                        out.add(new Ingredient(new IngredientNBTTC(rodStack)));
+                    }
                 }
-                try {
-                    
+                if (arcaneresearch.init.ModItems.SALIS_MUNDUS.isPresent()) {
                     out.add(Ingredient.of(arcaneresearch.init.ModItems.SALIS_MUNDUS.get()));
-                } catch (Exception ignored) {
                 }
                 return out;
             }
             if (cap != null) {
-                
-                
-                out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
-                out.add(new Ingredient(new IngredientNBTTC(ItemWandCap.createStack(cap))));
+                ItemStack capStack = ItemWandCap.createStack(cap);
+                if (!capStack.isEmpty()) {
+                    Ingredient capIng = new Ingredient(new IngredientNBTTC(capStack));
+                    out.add(capIng);
+                    out.add(capIng);
+                }
             }
             if (rod != null) {
-                
-                out.add(new Ingredient(new IngredientNBTTC(rod.getItem())));
+                ItemStack rodStack = rod.getItem();
+                if (!rodStack.isEmpty()) {
+                    out.add(new Ingredient(new IngredientNBTTC(rodStack)));
+                }
             }
         } catch (Exception ignored) {
         }
@@ -310,6 +319,6 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
 
     @Override
     public AspectList getCrystals() {
-        return crystals;
+        return crystals.copy();
     }
 }

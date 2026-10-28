@@ -1,10 +1,12 @@
 package arcaneresearch.discovered.table;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,7 +21,6 @@ import arcaneresearch.api.research.ResearchStage;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
-import arcaneresearch.discovered.note.DiscoveredNotes;
 
  
 
@@ -37,6 +38,8 @@ import arcaneresearch.discovered.note.DiscoveredNotes;
 
  
 public final class DiscoveredTableResearch {
+    private static final Aspect[] EMPTY_ASPECTS = new Aspect[0];
+    private static final int[] EMPTY_INTS = new int[0];
 
     private DiscoveredTableResearch() {
     }
@@ -58,7 +61,11 @@ public final class DiscoveredTableResearch {
         if (aspect == null) {
             return 0;
         }
-        int i = orderedTags().indexOf(aspect.getTag());
+        String tag = aspect.getTag();
+        if (tag == null) {
+            return 0;
+        }
+        int i = Collections.binarySearch(orderedTags(), tag);
         return i < 0 ? 0 : i + 1;
     }
 
@@ -78,7 +85,7 @@ public final class DiscoveredTableResearch {
  
     public static AspectList requiredAspects(String key) {
         AspectList exact = DiscoveredResearchAspects.get(key);
-        if (exact != null && exact.size() > 0) {
+        if (exact != null && !exact.aspects.isEmpty()) {
             return exact;
         }
         ResearchEntry entry = ResearchCategories.getResearch(key);
@@ -89,7 +96,7 @@ public final class DiscoveredTableResearch {
             return null;
         }
         ResearchCategory category = ResearchCategories.getResearchCategory(entry.getCategory());
-        if (category == null || category.formula == null || category.formula.size() <= 0) {
+        if (category == null || category.formula == null || category.formula.aspects.isEmpty()) {
             return null;
         }
         return category.formula.copy();
@@ -213,6 +220,15 @@ public final class DiscoveredTableResearch {
 
  
     public static String findMatchingResearch(Player player, Aspect[] tags, int[] amounts) {
+        if (player == null) {
+            return null;
+        }
+        if (tags == null) {
+            tags = EMPTY_ASPECTS;
+        }
+        if (amounts == null) {
+            amounts = EMPTY_INTS;
+        }
         int bestMatch = 0;
         String best = null;
         for (ResearchEntry entry : allEntries()) {
@@ -255,6 +271,9 @@ public final class DiscoveredTableResearch {
 
  
     public static String findLostResearch(Player player) {
+        if (player == null) {
+            return null;
+        }
         List<String> choices = new ArrayList<>();
         for (ResearchEntry entry : allEntries()) {
             if (!entry.hasMeta(ResearchEntry.EnumResearchMeta.HIDDEN)) {
@@ -294,9 +313,19 @@ public final class DiscoveredTableResearch {
  
     public static boolean progressTableResearch(Level level, Player researcher, ItemStack note,
             int baseChance, int baseLoss, Aspect[] inTags, int[] inAmounts) {
+        if (level == null || researcher == null || note == null) {
+            return false;
+        }
+        if (inTags == null) {
+            inTags = EMPTY_ASPECTS;
+        }
+        if (inAmounts == null) {
+            inAmounts = EMPTY_INTS;
+        }
         if (baseLoss <= 0) {
             baseLoss = 1;
         }
+        RandomSource rng = level.getRandom();
         DiscoveredNoteData data = DiscoveredNoteData.read(note);
         if (data.key == null) {
             String key = findLostResearch(researcher);
@@ -313,7 +342,7 @@ public final class DiscoveredTableResearch {
         for (Aspect tag : inTags) {
             if (tag != null && !contains(data.tags, tag) && data.getFailed(tag.getTag()) < 100) {
                 data.addFailed(tag.getTag(),
-                        (byte) Math.round((2 + level.getRandom().nextInt(baseLoss)) / 10.0F));
+                        (byte) Math.round((2 + rng.nextInt(baseLoss)) / 10.0F));
             }
         }
         boolean progressed = false;
@@ -335,7 +364,7 @@ public final class DiscoveredTableResearch {
             float chance = baseChance / 100.0F;
             int tries = researchIterations(entry < inAmounts.length ? inAmounts[entry] : 0);
             for (int a = 0; a < tries; a++) {
-                if (level.getRandom().nextFloat() <= chance) {
+                if (rng.nextFloat() <= chance) {
                     int want = t < data.need.length ? data.need[t] : 0;
                     int got = t < data.have.length ? data.have[t] : 0;
                     if (got < want) {
@@ -356,6 +385,9 @@ public final class DiscoveredTableResearch {
     }
 
     private static boolean contains(Aspect[] tags, Aspect tag) {
+        if (tags == null) {
+            return false;
+        }
         for (Aspect t : tags) {
             if (t == tag) {
                 return true;

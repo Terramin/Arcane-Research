@@ -89,7 +89,18 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
     }
 
     @Override
+    public void setItem(int slot, ItemStack stack) {
+        if (slot >= 0 && slot < SIZE) {
+            items.set(slot, stack);
+            setChanged();
+        }
+    }
+
+    @Override
     public ItemStack removeItem(int slot, int amount) {
+        if (slot < 0 || slot >= SIZE) {
+            return ItemStack.EMPTY;
+        }
         ItemStack out = ContainerHelper.removeItem(items, slot, amount);
         if (!out.isEmpty()) {
             setChanged();
@@ -99,15 +110,7 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
-        return ContainerHelper.takeItem(items, slot);
-    }
-
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-        if (slot >= 0 && slot < SIZE) {
-            items.set(slot, stack);
-            setChanged();
-        }
+        return slot >= 0 && slot < SIZE ? ContainerHelper.takeItem(items, slot) : ItemStack.EMPTY;
     }
 
     @Override
@@ -195,22 +198,25 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         }
         bonusAspects.aspects.clear();
         BlockPos pos = worldPosition;
+        BlockPos above = pos.above();
+
         addCapped(Aspect.getAspect("tenebrae"),
                 level.getMaxLocalRawBrightness(pos) < 9 ? 2 : 0);
-        
         addCapped(Aspect.getAspect("lux"),
-                level.isBrightOutside() && level.canSeeSky(pos.above()) ? 2 : 0);
+                level.isBrightOutside() && level.canSeeSky(above) ? 2 : 0);
         if (pos.getY() > 100) {
             addCapped(Aspect.getAspect("aer"), 3);
         }
-        if (level.isRainingAt(pos.above())) {
+        if (level.isRainingAt(above)) {
             addCapped(Aspect.getAspect("aqua"), 2);
-            addCapped(Aspect.getAspect("potentia"), 2);
+            Aspect potentia = Aspect.getAspect("potentia");
+            addCapped(potentia, 2);
             addCapped(Aspect.getAspect("motus"), 2);
             if (level.isThundering()) {
-                addCapped(Aspect.getAspect("potentia"), 2);
+                addCapped(potentia, 2);
             }
         }
+        
         int beasts = 0;
         int men = 0;
         try {
@@ -226,12 +232,11 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
         }
         addCapped(Aspect.getAspect("bestia"), Math.min(5, beasts / 5));
         addCapped(Aspect.getAspect("humanus"), Math.min(3, men));
+        
         for (int x = -10; x <= 10; x++) {
             for (int y = -10; y <= 10; y++) {
-                for (int z = -10; z <= 10; z++) {
-                    if ((x + y + z) % 3 != 0) {
-                        continue;
-                    }
+                int zStart = -10 + Math.floorMod(10 - x - y, 3);
+                for (int z = zStart; z <= 10; z += 3) {
                     try {
                         ItemStack asStack = new ItemStack(
                                 level.getBlockState(pos.offset(x, y, z)).getBlock());
@@ -313,6 +318,9 @@ public class HexNoteTableTile extends BlockEntity implements Container, MenuProv
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player) {
+        if (HexTableRegistry.MENU == null) {
+            return null;
+        }
         return new HexResearchTableMenu(HexTableRegistry.MENU, id, playerInventory, this);
     }
 }

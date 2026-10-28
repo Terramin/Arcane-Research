@@ -134,13 +134,12 @@ public class HexNoteTableBlock extends Block implements EntityBlock {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide()) {
-            
-            
-            BlockPos partner = partnerPos(pos, state);
             Block single = arcaneresearch.discovered.table.DiscoveredTableSetup.getSingleTable();
-            if (level.getBlockState(partner).getBlock() instanceof HexNoteTableBlock
-                    && single != null) {
-                level.setBlock(partner, single.defaultBlockState(), 3);
+            if (single != null) {
+                BlockPos partner = partnerPos(pos, state);
+                if (level.getBlockState(partner).getBlock() instanceof HexNoteTableBlock) {
+                    level.setBlock(partner, single.defaultBlockState(), 3);
+                }
             }
         }
         return super.playerWillDestroy(level, pos, state, player);

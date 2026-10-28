@@ -43,6 +43,9 @@ public class DiscoveredTableBlock extends Block {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
 
+    private static final VoxelShape SHAPE_Z = makeShape(false);
+    private static final VoxelShape SHAPE_X = makeShape(true);
+
     public DiscoveredTableBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties props) {
         super(props
                 .mapColor(MapColor.WOOD)
@@ -66,14 +69,12 @@ public class DiscoveredTableBlock extends Block {
 
 
  
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    private static VoxelShape makeShape(boolean rot) {
         double[][] boxes = {
                 {0, 12, 0, 16, 16, 16},
                 {10, 0, 6, 14, 12, 10},
                 {2, 0, 6, 6, 12, 10},
                 {0, 0, 4, 16, 4, 12}};
-        boolean rot = state.getValue(AXIS) == Direction.Axis.X;
         VoxelShape shape = Shapes.empty();
         for (double[] b : boxes) {
             double x1 = b[0], y1 = b[1], z1 = b[2], x2 = b[3], y2 = b[4], z2 = b[5];
@@ -82,6 +83,11 @@ public class DiscoveredTableBlock extends Block {
                     : Block.box(x1, y1, z1, x2, y2, z2));
         }
         return shape;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(AXIS) == Direction.Axis.X ? SHAPE_X : SHAPE_Z;
     }
 
     @Override

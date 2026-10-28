@@ -2,7 +2,6 @@ package arcaneresearch.discovered.table;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,7 +36,9 @@ public class HexResearchTableMenu extends AbstractContainerMenu {
       
     public HexResearchTableMenu(MenuType<?> type, int id, Inventory playerInventory,
             HexNoteTableTile tile) {
-        this(type, id, playerInventory, tile, false,
+        this(type, id, playerInventory,
+                tile == null ? new SimpleContainer(HexNoteTableTile.SIZE) : tile,
+                false,
                 tile == null ? null : tile.getBlockPos());
     }
 
@@ -122,8 +123,7 @@ public class HexResearchTableMenu extends AbstractContainerMenu {
             BlockPos foundPos = null;
             try {
                 foundPos = buf.readBlockPos();
-                if (foundPos != null && playerInventory.player.level()
-                        .getBlockEntity(foundPos) instanceof HexNoteTableTile tile) {
+                if (playerInventory != null && playerInventory.player.level().getBlockEntity(foundPos) instanceof HexNoteTableTile tile) {
                     found = tile;
                 }
             } catch (Exception ignored) {
@@ -145,8 +145,11 @@ public class HexResearchTableMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
+        if (index < 0 || index >= slots.size()) {
+            return ItemStack.EMPTY;
+        }
         Slot slot = slots.get(index);
-        if (slot == null || !slot.hasItem()) {
+        if (!slot.hasItem()) {
             return ItemStack.EMPTY;
         }
         ItemStack stack = slot.getItem();
@@ -176,14 +179,9 @@ public class HexResearchTableMenu extends AbstractContainerMenu {
         for (int i = 0; i < 2; i++) {
             ItemStack stack = getSlot(i).getItem();
             if (!stack.isEmpty()) {
-                
-                player.getInventory().placeItemBackInInventory(stack, net.minecraft.util.Prediction.SERVER_ONLY);
-                if (!stack.isEmpty() && player instanceof ServerPlayer serverPlayer) {
-                    serverPlayer.drop(stack, false, net.minecraft.util.Prediction.SERVER_ONLY);
-                }
                 getSlot(i).set(ItemStack.EMPTY);
+                player.getInventory().placeItemBackInInventory(stack, net.minecraft.util.Prediction.SERVER_ONLY);
             }
         }
-        broadcastChanges();
     }
 }
