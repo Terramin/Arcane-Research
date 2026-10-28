@@ -13,13 +13,9 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public final class WandTipHelper {
-     
 
-
-
- 
     public static final float TIP_DZ_SIDE = -0.12F;
-      
+
     public static final float TIP_DZ_BEAM = -0.16F;
 
     private WandTipHelper() {
@@ -49,7 +45,7 @@ public final class WandTipHelper {
             if (!(use.getItem() instanceof arcaneresearch.api.wands.IWand)) {
                 return 0.0F;
             }
-            
+
             float f = (float) use.getUseDuration(player) - (float) player.getUseItemRemainingTicks();
             float f1 = f / 20.0F;
             f1 = (f1 * f1 + f1 * 2.0F) / 3.0F;
@@ -63,12 +59,6 @@ public final class WandTipHelper {
         return tipWorld(player, partialTicks, 0.0F, 0.0F, 0.0F);
     }
 
-     
-
-
-
-
- 
     public static Vec3 tipWorld(Player player, float partialTicks,
                                 float modelDx, float modelDy, float modelDz) {
         try {
@@ -76,22 +66,15 @@ public final class WandTipHelper {
             Camera camera = mc.gameRenderer.mainCamera();
             boolean first = false;
             try {
-                
+
                 first = mc.options.getCameraType().isFirstPerson() && mc.getCameraEntity() == player;
             } catch (Exception ignored) {
             }
             if (first) {
-                // Preferred: the matrix captured while the hand was actually rendered.
-                Vec3 live = liveTip(player, modelDx, modelDy, modelDz);
-                if (live != null) {
-                    return live;
-                }
                 Vec3 tip = solveTip(player, partialTicks, modelDx, modelDy, modelDz);
                 if (tip != null) {
                     return tip;
                 }
-            } else {
-                return thirdPersonTip(player, partialTicks);
             }
             Vec3 eye = player.getEyePosition(partialTicks);
             Vec3 look = player.getViewVector(partialTicks);
@@ -106,75 +89,8 @@ public final class WandTipHelper {
             }
         }
     }
-
-     
-
-
-
-
-
- 
-    /**
-     * In third person the hand pose is not rendered through the first-person pipeline, so the
-     * tip is approximated from the player's body: the crystal sits in the wand hand, slightly
-     * to the side, ahead of the chest and above it. Much closer to the visible wand than the
-     * old "one block in front of the eyes" fallback.
-     */
-    private static Vec3 thirdPersonTip(Player player, float partialTicks) {
-        Vec3 look = player.getViewVector(partialTicks);
-        Vec3 right = new Vec3(-look.z, 0.0D, look.x);
-        if (right.lengthSqr() < 1.0E-6D) {
-            right = new Vec3(1.0D, 0.0D, 0.0D);
-        } else {
-            right = right.normalize();
-        }
-        double side = isRightHand(player) ? 0.32D : -0.32D;
-        Vec3 base = new Vec3(player.getX(), player.getY() + player.getEyeHeight() * 0.8D, player.getZ());
-        return base.add(look.scale(0.55D)).add(right.scale(side)).add(0.0D, 0.1D, 0.0D);
-    }
-
-    private static Vec3 liveTip(Player player, float modelDx, float modelDy, float modelDz) {
-        InteractionHand hand = heldWandHand(player);
-        if (hand == null) {
-            return null;
-        }
-        Vec3 world = viewToWorld(player, hand, modelDx, modelDy, modelDz);
-        if (world != null) {
-            return world;
-        }
-        InteractionHand other = hand == InteractionHand.MAIN_HAND
-                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-        return viewToWorld(player, other, modelDx, modelDy, modelDz);
-    }
-
-    private static InteractionHand heldWandHand(Player player) {
-        if (player.getMainHandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
-            return InteractionHand.MAIN_HAND;
-        }
-        if (player.getOffhandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
-            return InteractionHand.OFF_HAND;
-        }
-        return null;
-    }
-
-    private static Vec3 viewToWorld(Player player, InteractionHand hand,
-                                    float modelDx, float modelDy, float modelDz) {
-        org.joml.Vector3f view = new org.joml.Vector3f();
-        if (!arcaneresearch.client.renderers.item.WandUseAnimation.projectTip(hand,
-                modelDx, modelDy, modelDz, view)) {
-            return null;
-        }
-        Minecraft mc = Minecraft.getInstance();
-        Camera camera = mc.gameRenderer.mainCamera();
-        // 26.3 camera.rotation() already maps the hand pose frame into world space (no x/z flip).
-        org.joml.Vector3f v = new org.joml.Vector3f(view.x, view.y, view.z);
-        v.rotate(camera.rotation());
-        Vec3 pos = camera.position();
-        return new Vec3(pos.x + v.x, pos.y + v.y, pos.z + v.z);
-    }
-
     private static Vec3 solveTip(Player player, float partialTicks,
-                                   float modelDx, float modelDy, float modelDz) {
+                                 float modelDx, float modelDy, float modelDz) {
         try {
             if (!(player instanceof net.minecraft.client.player.LocalPlayer local)) {
                 return null;
@@ -195,24 +111,15 @@ public final class WandTipHelper {
                     arcaneresearch.client.renderers.item.WandUseAnimation.resolveState(
                             local, handStack, hand, partialTicks);
             com.mojang.blaze3d.vertex.PoseStack ps = new com.mojang.blaze3d.vertex.PoseStack();
-            
-            
             float bx = net.minecraft.util.Mth.lerp(partialTicks, local.xBobO, local.xBob);
             float by = net.minecraft.util.Mth.lerp(partialTicks, local.yBobO, local.yBob);
             ps.rotate(com.mojang.math.Axis.XP.rotationDegrees(
                     (local.getViewXRot(partialTicks) - bx) * 0.1F));
             ps.rotate(com.mojang.math.Axis.YP.rotationDegrees(
                     (local.getViewYRot(partialTicks) - by) * 0.1F));
-            
-            
-            
-            
             float equip = hand == InteractionHand.MAIN_HAND
                     ? arcaneresearch.client.renderers.item.WandUseAnimation.lastEquipMain
                     : arcaneresearch.client.renderers.item.WandUseAnimation.lastEquipOff;
-            
-            
-            
             InteractionHand swinging = InteractionHand.MAIN_HAND;
             try {
                 if (player.isSwinging() && player.getCurrentSwing() != null) {
@@ -231,30 +138,10 @@ public final class WandTipHelper {
                 arcaneresearch.client.renderers.item.WandUseAnimation.applyWaveBlock(
                         ps, st.focusStack(), st.u(), st.tilt());
             }
-            
             org.joml.Matrix4f preM = new org.joml.Matrix4f(ps.last().pose());
             float[] preT = new float[]{preM.m30(), preM.m31(), preM.m32()};
             arcaneresearch.api.wands.IWand wand =
                     (arcaneresearch.api.wands.IWand) handStack.getItem();
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             boolean right = arm == HumanoidArm.RIGHT;
             float dtx = (right ? 1.13F : -1.13F) * 0.0625F;
             float dty = 3.2F * 0.0625F;
@@ -267,8 +154,6 @@ public final class WandTipHelper {
             ps.scale(0.68F, 0.68F, 0.68F);
             ps.translate(-0.5F, -0.5F, -0.5F);
             org.joml.Matrix4f m = new org.joml.Matrix4f(ps.last().pose());
-            
-            
             boolean hasFocus = false;
             try {
                 hasFocus = wand.getFocus(handStack) != null;
@@ -279,13 +164,6 @@ public final class WandTipHelper {
             m.transform(p);
             Minecraft mc = Minecraft.getInstance();
             Camera camera = mc.gameRenderer.mainCamera();
-            
-            
-            
-            
-            
-            
-            
             org.joml.Vector3f v = new org.joml.Vector3f(p.x, p.y, p.z);
             v.rotate(camera.rotation());
             Vec3 pos = camera.position();

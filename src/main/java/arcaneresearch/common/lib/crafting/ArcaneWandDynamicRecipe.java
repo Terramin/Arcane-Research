@@ -271,7 +271,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
                         out.add(new Ingredient(new IngredientNBTTC(rodStack)));
                     }
                 }
-                if (arcaneresearch.init.ModItems.SALIS_MUNDUS.isPresent()) {
+                if (arcaneresearch.init.ModItems.SALIS_MUNDUS.areComponentsBound()) {
                     out.add(Ingredient.of(arcaneresearch.init.ModItems.SALIS_MUNDUS.get()));
                 }
                 return out;
