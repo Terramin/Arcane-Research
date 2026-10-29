@@ -40,16 +40,7 @@ public final class WorldProviderOuter {
       
     public static final long FIXED_TIME = 18000L;
 
-    private static final float[] FOG_RGB = computeFogColor();
-
     private WorldProviderOuter() {
-    }
-
-    private static float[] computeFogColor() {
-        float r = ((FOG_COLOR >> 16) & 0xFF) / 255.0F * 0.15F;
-        float g = ((FOG_COLOR >> 8) & 0xFF) / 255.0F * 0.15F;
-        float b = (FOG_COLOR & 0xFF) / 255.0F * 0.15F;
-        return new float[]{r, g, b};
     }
 
     public static String getDimensionName() {
@@ -98,17 +89,14 @@ public final class WorldProviderOuter {
 
       
     public static float[] getFogColor() {
-        return new float[]{FOG_RGB[0], FOG_RGB[1], FOG_RGB[2]};
+        float r = ((FOG_COLOR >> 16) & 0xFF) / 255.0F * 0.15F;
+        float g = ((FOG_COLOR >> 8) & 0xFF) / 255.0F * 0.15F;
+        float b = (FOG_COLOR & 0xFF) / 255.0F * 0.15F;
+        return new float[]{r, g, b};
     }
 
     public static boolean isOuterLands(ResourceKey<Level> dimension) {
-        if (dimension == null) {
-            return false;
-        }
-        if (OUTER_LANDS_KEY.equals(dimension)) {
-            return true;
-        }
-        ResourceKey<Level> mazeDim = MazeFeature.DIMENSION;
-        return mazeDim.equals(dimension);
+        return OUTER_LANDS_KEY.equals(dimension)
+                || MazeFeature.DIMENSION.equals(dimension);
     }
 }

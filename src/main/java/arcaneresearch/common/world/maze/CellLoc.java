@@ -1,5 +1,7 @@
 package arcaneresearch.common.world.maze;
 
+
+
 public class CellLoc implements Comparable<CellLoc> {
     public int x;
     public int z;
@@ -13,29 +15,27 @@ public class CellLoc implements Comparable<CellLoc> {
     }
 
     public CellLoc(CellLoc c) {
-        if (c != null) {
-            this.x = c.x;
-            this.z = c.z;
-        }
+        this.x = c.x;
+        this.z = c.z;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof CellLoc other)) {
+        if (!(o instanceof CellLoc)) {
             return false;
         }
-        return this.x == other.x && this.z == other.z;
+        CellLoc chunkcoordinates = (CellLoc) o;
+        return this.x == chunkcoordinates.x && this.z == chunkcoordinates.z;
     }
 
     @Override
     public int hashCode() {
-        return this.x * 1664525 + this.z * 1013904223;
+        return this.x + this.z << 8;
     }
 
     @Override
     public int compareTo(CellLoc c) {
-        int zCmp = Integer.compare(this.z, c.z);
-        return zCmp != 0 ? zCmp : Integer.compare(this.x, c.x);
+        return this.z == c.z ? this.x - c.x : this.z - c.z;
     }
 
     public void set(int x, int z) {
@@ -44,15 +44,12 @@ public class CellLoc implements Comparable<CellLoc> {
     }
 
     public float getDistanceSquared(int x, int z) {
-        float f = (float) this.x - x;
-        float f2 = (float) this.z - z;
+        float f = this.x - x;
+        float f2 = this.z - z;
         return f * f + f2 * f2;
     }
 
     public float getDistanceSquaredToChunkCoordinates(CellLoc c) {
-        if (c == null) {
-            return Float.POSITIVE_INFINITY;
-        }
         return getDistanceSquared(c.x, c.z);
     }
 

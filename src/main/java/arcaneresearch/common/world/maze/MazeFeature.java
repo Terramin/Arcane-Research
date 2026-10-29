@@ -10,7 +10,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
  
@@ -39,11 +38,7 @@ public class MazeFeature implements Feature {
 
  
     public static void ensureMaze(ServerLevel level) {
-        ConcurrentHashMap<CellLoc, Short> labyrinth = MazeHandler.labyrinth;
-        if (labyrinth != null && !labyrinth.isEmpty()) {
-            return;
-        }
-        if (level == null) {
+        if (!MazeHandler.labyrinth.isEmpty()) {
             return;
         }
         MazeThread.generate(level, SIZE / 2 + 1, SIZE / 2 + 1, SIZE, SIZE);
@@ -57,7 +52,7 @@ public class MazeFeature implements Feature {
     @Override
     public boolean place(WorldGenLevel region, ChunkGenerator generator, RandomSource random, BlockPos origin) {
         ServerLevel level = region.getLevel();
-        if (DIMENSION == null || !DIMENSION.equals(level.dimension())) {
+        if (!level.dimension().equals(DIMENSION)) {
             return false;
         }
         ensureMaze(level);
