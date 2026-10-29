@@ -63,7 +63,7 @@ public class ItemFocusHellbat extends ItemFocusBasic {
 
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
-        return 1000;
+        return 20;
     }
 
     @Override

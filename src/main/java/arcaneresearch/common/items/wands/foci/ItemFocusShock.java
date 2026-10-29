@@ -114,8 +114,7 @@ public class ItemFocusShock extends ItemFocusBasic {
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
         // ВНИМАНИЕ: 500/1000/250 тиков = 25/50/12.5 сек. Проверьте контракт getActivationCooldown.
-        return isUpgradedWith(focusstack, chainlightning) ? 500
-                : (isUpgradedWith(focusstack, earthshock) ? 1000 : 250);
+        return 20;
     }
 
     @Override
