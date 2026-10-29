@@ -16,10 +16,27 @@ import net.minecraft.util.RandomSource;
 
  
 public final class MazeRooms {
+
+    private static final class States {
+        static final BlockState FLOOR = StructureHelper.state(MazeRoomCarver.FLOOR);
+        static final BlockState WALL = StructureHelper.state(MazeRoomCarver.WALL);
+        static final BlockState LINING = StructureHelper.state("arcaneresearch:eldritch_stone_tile");
+        static final BlockState ELDRITCH_CAP = States.ELDRITCH_CAP;
+        static final BlockState ELDRITCH_PORTAL = States.ELDRITCH_PORTAL;
+        static final BlockState AIR = States.AIR;
+        static final BlockState BEDROCK = States.BEDROCK;
+        static final BlockState COBWEB = States.COBWEB;
+        static final BlockState BOOKSHELF = States.BOOKSHELF;
+        private States() {}
+    }
+
     private MazeRooms() {
     }
 
     public static void build(LevelAccessor level, RandomSource random, int cx, int cz, int y, Cell cell) {
+        if (level == null || random == null || cell == null) {
+            return;
+        }
         switch (cell.feature) {
             case 1:
                 portalRoom(level, random, cx, cz, y, cell);
@@ -59,23 +76,23 @@ public final class MazeRooms {
     }
 
     static BlockState wall() {
-        return StructureHelper.state(MazeRoomCarver.WALL);
+        return States.WALL;
     }
 
     static BlockState floor() {
-        return StructureHelper.state(MazeRoomCarver.FLOOR);
+        return States.FLOOR;
     }
 
       
     static BlockState lining() {
-        return StructureHelper.state("arcaneresearch:eldritch_stone_tile");
+        return States.LINING;
     }
 
     static void shell(LevelAccessor level, RandomSource random, int cx, int cz, int y) {
         BlockPos c = cellFloor(cx, cz, y);
         
         MazeRoomCarver.fill(level, c.getX() - 8, y - 1, c.getZ() - 8, c.getX() + 8, y + 6, c.getZ() + 8,
-                Blocks.BEDROCK.defaultBlockState());
+                States.BEDROCK);
         MazeRoomCarver.air(level, c.getX() - 7, y + 1, c.getZ() - 7, c.getX() + 7, y + 5, c.getZ() + 7);
         MazeRoomCarver.fill(level, c.getX() - 7, y, c.getZ() - 7, c.getX() + 7, y, c.getZ() + 7,
                 floor());
@@ -179,7 +196,7 @@ public final class MazeRooms {
                     if ((a <= 4 && b <= 4) || (a <= 4 && b >= 12)
                             || (a >= 12 && b <= 4) || (a >= 12 && b >= 12)) {
                         StructureHelper.set(level, new BlockPos(x + a, yy + ch, z + b),
-                                Blocks.AIR.defaultBlockState());
+                                States.AIR);
                     }
                 }
             }
@@ -237,9 +254,9 @@ public final class MazeRooms {
         
         
         StructureHelper.set(level, new BlockPos(x + 8, yy + 2, z + 8),
-                StructureHelper.state("arcaneresearch:eldritch_cap"));
+                States.ELDRITCH_CAP);
         StructureHelper.set(level, new BlockPos(x + 8, yy + 3, z + 8),
-                StructureHelper.state("arcaneresearch:eldritch_portal"));
+                States.ELDRITCH_PORTAL);
         MazeRoomCarver.obelisk(level, new BlockPos(x + 8, yy + 4, z + 8), 4);
         MazeRoomCarver.altar(level, c.offset(0, 1, 4), true, (byte) 1);
     }
@@ -248,7 +265,7 @@ public final class MazeRooms {
     static void bedrockIfAir(LevelAccessor level, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
         if (level.getBlockState(pos).isAir()) {
-            StructureHelper.set(level, pos, Blocks.BEDROCK.defaultBlockState());
+            StructureHelper.set(level, pos, States.BEDROCK);
         }
     }
 
@@ -340,7 +357,7 @@ public final class MazeRooms {
                 StructureHelper.set(level, pos, wall());
                 break;
             case 9:
-                StructureHelper.set(level, pos, Blocks.AIR.defaultBlockState());
+                StructureHelper.set(level, pos, States.AIR);
                 break;
             case 3:
             case 4:
@@ -418,7 +435,7 @@ public final class MazeRooms {
         MazeRoomCarver.spawner(level, c.offset(-3, 2, -3), ModEntities.MIND_SPIDER.get(), random);
         MazeRoomCarver.spawner(level, c.offset(3, 2, 3), ModEntities.TAINT_CRAWLER.get(), random);
         MazeRoomCarver.fill(level, c.getX() - 2, y + 1, c.getZ() - 2, c.getX() + 2, y + 1, c.getZ() + 2,
-                Blocks.COBWEB.defaultBlockState());
+                States.COBWEB);
         MazeRoomCarver.decorate(level, random, c.getX() - 6, y, c.getZ() - 6,
                 c.getX() + 6, c.getZ() + 6, true);
         connect(level, random, cx, cz, y, cell);
@@ -429,7 +446,7 @@ public final class MazeRooms {
         BlockPos c = cellFloor(cx, cz, y);
         
         
-        BlockState shelf = Blocks.BOOKSHELF.defaultBlockState();
+        BlockState shelf = States.BOOKSHELF;
         for (int sx = -1; sx <= 1; sx += 2) {
             for (int sz = -1; sz <= 1; sz += 2) {
                 MazeRoomCarver.fill(level, c.getX() + sx * 4, y + 1, c.getZ() + sz * 4,
@@ -472,7 +489,7 @@ public final class MazeRooms {
         
         
         MazeRoomCarver.fill(level, c.getX() - 4, y - 1, c.getZ() - 4, c.getX() + 4, y + 6, c.getZ() + 4,
-                Blocks.BEDROCK.defaultBlockState());
+                States.BEDROCK);
         MazeRoomCarver.air(level, c.getX() - 3, y + 1, c.getZ() - 3, c.getX() + 3, y + 4, c.getZ() + 3);
         MazeRoomCarver.fill(level, c.getX() - 3, y, c.getZ() - 3, c.getX() + 3, y, c.getZ() + 3, floor());
         MazeRoomCarver.fill(level, c.getX() - 3, y + 1, c.getZ() - 3, c.getX() + 3, y + 5, c.getZ() + 3,
@@ -593,20 +610,28 @@ public final class MazeRooms {
 
     static void corridorNS(LevelAccessor level, BlockPos c, int z0, int z1, int floorY,
                            int ownLining, int otherLining) {
-        for (int z = Math.min(z0, z1); z <= Math.max(z0, z1); z++) {
-            int distOwn = Math.abs(z - c.getZ());
+        int baseZ = c.getZ();
+        int x = c.getX();
+        int zMin = Math.min(z0, z1);
+        int zMax = Math.max(z0, z1);
+        for (int z = zMin; z <= zMax; z++) {
+            int distOwn = Math.abs(z - baseZ);
             int distOther = 16 - distOwn;
-            corridorSlice(level, c.getX(), z, floorY, true,
+            corridorSlice(level, x, z, floorY, true,
                     distOwn > ownLining && distOther > otherLining);
         }
     }
 
     static void corridorEW(LevelAccessor level, BlockPos c, int x0, int x1, int floorY,
                            int ownLining, int otherLining) {
-        for (int x = Math.min(x0, x1); x <= Math.max(x0, x1); x++) {
-            int distOwn = Math.abs(x - c.getX());
+        int baseX = c.getX();
+        int z = c.getZ();
+        int xMin = Math.min(x0, x1);
+        int xMax = Math.max(x0, x1);
+        for (int x = xMin; x <= xMax; x++) {
+            int distOwn = Math.abs(x - baseX);
             int distOther = 16 - distOwn;
-            corridorSlice(level, x, c.getZ(), floorY, false,
+            corridorSlice(level, x, z, floorY, false,
                     distOwn > ownLining && distOther > otherLining);
         }
     }
@@ -619,9 +644,10 @@ public final class MazeRooms {
  
     static void corridorSlice(LevelAccessor level, int x, int z, int floorY, boolean alongZ,
                               boolean structural) {
-        BlockState floor = floor();
-        BlockState wall = wall();
-        BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
+        BlockState floorState = States.FLOOR;
+        BlockState wallState = States.WALL;
+        BlockState bedrockState = States.BEDROCK;
+        BlockState airState = States.AIR;
         for (int w = -3; w <= 3; w++) {
             int px = alongZ ? x + w : x;
             int pz = alongZ ? z : z + w;
@@ -630,21 +656,21 @@ public final class MazeRooms {
                 if (aw <= 1) {
                     for (int dy = 1; dy <= 4; dy++) {
                         StructureHelper.set(level, new BlockPos(px, floorY + dy, pz),
-                                Blocks.AIR.defaultBlockState());
+                                airState);
                     }
                 }
                 continue;
             }
-            StructureHelper.set(level, new BlockPos(px, floorY - 1, pz), bedrock);
+            StructureHelper.set(level, new BlockPos(px, floorY - 1, pz), bedrockState);
             StructureHelper.set(level, new BlockPos(px, floorY, pz),
-                    aw <= 2 ? floor : bedrock);
+                    aw <= 2 ? floorState : bedrockState);
             for (int dy = 1; dy <= 4; dy++) {
                 StructureHelper.set(level, new BlockPos(px, floorY + dy, pz),
-                        aw <= 1 ? Blocks.AIR.defaultBlockState() : (aw == 2 ? wall : bedrock));
+                        aw <= 1 ? airState : (aw == 2 ? wallState : bedrockState));
             }
             StructureHelper.set(level, new BlockPos(px, floorY + 5, pz),
-                    aw <= 2 ? wall : bedrock);
-            StructureHelper.set(level, new BlockPos(px, floorY + 6, pz), bedrock);
+                    aw <= 2 ? wallState : bedrockState);
+            StructureHelper.set(level, new BlockPos(px, floorY + 6, pz), bedrockState);
         }
     }
 }

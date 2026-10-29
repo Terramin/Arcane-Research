@@ -14,11 +14,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import arcaneresearch.common.entities.monster.cult.EntityCultistPortalLesser;
 import arcaneresearch.init.ModEntities;
 
-
-
-
-
-
 public class CultistPortalFeature implements Feature {
 
     public static final MapCodec<CultistPortalFeature> CODEC =
@@ -34,6 +29,12 @@ public class CultistPortalFeature implements Feature {
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
+        if (level == null || random == null || origin == null) {
+            return false;
+        }
+
+        var entityType = ModEntities.CULTIST_PORTAL_LESSER.get();
+        var serverLevel = level.getLevel();
 
         for (int dy = -4; dy <= 4; dy++) {
             BlockPos at = origin.offset(0, dy, 0);
@@ -45,21 +46,26 @@ public class CultistPortalFeature implements Feature {
             if (!state.isAir() && !state.canBeReplaced()) {
                 continue;
             }
-            EntityCultistPortalLesser portal = new EntityCultistPortalLesser(
-                    ModEntities.CULTIST_PORTAL_LESSER.get(), level.getLevel());
-            
-            
-            portal.snapTo(at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5,
-                    random.nextFloat() * 360.0f, 0.0f);
-            DifficultyInstance difficulty = level.getCurrentDifficultyAt(at);
-            portal.finalizeSpawn(level, difficulty, EntitySpawnReason.CHUNK_GENERATION, null);
-            level.addFreshEntityWithPassengers(portal);
-            return true;
+            try {
+                EntityCultistPortalLesser portal = new EntityCultistPortalLesser(
+                        entityType, serverLevel);
+                portal.snapTo(at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5,
+                        random.nextFloat() * 360.0f, 0.0f);
+                DifficultyInstance difficulty = level.getCurrentDifficultyAt(at);
+                portal.finalizeSpawn(level, difficulty, EntitySpawnReason.CHUNK_GENERATION, null);
+                level.addFreshEntityWithPassengers(portal);
+                return true;
+            } catch (Exception e) {
+                arcaneresearch.Arcaneresearch.LOGGER.warn("CultistPortalFeature: failed to spawn portal at {}", at, e);
+            }
         }
         return false;
     }
 
     private boolean isValidGround(BlockState state) {
+        if (state == null) {
+            return false;
+        }
         return state.is(BlockTags.DIRT)
                 || state.is(Blocks.GRASS_BLOCK)
                 || state.is(BlockTags.BASE_STONE_OVERWORLD)

@@ -60,6 +60,9 @@ public class PoolStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        if (context == null) {
+            return Optional.empty();
+        }
         ChunkPos chunkPos = context.chunkPos();
         ChunkGenerator chunkGenerator = context.chunkGenerator();
         LevelHeightAccessor heightAccessor = context.heightAccessor();
@@ -70,27 +73,45 @@ public class PoolStructure extends Structure {
         int surfaceY = chunkGenerator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
         int groundY = surfaceY - 1;
 
-        if (groundY < this.minY || groundY > this.maxY) {
+        int minY = this.minY;
+        int maxY = this.maxY;
+        if (groundY < minY || groundY > maxY) {
+            return Optional.empty();
+        }
+        // world bounds
+        if (groundY < heightAccessor.getMinY()
+                || groundY > heightAccessor.getMaxY()) {
             return Optional.empty();
         }
 
         NoiseColumn column = chunkGenerator.getBaseColumn(x, z, heightAccessor, randomState);
-        BlockState topState = column.getBlock(groundY);
-        if (topState.liquid() || !topState.isSolid()) {
+        BlockState topState;
+        try {
+            topState = column.getBlock(groundY);
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
+        if (topState == null || !topState.getFluidState().isEmpty() || !topState.canOcclude()) {
             return Optional.empty();
         }
 
         int r = this.flatRadius;
-        int[] corners = {
-                chunkGenerator.getBaseHeight(x - r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState),
-                chunkGenerator.getBaseHeight(x + r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState),
-                chunkGenerator.getBaseHeight(x - r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState),
-                chunkGenerator.getBaseHeight(x + r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState)
-        };
-        for (int h : corners) {
-            if (Math.abs(h - surfaceY) > this.flatVariance) {
-                return Optional.empty();
-            }
+        int flatVariance = this.flatVariance;
+        int h00 = chunkGenerator.getBaseHeight(x - r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h00 - surfaceY) > flatVariance) {
+            return Optional.empty();
+        }
+        int h10 = chunkGenerator.getBaseHeight(x + r, z - r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h10 - surfaceY) > flatVariance) {
+            return Optional.empty();
+        }
+        int h01 = chunkGenerator.getBaseHeight(x - r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h01 - surfaceY) > flatVariance) {
+            return Optional.empty();
+        }
+        int h11 = chunkGenerator.getBaseHeight(x + r, z + r, Heightmap.Types.WORLD_SURFACE_WG, heightAccessor, randomState);
+        if (Math.abs(h11 - surfaceY) > flatVariance) {
+            return Optional.empty();
         }
 
         BlockPos structurePos = new BlockPos(x, groundY + this.yOffset, z);

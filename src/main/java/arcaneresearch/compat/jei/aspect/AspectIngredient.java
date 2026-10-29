@@ -10,7 +10,6 @@ import arcaneresearch.api.aspects.AspectList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class AspectIngredient {
 
@@ -21,12 +20,22 @@ public final class AspectIngredient {
 
     public static List<AspectList> createAll() {
         List<AspectList> aspects = new ArrayList<>();
-        aspects.addAll(Aspect.getPrimalAspects().stream()
-                .map(aspect -> new AspectList().add(aspect, 1))
-                .collect(Collectors.toList()));
-        aspects.addAll(Aspect.getCompoundAspects().stream()
-                .map(aspect -> new AspectList().add(aspect, 1))
-                .collect(Collectors.toList()));
+        List<Aspect> primal = Aspect.getPrimalAspects();
+        if (primal != null) {
+            for (Aspect aspect : primal) {
+                if (aspect != null) {
+                    aspects.add(new AspectList().add(aspect, 1));
+                }
+            }
+        }
+        List<Aspect> compound = Aspect.getCompoundAspects();
+        if (compound != null) {
+            for (Aspect aspect : compound) {
+                if (aspect != null) {
+                    aspects.add(new AspectList().add(aspect, 1));
+                }
+            }
+        }
         return aspects;
     }
 
@@ -34,7 +43,11 @@ public final class AspectIngredient {
         if (list == null || list.size() == 0) {
             return null;
         }
-        return list.getAspects()[0];
+        Aspect[] arr = list.getAspects();
+        if (arr == null || arr.length == 0) {
+            return null;
+        }
+        return arr[0];
     }
 
     public static class Helper implements IIngredientHelper<AspectList> {
@@ -47,28 +60,43 @@ public final class AspectIngredient {
         @Override
         public String getDisplayName(AspectList ingredient) {
             Aspect aspect = first(ingredient);
-            return aspect != null ? aspect.getName() : "";
+            if (aspect == null) {
+                return "";
+            }
+            String name = aspect.getName();
+            return name == null ? "" : name;
         }
 
         @Override
-        
         public Object getUid(AspectList ingredient, UidContext context) {
             Aspect aspect = first(ingredient);
-            return aspect != null ? aspect.getTag() : "empty";
+            if (aspect == null) {
+                return "empty";
+            }
+            String tag = aspect.getTag();
+            return tag == null ? "empty" : tag;
         }
 
-        
-        
         @Override
         public Identifier getIdentifier(AspectList ingredient) {
             Aspect aspect = first(ingredient);
-            return Identifier.fromNamespaceAndPath(Arcaneresearch.MODID,
-                    aspect != null ? aspect.getTag().toLowerCase(java.util.Locale.ROOT) : "empty");
+            String path = "empty";
+            if (aspect != null) {
+                String tag = aspect.getTag();
+                if (tag != null && !tag.isEmpty()) {
+                    path = tag.toLowerCase(java.util.Locale.ROOT);
+                }
+            }
+            return Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, path);
         }
 
         @Override
         public AspectList copyIngredient(AspectList ingredient) {
-            return ingredient == null ? new AspectList() : ingredient.copy();
+            if (ingredient == null) {
+                return new AspectList();
+            }
+            AspectList copy = ingredient.copy();
+            return copy == null ? new AspectList() : copy;
         }
 
         @Override

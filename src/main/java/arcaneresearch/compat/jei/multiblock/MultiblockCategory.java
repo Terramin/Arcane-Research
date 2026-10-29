@@ -25,6 +25,8 @@ import arcaneresearch.init.ModItems;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.BluePrint> {
 
     public static final Identifier UID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "multiblock");
@@ -54,12 +56,12 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     }
 
     @Override
-    public RecipeType<ArcaneresearchApi.BluePrint> getRecipeType() {
+    public @NotNull RecipeType<ArcaneresearchApi.BluePrint> getRecipeType() {
         return ArcaneresearchJEIPlugin.MULTIBLOCK_TYPE;
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return title;
     }
 
@@ -76,12 +78,15 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, ArcaneresearchApi.BluePrint recipe, IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull ArcaneresearchApi.BluePrint recipe, @NotNull IFocusGroup focuses) {
+        if (recipe == null) {
+            return;
+        }
         this.currentRecipe = recipe;
         Part[][][] parts = recipe.getParts();
         this.access = (parts == null) ? null : new BlueprintBlockAccess(parts);
@@ -108,25 +113,41 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     
     
     @Override
-    public void draw(ArcaneresearchApi.BluePrint recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+    public void draw(@NotNull ArcaneresearchApi.BluePrint recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        if (recipe == null || guiGraphics == null) {
+            return;
+        }
         if (access == null || currentRecipe != recipe) {
             Part[][][] parts = recipe.getParts();
             currentRecipe = recipe;
             access = (parts == null) ? null : new BlueprintBlockAccess(parts);
         }
+        Part[][][] parts = (access == null) ? null : recipe.getParts();
+        int ySize = 0;
+        int xSize = 0;
+        int zSize = 0;
+        if (parts != null) {
+            ySize = parts.length;
+            if (ySize > 0 && parts[0] != null) {
+                xSize = parts[0].length;
+                if (xSize > 0 && parts[0][0] != null) {
+                    zSize = parts[0][0].length;
+                }
+            }
+        }
         if (access != null) {
-            access.sliceLine = (int) ((System.currentTimeMillis() / 1000) % (access.getHeight() + 1));
+            int height = access.getHeight();
+            if (height < 0) {
+                height = 0;
+            }
+            access.sliceLine = (int) ((System.currentTimeMillis() / 1000L) % (height + 1L));
         }
         
         
         
         
         
-        if (access != null && recipe.getParts() != null) {
-            Part[][][] parts = recipe.getParts();
-            int ySize = parts.length;
-            int xSize = parts[0].length;
-            int zSize = parts[0][0].length;
+        if (access != null && parts != null && ySize > 0 && xSize > 0 && zSize > 0) {
             float scale = Math.max(6f, 26 - Math.max(ySize, Math.max(xSize, zSize)) * 2);
             IsoStructurePip.submitFixedScale(guiGraphics, access, parts,
                     xSize, ySize, zSize, CX, CY, scale);
@@ -138,7 +159,7 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     }
 
     @Override
-    public void getTooltip(ITooltipBuilder tooltip, ArcaneresearchApi.BluePrint recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+    public void getTooltip(@NotNull ITooltipBuilder tooltip, @NotNull ArcaneresearchApi.BluePrint recipe, @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         tooltip.addAll(JeiResearch.tooltip(recipe.getResearch(), mouseX, mouseY, WIDTH));
     }
 }

@@ -30,6 +30,8 @@ import arcaneresearch.init.ModBlocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
 
     public static final Identifier UID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "infusion");
@@ -47,6 +49,9 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
     private final IDrawable icon;
     private final Component title;
 
+    private InfusionRecipeType cachedRecipe;
+    private List<AspectSpot> cachedSpots = List.of();
+
     public InfusionCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModBlocks.INFUSION_MATRIX.get()));
@@ -55,17 +60,25 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
 
     private static List<AspectSpot> layoutAspects(AspectList aspects) {
         List<AspectSpot> spots = new ArrayList<>();
-        if (aspects == null || aspects.size() == 0) {
+        if (aspects == null || aspects.aspects.isEmpty()) {
             return spots;
         }
-        int total = 0;
-        int rows = (aspects.size() - 1) / 5;
-        int shift = (5 - aspects.size() % 5) * 10;
+        Aspect[] sorted = aspects.getAspectsSortedByName();
+        if (sorted == null || sorted.length == 0) {
+            return spots;
+        }
+        int size = aspects.size();
+        int rows = (size - 1) / 5;
+        int shift = (5 - size % 5) * 10;
         int sx = OX - 48;
         int sy = OY + 50 - 10 * rows;
-        for (Aspect tag : aspects.getAspectsSortedByName()) {
+        int total = 0;
+        for (Aspect tag : sorted) {
+            if (tag == null) {
+                continue;
+            }
             int m = 0;
-            if (total / 5 >= rows && (rows > 1 || aspects.size() < 5)) {
+            if (total / 5 >= rows && (rows > 1 || size < 5)) {
                 m = 1;
             }
             int vx = sx + total % 5 * 20 + shift * m;
@@ -76,13 +89,24 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
         return spots;
     }
 
+    private List<AspectSpot> spotsFor(InfusionRecipeType recipe) {
+        if (recipe == null) {
+            return List.of();
+        }
+        if (cachedRecipe != recipe) {
+            cachedRecipe = recipe;
+            cachedSpots = layoutAspects(recipe.getAspects());
+        }
+        return cachedSpots;
+    }
+
     @Override
-    public RecipeType<InfusionRecipeType> getRecipeType() {
+    public @NotNull RecipeType<InfusionRecipeType> getRecipeType() {
         return ArcaneresearchJEIPlugin.INFUSION_TYPE;
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return title;
     }
 
@@ -99,12 +123,12 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, InfusionRecipeType recipe, IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull InfusionRecipeType recipe, @NotNull IFocusGroup focuses) {
         
         builder.addSlot(RecipeIngredientRole.OUTPUT, OX - 9, OY - 86)
                 .addItemStack(recipe.getResultItem());
@@ -116,22 +140,29 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
         }
 
         NonNullList<Ingredient> components = recipe.getComponents();
+        if (components == null) {
+            return;
+        }
         int numComponents = components.size();
+        if (numComponents == 0) {
+            return;
+        }
         int radius = 40;
         for (int i = 0; i < numComponents; i++) {
+            Ingredient component = components.get(i);
+            if (component == null || component.isEmpty()) {
+                continue;
+            }
             double angle = (2 * Math.PI * i / numComponents) - Math.PI / 2;
             int compX = OX + (int) (Math.cos(angle) * radius) - 9;
             int compY = (OY - 8) + (int) (Math.sin(angle) * radius) - 9;
-            Ingredient component = components.get(i);
-            if (!component.isEmpty()) {
-                builder.addSlot(RecipeIngredientRole.INPUT, compX, compY)
-                        .addIngredients(component);
-            }
+            builder.addSlot(RecipeIngredientRole.INPUT, compX, compY)
+                    .addIngredients(component);
         }
     }
 
     @Override
-    public void draw(InfusionRecipeType recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+    public void draw(@NotNull InfusionRecipeType recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
 
         guiGraphics.pose().pushMatrix();
@@ -143,7 +174,7 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -28, -36, 200, 77, 60, 44, 256, 256);
         guiGraphics.pose().popMatrix();
 
-        for (AspectSpot spot : layoutAspects(recipe.getAspects())) {
+        for (AspectSpot spot : spotsFor(recipe)) {
             AspectRenderer.drawAspect(guiGraphics, spot.x(), spot.y(), spot.aspect(), spot.amount());
         }
 
@@ -158,8 +189,8 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
     }
 
     @Override
-    public void getTooltip(ITooltipBuilder tooltip, InfusionRecipeType recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-        for (AspectSpot spot : layoutAspects(recipe.getAspects())) {
+    public void getTooltip(@NotNull ITooltipBuilder tooltip, @NotNull InfusionRecipeType recipe, @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+        for (AspectSpot spot : spotsFor(recipe)) {
             if (AspectRenderer.isMouseOverAspect(spot.x(), spot.y(), (int) mouseX, (int) mouseY)) {
                 tooltip.addAll(AspectRenderer.getAspectTooltip(spot.aspect(), spot.amount()));
                 return;

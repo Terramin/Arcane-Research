@@ -20,7 +20,13 @@ public final class JeiResearch {
             arcaneresearch.api.research.ResearchEntry entry =
                     arcaneresearch.api.research.ResearchCategories.getResearch(researchKey);
             if (entry != null) {
-                return entry.getLocalizedName().getString();
+                net.minecraft.network.chat.Component name = entry.getLocalizedName();
+                if (name != null) {
+                    String s = name.getString();
+                    if (!s.isEmpty()) {
+                        return s;
+                    }
+                }
             }
         } catch (Exception ignored) {
         }
@@ -32,6 +38,9 @@ public final class JeiResearch {
     }
 
     public static String fittedText(Font font, String researchKey, int width, int xMin) {
+        if (font == null) {
+            return "";
+        }
         String text = label(researchKey);
         if (text.isEmpty()) {
             return text;
@@ -44,7 +53,11 @@ public final class JeiResearch {
     }
 
     public static void drawTopRight(GuiGraphicsExtractor guiGraphics, String researchKey, int width, int xMin) {
-        Font font = Minecraft.getInstance().font;
+        if (guiGraphics == null) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        Font font = mc.font;
         String text = fittedText(font, researchKey, width, xMin);
         if (text.isEmpty()) {
             return;
@@ -57,14 +70,18 @@ public final class JeiResearch {
     }
 
     public static List<Component> tooltip(String researchKey, double mouseX, double mouseY, int width, int xMin) {
-        Font font = Minecraft.getInstance().font;
-        String text = fittedText(font, researchKey, width, xMin);
+        Minecraft mc = Minecraft.getInstance();
+        Font font = mc.font;
+        String full = label(researchKey);
+        if (full.isEmpty()) {
+            return List.of();
+        }
+        String text = font.plainSubstrByWidth(full, Math.max(10, width - 4 - xMin));
         if (text.isEmpty()) {
             return List.of();
         }
         int textWidth = font.width(text);
         if (mouseX >= width - 4 - textWidth && mouseX <= width && mouseY >= 3 && mouseY <= 13) {
-            String full = label(researchKey);
             return List.of(Component.translatable("jei.arcaneresearch.requires_research", full));
         }
         return List.of();

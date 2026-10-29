@@ -8,7 +8,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -45,43 +48,57 @@ public class FeatureStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        if (context == null) {
+            return Optional.empty();
+        }
         ChunkPos chunkPos = context.chunkPos();
+        LevelHeightAccessor heightAccessor = context.heightAccessor();
+        net.minecraft.world.level.chunk.ChunkGenerator chunkGenerator = context.chunkGenerator();
+        net.minecraft.world.level.levelgen.RandomState randomState = context.randomState();
+
         int x = chunkPos.getMiddleBlockX();
         int z = chunkPos.getMiddleBlockZ();
-        int min = context.heightAccessor().getMinY();
-        
-        int max = context.heightAccessor().getMaxY() + 1;
-        int y = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
+        int min = heightAccessor.getMinY();
+        int max = heightAccessor.getMaxY() + 1;
+
+        int y = chunkGenerator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                heightAccessor, randomState);
+
+        int halfWidth = this.boxHalfWidth;
+        ResourceKey<PlacedFeature> key = this.featureKey;
+
         if (y < min + 2 || y > max - 20) {
-            
-            
-            
-            
-            
             int flat = min + 2;
             if (flat > max - 20) {
                 return Optional.empty();
             }
             BlockPos flatPos = new BlockPos(x, flat, z);
-            int h = this.boxHalfWidth;
-            BoundingBox flatBox = new BoundingBox(x - h, flat - this.boxHeightDown, z - h,
-                    x + h, flat + this.boxHeightUp, z + h);
+            BoundingBox flatBox = new BoundingBox(x - halfWidth, flat - this.boxHeightDown, z - halfWidth,
+                    x + halfWidth, flat + this.boxHeightUp, z + halfWidth);
             return Optional.of(new GenerationStub(flatPos,
-                    builder -> builder.addPiece(new FeatureStructurePiece(this.featureKey, flatBox, flatPos))));
+                    builder -> builder.addPiece(new FeatureStructurePiece(key, flatBox, flatPos))));
         }
-        NoiseColumn column = context.chunkGenerator().getBaseColumn(x, z,
-                context.heightAccessor(), context.randomState());
-        if (column.getBlock(y - 1).liquid()) {
+
+        NoiseColumn column = chunkGenerator.getBaseColumn(x, z, heightAccessor, randomState);
+        int blockY = y - 1;
+        if (blockY < min) {
             return Optional.empty();
         }
-        BlockPos pos = new BlockPos(x, y, z);
+        BlockState topState;
+        try {
+            topState = column.getBlock(blockY);
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
+        if (topState != null && !topState.getFluidState().isEmpty()) {
+            return Optional.empty();
+        }
 
-        int h = this.boxHalfWidth;
-        BoundingBox box = new BoundingBox(x - h, y - this.boxHeightDown, z - h,
-                x + h, y + this.boxHeightUp, z + h);
+        BlockPos pos = new BlockPos(x, y, z);
+        BoundingBox box = new BoundingBox(x - halfWidth, y - this.boxHeightDown, z - halfWidth,
+                x + halfWidth, y + this.boxHeightUp, z + halfWidth);
         return Optional.of(new GenerationStub(pos,
-                builder -> builder.addPiece(new FeatureStructurePiece(this.featureKey, box, pos))));
+                builder -> builder.addPiece(new FeatureStructurePiece(key, box, pos))));
     }
 
     @Override

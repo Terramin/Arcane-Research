@@ -29,6 +29,9 @@ import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModRecipeTypes;
 
 import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
 
 @JeiPlugin
 public class ArcaneresearchJEIPlugin implements IModPlugin {
@@ -76,15 +79,22 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerIngredients(IModIngredientRegistration registration) {
-        
-        registration.register(AspectIngredient.TYPE, AspectIngredient.createAll(),
-                new AspectIngredient.Helper(), new AspectIngredientRenderer(),
-                arcaneresearch.api.aspects.AspectList.CODEC);
+    public void registerIngredients(@NotNull IModIngredientRegistration registration) {
+        try {
+            var all = AspectIngredient.createAll();
+            if (all == null || all.isEmpty()) {
+                return;
+            }
+            registration.register(AspectIngredient.TYPE, all,
+                    new AspectIngredient.Helper(), new AspectIngredientRenderer(),
+                    arcaneresearch.api.aspects.AspectList.CODEC);
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.error("JEI: failed to register aspects", e);
+        }
     }
 
     @Override
-    public void registerCategories(IRecipeCategoryRegistration registration) {
+    public void registerCategories(@NotNull IRecipeCategoryRegistration registration) {
         IJeiHelpers jeiHelpers = registration.getJeiHelpers();
         IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
 
@@ -102,8 +112,9 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipes(IRecipeRegistration registration) {
-        if (Minecraft.getInstance().level == null) {
+    public void registerRecipes(@NotNull IRecipeRegistration registration) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null) {
             return;
         }
 
@@ -116,57 +127,85 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
 
         java.util.Map<Object, Identifier> ids = new java.util.IdentityHashMap<>();
         for (net.minecraft.world.item.crafting.RecipeHolder<?> holder : holders) {
+            if (holder == null) {
+                continue;
+            }
             ids.put(holder.value(), holder.id().identifier());
         }
         recipeIds = ids;
 
-        List<IArcaneRecipe> arcaneRecipes = new java.util.ArrayList<>(holders
-                .stream()
-                .map(net.minecraft.world.item.crafting.RecipeHolder::value)
-                .filter(IArcaneRecipe.class::isInstance)
-                .map(IArcaneRecipe.class::cast)
-                .toList());
+        List<IArcaneRecipe> arcaneRecipes = new java.util.ArrayList<>();
+        for (net.minecraft.world.item.crafting.RecipeHolder<?> holder : holders) {
+            if (holder == null) {
+                continue;
+            }
+            Object value = holder.value();
+            if (value instanceof IArcaneRecipe arcane && !arcaneRecipes.contains(arcane)) {
+                arcaneRecipes.add(arcane);
+            }
+        }
 
         try {
-            arcaneRecipes.addAll(arcaneresearch.common.lib.crafting.ArcaneWandDynamicRecipe.allPairs());
+            var pairs = arcaneresearch.common.lib.crafting.ArcaneWandDynamicRecipe.allPairs();
+            if (pairs != null) {
+                for (var r : pairs) {
+                    if (r != null) {
+                        arcaneRecipes.add(r);
+                    }
+                }
+            }
         } catch (Exception e) {
             Arcaneresearch.LOGGER.warn("JEI: failed to list wand recipes", e);
         }
 
         registration.addRecipes(ARCANE_TYPE, arcaneRecipes);
 
-        List<CrucibleRecipeType> crucibleRecipes = holders
-                .stream()
-                .map(net.minecraft.world.item.crafting.RecipeHolder::value)
-                .filter(CrucibleRecipeType.class::isInstance)
-                .map(CrucibleRecipeType.class::cast)
-                .toList();
+        List<CrucibleRecipeType> crucibleRecipes = new java.util.ArrayList<>();
+        List<InfusionRecipeType> infusionRecipes = new java.util.ArrayList<>();
+        for (net.minecraft.world.item.crafting.RecipeHolder<?> holder : holders) {
+            if (holder == null) {
+                continue;
+            }
+            Object value = holder.value();
+            if (value instanceof CrucibleRecipeType crucible) {
+                crucibleRecipes.add(crucible);
+            } else if (value instanceof InfusionRecipeType infusion) {
+                infusionRecipes.add(infusion);
+            }
+        }
 
         registration.addRecipes(CRUCIBLE_TYPE, crucibleRecipes);
-
-        List<InfusionRecipeType> infusionRecipes = holders
-                .stream()
-                .map(net.minecraft.world.item.crafting.RecipeHolder::value)
-                .filter(InfusionRecipeType.class::isInstance)
-                .map(InfusionRecipeType.class::cast)
-                .toList();
-
         registration.addRecipes(INFUSION_TYPE, infusionRecipes);
 
-        List<ArcaneresearchApi.BluePrint> blueprints = ArcaneresearchApi.getCraftingRecipes().values().stream()
-                .filter(r -> r instanceof ArcaneresearchApi.BluePrint)
-                .map(r -> (ArcaneresearchApi.BluePrint) r)
-                .toList();
+        List<ArcaneresearchApi.BluePrint> blueprints = new java.util.ArrayList<>();
+        try {
+            Map<?, ?> crafting = ArcaneresearchApi.getCraftingRecipes();
+            if (crafting != null) {
+                for (Object r : crafting.values()) {
+                    if (r instanceof ArcaneresearchApi.BluePrint bp) {
+                        blueprints.add(bp);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.warn("JEI: failed to list blueprints", e);
+        }
 
         registration.addRecipes(MULTIBLOCK_TYPE, blueprints);
 
-        registration.addRecipes(ASPECT_COMPOUND_TYPE, AspectCompoundCategory.recipes());
+        var compoundRecipes = AspectCompoundCategory.recipes();
+        if (compoundRecipes != null) {
+            registration.addRecipes(ASPECT_COMPOUND_TYPE, compoundRecipes);
+        }
 
-        List<AspectSourcesCategory.Sources> sources = AspectSourcesCategory.buildIndex();
-        registration.addRecipes(ASPECT_SOURCES_TYPE, sources);
+        var sources = AspectSourcesCategory.buildIndex();
+        if (sources != null) {
+            registration.addRecipes(ASPECT_SOURCES_TYPE, sources);
+        }
 
         Arcaneresearch.LOGGER.info("JEI: Registered {} arcane, {} crucible, {} infusion, {} multiblock, {} aspects",
-                arcaneRecipes.size(), crucibleRecipes.size(), infusionRecipes.size(), blueprints.size(), sources.size());
+                arcaneRecipes.size(), crucibleRecipes.size(), infusionRecipes.size(), blueprints.size(),
+                sources == null ? 0 : sources.size());
 
         ResearchGate.track(arcaneRecipes, crucibleRecipes, infusionRecipes, blueprints);
     }
@@ -177,16 +216,16 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-
+    public void registerRecipeTransferHandlers(@NotNull IRecipeTransferRegistration registration) {
+        var menuType = arcaneresearch.init.ModMenuTypes.ARCANE_WORKBENCH.get();
         registration.addRecipeTransferHandler(
                 arcaneresearch.common.menu.ArcaneWorkbenchMenu.class,
-                arcaneresearch.init.ModMenuTypes.ARCANE_WORKBENCH.get(),
+                menuType,
                 ARCANE_TYPE, 1, 9, 16, 36);
     }
 
     @Override
-    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+    public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
 
         registration.addGuiContainerHandler(arcaneresearch.client.gui.screens.ResearchTableScreen.class,
                 new arcaneresearch.compat.jei.gui.ResearchGuiHandlers.ResearchTableHandler());
@@ -195,17 +234,30 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+    public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
+        addCatalystSafe(registration, ModBlocks.ARCANE_WORKBENCH, ARCANE_TYPE);
+        addCatalystSafe(registration, ModBlocks.CRUCIBLE, CRUCIBLE_TYPE);
+        addCatalystSafe(registration, ModBlocks.INFUSION_MATRIX, INFUSION_TYPE);
+        addCatalystSafe(registration, arcaneresearch.init.ModItems.SALIS_MUNDUS, MULTIBLOCK_TYPE);
+        addCatalystSafe(registration, ModItems.THAUMONOMICON, ASPECT_COMPOUND_TYPE);
+        addCatalystSafe(registration, ModItems.THAUMONOMICON, ASPECT_SOURCES_TYPE);
+    }
 
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.ARCANE_WORKBENCH.get()), ARCANE_TYPE);
-
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.CRUCIBLE.get()), CRUCIBLE_TYPE);
-
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.INFUSION_MATRIX.get()), INFUSION_TYPE);
-
-        registration.addRecipeCatalyst(new ItemStack(arcaneresearch.init.ModItems.SALIS_MUNDUS.get()), MULTIBLOCK_TYPE);
-
-        registration.addRecipeCatalyst(new ItemStack(ModItems.THAUMONOMICON.get()), ASPECT_COMPOUND_TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModItems.THAUMONOMICON.get()), ASPECT_SOURCES_TYPE);
+    private static void addCatalystSafe(IRecipeCatalystRegistration reg, Object holder, RecipeType<?> type) {
+        if (reg == null || holder == null || type == null) {
+            return;
+        }
+        try {
+            Object value = null;
+            if (holder instanceof java.util.function.Supplier<?> supplier) {
+                value = supplier.get();
+            } else {
+                value = holder;
+            }
+            if (value instanceof net.minecraft.world.level.ItemLike item) {
+                reg.addRecipeCatalyst(new ItemStack(item), type);
+            }
+        } catch (Exception ignored) {
+        }
     }
 }

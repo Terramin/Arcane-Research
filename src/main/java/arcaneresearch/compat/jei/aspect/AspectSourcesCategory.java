@@ -24,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+
 public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCategory.Sources> {
 
     public static final Identifier UID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "aspect_sources");
@@ -46,14 +48,29 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
     public static List<Sources> buildIndex() {
         Map<String, Aspect> byTag = new LinkedHashMap<>();
         for (Aspect aspect : Aspect.getPrimalAspects()) {
-            byTag.put(aspect.getTag(), aspect);
+            if (aspect == null) {
+                continue;
+            }
+            String tag = aspect.getTag();
+            if (tag != null) {
+                byTag.put(tag, aspect);
+            }
         }
         for (Aspect aspect : Aspect.getCompoundAspects()) {
-            byTag.put(aspect.getTag(), aspect);
+            if (aspect == null) {
+                continue;
+            }
+            String tag = aspect.getTag();
+            if (tag != null) {
+                byTag.put(tag, aspect);
+            }
         }
         Map<Aspect, List<ItemStack>> index = new LinkedHashMap<>();
         
         for (Item item : BuiltInRegistries.ITEM) {
+            if (item == null) {
+                continue;
+            }
             ItemStack stack;
             try {
                 stack = new ItemStack(item);
@@ -72,8 +89,19 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
             if (aspects == null || aspects.size() == 0) {
                 continue;
             }
-            for (Aspect aspect : aspects.getAspects()) {
-                Aspect canonical = byTag.get(aspect.getTag());
+            Aspect[] aspectArray = aspects.getAspects();
+            if (aspectArray == null) {
+                continue;
+            }
+            for (Aspect aspect : aspectArray) {
+                if (aspect == null) {
+                    continue;
+                }
+                String tag = aspect.getTag();
+                if (tag == null) {
+                    continue;
+                }
+                Aspect canonical = byTag.get(tag);
                 if (canonical == null) {
                     continue;
                 }
@@ -83,21 +111,25 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
         List<Sources> recipes = new ArrayList<>();
         for (Map.Entry<Aspect, List<ItemStack>> entry : index.entrySet()) {
             List<ItemStack> items = entry.getValue();
-            for (int start = 0; start < items.size(); start += PAGE_SIZE) {
+            if (items == null) {
+                continue;
+            }
+            int size = items.size();
+            for (int start = 0; start < size; start += PAGE_SIZE) {
                 recipes.add(new Sources(entry.getKey(),
-                        new ArrayList<>(items.subList(start, Math.min(start + PAGE_SIZE, items.size())))));
+                        new ArrayList<>(items.subList(start, Math.min(start + PAGE_SIZE, size)))));
             }
         }
         return recipes;
     }
 
     @Override
-    public RecipeType<Sources> getRecipeType() {
+    public @NotNull RecipeType<Sources> getRecipeType() {
         return ArcaneresearchJEIPlugin.ASPECT_SOURCES_TYPE;
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return title;
     }
 
@@ -114,22 +146,34 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, Sources recipe, IFocusGroup focuses) {
-
-        builder.addSlot(RecipeIngredientRole.INPUT, 72, 4)
-                .addIngredients(AspectIngredient.TYPE, List.of(new AspectList().add(recipe.aspect(), 1)));
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull Sources recipe, @NotNull IFocusGroup focuses) {
+        Aspect aspect = recipe.aspect();
+        if (aspect != null) {
+            AspectList aspectList = new AspectList();
+            aspectList.add(aspect, 1);
+            builder.addSlot(RecipeIngredientRole.INPUT, 72, 4)
+                    .addIngredients(AspectIngredient.TYPE, List.of(aspectList));
+        }
 
         List<ItemStack> items = recipe.items();
-        for (int i = 0; i < items.size() && i < PAGE_SIZE; i++) {
+        if (items == null) {
+            return;
+        }
+        int limit = Math.min(items.size(), PAGE_SIZE);
+        for (int i = 0; i < limit; i++) {
+            ItemStack stack = items.get(i);
+            if (stack == null || stack.isEmpty()) {
+                continue;
+            }
             int col = i % 9;
             int row = i / 9;
             builder.addSlot(RecipeIngredientRole.OUTPUT, col * 18, 30 + row * 18)
-                    .addItemStack(items.get(i));
+                    .addItemStack(stack);
         }
     }
 

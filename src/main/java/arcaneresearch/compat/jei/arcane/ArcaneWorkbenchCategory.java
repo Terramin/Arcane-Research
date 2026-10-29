@@ -29,6 +29,8 @@ import arcaneresearch.init.ModBlocks;
 
 import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
 
     public static final Identifier UID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_workbench");
@@ -53,12 +55,12 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
     }
 
     @Override
-    public RecipeType<IArcaneRecipe> getRecipeType() {
+    public @NotNull RecipeType<IArcaneRecipe> getRecipeType() {
         return ArcaneresearchJEIPlugin.ARCANE_TYPE;
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return title;
     }
 
@@ -75,12 +77,12 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, IArcaneRecipe recipe, IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull IArcaneRecipe recipe, @NotNull IFocusGroup focuses) {
         
         builder.addSlot(RecipeIngredientRole.OUTPUT, OX - 9, OY - 85)
                 .addItemStack(recipe.getResultItem());
@@ -90,7 +92,8 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
         
         
         java.util.List<Optional<Ingredient>> ingredients = gridIngredients(recipe);
-        for (int i = 0; i < ingredients.size() && i < 9; i++) {
+        int ingredientLimit = Math.min(ingredients.size(), 9);
+        for (int i = 0; i < ingredientLimit; i++) {
             Optional<Ingredient> ingredient = ingredients.get(i);
             if (ingredient.isEmpty() || ingredient.get().isEmpty()) {
                 continue;
@@ -104,17 +107,24 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
 
         AspectList crystals = recipe.getCrystals();
         if (crystals != null && crystals.size() > 0) {
-            int a = 0;
-            int sz = crystals.size();
-            for (Aspect aspect : crystals.getAspects()) {
-                int amount = crystals.getAmount(aspect);
-                ItemStack crystal = ArcaneresearchApiHelper.makeCrystal(aspect, amount);
-                if (!crystal.isEmpty()) {
-                    builder.addSlot(RecipeIngredientRole.INPUT,
-                                    OX + 3 - sz * 10 + a * 20, OY + 58)
-                            .addItemStack(crystal);
+            Aspect[] aspects = crystals.getAspects();
+            if (aspects != null) {
+                int sz = crystals.size();
+                int a = 0;
+                for (Aspect aspect : aspects) {
+                    if (aspect == null) {
+                        a++;
+                        continue;
+                    }
+                    int amount = crystals.getAmount(aspect);
+                    ItemStack crystal = ArcaneresearchApiHelper.makeCrystal(aspect, amount);
+                    if (crystal != null && !crystal.isEmpty()) {
+                        builder.addSlot(RecipeIngredientRole.INPUT,
+                                        OX + 3 - sz * 10 + a * 20, OY + 58)
+                                .addItemStack(crystal);
+                    }
+                    a++;
                 }
-                a++;
             }
         }
     }
@@ -140,7 +150,8 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
             if (cells != null) {
                 java.util.List<Optional<Ingredient>> grid =
                         new java.util.ArrayList<>(java.util.Collections.nCopies(9, Optional.<Ingredient>empty()));
-                for (int k = 0; k < cells.length; k++) {
+                int cellCount = Math.min(cells.length, flat.size());
+                for (int k = 0; k < cellCount; k++) {
                     grid.set(cells[k], Optional.ofNullable(flat.get(k)));
                 }
                 return grid;
@@ -154,7 +165,7 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
     }
 
     @Override
-    public void draw(IArcaneRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+    public void draw(@NotNull IArcaneRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
 
         
@@ -182,7 +193,7 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
     }
 
     @Override
-    public void getTooltip(ITooltipBuilder tooltip, IArcaneRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+    public void getTooltip(@NotNull ITooltipBuilder tooltip, @NotNull IArcaneRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         tooltip.addAll(JeiResearch.tooltip(recipe.getResearch(), mouseX, mouseY, WIDTH));
     }
 

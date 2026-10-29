@@ -7,6 +7,8 @@ import arcaneresearch.client.gui.screens.ResearchTableScreen;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class ResearchGuiHandlers {
 
     private ResearchGuiHandlers() {
@@ -14,14 +16,14 @@ public final class ResearchGuiHandlers {
 
     public static class ResearchTableHandler implements IGuiContainerHandler<ResearchTableScreen> {
         @Override
-        public List<Rect2i> getGuiExtraAreas(ResearchTableScreen guiContainer) {
+        public @NotNull List<Rect2i> getGuiExtraAreas(@NotNull ResearchTableScreen guiContainer) {
             return List.of();
         }
     }
 
     public static class FocalManipulatorHandler implements IGuiContainerHandler<FocalManipulatorScreen> {
         @Override
-        public List<Rect2i> getGuiExtraAreas(FocalManipulatorScreen guiContainer) {
+        public @NotNull List<Rect2i> getGuiExtraAreas(@NotNull FocalManipulatorScreen guiContainer) {
             return List.of();
         }
     }

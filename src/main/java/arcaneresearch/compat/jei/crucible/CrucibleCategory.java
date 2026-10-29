@@ -28,6 +28,8 @@ import arcaneresearch.init.ModBlocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
+
 public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
 
     public static final Identifier UID = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "crucible");
@@ -45,6 +47,9 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     private final IDrawable icon;
     private final Component title;
 
+    private CrucibleRecipeType cachedRecipe;
+    private List<AspectSpot> cachedSpots = List.of();
+
     public CrucibleCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModBlocks.CRUCIBLE.get()));
@@ -53,17 +58,25 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
 
     private static List<AspectSpot> layoutAspects(AspectList aspects) {
         List<AspectSpot> spots = new ArrayList<>();
-        if (aspects == null || aspects.size() == 0) {
+        if (aspects == null || aspects.aspects.isEmpty()) {
             return spots;
         }
-        int total = 0;
-        int rows = (aspects.size() - 1) / 3;
-        int shift = (3 - aspects.size() % 3) * 10;
+        Aspect[] sorted = aspects.getAspectsSortedByName();
+        if (sorted == null || sorted.length == 0) {
+            return spots;
+        }
+        int size = aspects.size();
+        int rows = (size - 1) / 3;
+        int shift = (3 - size % 3) * 10;
         int sx = OX - 28;
         int sy = OY + 8 - 10 * rows;
-        for (Aspect tag : aspects.getAspectsSortedByName()) {
+        int total = 0;
+        for (Aspect tag : sorted) {
+            if (tag == null) {
+                continue;
+            }
             int m = 0;
-            if (total / 3 >= rows && (rows > 1 || aspects.size() < 3)) {
+            if (total / 3 >= rows && (rows > 1 || size < 3)) {
                 m = 1;
             }
             int vx = sx + total % 3 * 20 + shift * m;
@@ -74,13 +87,24 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
         return spots;
     }
 
+    private List<AspectSpot> spotsFor(CrucibleRecipeType recipe) {
+        if (recipe == null) {
+            return List.of();
+        }
+        if (cachedRecipe != recipe) {
+            cachedRecipe = recipe;
+            cachedSpots = layoutAspects(recipe.getAspects());
+        }
+        return cachedSpots;
+    }
+
     @Override
-    public RecipeType<CrucibleRecipeType> getRecipeType() {
+    public @NotNull RecipeType<CrucibleRecipeType> getRecipeType() {
         return ArcaneresearchJEIPlugin.CRUCIBLE_TYPE;
     }
 
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return title;
     }
 
@@ -97,12 +121,12 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     }
 
     @Override
-    public IDrawable getIcon() {
+    public @NotNull IDrawable getIcon() {
         return icon;
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, CrucibleRecipeType recipe, IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CrucibleRecipeType recipe, @NotNull IFocusGroup focuses) {
 
         
         Ingredient catalyst = recipe.getCatalyst();
@@ -117,7 +141,7 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     }
 
     @Override
-    public void draw(CrucibleRecipeType recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+    public void draw(@NotNull CrucibleRecipeType recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(OX, OY);
@@ -129,7 +153,7 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, OVERLAY_TEXTURE, -25, -26, 100, 84, 11, 13, 256, 256);
         guiGraphics.pose().popMatrix();
 
-        for (AspectSpot spot : layoutAspects(recipe.getAspects())) {
+        for (AspectSpot spot : spotsFor(recipe)) {
             AspectRenderer.drawAspect(guiGraphics, spot.x(), spot.y(), spot.aspect(), spot.amount());
         }
 
@@ -137,8 +161,8 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     }
 
     @Override
-    public void getTooltip(ITooltipBuilder tooltip, CrucibleRecipeType recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-        for (AspectSpot spot : layoutAspects(recipe.getAspects())) {
+    public void getTooltip(@NotNull ITooltipBuilder tooltip, @NotNull CrucibleRecipeType recipe, @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+        for (AspectSpot spot : spotsFor(recipe)) {
             if (AspectRenderer.isMouseOverAspect(spot.x(), spot.y(), (int) mouseX, (int) mouseY)) {
                 tooltip.addAll(AspectRenderer.getAspectTooltip(spot.aspect(), spot.amount()));
                 return;
