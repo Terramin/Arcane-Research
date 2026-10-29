@@ -24,24 +24,8 @@ import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
 import arcaneresearch.helper.IDsHelper;
+import org.jspecify.annotations.NonNull;
 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 @OnlyIn(Dist.CLIENT)
 public class CognitionNoteTableRenderer implements BlockEntityRenderer<CognitionNoteTableTile, CognitionNoteTableRenderer.State> {
 
@@ -49,10 +33,10 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
             IDsHelper.mod("textures/research/quill.png");
     private static final Identifier INKWELL_TEXTURE =
             IDsHelper.mod("textures/block/restable_model.png");
-      
+
     private static final Identifier PARCHMENT_TEXTURE =
             IDsHelper.mod("textures/misc/parchment.png");
-      
+
     private static final Identifier SCROLL_TEXTURE =
             IDsHelper.mod("textures/block/research_table_model.png");
 
@@ -66,18 +50,25 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
     private final arcaneresearch.client.models.block.ResearchTableModel scrollModel;
 
     public CognitionNoteTableRenderer(BlockEntityRendererProvider.Context context) {
-        this.scrollModel = new arcaneresearch.client.models.block.ResearchTableModel(
-                context.bakeLayer(arcaneresearch.client.models.block.ResearchTableModel.LAYER_LOCATION));
+        arcaneresearch.client.models.block.ResearchTableModel model = null;
+        if (context != null) {
+            try {
+                model = new arcaneresearch.client.models.block.ResearchTableModel(
+                        context.bakeLayer(arcaneresearch.client.models.block.ResearchTableModel.LAYER_LOCATION));
+            } catch (Exception ignored) {
+            }
+        }
+        this.scrollModel = model;
     }
 
     @Override
-    public State createRenderState() {
+    public @NonNull State createRenderState() {
         return new State();
     }
 
     @Override
-    public void extractRenderState(CognitionNoteTableTile tile, State state, float partialTicks,
-            Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+    public void extractRenderState(@NonNull CognitionNoteTableTile tile, @NonNull State state, float partialTicks,
+                                   @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
         try {
             state.facing = tile.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
@@ -94,9 +85,8 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
             note = tile.getItem(CognitionNoteTableTile.NOTE_SLOT);
         } catch (Exception ignored) {
         }
-        state.hasPaper = paper != null && !paper.isEmpty();
-        state.hasNote = note != null && !note.isEmpty()
-                && note.getItem() instanceof arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
+        state.hasPaper = !paper.isEmpty();
+        state.hasNote = !note.isEmpty() && note.getItem() instanceof arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
         state.noteColor = 0xFFFFFF;
         if (state.hasNote) {
             try {
@@ -109,8 +99,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
     }
 
     @Override
-    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector,
-            CameraRenderState cameraState) {
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, @NonNull CameraRenderState cameraState) {
         poseStack.pushPose();
         poseStack.translate(0.5, 1.0, 0.5);
         poseStack.rotate(Axis.XP.rotationDegrees(180));
@@ -118,18 +107,16 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
 
         poseStack.pushPose();
         poseStack.rotate(Axis.XP.rotationDegrees(180));
-        
-        
-        
+
+
         RenderType inkwellType = TCRenderTypes.translucentPortal(INKWELL_TEXTURE);
         int light = state.lightCoords;
         collector.submitCustomGeometry(poseStack, inkwellType, (pose, consumer) -> {
             PoseStack work = bridge(pose);
             drawInkwell(work, consumer, light);
         });
-        
-        
-        
+
+
         poseStack.translate(-0.28, 0.05, -0.28);
         poseStack.rotate(Axis.YP.rotationDegrees(60));
         poseStack.translate(0.25f, 0.25f, 0.0f);
@@ -144,16 +131,10 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         });
         poseStack.popPose();
 
-        
-        
-        
-        
+
         if (state.hasPaper) {
-            
-            
-            
-            
-            
+
+
             for (int a = 0; a < 6; a++) {
                 poseStack.pushPose();
                 poseStack.translate(1.0F, -0.01F - a * 0.015F, 0.0F);
@@ -165,7 +146,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
                 poseStack.popPose();
             }
         }
-        if (state.hasNote) {
+        if (state.hasNote && scrollModel != null) {
             poseStack.pushPose();
             poseStack.translate(0.125, 0.0, -0.125);
             RenderType scrollType = TCRenderTypes.objSolid(SCROLL_TEXTURE);
@@ -184,7 +165,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         poseStack.popPose();
     }
 
-      
+
     private static void paperQuad(VertexConsumer consumer, PoseStack.Pose pose, int light) {
         consumer.addVertex(pose, -0.5F, -0.5F, 0.0F)
                 .setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(0.0F, 0.0F)
@@ -211,44 +192,39 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
         return work;
     }
 
-     
 
-
-
-
- 
     private static void drawInkwell(PoseStack pose, VertexConsumer vc, int light) {
         double cx = -0.28125, cy = 0.0625, cz = -0.28125;
         double x0 = cx - 0.09375, x1 = cx + 0.09375;
         double y0 = cy - 0.0625, y1 = cy + 0.0625;
         double z0 = cz - 0.09375, z1 = cz + 0.09375;
-        
-        
+
+
         face(vc, pose, light, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0,
-                0.375, 11.0, 0.75, 11.75, 0, 1, 0);
+                0.375, 11.0, 0.75, 0, 1, 0);
         face(vc, pose, light, x0, y0, z1, x0, y0, z0, x1, y0, z0, x1, y0, z1,
-                0.75, 11.0, 1.125, 11.75, 0, -1, 0);
+                0.75, 11.0, 1.125, 0, -1, 0);
         face(vc, pose, light, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1,
-                0.375, 12.25, 0.75, 11.75, 0, 0, 1);
+                0.375, 12.25, 0.75, 0, 0, 1);
         face(vc, pose, light, x1, y0, z0, x0, y0, z0, x0, y1, z0, x1, y1, z0,
-                1.125, 12.25, 1.5, 11.75, 0, 0, -1);
+                1.125, 12.25, 1.5, 0, 0, -1);
         face(vc, pose, light, x1, y0, z1, x1, y0, z0, x1, y1, z0, x1, y1, z1,
-                0.0, 12.25, 0.375, 11.75, 1, 0, 0);
+                0.0, 12.25, 0.375, 1, 0, 0);
         face(vc, pose, light, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0,
-                0.75, 12.25, 1.125, 11.75, -1, 0, 0);
+                0.75, 12.25, 1.125, -1, 0, 0);
     }
 
     private static void face(VertexConsumer vc, PoseStack pose, int light,
-            double x1, double y1, double z1, double x2, double y2, double z2,
-            double x3, double y3, double z3, double x4, double y4, double z4,
-            double u1, double v1, double u2, double v2,
-            float nx, float ny, float nz) {
-        
+                             double x1, double y1, double z1, double x2, double y2, double z2,
+                             double x3, double y3, double z3, double x4, double y4, double z4,
+                             double u1, double v1, double u2,
+                             float nx, float ny, float nz) {
+
         PoseStack.Pose p = pose.last();
         float uu1 = (float) (u1 / 16.0);
         float vv1 = (float) (v1 / 16.0);
         float uu2 = (float) (u2 / 16.0);
-        float vv2 = (float) (v2 / 16.0);
+        float vv2 = (float) (11.75 / 16.0);
         vc.addVertex(p, (float) x1, (float) y1, (float) z1)
                 .setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(uu1, vv1)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light)
@@ -267,11 +243,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
                 .setNormal(p, nx, ny, nz);
     }
 
-     
 
-
-
- 
     private static void applyRotation(PoseStack poseStack, Direction facing) {
         switch (facing) {
             case SOUTH -> poseStack.rotate(Axis.YP.rotationDegrees(90));

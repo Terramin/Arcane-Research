@@ -23,46 +23,38 @@ import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.init.ModSounds;
 
- 
-
-
-
-
-
-
-
-
-
- 
 public final class DiscoveredNotes {
 
     private DiscoveredNotes() {
     }
 
-      
+
     public static ItemStack createNote(String key, AspectList required) {
+        if (DiscoveredNoteSetup.getNoteItem() == null) {
+            return ItemStack.EMPTY;
+        }
         ItemStack stack = new ItemStack(DiscoveredNoteSetup.getNoteItem());
         DiscoveredNoteData.write(stack, DiscoveredNoteData.create(key, required));
         return stack;
     }
 
     public static boolean isNoteFor(ItemStack stack, String key) {
-        return key != null && key.equals(DiscoveredNoteData.read(stack).key)
-                && stack.getItem() instanceof ItemDiscoveredResearchNote;
+        if (key == null || stack == null || stack.isEmpty()) {
+            return false;
+        }
+        if (!(stack.getItem() instanceof ItemDiscoveredResearchNote)) {
+            return false;
+        }
+        return key.equals(DiscoveredNoteData.read(stack).key);
     }
 
-     
 
-
-
-
- 
     @Deprecated
     public static int findNoteSlot(Player player, String key) {
-        if (key == null) {
+        if (player == null || key == null) {
             return -1;
         }
-        
+
         var inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             if (isNoteFor(inventory.getItem(slot), key)) {
@@ -72,27 +64,23 @@ public final class DiscoveredNotes {
         return -1;
     }
 
-     
 
-
-
-
-
-
- 
     public static InteractionResult tryCompleteFromNote(Level level, Player player, ItemStack stack) {
+        if (level == null || player == null || stack == null || stack.isEmpty()) {
+            return InteractionResult.PASS;
+        }
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
         if (data.key == null || !data.isComplete()
                 || ArcaneresearchCapabilities.isResearchComplete(player, data.key)) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide()) {
-            
+
             presentDiscovery(player, data.key);
             boolean ok = player instanceof net.minecraft.server.level.ServerPlayer serverPlayer
                     && ResearchManager.doesPlayerHaveRequisites(player, data.key)
                     && arcaneresearch.common.lib.network.playerdata.PacketSyncProgressToServer
-                            .checkRequisites(serverPlayer, data.key)
+                    .checkRequisites(serverPlayer, data.key)
                     && ResearchManager.progressResearch(player, data.key);
             if (ok) {
                 stack.shrink(1);
@@ -105,7 +93,7 @@ public final class DiscoveredNotes {
         return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
-      
+
     public static Component researchName(String key) {
         if (key == null) {
             return null;
@@ -117,10 +105,7 @@ public final class DiscoveredNotes {
         return Component.translatable("tempnote." + key + ".name");
     }
 
-     
 
-
- 
     public static Component researchText(String key) {
         if (key == null) {
             return null;
@@ -147,42 +132,36 @@ public final class DiscoveredNotes {
         return Component.translatable("tempnote." + key + ".text");
     }
 
-     
 
-
- 
     public static Component researchPopup(String key) {
         if (key == null) {
             return null;
         }
         String langKey = "tempnote." + key + ".popup";
         String resolved = Component.translatable(langKey).getString();
-        if (resolved == null || resolved.isEmpty() || resolved.equals(langKey)) {
+        if (resolved.isEmpty() || resolved.equals(langKey)) {
             return null;
         }
         return Component.translatable(langKey);
     }
 
-     
 
-
- 
     public static ItemStack toDiscovery(ItemStack note) {
-        if (DiscoveredNoteSetup.getDiscoveryItem() == null) {
-            return note;
+        if (note == null || DiscoveredNoteSetup.getDiscoveryItem() == null) {
+            return note == null ? ItemStack.EMPTY : note;
         }
         ItemStack out = new ItemStack(DiscoveredNoteSetup.getDiscoveryItem(), note.getCount());
-        
+
         CompoundTag custom = ArcaneresearchInvHelper.getCustomTag(note);
         if (custom != null && !custom.isEmpty()) {
             ArcaneresearchInvHelper.setCustomTag(out, custom.copy());
         }
-        
+
         out.set(net.minecraft.core.component.DataComponents.RARITY, net.minecraft.world.item.Rarity.RARE);
         return out;
     }
 
-      
+
     public static boolean isDiscoveryFor(ItemStack stack, String key) {
         if (stack == null || stack.isEmpty() || key == null
                 || DiscoveredNoteSetup.getDiscoveryItem() == null) {
@@ -194,10 +173,7 @@ public final class DiscoveredNotes {
         return key.equals(DiscoveredNoteData.read(stack).key);
     }
 
-     
 
-
- 
     public static boolean hasDiscovery(Player player, String key) {
         if (player == null || key == null) {
             return false;
@@ -206,11 +182,7 @@ public final class DiscoveredNotes {
         return knowledge != null && knowledge.hasPresentedDiscovery(key);
     }
 
-     
 
-
-
- 
     public static boolean presentDiscovery(Player player, String key) {
         if (player == null || key == null) {
             return false;
@@ -238,11 +210,7 @@ public final class DiscoveredNotes {
         return added;
     }
 
-     
 
-
-
- 
     @Deprecated
     public static boolean isCompleteNoteFor(ItemStack stack, String key) {
         if (stack == null || stack.isEmpty() || key == null
@@ -256,7 +224,7 @@ public final class DiscoveredNotes {
         return key.equals(data.key) && data.isComplete();
     }
 
-      
+
     public static boolean consumeDiscovery(Player player, String key) {
         if (player == null || key == null) {
             return false;
@@ -265,7 +233,7 @@ public final class DiscoveredNotes {
         return knowledge != null && knowledge.consumePresentedDiscovery(key);
     }
 
-      
+
     public static ItemStack discoveryStack(String key) {
         if (DiscoveredNoteSetup.getDiscoveryItem() == null || key == null) {
             return ItemStack.EMPTY;
@@ -275,19 +243,14 @@ public final class DiscoveredNotes {
         return stack;
     }
 
-     
 
-
-
-
- 
     @Deprecated
     public static int clearNotes(Player player) {
         if (player == null) {
             return 0;
         }
         int removed = 0;
-        
+
         var inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
@@ -304,20 +267,16 @@ public final class DiscoveredNotes {
         return removed;
     }
 
-     
 
-
-
-
- 
     @Deprecated
     public static boolean consumeInk(Player player, boolean doIt) {
-        
+        if (player == null) {
+            return false;
+        }
         var inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (stack.getItem() instanceof IScribeTools
-                    && stack.getDamageValue() < stack.getMaxDamage()) {
+            if (stack.getItem() instanceof IScribeTools && stack.getDamageValue() < stack.getMaxDamage()) {
                 if (doIt && !player.getAbilities().instabuild) {
                     stack.setDamageValue(stack.getDamageValue() + 1);
                 }
@@ -327,14 +286,12 @@ public final class DiscoveredNotes {
         return false;
     }
 
-     
 
-
-
- 
     @Deprecated
     public static boolean consumePaper(Player player) {
-        
+        if (player == null) {
+            return false;
+        }
         var inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
@@ -346,17 +303,15 @@ public final class DiscoveredNotes {
         return false;
     }
 
-     
-
-
-
-
- 
     @Deprecated
     public static ItemStack createNoteFromSupplies(Player player, String key, AspectList required) {
+        if (player == null) {
+            return null;
+        }
         if (consumeInk(player, false) && consumePaper(player)) {
             consumeInk(player, true);
-            return createNote(key, required);
+            ItemStack out = createNote(key, required);
+            return out.isEmpty() ? null : out;
         }
         return null;
     }

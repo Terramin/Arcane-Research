@@ -9,24 +9,16 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.proxies.Proxies;
+import org.jspecify.annotations.NonNull;
 
- 
+import static arcaneresearch.discovered.note.DiscoveredNoteSetup.*;
 
-
-
-
-
-
-
-
- 
 public class ItemDiscoveredResearchNote extends Item {
 
     public ItemDiscoveredResearchNote(Properties props) {
@@ -34,29 +26,29 @@ public class ItemDiscoveredResearchNote extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NonNull InteractionResult use(Level level, Player player, @NonNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        boolean client = level.isClientSide();
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
-        
-        
-        if (data.key != null && stack.getItem() == DiscoveredNoteSetup.getDiscoveryItem()) {
-            if (!level.isClientSide()) {
+        Item discoveryItem = getDiscoveryItem();
+        if (data.key != null && discoveryItem != null && stack.getItem() == discoveryItem) {
+            if (!client) {
                 DiscoveredNotes.presentDiscovery(player, data.key);
                 level.playSound(null, player.getX(), player.getY(), player.getZ(),
                         net.minecraft.sounds.SoundEvents.BOOK_PAGE_TURN,
                         net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
             }
-            return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+            return client ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }
         return DiscoveredNotes.tryCompleteFromNote(level, player, stack);
     }
 
     @Override
-    public Component getName(ItemStack stack) {
+    public @NonNull Component getName(@NonNull ItemStack stack) {
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
-        
         float progress = data.getTotalProgress();
-        if (stack.getItem() == DiscoveredNoteSetup.getDiscoveryItem()) {
+        Item discoveryItem = getDiscoveryItem();
+        if (discoveryItem != null && stack.getItem() == discoveryItem) {
             progress = 1.0F;
         }
         if (data.key != null && progress >= 0.2F) {
@@ -69,14 +61,18 @@ public class ItemDiscoveredResearchNote extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
-            Consumer<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.@NonNull TooltipContext context, @NonNull TooltipDisplay display,
+                                @NonNull Consumer<Component> tooltip, @NonNull TooltipFlag flag) {
+        if (stack.isEmpty()) {
+            return;
+        }
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
         if (!DiscoveredNoteData.hasNote(stack) || data.key == null) {
             return;
         }
         float progress = data.getTotalProgress();
-        if (stack.getItem() == DiscoveredNoteSetup.getDiscoveryItem()) {
+        Item discoveryItem = getDiscoveryItem();
+        if (discoveryItem != null && stack.getItem() == discoveryItem) {
             progress = 1.0F;
         }
         if (progress >= 0.2F) {
@@ -89,30 +85,41 @@ public class ItemDiscoveredResearchNote extends Item {
         } else {
             tooltip.accept(Component.translatable("tc.discoveryunknown"));
         }
-        
-        
+
+
         boolean showStudy = false;
-        if (stack.getItem() == DiscoveredNoteSetup.getNoteItem()) {
+        Item noteItem = getNoteItem();
+        if (noteItem != null && stack.getItem() == noteItem) {
             int pct1 = (int) (progress * 100.0F);
             tooltip.accept(Component.translatable("tooltip.arcaneresearch.stage1", pct1));
             showStudy = DiscoveredNoteData.requiresHex(data.key);
         }
-        
-        
-        if (Proxies.get().isShiftKeyDown()) {
-            for (int i = 0; i < data.tags.length; i++) {
-                Aspect aspect = data.tags[i];
-                if (aspect == null) {
-                    continue;
+        var proxy = Proxies.get();
+        if (proxy != null && proxy.isShiftKeyDown()) {
+            Aspect[] tags = data.tags;
+            int[] need = data.need;
+            int[] have = data.have;
+            if (tags != null) {
+                int needLen = need == null ? 0 : need.length;
+                int haveLen = have == null ? 0 : have.length;
+                for (int i = 0; i < tags.length; i++) {
+                    Aspect aspect = tags[i];
+                    if (aspect == null) {
+                        continue;
+                    }
+                    String tag = aspect.getTag();
+                    if (tag == null) {
+                        continue;
+                    }
+                    int want = i < needLen ? need[i] : 0;
+                    int got = i < haveLen ? Math.min(have[i], want) : 0;
+                    if (got <= 0) {
+                        continue;
+                    }
+                    tooltip.accept(Component.translatable("tc.aspect." + tag)
+                            .append(Component.literal(": " + got + "/" + want))
+                            .withStyle(ChatFormatting.GRAY));
                 }
-                int want = i < data.need.length ? data.need[i] : 0;
-                int got = i < data.have.length ? Math.min(data.have[i], want) : 0;
-                if (got <= 0) {
-                    continue;
-                }
-                tooltip.accept(Component.translatable("tc.aspect." + aspect.getTag())
-                        .append(Component.literal(": " + got + "/" + want))
-                        .withStyle(ChatFormatting.GRAY));
             }
         }
         if (showStudy) {
@@ -121,12 +128,14 @@ public class ItemDiscoveredResearchNote extends Item {
         }
     }
 
-      
+
     @Override
-    public boolean isFoil(ItemStack stack) {
+    public boolean isFoil(@NonNull ItemStack stack) {
+        if (stack.isEmpty()) {
+            return false;
+        }
         return DiscoveredNoteData.read(stack).isComplete();
     }
 
-    
-    
+
 }

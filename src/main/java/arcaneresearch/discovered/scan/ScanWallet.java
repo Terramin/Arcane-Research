@@ -5,22 +5,6 @@ import net.minecraft.world.entity.player.Player;
 
 import arcaneresearch.api.aspects.Aspect;
 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 public final class ScanWallet {
 
     private static final String ROOT = "HexScanWallet";
@@ -60,45 +44,59 @@ public final class ScanWallet {
         return sub;
     }
 
-      
+
     public static int getAmount(Player player, Aspect aspect) {
         if (player == null || aspect == null) {
             return 0;
         }
+        String key = aspect.getTag();
+        if (key == null) {
+            return 0;
+        }
         try {
-            return aspectsTag(player).getIntOr(aspect.getTag(), 0);
+            return aspectsTag(player).getIntOr(key, 0);
         } catch (Exception e) {
             return 0;
         }
     }
 
-      
+
     public static void add(Player player, Aspect aspect, int amount) {
         if (player == null || aspect == null || amount <= 0) {
             return;
         }
+        String key = aspect.getTag();
+        if (key == null) {
+            return;
+        }
         CompoundTag tags = aspectsTag(player);
-        tags.putInt(aspect.getTag(), tags.getIntOr(aspect.getTag(), 0) + amount);
+        tags.putInt(key, tags.getIntOr(key, 0) + amount);
     }
 
-     
 
-
- 
     public static int remove(Player player, Aspect aspect, int amount) {
         if (player == null || aspect == null || amount <= 0) {
             return 0;
         }
+        String key = aspect.getTag();
+        if (key == null) {
+            return 0;
+        }
         CompoundTag tags = aspectsTag(player);
-        int have = tags.getIntOr(aspect.getTag(), 0);
+        int have = tags.getIntOr(key, 0);
         int take = Math.min(have, amount);
         if (take > 0) {
-            tags.putInt(aspect.getTag(), have - take);
+            int left = have - take;
+            if (left > 0) {
+                tags.putInt(key, left);
+            } else {
+                tags.remove(key);
+            }
         }
         return take;
     }
 
-      
+
     public static boolean hasScanned(Player player, String key) {
         if (player == null || key == null) {
             return true;
@@ -112,7 +110,7 @@ public final class ScanWallet {
         }
     }
 
-      
+
     public static void markScanned(Player player, String key) {
         if (player == null || key == null || hasScanned(player, key)) {
             return;
@@ -120,7 +118,7 @@ public final class ScanWallet {
         scannedTag(player).putBoolean(key, true);
     }
 
-      
+
     public static java.util.Map<String, Integer> snapshot(Player player) {
         java.util.LinkedHashMap<String, Integer> out = new java.util.LinkedHashMap<>();
         if (player == null) {
@@ -139,38 +137,57 @@ public final class ScanWallet {
         return out;
     }
 
-    
 
     private static final java.util.Map<String, Integer> VIEW = new java.util.HashMap<>();
     private static final java.util.Map<String, Integer> VIEW_BONUS = new java.util.HashMap<>();
 
     public static synchronized void applyView(java.util.Map<String, Integer> wallet,
-            java.util.Map<String, Integer> bonus) {
+                                              java.util.Map<String, Integer> bonus) {
         VIEW.clear();
         VIEW_BONUS.clear();
         if (wallet != null) {
-            VIEW.putAll(wallet);
+            for (java.util.Map.Entry<String, Integer> e : wallet.entrySet()) {
+                String k = e.getKey();
+                Integer v = e.getValue();
+                if (k != null && v != null && v > 0) {
+                    VIEW.put(k, v);
+                }
+            }
         }
         if (bonus != null) {
-            VIEW_BONUS.putAll(bonus);
+            for (java.util.Map.Entry<String, Integer> e : bonus.entrySet()) {
+                String k = e.getKey();
+                Integer v = e.getValue();
+                if (k != null && v != null) {
+                    VIEW_BONUS.put(k, v);
+                }
+            }
         }
     }
 
-      
-    public static int viewAmount(Aspect aspect) {
+
+    public static synchronized int viewAmount(Aspect aspect) {
         if (aspect == null) {
             return 0;
         }
-        Integer amount = VIEW.get(aspect.getTag());
+        String key = aspect.getTag();
+        if (key == null) {
+            return 0;
+        }
+        Integer amount = VIEW.get(key);
         return amount == null ? 0 : amount;
     }
 
-      
-    public static int viewBonus(Aspect aspect) {
+
+    public static synchronized int viewBonus(Aspect aspect) {
         if (aspect == null) {
             return 0;
         }
-        Integer amount = VIEW_BONUS.get(aspect.getTag());
+        String key = aspect.getTag();
+        if (key == null) {
+            return 0;
+        }
+        Integer amount = VIEW_BONUS.get(key);
         return amount == null ? 0 : amount;
     }
 }

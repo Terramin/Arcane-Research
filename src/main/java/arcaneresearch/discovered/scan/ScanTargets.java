@@ -22,25 +22,10 @@ import arcaneresearch.api.research.ScanResult;
 import arcaneresearch.common.lib.aura.INode;
 import arcaneresearch.common.lib.utils.EntityUtils;
 
- 
+import java.util.Objects;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 public final class ScanTargets {
 
-      
     public static final double RANGE = 9.0D;
 
     private ScanTargets() {
@@ -50,69 +35,72 @@ public final class ScanTargets {
         NONE, BLOCK, ENTITY, NODE
     }
 
-      
     public static final class Target {
         public final Kind kind;
         public final BlockPos pos;
         public final Entity entity;
-          
         public final String phenomena;
+        private final String key;
 
         public Target(Kind kind, BlockPos pos, Entity entity, String phenomena) {
             this.kind = kind;
             this.pos = pos;
             this.entity = entity;
             this.phenomena = phenomena;
+            this.key = computeKey(kind, pos, entity);
         }
 
-          
-        public String steadyKey() {
-            switch (kind) {
-                case BLOCK:
-                    return "B:" + pos.getX() + "," + pos.getY() + "," + pos.getZ();
-                case NODE:
-                    return "N:" + pos.getX() + "," + pos.getY() + "," + pos.getZ();
-                case ENTITY:
-                    return "E:" + entity.getId();
-                default:
-                    return "";
+        private static String computeKey(Kind kind, BlockPos pos, Entity entity) {
+            if (kind == null) {
+                return "";
             }
+            return switch (kind) {
+                case BLOCK -> pos == null ? "" : "B:" + pos.getX() + "," + pos.getY() + "," + pos.getZ();
+                case NODE -> pos == null ? "" : "N:" + pos.getX() + "," + pos.getY() + "," + pos.getZ();
+                case ENTITY -> entity == null ? "" : "E:" + entity.getId();
+                default -> "";
+            };
+        }
+
+        public String steadyKey() {
+            return key;
         }
     }
 
-      
     public static Target resolve(Level level, Player player) {
+        if (level == null || player == null) {
+            return new Target(Kind.NONE, null, null, "");
+        }
         Entity pointed = EntityUtils.getPointedEntity(level, player, 1.0D, RANGE, 0.0F, true);
         if (pointed != null) {
             return new Target(Kind.ENTITY, null, pointed, "");
         }
         BlockHitResult hit = blockRay(level, player, RANGE);
-        if (hit.getType() == HitResult.Type.BLOCK && !level.isEmptyBlock(hit.getBlockPos())) {
-            
-            try {
-                if (level.getBlockEntity(hit.getBlockPos()) instanceof INode node) {
-                    String id = "";
-                    try {
-                        id = node.getId();
-                    } catch (Exception ignored) {
+        if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
+            BlockPos hitPos = hit.getBlockPos();
+            if (!level.isEmptyBlock(hitPos)) {
+                try {
+                    if (level.getBlockEntity(hitPos) instanceof INode node) {
+                        String id = "";
+                        try {
+                            id = node.getId();
+                        } catch (Exception ignored) {
+                        }
+                        return new Target(Kind.NODE, hitPos, null,
+                                "NODE" + (id == null ? "" : id));
                     }
-                    return new Target(Kind.NODE, hit.getBlockPos(), null,
-                            "NODE" + (id == null ? "" : id));
+                } catch (Exception ignored) {
                 }
-            } catch (Exception ignored) {
-            }
-            
-            
-            try {
-                if (level.getBlockState(hit.getBlockPos()).getBlock()
-                        instanceof arcaneresearch.discovered.table.HexNoteTableBlock) {
-                    return new Target(Kind.NONE, null, null, "");
+                try {
+                    if (level.getBlockState(hitPos).getBlock()
+                            instanceof arcaneresearch.discovered.table.HexNoteTableBlock) {
+                        return new Target(Kind.NONE, null, null, "");
+                    }
+                } catch (Exception ignored) {
                 }
-            } catch (Exception ignored) {
+                return new Target(Kind.BLOCK, hitPos, null, "");
             }
-            return new Target(Kind.BLOCK, hit.getBlockPos(), null, "");
         }
-        
         Target phenomena = scanPhenomena(level, player);
         if (phenomena != null) {
             return phenomena;
@@ -120,12 +108,10 @@ public final class ScanTargets {
         return new Target(Kind.NONE, null, null, "");
     }
 
-     
-
-
-
- 
     private static Target scanPhenomena(Level level, Player player) {
+        if (level == null || player == null) {
+            return null;
+        }
         ItemStack held;
         try {
             held = holdingThaumometer(player) ? player.getMainHandItem() : ItemStack.EMPTY;
@@ -136,7 +122,8 @@ public final class ScanTargets {
             held = ItemStack.EMPTY;
         }
         try {
-            for (IScanEventHandler handler : ArcaneresearchApi.scanEventhandlers) {
+            java.util.List<IScanEventHandler> handlers = ArcaneresearchApi.scanEventhandlers;
+            for (IScanEventHandler handler : handlers) {
                 if (handler == null) {
                     continue;
                 }
@@ -159,29 +146,39 @@ public final class ScanTargets {
     }
 
     public static BlockHitResult blockRay(Level level, Player player, double range) {
-        return EntityUtils.blockRay(level, player, range);
+        if (level == null || player == null) {
+            return null;
+        }
+        try {
+            return EntityUtils.blockRay(level, player, range);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-     
-
-
-
-
- 
     public static String scannedKey(Level level, Target target, Player viewer) {
-        if (target.kind == Kind.BLOCK) {
+        if (level == null || target == null) {
+            return "";
+        }
+        if (target.kind == Kind.BLOCK && target.pos != null) {
             ItemStack pick = pickStack(level, target.pos, viewer);
-            if (!pick.isEmpty()) {
+            if (pick != null && !pick.isEmpty()) {
                 Identifier id = RegsHelper.itemKey(pick.getItem());
                 if (id != null) {
                     return "B:" + id;
                 }
             }
-            Identifier blockId = RegsHelper.blockKey(
-                    level.getBlockState(target.pos).getBlock());
-            return "B:" + blockId;
+            try {
+                BlockState state = level.getBlockState(target.pos);
+                Identifier blockId = RegsHelper.blockKey(state.getBlock());
+                if (blockId != null) {
+                    return "B:" + blockId;
+                }
+            } catch (Exception ignored) {
+            }
+            return "";
         }
-        if (target.kind == Kind.NODE) {
+        if (target.kind == Kind.NODE && target.pos != null) {
             String dim = "";
             try {
                 dim = level.dimension().identifier().toString();
@@ -190,7 +187,7 @@ public final class ScanTargets {
             return "N:" + dim + ":" + target.pos.getX() + "," + target.pos.getY()
                     + "," + target.pos.getZ();
         }
-        if (target.kind == Kind.ENTITY) {
+        if (target.kind == Kind.ENTITY && target.entity != null) {
             if (target.entity instanceof net.minecraft.world.entity.item.ItemEntity item) {
                 try {
                     ItemStack stack = item.getItem();
@@ -204,20 +201,26 @@ public final class ScanTargets {
                 }
                 return "B:empty";
             }
-            Identifier id = RegsHelper.entityKey(target.entity.getType());
-            return "E:" + id;
+            try {
+                Identifier id = RegsHelper.entityKey(target.entity.getType());
+                if (id != null) {
+                    return "E:" + id;
+                }
+            } catch (Exception ignored) {
+            }
+            return "";
         }
         return "";
     }
 
-      
     public static ItemStack pickStack(Level level, BlockPos pos, Player viewer) {
+        if (level == null || pos == null) {
+            return ItemStack.EMPTY;
+        }
         try {
             BlockState state = level.getBlockState(pos);
-            
-            
             ItemStack stack = state.getCloneItemStack(pos, level, true, viewer);
-            if (stack != null && !stack.isEmpty()) {
+            if (!stack.isEmpty()) {
                 return stack;
             }
         } catch (Exception ignored) {
@@ -229,17 +232,14 @@ public final class ScanTargets {
         }
     }
 
-     
-
-
-
-
- 
     public static AspectList aspectsFor(Level level, Target target, Player viewer) {
-        if (target.kind == Kind.BLOCK) {
+        if (level == null || target == null) {
+            return null;
+        }
+        if (target.kind == Kind.BLOCK && target.pos != null) {
             try {
                 ItemStack pick = pickStack(level, target.pos, viewer);
-                if (!pick.isEmpty()) {
+                if (pick != null && !pick.isEmpty()) {
                     AspectList tags = arcaneresearch.api.ArcaneresearchApi.internalMethods
                             .getObjectAspects(pick);
                     if (tags != null && tags.size() > 0) {
@@ -250,10 +250,10 @@ public final class ScanTargets {
             }
             return null;
         }
-        if (target.kind == Kind.NODE) {
+        if (target.kind == Kind.NODE && target.pos != null) {
             return nodeAspects(level, target.pos);
         }
-        if (target.kind == Kind.ENTITY) {
+        if (target.kind == Kind.ENTITY && target.entity != null) {
             if (target.entity instanceof net.minecraft.world.entity.item.ItemEntity item) {
                 try {
                     ItemStack stack = item.getItem();
@@ -275,12 +275,6 @@ public final class ScanTargets {
         return null;
     }
 
-     
-
-
-
-
- 
     public static AspectList nodeAspects(Level level, BlockPos pos) {
         if (level == null || pos == null) {
             return null;
@@ -293,7 +287,6 @@ public final class ScanTargets {
             try {
                 base = node.getAspects();
             } catch (Exception e) {
-                base = null;
             }
             AspectList tags = new AspectList();
             if (base != null) {
@@ -310,35 +303,18 @@ public final class ScanTargets {
             try {
                 switch (node.getNodeType()) {
                     case UNSTABLE:
-                        if (Aspect.ENTROPY != null) {
-                            tags.merge(Aspect.ENTROPY, 4);
-                        }
+                        tags.merge(Aspect.ENTROPY, 4);
                         break;
-                    case HUNGRY:
-                        if (Aspect.FLUX != null) {
-                            tags.merge(Aspect.FLUX, 4);
-                        }
-                        break;
-                    case TAINTED:
-                        if (Aspect.FLUX != null) {
-                            tags.merge(Aspect.FLUX, 4);
-                        }
+                    case HUNGRY, TAINTED:
+                        tags.merge(Aspect.FLUX, 4);
                         break;
                     case PURE:
-                        if (Aspect.LIFE != null) {
-                            tags.merge(Aspect.LIFE, 2);
-                        }
-                        if (Aspect.ORDER != null) {
-                            tags.add(Aspect.ORDER, 2);
-                        }
+                        tags.merge(Aspect.LIFE, 2);
+                        tags.add(Aspect.ORDER, 2);
                         break;
                     case DARK:
-                        if (Aspect.DEATH != null) {
-                            tags.merge(Aspect.DEATH, 2);
-                        }
-                        if (Aspect.DARKNESS != null) {
-                            tags.add(Aspect.DARKNESS, 2);
-                        }
+                        tags.merge(Aspect.DEATH, 2);
+                        tags.add(Aspect.DARKNESS, 2);
                         break;
                     default:
                         break;
@@ -351,13 +327,6 @@ public final class ScanTargets {
         }
     }
 
-     
-
-
-
-
-
- 
     public static AspectList entityAspects(Entity entity) {
         if (entity == null) {
             return null;
@@ -365,22 +334,22 @@ public final class ScanTargets {
         try {
             if (entity instanceof Player) {
                 AspectList tags = new AspectList();
-                if (Aspect.MAN != null) {
-                    tags.add(Aspect.MAN, 4);
-                }
+                tags.add(Aspect.MAN, 4);
                 return tags.size() > 0 ? tags : null;
             }
             Identifier id = RegsHelper.entityKey(entity.getType());
             String name = id == null ? "" : id.toString();
-            for (ArcaneresearchApi.EntityTags et : CommonInternals.scanEntities) {
-                if (et == null || !et.entityName.equals(name)) {
+            java.util.List<ArcaneresearchApi.EntityTags> scanEntities = CommonInternals.scanEntities;
+            if (scanEntities == null) {
+                return null;
+            }
+            for (ArcaneresearchApi.EntityTags et : scanEntities) {
+                if (et == null || et.entityName == null || !et.entityName.equals(name)) {
                     continue;
                 }
                 if (et.nbts == null || et.nbts.length == 0) {
                     return et.aspects;
                 }
-                
-                
                 net.minecraft.world.level.storage.TagValueOutput tvo =
                         net.minecraft.world.level.storage.TagValueOutput.createWithContext(
                                 net.minecraft.util.ProblemReporter.DISCARDING, entity.registryAccess());
@@ -388,8 +357,11 @@ public final class ScanTargets {
                 CompoundTag tc = tvo.buildResult();
                 boolean match = true;
                 for (ArcaneresearchApi.EntityTagsNBT nbt : et.nbts) {
+                    if (nbt == null) {
+                        continue;
+                    }
                     if (!tc.contains(nbt.name) || !ArcaneresearchApiHelper.getNBTDataFromId(
-                            tc, tc.get(nbt.name).getId(), nbt.name).equals(nbt.value)) {
+                            tc, Objects.requireNonNull(tc.get(nbt.name)).getId(), nbt.name).equals(nbt.value)) {
                         match = false;
                         break;
                     }
@@ -403,17 +375,16 @@ public final class ScanTargets {
         return null;
     }
 
-     
-
-
-
- 
     public static boolean validScan(Player player, AspectList aspects) {
         if (player == null || aspects == null) {
             return false;
         }
         try {
-            for (Aspect aspect : aspects.getAspects()) {
+            Aspect[] list = aspects.getAspects();
+            if (list == null) {
+                return false;
+            }
+            for (Aspect aspect : list) {
                 if (aspect == null || aspect.isPrimal()) {
                     continue;
                 }
@@ -431,7 +402,6 @@ public final class ScanTargets {
         return true;
     }
 
-      
     public static boolean known(Player player, Aspect aspect) {
         try {
             return arcaneresearch.discovered.table.HexResearchGame.isKnown(player, aspect);
@@ -440,7 +410,6 @@ public final class ScanTargets {
         }
     }
 
-      
     public static boolean holdingThaumometer(Player player) {
         if (player == null) {
             return false;
@@ -448,8 +417,8 @@ public final class ScanTargets {
         try {
             ItemStack main = player.getMainHandItem();
             ItemStack off = player.getOffhandItem();
-            return main.getItem() == arcaneresearch.init.ModItems.THAUMOMETER.get()
-                    || off.getItem() == arcaneresearch.init.ModItems.THAUMOMETER.get();
+            var thaum = arcaneresearch.init.ModItems.THAUMOMETER.get();
+            return main.getItem() == thaum || off.getItem() == thaum;
         } catch (Exception e) {
             return false;
         }

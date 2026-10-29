@@ -6,13 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 
- 
-
-
-
-
-
- 
 public final class DiscoveredGuiLines {
 
     private static final Random RANDOM = new Random();
@@ -21,18 +14,24 @@ public final class DiscoveredGuiLines {
     }
 
     public static void unstable(GuiGraphicsExtractor graphics, int x, int y, int x2, int y2,
-            float instability, float opacity) {
+                                float instability, float opacity) {
+        if (graphics == null) {
+            return;
+        }
         if (instability <= 0.01F) {
             line(graphics, x, y, x2, y2, opacity);
             return;
         }
-        double distance = Mth.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2)) * instability;
+        int ddx = x - x2;
+        int ddy = y - y2;
+        double distance = Mth.sqrt(ddx * ddx + ddy * ddy) * instability;
         if (distance < 1.0) {
             line(graphics, x, y, x2, y2, opacity);
             return;
         }
         double dx = (x2 - x) / distance;
         double dy = (y2 - y) / distance;
+        int tick = tickCount();
         int xr = 0;
         int yr = 0;
         int steps = (int) Math.floor(distance - 1.0);
@@ -41,16 +40,32 @@ public final class DiscoveredGuiLines {
             int xrn = RANDOM.nextInt(2) - RANDOM.nextInt(2);
             int yrn = RANDOM.nextInt(2) - RANDOM.nextInt(2);
             line(graphics, (int) (x + dx * a) + xr, (int) (y + dy * a) + yr,
-                    (int) (x + dx * (a + 1)) + xrn, (int) (y + dy * (a + 1)) + yrn, opacity);
+                    (int) (x + dx * (a + 1)) + xrn, (int) (y + dy * (a + 1)) + yrn,
+                    opacity, tick);
             xr = xrn;
             yr = yrn;
         }
-        line(graphics, (int) (x + dx * a) + xr, (int) (y + dy * a) + yr, x2, y2, opacity);
+        line(graphics, (int) (x + dx * a) + xr, (int) (y + dy * a) + yr, x2, y2,
+                opacity, tick);
     }
 
     public static void line(GuiGraphicsExtractor graphics, int x, int y, int x2, int y2, float opacity) {
-        Minecraft minecraft = Minecraft.getInstance();
-        int count = minecraft.player == null ? 0 : minecraft.player.tickCount;
+        if (graphics == null) {
+            return;
+        }
+        line(graphics, x, y, x2, y2, opacity, tickCount());
+    }
+
+    private static int tickCount() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return 0;
+        }
+        return mc.player.tickCount;
+    }
+
+    private static void line(GuiGraphicsExtractor graphics, int x, int y, int x2, int y2,
+                             float opacity, int count) {
         float red = Mth.sin((count + x2) / 10.0F) * 0.15F + 0.15F;
         float green = Mth.sin((count + x + y2) / 11.0F) * 0.15F + 0.15F;
         float blue = Mth.sin((count + y) / 12.0F) * 0.15F + 0.15F;

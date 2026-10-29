@@ -34,23 +34,6 @@ import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
 
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class DiscoveredNoteHandRenderer {
 
@@ -67,11 +50,15 @@ public class DiscoveredNoteHandRenderer {
         }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (player == null || !player.getOffhandItem().isEmpty()) {
+        if (player == null) {
+            return;
+        }
+        ItemStack off = player.getOffhandItem();
+        if (!off.isEmpty()) {
             return;
         }
         ItemStack stack = event.getItemStack();
-        if (!(stack.getItem() instanceof ItemDiscoveredResearchNote)) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof ItemDiscoveredResearchNote)) {
             return;
         }
         event.setCanceled(true);
@@ -109,7 +96,7 @@ public class DiscoveredNoteHandRenderer {
     }
 
     private static void renderMapHand(Minecraft mc, PoseStack pose, SubmitNodeCollector collector,
-            int light, HumanoidArm arm, PlayerRenderState playerState) {
+                                      int light, HumanoidArm arm, PlayerRenderState playerState) {
         AvatarRenderState avatar = playerState == null ? null : playerState.avatarRenderState;
         if (avatar == null) {
             return;
@@ -131,19 +118,18 @@ public class DiscoveredNoteHandRenderer {
     }
 
     private static void quad(PoseStack pose, OrderedSubmitNodeCollector collector, RenderType type,
-            float x0, float y0, float x1, float y1, float z,
-            float u0, float v0, float u1, float v1,
-            int r, int g, int b, int a, int light) {
+                             float x0, float y0, float x1, float y1,
+                             int r, int g, int b, int a, int light) {
         collector.submitCustomGeometry(pose, type, (p, vc) -> {
-            vc.addVertex(p, x0, y1, z).setColor(r, g, b, a).setUv(u0, v1).setLight(light);
-            vc.addVertex(p, x1, y1, z).setColor(r, g, b, a).setUv(u1, v1).setLight(light);
-            vc.addVertex(p, x1, y0, z).setColor(r, g, b, a).setUv(u1, v0).setLight(light);
-            vc.addVertex(p, x0, y0, z).setColor(r, g, b, a).setUv(u0, v0).setLight(light);
+            vc.addVertex(p, x0, y1, (float) 0.0).setColor(r, g, b, a).setUv((float) 0.0, (float) 1.0).setLight(light);
+            vc.addVertex(p, x1, y1, (float) 0.0).setColor(r, g, b, a).setUv((float) 1.0, (float) 1.0).setLight(light);
+            vc.addVertex(p, x1, y0, (float) 0.0).setColor(r, g, b, a).setUv((float) 1.0, (float) 0.0).setLight(light);
+            vc.addVertex(p, x0, y0, (float) 0.0).setColor(r, g, b, a).setUv((float) 0.0, (float) 0.0).setLight(light);
         });
     }
 
     private static void text(PoseStack pose, OrderedSubmitNodeCollector collector,
-            FormattedCharSequence text, float x, float y, int light) {
+                             FormattedCharSequence text, float x, float y, int light) {
         collector.submitText(pose, x, y, text, false, Font.DisplayMode.NORMAL, light,
                 TEXT_COLOR, 0, 0);
     }
@@ -153,19 +139,26 @@ public class DiscoveredNoteHandRenderer {
     }
 
     private static void renderNotes(Minecraft mc, ItemStack stack, PoseStack pose,
-            SubmitNodeCollector collector, int light) {
+                                    SubmitNodeCollector collector, int light) {
+        if (mc == null || stack == null || pose == null || collector == null) {
+            return;
+        }
         Font font = mc.font;
-        
         OrderedSubmitNodeCollector icons = collector.order(1);
         OrderedSubmitNodeCollector texts = collector.order(2);
         pose.scale(0.0078125F, 0.0078125F, 0.0078125F);
         quad(pose, collector, RenderTypes.text(PARCHMENT),
-                -7.0F, -7.0F, 135.0F, 135.0F, 0.0F,
-                0.0F, 0.0F, 1.0F, 1.0F, 255, 255, 255, 255, light);
+                -7.0F, -7.0F, 135.0F, 135.0F,
+                255, 255, 255, 255, light);
         DiscoveredNoteData data = DiscoveredNoteData.read(stack);
         if (data.key == null) {
             return;
         }
+        Aspect[] tags = data.tags;
+        int[] haveArr = data.have;
+        int[] needArr = data.need;
+        int haveLen = haveArr == null ? 0 : haveArr.length;
+        int needLen = needArr == null ? 0 : needArr.length;
         float total = data.getTotalProgress();
         Component name = DiscoveredNotes.researchName(data.key);
         Component title = name == null ? Component.literal(data.key) : name;
@@ -182,48 +175,61 @@ public class DiscoveredNoteHandRenderer {
         text(pose, texts, title.getVisualOrderText(), 0.0F, 0.0F, light);
         pose.popPose();
         int index = 0;
-        for (int a = 0; a < data.tags.length; a++) {
-            Aspect tag = data.tags[a];
-            if (tag == null) {
-                continue;
-            }
-            int have = a < data.have.length ? data.have[a] : 0;
-            if (have <= 0 && total < 0.5F) {
-                continue;
-            }
-            float tagProgress = data.getTagProgress(tag);
-            boolean known = tagProgress >= 0.3F;
-            Identifier icon = known
-                    ? UtilsFX.strippedAspectTexture(tag.getImage())
-                    : UNKNOWN_TAG;
-            float x = 15.0F + (index % 4) * 30.0F;
-            float y = 28.0F + (index / 4) * 13.0F;
-            int color = known ? tag.getColor() : 0xFFFFFF;
-            int r = (color >> 16) & 0xFF;
-            int g = (color >> 8) & 0xFF;
-            int b = color & 0xFF;
-            int alpha = known ? 150 : 255;
-            pose.pushPose();
-            pose.translate(x, y, -0.02F);
-            pose.scale(6.0F, 6.0F, 3.0F);
-            quad(pose, icons, RenderTypes.text(icon),
-                    -1.0F, -1.0F, 1.0F, 1.0F, 0.0F,
-                    0.0F, 0.0F, 1.0F, 1.0F, r, g, b, alpha, light);
-            pose.popPose();
-            if (tagProgress >= 0.333332F) {
-                int need = a < data.need.length ? data.need[a] : 0;
-                int completion = need <= 0 ? 100 : (int) ((float) Math.min(have, need) / need * 100.0F);
+        if (tags != null) {
+            for (int a = 0; a < tags.length; a++) {
+                Aspect tag = tags[a];
+                if (tag == null) {
+                    continue;
+                }
+                String tagStr = tag.getTag();
+                if (tagStr == null) {
+                    continue;
+                }
+                int have = a < haveLen ? haveArr[a] : 0;
+                if (have <= 0 && total < 0.5F) {
+                    continue;
+                }
+                float tagProgress = data.getTagProgress(tag);
+                boolean known = tagProgress >= 0.3F;
+                Identifier icon = UNKNOWN_TAG;
+                if (known) {
+                    Identifier image = tag.getImage();
+                    if (image != null) {
+                        Identifier stripped = UtilsFX.strippedAspectTexture(image);
+                        if (stripped != null) {
+                            icon = stripped;
+                        }
+                    }
+                }
+                float x = 15.0F + (index % 4) * 30.0F;
+                float y = 28.0F + ((float) index / 4) * 13.0F;
+                int color = known ? tag.getColor() : 0xFFFFFF;
+                int r = (color >> 16) & 0xFF;
+                int g = (color >> 8) & 0xFF;
+                int b = color & 0xFF;
+                int alpha = known ? 150 : 255;
                 pose.pushPose();
                 pose.translate(x, y, -0.02F);
-                pose.scale(0.56F, 0.56F, 1.0F);
-                text(pose, texts, Component.literal(completion + "%").getVisualOrderText(), 13.0F, -3.0F, light);
+                pose.scale(6.0F, 6.0F, 3.0F);
+                quad(pose, icons, RenderTypes.text(icon),
+                        -1.0F, -1.0F, 1.0F, 1.0F,
+                        r, g, b, alpha, light);
                 pose.popPose();
+                if (tagProgress >= 0.333332F) {
+                    int need = a < needLen ? needArr[a] : 0;
+                    int completion = need <= 0 ? 100 : (int) ((float) Math.min(have, need) / need * 100.0F);
+                    pose.pushPose();
+                    pose.translate(x, y, -0.02F);
+                    pose.scale(0.56F, 0.56F, 1.0F);
+                    text(pose, texts, Component.literal(completion + "%").getVisualOrderText(), 13.0F, -3.0F, light);
+                    pose.popPose();
+                }
+                index++;
             }
-            index++;
         }
         Component desc = describe(data.key);
         if (desc != null) {
-            float startY = 25.0F + (1 + (index - 1) / 4) * 13.0F;
+            float startY = 25.0F + (1 + (float) (index - 1) / 4) * 13.0F;
             float availH = Math.max(0.0F, 130.0F - startY);
             DiscoveredNoteText.Fit fit = DiscoveredNoteText.parchmentFit(
                     font, desc, total < 0.5F, 180, 0.63F, availH, 0.30F);

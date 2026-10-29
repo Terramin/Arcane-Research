@@ -17,16 +17,8 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.discovered.table.HexNoteTableTile;
 import arcaneresearch.discovered.table.HexResearchTableMenu;
+import org.jspecify.annotations.NonNull;
 
- 
-
-
-
-
-
-
-
- 
 public class MsgWalletRequest implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgWalletRequest> TYPE =
@@ -34,11 +26,11 @@ public class MsgWalletRequest implements CustomPacketPayload {
 
     public static final StreamCodec<ByteBuf, MsgWalletRequest> STREAM_CODEC = new StreamCodec<>() {
         @Override
-        public void encode(ByteBuf buf, MsgWalletRequest packet) {
+        public void encode(@NonNull ByteBuf buf, @NonNull MsgWalletRequest packet) {
         }
 
         @Override
-        public MsgWalletRequest decode(ByteBuf buf) {
+        public @NonNull MsgWalletRequest decode(@NonNull ByteBuf buf) {
             return new MsgWalletRequest();
         }
     };
@@ -47,11 +39,14 @@ public class MsgWalletRequest implements CustomPacketPayload {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public CustomPacketPayload.@NonNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
     public static void handle(MsgWalletRequest msg, IPayloadContext ctx) {
+        if (ctx == null) {
+            return;
+        }
         ctx.enqueueWork(() -> {
             if (ctx.player() instanceof ServerPlayer player) {
                 push(player);
@@ -59,7 +54,6 @@ public class MsgWalletRequest implements CustomPacketPayload {
         });
     }
 
-      
     public static void push(ServerPlayer player) {
         if (player == null) {
             return;
@@ -72,11 +66,19 @@ public class MsgWalletRequest implements CustomPacketPayload {
                 if (inv instanceof HexNoteTableTile tile) {
                     AspectList list = tile.getBonus();
                     if (list != null) {
-                        for (Aspect aspect : list.getAspects()) {
-                            if (aspect != null) {
+                        Aspect[] aspects = list.getAspects();
+                        if (aspects != null) {
+                            for (Aspect aspect : aspects) {
+                                if (aspect == null) {
+                                    continue;
+                                }
+                                String key = aspect.getTag();
+                                if (key == null) {
+                                    continue;
+                                }
                                 int amount = list.getAmount(aspect);
                                 if (amount > 0) {
-                                    bonus.put(aspect.getTag(), amount);
+                                    bonus.put(key, amount);
                                 }
                             }
                         }
@@ -85,6 +87,9 @@ public class MsgWalletRequest implements CustomPacketPayload {
             }
         } catch (Exception ignored) {
         }
-        PacketHandler.sendToPlayer(new MsgWalletSync(wallet, bonus), player);
+        try {
+            PacketHandler.sendToPlayer(new MsgWalletSync(wallet, bonus), player);
+        } catch (Exception ignored) {
+        }
     }
 }
