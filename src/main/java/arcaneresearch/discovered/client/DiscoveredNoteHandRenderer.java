@@ -173,7 +173,7 @@ public class DiscoveredNoteHandRenderer {
         float total = data.getTotalProgress();
         Component name = DiscoveredNotes.researchName(data.key);
         Component title = name == null ? Component.literal(data.key) : name;
-        if (total < 0.2F) {
+        if (total < 0.2F && !data.revealed) {
             title = scrambled(title);
         }
         pose.pushPose();

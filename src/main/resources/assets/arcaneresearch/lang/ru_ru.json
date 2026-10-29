@@ -933,6 +933,7 @@
   "tc.discoveryerror": "Чтобы это понять нужно предварительно изучить %1$s.",
   "tc.discoveryunknown": "Неизвестная теория",
   "tc.discoveryprogress": "% выполнено",
+  "tc.thaumcraft.discoveryprogress": "% выполнено",
   "tc.addclue": "§aВы обнаружили нечто, что может помочь в будущих исследованиях§0",
   "tc.addaddendum": "§aК исследованию \"%1$s\" добавлено приложение§0",
   "tc.addendumtext": "§oПриложение %1$s§r",

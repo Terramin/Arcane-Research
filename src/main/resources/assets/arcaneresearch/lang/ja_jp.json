@@ -855,6 +855,7 @@
   "tc.discoveryerror": "理解するために%1$sの研究が必要。",
   "tc.discoveryunknown": "未知の理論",
   "tc.discoveryprogress": "%完了",
+  "tc.thaumcraft.discoveryprogress": "%完了",
   "tc.addclue": "§a将来の研究に役立ちそうな何かを発見した§0",
   "tc.addaddendum": "§a追補が%1$sに加わった§0",
   "tc.addendumtext": "§o追補%1$s§r",

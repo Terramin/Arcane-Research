@@ -22,6 +22,7 @@ public class DiscoveredNoteData {
     public Map<String, Byte> failed = new HashMap<>();
     public boolean stage1;
     public boolean stage2;
+    public boolean revealed;
 
     public static boolean hasNote(ItemStack stack) {
         if (stack == null) {
@@ -81,6 +82,7 @@ public class DiscoveredNoteData {
         }
         data.stage1 = root.getBoolean("stage1");
         data.stage2 = root.getBoolean("stage2") || root.getBoolean("hex");
+        data.revealed = root.getBoolean("revealed");
         return data;
     }
 
@@ -121,6 +123,7 @@ public class DiscoveredNoteData {
         root.put("have", haveList);
         root.putBoolean("stage1", data.stage1);
         root.putBoolean("stage2", data.stage2);
+        root.putBoolean("revealed", data.revealed);
         CompoundTag fail = new CompoundTag();
         if (data.failed != null) {
             for (Map.Entry<String, Byte> e : data.failed.entrySet()) {

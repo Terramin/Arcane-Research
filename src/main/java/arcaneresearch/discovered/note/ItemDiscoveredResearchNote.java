@@ -48,7 +48,7 @@ public class ItemDiscoveredResearchNote extends Item {
         if (discoveryItem != null && stack.getItem() == discoveryItem) {
             progress = 1.0F;
         }
-        if (data.key != null && progress >= 0.2F) {
+        if (data.key != null && (progress >= 0.2F || data.revealed)) {
             Component name = DiscoveredNotes.researchName(data.key);
             if (name != null) {
                 return name;
@@ -73,7 +73,7 @@ public class ItemDiscoveredResearchNote extends Item {
         if (discoveryItem != null && stackItem == discoveryItem) {
             progress = 1.0F;
         }
-        if (progress >= 0.2F) {
+        if (progress >= 0.2F || data.revealed) {
             Component name = DiscoveredNotes.researchName(data.key);
             tooltip.add(name == null ? Component.literal(data.key) : name);
             Component popup = DiscoveredNotes.researchPopup(data.key);
