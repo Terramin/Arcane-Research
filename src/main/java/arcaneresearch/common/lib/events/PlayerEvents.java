@@ -58,6 +58,15 @@ public class PlayerEvents {
         }
     }
     @SubscribeEvent
+    public static void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            int id = player.getId();
+            player.getPersistentData().putInt("TC.RunicCharge",
+                    runicCharge.getOrDefault(id, 0));
+        }
+    }
+
+    @SubscribeEvent
     public static void playerJoin(EntityJoinLevelEvent event) {
         if (!event.getLevel().isClientSide && event.getEntity() instanceof ServerPlayer player) {
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
@@ -68,6 +77,12 @@ public class PlayerEvents {
             if (warp != null) {
                 warp.sync(player);
             }
+            int id = player.getId();
+            CompoundTag persistent = player.getPersistentData();
+            if (persistent.contains("TC.RunicCharge")) {
+                runicCharge.put(id, persistent.getInt("TC.RunicCharge"));
+            }
+            runicDirty = true;
             Arcaneresearch.LOGGER.debug("Synced Arcaneresearch data for player: {}", player.getName().getString());
         }
     }
@@ -203,6 +218,9 @@ public class PlayerEvents {
             if (lastCharge.get(id) != charge) {
                 sendRunicCharge(player, charge, runicInfo.get(id)[0]);
                 lastCharge.put(id, charge);
+            }
+            if (player instanceof ServerPlayer serverPlayer && runicCharge.containsKey(id)) {
+                serverPlayer.getPersistentData().putInt("TC.RunicCharge", runicCharge.get(id));
             }
         }
     }
