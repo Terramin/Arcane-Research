@@ -142,7 +142,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
                 poseStack.rotate(Axis.ZP.rotationDegrees(15 + a % 3 * 2));
                 poseStack.scale(0.5F, 0.6F, 0.6F);
                 UtilsFX.renderQuadCentered(poseStack, collector, PARCHMENT_TEXTURE,
-                        1.0F, 1.0F, 1.0F, 1.0F, light, 0, 1.0F);
+                        1.0F, 1.0F, 1.0F, 1.0F, 0xF000F0, 0, 1.0F);
                 poseStack.popPose();
             }
         }
