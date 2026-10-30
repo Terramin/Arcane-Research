@@ -78,7 +78,7 @@ public class ItemFocusFire extends ItemFocusBasic {
 
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
-        return isUpgradedWith(focusstack, fireball) ? 1000 : 0;
+        return isUpgradedWith(focusstack, fireball) ? 20 : 0;
     }
 
     @Override

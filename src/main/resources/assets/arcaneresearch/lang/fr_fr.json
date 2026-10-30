@@ -865,6 +865,7 @@
   "tc.discoveryerror": "Pour comprendre ça vous devez étudier %1$s.",
   "tc.discoveryunknown": "Théorie inconnue",
   "tc.discoveryprogress": "% complète",
+  "tc.thaumcraft.discoveryprogress": "% complète",
   "tc.addclue": "§aVous avez découvert quelque chose qui peut aidez vos recherches futures§0",
   "tc.addaddendum": "§aaddendum ajouté à %1$s§0",
   "tc.addendumtext": "§oaddendum %1$s§r",

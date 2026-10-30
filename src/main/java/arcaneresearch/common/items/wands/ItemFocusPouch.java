@@ -12,6 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import arcaneresearch.api.ArcaneresearchInvHelper;
@@ -128,18 +130,17 @@ public class ItemFocusPouch extends Item implements ICurioItem {
         ArcaneresearchInvHelper.setCustomTag(stack, root);
     }
 
-    @SubscribeEvent
-    public void onItemTooltip(ItemTooltipEvent event) {
-        ItemStack stack = event.getItemStack();
-        if (event.getItemStack()==stack) {
-            int count = getFociCount(event.getItemStack());
-            if (count > 0) {
-                event.getToolTip().add(Component.translatable("item.arcaneresearch.wand_focus_pouch.contents", count, SLOTS)
-                        .withStyle(style -> style.withColor(0x808080)));
-            } else {
-                event.getToolTip().add(Component.translatable("item.arcaneresearch.wand_focus_pouch.empty")
-                        .withStyle(style -> style.withColor(0x808080)));
-            }
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, tooltip, flag);
+        int count = getFociCount(stack);
+        if (count > 0) {
+            tooltip.accept(Component.translatable("item.arcaneresearch.wand_focus_pouch.contents", count, SLOTS)
+                    .withStyle(style -> style.withColor(0x808080)));
+        } else {
+            tooltip.accept(Component.translatable("item.arcaneresearch.wand_focus_pouch.empty")
+                    .withStyle(style -> style.withColor(0x808080)));
         }
     }
 }

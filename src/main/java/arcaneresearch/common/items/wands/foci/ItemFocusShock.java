@@ -111,8 +111,7 @@ public class ItemFocusShock extends ItemFocusBasic {
 
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
-        return isUpgradedWith(focusstack, chainlightning) ? 500
-                : (isUpgradedWith(focusstack, earthshock) ? 1000 : 250);
+        return 20;
     }
 
     @Override

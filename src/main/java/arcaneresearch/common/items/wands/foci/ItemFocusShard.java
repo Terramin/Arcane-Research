@@ -47,7 +47,7 @@ public class ItemFocusShard extends ItemFocusBasic {
 
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
-        return 300;
+        return 20;
     }
 
     @Override

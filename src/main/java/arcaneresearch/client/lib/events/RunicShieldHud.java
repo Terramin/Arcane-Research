@@ -103,20 +103,20 @@ public class RunicShieldHud {
         
         
         
-        float base = Math.max(player.getMaxHealth(), player.getHealth())
-                + (float) Math.ceil(player.getAbsorptionAmount());
-        int heartRows = Math.max(1, (int) Math.ceil(base / 2.0F / 10.0F));
+        float absorption = (float) Math.ceil(player.getAbsorptionAmount());
+        float currentBase = player.getHealth() + absorption;
+        float layoutBase = Math.max(player.getMaxHealth(), player.getHealth()) + absorption;
+        int heartRows = Math.max(1, (int) Math.ceil(layoutBase / 2.0F / 10.0F));
         int rowHeight = Math.max(10 - (heartRows - 2), 3);
-        int heartCells = Math.max(0, (int) Math.ceil(base / 2.0F));
-        int overlaid = Math.min(current, heartCells);
-        int extraRowStart = heartRows * 10;
+        int currentHeartCells = Math.max(0, (int) Math.ceil(currentBase / 2.0F));
+        int renderCount = Math.min(current, currentHeartCells);
         int baseX = sw / 2 - 91;
         int baseY = sh - 39;
 
         
         
-        for (int a = 0; a < current; a++) {
-            int cellIndex = a < overlaid ? a : extraRowStart + (a - overlaid);
+        for (int a = 0; a < renderCount; a++) {
+            int cellIndex = a;
             int col = cellIndex % 10;
             int row = cellIndex / 10;
             int px = baseX + col * 8;

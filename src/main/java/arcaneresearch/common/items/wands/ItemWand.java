@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -770,12 +771,18 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
     }
 
 
-    @SubscribeEvent
-    public void onItemTooltip(ItemTooltipEvent event) {
-        ItemStack stack = event.getItemStack();
-        List<Component> tooltip = event.getToolTip();
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, tooltip, flag);
         boolean shift = Proxies.get().isShiftKeyDown();
-        Level tooltipLevel = event.getEntity() != null ? event.getEntity().level() : null;
+        Level tooltipLevel = context.level();
+        if (tooltipLevel == null) {
+            try {
+                tooltipLevel = net.minecraft.client.Minecraft.getInstance().level;
+            } catch (Exception ignored) {
+            }
+        }
         ItemStack focusStack = getFocusStack(stack);
         ItemFocusBasic focus = focusStack.getItem() instanceof ItemFocusBasic b ? b : null;
 
@@ -807,7 +814,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
                 }
 
                 if (shift) {
-                    tooltip.add(Component.literal(" §" + aspect.getChatcolor() + aspect.getName() + " x " + amount
+                    tooltip.accept(Component.literal(" §" + aspect.getChatcolor() + aspect.getName() + " x " + amount
                             + ", (" + consumption + "% "
                             + Component.translatable("tc.vis.cost").getString() + ")" + extra));
                 } else {
@@ -816,35 +823,35 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
                 }
             }
             if (!shift && count > 0) {
-                tooltip.add(Component.literal(line));
+                tooltip.accept(Component.literal(line));
                 total /= count;
-                tooltip.add(Component.literal(" (" + total + "% "
+                tooltip.accept(Component.literal(" (" + total + "% "
                         + Component.translatable("tc.vis.costavg").getString() + ")"));
             }
         }
         WandCap cap = getCap(stack);
         if (cap != null) {
-            tooltip.add(Component.literal(ChatFormatting.GOLD + Component.translatable("item.capacity.text").getString()
+            tooltip.accept(Component.literal(ChatFormatting.GOLD + Component.translatable("item.capacity.text").getString()
                     + " " + getMaxVis(stack) + "§r"));
 
             if (cap.getRechargeMultiplier() != 1.0F) {
-                tooltip.add(Component.literal(ChatFormatting.AQUA
+                tooltip.accept(Component.literal(ChatFormatting.AQUA
                         + Component.translatable("item.rechargemult.text").getString() + " x"
                         + cap.getRechargeMultiplier() + "§r"));
             }
             if (cap.getChargeBonus() > 0) {
-                tooltip.add(Component.literal(ChatFormatting.AQUA
+                tooltip.accept(Component.literal(ChatFormatting.AQUA
                         + Component.translatable("item.chargebonus.text").getString() + " +"
                         + cap.getChargeBonus() + "§r"));
             }
         }
         if (getFocus(stack) != null) {
-            tooltip.add(Component.literal(ChatFormatting.BOLD.toString() + ChatFormatting.ITALIC
+            tooltip.accept(Component.literal(ChatFormatting.BOLD.toString() + ChatFormatting.ITALIC
                     + ChatFormatting.GREEN + focusStack.getHoverName().getString()));
             if (shift && focus != null) {
                 List<Component> focusInfo = new ArrayList<>();
-                focus.addFocusInformation(focusStack, tooltipLevel, focusInfo, event.getFlags());
-                tooltip.addAll(focusInfo);
+                focus.addFocusInformation(focusStack, tooltipLevel, focusInfo, flag);
+                focusInfo.forEach(tooltip);
             }
         }
     }

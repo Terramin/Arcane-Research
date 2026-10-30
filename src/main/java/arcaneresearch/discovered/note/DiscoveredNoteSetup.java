@@ -119,7 +119,14 @@ public class DiscoveredNoteSetup {
         if (required == null || required.size() <= 0) {
             return null;
         }
-        return DiscoveredNotes.createNote(key, required);
+        ItemStack stack = DiscoveredNotes.createNote(key, required);
+        if (stack == null || stack.isEmpty()) {
+            return stack;
+        }
+        DiscoveredNoteData data = DiscoveredNoteData.read(stack);
+        data.revealed = true;
+        DiscoveredNoteData.write(stack, data);
+        return stack;
     }
 
     

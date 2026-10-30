@@ -865,6 +865,7 @@
   "tc.discoveryerror": "要窥破个中真谛你需要研究%1$s。",
   "tc.discoveryunknown": "未知理论",
   "tc.discoveryprogress": "% 完成",
+  "tc.thaumcraft.discoveryprogress": "% 完成",
   "tc.addclue": "§a你发现了一些有助于未来研究的东西§0",
   "tc.addaddendum": "§a附录添加至 %1$s§0",
   "tc.addendumtext": "§o附录 %1$s§r",

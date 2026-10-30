@@ -59,7 +59,7 @@ public class ItemFocusPrimal extends ItemFocusBasic {
 
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
-        return 500;
+        return 20;
     }
 
     @Override

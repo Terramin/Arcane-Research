@@ -62,8 +62,7 @@ public class ItemFocusFrost extends ItemFocusBasic {
 
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
-        boolean upgraded = isUpgradedWith(focusstack, scattershot) || isUpgradedWith(focusstack, iceboulder);
-        return upgraded ? 500 : 200;
+        return 20;
     }
 
     @Override

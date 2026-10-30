@@ -632,6 +632,7 @@
   "tc.discoveryerror": "Um dies zu verstehen, musst du %1$s studieren.",
   "tc.discoveryunknown": "Unbekannte Theorie",
   "tc.discoveryprogress": "% komplett",
+  "tc.thaumcraft.discoveryprogress": "% komplett",
   "tc.addclue": "Du hast einen Hinweis auf neue Forschung entdeckt",
   "tc.addaddendum": "Â§aAnhang hizugefügt zu %1$sÂ§0",
   "tc.addendumtext": "Â§oAnhang %1$sÂ§r",
