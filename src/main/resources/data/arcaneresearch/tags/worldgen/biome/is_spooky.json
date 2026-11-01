@@ -4,7 +4,7 @@
     "minecraft:swamp",
     "minecraft:mangrove_swamp",
     "minecraft:dark_forest",
-    "minecraft:pale_garden",
+    { "id": "minecraft:pale_garden", "required": false },
     "minecraft:mushroom_fields",
     "minecraft:deep_dark"
   ]

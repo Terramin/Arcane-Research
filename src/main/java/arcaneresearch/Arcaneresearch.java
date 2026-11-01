@@ -69,9 +69,9 @@ public class Arcaneresearch {
     public static final String VERSION = "6.2.0";
     public static final Logger LOGGER = LogUtils.getLogger();
     private static Arcaneresearch instance;
-    public Arcaneresearch() {
+    public Arcaneresearch(FMLJavaModLoadingContext context) {
         instance = this;
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = context.getModEventBus();
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::processIMC);
         modEventBus.addListener(this::registerIngredientTypes);
@@ -265,24 +265,21 @@ public class Arcaneresearch {
             LOGGER.info("Arcaneresearch client setup");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             event.enqueueWork(() -> {
-                ItemBlockRenderTypes.setRenderLayer(
-                        arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_PORTAL.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(
-                        ModBlocks.GRASS_AMBIENT.get(), RenderType.cutoutMipped());
+                ItemBlockRenderTypes.setRenderLayer(ModBlocks.GRASS_AMBIENT.get(), RenderType.cutoutMipped());
                 ItemProperties.register(ModBlocks.JAR_NORMAL.get().asItem(),
-                        new ResourceLocation(MODID, "fill"),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "fill"),
                         (stack, level, entity, seed) ->
                                 arcaneresearch.common.blocks.essentia.BlockJarItem.getFill(stack));
                 ItemProperties.register(ModBlocks.JAR_VOID.get().asItem(),
-                        new ResourceLocation(MODID, "fill"),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "fill"),
                         (stack, level, entity, seed) ->
                                 arcaneresearch.common.blocks.essentia.BlockJarItem.getFill(stack));
                 ItemProperties.register(ModItems.GRAPPLE_GUN.get(),
-                        new ResourceLocation(MODID, "type"),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "type"),
                         (stack, level, entity, seed) ->
                                 (stack.hasTag() && stack.getTag().getByte("loaded") == 1) ? 1.0F : 0.0F);
                 ItemProperties.register(ModItems.PRIMORDIAL_PEARL.get(),
-                        new ResourceLocation(MODID, "type"),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "type"),
                         (stack, level, entity, seed) -> {
                             int damage = stack.getDamageValue();
                             return damage < 3 ? 0.0F : (damage < 6 ? 1.0F : 2.0F);
@@ -291,12 +288,12 @@ public class Arcaneresearch {
                         ModItems.CASTER_BASIC.get()
                 };
                 ItemProperties.register(ModItems.VERDANT_CHARM.get(),
-                        new ResourceLocation(MODID, "type"),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "type"),
                         (stack, level, entity, seed) ->
                                 (stack.hasTag() ? stack.getTag().getByte("type") : 0));
                 for (net.minecraft.world.item.Item caster : casters) {
                     ItemProperties.register(caster,
-                            new ResourceLocation(MODID, "focus"),
+                            ResourceLocation.fromNamespaceAndPath(MODID, "focus"),
                             (stack, level, entity, seed) -> {
                                 if (stack.getItem() instanceof arcaneresearch.common.items.casters.ItemCaster itemCaster
                                         && itemCaster.getFocus(stack) != null) {
@@ -306,16 +303,16 @@ public class Arcaneresearch {
                             });
                 }
                 ItemProperties.register(ModBlocks.MIRROR_ESSENTIA.get().asItem(),
-                        new ResourceLocation(MODID, "linked"),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "linked"),
                         (stack, level, entity, seed) ->
                                 (stack.hasTag() && stack.getTag().contains("linkX")) ? 1.0F : 0.0F);
                 ItemProperties.register(ModItems.BONE_BOW.get(),
-                        new ResourceLocation("pulling"),
+                        ResourceLocation.parse("pulling"),
                         (stack, level, entity, seed) ->
                                 entity != null && entity.isUsingItem()
                                         && entity.getUseItem() == stack ? 1.0F : 0.0F);
                 ItemProperties.register(ModItems.BONE_BOW.get(),
-                        new ResourceLocation("pull"),
+                        ResourceLocation.parse("pull"),
                         (stack, level, entity, seed) -> {
                             if (entity == null || entity.getUseItem() != stack) {
                                 return 0.0F;
@@ -331,7 +328,7 @@ public class Arcaneresearch {
                         });
                 ItemProperties.register(
                         arcaneresearch.common.items.wands.WandItems.WAND_CAP.get(),
-                        new ResourceLocation(MODID, "cap"),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "cap"),
                         (stack, level, entity, seed) ->
                                 arcaneresearch.common.items.wands.ItemWandCap.getCapIndex(stack));
                 net.minecraft.client.renderer.entity.EntityRenderers.register(
