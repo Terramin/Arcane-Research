@@ -14,10 +14,6 @@
     {
       "structure": "arcaneresearch:big_magic_tree",
       "weight": 2
-    },
-    {
-      "structure": "arcaneresearch:big_magic_tree_common",
-      "weight": 3
     }
   ]
 }

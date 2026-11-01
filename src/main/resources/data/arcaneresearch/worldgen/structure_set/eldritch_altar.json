@@ -3,12 +3,12 @@
     "type": "minecraft:random_spread",
     "salt": 10387321,
     "separation": 3,
-    "spacing": 8,
+    "spacing": 32,
     "spread_type": "triangular"
   },
   "structures": [
     {
-      "structure": "arcaneresearch:eldritch_ring",
+      "structure": "arcaneresearch:eldritch_altar",
       "weight": 1
     }
   ]

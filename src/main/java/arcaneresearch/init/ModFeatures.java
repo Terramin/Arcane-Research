@@ -1,7 +1,7 @@
 package arcaneresearch.init;
 import arcaneresearch.common.world.maze.MazeFeature;
 import arcaneresearch.common.world.structures.AuraNodeStructure;
-import arcaneresearch.common.world.structures.EldritchRingStructure;
+import arcaneresearch.common.world.structures.EldritchAltarStructure;
 import arcaneresearch.common.world.structures.HilltopStonesStructure;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -67,9 +67,9 @@ public class ModFeatures {
     public static final RegistryObject<arcaneresearch.common.world.structures.AuraNodeStructure> AURA_NODE =
             FEATURES.register("aura_node",
                     () -> new arcaneresearch.common.world.structures.AuraNodeStructure(NoneFeatureConfiguration.CODEC));
-    public static final RegistryObject<arcaneresearch.common.world.structures.EldritchRingStructure.Feature> ELDRITCH_RING =
-            FEATURES.register("eldritch_ring",
-                    () -> new arcaneresearch.common.world.structures.EldritchRingStructure.Feature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<arcaneresearch.common.world.structures.EldritchAltarStructure.Feature> ELDRITCH_ALTAR =
+            FEATURES.register("eldritch_altar",
+                    () -> new arcaneresearch.common.world.structures.EldritchAltarStructure.Feature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<arcaneresearch.common.world.structures.HilltopStonesStructure.Feature> HILLTOP_STONES =
             FEATURES.register("hilltop_stones",
                     () -> new arcaneresearch.common.world.structures.HilltopStonesStructure.Feature(NoneFeatureConfiguration.CODEC));
