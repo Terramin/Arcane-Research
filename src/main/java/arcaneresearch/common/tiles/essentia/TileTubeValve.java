@@ -1,4 +1,8 @@
 package arcaneresearch.common.tiles.essentia;
+
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.init.ModBlockEntities;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -9,19 +13,24 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.init.ModBlockEntities;
-import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+
 public class TileTubeValve extends TileTube {
+
+    private static final Direction[] DIRECTIONS = Direction.values();
+
     public boolean allowFlow = true;
     public float rotation = 0.0f;
     private boolean wasPoweredLastTick = false;
+
     public TileTubeValve(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
+
     public TileTubeValve(BlockPos pos, BlockState state) {
         this(ModBlockEntities.TUBE_VALVE.get(), pos, state);
     }
+
     public static void serverTickValve(Level level, BlockPos pos, BlockState state, TileTubeValve tile) {
         if (tile.count % 5 == 0) {
             boolean gettingPower = tile.gettingPower();
@@ -30,8 +39,7 @@ public class TileTubeValve extends TileTube {
                 level.playSound(null, pos, ModSounds.SQUEEK.get(), SoundSource.BLOCKS,
                         0.7f, 0.9f + level.random.nextFloat() * 0.2f);
                 tile.markDirtyAndSync();
-            }
-            if (tile.wasPoweredLastTick && !gettingPower && !tile.allowFlow) {
+            } else if (tile.wasPoweredLastTick && !gettingPower && !tile.allowFlow) {
                 tile.allowFlow = true;
                 level.playSound(null, pos, ModSounds.SQUEEK.get(), SoundSource.BLOCKS,
                         0.7f, 0.9f + level.random.nextFloat() * 0.2f);
@@ -41,6 +49,7 @@ public class TileTubeValve extends TileTube {
         }
         TileTube.serverTick(level, pos, state, tile);
     }
+
     public static void clientTickValve(Level level, BlockPos pos, BlockState state, TileTubeValve tile) {
         if (!tile.allowFlow && tile.rotation < 360.0f) {
             tile.rotation += 20.0f;
@@ -49,21 +58,30 @@ public class TileTubeValve extends TileTube {
         }
         TileTube.clientTick(level, pos, state, tile);
     }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putBoolean("HadPower", wasPoweredLastTick);
+    }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
         tag.putBoolean("Flow", allowFlow);
-        tag.putBoolean("HadPower", wasPoweredLastTick);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
         allowFlow = tag.contains("Flow") ? tag.getBoolean("Flow") : tag.getBoolean("flow");
         wasPoweredLastTick = tag.contains("HadPower") ? tag.getBoolean("HadPower") : tag.getBoolean("hadpower");
     }
+
     public boolean gettingPower() {
         return level != null && level.getBestNeighborSignal(worldPosition) > 0;
     }
+
     @Override
     public boolean onCasterRightClick(Level level, ItemStack casterStack, Player player,
                                       BlockPos pos, Direction side, InteractionHand hand) {
@@ -71,35 +89,43 @@ public class TileTubeValve extends TileTube {
             level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
                     0.9f + level.random.nextFloat() * 0.2f);
             player.swing(hand);
-            markDirtyAndSync();
-            for (int i = 1; i < 20; i++) {
-                Direction candidate = Direction.values()[(facing.ordinal() + i) % 6];
-                if (!canConnectSide(candidate)) {
-                    facing = candidate;
-                    markDirtyAndSync();
-                    syncConnectionState();
-                    break;
+            if (facing != null) {
+                int base = facing.ordinal();
+                for (int i = 1; i < 20; i++) {
+                    Direction candidate = DIRECTIONS[(base + i) % 6];
+                    if (!canConnectSide(candidate)) {
+                        facing = candidate;
+                        markDirtyAndSync();
+                        syncConnectionState();
+                        break;
+                    }
                 }
             }
             return true;
         }
         return super.onCasterRightClick(level, casterStack, player, pos, side, hand);
     }
+
     @Override
     public boolean isConnectable(Direction face) {
         return face != facing && super.isConnectable(face);
     }
+
     @Override
     public void setSuction(Aspect aspect, int amount) {
         if (allowFlow) {
             super.setSuction(aspect, amount);
         }
     }
+
     public boolean isOpen() {
         return allowFlow;
     }
+
     public void setOpen(boolean open) {
-        this.allowFlow = open;
-        markDirtyAndSync();
+        if (this.allowFlow != open) {
+            this.allowFlow = open;
+            markDirtyAndSync();
+        }
     }
 }

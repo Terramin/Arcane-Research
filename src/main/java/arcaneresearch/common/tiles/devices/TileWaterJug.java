@@ -1,4 +1,9 @@
 package arcaneresearch.common.tiles.devices;
+
+import arcaneresearch.api.aura.AuraHelper;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.tiles.TileArcaneresearch;
+import arcaneresearch.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -8,40 +13,49 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import arcaneresearch.api.aura.AuraHelper;
-import arcaneresearch.client.fx.FXDispatcher;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import arcaneresearch.common.tiles.TileArcaneresearch;
-import arcaneresearch.init.ModBlockEntities;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
+
 public class TileWaterJug extends TileArcaneresearch {
+
     public static final int TANK_CAPACITY = 1000;
     private static final int SCAN_RANGE = 2;
+    private static final int SCAN_SIZE = 5 * 3 * 5;
+
     public final FluidTank tank = new FluidTank(TANK_CAPACITY) {
         @Override
         public boolean isFluidValid(FluidStack stack) {
             return stack.getFluid() == Fluids.WATER;
         }
     };
-    private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> new WaterJugFluidHandler());
+
+    private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(WaterJugFluidHandler::new);
+
     private int zone = 0;
     private int counter = 0;
-    private List<Integer> handlers = new ArrayList<>();
+    private final List<Integer> handlers = new ArrayList<>();
+    private final BitSet handlerSet = new BitSet(SCAN_SIZE);
+
     private int visualZone = 0;
     private int visualCounter = 0;
+
     public TileWaterJug(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WATER_JUG.get(), pos, state);
     }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileWaterJug tile) {
         tile.counter++;
         if (tile.counter % 5 != 0) {
@@ -52,12 +66,12 @@ public class TileWaterJug extends TileArcaneresearch {
         int scanY = (tile.zone / 5 / 5) % 3;
         int scanZ = tile.zone % 5;
         BlockPos scanPos = pos.offset(scanX - SCAN_RANGE, scanY - 1, scanZ - SCAN_RANGE);
-        if (tile.isValidFluidTarget(level, scanPos)) {
-            if (!tile.handlers.contains(tile.zone)) {
-                tile.handlers.add(tile.zone);
-                tile.setChanged();
-            }
+        if (!tile.handlerSet.get(tile.zone) && tile.isValidFluidTarget(level, scanPos)) {
+            tile.handlerSet.set(tile.zone);
+            tile.handlers.add(tile.zone);
+            tile.setChanged();
         }
+
         int handlerIndex = 0;
         while (handlerIndex < tile.handlers.size() && tile.tank.getFluidAmount() >= 25) {
             int handlerZone = tile.handlers.get(handlerIndex);
@@ -66,12 +80,14 @@ public class TileWaterJug extends TileArcaneresearch {
             int hz = handlerZone % 5;
             BlockPos handlerPos = pos.offset(hx - SCAN_RANGE, hy - 1, hz - SCAN_RANGE);
             if (!tile.tryFillTarget(level, handlerPos, handlerZone)) {
+                tile.handlerSet.clear(handlerZone);
                 tile.handlers.remove(handlerIndex);
                 tile.setChanged();
                 continue;
             }
             handlerIndex++;
         }
+
         if (tile.tank.getFluidAmount() < TANK_CAPACITY) {
             float visNeeded = (TANK_CAPACITY - tile.tank.getFluidAmount()) / 1000.0f;
             if (visNeeded > 0.1f) {
@@ -88,6 +104,7 @@ public class TileWaterJug extends TileArcaneresearch {
             }
         }
     }
+
     @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileWaterJug tile) {
         tile.counter++;
@@ -102,44 +119,59 @@ public class TileWaterJug extends TileArcaneresearch {
             tile.visualCounter--;
         }
     }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
         tank.writeToNBT(tag);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
         tank.readFromNBT(tag);
     }
+
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         handlers.clear();
+        handlerSet.clear();
         if (tag.contains("handlers")) {
             int[] arr = tag.getIntArray("handlers");
             for (int h : arr) {
-                handlers.add(h);
+                if (h >= 0 && h < SCAN_SIZE) {
+                    handlers.add(h);
+                    handlerSet.set(h);
+                }
             }
         }
     }
+
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putIntArray("handlers", handlers.stream().mapToInt(i -> i).toArray());
+        int size = handlers.size();
+        int[] arr = new int[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = handlers.get(i);
+        }
+        tag.putIntArray("handlers", arr);
     }
+
     private boolean isValidFluidTarget(Level level, BlockPos targetPos) {
         BlockState targetState = level.getBlockState(targetPos);
         if (targetState.is(Blocks.CAULDRON) || targetState.is(Blocks.WATER_CAULDRON)) {
             return true;
         }
-        BlockEntity te = level.getBlockEntity(targetPos);
-        if (te != null) {
-            LazyOptional<IFluidHandler> cap = te.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.UP);
+        BlockEntity be = level.getBlockEntity(targetPos);
+        if (be != null) {
+            LazyOptional<IFluidHandler> cap = be.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.UP);
             return cap.isPresent();
         }
         return false;
     }
+
     private boolean tryFillTarget(Level level, BlockPos targetPos, int zoneId) {
         BlockState targetState = level.getBlockState(targetPos);
         if (targetState.is(Blocks.CAULDRON)) {
@@ -148,8 +180,7 @@ public class TileWaterJug extends TileArcaneresearch {
                         .setValue(LayeredCauldronBlock.LEVEL, 1), 2);
                 tank.drain(333, IFluidHandler.FluidAction.EXECUTE);
                 level.blockEvent(worldPosition, getBlockState().getBlock(), 1, zoneId);
-                setChanged();
-                syncTile(false);
+                markDirtyAndSync();
             }
             return true;
         }
@@ -159,30 +190,27 @@ public class TileWaterJug extends TileArcaneresearch {
                 level.setBlock(targetPos, targetState.setValue(LayeredCauldronBlock.LEVEL, currentLevel + 1), 2);
                 tank.drain(333, IFluidHandler.FluidAction.EXECUTE);
                 level.blockEvent(worldPosition, getBlockState().getBlock(), 1, zoneId);
-                setChanged();
-                syncTile(false);
+                markDirtyAndSync();
             }
             return true;
         }
-        BlockEntity te = level.getBlockEntity(targetPos);
-        if (te != null) {
-            LazyOptional<IFluidHandler> cap = te.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.UP);
+        BlockEntity be = level.getBlockEntity(targetPos);
+        if (be != null) {
+            LazyOptional<IFluidHandler> cap = be.getCapability(ForgeCapabilities.FLUID_HANDLER, Direction.UP);
             if (cap.isPresent()) {
                 IFluidHandler handler = cap.orElse(null);
-                if (handler != null) {
-                    int filled = handler.fill(new FluidStack(Fluids.WATER, 25), IFluidHandler.FluidAction.EXECUTE);
-                    if (filled > 0) {
-                        tank.drain(filled, IFluidHandler.FluidAction.EXECUTE);
-                        level.blockEvent(worldPosition, getBlockState().getBlock(), 1, zoneId);
-                        setChanged();
-                        syncTile(false);
-                    }
+                int filled = handler.fill(new FluidStack(Fluids.WATER, 25), IFluidHandler.FluidAction.EXECUTE);
+                if (filled > 0) {
+                    tank.drain(filled, IFluidHandler.FluidAction.EXECUTE);
+                    level.blockEvent(worldPosition, getBlockState().getBlock(), 1, zoneId);
+                    markDirtyAndSync();
                 }
                 return true;
             }
         }
         return false;
     }
+
     @Override
     public boolean triggerEvent(int id, int param) {
         if (id == 1) {
@@ -194,6 +222,7 @@ public class TileWaterJug extends TileArcaneresearch {
         }
         return super.triggerEvent(id, param);
     }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -202,39 +231,48 @@ public class TileWaterJug extends TileArcaneresearch {
         }
         return super.getCapability(cap, side);
     }
+
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
         fluidHandler.invalidate();
     }
+
     public int getWaterLevel() {
         return tank.getFluidAmount();
     }
+
     public boolean isFull() {
         return tank.getFluidAmount() >= TANK_CAPACITY;
     }
+
     private class WaterJugFluidHandler implements IFluidHandler {
         @Override
         public int getTanks() {
             return 1;
         }
+
         @Nonnull
         @Override
         public FluidStack getFluidInTank(int tankIndex) {
             return tank.getFluid();
         }
+
         @Override
         public int getTankCapacity(int tankIndex) {
             return TANK_CAPACITY;
         }
+
         @Override
         public boolean isFluidValid(int tankIndex, @Nonnull FluidStack stack) {
             return false;
         }
+
         @Override
         public int fill(FluidStack resource, FluidAction action) {
             return 0;
         }
+
         @Nonnull
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
@@ -244,22 +282,25 @@ public class TileWaterJug extends TileArcaneresearch {
             boolean wasFull = tank.getFluidAmount() >= TANK_CAPACITY;
             FluidStack drained = tank.drain(resource, action);
             if (action.execute()) {
-                setChanged();
                 if (wasFull && tank.getFluidAmount() < TANK_CAPACITY) {
                     syncTile(false);
+                } else {
+                    setChanged();
                 }
             }
             return drained;
         }
+
         @Nonnull
         @Override
         public FluidStack drain(int maxDrain, FluidAction action) {
             boolean wasFull = tank.getFluidAmount() >= TANK_CAPACITY;
             FluidStack drained = tank.drain(maxDrain, action);
             if (action.execute()) {
-                setChanged();
                 if (wasFull && tank.getFluidAmount() < TANK_CAPACITY) {
                     syncTile(false);
+                } else {
+                    setChanged();
                 }
             }
             return drained;

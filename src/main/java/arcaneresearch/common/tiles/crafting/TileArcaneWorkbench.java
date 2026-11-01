@@ -1,4 +1,5 @@
 package arcaneresearch.common.tiles.crafting;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -16,130 +17,178 @@ import arcaneresearch.common.menu.ArcaneWorkbenchMenu;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModBlocks;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
+
 public class TileArcaneWorkbench extends TileArcaneresearch implements MenuProvider {
     public static final int GRID_SIZE = 9;
     public static final int CRYSTAL_SLOTS = 6;
     public static final int TOTAL_SLOTS = GRID_SIZE + CRYSTAL_SLOTS;
+
     public int auraVisServer = 0;
     public int auraVisClient = 0;
+
     private NonNullList<ItemStack> craftMatrix = NonNullList.withSize(TOTAL_SLOTS, ItemStack.EMPTY);
+
+    private final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+
     public TileArcaneWorkbench(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
+
     public TileArcaneWorkbench(BlockPos pos, BlockState state) {
         this(ModBlockEntities.ARCANE_WORKBENCH.get(), pos, state);
     }
+
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         ContainerHelper.saveAllItems(tag, craftMatrix);
     }
+
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         craftMatrix = NonNullList.withSize(TOTAL_SLOTS, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, craftMatrix);
     }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
+        super.writeSyncNBT(tag);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
+        super.readSyncNBT(tag);
     }
+
     public ItemStack getStackInSlot(int slot) {
         if (slot >= 0 && slot < TOTAL_SLOTS) {
             return craftMatrix.get(slot);
         }
         return ItemStack.EMPTY;
     }
+
     public void setStackInSlot(int slot, ItemStack stack) {
-        if (slot >= 0 && slot < TOTAL_SLOTS) {
-            craftMatrix.set(slot, stack);
-            setChanged();
-        }
+        if (slot < 0 || slot >= TOTAL_SLOTS || stack == null) return;
+
+        craftMatrix.set(slot, stack);
+        setChanged();
     }
+
     public ItemStack removeStackFromSlot(int slot) {
-        if (slot >= 0 && slot < TOTAL_SLOTS) {
-            ItemStack stack = craftMatrix.get(slot);
-            craftMatrix.set(slot, ItemStack.EMPTY);
-            setChanged();
-            return stack;
-        }
-        return ItemStack.EMPTY;
+        if (slot < 0 || slot >= TOTAL_SLOTS) return ItemStack.EMPTY;
+
+        ItemStack stack = craftMatrix.get(slot);
+        craftMatrix.set(slot, ItemStack.EMPTY);
+        setChanged();
+        return stack;
     }
+
     public void clearCraftMatrix() {
         for (int i = 0; i < TOTAL_SLOTS; i++) {
             craftMatrix.set(i, ItemStack.EMPTY);
         }
         setChanged();
     }
+
     public void updateAura() {
         if (level == null || level.isClientSide) return;
+
         int totalVis = 0;
         BlockState above = level.getBlockState(worldPosition.above());
+
         if (above.is(ModBlocks.ARCANE_WORKBENCH_CHARGER.get())) {
             int chunkX = worldPosition.getX() >> 4;
             int chunkZ = worldPosition.getZ() >> 4;
+            int y = worldPosition.getY();
+
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dz = -1; dz <= 1; dz++) {
-                    BlockPos chunkCenter = new BlockPos((chunkX + dx) << 4, worldPosition.getY(), (chunkZ + dz) << 4);
-                    totalVis += (int) AuraHelper.getVis(level, chunkCenter);
+                    mutablePos.set((chunkX + dx) << 4, y, (chunkZ + dz) << 4);
+                    totalVis += (int) AuraHelper.getVis(level, mutablePos);
                 }
             }
         } else {
             totalVis = (int) AuraHelper.getVis(level, worldPosition);
         }
+
         auraVisServer = totalVis;
     }
+
     public void spendAura(int visCost) {
         if (level == null || level.isClientSide || visCost <= 0) return;
+
         BlockState above = level.getBlockState(worldPosition.above());
         boolean hasCharger = above.is(ModBlocks.ARCANE_WORKBENCH_CHARGER.get());
-        if (hasCharger) {
-            int remaining = visCost;
-            int perChunk = Math.max(1, visCost / 9);
-            int attempts = 0;
-            while (remaining > 0 && attempts < 1000) {
-                for (int dx = -1; dx <= 1 && remaining > 0; dx++) {
-                    for (int dz = -1; dz <= 1 && remaining > 0; dz++) {
-                        int toDrain = Math.min(perChunk, remaining);
-                        BlockPos drainPos = worldPosition.offset(dx * 16, 0, dz * 16);
-                        int drained = (int) AuraHelper.drainVis(level, drainPos, toDrain, false);
-                        remaining -= drained;
-                    }
-                }
-                attempts++;
-            }
-        } else {
+
+        if (!hasCharger) {
             AuraHelper.drainVis(level, worldPosition, visCost, false);
+            return;
         }
-    }
-    public void dropContents() {
-        if (level != null && !level.isClientSide) {
-            for (int i = 0; i < TOTAL_SLOTS; i++) {
-                ItemStack stack = craftMatrix.get(i);
-                if (!stack.isEmpty()) {
-                    net.minecraft.world.Containers.dropItemStack(level,
-                            worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), stack);
+
+        int remaining = visCost;
+        int perChunk = Math.max(1, visCost / 9);
+
+        while (remaining > 0) {
+            int before = remaining;
+
+            for (int dx = -1; dx <= 1 && remaining > 0; dx++) {
+                for (int dz = -1; dz <= 1 && remaining > 0; dz++) {
+                    int toDrain = Math.min(perChunk, remaining);
+                    mutablePos.set(
+                            worldPosition.getX() + dx * 16,
+                            worldPosition.getY(),
+                            worldPosition.getZ() + dz * 16
+                    );
+
+                    int drained = (int) AuraHelper.drainVis(level, mutablePos, toDrain, false);
+                    remaining -= drained;
                 }
             }
-            clearCraftMatrix();
+
+            if (remaining == before) break;
         }
     }
+
+    public void dropContents() {
+        if (level == null || level.isClientSide) return;
+
+        for (int i = 0; i < TOTAL_SLOTS; i++) {
+            ItemStack stack = craftMatrix.get(i);
+
+            if (!stack.isEmpty()) {
+                net.minecraft.world.Containers.dropItemStack(level,
+                        worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), stack);
+                craftMatrix.set(i, ItemStack.EMPTY);
+            }
+        }
+
+        setChanged();
+    }
+
     public boolean stillValid(Player player) {
         if (level == null || level.getBlockEntity(worldPosition) != this) {
             return false;
         }
-        return player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) <= 64.0;
+
+        return player.distanceToSqr(
+                worldPosition.getX() + 0.5,
+                worldPosition.getY() + 0.5,
+                worldPosition.getZ() + 0.5
+        ) <= 64.0;
     }
+
     @Override
-    public Component getDisplayName() {
+    public @NotNull Component getDisplayName() {
         return Component.translatable("block.arcaneresearch.arcane_workbench");
     }
+
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
         return new ArcaneWorkbenchMenu(containerId, playerInventory, this);
     }
 }

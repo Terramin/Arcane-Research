@@ -1,4 +1,5 @@
 package arcaneresearch.common.tiles.devices;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -31,61 +33,83 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
 import arcaneresearch.init.ModBlockEntities;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+
 public class TileInfernalFurnace extends TileArcaneresearchInventory implements net.minecraft.world.WorldlyContainer {
+    private static final ItemStack[] EMPTY_ITEMS = new ItemStack[0];
+    private static final int[] EMPTY_SLOTS = new int[0];
+
+    private final SimpleContainer recipeContainer = new SimpleContainer(1);
+    private int[] upSlotsCache;
+
     public int furnaceCookTime = 0;
     public int furnaceMaxCookTime = 0;
     public int speedyTime = 0;
     public int facingX = -5;
     public int facingZ = -5;
+
     public TileInfernalFurnace(BlockPos pos, BlockState state) {
         super(ModBlockEntities.INFERNAL_FURNACE.get(), pos, state, 32);
     }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileInfernalFurnace tile) {
         if (tile.facingX == -5) {
             tile.setFacing(state);
         }
+
         boolean wasCooked = false;
         if (tile.furnaceCookTime > 0) {
             tile.furnaceCookTime--;
             wasCooked = true;
         }
+
         if (tile.furnaceMaxCookTime <= 0) {
             tile.furnaceMaxCookTime = tile.calcCookTime();
         }
+
         if (tile.furnaceCookTime > tile.furnaceMaxCookTime) {
             tile.furnaceCookTime = tile.furnaceMaxCookTime;
         }
+
         if (tile.furnaceCookTime <= 0 && wasCooked) {
             for (int slot = 0; slot < tile.getContainerSize(); slot++) {
                 ItemStack inputStack = tile.getItem(slot);
-                if (!inputStack.isEmpty()) {
-                    ItemStack result = tile.getSmeltingResult(inputStack);
-                    if (!result.isEmpty()) {
-                        if (tile.speedyTime > 0) {
-                            tile.speedyTime--;
-                        }
-                        tile.ejectItem(result.copy(), inputStack);
-                        level.blockEvent(pos, state.getBlock(), 3, 0);
-                        if (level.random.nextInt(20) == 0) {
-                            Direction facing = tile.getFacing(state);
-                            if (facing != null) {
-                                AuraHelper.polluteAura(level, pos.relative(facing.getOpposite()), 1.0f, true);
-                            }
-                        }
-                        tile.removeItem(slot, 1);
-                        break;
+                if (inputStack.isEmpty()) continue;
+
+                ItemStack result = tile.getSmeltingResult(inputStack);
+                if (!result.isEmpty()) {
+                    if (tile.speedyTime > 0) {
+                        tile.speedyTime--;
                     }
-                    tile.setItem(slot, ItemStack.EMPTY);
+
+                    tile.ejectItem(result, inputStack);
+                    level.blockEvent(pos, state.getBlock(), 3, 0);
+
+                    if (level.random.nextInt(20) == 0) {
+                        Direction facing = tile.getFacing(state);
+                        if (facing != null) {
+                            AuraHelper.polluteAura(level, pos.relative(facing.getOpposite()), 1.0f, true);
+                        }
+                    }
+
+                    tile.removeItem(slot, 1);
+                    break;
                 }
+
+                tile.setItem(slot, ItemStack.EMPTY);
             }
         }
+
         if (tile.speedyTime <= 0) {
             tile.speedyTime = (int) AuraHelper.drainVis(level, pos, 20.0f, false);
         }
-        if (tile.furnaceCookTime == 0 && !wasCooked) {
+
+        if (tile.furnaceCookTime <= 0) {
             for (int slot = 0; slot < tile.getContainerSize(); slot++) {
                 if (tile.canSmelt(tile.getItem(slot))) {
                     tile.furnaceMaxCookTime = tile.calcCookTime();
@@ -95,38 +119,46 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
             }
         }
     }
+
     static TagKey<Item> oreDictToTag(String oreDict) {
         if (oreDict == null || !oreDict.startsWith("ore")) return null;
-        String name = oreDict.substring(3).toLowerCase();
-        return net.minecraft.tags.ItemTags.create(new ResourceLocation("forge", "ores/" + name));
+        String name = oreDict.substring(3).toLowerCase(Locale.ROOT);
+        return net.minecraft.tags.ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "ores/" + name));
     }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
         tag.putShort("CookTime", (short) furnaceCookTime);
         tag.putShort("SpeedyTime", (short) speedyTime);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
         furnaceCookTime = tag.getShort("CookTime");
         speedyTime = tag.getShort("SpeedyTime");
     }
+
     private ItemStack getSmeltingResult(ItemStack input) {
         if (input.isEmpty() || level == null) return ItemStack.EMPTY;
-        RecipeManager recipeManager = level.getRecipeManager();
-        Optional<SmeltingRecipe> recipe = recipeManager.getRecipeFor(
+
+        recipeContainer.setItem(0, input);
+        Optional<SmeltingRecipe> recipe = level.getRecipeManager().getRecipeFor(
                 RecipeType.SMELTING,
-                new SimpleContainer(input),
+                recipeContainer,
                 level
         );
         return recipe.map(r -> r.getResultItem(level.registryAccess()).copy()).orElse(ItemStack.EMPTY);
     }
+
     private boolean canSmelt(ItemStack stack) {
         return !stack.isEmpty() && !getSmeltingResult(stack).isEmpty();
     }
+
     private float getSmeltingExperience(ItemStack result) {
         if (level == null) return 0;
+
         RecipeManager recipeManager = level.getRecipeManager();
         for (AbstractCookingRecipe recipe : recipeManager.getAllRecipesFor(RecipeType.SMELTING)) {
             if (ItemStack.isSameItem(recipe.getResultItem(level.registryAccess()), result)) {
@@ -135,24 +167,29 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         }
         return 0;
     }
+
     private int getBellows() {
         if (level == null) return 0;
+
         int bellows = 0;
         for (Direction dir : Direction.values()) {
-            if (dir != Direction.UP) {
-                BlockPos bellowsPos = worldPosition.relative(dir, 2);
-                BlockEntity tile = level.getBlockEntity(bellowsPos);
-                if (tile instanceof TileBellows bellowsTile) {
-                    BlockState bellowsState = level.getBlockState(bellowsPos);
-                    Direction bellowsFacing = bellowsTile.getFacing(bellowsState);
-                    if (bellowsFacing == dir.getOpposite() && level.getBestNeighborSignal(bellowsPos) == 0) {
-                        bellows++;
-                    }
+            if (dir == Direction.UP) continue;
+
+            BlockPos bellowsPos = worldPosition.relative(dir, 2);
+            BlockEntity tile = level.getBlockEntity(bellowsPos);
+
+            if (tile instanceof TileBellows) {
+                BlockState bellowsState = level.getBlockState(bellowsPos);
+                Direction bellowsFacing = TileBellows.getFacing(bellowsState);
+
+                if (bellowsFacing == dir.getOpposite() && level.getBestNeighborSignal(bellowsPos) == 0) {
+                    bellows++;
                 }
             }
         }
         return Math.min(4, bellows);
     }
+
     private int calcCookTime() {
         int b = getBellows();
         if (b > 0) {
@@ -160,8 +197,10 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         }
         return Math.max(10, ((speedyTime > 0) ? 80 : 140) - b);
     }
+
     public ItemStack addItemsToInventory(ItemStack items) {
         if (level == null || items.isEmpty()) return items;
+
         if (canSmelt(items)) {
             items = ArcaneresearchInvHelper.insertStackAt(level, worldPosition, Direction.UP, items, false);
         } else {
@@ -170,48 +209,59 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         }
         return items;
     }
+
     private void destroyItem() {
         if (level == null) return;
+
         level.playSound(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
                 SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.3f,
                 2.6f + (level.random.nextFloat() - level.random.nextFloat()) * 0.8f);
+
         double lx = worldPosition.getX() + level.random.nextFloat();
         double ly = worldPosition.getY() + 1.0;
         double lz = worldPosition.getZ() + level.random.nextFloat();
+
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.LAVA, lx, ly, lz, 1, 0, 0, 0, 0);
         } else {
             level.addParticle(ParticleTypes.LAVA, lx, ly, lz, 0, 0, 0);
         }
     }
+
     public void ejectItem(ItemStack items, ItemStack furnaceItemStack) {
         if (items.isEmpty() || level == null) return;
-        List<ItemStack> ejecti = new ArrayList<>();
-        ejecti.add(items.copy());
-        int bellows = getBellows() + 1;
-        for (int a = 0; a < bellows; ++a) {
-            ItemStack[] boni = getSmeltingBonus(furnaceItemStack);
-            if (boni != null) {
-                for (ItemStack bonus : boni) {
-                    if (!bonus.isEmpty() && bonus.getCount() > 0) {
-                        ejecti.add(bonus);
-                    }
-                }
-            }
-        }
+
         Direction facing = getFacing(level.getBlockState(worldPosition));
         if (facing == null) facing = Direction.NORTH;
         Direction ejectDir = facing.getOpposite();
+
+        List<ItemStack> ejecti = new ArrayList<>();
+        ejecti.add(items.copy());
+
+        int bellows = getBellows() + 1;
+        for (int a = 0; a < bellows; ++a) {
+            ItemStack[] boni = getSmeltingBonus(furnaceItemStack);
+            for (ItemStack bonus : boni) {
+                if (!bonus.isEmpty() && bonus.getCount() > 0) {
+                    ejecti.add(bonus);
+                }
+            }
+        }
+
         for (ItemStack outItem : ejecti) {
             if (outItem.isEmpty()) continue;
             InventoryUtils.ejectStackAt(level, worldPosition, ejectDir, outItem);
         }
-        spawnExperience(items);
+
+        spawnExperience(items, ejectDir);
     }
-    private void spawnExperience(ItemStack result) {
+
+    private void spawnExperience(ItemStack result, Direction ejectDir) {
         if (level == null) return;
+
         float xpf = getSmeltingExperience(result);
         int count = result.getCount();
+
         if (xpf == 0) {
             count = 0;
         } else if (xpf < 1.0f) {
@@ -221,51 +271,64 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
             }
             count = xpAmount;
         }
-        Direction facing = getFacing(level.getBlockState(worldPosition));
-        if (facing == null) facing = Direction.NORTH;
-        float lx = worldPosition.getX() + 0.5f + facing.getOpposite().getStepX() * 1.2f;
-        float lz = worldPosition.getZ() + 0.5f + facing.getOpposite().getStepZ() * 1.2f;
+
+        int stepX = ejectDir.getStepX();
+        int stepZ = ejectDir.getStepZ();
+
+        float lx = worldPosition.getX() + 0.5f + stepX * 1.2f;
+        float lz = worldPosition.getZ() + 0.5f + stepZ * 1.2f;
+
         while (count > 0) {
             int xpValue = ExperienceOrb.getExperienceValue(count);
             count -= xpValue;
+
             ExperienceOrb xp = new ExperienceOrb(level, lx, worldPosition.getY() + 0.4, lz, xpValue);
-            float mx = facing.getOpposite().getStepX() == 0 ?
-                    (level.random.nextFloat() - level.random.nextFloat()) * 0.025f :
-                    facing.getOpposite().getStepX() * 0.13f;
-            float mz = facing.getOpposite().getStepZ() == 0 ?
-                    (level.random.nextFloat() - level.random.nextFloat()) * 0.025f :
-                    facing.getOpposite().getStepZ() * 0.13f;
+
+            float mx = stepX == 0
+                    ? (level.random.nextFloat() - level.random.nextFloat()) * 0.025f
+                    : stepX * 0.13f;
+            float mz = stepZ == 0
+                    ? (level.random.nextFloat() - level.random.nextFloat()) * 0.025f
+                    : stepZ * 0.13f;
+
             xp.setDeltaMovement(mx, 0, mz);
             level.addFreshEntity(xp);
         }
     }
+
     private ItemStack[] getSmeltingBonus(ItemStack in) {
-        if (in.isEmpty() || level == null) return new ItemStack[0];
-        ArrayList<ItemStack> out = new ArrayList<>();
+        if (in.isEmpty() || level == null) return EMPTY_ITEMS;
+
+        ArrayList<ItemStack> out = null;
+
         for (ArcaneresearchApi.SmeltBonus bonus : CommonInternals.smeltingBonus) {
             if (bonus.in instanceof ItemStack bonusIn) {
                 boolean itemMatch = in.is(bonusIn.getItem());
                 boolean nbtWildcard = !bonusIn.hasTag();
                 boolean nbtMatch = nbtWildcard || ItemStack.isSameItemSameTags(in, bonusIn);
+
                 if (!itemMatch || !nbtMatch || level.random.nextFloat() > bonus.chance) {
                     continue;
                 }
+
                 ItemStack is = bonus.out.copy();
                 if (is.getCount() < 1) is.setCount(1);
+                if (out == null) out = new ArrayList<>(4);
                 out.add(is);
             } else if (bonus.in instanceof String oreDict) {
                 TagKey<Item> tag = oreDictToTag(oreDict);
-                if (tag != null && in.is(tag)) {
-                    if (level.random.nextFloat() <= bonus.chance) {
-                        ItemStack is2 = bonus.out.copy();
-                        if (is2.getCount() < 1) is2.setCount(1);
-                        out.add(is2);
-                    }
+                if (tag != null && in.is(tag) && level.random.nextFloat() <= bonus.chance) {
+                    ItemStack is2 = bonus.out.copy();
+                    if (is2.getCount() < 1) is2.setCount(1);
+                    if (out == null) out = new ArrayList<>(4);
+                    out.add(is2);
                 }
             }
         }
-        return out.toArray(new ItemStack[0]);
+
+        return out == null ? EMPTY_ITEMS : out.toArray(EMPTY_ITEMS);
     }
+
     private void setFacing(BlockState state) {
         Direction facing = getFacing(state);
         if (facing != null) {
@@ -277,12 +340,14 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
             facingZ = -1;
         }
     }
+
     private Direction getFacing(BlockState state) {
-        if (state.hasProperty(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING)) {
-            return state.getValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING);
+        if (state.hasProperty(HorizontalDirectionalBlock.FACING)) {
+            return state.getValue(HorizontalDirectionalBlock.FACING);
         }
         return Direction.NORTH;
     }
+
     @Override
     public boolean triggerEvent(int id, int param) {
         if (id == 3) {
@@ -293,33 +358,42 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         }
         return super.triggerEvent(id, param);
     }
+
     @OnlyIn(Dist.CLIENT)
     private void spawnLavaFX() {
         for (int a = 0; a < 5; ++a) {
             FXDispatcher.INSTANCE.furnaceLavaFx(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), facingX, facingZ);
+            assert level != null;
             level.playLocalSound(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5,
                     SoundEvents.LAVA_POP, SoundSource.BLOCKS,
                     0.1f + level.random.nextFloat() * 0.1f,
                     0.9f + level.random.nextFloat() * 0.15f, false);
         }
     }
+
     @Override
-    public int[] getSlotsForFace(Direction side) {
-        if (side == Direction.UP) {
-            int[] slots = new int[getContainerSize()];
-            for (int i = 0; i < slots.length; i++) slots[i] = i;
-            return slots;
+    public int @NotNull [] getSlotsForFace(@NotNull Direction side) {
+        if (side != Direction.UP) return EMPTY_SLOTS;
+
+        if (upSlotsCache == null) {
+            int size = getContainerSize();
+            int[] slots = new int[size];
+            for (int i = 0; i < size; i++) slots[i] = i;
+            upSlotsCache = slots;
         }
-        return new int[0];
+        return upSlotsCache;
     }
+
     @Override
-    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction dir) {
+    public boolean canPlaceItemThroughFace(int slot, @NotNull ItemStack stack, Direction dir) {
         return dir == Direction.UP;
     }
+
     @Override
-    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
+    public boolean canTakeItemThroughFace(int slot, @NotNull ItemStack stack, @NotNull Direction dir) {
         return false;
     }
+
     @Override
     public AABB getRenderBoundingBox() {
         return new AABB(

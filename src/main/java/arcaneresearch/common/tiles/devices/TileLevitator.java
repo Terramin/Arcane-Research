@@ -1,4 +1,9 @@
 package arcaneresearch.common.tiles.devices;
+
+import arcaneresearch.api.aura.AuraHelper;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.tiles.TileArcaneresearch;
+import arcaneresearch.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -12,31 +17,36 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
-import arcaneresearch.api.aura.AuraHelper;
-import arcaneresearch.client.fx.FXDispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import arcaneresearch.common.tiles.TileArcaneresearch;
-import arcaneresearch.init.ModBlockEntities;
+
 import java.util.List;
+
 public class TileLevitator extends TileArcaneresearch {
+
     private static final int[] RANGES = {4, 8, 16, 32};
+
     private int rangeIndex = 1;
     private int rangeActual = 0;
     private int counter = 0;
     private int vis = 0;
+
     public TileLevitator(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
+
     public TileLevitator(BlockPos pos, BlockState state) {
         this(ModBlockEntities.LEVITATOR.get(), pos, state);
     }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileLevitator tile) {
         tile.tick();
     }
+
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileLevitator tile) {
         tile.tick();
     }
+
     private void tick() {
         Direction facing = getFacing();
         int maxRange = RANGES[rangeIndex];
@@ -45,6 +55,7 @@ public class TileLevitator extends TileArcaneresearch {
         }
         int p = counter % maxRange;
         BlockPos checkPos = worldPosition.relative(facing, 1 + p);
+        assert level != null;
         if (level.getBlockState(checkPos).canOcclude()) {
             if (1 + p < rangeActual) {
                 rangeActual = 1 + p;
@@ -54,21 +65,31 @@ public class TileLevitator extends TileArcaneresearch {
             rangeActual = 1 + p;
         }
         counter++;
-        if (!level.isClientSide && vis < 10) {
-            vis += (int) (AuraHelper.drainVis(level, worldPosition, 1.0f, false) * 1200.0f);
-            setChanged();
-            syncTile(false);
+
+        boolean client = level.isClientSide;
+
+        if (!client && vis < 10) {
+            float drained = AuraHelper.drainVis(level, worldPosition, 1.0f, false);
+            if (drained > 0) {
+                vis += (int) (drained * 1200.0f);
+                markDirtyAndSync();
+            }
         }
+
         if (rangeActual <= 0 || vis <= 0 || !isEnabled()) {
             return;
         }
+
         AABB box = createSelectionBox(facing);
         List<Entity> targets = level.getEntitiesOfClass(Entity.class, box,
-                e -> e instanceof ItemEntity || e.isPushable() || e instanceof AbstractHorse);
+                e -> e instanceof ItemEntity || e instanceof AbstractHorse || e.isPushable());
+        int cost = getCost();
         boolean lifted = false;
-        for (Entity entity : targets) {
+
+        for (int i = 0, n = targets.size(); i < n; i++) {
+            Entity entity = targets.get(i);
             lifted = true;
-            if (level.isClientSide) {
+            if (client) {
                 drawFXAt(entity);
                 drawFX(facing, 0.6);
             }
@@ -77,8 +98,7 @@ public class TileLevitator extends TileArcaneresearch {
                     entity.setDeltaMovement(
                             entity.getDeltaMovement().x,
                             entity.getDeltaMovement().y * 0.9,
-                            entity.getDeltaMovement().z
-                    );
+                            entity.getDeltaMovement().z);
                 }
             } else {
                 double mx = entity.getDeltaMovement().x + 0.1 * facing.getStepX();
@@ -90,24 +110,26 @@ public class TileLevitator extends TileArcaneresearch {
                     }
                     my += 0.08;
                 }
-                mx = clamp(mx, -0.35, 0.35);
-                my = clamp(my, -0.35, 0.35);
-                mz = clamp(mz, -0.35, 0.35);
+                mx = clamp(mx);
+                my = clamp(my);
+                mz = clamp(mz);
                 entity.setDeltaMovement(mx, my, mz);
             }
             entity.fallDistance = 0;
-            vis -= getCost();
+            vis -= cost;
             if (vis <= 0) {
                 break;
             }
         }
-        if (level.isClientSide) {
+
+        if (client) {
             drawFX(facing, 0.1);
         }
-        if (lifted && !level.isClientSide && counter % 20 == 0) {
+        if (lifted && !client && counter % 20 == 0) {
             setChanged();
         }
     }
+
     private AABB createSelectionBox(Direction facing) {
         int ox = facing.getStepX();
         int oy = facing.getStepY();
@@ -118,11 +140,12 @@ public class TileLevitator extends TileArcaneresearch {
                 worldPosition.getZ() - (oz < 0 ? rangeActual : 0),
                 worldPosition.getX() + 1 + (ox > 0 ? rangeActual : 0),
                 worldPosition.getY() + 1 + (oy > 0 ? rangeActual : 0),
-                worldPosition.getZ() + 1 + (oz > 0 ? rangeActual : 0)
-        );
+                worldPosition.getZ() + 1 + (oz > 0 ? rangeActual : 0));
     }
+
     @OnlyIn(Dist.CLIENT)
     private void drawFX(Direction facing, double chance) {
+        assert level != null;
         if (level.isClientSide && level.random.nextFloat() < chance) {
             float x = worldPosition.getX() + 0.25f + level.random.nextFloat() * 0.5f;
             float y = worldPosition.getY() + 0.25f + level.random.nextFloat() * 0.5f;
@@ -133,8 +156,10 @@ public class TileLevitator extends TileArcaneresearch {
                     facing.getStepZ() / 50.0);
         }
     }
+
     @OnlyIn(Dist.CLIENT)
     private void drawFXAt(Entity entity) {
+        assert level != null;
         if (level.isClientSide && level.random.nextFloat() < 0.1f) {
             float x = (float) (entity.getX() + (level.random.nextFloat() - level.random.nextFloat()) * entity.getBbWidth());
             float y = (float) (entity.getY() + level.random.nextFloat() * entity.getBbHeight());
@@ -145,29 +170,34 @@ public class TileLevitator extends TileArcaneresearch {
                     (level.random.nextFloat() - level.random.nextFloat()) * 0.01);
         }
     }
-    private double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
+
+    private double clamp(double value) {
+        return Math.max(-0.35, Math.min(0.35, value));
     }
+
     public int getCost() {
         return RANGES[rangeIndex] * 2;
     }
+
     public int getRange() {
         return RANGES[rangeIndex];
     }
+
     public void increaseRange(Player player) {
         rangeActual = 0;
-        if (!level.isClientSide) {
-            rangeIndex++;
-            if (rangeIndex >= RANGES.length) {
-                rangeIndex = 0;
-            }
-            setChanged();
-            syncTile(false);
+        if (level == null || level.isClientSide) return;
+        rangeIndex++;
+        if (rangeIndex >= RANGES.length) {
+            rangeIndex = 0;
+        }
+        markDirtyAndSync();
+        if (player != null) {
             player.displayClientMessage(
                     Component.translatable("tc.levitator", RANGES[rangeIndex], getCost()),
                     true);
         }
     }
+
     private Direction getFacing() {
         BlockState state = getBlockState();
         if (state.hasProperty(BlockStateProperties.FACING)) {
@@ -175,15 +205,19 @@ public class TileLevitator extends TileArcaneresearch {
         }
         return Direction.UP;
     }
+
     private boolean isEnabled() {
+        assert level != null;
         return !level.hasNeighborSignal(worldPosition);
     }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
         tag.putByte("range", (byte) rangeIndex);
         tag.putInt("vis", vis);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);

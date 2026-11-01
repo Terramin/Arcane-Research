@@ -1,4 +1,10 @@
 package arcaneresearch.common.tiles.devices;
+
+import arcaneresearch.api.aura.AuraHelper;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.blocks.devices.BlockMirror;
+import arcaneresearch.common.tiles.TileArcaneresearch;
+import arcaneresearch.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -17,31 +23,43 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import arcaneresearch.api.aura.AuraHelper;
-import arcaneresearch.client.fx.FXDispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import arcaneresearch.common.tiles.TileArcaneresearch;
-import arcaneresearch.init.ModBlockEntities;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
 public class TileMirror extends TileArcaneresearch implements Container {
+
     private static final int INSTABILITY_THRESHOLD = 128;
+
     public boolean linked = false;
     public int linkX = 0;
     public int linkY = 0;
     public int linkZ = 0;
     public ResourceKey<Level> linkDimension = Level.OVERWORLD;
     public int instability = 0;
+
     private int count = 0;
     private int linkCheckInterval = 40;
-    private List<ItemStack> outputStacks = new ArrayList<>();
+    private final List<ItemStack> outputStacks = new ArrayList<>();
+
+    @Nullable
+    private BlockPos cachedLinkedPos;
+    private int cachedLinkX = Integer.MIN_VALUE;
+    private int cachedLinkY = Integer.MIN_VALUE;
+    private int cachedLinkZ = Integer.MIN_VALUE;
+
     public TileMirror(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
+
     public TileMirror(BlockPos pos, BlockState state) {
         this(ModBlockEntities.MIRROR_ITEM.get(), pos, state);
     }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileMirror tile) {
         tile.count++;
         tile.ejectItems();
@@ -57,21 +75,35 @@ public class TileMirror extends TileArcaneresearch implements Container {
             }
         }
     }
+
+    private BlockPos getLinkedPos() {
+        BlockPos pos = cachedLinkedPos;
+        if (pos != null && cachedLinkX == linkX && cachedLinkY == linkY && cachedLinkZ == linkZ) {
+            return pos;
+        }
+        pos = new BlockPos(linkX, linkY, linkZ);
+        cachedLinkedPos = pos;
+        cachedLinkX = linkX;
+        cachedLinkY = linkY;
+        cachedLinkZ = linkZ;
+        return pos;
+    }
+
     static void updateLinkedState(Level world, BlockPos pos, boolean value) {
         if (world == null || world.isClientSide) {
             return;
         }
         try {
             BlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof arcaneresearch.common.blocks.devices.BlockMirror
-                    && state.hasProperty(arcaneresearch.common.blocks.devices.BlockMirror.LINKED)
-                    && state.getValue(arcaneresearch.common.blocks.devices.BlockMirror.LINKED) != value) {
-                world.setBlock(pos, state.setValue(
-                        arcaneresearch.common.blocks.devices.BlockMirror.LINKED, value), 3);
+            if (state.getBlock() instanceof BlockMirror
+                    && state.hasProperty(BlockMirror.LINKED)
+                    && state.getValue(BlockMirror.LINKED) != value) {
+                world.setBlock(pos, state.setValue(BlockMirror.LINKED, value), 3);
             }
         } catch (Exception ignored) {
         }
     }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
@@ -82,6 +114,7 @@ public class TileMirror extends TileArcaneresearch implements Container {
         tag.putString("LinkDim", linkDimension.location().toString());
         tag.putInt("Instability", instability);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
@@ -90,156 +123,150 @@ public class TileMirror extends TileArcaneresearch implements Container {
         linkY = tag.contains("LinkY") ? tag.getInt("LinkY") : tag.getInt("linkY");
         linkZ = tag.contains("LinkZ") ? tag.getInt("LinkZ") : tag.getInt("linkZ");
         if (tag.contains("LinkDim")) {
-            linkDimension = ResourceKey.create(Registries.DIMENSION,
-                    new ResourceLocation(tag.getString("LinkDim")));
+            ResourceLocation dimLoc = ResourceLocation.tryParse(tag.getString("LinkDim"));
+            if (dimLoc != null) {
+                linkDimension = ResourceKey.create(Registries.DIMENSION, dimLoc);
+            }
         } else if (tag.contains("linkDim")) {
             readLegacyLinkDim(tag);
         }
         instability = tag.contains("Instability") ? tag.getInt("Instability") : tag.getInt("instability");
     }
+
     private void readLegacyLinkDim(CompoundTag tag) {
-        try {
-            int dim = tag.getInt("linkDim");
-            if (dim == -1) {
-                linkDimension = Level.NETHER;
-            } else if (dim == 1) {
-                linkDimension = Level.END;
-            } else {
-                linkDimension = Level.OVERWORLD;
-            }
-        } catch (Exception ignored) {
-            try {
-                linkDimension = ResourceKey.create(Registries.DIMENSION,
-                        new ResourceLocation(tag.getString("linkDim")));
-            } catch (Exception ignored2) {
-            }
+        int dim = tag.getInt("linkDim");
+        if (dim == -1) {
+            linkDimension = Level.NETHER;
+        } else if (dim == 1) {
+            linkDimension = Level.END;
+        } else {
+            linkDimension = Level.OVERWORLD;
         }
     }
+
     @Override
-    public void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         ListTag itemList = new ListTag();
-        for (int i = 0; i < outputStacks.size(); i++) {
-            ItemStack stack = outputStacks.get(i);
+        for (ItemStack stack : outputStacks) {
             if (!stack.isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putByte("Slot", (byte) i);
-                stack.save(itemTag);
-                itemList.add(itemTag);
+                itemList.add(stack.save(new CompoundTag()));
             }
         }
         tag.put("Items", itemList);
     }
+
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         outputStacks.clear();
         ListTag itemList = tag.getList("Items", Tag.TAG_COMPOUND);
-        for (int i = 0; i < itemList.size(); i++) {
-            CompoundTag itemTag = itemList.getCompound(i);
-            ItemStack stack = ItemStack.of(itemTag);
+        for (int i = 0, n = itemList.size(); i < n; i++) {
+            ItemStack stack = ItemStack.of(itemList.getCompound(i));
             if (!stack.isEmpty()) {
                 outputStacks.add(stack);
             }
         }
     }
+
     public void restoreLink() {
         if (!isDestinationValid()) return;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (te instanceof TileMirror target) {
             target.linked = true;
             target.linkX = worldPosition.getX();
             target.linkY = worldPosition.getY();
             target.linkZ = worldPosition.getZ();
+            assert level != null;
             target.linkDimension = level.dimension();
             target.syncTile(false);
             linked = true;
-            setChanged();
-            target.setChanged();
             syncTile(false);
-            updateLinkedState(targetWorld, new BlockPos(linkX, linkY, linkZ), true);
+            updateLinkedState(targetWorld, getLinkedPos(), true);
             updateLinkedState(level, worldPosition, true);
         }
     }
+
     public void invalidateLink() {
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return;
         if (!isChunkLoaded(targetWorld, linkX, linkZ)) return;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (te instanceof TileMirror target) {
             target.linked = false;
-            setChanged();
-            target.setChanged();
             target.syncTile(false);
-            updateLinkedState(targetWorld, new BlockPos(linkX, linkY, linkZ), false);
+            updateLinkedState(targetWorld, getLinkedPos(), false);
         }
     }
+
     public boolean isLinkValid() {
         if (!linked) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (!(te instanceof TileMirror target)) {
-            setLinked(false);
+            setLinked();
             return false;
         }
         if (!target.linked) {
-            setLinked(false);
+            setLinked();
             return false;
         }
-        if (target.linkX != worldPosition.getX() ||
-                target.linkY != worldPosition.getY() ||
-                target.linkZ != worldPosition.getZ() ||
-                !target.linkDimension.equals(level.dimension())) {
-            setLinked(false);
+        if (target.linkX != worldPosition.getX()
+                || target.linkY != worldPosition.getY()
+                || target.linkZ != worldPosition.getZ()
+                || !target.linkDimension.equals(level != null ? level.dimension() : null)) {
+            setLinked();
             return false;
         }
         return true;
     }
-    private void setLinked(boolean value) {
-        linked = value;
-        setChanged();
+
+    private void setLinked() {
+        linked = false;
         syncTile(false);
         if (level != null && !level.isClientSide) {
-            updateLinkedState(level, worldPosition, value);
+            updateLinkedState(level, worldPosition, false);
         }
     }
+
     public boolean isLinkValidSimple() {
         if (!linked) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (!(te instanceof TileMirror target)) return false;
-        return target.linked &&
-                target.linkX == worldPosition.getX() &&
-                target.linkY == worldPosition.getY() &&
-                target.linkZ == worldPosition.getZ() &&
-                target.linkDimension.equals(level.dimension());
+        if (!target.linked
+                || target.linkX != worldPosition.getX()
+                || target.linkY != worldPosition.getY()
+                || target.linkZ != worldPosition.getZ()) return false;
+        assert level != null;
+        return target.linkDimension.equals(level.dimension());
     }
+
     public boolean isDestinationValid() {
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (!(te instanceof TileMirror target)) {
-            setLinked(false);
+            setLinked();
             return false;
         }
         return !target.isLinkValid();
     }
+
     public boolean transport(ItemEntity itemEntity) {
-        ItemStack items = itemEntity.getItem();
         if (!linked || !isLinkValid()) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (te instanceof TileMirror target) {
+            ItemStack items = itemEntity.getItem();
             target.addStack(items.copy());
-            addInstability(null, items.getCount());
+            addInstability(items.getCount());
             itemEntity.discard();
-            setChanged();
-            target.setChanged();
             if (level instanceof ServerLevel serverLevel) {
                 serverLevel.blockEvent(worldPosition, getBlockState().getBlock(), 1, 0);
             }
@@ -247,29 +274,33 @@ public class TileMirror extends TileArcaneresearch implements Container {
         }
         return false;
     }
+
     public boolean transportDirect(ItemStack items) {
         if (items.isEmpty()) return false;
         addStack(items.copy());
-        setChanged();
         return true;
     }
+
     public void addStack(ItemStack stack) {
         outputStacks.add(stack.copy());
         setChanged();
     }
+
     private void ejectItems() {
         if (outputStacks.isEmpty() || count <= 20) return;
+        assert level != null;
         int index = level.random.nextInt(outputStacks.size());
         ItemStack stack = outputStacks.get(index);
         if (stack.isEmpty()) {
             outputStacks.remove(index);
+            setChanged();
             return;
         }
         ItemStack outItem = stack.copy();
         outItem.setCount(1);
         if (spawnItem(outItem)) {
             stack.shrink(1);
-            addInstability(null, 1);
+            addInstability(1);
             if (level instanceof ServerLevel serverLevel) {
                 serverLevel.blockEvent(worldPosition, getBlockState().getBlock(), 1, 0);
             }
@@ -277,8 +308,8 @@ public class TileMirror extends TileArcaneresearch implements Container {
                 outputStacks.remove(index);
             }
         }
-        setChanged();
     }
+
     private boolean spawnItem(ItemStack stack) {
         if (level == null || stack.isEmpty()) return false;
         try {
@@ -303,18 +334,12 @@ public class TileMirror extends TileArcaneresearch implements Container {
             return false;
         }
     }
-    protected void addInstability(Level targetWorld, int amount) {
+
+    protected void addInstability(int amount) {
         instability += amount;
         setChanged();
-        if (targetWorld != null) {
-            BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
-            if (te instanceof TileMirror target) {
-                target.instability += amount;
-                if (target.instability < 0) target.instability = 0;
-                target.setChanged();
-            }
-        }
     }
+
     private void checkInstability() {
         if (instability > INSTABILITY_THRESHOLD) {
             AuraHelper.polluteAura(level, worldPosition, 1.0f, true);
@@ -323,24 +348,29 @@ public class TileMirror extends TileArcaneresearch implements Container {
         }
         if (instability > 0 && count % 100 == 0) {
             instability--;
+            setChanged();
         }
     }
+
     private Direction getFacing() {
         BlockState state = getBlockState();
-        if (state.hasProperty(arcaneresearch.common.blocks.devices.BlockMirror.FACING)) {
-            return state.getValue(arcaneresearch.common.blocks.devices.BlockMirror.FACING);
+        if (state.hasProperty(BlockMirror.FACING)) {
+            return state.getValue(BlockMirror.FACING);
         }
         return Direction.NORTH;
     }
+
     private ServerLevel getTargetWorld() {
         if (level == null || level.isClientSide()) return null;
         MinecraftServer server = level.getServer();
         if (server == null) return null;
         return server.getLevel(linkDimension);
     }
+
     private boolean isChunkLoaded(ServerLevel world, int x, int z) {
         return world.hasChunkAt(new BlockPos(x, 0, z));
     }
+
     @Override
     public boolean triggerEvent(int id, int data) {
         if (id == 1) {
@@ -351,9 +381,11 @@ public class TileMirror extends TileArcaneresearch implements Container {
         }
         return super.triggerEvent(id, data);
     }
+
     @OnlyIn(Dist.CLIENT)
     private void spawnWispyMotes() {
         Direction face = getFacing();
+        assert level != null;
         double xx = worldPosition.getX() + 0.33 + level.random.nextFloat() * 0.33f - face.getStepX() / 2.0;
         double yy = worldPosition.getY() + 0.33 + level.random.nextFloat() * 0.33f - face.getStepY() / 2.0;
         double zz = worldPosition.getZ() + 0.33 + level.random.nextFloat() * 0.33f - face.getStepZ() / 2.0;
@@ -365,28 +397,34 @@ public class TileMirror extends TileArcaneresearch implements Container {
                 level.random.nextFloat() / 3.0f, 0.0f, level.random.nextFloat() / 2.0f,
                 (float) (level.random.nextGaussian() * 0.01));
     }
+
     @Override
     public int getContainerSize() {
         return 1;
     }
+
     @Override
     public boolean isEmpty() {
         return false;
     }
+
     @Override
-    public ItemStack getItem(int slot) {
+    public @NotNull ItemStack getItem(int slot) {
         return ItemStack.EMPTY;
     }
+
     @Override
-    public ItemStack removeItem(int slot, int amount) {
+    public @NotNull ItemStack removeItem(int slot, int amount) {
         return ItemStack.EMPTY;
     }
+
     @Override
-    public ItemStack removeItemNoUpdate(int slot) {
+    public @NotNull ItemStack removeItemNoUpdate(int slot) {
         return ItemStack.EMPTY;
     }
+
     @Override
-    public void setItem(int slot, ItemStack stack) {
+    public void setItem(int slot, @NotNull ItemStack stack) {
         if (!linked || !isLinkValid()) {
             spawnItem(stack.copy());
             return;
@@ -396,10 +434,10 @@ public class TileMirror extends TileArcaneresearch implements Container {
             spawnItem(stack.copy());
             return;
         }
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (te instanceof TileMirror target) {
             target.addStack(stack.copy());
-            addInstability(null, stack.getCount());
+            addInstability(stack.getCount());
             if (level instanceof ServerLevel serverLevel) {
                 serverLevel.blockEvent(worldPosition, getBlockState().getBlock(), 1, 0);
             }
@@ -407,10 +445,12 @@ public class TileMirror extends TileArcaneresearch implements Container {
             spawnItem(stack.copy());
         }
     }
+
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return false;
     }
+
     @Override
     public void clearContent() {
         outputStacks.clear();

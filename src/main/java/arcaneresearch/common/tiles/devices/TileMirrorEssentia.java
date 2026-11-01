@@ -1,4 +1,13 @@
 package arcaneresearch.common.tiles.devices;
+
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.api.aspects.IAspectSource;
+import arcaneresearch.api.aura.AuraHelper;
+import arcaneresearch.common.blocks.devices.BlockMirror;
+import arcaneresearch.common.lib.events.EssentiaHandler;
+import arcaneresearch.common.tiles.TileArcaneresearch;
+import arcaneresearch.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -11,15 +20,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.aspects.IAspectSource;
-import arcaneresearch.api.aura.AuraHelper;
-import arcaneresearch.common.lib.events.EssentiaHandler;
-import arcaneresearch.common.tiles.TileArcaneresearch;
-import arcaneresearch.init.ModBlockEntities;
+
+import javax.annotation.Nullable;
+
 public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSource {
+
     private static final int INSTABILITY_THRESHOLD = 64;
+
     public boolean linked = false;
     public int linkX = 0;
     public int linkY = 0;
@@ -27,14 +34,24 @@ public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSou
     public ResourceKey<Level> linkDimension = Level.OVERWORLD;
     public Direction linkedFacing = null;
     public int instability = 0;
+
     private int count = 0;
     private int linkCheckInterval = 40;
+
+    @Nullable
+    private BlockPos cachedLinkedPos;
+    private int cachedLinkX = Integer.MIN_VALUE;
+    private int cachedLinkY = Integer.MIN_VALUE;
+    private int cachedLinkZ = Integer.MIN_VALUE;
+
     public TileMirrorEssentia(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
+
     public TileMirrorEssentia(BlockPos pos, BlockState state) {
         this(ModBlockEntities.MIRROR_ESSENTIA.get(), pos, state);
     }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileMirrorEssentia tile) {
         tile.count++;
         tile.checkInstability();
@@ -49,6 +66,20 @@ public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSou
             }
         }
     }
+
+    private BlockPos getLinkedPos() {
+        BlockPos pos = cachedLinkedPos;
+        if (pos != null && cachedLinkX == linkX && cachedLinkY == linkY && cachedLinkZ == linkZ) {
+            return pos;
+        }
+        pos = new BlockPos(linkX, linkY, linkZ);
+        cachedLinkedPos = pos;
+        cachedLinkX = linkX;
+        cachedLinkY = linkY;
+        cachedLinkZ = linkZ;
+        return pos;
+    }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
@@ -59,6 +90,7 @@ public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSou
         tag.putString("LinkDim", linkDimension.location().toString());
         tag.putInt("Instability", instability);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
@@ -67,123 +99,123 @@ public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSou
         linkY = tag.contains("LinkY") ? tag.getInt("LinkY") : tag.getInt("linkY");
         linkZ = tag.contains("LinkZ") ? tag.getInt("LinkZ") : tag.getInt("linkZ");
         if (tag.contains("LinkDim")) {
-            linkDimension = ResourceKey.create(Registries.DIMENSION,
-                    new ResourceLocation(tag.getString("LinkDim")));
+            ResourceLocation dimLoc = ResourceLocation.tryParse(tag.getString("LinkDim"));
+            if (dimLoc != null) {
+                linkDimension = ResourceKey.create(Registries.DIMENSION, dimLoc);
+            }
         } else if (tag.contains("linkDim")) {
             readLegacyLinkDim(tag);
         }
         instability = tag.contains("Instability") ? tag.getInt("Instability") : tag.getInt("instability");
     }
+
     private void readLegacyLinkDim(CompoundTag tag) {
-        try {
-            int dim = tag.getInt("linkDim");
-            if (dim == -1) {
-                linkDimension = Level.NETHER;
-            } else if (dim == 1) {
-                linkDimension = Level.END;
-            } else {
-                linkDimension = Level.OVERWORLD;
-            }
-        } catch (Exception ignored) {
-            try {
-                linkDimension = ResourceKey.create(Registries.DIMENSION,
-                        new ResourceLocation(tag.getString("linkDim")));
-            } catch (Exception ignored2) {
-            }
+        int dim = tag.getInt("linkDim");
+        if (dim == -1) {
+            linkDimension = Level.NETHER;
+        } else if (dim == 1) {
+            linkDimension = Level.END;
+        } else {
+            linkDimension = Level.OVERWORLD;
         }
     }
+
     public void restoreLink() {
         if (!isDestinationValid()) return;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (te instanceof TileMirrorEssentia target) {
             target.linked = true;
             target.linkX = worldPosition.getX();
             target.linkY = worldPosition.getY();
             target.linkZ = worldPosition.getZ();
+            assert level != null;
             target.linkDimension = level.dimension();
             target.syncTile(false);
-            linkedFacing = getFacingAt(targetWorld, new BlockPos(linkX, linkY, linkZ));
+            linkedFacing = getFacingAt(targetWorld, getLinkedPos());
             linked = true;
-            setChanged();
-            target.setChanged();
             syncTile(false);
-            TileMirror.updateLinkedState(targetWorld, new BlockPos(linkX, linkY, linkZ), true);
+            TileMirror.updateLinkedState(targetWorld, getLinkedPos(), true);
             TileMirror.updateLinkedState(level, worldPosition, true);
         }
     }
+
     public void invalidateLink() {
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return;
         if (!isChunkLoaded(targetWorld, linkX, linkZ)) return;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (te instanceof TileMirrorEssentia target) {
             target.linked = false;
             target.linkedFacing = null;
             setChanged();
-            target.setChanged();
             target.syncTile(false);
-            TileMirror.updateLinkedState(targetWorld, new BlockPos(linkX, linkY, linkZ), false);
+            TileMirror.updateLinkedState(targetWorld, getLinkedPos(), false);
         }
     }
+
     public boolean isLinkValid() {
         if (!linked) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (!(te instanceof TileMirrorEssentia target)) {
-            setLinked(false);
+            setLinked();
             return false;
         }
         if (!target.linked) {
-            setLinked(false);
+            setLinked();
             return false;
         }
-        if (target.linkX != worldPosition.getX() ||
-                target.linkY != worldPosition.getY() ||
-                target.linkZ != worldPosition.getZ() ||
-                !target.linkDimension.equals(level.dimension())) {
-            setLinked(false);
+        if (target.linkX != worldPosition.getX()
+                || target.linkY != worldPosition.getY()
+                || target.linkZ != worldPosition.getZ()
+                || !target.linkDimension.equals(level != null ? level.dimension() : null)) {
+            setLinked();
             return false;
         }
         return true;
     }
-    private void setLinked(boolean value) {
-        linked = value;
-        setChanged();
+
+    private void setLinked() {
+        linked = false;
         syncTile(false);
         if (level != null && !level.isClientSide) {
-            TileMirror.updateLinkedState(level, worldPosition, value);
+            TileMirror.updateLinkedState(level, worldPosition, false);
         }
     }
+
     public boolean isLinkValidSimple() {
         if (!linked) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (!(te instanceof TileMirrorEssentia target)) return false;
-        return target.linked &&
-                target.linkX == worldPosition.getX() &&
-                target.linkY == worldPosition.getY() &&
-                target.linkZ == worldPosition.getZ() &&
-                target.linkDimension.equals(level.dimension());
+        if (!target.linked
+                || target.linkX != worldPosition.getX()
+                || target.linkY != worldPosition.getY()
+                || target.linkZ != worldPosition.getZ()) return false;
+        assert level != null;
+        return target.linkDimension.equals(level.dimension());
     }
+
     public boolean isDestinationValid() {
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(getLinkedPos());
         if (!(te instanceof TileMirrorEssentia target)) {
-            setLinked(false);
+            setLinked();
             return false;
         }
         return !target.isLinkValid();
     }
-    protected void addInstability(Level targetWorld, int amount) {
+
+    protected void addInstability(int amount) {
         instability += amount;
         setChanged();
-        if (targetWorld != null) {
-            BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        if (null != null) {
+            BlockEntity te = ((Level) null).getBlockEntity(getLinkedPos());
             if (te instanceof TileMirrorEssentia target) {
                 target.instability += amount;
                 if (target.instability < 0) target.instability = 0;
@@ -191,6 +223,7 @@ public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSou
             }
         }
     }
+
     private void checkInstability() {
         if (instability > INSTABILITY_THRESHOLD) {
             AuraHelper.polluteAura(level, worldPosition, 1.0f, true);
@@ -201,109 +234,127 @@ public class TileMirrorEssentia extends TileArcaneresearch implements IAspectSou
             instability--;
         }
     }
+
     @Override
     public AspectList getAspects() {
         return null;
     }
+
     @Override
     public void setAspects(AspectList aspects) {
     }
+
     @Override
     public boolean doesContainerAccept(Aspect aspect) {
         if (!isLinkValid()) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
+        BlockPos linkedPos = getLinkedPos();
         if (linkedFacing == null) {
-            linkedFacing = getFacingAt(targetWorld, new BlockPos(linkX, linkY, linkZ));
+            linkedFacing = getFacingAt(targetWorld, linkedPos);
         }
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(linkedPos);
         return te instanceof TileMirrorEssentia
                 && EssentiaHandler.canAcceptEssentia(te, aspect, linkedFacing, 8, true);
     }
+
     @Override
     public int addToContainer(Aspect aspect, int amount) {
-        if (!isLinkValid() || amount > 1) return amount;
+        if (amount > 1 || !isLinkValid()) return amount;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return amount;
+        BlockPos linkedPos = getLinkedPos();
         if (linkedFacing == null) {
-            linkedFacing = getFacingAt(targetWorld, new BlockPos(linkX, linkY, linkZ));
+            linkedFacing = getFacingAt(targetWorld, linkedPos);
         }
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(linkedPos);
         if (te instanceof TileMirrorEssentia) {
             boolean b = EssentiaHandler.addEssentia(te, aspect, linkedFacing, 8, true, 5);
             if (b) {
-                addInstability(null, amount);
+                addInstability(amount);
             }
             return b ? 0 : amount;
         }
         return amount;
     }
+
     @Override
     public boolean takeFromContainer(Aspect aspect, int amount) {
-        if (!isLinkValid() || amount > 1) return false;
+        if (amount > 1 || !isLinkValid()) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
+        BlockPos linkedPos = getLinkedPos();
         if (linkedFacing == null) {
-            linkedFacing = getFacingAt(targetWorld, new BlockPos(linkX, linkY, linkZ));
+            linkedFacing = getFacingAt(targetWorld, linkedPos);
         }
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(linkedPos);
         if (te instanceof TileMirrorEssentia) {
             boolean b = EssentiaHandler.drainEssentia(te, aspect, linkedFacing, 8, true, 5);
             if (b) {
-                addInstability(null, amount);
+                addInstability(amount);
             }
             return b;
         }
         return false;
     }
+
     @Override
     public boolean takeFromContainer(AspectList aspects) {
         return false;
     }
+
     @Override
     public boolean doesContainerContainAmount(Aspect aspect, int amount) {
-        if (!isLinkValid() || amount > 1) return false;
+        if (amount > 1 || !isLinkValid()) return false;
         ServerLevel targetWorld = getTargetWorld();
         if (targetWorld == null) return false;
+        BlockPos linkedPos = getLinkedPos();
         if (linkedFacing == null) {
-            linkedFacing = getFacingAt(targetWorld, new BlockPos(linkX, linkY, linkZ));
+            linkedFacing = getFacingAt(targetWorld, linkedPos);
         }
-        BlockEntity te = targetWorld.getBlockEntity(new BlockPos(linkX, linkY, linkZ));
+        BlockEntity te = targetWorld.getBlockEntity(linkedPos);
         return te instanceof TileMirrorEssentia
                 && EssentiaHandler.findEssentia(te, aspect, linkedFacing, 8, true);
     }
+
     @Override
     public boolean doesContainerContain(AspectList aspects) {
         return false;
     }
+
     @Override
     public int containerContains(Aspect aspect) {
         return 0;
     }
+
     @Override
     public boolean isBlocked() {
         return false;
     }
+
     private Direction getFacing() {
         BlockState state = getBlockState();
-        if (state.hasProperty(arcaneresearch.common.blocks.devices.BlockMirror.FACING)) {
-            return state.getValue(arcaneresearch.common.blocks.devices.BlockMirror.FACING);
+        if (state.hasProperty(BlockMirror.FACING)) {
+            return state.getValue(BlockMirror.FACING);
         }
         return Direction.NORTH;
     }
+
     private Direction getFacingAt(Level world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        if (state.hasProperty(arcaneresearch.common.blocks.devices.BlockMirror.FACING)) {
-            return state.getValue(arcaneresearch.common.blocks.devices.BlockMirror.FACING);
+        if (state.hasProperty(BlockMirror.FACING)) {
+            return state.getValue(BlockMirror.FACING);
         }
         return Direction.DOWN;
     }
+
     private ServerLevel getTargetWorld() {
         if (level == null || level.isClientSide()) return null;
         MinecraftServer server = level.getServer();
         if (server == null) return null;
         return server.getLevel(linkDimension);
     }
+
     private boolean isChunkLoaded(ServerLevel world, int x, int z) {
         return world.hasChunkAt(new BlockPos(x, 0, z));
     }

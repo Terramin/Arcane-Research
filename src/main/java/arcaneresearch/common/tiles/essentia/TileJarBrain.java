@@ -1,4 +1,8 @@
 package arcaneresearch.common.tiles.essentia;
+
+import arcaneresearch.common.tiles.TileArcaneresearch;
+import arcaneresearch.init.ModBlockEntities;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -9,72 +13,117 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import arcaneresearch.common.tiles.TileArcaneresearch;
-import arcaneresearch.init.ModBlockEntities;
+import net.minecraft.world.phys.Vec3;
+
 import javax.annotation.Nullable;
 import java.util.List;
+
 public class TileJarBrain extends TileArcaneresearch {
+
     public static final int MAX_XP = 2000;
+    private static final float TWO_PI = (float) (Math.PI * 2.0);
+
     public int xp = 0;
     public int eatDelay = 0;
     public float brainRotation = 0;
     public float brainRotationPrev = 0;
     public float brainY = 0;
     public float brainYPrev = 0;
+
     private float bobPhase = 0;
     private long lastSigh = 0;
     private int tickCount = 0;
+
+    @Nullable
+    private AABB pullBox;
+    @Nullable
+    private AABB eatBox;
+
     public TileJarBrain(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
+
     public TileJarBrain(BlockPos pos, BlockState state) {
         this(ModBlockEntities.JAR_BRAIN.get(), pos, state);
     }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileJarBrain tile) {
         tile.tickCount++;
         if (tile.xp > MAX_XP) {
             tile.xp = MAX_XP;
         }
-        if (tile.xp < MAX_XP) {
-            ExperienceOrb closest = tile.getClosestXPOrb();
-            if (closest != null && tile.eatDelay == 0) {
-                double dx = (pos.getX() + 0.5 - closest.getX()) / 25.0;
-                double dy = (pos.getY() + 0.5 - closest.getY()) / 25.0;
-                double dz = (pos.getZ() + 0.5 - closest.getZ()) / 25.0;
-                double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                double pull = 1.0 - dist;
-                if (pull > 0.0) {
-                    pull *= pull;
-                    net.minecraft.world.phys.Vec3 motion = closest.getDeltaMovement();
-                    closest.setDeltaMovement(
-                            motion.x + dx / dist * pull * 0.3,
-                            motion.y + dy / dist * pull * 0.5,
-                            motion.z + dz / dist * pull * 0.3);
-                }
-            }
-        }
+
         if (tile.eatDelay > 0) {
             tile.eatDelay--;
         } else if (tile.xp < MAX_XP) {
-            List<ExperienceOrb> ents = level.getEntitiesOfClass(ExperienceOrb.class, new AABB(
-                    pos.getX() - 0.1, pos.getY() - 0.1, pos.getZ() - 0.1,
-                    pos.getX() + 1.1, pos.getY() + 1.1, pos.getZ() + 1.1));
-            if (!ents.isEmpty()) {
-                for (ExperienceOrb orb : ents) {
-                    tile.xp += orb.getValue();
-                    level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP,
-                            SoundSource.BLOCKS, 0.1f,
-                            (level.random.nextFloat() - level.random.nextFloat()) * 0.2f + 1.0f);
-                    orb.discard();
+            AABB box = tile.pullBox;
+            if (box == null) {
+                box = new AABB(tile.worldPosition).inflate(8.0);
+                tile.pullBox = box;
+            }
+            List<ExperienceOrb> orbs = level.getEntitiesOfClass(ExperienceOrb.class, box);
+            if (!orbs.isEmpty()) {
+                double cx = pos.getX() + 0.5;
+                double cy = pos.getY() + 0.5;
+                double cz = pos.getZ() + 0.5;
+
+                ExperienceOrb closest = null;
+                double best = Double.MAX_VALUE;
+                for (ExperienceOrb orb : orbs) {
+                    double d = orb.distanceToSqr(cx, cy, cz);
+                    if (d < best) {
+                        best = d;
+                        closest = orb;
+                    }
                 }
-                if (tile.xp > MAX_XP) {
-                    tile.xp = MAX_XP;
+
+                if (closest != null) {
+                    double ox = closest.getX();
+                    double oy = closest.getY();
+                    double oz = closest.getZ();
+                    double dx = (cx - ox) / 25.0;
+                    double dy = (cy - oy) / 25.0;
+                    double dz = (cz - oz) / 25.0;
+                    double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    double pull = 1.0 - dist;
+                    if (pull > 0.0 && dist > 1e-6) {
+                        pull *= pull;
+                        Vec3 motion = closest.getDeltaMovement();
+                        closest.setDeltaMovement(
+                                motion.x + dx / dist * pull * 0.3,
+                                motion.y + dy / dist * pull * 0.5,
+                                motion.z + dz / dist * pull * 0.3);
+                    }
                 }
-                tile.syncTile(false);
-                tile.setChanged();
+
+                AABB eat = tile.eatBox;
+                if (eat == null) {
+                    eat = new AABB(cx - 0.6, cy - 0.6, cz - 0.6, cx + 0.6, cy + 0.6, cz + 0.6);
+                    tile.eatBox = eat;
+                }
+
+                boolean ate = false;
+                for (ExperienceOrb orb : orbs) {
+                    if (eat.intersects(orb.getBoundingBox())) {
+                        tile.xp += orb.getValue();
+                        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP,
+                                SoundSource.BLOCKS, 0.1f,
+                                (level.random.nextFloat() - level.random.nextFloat()) * 0.2f + 1.0f);
+                        orb.discard();
+                        ate = true;
+                    }
+                }
+                if (ate) {
+                    if (tile.xp > MAX_XP) {
+                        tile.xp = MAX_XP;
+                    }
+                    tile.syncTile(false);
+                    tile.setChanged();
+                }
             }
         }
     }
+
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileJarBrain tile) {
         tile.brainRotationPrev = tile.brainRotation;
         tile.brainYPrev = tile.brainY;
@@ -85,13 +134,13 @@ public class TileJarBrain extends TileArcaneresearch {
             double dz = watcher.getZ() - (pos.getZ() + 0.5);
             float target = (float) Math.atan2(dz, dx);
             float delta = target - tile.brainRotation;
-            while (delta >= Math.PI) delta -= Math.PI * 2;
-            while (delta < -Math.PI) delta += Math.PI * 2;
+            while (delta >= Math.PI) delta -= TWO_PI;
+            while (delta < -Math.PI) delta += TWO_PI;
             tile.brainRotation += delta * 0.04f;
             long now = System.currentTimeMillis();
             if (tile.lastSigh < now) {
                 level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                        arcaneresearch.init.ModSounds.BRAIN.get(), SoundSource.AMBIENT, 0.15f,
+                        ModSounds.BRAIN.get(), SoundSource.AMBIENT, 0.15f,
                         0.8f + level.random.nextFloat() * 0.4f, false);
                 tile.lastSigh = now + 5000L + level.random.nextInt(25000);
             }
@@ -101,28 +150,37 @@ public class TileJarBrain extends TileArcaneresearch {
         tile.bobPhase += 0.05f;
         tile.brainY = (float) Math.sin(tile.bobPhase) * 0.03f;
     }
+
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
         tag.putInt("XP", xp);
     }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
-        xp = tag.getInt("XP");
+        xp = Math.min(tag.getInt("XP"), MAX_XP);
     }
+
     @Nullable
     private ExperienceOrb getClosestXPOrb() {
         if (level == null) {
             return null;
         }
-        AABB box = new AABB(worldPosition).inflate(8.0);
+        AABB box = pullBox;
+        if (box == null) {
+            box = new AABB(worldPosition).inflate(8.0);
+            pullBox = box;
+        }
         List<ExperienceOrb> ents = level.getEntitiesOfClass(ExperienceOrb.class, box);
         double best = Double.MAX_VALUE;
         ExperienceOrb closest = null;
+        double cx = worldPosition.getX() + 0.5;
+        double cy = worldPosition.getY() + 0.5;
+        double cz = worldPosition.getZ() + 0.5;
         for (ExperienceOrb orb : ents) {
-            double d = orb.distanceToSqr(worldPosition.getX() + 0.5,
-                    worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
+            double d = orb.distanceToSqr(cx, cy, cz);
             if (d < best) {
                 best = d;
                 closest = orb;
@@ -130,8 +188,9 @@ public class TileJarBrain extends TileArcaneresearch {
         }
         return closest;
     }
+
     public int dispenseXP(Player player, boolean all) {
-        if (level == null || xp <= 0) return 0;
+        if (level == null || xp <= 0 || player == null) return 0;
         int toDispense;
         if (all) {
             toDispense = xp;
@@ -149,6 +208,7 @@ public class TileJarBrain extends TileArcaneresearch {
         }
         return toDispense;
     }
+
     private int getXpNeededForLevel(int level) {
         if (level <= 16) {
             return level * level + 6 * level;
@@ -158,14 +218,25 @@ public class TileJarBrain extends TileArcaneresearch {
             return (int) (4.5 * level * level - 162.5 * level + 2220);
         }
     }
+
     public int getXP() {
         return xp;
     }
+
     public float getFillPercent() {
         return (float) xp / MAX_XP;
     }
+
     public int getComparatorOutput() {
         if (xp == 0) return 0;
         return 1 + (int) ((xp / (float) MAX_XP) * 14);
+    }
+
+    public int getTickCount() {
+        return tickCount;
+    }
+
+    public void setTickCount(int tickCount) {
+        this.tickCount = tickCount;
     }
 }
