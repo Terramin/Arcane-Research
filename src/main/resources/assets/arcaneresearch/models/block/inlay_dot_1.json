@@ -1,4 +1,5 @@
 {
+    "render_type": "minecraft:cutout_mipped",
     "parent": "arcaneresearch:block/inlay_dot",
     "textures": {
         "over": "arcaneresearch:block/inlay_connect1"

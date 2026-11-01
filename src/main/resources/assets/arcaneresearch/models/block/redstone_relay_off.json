@@ -1,4 +1,5 @@
 {
+    "render_type": "minecraft:cutout_mipped",
     "textures": {
         "particle": "arcaneresearch:block/redstone_relay_off",
         "torch": "minecraft:block/redstone_torch_off",

@@ -1,4 +1,5 @@
 {
+  "render_type": "minecraft:cutout_mipped",
   "parent": "minecraft:block/leaves",
   "textures": {
     "all": "arcaneresearch:block/leaves_silverwood"

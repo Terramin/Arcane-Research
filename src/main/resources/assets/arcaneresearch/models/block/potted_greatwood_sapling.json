@@ -1,4 +1,5 @@
 {
+  "render_type": "minecraft:cutout_mipped",
   "parent": "minecraft:block/flower_pot_cross",
   "textures": {
     "plant": "arcaneresearch:block/sapling_greatwood"

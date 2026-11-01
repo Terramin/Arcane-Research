@@ -1,4 +1,5 @@
 {
+    "render_type": "minecraft:cutout_mipped",
     "ambientocclusion": false,
     "textures": {        
         "under": "arcaneresearch:block/inlay_connect_under",

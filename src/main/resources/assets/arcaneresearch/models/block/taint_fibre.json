@@ -1,4 +1,5 @@
 {
+    "render_type": "minecraft:cutout_mipped",
     "textures": {
         "particle": "arcaneresearch:block/taint_fibres",
         "crust": "arcaneresearch:block/taint_fibres"

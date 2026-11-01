@@ -1,5 +1,5 @@
 {
-    "__createdwith": "opl's Model Creator",
+    "render_type": "minecraft:cutout_mipped",
     "ambientocclusion": false,
     "textures": {
         "side": "arcaneresearch:block/condenser_lattice",

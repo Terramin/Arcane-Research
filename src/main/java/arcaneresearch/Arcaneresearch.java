@@ -265,42 +265,10 @@ public class Arcaneresearch {
             LOGGER.info("Arcaneresearch client setup");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             event.enqueueWork(() -> {
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.JAR_NORMAL.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.JAR_VOID.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.JAR_BRAIN.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(arcaneresearch.common.blocks.aura.AuraBlocks.JAR_NODE.get(),
-                        RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.LIQUID_DEATH.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.PURIFYING_FLUID.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.FLUX_GOO.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.FLUX_GAS.get(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.GREATWOOD_LEAVES.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.SILVERWOOD_LEAVES.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.GREATWOOD_SAPLING.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.SILVERWOOD_SAPLING.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.VISHROOM.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.CINDERPEARL.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.SHIMMERLEAF.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_GREATWOOD_SAPLING.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_SILVERWOOD_SAPLING.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_VISHROOM.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_CINDERPEARL.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.POTTED_SHIMMERLEAF.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.REDSTONE_RELAY.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.CONDENSER_LATTICE.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.CONDENSER_LATTICE_DIRTY.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.INFERNAL_FURNACE.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.STABILIZER.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.INLAY.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.TAINT_SOIL.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.TAINT_ROCK.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.TAINT_CRUST.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.TAINT_GEYSER.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.TAINT_FIBRE.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.ACTIVATOR_RAIL.get(), RenderType.cutout());
-                ItemBlockRenderTypes.setRenderLayer(ModBlocks.GRASS_AMBIENT.get(), RenderType.cutoutMipped());
                 ItemBlockRenderTypes.setRenderLayer(
                         arcaneresearch.common.blocks.aura.AuraBlocks.ELDRITCH_PORTAL.get(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(
+                        ModBlocks.GRASS_AMBIENT.get(), RenderType.cutoutMipped());
                 ItemProperties.register(ModBlocks.JAR_NORMAL.get().asItem(),
                         new ResourceLocation(MODID, "fill"),
                         (stack, level, entity, seed) ->

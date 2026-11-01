@@ -1,4 +1,5 @@
 {
+    "render_type": "minecraft:cutout_mipped",
     "parent": "arcaneresearch:block/inlay_side_alt",
     "textures": {
         "over": "arcaneresearch:block/inlay_rune1"

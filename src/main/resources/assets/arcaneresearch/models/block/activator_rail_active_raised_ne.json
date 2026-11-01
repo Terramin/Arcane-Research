@@ -1,4 +1,5 @@
 {
+    "render_type": "minecraft:cutout_mipped",
     "parent": "block/rail_raised_ne",
     "textures": {
         "rail": "arcaneresearch:block/rail_activator_powered"

@@ -1,4 +1,5 @@
 {
+  "render_type": "minecraft:cutout_mipped",
   "parent": "minecraft:block/cube_bottom_top",
   "textures": {
     "bottom": "arcaneresearch:block/taint_geyser_side",

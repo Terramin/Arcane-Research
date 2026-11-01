@@ -30,6 +30,7 @@
             "scale": [ 0.5, 0.5, 0.5 ]
         }
     },
+    "render_type": "minecraft:cutout_mipped",
     "textures": {
         "particle": "arcaneresearch:block/taint_growth_5",
         "side1": "arcaneresearch:block/taint_growth_5",

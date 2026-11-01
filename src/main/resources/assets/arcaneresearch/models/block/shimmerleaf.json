@@ -1,4 +1,5 @@
 {
+  "render_type": "minecraft:cutout_mipped",
   "parent": "minecraft:block/cross",
   "textures": {
     "cross": "arcaneresearch:block/shimmerleaf"

@@ -1,4 +1,5 @@
 {
+    "render_type": "minecraft:cutout_mipped",
     "textures": {
         "cross": "arcaneresearch:block/taint_growth_2"
     },
