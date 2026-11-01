@@ -27,6 +27,10 @@ public class ModFeatures {
             FEATURES.register("big_magic_tree",
                     () -> new BigMagicTreeFeature(NoneFeatureConfiguration.CODEC,
                             BigMagicTreeFeature.TreeType.OAK));
+    public static final RegistryObject<BigMagicTreeFeature> BIG_GREATWOOD_TREE =
+            FEATURES.register("big_greatwood_tree",
+                    () -> new BigMagicTreeFeature(NoneFeatureConfiguration.CODEC,
+                            BigMagicTreeFeature.TreeType.GREATWOOD));
     public static final RegistryObject<BigMagicTreeFeature> BIG_SILVERWOOD_TREE =
             FEATURES.register("big_silverwood_tree",
                     () -> new BigMagicTreeFeature(NoneFeatureConfiguration.CODEC,

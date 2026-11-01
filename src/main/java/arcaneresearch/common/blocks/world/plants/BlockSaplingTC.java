@@ -88,7 +88,7 @@ public class BlockSaplingTC extends SaplingBlock {
                         BlockPos origin = pos.offset(i, 0, j);
                         net.minecraft.resources.ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(
                                 Registries.CONFIGURED_FEATURE,
-                                new ResourceLocation(Arcaneresearch.MODID, "big_magic_tree"));
+                                new ResourceLocation(Arcaneresearch.MODID, "big_greatwood_tree"));
                         var holder = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key);
                         if (holder.isPresent()) {
                             BlockState air = Blocks.AIR.defaultBlockState();
