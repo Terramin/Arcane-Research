@@ -23,7 +23,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class UtilsFX {
     public static final ResourceLocation NODE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/auranodes.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/auranodes.png");
     private static final java.util.Map<ResourceLocation, ResourceLocation> STRIPPED_ASPECT_CACHE =
             new java.util.concurrent.ConcurrentHashMap<>();
     private static final java.util.Map<ResourceLocation, ResourceLocation> CUTOUT_ASPECT_CACHE =
@@ -67,7 +67,7 @@ public class UtilsFX {
                         }
                     }
                     if (touched) {
-                        ResourceLocation processed = new ResourceLocation(texture.getNamespace(),
+                        ResourceLocation processed = ResourceLocation.fromNamespaceAndPath(texture.getNamespace(),
                                 prefix + "/" + texture.getPath());
                         Minecraft.getInstance().getTextureManager().register(processed,
                                 new net.minecraft.client.renderer.texture.DynamicTexture(image));

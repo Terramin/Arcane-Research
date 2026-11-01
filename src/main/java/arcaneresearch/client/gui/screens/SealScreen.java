@@ -30,7 +30,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class SealScreen extends AbstractContainerScreen<SealMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private final List<GuiGolemCategoryButton> categoryButtons = new ArrayList<>();
     private final List<HoverButton> tagHovers = new ArrayList<>();
     private final int middleX;

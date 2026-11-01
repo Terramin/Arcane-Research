@@ -22,9 +22,9 @@ import java.awt.*;
 @OnlyIn(Dist.CLIENT)
 public class AlembicRenderer implements BlockEntityRenderer<TileAlembic> {
     private static final ResourceLocation LABEL_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/label.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/label.png");
     private static final ResourceLocation BORE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/bore.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/bore.png");
     private final arcaneresearch.client.models.block.BellowsNozzleModel nozzleModel;
     public AlembicRenderer(BlockEntityRendererProvider.Context context) {
         this.nozzleModel = new arcaneresearch.client.models.block.BellowsNozzleModel(

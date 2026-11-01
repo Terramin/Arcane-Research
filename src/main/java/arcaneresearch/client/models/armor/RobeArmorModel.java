@@ -12,9 +12,9 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class RobeArmorModel extends HumanoidModel<LivingEntity> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "robe_armor"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "robe_armor"), "main");
     public static final ModelLayerLocation INNER_LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "robe_armor_inner"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "robe_armor_inner"), "main");
     public RobeArmorModel(ModelPart root) {
         super(root);
     }

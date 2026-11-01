@@ -13,7 +13,7 @@ import arcaneresearch.common.menu.SmelterMenu;
 @OnlyIn(Dist.CLIENT)
 public class SmelterScreen extends AbstractContainerScreen<SmelterMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_smelter.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_smelter.png");
     public SmelterScreen(SmelterMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 176;

@@ -19,17 +19,17 @@ import arcaneresearch.common.tiles.devices.TileMirror;
 @OnlyIn(Dist.CLIENT)
 public class MirrorRenderer implements BlockEntityRenderer<TileMirror> {
     private static final ResourceLocation TUNNEL_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/tunnel.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/tunnel.png");
     private static final ResourceLocation PARTICLEFIELD_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/particlefield.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particlefield.png");
     private static final ResourceLocation INACTIVE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/block/mirrorpane.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/mirrorpane.png");
     private static final ResourceLocation ACTIVE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/block/mirrorpanetrans.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/mirrorpanetrans.png");
     private static final ResourceLocation FRAME_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/block/mirrorframe.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/mirrorframe.png");
     private static final ResourceLocation FRAME2_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/block/mirrorframe2.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/mirrorframe2.png");
     public MirrorRenderer(BlockEntityRendererProvider.Context context) {
     }
     static ResourceLocation frame2Texture() {

@@ -14,7 +14,7 @@ import arcaneresearch.common.menu.WandFocusPouchMenu;
 @OnlyIn(Dist.CLIENT)
 public class WandFocusPouchScreen extends AbstractContainerScreen<WandFocusPouchMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_focuspouch.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_focuspouch.png");
     private final int blockSlot;
     public WandFocusPouchScreen(WandFocusPouchMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

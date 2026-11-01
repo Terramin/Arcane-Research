@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 @OnlyIn(Dist.CLIENT)
 public class ScrollButton extends AbstractWidget {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private final boolean minus;
     private final boolean vertical;
     private final Consumer<ScrollButton> onPress;

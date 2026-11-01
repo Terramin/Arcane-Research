@@ -34,15 +34,15 @@ import java.util.*;
 @OnlyIn(Dist.CLIENT)
 public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_research_table.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_research_table.png");
     private static final ResourceLocation TX_BASE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private static final ResourceLocation TX_PAPER =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/paper.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/paper.png");
     private static final ResourceLocation TX_PAPER_GILDED =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/papergilded.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/papergilded.png");
     private static final ResourceLocation TX_QUESTION =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/aspects/_unknown.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/_unknown.png");
     private final TileResearchTable table;
     private final Player player;
     private final Set<String> sparkleCats = new HashSet<>();

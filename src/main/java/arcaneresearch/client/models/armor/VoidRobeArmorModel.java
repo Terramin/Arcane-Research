@@ -9,7 +9,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class VoidRobeArmorModel extends CultistRobeArmorModel {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "void_robe_armor"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "void_robe_armor"), "main");
     public VoidRobeArmorModel(ModelPart root) {
         super(root);
     }

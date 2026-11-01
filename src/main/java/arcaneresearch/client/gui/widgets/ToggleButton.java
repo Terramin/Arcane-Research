@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 @OnlyIn(Dist.CLIENT)
 public class ToggleButton extends AbstractWidget {
     private static final ResourceLocation DEFAULT_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_turret_advanced.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_turret_advanced.png");
     private final ResourceLocation texture;
     private final Runnable updater;
     private final Consumer<ToggleButton> onPress;

@@ -40,8 +40,8 @@ import arcaneresearch.common.lib.utils.InventoryUtils;
 import java.util.*;
 @OnlyIn(Dist.CLIENT)
 public class ResearchBrowserScreen extends Screen {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_research_browser.png");
-    private static final ResourceLocation NODE_TEXTURE = new ResourceLocation(Arcaneresearch.MODID, "textures/misc/auranodes.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_research_browser.png");
+    private static final ResourceLocation NODE_TEXTURE = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/auranodes.png");
     private static final java.util.Map<ResourceLocation, int[]> textureSizeCache = new java.util.HashMap<>();
     public static double lastX = -9999.0;
     public static double lastY = -9999.0;

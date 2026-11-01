@@ -24,7 +24,7 @@ import java.util.HashMap;
 @OnlyIn(Dist.CLIENT)
 public class ThaumatoriumScreen extends AbstractContainerScreen<ThaumatoriumMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_thaumatorium.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_thaumatorium.png");
     private static final HashMap<Integer, CrucibleRecipe> recipeCache = new HashMap<>();
     private final TileThaumatorium tile;
     private final ArrayList<Integer> hashList = new ArrayList<>();

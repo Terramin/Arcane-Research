@@ -18,7 +18,7 @@ import arcaneresearch.init.ModSounds;
 @OnlyIn(Dist.CLIENT)
 public class ResearchToast implements Toast {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/hud.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/hud.png");
     private static final long DISPLAY_TIME = 5000L;
     private final ResearchEntry entry;
     private final Component title;

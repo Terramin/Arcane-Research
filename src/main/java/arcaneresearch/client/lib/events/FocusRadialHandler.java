@@ -26,9 +26,9 @@ import java.util.TreeMap;
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class FocusRadialHandler {
     private static final ResourceLocation R1 =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/radial.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/radial.png");
     private static final ResourceLocation R2 =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/radial2.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/radial2.png");
     private static final TreeMap<String, Integer> foci = new TreeMap<>();
     private static final HashMap<String, ItemStack> fociItem = new HashMap<>();
     private static final HashMap<String, Boolean> fociHover = new HashMap<>();

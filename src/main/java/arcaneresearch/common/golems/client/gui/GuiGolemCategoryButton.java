@@ -11,7 +11,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class GuiGolemCategoryButton extends Button {
     static final ResourceLocation TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     final int icon;
     boolean active;
     public GuiGolemCategoryButton(int x, int y, String labelKey, int icon, boolean active, OnPress onPress) {

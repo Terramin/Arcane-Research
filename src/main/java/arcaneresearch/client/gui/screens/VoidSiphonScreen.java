@@ -13,7 +13,7 @@ import arcaneresearch.common.menu.VoidSiphonMenu;
 @OnlyIn(Dist.CLIENT)
 public class VoidSiphonScreen extends AbstractContainerScreen<VoidSiphonMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_void_siphon.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_void_siphon.png");
     public VoidSiphonScreen(VoidSiphonMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 176;

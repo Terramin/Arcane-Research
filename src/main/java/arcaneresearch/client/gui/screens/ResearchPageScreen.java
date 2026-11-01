@@ -37,8 +37,8 @@ import arcaneresearch.init.ModSounds;
 import java.util.*;
 @OnlyIn(Dist.CLIENT)
 public class ResearchPageScreen extends Screen {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_researchbook.png");
-    private static final ResourceLocation OVERLAY = new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_researchbook_overlay.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_researchbook.png");
+    private static final ResourceLocation OVERLAY = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_researchbook_overlay.png");
     private static final int PANE_WIDTH = 256;
     private static final int PANE_HEIGHT = 181;
     private static final int PAGE_WIDTH = 140;
@@ -46,17 +46,17 @@ public class ResearchPageScreen extends Screen {
     private static final Deque<ResourceLocation> history = new ArrayDeque<>();
     private static final Map<Integer, String> keyCache = new HashMap<>();
     private static final ResourceLocation DUMMY_RESEARCH =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/aspects/_unknown.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/_unknown.png");
     private static final ResourceLocation DUMMY_MAP =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/research/rd_map.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/research/rd_map.png");
     private static final ResourceLocation DUMMY_CHEST =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/research/rd_chest.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/research/rd_chest.png");
     private static final ResourceLocation DUMMY_FLASK =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/research/rd_flask.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/research/rd_flask.png");
     private static final ResourceLocation PAPER_TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/paper.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/paper.png");
     private static final ResourceLocation BACK_TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/aspects/_back.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/_back.png");
     private static final PageImage PILINE =
             PageImage.parse("arcaneresearch:textures/gui/gui_researchbook.png:24:184:95:6:1");
     private static final PageImage PIDIV =
@@ -243,7 +243,7 @@ public class ResearchPageScreen extends Screen {
         }
         try {
             net.minecraft.world.item.Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS
-                    .getValue(new ResourceLocation(icon));
+                    .getValue(ResourceLocation.tryParse(icon));
             if (item != null && item != net.minecraft.world.item.Items.AIR) {
                 return new ItemStack(item);
             }
@@ -714,7 +714,7 @@ public class ResearchPageScreen extends Screen {
             return playerHasItem(stack);
         } else if (required instanceof String tagName) {
             try {
-                TagKey<Item> tag = TagKey.create(Registries.ITEM, new ResourceLocation(tagName));
+                TagKey<Item> tag = TagKey.create(Registries.ITEM, Objects.requireNonNull(ResourceLocation.tryParse(tagName)));
                 for (ItemStack stack : player.getInventory().items) {
                     if (!stack.isEmpty() && stack.is(tag)) {
                         return true;
@@ -1080,7 +1080,7 @@ public class ResearchPageScreen extends Screen {
                 for (int a = 0; a < stage.getResearch().length; a++) {
                     String key = stage.getResearch()[a];
                     Object loc = stage.getResearchIcon() != null && stage.getResearchIcon()[a] != null
-                            ? new ResourceLocation(stage.getResearchIcon()[a]) : DUMMY_RESEARCH;
+                            ? ResourceLocation.tryParse(stage.getResearchIcon()[a]) : DUMMY_RESEARCH;
                     String text = Component.translatable("research." + key + ".text").getString();
                     if (stage.getResearchIcon() != null && stage.getResearchIcon()[a] != null) {
                         ItemStack iconStack = iconSegmentStack(stage.getResearchIcon()[a]);
@@ -1799,7 +1799,7 @@ public class ResearchPageScreen extends Screen {
                     int y = Integer.parseInt(c[1].trim());
                     int z = Integer.parseInt(c[2].trim());
                     Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS
-                            .getValue(new ResourceLocation(parts[1].trim()));
+                            .getValue(ResourceLocation.tryParse(parts[1].trim()));
                     if (item == null) {
                         continue;
                     }
@@ -1843,7 +1843,7 @@ public class ResearchPageScreen extends Screen {
             }
             try {
                 PageImage pi = new PageImage();
-                pi.loc = new ResourceLocation(s[0], s[1]);
+                pi.loc = ResourceLocation.fromNamespaceAndPath(s[0], s[1]);
                 pi.x = Integer.parseInt(s[2]);
                 pi.y = Integer.parseInt(s[3]);
                 pi.w = Integer.parseInt(s[4]);

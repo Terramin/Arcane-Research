@@ -26,7 +26,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class GogglesCurioLayer extends RenderLayer<Player, PlayerModel<Player>> {
     private static final ResourceLocation GOGGLES_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/armor/goggles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/armor/goggles.png");
     private final GogglesHeadModel model;
     public GogglesCurioLayer(RenderLayerParent<Player, PlayerModel<Player>> parent) {
         super(parent);

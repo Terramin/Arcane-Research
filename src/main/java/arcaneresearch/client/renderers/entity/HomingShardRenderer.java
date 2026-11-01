@@ -23,9 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @OnlyIn(Dist.CLIENT)
 public class HomingShardRenderer extends EntityRenderer<EntityHomingShard> {
     private static final ResourceLocation PARTICLES =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
     private static final ResourceLocation BEAM_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/beaml.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/beaml.png");
     private static final int TRAIL_LENGTH = 14;
     private static final Map<Integer, Deque<Vec3>> TRAILS = new ConcurrentHashMap<>();
     public HomingShardRenderer(EntityRendererProvider.Context context) {

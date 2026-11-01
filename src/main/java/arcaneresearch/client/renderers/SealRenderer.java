@@ -32,11 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @OnlyIn(Dist.CLIENT)
 public class SealRenderer {
     private static final ResourceLocation DEFAULT_SEAL_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/item/seals/seal_blank.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/item/seals/seal_blank.png");
     private static final ResourceLocation MIDDLE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/seal_area.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/seal_area.png");
     private static final ResourceLocation CFRAME =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/frame_corner.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/frame_corner.png");
     private static final Direction[][] ROT_FACES = {
             {Direction.DOWN, Direction.NORTH, Direction.WEST},
             {Direction.UP, Direction.NORTH, Direction.WEST},
@@ -215,7 +215,7 @@ public class SealRenderer {
             if (!path.endsWith(".png")) {
                 path = path + ".png";
             }
-            actualTexture = new ResourceLocation(texture.getNamespace(), path);
+            actualTexture = ResourceLocation.fromNamespaceAndPath(texture.getNamespace(), path);
         }
         FrameStrip strip = framesFor(actualTexture);
         int step = (int) ((tick / strip.frameTime()) % strip.sequence().length);
@@ -292,7 +292,7 @@ public class SealRenderer {
                 }
             }
             var mcmeta = resources.getResource(
-                    new ResourceLocation(texture.getNamespace(), texture.getPath() + ".mcmeta")).orElse(null);
+                    ResourceLocation.fromNamespaceAndPath(texture.getNamespace(), texture.getPath() + ".mcmeta")).orElse(null);
             if (mcmeta != null) {
                 try (var in = mcmeta.open()) {
                     String json = new String(in.readAllBytes(), StandardCharsets.UTF_8);

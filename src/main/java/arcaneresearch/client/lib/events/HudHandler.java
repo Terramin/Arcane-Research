@@ -39,17 +39,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class HudHandler {
     public static final Queue<KnowledgeGainTracker> knowledgeGainTrackers = new ConcurrentLinkedQueue<>();
     private static final ResourceLocation HUD_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/hud.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/hud.png");
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#######.#");
     private static final float MAX_VIS = 525.0f;
     private static final ResourceLocation BOOK =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/item/thaumonomicon.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/item/thaumonomicon.png");
     private static final ResourceLocation[] KNOW_TYPE = {
-            new ResourceLocation(Arcaneresearch.MODID, "textures/research/knowledge_theory.png"),
-            new ResourceLocation(Arcaneresearch.MODID, "textures/research/knowledge_observation.png")
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/research/knowledge_theory.png"),
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/research/knowledge_observation.png")
     };
     private static final ResourceLocation VIGNETTE_TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/vignette.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/vignette.png");
     public static AuraChunk currentAura = new AuraChunk(null, (short) 0, 0.0f, 0.0f);
     public static float kgFade = 0f;
     private static int warpVignette = 0;

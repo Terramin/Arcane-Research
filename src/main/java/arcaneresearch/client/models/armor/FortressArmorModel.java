@@ -12,7 +12,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class FortressArmorModel extends HumanoidModel<LivingEntity> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "fortress_armor"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "fortress_armor"), "main");
     private final ModelPart ornamentL;
     private final ModelPart ornamentL2;
     private final ModelPart ornamentR;

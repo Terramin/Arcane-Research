@@ -21,9 +21,9 @@ import arcaneresearch.common.entities.construct.EntityArcaneBore;
 @OnlyIn(Dist.CLIENT)
 public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBoreModel> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/arcanebore.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/arcanebore.png");
     private static final ResourceLocation BEAM_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/beam1.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/beam1.png");
     public ArcaneBoreRenderer(EntityRendererProvider.Context context) {
         super(context, new ArcaneBoreModel(context.bakeLayer(ArcaneBoreModel.LAYER_LOCATION)), 0.5F);
     }

@@ -19,13 +19,13 @@ import java.awt.*;
 @OnlyIn(Dist.CLIENT)
 public class JarRenderer implements BlockEntityRenderer<TileJar> {
     private static final ResourceLocation LIQUID_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/block/animatedglow.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/animatedglow.png");
     private static final int LIQUID_FRAMES = 20;
     private static final int LIQUID_CYCLE = 38;
     private static final ResourceLocation LABEL_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/label.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/label.png");
     private static final ResourceLocation BRINE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/jarbrine.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/jarbrine.png");
     private final arcaneresearch.client.models.block.JarModel fittings;
     public JarRenderer(BlockEntityRendererProvider.Context context) {
         this.fittings = new arcaneresearch.client.models.block.JarModel(

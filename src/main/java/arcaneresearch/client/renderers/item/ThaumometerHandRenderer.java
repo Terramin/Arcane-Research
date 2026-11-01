@@ -45,9 +45,9 @@ import arcaneresearch.common.lib.utils.EntityUtils;
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ThaumometerHandRenderer {
     private static final ResourceLocation SCANSCREEN =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/item/scanscreen.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/item/scanscreen.png");
     private static final ResourceLocation UNKNOWN_TAG =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/aspects/_unknown.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/_unknown.png");
     private static final double SCAN_RANGE = 10.0D;
     private static final int SWING_QUIET_TICKS = 8;
     private static int useStartTick = -1000;

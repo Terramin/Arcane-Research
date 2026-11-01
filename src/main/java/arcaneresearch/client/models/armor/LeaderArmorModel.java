@@ -13,7 +13,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class LeaderArmorModel extends HumanoidModel<LivingEntity> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "leader_armor"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "leader_armor"), "main");
     private final ModelPart legClothR;
     private final ModelPart legClothL;
     private final ModelPart cloak1;

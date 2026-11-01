@@ -22,9 +22,9 @@ import java.awt.*;
 @OnlyIn(Dist.CLIENT)
 public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTable> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/block/research_table_model.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/research_table_model.png");
     private static final ResourceLocation QUILL_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/research/quill.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/research/quill.png");
     private final ResearchTableModel tableModel;
     public ResearchTableRenderer(BlockEntityRendererProvider.Context context) {
         this.tableModel = new ResearchTableModel(context.bakeLayer(ResearchTableModel.LAYER_LOCATION));

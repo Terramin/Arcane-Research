@@ -16,7 +16,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class GogglesHeadModel extends EntityModel<Player> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "goggles_head"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "goggles_head"), "main");
     private final ModelPart head;
     public GogglesHeadModel(ModelPart root) {
         this.head = root.getChild("head");

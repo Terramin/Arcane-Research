@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Optional;
 @OnlyIn(Dist.CLIENT)
 public class RecipeRenderer {
-    private static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_researchbook_overlay.png");
-    private static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_researchbook.png");
+    private static final ResourceLocation OVERLAY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_researchbook_overlay.png");
+    private static final ResourceLocation BOOK_TEXTURE = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_researchbook.png");
     private static final int SLOT_SIZE = 18;
     private static final int ITEM_SIZE = 16;
     private static final List<ClickableIngredient> clickables = new ArrayList<>();
@@ -716,8 +716,8 @@ public class RecipeRenderer {
                 if (ref != null) {
                     String[] sr = ref.split(";", 2);
                     if (sr.length > 1) {
-                        ResourceLocation res = new ResourceLocation(sr[0]);
-                        if (res.getPath().equals("UNKNOWN")) {
+                        ResourceLocation res = ResourceLocation.tryParse(sr[0]);
+                        if (res != null && res.getPath().equals("UNKNOWN")) {
                             lines.add(net.minecraft.network.chat.Component.translatable("recipe.unknown")
                                     .withStyle(net.minecraft.ChatFormatting.DARK_RED,
                                             net.minecraft.ChatFormatting.ITALIC));

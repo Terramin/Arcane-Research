@@ -22,9 +22,9 @@ import java.awt.*;
 @OnlyIn(Dist.CLIENT)
 public class BannerRenderer implements BlockEntityRenderer<TileBanner> {
     private static final ResourceLocation TEX_CULT =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/banner_cultist.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/banner_cultist.png");
     private static final ResourceLocation TEX_BLANK =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/banner_blank.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/banner_blank.png");
     private static final int ICON_SIZE = 16;
     private final BannerModel model;
     public BannerRenderer(BlockEntityRendererProvider.Context context) {

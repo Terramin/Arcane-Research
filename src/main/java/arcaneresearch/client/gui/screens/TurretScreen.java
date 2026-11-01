@@ -15,9 +15,9 @@ import arcaneresearch.common.menu.TurretMenu;
 @OnlyIn(Dist.CLIENT)
 public class TurretScreen extends AbstractContainerScreen<TurretMenu> {
     private static final ResourceLocation TEXTURE_BASIC =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_turret_basic.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_turret_basic.png");
     private static final ResourceLocation TEXTURE_ADVANCED =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_turret_advanced.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_turret_advanced.png");
     private final boolean isAdvanced;
     public TurretScreen(TurretMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

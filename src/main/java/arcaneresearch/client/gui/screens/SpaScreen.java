@@ -19,7 +19,7 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public class SpaScreen extends AbstractContainerScreen<SpaMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_spa.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_spa.png");
     private static final int MIX_X = 89;
     private static final int MIX_Y = 35;
     private static final int MIX_SIZE = 8;

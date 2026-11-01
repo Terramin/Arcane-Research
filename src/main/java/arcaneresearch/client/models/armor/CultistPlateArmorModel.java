@@ -13,7 +13,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class CultistPlateArmorModel extends HumanoidModel<LivingEntity> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "cultist_plate_armor"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "cultist_plate_armor"), "main");
     private final ModelPart frontcloth1;
     private final ModelPart frontcloth2;
     private final ModelPart cloak1;

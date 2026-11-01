@@ -18,13 +18,13 @@ import arcaneresearch.client.renderers.entity.TurretObjModel;
 import arcaneresearch.common.tiles.aura.StabilizerTile;
 @OnlyIn(Dist.CLIENT)
 public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile> {
-    private static final ResourceLocation MODEL = new ResourceLocation(Arcaneresearch.MODID,
+    private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID,
             "models/block/node_converter.obj");
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Arcaneresearch.MODID,
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID,
             "textures/models/node_stabilizer.png");
-    private static final ResourceLocation TEXTURE_OVER = new ResourceLocation(Arcaneresearch.MODID,
+    private static final ResourceLocation TEXTURE_OVER = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID,
             "textures/models/node_stabilizer_over.png");
-    private static final ResourceLocation BUBBLE = new ResourceLocation(Arcaneresearch.MODID,
+    private static final ResourceLocation BUBBLE = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID,
             "textures/misc/node_bubble.png");
     public StabilizerRenderer(BlockEntityRendererProvider.Context context) {
     }

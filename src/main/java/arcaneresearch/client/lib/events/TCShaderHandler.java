@@ -16,10 +16,10 @@ public final class TCShaderHandler {
     public static final int SHADER_SUNSCORNED = 3;
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceLocation[] SHADERS = {
-            new ResourceLocation(Arcaneresearch.MODID, "shaders/post/desaturatetc.json"),
-            new ResourceLocation(Arcaneresearch.MODID, "shaders/post/blurtc.json"),
-            new ResourceLocation(Arcaneresearch.MODID, "shaders/post/hunger.json"),
-            new ResourceLocation(Arcaneresearch.MODID, "shaders/post/sunscorned.json")
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/desaturatetc.json"),
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/blurtc.json"),
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/hunger.json"),
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/sunscorned.json")
     };
     private static ResourceLocation active = null;
     private TCShaderHandler() {
