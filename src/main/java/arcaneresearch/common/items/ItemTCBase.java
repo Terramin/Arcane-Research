@@ -1,11 +1,14 @@
 package arcaneresearch.common.items;
+
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
 public class ItemTCBase extends Item {
     protected String BASE_NAME;
     protected String[] VARIANTS;
     protected int[] VARIANTS_META;
     private boolean hasSubtypes;
+
     public ItemTCBase(Properties properties, String name, String... variants) {
         super(properties);
         BASE_NAME = name;
@@ -20,9 +23,11 @@ public class ItemTCBase extends Item {
         }
         hasSubtypes = VARIANTS.length > 1;
     }
+
     public ItemTCBase(String name, String... variants) {
         this(new Properties(), name, variants);
     }
+
     public ItemTCBase(Properties properties) {
         super(properties);
         BASE_NAME = "item";
@@ -30,15 +35,18 @@ public class ItemTCBase extends Item {
         VARIANTS_META = new int[]{0};
         hasSubtypes = false;
     }
+
     public String getUnlocalizedName(ItemStack stack) {
         if (hasSubtypes && stack.getDamageValue() < VARIANTS.length && !VARIANTS[stack.getDamageValue()].equals(BASE_NAME)) {
             return String.format(super.getDescriptionId(stack) + ".%s", VARIANTS[stack.getDamageValue()]);
         }
         return super.getDescriptionId(stack);
     }
+
     public String[] getVariantNames() {
         return VARIANTS;
     }
+
     public int[] getVariantMeta() {
         return VARIANTS_META;
     }

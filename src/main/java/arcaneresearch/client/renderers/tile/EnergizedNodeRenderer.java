@@ -1,4 +1,5 @@
 package arcaneresearch.client.renderers.tile;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -8,15 +9,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import arcaneresearch.common.tiles.aura.TileNodeEnergized;
+
 @OnlyIn(Dist.CLIENT)
 public class EnergizedNodeRenderer implements BlockEntityRenderer<TileNodeEnergized> {
     public EnergizedNodeRenderer(BlockEntityRendererProvider.Context context) {
     }
+
     @Override
     public void render(TileNodeEnergized tile, float partialTicks, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight, int packedOverlay) {
+                       @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         net.minecraft.world.entity.Entity camEntity = Minecraft.getInstance().getCameraEntity();
         LivingEntity viewer = camEntity instanceof LivingEntity ? (LivingEntity) camEntity : null;
         Player player = viewer instanceof Player ? (Player) viewer : null;
@@ -27,8 +31,9 @@ public class EnergizedNodeRenderer implements BlockEntityRenderer<TileNodeEnergi
                 AuraNodeRenderHelper.resolve(player, true), partialTicks);
         poseStack.popPose();
     }
+
     @Override
-    public boolean shouldRenderOffScreen(TileNodeEnergized tile) {
+    public boolean shouldRenderOffScreen(@NotNull TileNodeEnergized tile) {
         return true;
     }
 }

@@ -1,4 +1,5 @@
 package arcaneresearch.client.renderers.tile;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -18,7 +19,9 @@ import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.models.block.ResearchTableModel;
 import arcaneresearch.common.blocks.crafting.BlockResearchTable;
 import arcaneresearch.common.tiles.crafting.TileResearchTable;
+
 import java.awt.*;
+
 @OnlyIn(Dist.CLIENT)
 public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTable> {
     private static final ResourceLocation TEXTURE =
@@ -26,9 +29,11 @@ public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTa
     private static final ResourceLocation QUILL_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/research/quill.png");
     private final ResearchTableModel tableModel;
+
     public ResearchTableRenderer(BlockEntityRendererProvider.Context context) {
         this.tableModel = new ResearchTableModel(context.bakeLayer(ResearchTableModel.LAYER_LOCATION));
     }
+
     @Override
     public void render(TileResearchTable tile, float partialTicks, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight, int packedOverlay) {
@@ -62,6 +67,7 @@ public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTa
         }
         poseStack.popPose();
     }
+
     private void applyRotation(PoseStack poseStack, Direction facing) {
         switch (facing) {
             case EAST -> poseStack.mulPose(Axis.YP.rotationDegrees(90));
@@ -71,6 +77,7 @@ public class ResearchTableRenderer implements BlockEntityRenderer<TileResearchTa
             }
         }
     }
+
     private Direction getFacing(BlockState state) {
         if (state.hasProperty(BlockResearchTable.FACING)) {
             return state.getValue(BlockResearchTable.FACING);

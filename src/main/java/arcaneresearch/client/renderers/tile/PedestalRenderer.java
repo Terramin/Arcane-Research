@@ -1,4 +1,5 @@
 package arcaneresearch.client.renderers.tile;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -11,15 +12,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.common.tiles.crafting.TilePedestal;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class PedestalRenderer implements BlockEntityRenderer<TilePedestal> {
     private final ItemRenderer itemRenderer;
+
     public PedestalRenderer(BlockEntityRendererProvider.Context context) {
         this.itemRenderer = Minecraft.getInstance().getItemRenderer();
     }
+
     @Override
-    public void render(TilePedestal tile, float partialTicks, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(TilePedestal tile, float partialTicks, @NotNull PoseStack poseStack,
+                       @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         ItemStack stack = tile.getItem(0);
         if (stack.isEmpty()) {
             return;

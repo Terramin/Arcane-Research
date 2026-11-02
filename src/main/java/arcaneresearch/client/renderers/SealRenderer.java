@@ -1,4 +1,5 @@
 package arcaneresearch.client.renderers;
+
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.golems.seals.ISealConfigArea;
@@ -24,11 +26,13 @@ import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.renderers.entity.golem.GolemRenderHooks;
 import arcaneresearch.common.golems.seals.SealEntity;
 import arcaneresearch.common.golems.seals.SealHandler;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 @OnlyIn(Dist.CLIENT)
 public class SealRenderer {
     private static final ResourceLocation DEFAULT_SEAL_TEXTURE =
@@ -53,8 +57,8 @@ public class SealRenderer {
     };
     private static final double MAX_RENDER_DIST_SQ = 256.0;
     private static final Map<ResourceLocation, FrameStrip> FRAME_CACHE = new ConcurrentHashMap<>();
-    public static void renderSeals(PoseStack poseStack, float partialTick, Player player) {
-        if (player == null || player.level() == null) return;
+
+    public static void renderSeals(@NotNull PoseStack poseStack, float partialTick, @NotNull Player player) {
         String dimKey = player.level().dimension().location().toString();
         ConcurrentHashMap<SealPos, SealEntity> seals = SealHandler.sealEntities.get(dimKey);
         if (seals == null || seals.isEmpty()) return;
@@ -102,6 +106,7 @@ public class SealRenderer {
             RenderSystem.disableBlend();
         }
     }
+
     private static void renderSeal(PoseStack poseStack, ISealEntity seal, Vec3 cameraPos,
                                    float alpha, boolean inactive) {
         SealPos sealPos = seal.getSealPos();
@@ -123,6 +128,7 @@ public class SealRenderer {
                 viewer != null ? viewer.tickCount : 0L, thickness);
         poseStack.popPose();
     }
+
     private static void drawSealArea(PoseStack poseStack, MultiBufferSource buffers,
                                      Player player, ISealEntity seal, float alpha, float partialTick) {
         float r;
@@ -190,6 +196,7 @@ public class SealRenderer {
             }
         }
     }
+
     private static void applyFaceRotation(PoseStack poseStack, Direction face) {
         switch (face) {
             case UP -> poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90));
@@ -201,6 +208,7 @@ public class SealRenderer {
             case EAST -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90));
         }
     }
+
     private static void renderSealQuad(PoseStack poseStack, ResourceLocation texture,
                                        float r, float g, float b, float a, long tick,
                                        float thickness) {
@@ -268,9 +276,11 @@ public class SealRenderer {
         }
         tesselator.end();
     }
+
     private static FrameStrip framesFor(ResourceLocation texture) {
         return FRAME_CACHE.computeIfAbsent(texture, SealRenderer::loadFrameStrip);
     }
+
     private static FrameStrip loadFrameStrip(ResourceLocation texture) {
         int frames = 1;
         int frameTime = 2;
@@ -329,6 +339,7 @@ public class SealRenderer {
         }
         return new FrameStrip(frames, frameTime, sequence);
     }
+
     private record FrameStrip(int frames, int frameTime, int[] sequence) {
     }
 }

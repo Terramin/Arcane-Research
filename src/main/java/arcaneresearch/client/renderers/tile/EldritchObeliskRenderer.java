@@ -1,4 +1,5 @@
 package arcaneresearch.client.renderers.tile;
+
 import arcaneresearch.common.tiles.aura.EldritchObeliskTile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -9,257 +10,341 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.client.renderers.entity.TurretObjModel;
+
 import java.util.Random;
+
 @OnlyIn(Dist.CLIENT)
 public class EldritchObeliskRenderer implements BlockEntityRenderer<EldritchObeliskTile> {
     private static final ResourceLocation CAP_MODEL =
-            new ResourceLocation("arcaneresearch", "models/obj/obelisk_cap.obj");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "models/obj/obelisk_cap.obj");
     private static final ResourceLocation TUNNEL =
-            new ResourceLocation("arcaneresearch", "textures/misc/tunnel.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/tunnel.png");
     private static final ResourceLocation PARTICLEFIELD =
-            new ResourceLocation("arcaneresearch", "textures/misc/particlefield.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particlefield.png");
     private static final ResourceLocation PARTICLEFIELD32 =
-            new ResourceLocation("arcaneresearch", "textures/misc/particlefield32.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particlefield32.png");
     private static final ResourceLocation SIDE =
-            new ResourceLocation("arcaneresearch", "textures/models/obelisk_side.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/models/obelisk_side.png");
     private static final ResourceLocation CAP =
-            new ResourceLocation("arcaneresearch", "textures/models/obelisk_cap.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/models/obelisk_cap.png");
     private static final ResourceLocation SIDE_OUTER =
-            new ResourceLocation("arcaneresearch", "textures/models/obelisk_side_2.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/models/obelisk_side_2.png");
     private static final ResourceLocation CAP_OUTER =
-            new ResourceLocation("arcaneresearch", "textures/models/obelisk_cap_2.png");
-    private static volatile TurretObjModel CAP_MODEL_OBJ = null;
-    private static volatile boolean CAP_MODEL_TRIED = false;
-    private static TurretObjModel capModel() {
-        if (!CAP_MODEL_TRIED) {
-            synchronized (EldritchObeliskRenderer.class) {
-                if (!CAP_MODEL_TRIED) {
-                    CAP_MODEL_TRIED = true;
-                    try {
-                        CAP_MODEL_OBJ = TurretObjModel.load(CAP_MODEL);
-                    } catch (Throwable ignored) {
-                        CAP_MODEL_OBJ = null;
-                    }
-                }
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/models/obelisk_cap_2.png");
+
+    private static final RenderType TUNNEL_TYPE = RenderType.entityTranslucent(TUNNEL);
+    private static final RenderType PARTICLEFIELD_ADDITIVE = TCRenderTypes.additiveTexturedNoCull(PARTICLEFIELD);
+    private static final RenderType PARTICLEFIELD_TRANSLUCENT = RenderType.entityTranslucent(PARTICLEFIELD);
+    private static final RenderType PARTICLEFIELD32_TYPE = RenderType.entityTranslucent(PARTICLEFIELD32);
+    private static final RenderType SIDE_INNER_TYPE = RenderType.entityTranslucent(SIDE);
+    private static final RenderType SIDE_OUTER_TYPE = RenderType.entityTranslucent(SIDE_OUTER);
+    private static final RenderType CAP_INNER_TYPE = TCRenderTypes.golemGhost(CAP);
+    private static final RenderType CAP_OUTER_TYPE = TCRenderTypes.golemGhost(CAP_OUTER);
+
+    private static final Quaternionf[] YAW_ROTATIONS = new Quaternionf[4];
+    private static final Quaternionf ROT_XP_90 = Axis.XP.rotationDegrees(90.0F);
+    private static final Quaternionf ROT_XP_NEG_90 = Axis.XP.rotationDegrees(-90.0F);
+
+    private static final int LAYERS = 16;
+    private static final int WALL_HEIGHT = 3;
+    private static final float HALF_WIDTH = 0.5F;
+    private static final float LOCAL_Z = 0.5F;
+
+    private static final float[] LAYER_BRIGHTNESS = new float[LAYERS];
+    private static final float[] LAYER_UV_SCALE = new float[LAYERS];
+    private static final float[] LAYER_RGB_R = new float[LAYERS];
+    private static final float[] LAYER_RGB_G = new float[LAYERS];
+    private static final float[] LAYER_RGB_B = new float[LAYERS];
+    private static final float[] LAYER_ROT_COS = new float[LAYERS];
+    private static final float[] LAYER_ROT_SIN = new float[LAYERS];
+
+    private static final float[] YAW_COS = new float[4];
+    private static final float[] YAW_SIN = new float[4];
+    private static final boolean[] YAW_USE_X = new boolean[4];
+
+    static {
+        for (int i = 0; i < 4; i++) {
+            float yawDeg = i * 90.0F;
+            YAW_ROTATIONS[i] = Axis.YP.rotationDegrees(yawDeg);
+            float rad = (float) Math.toRadians(yawDeg);
+            YAW_COS[i] = (float) Math.cos(rad);
+            YAW_SIN[i] = (float) Math.sin(rad);
+            YAW_USE_X[i] = (i == 1 || i == 3);
+        }
+
+        Random rng = new Random(31100L);
+        for (int i = 0; i < LAYERS; i++) {
+            float brightness = 1.0F / (16 - i + 1.0F);
+            float uvScale = 0.0625F;
+            if (i == 0) {
+                brightness = 0.1F;
+                uvScale = 0.125F;
+            }
+            if (i == 1) {
+                uvScale = 0.5F;
+            }
+            LAYER_BRIGHTNESS[i] = brightness;
+            LAYER_UV_SCALE[i] = uvScale;
+
+            float r = rng.nextFloat() * 0.5F + 0.1F;
+            float g = rng.nextFloat() * 0.5F + 0.4F;
+            float b = rng.nextFloat() * 0.5F + 0.5F;
+            if (i == 0) {
+                r = g = b = 1.0F;
+            }
+            LAYER_RGB_R[i] = r;
+            LAYER_RGB_G[i] = g;
+            LAYER_RGB_B[i] = b;
+
+            float angleDeg = (i * i * 4321 + i * 9) * 2.0F;
+            float rad = (float) Math.toRadians(angleDeg);
+            LAYER_ROT_COS[i] = Mth.cos(rad);
+            LAYER_ROT_SIN[i] = Mth.sin(rad);
+        }
+    }
+
+    private static final class CapModelHolder {
+        static final TurretObjModel MODEL = load();
+
+        private static TurretObjModel load() {
+            try {
+                return TurretObjModel.load(CAP_MODEL);
+            } catch (Throwable ignored) {
+                return null;
             }
         }
-        return CAP_MODEL_OBJ;
     }
+
     public EldritchObeliskRenderer(BlockEntityRendererProvider.Context context) {
     }
+
     @Override
-    public void render(EldritchObeliskTile tile, float partialTicks, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        if (tile.getLevel() == null) {
-            return;
-        }
-        boolean inRange = true;
-        try {
-            if (Minecraft.getInstance().player == null) {
-                return;
-            }
-            inRange = Minecraft.getInstance().player.distanceToSqr(
-                    tile.getBlockPos().getX() + 0.5D,
-                    tile.getBlockPos().getY() + 0.5D,
-                    tile.getBlockPos().getZ() + 0.5D) < 512.0D;
-        } catch (Exception e) {
-            return;
-        }
-        float time = 0.0F;
-        try {
-            time = Minecraft.getInstance().player.tickCount + partialTicks;
-        } catch (Exception ignored) {
-            try {
-                time = tile.getLevel().getGameTime() + partialTicks;
-            } catch (Exception ignored2) {
-            }
-        }
+    public void render(@NotNull EldritchObeliskTile tile, float partialTicks, @NotNull PoseStack poseStack,
+                       @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        Level level = tile.getLevel();
+        if (level == null) return;
+        BlockPos pos = tile.getBlockPos();
+
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null) return;
+
+        boolean inRange = player.distanceToSqr(
+                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) < 512.0D;
+
+        float time = player.tickCount + partialTicks;
         float bob = Mth.sin(time / 10.0F) * 0.1F + 0.1F;
+        float scroll = (System.currentTimeMillis() % 700000L) / 250000.0F;
+
         try {
-            renderWall(poseStack, buffer, tile, 0.0F, 1.0F + bob, 0.0F, 0.0F, 3, inRange);
-            renderWall(poseStack, buffer, tile, 0.0F, 1.0F + bob, 0.0F, 180.0F, 3, inRange);
-            renderWall(poseStack, buffer, tile, 0.0F, 1.0F + bob, 0.0F, 90.0F, 3, inRange);
-            renderWall(poseStack, buffer, tile, 0.0F, 1.0F + bob, 0.0F, 270.0F, 3, inRange);
+            renderWall(poseStack, buffer, pos, 1.0F + bob, 0, inRange, scroll);
+            renderWall(poseStack, buffer, pos, 1.0F + bob, 2, inRange, scroll);
+            renderWall(poseStack, buffer, pos, 1.0F + bob, 1, inRange, scroll);
+            renderWall(poseStack, buffer, pos, 1.0F + bob, 3, inRange, scroll);
         } catch (Throwable ignored) {
         }
+
         boolean outer = false;
         try {
-            outer = tile.getLevel().dimension().location().getPath().contains("outer");
+            ResourceLocation dimLoc = level.dimension().location();
+            outer = dimLoc.getPath().contains("outer");
         } catch (Exception ignored) {
         }
-        ResourceLocation sideTex = outer ? SIDE_OUTER : SIDE;
-        ResourceLocation capTex = outer ? CAP_OUTER : CAP;
+
         try {
-            VertexConsumer sideConsumer = buffer.getBuffer(RenderType.entityTranslucent(sideTex));
+            VertexConsumer sideConsumer = buffer.getBuffer(outer ? SIDE_OUTER_TYPE : SIDE_INNER_TYPE);
             for (int a = 0; a < 4; a++) {
                 poseStack.pushPose();
-                poseStack.translate(0.5F, 1.0F + bob, 0.5F);
-                poseStack.mulPose(Axis.YP.rotationDegrees(a * 90));
-                poseStack.translate(0.0D, 0.0D, -0.505D);
-                quad(poseStack, sideConsumer, packedLight, -0.5F, 0.0F, 0.5F, 3.0F);
-                poseStack.popPose();
+                try {
+                    poseStack.translate(0.5F, 1.0F + bob, 0.5F);
+                    poseStack.mulPose(YAW_ROTATIONS[a]);
+                    poseStack.translate(0.0D, 0.0D, -0.505D);
+                    quad(poseStack, sideConsumer, packedLight);
+                } finally {
+                    poseStack.popPose();
+                }
             }
         } catch (Throwable ignored) {
         }
+
         try {
-            TurretObjModel cap = capModel();
+            TurretObjModel cap = CapModelHolder.MODEL;
             if (cap != null) {
-                VertexConsumer capConsumer = buffer.getBuffer(TCRenderTypes.golemGhost(capTex));
+                VertexConsumer capConsumer = buffer.getBuffer(outer ? CAP_OUTER_TYPE : CAP_INNER_TYPE);
+
                 poseStack.pushPose();
-                poseStack.translate(0.5F, 1.0F + bob, 0.5F);
-                poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-                cap.renderGroup(poseStack, capConsumer, "Cap", packedLight, packedOverlay,
-                        1.0F, 1.0F, 1.0F, 1.0F);
-                poseStack.popPose();
+                try {
+                    poseStack.translate(0.5F, 1.0F + bob, 0.5F);
+                    poseStack.mulPose(ROT_XP_90);
+                    cap.renderGroup(poseStack, capConsumer, "Cap", packedLight, packedOverlay,
+                            1.0F, 1.0F, 1.0F, 1.0F);
+                } finally {
+                    poseStack.popPose();
+                }
+
                 poseStack.pushPose();
-                poseStack.translate(0.5F, 4.0F + bob, 0.5F);
-                poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-                cap.renderGroup(poseStack, capConsumer, "Cap", packedLight, packedOverlay,
-                        1.0F, 1.0F, 1.0F, 1.0F);
-                poseStack.popPose();
+                try {
+                    poseStack.translate(0.5F, 4.0F + bob, 0.5F);
+                    poseStack.mulPose(ROT_XP_NEG_90);
+                    cap.renderGroup(poseStack, capConsumer, "Cap", packedLight, packedOverlay,
+                            1.0F, 1.0F, 1.0F, 1.0F);
+                } finally {
+                    poseStack.popPose();
+                }
             }
         } catch (Throwable ignored) {
         }
     }
-    private void renderWall(PoseStack poseStack, MultiBufferSource buffer, EldritchObeliskTile tile,
-                            float x, float y, float z, float yaw, int height, boolean inRange) {
-        Random random = new Random(31100L);
-        float scroll = (System.currentTimeMillis() % 700000L) / 250000.0F;
-        if (inRange) {
-            for (int i = 0; i < 16; i++) {
-                float brightness = 1.0F / (16 - i + 1.0F);
-                ResourceLocation tex = PARTICLEFIELD;
-                float uvScale = 0.0625F;
-                if (i == 0) {
-                    tex = TUNNEL;
-                    brightness = 0.1F;
-                    uvScale = 0.125F;
-                }
-                float r = random.nextFloat() * 0.5F + 0.1F;
-                float g = random.nextFloat() * 0.5F + 0.4F;
-                float b = random.nextFloat() * 0.5F + 0.5F;
-                if (i == 0) {
-                    r = g = b = 1.0F;
-                }
-                if (i == 1) {
-                    uvScale = 0.5F;
-                }
-                VertexConsumer consumer = buffer.getBuffer(i == 1
-                        ? TCRenderTypes.additiveTexturedNoCull(tex)
-                        : RenderType.entityTranslucent(tex));
-                float angleDeg = (i * i * 4321 + i * 9) * 2.0F;
-                float[][] uvs = portalUvs(tile, x, y, z, yaw, height, scroll, uvScale, angleDeg, i);
-                poseStack.pushPose();
-                poseStack.translate(0.5F + x, y, 0.5F + z);
-                poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
-                poseStack.translate(0.0F, 0.0F, 0.5F);
+
+    private static void renderWall(PoseStack poseStack, MultiBufferSource buffer, BlockPos pos,
+                                   float y, int yawIndex,
+                                   boolean inRange, float scroll) {
+        if (!inRange) {
+            VertexConsumer consumer = buffer.getBuffer(PARTICLEFIELD32_TYPE);
+            poseStack.pushPose();
+            try {
+                poseStack.translate(0.5F + (float) 0.0, y, 0.5F + (float) 0.0);
+                poseStack.mulPose(YAW_ROTATIONS[yawIndex]);
                 Matrix4f matrix = poseStack.last().pose();
-                float hw = 0.5F;
-                consumer.vertex(matrix, -hw, 0.0F, 0.0F)
-                        .color(r * brightness, g * brightness, b * brightness, 1.0F)
-                        .uv(uvs[0][0], uvs[0][1]).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
-                        .normal(0.0F, 0.0F, 1.0F).endVertex();
-                consumer.vertex(matrix, -hw, height, 0.0F)
-                        .color(r * brightness, g * brightness, b * brightness, 1.0F)
-                        .uv(uvs[1][0], uvs[1][1]).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
-                        .normal(0.0F, 0.0F, 1.0F).endVertex();
-                consumer.vertex(matrix, hw, height, 0.0F)
-                        .color(r * brightness, g * brightness, b * brightness, 1.0F)
-                        .uv(uvs[2][0], uvs[2][1]).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
-                        .normal(0.0F, 0.0F, 1.0F).endVertex();
-                consumer.vertex(matrix, hw, 0.0F, 0.0F)
-                        .color(r * brightness, g * brightness, b * brightness, 1.0F)
-                        .uv(uvs[3][0], uvs[3][1]).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
-                        .normal(0.0F, 0.0F, 1.0F).endVertex();
+                consumer.vertex(matrix, -0.5F, 0.0F, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(1.0F, 1.0F)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
+                consumer.vertex(matrix, -0.5F, WALL_HEIGHT, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(1.0F, 0.0F)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
+                consumer.vertex(matrix, 0.5F, WALL_HEIGHT, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(0.0F, 0.0F)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
+                consumer.vertex(matrix, 0.5F, 0.0F, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(0.0F, 1.0F)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
+            } finally {
                 poseStack.popPose();
             }
+            return;
+        }
+
+        float yawCos = YAW_COS[yawIndex];
+        float yawSin = YAW_SIN[yawIndex];
+        boolean useX = YAW_USE_X[yawIndex];
+        float bx = pos.getX();
+        float by = pos.getY();
+        float bz = pos.getZ();
+
+        float hw_c = HALF_WIDTH * yawCos;
+        float hw_s = HALF_WIDTH * yawSin;
+        float lz_s = LOCAL_Z * yawSin;
+        float lz_c = LOCAL_Z * yawCos;
+        float rxLeft = -hw_c + lz_s;
+        float rzLeft = hw_s + lz_c;
+        float rxRight = hw_c + lz_s;
+        float rzRight = -hw_s + lz_c;
+
+        float leftBase;
+        float rightBase;
+        if (useX) {
+            leftBase = bz + 0.5F + (float) 0.0 + rzLeft;
+            rightBase = bz + 0.5F + (float) 0.0 + rzRight;
         } else {
-            VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucent(PARTICLEFIELD32));
+            leftBase = bx + 0.5F + (float) 0.0 + rxLeft;
+            rightBase = bx + 0.5F + (float) 0.0 + rxRight;
+        }
+        float vBaseBottom = by + y;
+        float vBaseTop = by + y + WALL_HEIGHT;
+
+        for (int i = 0; i < LAYERS; i++) {
+            float brightness = LAYER_BRIGHTNESS[i];
+            float uvScale = LAYER_UV_SCALE[i];
+            float r = LAYER_RGB_R[i] * brightness;
+            float g = LAYER_RGB_G[i] * brightness;
+            float b = LAYER_RGB_B[i] * brightness;
+
+            RenderType texType;
+            if (i == 0) {
+                texType = TUNNEL_TYPE;
+            } else if (i == 1) {
+                texType = PARTICLEFIELD_ADDITIVE;
+            } else {
+                texType = PARTICLEFIELD_TRANSLUCENT;
+            }
+            VertexConsumer consumer = buffer.getBuffer(texType);
+
+            float uLeft = leftBase * uvScale + scroll;
+            float uRight = rightBase * uvScale + scroll;
+            float vBottom = vBaseBottom * uvScale + scroll;
+            float vTop = vBaseTop * uvScale + scroll;
+
+            float cu = (uLeft + uRight) * 0.5F;
+            float cv = (vBottom + vTop) * 0.5F;
+            float du = (uLeft - uRight) * 0.5F;
+            float dv = (vBottom - vTop) * 0.5F;
+
+            float rotCos = LAYER_ROT_COS[i];
+            float rotSin = LAYER_ROT_SIN[i];
+            float a = du * rotCos;
+            float bb = du * rotSin;
+            float c = dv * rotCos;
+            float d = dv * rotSin;
+
+            float u0 = cu + a - d;
+            float v0 = cv + bb + c;
+            float u1 = cu + a + d;
+            float v1 = cv + bb - c;
+            float u2 = cu - a + d;
+            float v2 = cv - bb - c;
+            float u3 = cu - a - d;
+            float v3 = cv - bb + c;
+
             poseStack.pushPose();
-            poseStack.translate(0.5F + x, y, 0.5F + z);
-            poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
-            Matrix4f matrix = poseStack.last().pose();
-            consumer.vertex(matrix, -0.5F, 0.0F, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(1.0F, 1.0F)
-                    .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
-            consumer.vertex(matrix, -0.5F, height, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(1.0F, 0.0F)
-                    .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
-            consumer.vertex(matrix, 0.5F, height, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(0.0F, 0.0F)
-                    .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
-            consumer.vertex(matrix, 0.5F, 0.0F, 0.5F).color(0.5F, 0.5F, 0.5F, 0.65F).uv(0.0F, 1.0F)
-                    .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(0.0F, 0.0F, 1.0F).endVertex();
-            poseStack.popPose();
+            try {
+                poseStack.translate(0.5F + (float) 0.0, y, 0.5F + (float) 0.0);
+                poseStack.mulPose(YAW_ROTATIONS[yawIndex]);
+                poseStack.translate(0.0F, 0.0F, LOCAL_Z);
+                Matrix4f matrix = poseStack.last().pose();
+                consumer.vertex(matrix, -HALF_WIDTH, 0.0F, 0.0F)
+                        .color(r, g, b, 1.0F).uv(u0, v0)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
+                        .normal(0.0F, 0.0F, 1.0F).endVertex();
+                consumer.vertex(matrix, -HALF_WIDTH, WALL_HEIGHT, 0.0F)
+                        .color(r, g, b, 1.0F).uv(u1, v1)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
+                        .normal(0.0F, 0.0F, 1.0F).endVertex();
+                consumer.vertex(matrix, HALF_WIDTH, WALL_HEIGHT, 0.0F)
+                        .color(r, g, b, 1.0F).uv(u2, v2)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
+                        .normal(0.0F, 0.0F, 1.0F).endVertex();
+                consumer.vertex(matrix, HALF_WIDTH, 0.0F, 0.0F)
+                        .color(r, g, b, 1.0F).uv(u3, v3)
+                        .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
+                        .normal(0.0F, 0.0F, 1.0F).endVertex();
+            } finally {
+                poseStack.popPose();
+            }
         }
     }
-    private static float[][] portalUvs(EldritchObeliskTile tile,
-                                       float x, float y, float z, float yaw, int height,
-                                       float scroll, float uvScale, float angleDeg, int layer) {
-        double rad = Math.toRadians(yaw);
-        double c = Math.cos(rad);
-        double s = Math.sin(rad);
-        boolean useX = Math.abs(yaw - 90.0F) < 1.0F || Math.abs(yaw - 270.0F) < 1.0F;
-        double bx;
-        double by;
-        double bz;
-        try {
-            bx = tile.getBlockPos().getX();
-            by = tile.getBlockPos().getY();
-            bz = tile.getBlockPos().getZ();
-        } catch (Exception e) {
-            bx = 0.0D;
-            by = 0.0D;
-            bz = 0.0D;
-        }
-        double hw = 0.5D;
-        double lz = 0.5D;
-        double[][] local = {{-hw, 0.0D}, {-hw, height}, {hw, height}, {hw, 0.0D}};
-        float[][] uvs = new float[4][2];
-        double cu = 0.0D;
-        double cv = 0.0D;
-        for (int k = 0; k < 4; k++) {
-            double lx = local[k][0];
-            double ly = local[k][1];
-            double rx = lx * c + lz * s;
-            double rz = -lx * s + lz * c;
-            double uCoord = (useX ? (bz + 0.5D + z + rz) : (bx + 0.5D + x + rx)) * uvScale + scroll;
-            double vCoord = (by + y + ly) * uvScale + scroll;
-            uvs[k][0] = (float) uCoord;
-            uvs[k][1] = (float) vCoord;
-            cu += uCoord;
-            cv += vCoord;
-        }
-        cu /= 4.0D;
-        cv /= 4.0D;
-        float cos = Mth.cos((float) Math.toRadians(angleDeg));
-        float sin = Mth.sin((float) Math.toRadians(angleDeg));
-        for (float[] uv : uvs) {
-            float dx = (float) (uv[0] - cu);
-            float dy = (float) (uv[1] - cv);
-            uv[0] = (float) (cu + dx * cos - dy * sin);
-            uv[1] = (float) (cv + dx * sin + dy * cos);
-        }
-        return uvs;
-    }
-    private static void quad(PoseStack poseStack, VertexConsumer consumer, int packedLight,
-                             float x0, float y0, float x1, float y1) {
+
+    private static void quad(PoseStack poseStack, VertexConsumer consumer, int packedLight) {
         Matrix4f matrix = poseStack.last().pose();
-        consumer.vertex(matrix, x0, y1, 0.0F).color(255, 255, 255, 255).uv(0.0F, 1.0F)
+        consumer.vertex(matrix, (float) -0.5, (float) 3.0, 0.0F).color(255, 255, 255, 255).uv(0.0F, 1.0F)
                 .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0.0F, 0.0F, -1.0F).endVertex();
-        consumer.vertex(matrix, x1, y1, 0.0F).color(255, 255, 255, 255).uv(1.0F, 1.0F)
+        consumer.vertex(matrix, (float) 0.5, (float) 3.0, 0.0F).color(255, 255, 255, 255).uv(1.0F, 1.0F)
                 .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0.0F, 0.0F, -1.0F).endVertex();
-        consumer.vertex(matrix, x1, y0, 0.0F).color(255, 255, 255, 255).uv(1.0F, 0.0F)
+        consumer.vertex(matrix, (float) 0.5, (float) 0.0, 0.0F).color(255, 255, 255, 255).uv(1.0F, 0.0F)
                 .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0.0F, 0.0F, -1.0F).endVertex();
-        consumer.vertex(matrix, x0, y0, 0.0F).color(255, 255, 255, 255).uv(0.0F, 0.0F)
+        consumer.vertex(matrix, (float) -0.5, (float) 0.0, 0.0F).color(255, 255, 255, 255).uv(0.0F, 0.0F)
                 .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0.0F, 0.0F, -1.0F).endVertex();
     }
+
     @Override
-    public boolean shouldRenderOffScreen(EldritchObeliskTile tile) {
+    public boolean shouldRenderOffScreen(@NotNull EldritchObeliskTile tile) {
         return true;
     }
 }

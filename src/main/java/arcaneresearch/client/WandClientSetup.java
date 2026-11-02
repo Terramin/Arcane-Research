@@ -1,4 +1,5 @@
 package arcaneresearch.client;
+
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,6 +9,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.gui.screens.WandFocusPouchScreen;
 import arcaneresearch.common.menu.WandMenuTypes;
+
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class WandClientSetup {

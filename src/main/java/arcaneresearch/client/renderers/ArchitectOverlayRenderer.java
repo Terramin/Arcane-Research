@@ -20,9 +20,9 @@ import java.util.ArrayList;
 @OnlyIn(Dist.CLIENT)
 public class ArchitectOverlayRenderer {
     private static final ResourceLocation CFRAME =
-            new ResourceLocation("arcaneresearch", "textures/misc/frame_corner.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/frame_corner.png");
     private static final ResourceLocation SFRAME =
-            new ResourceLocation("arcaneresearch", "textures/misc/frame_side.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/frame_side.png");
     private static final int[][] MOS = {
             {4, 5, 6, 7}, {0, 1, 2, 3}, {0, 1, 4, 5},
             {2, 3, 6, 7}, {0, 2, 4, 6}, {1, 3, 5, 7}};
@@ -36,7 +36,7 @@ public class ArchitectOverlayRenderer {
         }
         Level level = player.level();
         BlockHitResult target = architect.getArchitectMOP(stack, level, player);
-        if (target == null || target.getBlockPos() == null) {
+        if (target == null) {
             return false;
         }
         ArrayList<BlockPos> blocks = architect.getArchitectBlocks(stack, level,

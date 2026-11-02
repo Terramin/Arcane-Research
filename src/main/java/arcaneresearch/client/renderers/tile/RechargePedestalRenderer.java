@@ -1,4 +1,5 @@
 package arcaneresearch.client.renderers.tile;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -15,15 +16,19 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.common.tiles.devices.TileRechargePedestal;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class RechargePedestalRenderer implements BlockEntityRenderer<TileRechargePedestal> {
     private final ItemRenderer itemRenderer;
+
     public RechargePedestalRenderer(BlockEntityRendererProvider.Context context) {
         this.itemRenderer = context.getItemRenderer();
     }
+
     @Override
-    public void render(TileRechargePedestal tile, float partialTicks, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(TileRechargePedestal tile, float partialTicks, @NotNull PoseStack poseStack,
+                       @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         Level level = tile.getLevel();
         if (level == null) return;
         ItemStack stack = tile.getSyncedStackInSlot(0);

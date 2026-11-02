@@ -1,39 +1,50 @@
 package arcaneresearch.client.renderers;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class ScanPopupRenderer {
     public static volatile Entity thaumTarget = null;
     public static volatile BlockPos thaumBlockTarget = null;
-    public static AspectList getCurrentAspects(Player player) {
-        if (player == null || player.level() == null) {
-            return null;
-        }
-        if (thaumTarget != null && thaumTarget.isAlive()
-                && thaumTarget.level() == player.level()) {
-            AspectList tags = AspectHelper.getEntityAspects(thaumTarget);
-            if (tags != null && tags.size() > 0) {
-                return tags;
+
+    public static AspectList getCurrentAspects(@NotNull Player player) {
+        Level level = player.level();
+
+        Entity target = thaumTarget;
+        if (target != null && target.isAlive()) {
+            Level targetLevel = target.level();
+            if (targetLevel == level) {
+                AspectList tags = AspectHelper.getEntityAspects(target);
+                if (tags != null && tags.size() > 0) {
+                    return tags;
+                }
             }
         }
-        if (thaumBlockTarget != null) {
-            BlockState state = player.level().getBlockState(thaumBlockTarget);
+
+        BlockPos blockTarget = thaumBlockTarget;
+        if (blockTarget != null) {
+            BlockState state = level.getBlockState(blockTarget);
             if (!state.isAir()) {
+                Block block = state.getBlock();
                 ItemStack stack = ItemStack.EMPTY;
                 try {
-                    stack = state.getBlock().getCloneItemStack(player.level(), thaumBlockTarget, state);
+                    stack = block.getCloneItemStack(level, blockTarget, state);
                 } catch (Exception ignored) {
                 }
                 if (stack.isEmpty()) {
-                    stack = new ItemStack(state.getBlock());
+                    stack = new ItemStack(block);
                 }
                 AspectList tags = arcaneresearch.api.ArcaneresearchApi.internalMethods.getObjectAspects(stack);
                 if (tags != null && tags.size() > 0) {
@@ -43,22 +54,32 @@ public class ScanPopupRenderer {
         }
         return null;
     }
-    public static Object getCurrentTarget(Player player) {
-        if (player == null || player.level() == null) {
-            return null;
+
+    public static Object getCurrentTarget(@NotNull Player player) {
+        Level level = player.level();
+
+        Entity target = thaumTarget;
+        if (target != null && target.isAlive()) {
+            Level targetLevel = target.level();
+            if (targetLevel == level) {
+                return target;
+            }
         }
-        if (thaumTarget != null && thaumTarget.isAlive()
-                && thaumTarget.level() == player.level()) {
-            return thaumTarget;
-        }
-        if (thaumBlockTarget != null && !player.level().getBlockState(thaumBlockTarget).isAir()) {
-            return thaumBlockTarget;
+
+        BlockPos blockTarget = thaumBlockTarget;
+        if (blockTarget != null) {
+            BlockState state = level.getBlockState(blockTarget);
+            if (!state.isAir()) {
+                return blockTarget;
+            }
         }
         return null;
     }
+
     @Deprecated
     public static void render(PoseStack poseStack, float partialTick) {
     }
+
     public static void reset() {
         thaumTarget = null;
         thaumBlockTarget = null;

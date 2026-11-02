@@ -1,4 +1,5 @@
 package arcaneresearch.client.renderers.tile;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -8,15 +9,19 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import arcaneresearch.common.tiles.aura.EldritchPortalTile;
+
 @OnlyIn(Dist.CLIENT)
 public class EldritchPortalRenderer implements BlockEntityRenderer<EldritchPortalTile> {
     private static final ResourceLocation PORTAL_TEX =
-            new ResourceLocation("arcaneresearch", "textures/misc/eldritch_portal.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/eldritch_portal.png");
+
     public EldritchPortalRenderer(BlockEntityRendererProvider.Context context) {
     }
+
     @Override
     public void render(EldritchPortalTile tile, float partialTicks, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight, int packedOverlay) {
@@ -52,8 +57,9 @@ public class EldritchPortalRenderer implements BlockEntityRenderer<EldritchPorta
         }
         poseStack.popPose();
     }
+
     @Override
-    public boolean shouldRenderOffScreen(EldritchPortalTile tile) {
+    public boolean shouldRenderOffScreen(@NotNull EldritchPortalTile tile) {
         return true;
     }
 }
