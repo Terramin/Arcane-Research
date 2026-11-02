@@ -1,14 +1,21 @@
 package arcaneresearch.common.lib;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
+
 public class CommonInternals {
-    public static Map<String, ItemStack[]> smeltingBonus = new HashMap<>();
+
+    private static final Map<ResourceLocation, ItemStack[]> smeltingBonus = new HashMap<>();
+
     public static void initAspects() {
         registerAspects("minecraft:coal", new AspectList()
                 .add(Aspect.FIRE, 10).add(Aspect.ENERGY, 10));
@@ -213,34 +220,41 @@ public class CommonInternals {
         registerAspects("minecraft:music_disc_13", new AspectList()
                 .add(Aspect.SENSES, 15).add(Aspect.AIR, 10).add(Aspect.DESIRE, 10));
     }
+
     private static void registerAspects(String itemId, AspectList aspects) {
-        AspectHelper.registerObjectTag(new ResourceLocation(itemId), aspects);
+        if (itemId == null || aspects == null) return;
+        ResourceLocation loc = ResourceLocation.tryParse(itemId);
+        if (loc == null) return;
+        AspectHelper.registerObjectTag(loc, aspects);
     }
+
     public static void registerSmeltingBonus(ResourceLocation input, ItemStack... bonuses) {
-        if (input != null && bonuses != null && bonuses.length > 0) {
-            smeltingBonus.put(input.toString(), bonuses);
+        if (input == null || bonuses == null || bonuses.length == 0) return;
+
+        ItemStack[] copy = new ItemStack[bonuses.length];
+        for (int i = 0; i < bonuses.length; i++) {
+            ItemStack s = bonuses[i];
+            copy[i] = s == null ? ItemStack.EMPTY : s.copy();
         }
+        smeltingBonus.put(input, copy);
     }
-    public static ItemStack[] getSmeltingBonus(ItemStack input) {
-        if (input == null || input.isEmpty()) {
-            return null;
-        }
-        ResourceLocation itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(input.getItem());
-        if (itemId == null) {
-            return null;
-        }
-        return smeltingBonus.get(itemId.toString());
+
+    public static @NotNull ItemStack[] getSmeltingBonus(@NotNull ItemStack input) {
+        if (input.isEmpty()) return null;
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(input.getItem());
+        return smeltingBonus.get(itemId);
     }
+
     public static void initSmeltingBonuses() {
-        registerSmeltingBonus(new ResourceLocation("minecraft:raw_iron"),
+        registerSmeltingBonus(ResourceLocation.tryParse("minecraft:raw_iron"),
                 new ItemStack(Items.IRON_NUGGET, 1));
-        registerSmeltingBonus(new ResourceLocation("minecraft:iron_ore"),
+        registerSmeltingBonus(ResourceLocation.tryParse("minecraft:iron_ore"),
                 new ItemStack(Items.IRON_NUGGET, 1));
-        registerSmeltingBonus(new ResourceLocation("minecraft:raw_gold"),
+        registerSmeltingBonus(ResourceLocation.tryParse("minecraft:raw_gold"),
                 new ItemStack(Items.GOLD_NUGGET, 1));
-        registerSmeltingBonus(new ResourceLocation("minecraft:gold_ore"),
+        registerSmeltingBonus(ResourceLocation.tryParse("minecraft:gold_ore"),
                 new ItemStack(Items.GOLD_NUGGET, 1));
-        registerSmeltingBonus(new ResourceLocation("minecraft:raw_copper"),
+        registerSmeltingBonus(ResourceLocation.tryParse("minecraft:raw_copper"),
                 new ItemStack(Items.COPPER_INGOT, 1));
     }
 }

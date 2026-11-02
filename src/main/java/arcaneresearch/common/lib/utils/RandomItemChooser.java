@@ -1,5 +1,7 @@
 package arcaneresearch.common.lib.utils;
+
 import java.util.List;
+
 public class RandomItemChooser {
     public Item chooseOnWeight(List<Item> items) {
         double completeWeight = 0.0;
@@ -16,6 +18,7 @@ public class RandomItemChooser {
         }
         throw new RuntimeException("Should never be shown.");
     }
+
     public interface Item {
         double getWeight();
     }

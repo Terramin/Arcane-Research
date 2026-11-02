@@ -1,18 +1,26 @@
 package arcaneresearch.common.lib.research;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
+
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.items.IScribeTools;
 import arcaneresearch.api.research.IScanThing;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.init.ModItems;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.Set;
+
 public class ScanSky implements IScanThing {
+
     @Override
     public boolean checkThing(Player player, Object obj) {
+        if (player == null) return false;
         if (obj != null) return false;
         if (player.getXRot() > 0.0f) return false;
         if (!player.level().canSeeSky(player.blockPosition().above())) return false;
@@ -20,19 +28,25 @@ public class ScanSky implements IScanThing {
         if (!ArcaneresearchCapabilities.knowsResearchStrict(player, "CELESTIALSCANNING")) return false;
         return true;
     }
+
     @Override
     public void onSuccess(Player player, Object object) {
+        if (player == null) return;
         if (object != null || player.getXRot() > 0.0f) return;
-        if (!player.level().canSeeSky(player.blockPosition().above())) return;
-        if (!ArcaneresearchCapabilities.knowsResearchStrict(player, "CELESTIALSCANNING")) return;
+
         Level level = player.level();
-        int yaw = (int) (player.getYRot() + 90.0f) % 360;
+        if (!level.canSeeSky(player.blockPosition().above())) return;
+        if (!ArcaneresearchCapabilities.knowsResearchStrict(player, "CELESTIALSCANNING")) return;
+
+        int yaw = (int) Mth.wrapDegrees(player.getYRot() + 90.0f);
         int pitch = (int) Math.abs(player.getXRot());
+
         int celestialAngle = (int) ((level.getDayTime() / 24000.0 + 0.25) * 360.0) % 360;
         boolean isNight = celestialAngle > 180;
         if (isNight) {
             celestialAngle -= 180;
         }
+
         boolean inRangeYaw;
         boolean inRangePitch;
         if (celestialAngle > 90) {
@@ -42,8 +56,10 @@ public class ScanSky implements IScanThing {
             inRangeYaw = Math.abs(yaw) < 10;
             inRangePitch = Math.abs(celestialAngle - pitch) < 7;
         }
+
         long worldDay = level.getDayTime() / 24000L;
         String dayPrefix = "CEL_" + worldDay + "_";
+
         if (inRangeYaw && inRangePitch) {
             int moonPhase = (int) (level.getDayTime() / 24000L % 8L);
             String key = dayPrefix + (isNight ? ("Moon" + moonPhase) : "Sun");
@@ -53,7 +69,7 @@ public class ScanSky implements IScanThing {
             }
             if (hasScribingTools(player)
                     && InventoryUtils.consumePlayerItem(player, new ItemStack(Items.PAPER), false, true)) {
-                giveNote(player, isNight ? 5 + (int) (level.getDayTime() / 24000L % 8L) : 0);
+                giveNote(player, isNight ? 5 + moonPhase : 0);
                 ArcaneresearchApi.internalMethods.progressResearch(player, key);
             } else {
                 player.displayClientMessage(Component.translatable("tc.celestial.fail.2"), true);
@@ -76,35 +92,39 @@ public class ScanSky implements IScanThing {
             cleanResearch(player, dayPrefix);
         }
     }
+
     private boolean hasScribingTools(Player player) {
+        if (player == null) return false;
         for (ItemStack stack : player.getInventory().items) {
-            if (!stack.isEmpty() && stack.getItem() instanceof IScribeTools) {
+            if (stack != null && !stack.isEmpty() && stack.getItem() instanceof IScribeTools) {
                 return true;
             }
         }
         return false;
     }
+
     private int getStarDirection(Player player) {
-        float yaw = player.getYRot();
-        while (yaw < 0) yaw += 360;
-        while (yaw >= 360) yaw -= 360;
+        float yaw = Mth.wrapDegrees(player.getYRot());
+        if (yaw < 0) yaw += 360.0f;
+
         if (yaw < 45 || yaw >= 315) return 0;
         if (yaw < 135) return 1;
         if (yaw < 225) return 2;
         return 3;
     }
+
     private void giveNote(Player player, int meta) {
         ItemStack stack = switch (meta) {
-            case 0 -> new ItemStack(ModItems.CELESTIAL_NOTES_SUN.get());
-            case 1 -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_1.get());
-            case 2 -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_2.get());
-            case 3 -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_3.get());
-            case 4 -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_4.get());
-            case 5 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_1.get());
-            case 6 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_2.get());
-            case 7 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_3.get());
-            case 8 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_4.get());
-            case 9 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_5.get());
+            case 0  -> new ItemStack(ModItems.CELESTIAL_NOTES_SUN.get());
+            case 1  -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_1.get());
+            case 2  -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_2.get());
+            case 3  -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_3.get());
+            case 4  -> new ItemStack(ModItems.CELESTIAL_NOTES_STARS_4.get());
+            case 5  -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_1.get());
+            case 6  -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_2.get());
+            case 7  -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_3.get());
+            case 8  -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_4.get());
+            case 9  -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_5.get());
             case 10 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_6.get());
             case 11 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_7.get());
             case 12 -> new ItemStack(ModItems.CELESTIAL_NOTES_MOON_8.get());
@@ -115,20 +135,36 @@ public class ScanSky implements IScanThing {
             player.drop(stack, false);
         }
     }
+
     private void cleanResearch(Player player, String dayPrefix) {
+        if (player == null) return;
+
         var knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) return;
-        var toRemove = new java.util.ArrayList<String>();
-        for (String key : knowledge.getResearchList()) {
-            if (key.startsWith("CEL_") && !key.startsWith(dayPrefix)) {
+
+        Set<String> research = knowledge.getResearchList();
+        String playerName = player.getName().getString();
+
+        if (research == null || research.isEmpty()) {
+            ResearchManager.syncList.put(playerName, true);
+            return;
+        }
+
+        ArrayList<String> toRemove = null;
+        for (String key : research) {
+            if (key != null && key.startsWith("CEL_") && !key.startsWith(dayPrefix)) {
+                if (toRemove == null) toRemove = new ArrayList<>();
                 toRemove.add(key);
             }
         }
-        for (String key : toRemove) {
-            knowledge.removeResearch(key);
+        if (toRemove != null) {
+            for (String key : toRemove) {
+                knowledge.removeResearch(key);
+            }
         }
-        ResearchManager.syncList.put(player.getName().getString(), true);
+        ResearchManager.syncList.put(playerName, true);
     }
+
     @Override
     public String getResearchKey(Player player, Object object) {
         return "";

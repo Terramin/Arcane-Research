@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib;
+
 import arcaneresearch.discovered.scan.ScanNetwork;
 import arcaneresearch.discovered.scan.ScanTargets;
 import arcaneresearch.discovered.scan.ScanWallet;
@@ -29,9 +30,11 @@ import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.playerdata.PacketWarpMessage;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.common.world.aura.AuraHandler;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 public class CommandArcaneresearch {
     private static final SuggestionProvider<CommandSourceStack> RESEARCH_SUGGESTIONS = (context, builder) -> {
         List<String> keys = new ArrayList<>();
@@ -52,6 +55,7 @@ public class CommandArcaneresearch {
         }
         return SharedSuggestionProvider.suggest(tags, builder);
     };
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("arcaneresearch")
                 .requires(source -> source.hasPermission(2));
@@ -100,7 +104,7 @@ public class CommandArcaneresearch {
                                                 StringArgumentType.getString(context, "aspect"),
                                                 IntegerArgumentType.getInteger(context, "amount"))))))
         );
-        builder.then(Commands.literal("warp")                .then(Commands.argument("player", EntityArgument.player())
+        builder.then(Commands.literal("warp").then(Commands.argument("player", EntityArgument.player())
                         .then(Commands.literal("add")
                                 .then(Commands.argument("amount", IntegerArgumentType.integer())
                                         .executes(context -> addWarp(context.getSource(), EntityArgument.getPlayer(context, "player"), IntegerArgumentType.getInteger(context, "amount"), ""))
@@ -123,6 +127,7 @@ public class CommandArcaneresearch {
         );
         dispatcher.register(builder);
     }
+
     private static int help(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal("§3You can also use /thaum or /tc instead of /arcaneresearch."), false);
         source.sendSuccess(() -> Component.literal("§3Use this to give research to a player."), false);
@@ -140,11 +145,13 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("  /arcaneresearch spawnaura <vis> [flux]"), false);
         return 1;
     }
+
     private static int reload(CommandSourceStack source) {
         ConfigResearch.init();
         source.sendSuccess(() -> Component.literal("§5Reloaded research data."), true);
         return 1;
     }
+
     private static int spawnAura(CommandSourceStack source, float vis, float flux) {
         ServerLevel level = source.getLevel();
         BlockPos pos = BlockPos.containing(source.getPosition());
@@ -159,6 +166,7 @@ public class CommandArcaneresearch {
                 + AuraHandler.getFlux(level, pos) + " flux in this chunk."), true);
         return 1;
     }
+
     private static int listResearch(CommandSourceStack source) {
         for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
             for (ResearchEntry ri : cat.research.values()) {
@@ -167,6 +175,7 @@ public class CommandArcaneresearch {
         }
         return 1;
     }
+
     private static int listPlayerResearch(CommandSourceStack source, ServerPlayer player) {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null) {
@@ -176,6 +185,7 @@ public class CommandArcaneresearch {
         }
         return 1;
     }
+
     private static int giveAllResearch(CommandSourceStack source, ServerPlayer player) {
         for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
             for (ResearchEntry ri : cat.research.values()) {
@@ -189,6 +199,7 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("§5Gave all research to " + player.getName().getString()), true);
         return 1;
     }
+
     private static int resetResearch(CommandSourceStack source, ServerPlayer player) {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null) {
@@ -205,6 +216,7 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("§5Reset research for " + player.getName().getString()), true);
         return 1;
     }
+
     private static int giveResearch(CommandSourceStack source, ServerPlayer player, String research) {
         if (ResearchCategories.getResearch(research) != null) {
             giveRecursiveResearch(player, research);
@@ -218,6 +230,7 @@ public class CommandArcaneresearch {
         }
         return 1;
     }
+
     public static void giveRecursiveResearch(ServerPlayer player, String research) {
         if (research.contains("@")) {
             research = research.substring(0, research.indexOf("@"));
@@ -260,6 +273,7 @@ public class CommandArcaneresearch {
             }
         }
     }
+
     private static int revokeResearch(CommandSourceStack source, ServerPlayer player, String research) {
         if (ResearchCategories.getResearch(research) != null) {
             revokeRecursiveResearch(player, research);
@@ -274,6 +288,7 @@ public class CommandArcaneresearch {
         }
         return 1;
     }
+
     public static void revokeRecursiveResearch(ServerPlayer player, String research) {
         if (research.contains("@")) {
             research = research.substring(0, research.indexOf("@"));
@@ -295,6 +310,7 @@ public class CommandArcaneresearch {
             knowledge.removeResearch(finalResearch);
         }
     }
+
     private static int giveAspect(CommandSourceStack source, ServerPlayer player, String tag, int amount) {
         List<arcaneresearch.api.aspects.Aspect> targets = new ArrayList<>();
         if ("all".equalsIgnoreCase(tag)) {
@@ -333,7 +349,9 @@ public class CommandArcaneresearch {
                 + " aspect to " + player.getName().getString()), true);
         return 1;
     }
-    private static int addWarp(CommandSourceStack source, ServerPlayer player, int amount, String type) {        IPlayerWarp.EnumWarpType warpType = IPlayerWarp.EnumWarpType.NORMAL;
+
+    private static int addWarp(CommandSourceStack source, ServerPlayer player, int amount, String type) {
+        IPlayerWarp.EnumWarpType warpType = IPlayerWarp.EnumWarpType.NORMAL;
         if (type.equalsIgnoreCase("PERM")) warpType = IPlayerWarp.EnumWarpType.PERMANENT;
         else if (type.equalsIgnoreCase("TEMP")) warpType = IPlayerWarp.EnumWarpType.TEMPORARY;
         final IPlayerWarp.EnumWarpType finalWarpType = warpType;
@@ -348,6 +366,7 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("§5Added " + amount + " " + finalWarpType.name() + " warp to " + player.getName().getString()), true);
         return 1;
     }
+
     private static int setWarp(CommandSourceStack source, ServerPlayer player, int amount, String type) {
         IPlayerWarp.EnumWarpType warpType = IPlayerWarp.EnumWarpType.NORMAL;
         if (type.equalsIgnoreCase("PERM")) warpType = IPlayerWarp.EnumWarpType.PERMANENT;

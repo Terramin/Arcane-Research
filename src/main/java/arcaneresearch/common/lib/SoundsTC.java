@@ -1,7 +1,9 @@
 package arcaneresearch.common.lib;
+
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;
 import arcaneresearch.init.ModSounds;
+
 public class SoundsTC {
     public static SoundEvent zap;
     public static SoundEvent heartbeat;
@@ -72,6 +74,7 @@ public class SoundsTC {
     public static SoundType CRYSTAL;
     public static SoundType JAR;
     public static SoundType URN;
+
     public static void init() {
         try {
             zap = ModSounds.ZAP.get();
@@ -143,6 +146,7 @@ public class SoundsTC {
         }
         registerSoundTypes();
     }
+
     public static void registerSoundTypes() {
         try {
             GORE = ModSounds.GORE_TYPE;

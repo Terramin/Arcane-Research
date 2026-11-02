@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.utils;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -6,18 +7,22 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
+
 import java.util.HashSet;
 import java.util.Set;
+
 public class CropUtils {
     private static final Set<String> standardCrops = new HashSet<>();
     private static final Set<String> clickableCrops = new HashSet<>();
     private static final Set<String> stackedCrops = new HashSet<>();
     private static final Set<String> lampBlacklist = new HashSet<>();
+
     public static void addStandardCrop(ItemStack stack, int grownAge) {
         Block block = Block.byItem(stack.getItem());
         if (block == Blocks.AIR) return;
         addStandardCrop(block, grownAge);
     }
+
     public static void addStandardCrop(Block block, int grownAge) {
         String blockId = getBlockId(block);
         if (blockId == null) return;
@@ -32,6 +37,7 @@ public class CropUtils {
             standardCrops.add(blockId + ":7");
         }
     }
+
     public static void addClickableCrop(ItemStack stack, int grownAge) {
         Block block = Block.byItem(stack.getItem());
         if (block == Blocks.AIR) return;
@@ -48,11 +54,13 @@ public class CropUtils {
             clickableCrops.add(blockId + ":7");
         }
     }
+
     public static void addStackedCrop(ItemStack stack, int grownAge) {
         Block block = Block.byItem(stack.getItem());
         if (block == Blocks.AIR) return;
         addStackedCrop(block, grownAge);
     }
+
     public static void addStackedCrop(Block block, int grownAge) {
         String blockId = getBlockId(block);
         if (blockId == null) return;
@@ -67,6 +75,7 @@ public class CropUtils {
             stackedCrops.add(blockId + ":7");
         }
     }
+
     public static void blacklistLamp(ItemStack stack, int age) {
         Block block = Block.byItem(stack.getItem());
         if (block == Blocks.AIR) return;
@@ -80,6 +89,7 @@ public class CropUtils {
             lampBlacklist.add(blockId + ":" + age);
         }
     }
+
     public static boolean isGrownCrop(Level level, BlockPos pos) {
         if (level.isEmptyBlock(pos)) return false;
         BlockState state = level.getBlockState(pos);
@@ -111,6 +121,7 @@ public class CropUtils {
         }
         return false;
     }
+
     public static boolean isClickableCrop(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
@@ -119,6 +130,7 @@ public class CropUtils {
         int age = getBlockAge(state);
         return clickableCrops.contains(blockId + ":" + age);
     }
+
     public static boolean isStackedCrop(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
@@ -127,6 +139,7 @@ public class CropUtils {
         int age = getBlockAge(state);
         return stackedCrops.contains(blockId + ":" + age);
     }
+
     public static boolean doesLampGrow(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
@@ -135,10 +148,12 @@ public class CropUtils {
         int age = getBlockAge(state);
         return !lampBlacklist.contains(blockId + ":" + age);
     }
+
     private static String getBlockId(Block block) {
         ResourceLocation key = ForgeRegistries.BLOCKS.getKey(block);
         return key != null ? key.toString() : null;
     }
+
     private static int getBlockAge(BlockState state) {
         if (state.getBlock() instanceof CropBlock cropBlock) {
             return cropBlock.getAge(state);
@@ -153,6 +168,7 @@ public class CropUtils {
         }
         return 0;
     }
+
     public static void init() {
         addStackedCrop(Blocks.SUGAR_CANE, 0);
         addStackedCrop(Blocks.CACTUS, 0);

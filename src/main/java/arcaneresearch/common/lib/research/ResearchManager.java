@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.research;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,12 +27,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
 public class ResearchManager {
+
     private static final Set<String> warnedItems = new HashSet<>();
     private static final Map<String, String> LEGACY_ITEM_MAPPINGS = new HashMap<>();
+
     public static ConcurrentHashMap<String, Boolean> syncList = new ConcurrentHashMap<>();
     public static boolean noFlags = false;
     public static LinkedHashSet<Integer> craftingReferences = new LinkedHashSet<>();
+
+    private static final int COMPLETE_RESEARCH_MAX_ITERATIONS = 1000;
+
     static {
         LEGACY_ITEM_MAPPINGS.put("arcaneresearch:ingot", "arcaneresearch:thaumium_ingot");
         LEGACY_ITEM_MAPPINGS.put("arcaneresearch:plate", "arcaneresearch:plate_brass");
@@ -73,20 +80,26 @@ public class ResearchManager {
         LEGACY_ITEM_MAPPINGS.put("minecraft:dye", "minecraft:white_dye");
         LEGACY_ITEM_MAPPINGS.put("minecraft:hardened_clay", "minecraft:terracotta");
     }
+
     public static boolean addKnowledge(Player player, IPlayerKnowledge.EnumKnowledgeType type,
                                        ResearchCategory category, int amount) {
+        if (player == null || type == null) return false;
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) return false;
+
         String catKey = category != null ? category.key : null;
         if (!type.hasFields()) {
             catKey = null;
         }
+
         if (MinecraftForge.EVENT_BUS.post(new ResearchEvent.Knowledge(player, type, category, amount))) {
             return false;
         }
+
         int before = knowledge.getKnowledge(type, catKey);
         knowledge.addKnowledge(type, catKey, amount);
         int gained = knowledge.getKnowledge(type, catKey) - before;
+
         if (amount > 0 && player instanceof ServerPlayer serverPlayer) {
             for (int a = 0; a < gained; a++) {
                 PacketHandler.sendToPlayer(new PacketKnowledgeGain(type, catKey), serverPlayer);
@@ -95,17 +108,28 @@ public class ResearchManager {
         syncList.put(player.getName().getString(), true);
         return true;
     }
+
     public static boolean completeResearch(Player player, String researchKey) {
         return completeResearch(player, researchKey, true);
     }
+
     public static boolean completeResearch(Player player, String researchKey, boolean sync) {
+        if (player == null || researchKey == null) return false;
+        IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+        if (knowledge == null) return false;
+
         boolean success = false;
-        while (progressResearch(player, researchKey, sync)) {
+        for (int i = 0; i < COMPLETE_RESEARCH_MAX_ITERATIONS; i++) {
+            if (!progressResearch(player, researchKey, sync)) break;
             success = true;
+            if (knowledge.isResearchComplete(researchKey)) break;
         }
         return success;
     }
+
     public static boolean startResearchWithPopup(Player player, String researchKey) {
+        if (player == null || researchKey == null) return false;
+
         boolean success = progressResearch(player, researchKey, true);
         if (success) {
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
@@ -116,71 +140,82 @@ public class ResearchManager {
         }
         return success;
     }
+
     public static boolean progressResearch(Player player, String researchKey) {
         return progressResearch(player, researchKey, true);
     }
+
     public static boolean progressResearch(Player player, String researchKey, boolean sync) {
+        if (player == null || researchKey == null) return false;
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) return false;
+
         if (knowledge.isResearchComplete(researchKey) || !doesPlayerHaveRequisites(player, researchKey)) {
             return false;
         }
         if (MinecraftForge.EVENT_BUS.post(new ResearchEvent.Research(player, researchKey))) {
             return false;
         }
+
         if (!knowledge.isResearchKnown(researchKey)) {
             knowledge.addResearch(researchKey);
         }
+
+        String playerName = player.getName().getString();
+
         ResearchEntry entry = ResearchCategories.getResearch(researchKey);
         if (entry == null) {
             if (sync) {
-                syncList.put(player.getName().getString(), true);
+                syncList.put(playerName, true);
                 player.giveExperienceLevels(5);
             }
             return true;
         }
-        if (entry != null) {
-            boolean showPopups = true;
-            if (entry.getStages() != null && entry.getStages().length > 0) {
-                int currentStage = knowledge.getResearchStage(researchKey);
-                ResearchStage stage = null;
-                if (currentStage > 0) {
-                    currentStage = Math.min(currentStage, entry.getStages().length);
-                    stage = entry.getStages()[currentStage - 1];
-                }
-                if (entry.getStages().length == 1 && currentStage == 0 && isStageAutoComplete(entry.getStages()[0])) {
-                    currentStage++;
-                } else if (entry.getStages().length > 1 && entry.getStages().length <= currentStage + 1
-                        && currentStage < entry.getStages().length && isStageAutoComplete(entry.getStages()[currentStage])) {
-                    currentStage++;
-                }
-                knowledge.setResearchStage(researchKey, Math.min(entry.getStages().length + 1, currentStage + 1));
-                showPopups = (currentStage >= entry.getStages().length);
-                int warp = 0;
-                if (stage != null) {
-                    warp = stage.getWarp();
-                }
-                if (showPopups && currentStage > 0) {
-                    currentStage = Math.min(currentStage, entry.getStages().length);
-                    stage = entry.getStages()[currentStage - 1];
-                }
-                if (stage != null) {
-                    warp += stage.getWarp();
-                    if (warp > 0 && !ModConfig.wussMode && !player.level().isClientSide) {
-                        if (warp > 1) {
-                            int w2 = warp / 2;
-                            if (warp - w2 > 0) {
-                                ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp - w2, IPlayerWarp.EnumWarpType.PERMANENT);
-                            }
-                            if (w2 > 0) {
-                                ArcaneresearchApi.internalMethods.addWarpToPlayer(player, w2, IPlayerWarp.EnumWarpType.NORMAL);
-                            }
-                        } else {
-                            ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp, IPlayerWarp.EnumWarpType.PERMANENT);
+
+        ResearchStage[] stages = entry.getStages();
+        if (stages != null && stages.length > 0) {
+            int currentStage = knowledge.getResearchStage(researchKey);
+            ResearchStage stage = null;
+            if (currentStage > 0) {
+                currentStage = Math.min(currentStage, stages.length);
+                stage = stages[currentStage - 1];
+            }
+
+            if (stages.length == 1 && currentStage == 0 && isStageAutoComplete(stages[0])) {
+                currentStage++;
+            } else if (stages.length > 1 && stages.length <= currentStage + 1
+                    && currentStage < stages.length && isStageAutoComplete(stages[currentStage])) {
+                currentStage++;
+            }
+
+            knowledge.setResearchStage(researchKey, Math.min(stages.length + 1, currentStage + 1));
+            boolean showPopups = (currentStage >= stages.length);
+
+            int warp = 0;
+            if (stage != null) {
+                warp = stage.getWarp();
+            }
+            if (showPopups) {
+                currentStage = stages.length;
+                stage = stages[currentStage - 1];
+            }
+            if (stage != null) {
+                warp += stage.getWarp();
+                if (warp > 0 && !ModConfig.wussMode && !player.level().isClientSide) {
+                    if (warp > 1) {
+                        int w2 = warp / 2;
+                        if (warp - w2 > 0) {
+                            ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp - w2, IPlayerWarp.EnumWarpType.PERMANENT);
                         }
+                        if (w2 > 0) {
+                            ArcaneresearchApi.internalMethods.addWarpToPlayer(player, w2, IPlayerWarp.EnumWarpType.NORMAL);
+                        }
+                    } else {
+                        ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp, IPlayerWarp.EnumWarpType.PERMANENT);
                     }
                 }
             }
+
             if (showPopups) {
                 if (sync) {
                     knowledge.setResearchFlag(researchKey, IPlayerKnowledge.EnumResearchFlag.POPUP);
@@ -189,15 +224,22 @@ public class ResearchManager {
                     } else {
                         noFlags = false;
                     }
-                    if (entry.getRewardItem() != null) {
-                        for (ItemStack reward : entry.getRewardItem()) {
-                            if (!player.getInventory().add(reward.copy())) {
-                                player.spawnAtLocation(reward.copy(), 1.0f);
+
+                    ItemStack[] rewards = entry.getRewardItem();
+                    if (rewards != null) {
+                        for (ItemStack reward : rewards) {
+                            if (reward == null || reward.isEmpty()) continue;
+                            ItemStack copy = reward.copy();
+                            if (!player.getInventory().add(copy)) {
+                                player.spawnAtLocation(copy, 1.0f);
                             }
                         }
                     }
-                    if (entry.getRewardKnow() != null) {
-                        for (ResearchStage.Knowledge rk : entry.getRewardKnow()) {
+
+                    ResearchStage.Knowledge[] rewardKnow = entry.getRewardKnow();
+                    if (rewardKnow != null) {
+                        for (ResearchStage.Knowledge rk : rewardKnow) {
+                            if (rk == null || rk.type == null) continue;
                             addKnowledge(player, rk.type, rk.category, rk.type.getProgression() * rk.amount);
                         }
                     }
@@ -205,137 +247,192 @@ public class ResearchManager {
                 checkAddendumUnlocks(player, knowledge, researchKey);
             }
         }
-        if (entry != null && entry.getSiblings() != null) {
-            for (String sibling : entry.getSiblings()) {
+
+        String[] siblings = entry.getSiblings();
+        if (siblings != null) {
+            for (String sibling : siblings) {
+                if (sibling == null) continue;
                 if (!knowledge.isResearchComplete(sibling) && doesPlayerHaveRequisites(player, sibling)) {
                     completeResearch(player, sibling, sync);
                 }
             }
         }
+
         if (sync) {
-            syncList.put(player.getName().getString(), true);
-            if (entry != null) {
-                player.giveExperienceLevels(5);
-            }
+            syncList.put(playerName, true);
+            player.giveExperienceLevels(5);
         }
         return true;
     }
+
     private static boolean isStageAutoComplete(ResearchStage stage) {
         return stage.getCraft() == null && stage.getObtain() == null
                 && stage.getKnow() == null && stage.getResearch() == null
                 && stage.getDiscovery() == null;
     }
+
     private static void checkAddendumUnlocks(Player player, IPlayerKnowledge knowledge, String completedResearch) {
         for (String catKey : ResearchCategories.researchCategories.keySet()) {
             ResearchCategory category = ResearchCategories.getResearchCategory(catKey);
             if (category == null) continue;
             for (ResearchEntry entry : category.research.values()) {
-                if (entry == null || entry.getAddenda() == null || !knowledge.isResearchComplete(entry.getKey())) {
-                    continue;
-                }
+                if (entry == null || entry.getAddenda() == null) continue;
+                String entryKey = entry.getKey();
+                if (entryKey == null || !knowledge.isResearchComplete(entryKey)) continue;
+
                 for (ResearchAddendum addendum : entry.getAddenda()) {
-                    if (addendum.getResearch() != null && Arrays.asList(addendum.getResearch()).contains(completedResearch)) {
-                        player.sendSystemMessage(net.minecraft.network.chat.Component.translatable("tc.addaddendum", entry.getLocalizedName()));
-                        knowledge.setResearchFlag(entry.getKey(), IPlayerKnowledge.EnumResearchFlag.PAGE);
+                    if (addendum == null) continue;
+                    String[] req = addendum.getResearch();
+                    if (req == null) continue;
+
+                    boolean match = false;
+                    for (String r : req) {
+                        if (completedResearch.equals(r)) { match = true; break; }
+                    }
+                    if (match) {
+                        player.sendSystemMessage(net.minecraft.network.chat.Component.translatable(
+                                "tc.addaddendum", entry.getLocalizedName()));
+                        knowledge.setResearchFlag(entryKey, IPlayerKnowledge.EnumResearchFlag.PAGE);
                         break;
                     }
                 }
             }
         }
     }
+
     public static boolean doesPlayerHaveRequisites(Player player, String key) {
+        if (player == null || key == null) return false;
         ResearchEntry entry = ResearchCategories.getResearch(key);
         if (entry == null) return true;
         String[] parents = entry.getParentsStripped();
         return parents == null || ArcaneresearchCapabilities.knowsResearchStrict(player, parents);
     }
+
     public static Aspect getCombinationResult(Aspect aspect1, Aspect aspect2) {
+        if (aspect1 == null || aspect2 == null) return null;
         for (Aspect aspect : Aspect.aspects.values()) {
-            if (aspect.getComponents() != null) {
-                Aspect[] components = aspect.getComponents();
-                if ((components[0] == aspect1 && components[1] == aspect2) ||
-                        (components[0] == aspect2 && components[1] == aspect1)) {
-                    return aspect;
-                }
+            if (aspect == null) continue;
+            Aspect[] components = aspect.getComponents();
+            if (components == null || components.length < 2) continue;
+            if ((components[0] == aspect1 && components[1] == aspect2)
+                    || (components[0] == aspect2 && components[1] == aspect1)) {
+                return aspect;
             }
         }
         return null;
     }
+
     public static void parseAllResearch() {
+        Map<?, ?> jsonLocs = CommonInternals.jsonLocs;
+        if (jsonLocs == null || jsonLocs.isEmpty()) {
+            Arcaneresearch.LOGGER.warn("No research files to parse (jsonLocs empty)");
+            return;
+        }
+
         int totalEntries = 0;
-        for (ResourceLocation loc : CommonInternals.jsonLocs.values()) {
+        for (Object val : jsonLocs.values()) {
+            if (!(val instanceof ResourceLocation loc)) continue;
+
             String path = "/assets/" + loc.getNamespace() + "/" + loc.getPath();
             if (!path.endsWith(".json")) {
                 path += ".json";
             }
             try (InputStream stream = ResearchManager.class.getResourceAsStream(path)) {
-                if (stream != null) {
-                    InputStreamReader reader = new InputStreamReader(stream);
-                    JsonObject obj = JsonParser.parseReader(reader).getAsJsonObject();
-                    JsonArray entries = obj.getAsJsonArray("entries");
-                    int count = 0;
-                    for (JsonElement element : entries) {
-                        try {
-                            JsonObject entryObj = element.getAsJsonObject();
-                            ResearchEntry entry = parseResearchJson(entryObj);
+                if (stream == null) {
+                    Arcaneresearch.LOGGER.warn("Research file not found: {}", path);
+                    continue;
+                }
+                InputStreamReader reader = new InputStreamReader(stream);
+                JsonObject obj = JsonParser.parseReader(reader).getAsJsonObject();
+
+                JsonElement entriesElement = obj.get("entries");
+                if (entriesElement == null || !entriesElement.isJsonArray()) {
+                    Arcaneresearch.LOGGER.warn("No 'entries' array in {}", loc);
+                    continue;
+                }
+                JsonArray entries = entriesElement.getAsJsonArray();
+                int count = 0;
+                for (JsonElement element : entries) {
+                    try {
+                        JsonObject entryObj = element.getAsJsonObject();
+                        ResearchEntry entry = parseResearchJson(entryObj);
+                        if (entry != null) {
                             addResearchToCategory(entry);
                             count++;
-                        } catch (Exception e) {
-                            Arcaneresearch.LOGGER.warn("Invalid research entry in {}: {}", loc, e.getMessage());
                         }
+                    } catch (Exception e) {
+                        Arcaneresearch.LOGGER.warn("Invalid research entry in {}: {}", loc, e.getMessage());
                     }
-                    Arcaneresearch.LOGGER.info("Loaded {} research entries from {}", count, loc);
-                    totalEntries += count;
-                } else {
-                    Arcaneresearch.LOGGER.warn("Research file not found: {}", path);
                 }
+                Arcaneresearch.LOGGER.info("Loaded {} research entries from {}", count, loc);
+                totalEntries += count;
             } catch (Exception e) {
                 Arcaneresearch.LOGGER.warn("Failed to parse research file {}: {}", loc, e.getMessage());
             }
         }
         Arcaneresearch.LOGGER.info("Total research entries loaded: {}", totalEntries);
     }
-    private static ResearchEntry parseResearchJson(JsonObject obj) throws Exception {
+
+    private static ResearchEntry parseResearchJson(JsonObject obj) {
+        if (obj == null) return null;
+
+        JsonElement keyEl = obj.get("key");
+        JsonElement nameEl = obj.get("name");
+        JsonElement catEl = obj.get("category");
+        if (keyEl == null || keyEl.isJsonNull()
+                || nameEl == null || nameEl.isJsonNull()
+                || catEl == null || catEl.isJsonNull()) {
+            Arcaneresearch.LOGGER.warn("Research entry missing required key/name/category");
+            return null;
+        }
+
         ResearchEntry entry = new ResearchEntry();
-        entry.setKey(obj.get("key").getAsString());
-        entry.setName(obj.get("name").getAsString());
-        entry.setCategory(obj.get("category").getAsString());
-        if (obj.has("icons")) {
+        entry.setKey(keyEl.getAsString());
+        entry.setName(nameEl.getAsString());
+        entry.setCategory(catEl.getAsString());
+
+        if (obj.has("icons") && obj.get("icons").isJsonArray()) {
             String[] iconStrings = arrayJsonToString(obj.getAsJsonArray("icons"));
             if (iconStrings != null && iconStrings.length > 0) {
                 Object[] icons = new Object[iconStrings.length];
                 for (int i = 0; i < iconStrings.length; i++) {
-                    ItemStack stack = parseJSONtoItemStack(iconStrings[i]);
+                    String iconStr = iconStrings[i];
+                    if (iconStr == null) continue;
+                    ItemStack stack = parseJSONtoItemStack(iconStr);
                     if (!stack.isEmpty()) {
                         icons[i] = stack;
-                    } else if (iconStrings[i].startsWith("focus")) {
-                        icons[i] = iconStrings[i];
+                    } else if (iconStr.startsWith("focus")) {
+                        icons[i] = iconStr;
                     } else {
-                        icons[i] = new ResourceLocation(
-                                iconStrings[i].replace("textures/items/", "textures/item/"));
+                        icons[i] = ResourceLocation.tryParse(
+                                iconStr.replace("textures/items/", "textures/item/"));
                     }
                 }
                 entry.setIcons(icons);
             }
         }
-        if (obj.has("location")) {
+
+        if (obj.has("location") && obj.get("location").isJsonArray()) {
             Integer[] loc = arrayJsonToInt(obj.getAsJsonArray("location"));
-            if (loc != null && loc.length == 2) {
+            if (loc != null && loc.length == 2 && loc[0] != null && loc[1] != null) {
                 entry.setDisplayColumn(loc[0]);
                 entry.setDisplayRow(loc[1]);
             }
         }
-        if (obj.has("parents")) {
+
+        if (obj.has("parents") && obj.get("parents").isJsonArray()) {
             entry.setParents(arrayJsonToString(obj.getAsJsonArray("parents")));
         }
-        if (obj.has("siblings")) {
+        if (obj.has("siblings") && obj.get("siblings").isJsonArray()) {
             entry.setSiblings(arrayJsonToString(obj.getAsJsonArray("siblings")));
         }
-        if (obj.has("meta")) {
+
+        if (obj.has("meta") && obj.get("meta").isJsonArray()) {
             String[] metaStrings = arrayJsonToString(obj.getAsJsonArray("meta"));
             if (metaStrings != null) {
                 List<ResearchEntry.EnumResearchMeta> metas = new ArrayList<>();
                 for (String s : metaStrings) {
+                    if (s == null) continue;
                     try {
                         metas.add(ResearchEntry.EnumResearchMeta.valueOf(s.toUpperCase()));
                     } catch (IllegalArgumentException e) {
@@ -345,14 +442,16 @@ public class ResearchManager {
                 entry.setMeta(metas.toArray(new ResearchEntry.EnumResearchMeta[0]));
             }
         }
-        if (obj.has("reward_item")) {
+
+        if (obj.has("reward_item") && obj.get("reward_item").isJsonArray()) {
             entry.setRewardItem(parseJsonItemList(arrayJsonToString(obj.getAsJsonArray("reward_item"))));
         }
-        if (obj.has("reward_knowledge")) {
+        if (obj.has("reward_knowledge") && obj.get("reward_knowledge").isJsonArray()) {
             String[] knowledgeStrings = arrayJsonToString(obj.getAsJsonArray("reward_knowledge"));
             if (knowledgeStrings != null) {
                 List<ResearchStage.Knowledge> knowledge = new ArrayList<>();
                 for (String s : knowledgeStrings) {
+                    if (s == null) continue;
                     ResearchStage.Knowledge k = ResearchStage.Knowledge.parse(s);
                     if (k != null) knowledge.add(k);
                 }
@@ -361,40 +460,48 @@ public class ResearchManager {
                 }
             }
         }
-        if (obj.has("stages")) {
+
+        if (obj.has("stages") && obj.get("stages").isJsonArray()) {
             JsonArray stagesJson = obj.getAsJsonArray("stages");
             List<ResearchStage> stages = new ArrayList<>();
             for (JsonElement stageElement : stagesJson) {
+                if (stageElement == null || !stageElement.isJsonObject()) continue;
                 stages.add(parseStageJson(stageElement.getAsJsonObject(), entry.getKey()));
             }
             if (!stages.isEmpty()) {
                 entry.setStages(stages.toArray(new ResearchStage[0]));
             }
         }
-        if (obj.has("addenda")) {
+
+        if (obj.has("addenda") && obj.get("addenda").isJsonArray()) {
             JsonArray addendaJson = obj.getAsJsonArray("addenda");
             List<ResearchAddendum> addenda = new ArrayList<>();
             for (JsonElement addElement : addendaJson) {
-                addenda.add(parseAddendumJson(addElement.getAsJsonObject()));
+                if (addElement == null || !addElement.isJsonObject()) continue;
+                ResearchAddendum add = parseAddendumJson(addElement.getAsJsonObject());
+                if (add != null) addenda.add(add);
             }
             if (!addenda.isEmpty()) {
                 entry.setAddenda(addenda.toArray(new ResearchAddendum[0]));
             }
         }
+
         return entry;
     }
+
     private static ResearchStage parseStageJson(JsonObject obj, String entryKey) {
         ResearchStage stage = new ResearchStage();
+
         if (obj.has("text") && !obj.get("text").isJsonNull()) {
             stage.setText(obj.get("text").getAsString());
         }
-        if (obj.has("recipes")) {
+        if (obj.has("recipes") && obj.get("recipes").isJsonArray()) {
             stage.setRecipes(arrayJsonToResourceLocations(obj.getAsJsonArray("recipes")));
         }
-        if (obj.has("required_item")) {
+        if (obj.has("required_item") && obj.get("required_item").isJsonArray()) {
             stage.setObtain(parseJsonOreList(arrayJsonToString(obj.getAsJsonArray("required_item"))));
         }
-        if (obj.has("required_craft")) {
+        if (obj.has("required_craft") && obj.get("required_craft").isJsonArray()) {
             String[] craftStrings = arrayJsonToString(obj.getAsJsonArray("required_craft"));
             Object[] craftItems = parseJsonOreList(craftStrings);
             stage.setCraft(craftItems);
@@ -413,11 +520,12 @@ public class ResearchManager {
                 stage.setCraftReference(refs);
             }
         }
-        if (obj.has("required_knowledge")) {
+        if (obj.has("required_knowledge") && obj.get("required_knowledge").isJsonArray()) {
             String[] knowStrings = arrayJsonToString(obj.getAsJsonArray("required_knowledge"));
             if (knowStrings != null) {
                 List<ResearchStage.Knowledge> knowledge = new ArrayList<>();
                 for (String s : knowStrings) {
+                    if (s == null) continue;
                     ResearchStage.Knowledge k = ResearchStage.Knowledge.parse(s);
                     if (k != null) knowledge.add(k);
                 }
@@ -426,14 +534,16 @@ public class ResearchManager {
                 }
             }
         }
-        if (obj.has("required_research")) {
+        if (obj.has("required_research") && obj.get("required_research").isJsonArray()) {
             String[] researchStrings = arrayJsonToString(obj.getAsJsonArray("required_research"));
             if (researchStrings != null) {
                 String[] keys = new String[researchStrings.length];
                 String[] icons = new String[researchStrings.length];
                 for (int i = 0; i < researchStrings.length; i++) {
-                    String[] parts = researchStrings[i].split(";");
-                    keys[i] = parts[0];
+                    String rs = researchStrings[i];
+                    if (rs == null) continue;
+                    String[] parts = rs.split(";");
+                    keys[i] = parts.length > 0 ? parts[0] : null;
                     icons[i] = parts.length > 1 ? parts[1] : null;
                 }
                 stage.setResearch(keys);
@@ -441,9 +551,15 @@ public class ResearchManager {
             }
         }
         if (obj.has("warp")) {
-            stage.setWarp(obj.get("warp").getAsInt());
+            JsonElement warpEl = obj.get("warp");
+            if (warpEl != null && warpEl.isJsonPrimitive() && warpEl.getAsJsonPrimitive().isNumber()) {
+                try {
+                    stage.setWarp(warpEl.getAsInt());
+                } catch (RuntimeException ignored) {
+                }
+            }
         }
-        if (obj.has("structure")) {
+        if (obj.has("structure") && obj.get("structure").isJsonArray()) {
             String[] structStrings = arrayJsonToString(obj.getAsJsonArray("structure"));
             if (structStrings != null && structStrings.length > 0) {
                 stage.setStructure(structStrings);
@@ -452,34 +568,34 @@ public class ResearchManager {
         if (obj.has("required_discovery") && !obj.get("required_discovery").isJsonNull()) {
             JsonArray discArray = null;
             try {
-                if (obj.get("required_discovery").isJsonArray()) {
-                    discArray = obj.getAsJsonArray("required_discovery");
-                } else if (obj.get("required_discovery").isJsonObject()) {
-                    JsonObject discObj = obj.getAsJsonObject("required_discovery");
+                JsonElement discEl = obj.get("required_discovery");
+                if (discEl.isJsonArray()) {
+                    discArray = discEl.getAsJsonArray();
+                } else if (discEl.isJsonObject()) {
+                    JsonObject discObj = discEl.getAsJsonObject();
                     if (discObj.has("keys") && discObj.get("keys").isJsonArray()) {
                         discArray = discObj.getAsJsonArray("keys");
                     }
                     if (discObj.has("hex") && !discObj.get("hex").isJsonNull()) {
                         try {
                             stage.setHex(discObj.get("hex").getAsBoolean());
-                        } catch (Exception ignored) {
+                        } catch (RuntimeException ignored) {
                         }
                     }
                 }
-            } catch (Exception ignored) {
+            } catch (RuntimeException ignored) {
             }
             if (discArray != null) {
-                java.util.ArrayList<String> keys = new java.util.ArrayList<>();
+                ArrayList<String> keys = new ArrayList<>();
                 for (JsonElement el : discArray) {
-                    if (el == null || el.isJsonNull()) {
-                        continue;
-                    }
+                    if (el == null || el.isJsonNull()) continue;
                     try {
                         if (el.isJsonPrimitive() && el.getAsJsonPrimitive().isBoolean()) {
                             stage.setHex(el.getAsJsonPrimitive().getAsBoolean());
                             continue;
                         }
                         String raw = el.getAsString();
+                        if (raw == null) continue;
                         if (raw.equalsIgnoreCase("hex:true")) {
                             stage.setHex(true);
                             continue;
@@ -490,7 +606,7 @@ public class ResearchManager {
                         }
                         String s = raw.trim();
                         keys.add(s.startsWith("#") ? s.substring(1) : s);
-                    } catch (Exception ignored) {
+                    } catch (RuntimeException ignored) {
                     }
                 }
                 if (!keys.isEmpty()) {
@@ -500,18 +616,26 @@ public class ResearchManager {
         }
         return stage;
     }
+
     private static ResearchAddendum parseAddendumJson(JsonObject obj) {
+        if (obj == null) return null;
+        JsonElement textEl = obj.get("text");
+        if (textEl == null || textEl.isJsonNull()) return null;
+
         ResearchAddendum addendum = new ResearchAddendum();
-        addendum.setText(obj.get("text").getAsString());
-        if (obj.has("recipes")) {
+        addendum.setText(textEl.getAsString());
+        if (obj.has("recipes") && obj.get("recipes").isJsonArray()) {
             addendum.setRecipes(arrayJsonToResourceLocations(obj.getAsJsonArray("recipes")));
         }
-        if (obj.has("required_research")) {
+        if (obj.has("required_research") && obj.get("required_research").isJsonArray()) {
             addendum.setResearch(arrayJsonToString(obj.getAsJsonArray("required_research")));
         }
         return addendum;
     }
+
     private static void addResearchToCategory(ResearchEntry entry) {
+        if (entry == null || entry.getKey() == null) return;
+
         ResearchCategory category = ResearchCategories.getResearchCategory(entry.getCategory());
         if (category == null) {
             Arcaneresearch.LOGGER.warn("Cannot add research {} - category {} not found",
@@ -524,10 +648,11 @@ public class ResearchManager {
             return;
         }
         for (ResearchEntry existing : category.research.values()) {
-            if (existing.getDisplayColumn() == entry.getDisplayColumn() &&
-                    existing.getDisplayRow() == entry.getDisplayRow()) {
+            if (existing.getDisplayColumn() == entry.getDisplayColumn()
+                    && existing.getDisplayRow() == entry.getDisplayRow()) {
                 Arcaneresearch.LOGGER.warn("Research {} overlaps with {} at position [{},{}]",
-                        entry.getKey(), existing.getKey(), entry.getDisplayColumn(), entry.getDisplayRow());
+                        entry.getKey(), existing.getKey(),
+                        entry.getDisplayColumn(), entry.getDisplayRow());
                 return;
             }
         }
@@ -545,34 +670,64 @@ public class ResearchManager {
             category.maxDisplayRow = entry.getDisplayRow();
         }
     }
+
     private static String[] arrayJsonToString(JsonArray array) {
         if (array == null || array.isEmpty()) return null;
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<>(array.size());
         for (JsonElement e : array) {
-            list.add(e.getAsString());
+            if (e == null || e.isJsonNull()) {
+                list.add(null);
+                continue;
+            }
+            try {
+                list.add(e.getAsString());
+            } catch (RuntimeException ex) {
+                list.add(null);
+            }
         }
         return list.toArray(new String[0]);
     }
+
     private static Integer[] arrayJsonToInt(JsonArray array) {
         if (array == null || array.isEmpty()) return null;
-        List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<>(array.size());
         for (JsonElement e : array) {
-            list.add(e.getAsInt());
+            if (e == null || e.isJsonNull()) {
+                list.add(null);
+                continue;
+            }
+            try {
+                list.add(e.getAsInt());
+            } catch (RuntimeException ex) {
+                list.add(null);
+            }
         }
         return list.toArray(new Integer[0]);
     }
+
     private static ResourceLocation[] arrayJsonToResourceLocations(JsonArray array) {
         if (array == null || array.isEmpty()) return null;
-        List<ResourceLocation> list = new ArrayList<>();
+        List<ResourceLocation> list = new ArrayList<>(array.size());
         for (JsonElement e : array) {
-            list.add(new ResourceLocation(e.getAsString()));
+            if (e == null || e.isJsonNull()) continue;
+            try {
+                String s = e.getAsString();
+                if (s != null) {
+                    ResourceLocation rl = ResourceLocation.tryParse(s);
+                    if (rl != null) list.add(rl);
+                }
+            } catch (RuntimeException ex) {
+                Arcaneresearch.LOGGER.debug("Invalid resource location in array: {}", e);
+            }
         }
-        return list.toArray(new ResourceLocation[0]);
+        return list.isEmpty() ? null : list.toArray(new ResourceLocation[0]);
     }
+
     private static ItemStack[] parseJsonItemList(String[] strings) {
         if (strings == null || strings.length == 0) return null;
-        List<ItemStack> items = new ArrayList<>();
+        List<ItemStack> items = new ArrayList<>(strings.length);
         for (String s : strings) {
+            if (s == null) continue;
             ItemStack stack = parseJSONtoItemStack(s.replace("'", "\""));
             if (!stack.isEmpty()) {
                 items.add(stack);
@@ -580,13 +735,15 @@ public class ResearchManager {
         }
         return items.isEmpty() ? null : items.toArray(new ItemStack[0]);
     }
+
     private static Object[] parseJsonOreList(String[] strings) {
         if (strings == null || strings.length == 0) return null;
-        List<Object> items = new ArrayList<>();
+        List<Object> items = new ArrayList<>(strings.length);
         for (String s : strings) {
+            if (s == null) continue;
             s = s.replace("'", "\"");
             if (s.startsWith("tag:") || s.startsWith("oredict:")) {
-                String tagName = s.contains(":") ? s.substring(s.indexOf(":") + 1) : s;
+                String tagName = s.substring(s.indexOf(":") + 1);
                 items.add(tagName);
             } else {
                 ItemStack stack = parseJSONtoItemStack(s);
@@ -597,6 +754,7 @@ public class ResearchManager {
         }
         return items.isEmpty() ? null : items.toArray();
     }
+
     public static ItemStack parseJSONtoItemStack(String entry) {
         if (entry == null || entry.isEmpty()) return ItemStack.EMPTY;
         entry = entry.replace("'", "\"");
@@ -625,13 +783,18 @@ public class ResearchManager {
         }
         name = name.toLowerCase();
         try {
-            ResourceLocation itemId = new ResourceLocation(name);
+            ResourceLocation itemId = ResourceLocation.tryParse(name);
+            if (itemId == null) return ItemStack.EMPTY;
+
             Item item = ForgeRegistries.ITEMS.getValue(itemId);
             if (item == null || item == net.minecraft.world.item.Items.AIR) {
                 String mappedName = LEGACY_ITEM_MAPPINGS.get(name);
                 if (mappedName != null) {
-                    itemId = new ResourceLocation(mappedName);
-                    item = ForgeRegistries.ITEMS.getValue(itemId);
+                    ResourceLocation mappedId = ResourceLocation.tryParse(mappedName);
+                    if (mappedId != null) {
+                        itemId = mappedId;
+                        item = ForgeRegistries.ITEMS.getValue(itemId);
+                    }
                 }
             }
             if (item != null && item != net.minecraft.world.item.Items.AIR) {
@@ -655,6 +818,7 @@ public class ResearchManager {
         }
         return ItemStack.EMPTY;
     }
+
     public static int createItemStackHash(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return 0;
         ItemStack copy = stack.copy();

@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -29,6 +30,7 @@ import arcaneresearch.common.lib.network.fx.PacketFXPollute;
 import arcaneresearch.common.lib.network.playerdata.PacketWarpMessage;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.common.world.aura.AuraHandler;
+
 public class InternalMethodHandler implements IInternalMethodHandler {
     @Override
     public boolean addKnowledge(Player player, EnumKnowledgeType type, ResearchCategory category, int amount) {
@@ -37,6 +39,7 @@ public class InternalMethodHandler implements IInternalMethodHandler {
         }
         return ResearchManager.addKnowledge(player, type, category, amount);
     }
+
     @Override
     public boolean progressResearch(Player player, String researchKey) {
         if (researchKey == null || player.level().isClientSide()) {
@@ -44,6 +47,7 @@ public class InternalMethodHandler implements IInternalMethodHandler {
         }
         return ResearchManager.progressResearch(player, researchKey);
     }
+
     @Override
     public boolean completeResearch(Player player, String researchKey) {
         if (researchKey == null || player.level().isClientSide()) {
@@ -51,10 +55,12 @@ public class InternalMethodHandler implements IInternalMethodHandler {
         }
         return ResearchManager.completeResearch(player, researchKey);
     }
+
     @Override
     public boolean doesPlayerHaveRequisites(Player player, String researchKey) {
         return ResearchManager.doesPlayerHaveRequisites(player, researchKey);
     }
+
     @Override
     public void addWarpToPlayer(Player player, int amount, EnumWarpType type) {
         if (amount == 0 || player.level().isClientSide()) {
@@ -85,12 +91,13 @@ public class InternalMethodHandler implements IInternalMethodHandler {
                 && ArcaneresearchCapabilities.knowsResearchStrict(player, "FIRSTSTEPS")
                 && !ArcaneresearchCapabilities.knowsResearchStrict(player, "WARP")) {
             completeResearch(player, "WARP");
-            player.displayClientMessage(Component.translatable("research.WARP.warn"), true);
+            player.sendSystemMessage(Component.translatable("research.WARP.warn"));
         }
         if (player instanceof ServerPlayer serverPlayer) {
             pw.sync(serverPlayer);
         }
     }
+
     @Override
     public int getActualWarp(Player player) {
         IPlayerWarp wc = ArcaneresearchCapabilities.getWarp(player);
@@ -99,26 +106,32 @@ public class InternalMethodHandler implements IInternalMethodHandler {
         }
         return wc.get(EnumWarpType.NORMAL) + wc.get(EnumWarpType.PERMANENT);
     }
+
     @Override
     public AspectList getObjectAspects(ItemStack is) {
         return ArcaneresearchCraftingManager.getObjectTags(is);
     }
+
     @Override
     public AspectList generateTags(ItemStack is) {
         return ArcaneresearchCraftingManager.generateTags(is);
     }
+
     @Override
     public float drainVis(Level level, BlockPos pos, float amount, boolean simulate) {
         return AuraHandler.drainVis(level, pos, amount, simulate);
     }
+
     @Override
     public float drainFlux(Level level, BlockPos pos, float amount, boolean simulate) {
         return AuraHandler.drainFlux(level, pos, amount, simulate);
     }
+
     @Override
     public void addVis(Level level, BlockPos pos, float amount) {
         AuraHandler.addVis(level, pos, amount);
     }
+
     @Override
     public void addFlux(Level level, BlockPos pos, float amount, boolean showEffect) {
         if (level.isClientSide()) {
@@ -135,34 +148,42 @@ public class InternalMethodHandler implements IInternalMethodHandler {
             }
         }
     }
+
     @Override
     public float getTotalAura(Level level, BlockPos pos) {
         return AuraHandler.getTotalAura(level, pos);
     }
+
     @Override
     public float getVis(Level level, BlockPos pos) {
         return AuraHandler.getVis(level, pos);
     }
+
     @Override
     public float getFlux(Level level, BlockPos pos) {
         return AuraHandler.getFlux(level, pos);
     }
+
     @Override
     public int getAuraBase(Level level, BlockPos pos) {
         return AuraHandler.getAuraBase(level, pos);
     }
+
     @Override
     public boolean shouldPreserveAura(Level level, Player player, BlockPos pos) {
         return AuraHandler.shouldPreserveAura(level, player, pos);
     }
+
     @Override
     public void registerSeal(ISeal seal) {
         SealHandler.registerSeal(seal);
     }
+
     @Override
     public ISeal getSeal(String key) {
         return SealHandler.getSeal(key);
     }
+
     @Override
     public ISealEntity getSealEntity(String dimension, SealPos pos) {
         ResourceKey<Level> dimKey = parseDimensionKey(dimension);
@@ -171,6 +192,7 @@ public class InternalMethodHandler implements IInternalMethodHandler {
         }
         return SealHandler.getSealEntity(dimKey, pos);
     }
+
     @Override
     public void addGolemTask(String dimension, Task task) {
         ResourceKey<Level> dimKey = parseDimensionKey(dimension);
@@ -179,21 +201,25 @@ public class InternalMethodHandler implements IInternalMethodHandler {
         }
         TaskHandler.addTask(dimKey, task);
     }
+
     @Override
     public ItemStack getSealStack(String key) {
         return ItemSealPlacer.getSealStack(key);
     }
+
     private ResourceKey<Level> parseDimensionKey(String dimension) {
         if (dimension == null || dimension.isEmpty()) {
             return null;
         }
         try {
-            ResourceLocation loc = new ResourceLocation(dimension);
+            ResourceLocation loc = ResourceLocation.tryParse(dimension);
+            assert loc != null;
             return ResourceKey.create(net.minecraft.core.registries.Registries.DIMENSION, loc);
         } catch (Exception e) {
             return null;
         }
     }
+
     @SuppressWarnings("unused")
     private ServerLevel getServerLevel(String dimension) {
         ResourceKey<Level> dimKey = parseDimensionKey(dimension);
