@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.playerdata;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,12 +12,16 @@ import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.ResearchEntry;
 import arcaneresearch.client.gui.ResearchToast;
+
 import java.util.function.Supplier;
+
 public class PacketSyncKnowledge {
     private CompoundTag data;
+
     public PacketSyncKnowledge() {
         this.data = new CompoundTag();
     }
+
     public PacketSyncKnowledge(Player player) {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null) {
@@ -29,19 +34,23 @@ public class PacketSyncKnowledge {
             this.data = new CompoundTag();
         }
     }
+
     public static void encode(PacketSyncKnowledge msg, FriendlyByteBuf buf) {
         buf.writeNbt(msg.data);
     }
+
     public static PacketSyncKnowledge decode(FriendlyByteBuf buf) {
         PacketSyncKnowledge msg = new PacketSyncKnowledge();
         msg.data = buf.readNbt();
         return msg;
     }
+
     public static void handle(PacketSyncKnowledge msg, Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.enqueueWork(() -> handleOnClient(msg));
         ctx.setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleOnClient(PacketSyncKnowledge msg) {
         Player player = Minecraft.getInstance().player;

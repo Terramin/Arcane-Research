@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.misc;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -7,24 +8,29 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.golems.GolemHelper;
+
 import java.util.function.Supplier;
+
 public class PacketLogisticsRequestToServer {
     private final BlockPos pos;
     private final Direction side;
     private final ItemStack stack;
     private final int stackSize;
+
     public PacketLogisticsRequestToServer(ItemStack stack, int size) {
         this.pos = null;
         this.side = null;
         this.stack = stack;
         this.stackSize = size;
     }
+
     public PacketLogisticsRequestToServer(BlockPos pos, Direction side, ItemStack stack, int size) {
         this.pos = pos;
         this.side = side;
         this.stack = stack;
         this.stackSize = size;
     }
+
     public static void encode(PacketLogisticsRequestToServer packet, FriendlyByteBuf buf) {
         if (packet.pos == null || packet.side == null) {
             buf.writeBoolean(false);
@@ -36,6 +42,7 @@ public class PacketLogisticsRequestToServer {
         buf.writeItem(packet.stack);
         buf.writeInt(packet.stackSize);
     }
+
     public static PacketLogisticsRequestToServer decode(FriendlyByteBuf buf) {
         boolean hasPos = buf.readBoolean();
         BlockPos pos = null;
@@ -52,6 +59,7 @@ public class PacketLogisticsRequestToServer {
             return new PacketLogisticsRequestToServer(stack, stackSize);
         }
     }
+
     public static void handle(PacketLogisticsRequestToServer packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();

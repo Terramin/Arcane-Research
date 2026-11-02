@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,13 +11,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.client.fx.FXDispatcher;
+
 import java.util.function.Supplier;
+
 public class PacketFXBoreDig {
     private final int x;
     private final int y;
     private final int z;
     private final int boreId;
     private final int delay;
+
     public PacketFXBoreDig(BlockPos pos, Entity bore, int delay) {
         this.x = pos.getX();
         this.y = pos.getY();
@@ -24,6 +28,7 @@ public class PacketFXBoreDig {
         this.boreId = bore.getId();
         this.delay = delay;
     }
+
     private PacketFXBoreDig(int x, int y, int z, int boreId, int delay) {
         this.x = x;
         this.y = y;
@@ -31,6 +36,7 @@ public class PacketFXBoreDig {
         this.boreId = boreId;
         this.delay = delay;
     }
+
     public static void encode(PacketFXBoreDig packet, FriendlyByteBuf buffer) {
         buffer.writeInt(packet.x);
         buffer.writeInt(packet.y);
@@ -38,6 +44,7 @@ public class PacketFXBoreDig {
         buffer.writeInt(packet.boreId);
         buffer.writeInt(packet.delay);
     }
+
     public static PacketFXBoreDig decode(FriendlyByteBuf buffer) {
         int x = buffer.readInt();
         int y = buffer.readInt();
@@ -46,12 +53,14 @@ public class PacketFXBoreDig {
         int delay = buffer.readInt();
         return new PacketFXBoreDig(x, y, z, boreId, delay);
     }
+
     public static void handle(PacketFXBoreDig packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             handleClient(packet);
         });
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXBoreDig packet) {
         try {

@@ -1,11 +1,14 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 public class CardNotation extends TheorycraftCard {
     private String cat1, cat2;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
@@ -13,28 +16,34 @@ public class CardNotation extends TheorycraftCard {
         if (cat2 != null) nbt.putString("cat2", cat2);
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         cat1 = nbt.getString("cat1");
         cat2 = nbt.getString("cat2");
     }
+
     @Override
     public boolean isAidOnly() {
         return true;
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getLocalizedName() {
         return "card.notation.name";
     }
+
     @Override
     public String getLocalizedText() {
         return "card.notation.text";
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         if (data.categoryTotals.size() < 2) return false;
@@ -58,6 +67,7 @@ public class CardNotation extends TheorycraftCard {
         cat2 = hKey;
         return true;
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         if (cat1 == null || cat2 == null) return false;

@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -24,7 +25,9 @@ import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketMiscEvent;
 import arcaneresearch.init.ModEffects;
 import arcaneresearch.init.ModEntities;
+
 import java.util.List;
+
 public class WarpEvents {
     public static void checkWarpEvent(Player player) {
         if (player.level().isClientSide) return;
@@ -73,6 +76,7 @@ public class WarpEvents {
             wc.sync(serverPlayer);
         }
     }
+
     private static void triggerWarpEffect(Player player, int eff, int warp, int nw) {
         Level level = player.level();
         if (eff <= 4) {
@@ -181,6 +185,7 @@ public class WarpEvents {
             spawnMist(player, warp, warp / 15);
         }
     }
+
     private static void spawnMist(Player player, int warp, int guardian) {
         if (player instanceof ServerPlayer serverPlayer) {
             PacketHandler.sendToPlayer(new PacketMiscEvent(PacketMiscEvent.MIST_EVENT), serverPlayer);
@@ -193,6 +198,7 @@ public class WarpEvents {
         }
         player.displayClientMessage(getWarpText(6), true);
     }
+
     private static void spawnPortal(Player player) {
         Level level = player.level();
         EntityCultistPortalLesser portal = new EntityCultistPortalLesser(ModEntities.CULTIST_PORTAL_LESSER.get(), level);
@@ -219,6 +225,7 @@ public class WarpEvents {
             }
         }
     }
+
     private static void spawnGuardian(Player player) {
         Level level = player.level();
         EntityEldritchGuardian guardian = new EntityEldritchGuardian(ModEntities.ELDRITCH_GUARDIAN.get(), level);
@@ -241,6 +248,7 @@ public class WarpEvents {
             }
         }
     }
+
     private static void suddenlySpiders(Player player, int warp, boolean real) {
         Level level = player.level();
         int spawns = Math.min(50, warp);
@@ -275,6 +283,7 @@ public class WarpEvents {
         }
         player.displayClientMessage(getWarpText(7), true);
     }
+
     public static void checkDeathGaze(Player player) {
         if (player.level().isClientSide) return;
         MobEffectInstance effect = player.getEffect(ModEffects.DEATH_GAZE.get());
@@ -305,6 +314,7 @@ public class WarpEvents {
             }
         }
     }
+
     private static int getWarpFromGear(Player player) {
         int w = PlayerEvents.getFinalWarp(player.getMainHandItem(), player);
         for (ItemStack armor : player.getInventory().armor) {
@@ -316,6 +326,7 @@ public class WarpEvents {
         w += curiosWarp[0];
         return w;
     }
+
     private static net.minecraft.network.chat.Component getWarpText(int index) {
         if (index >= 1 && index <= 16) {
             return net.minecraft.network.chat.Component.literal("§5§o")

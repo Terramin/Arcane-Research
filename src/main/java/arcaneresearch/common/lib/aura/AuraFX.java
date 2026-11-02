@@ -1,14 +1,18 @@
 package arcaneresearch.common.lib.aura;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+
 public class AuraFX {
     private AuraFX() {
     }
-    public static void nodeSparkle(Level level, BlockPos pos, int color) {
-        if (level == null || !(level instanceof ServerLevel server) || pos == null) {
+
+    public static void nodeSparkle(@NotNull Level level, @NotNull BlockPos pos, int color) {
+        if (!(level instanceof ServerLevel server)) {
             return;
         }
         float r = ((color >> 16) & 0xFF) / 255.0F;

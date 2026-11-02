@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
@@ -6,9 +7,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.client.fx.FXDispatcher;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+
 public class PacketFXInfusionStream {
     private final int streamId;
     private final BlockPos source;
@@ -18,6 +21,7 @@ public class PacketFXInfusionStream {
     private final long startTick;
     private final long serverNow;
     private final List<Vec3> waypoints;
+
     public PacketFXInfusionStream(int streamId, BlockPos source, BlockPos target, int color,
                                   int duration, long startTick, long serverNow, List<Vec3> waypoints) {
         this.streamId = streamId;
@@ -29,10 +33,12 @@ public class PacketFXInfusionStream {
         this.serverNow = serverNow;
         this.waypoints = new ArrayList<>(waypoints);
     }
+
     private PacketFXInfusionStream(int streamId, BlockPos source, BlockPos target, int color,
                                    int duration, long startTick, long serverNow) {
         this(streamId, source, target, color, duration, startTick, serverNow, new ArrayList<>());
     }
+
     public static void encode(PacketFXInfusionStream packet, FriendlyByteBuf buffer) {
         buffer.writeVarInt(packet.streamId);
         buffer.writeBlockPos(packet.source);
@@ -48,6 +54,7 @@ public class PacketFXInfusionStream {
             buffer.writeDouble(p.z);
         }
     }
+
     public static PacketFXInfusionStream decode(FriendlyByteBuf buffer) {
         int streamId = buffer.readVarInt();
         BlockPos source = buffer.readBlockPos();
@@ -67,12 +74,14 @@ public class PacketFXInfusionStream {
         }
         return packet;
     }
+
     public static void handle(PacketFXInfusionStream packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             handleClient(packet);
         });
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXInfusionStream packet) {
         FXDispatcher.INSTANCE.infusionStreamFx(packet.streamId, packet.source, packet.target, packet.color,

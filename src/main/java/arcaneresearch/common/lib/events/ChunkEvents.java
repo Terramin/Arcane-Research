@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -15,10 +16,12 @@ import arcaneresearch.common.golems.seals.SealEntity;
 import arcaneresearch.common.golems.seals.SealHandler;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketSealToClient;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ChunkEvents {
     private static final String ARCANERESEARCH_DATA_KEY = "Arcaneresearch";
     private static final String SEALS_KEY = "seals";
+
     @SubscribeEvent
     public static void onChunkSave(ChunkDataEvent.Save event) {
         if (event.getLevel() instanceof Level level && !level.isClientSide()) {
@@ -39,6 +42,7 @@ public class ChunkEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void onChunkLoad(ChunkDataEvent.Load event) {
         if (event.getLevel() instanceof Level level && !level.isClientSide()) {
@@ -66,6 +70,7 @@ public class ChunkEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Watch event) {
         ServerPlayer player = event.getPlayer();
@@ -77,6 +82,7 @@ public class ChunkEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void onChunkUnWatch(ChunkWatchEvent.UnWatch event) {
     }

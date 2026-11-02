@@ -1,6 +1,8 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.research.theorycraft.TheorycraftManager;
+
 public class TheoryRegistry {
     public static void init() {
         Arcaneresearch.LOGGER.info("Registering theorycraft cards and aids");

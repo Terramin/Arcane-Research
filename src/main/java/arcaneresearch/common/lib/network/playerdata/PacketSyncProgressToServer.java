@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.playerdata;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -13,29 +14,36 @@ import arcaneresearch.api.research.ResearchEntry;
 import arcaneresearch.api.research.ResearchStage;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.research.ResearchManager;
+
 import java.util.function.Supplier;
+
 public class PacketSyncProgressToServer {
     private String key;
     private boolean first;
     private boolean checks;
     private boolean noFlags;
+
     public PacketSyncProgressToServer() {
     }
+
     public PacketSyncProgressToServer(String key, boolean first) {
         this(key, first, false, true);
     }
+
     public PacketSyncProgressToServer(String key, boolean first, boolean checks, boolean noFlags) {
         this.key = key;
         this.first = first;
         this.checks = checks;
         this.noFlags = noFlags;
     }
+
     public static void encode(PacketSyncProgressToServer msg, FriendlyByteBuf buf) {
         buf.writeUtf(msg.key);
         buf.writeBoolean(msg.first);
         buf.writeBoolean(msg.checks);
         buf.writeBoolean(msg.noFlags);
     }
+
     public static PacketSyncProgressToServer decode(FriendlyByteBuf buf) {
         PacketSyncProgressToServer msg = new PacketSyncProgressToServer();
         msg.key = buf.readUtf(256);
@@ -44,6 +52,7 @@ public class PacketSyncProgressToServer {
         msg.noFlags = buf.readBoolean();
         return msg;
     }
+
     public static void handle(PacketSyncProgressToServer msg, Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.enqueueWork(() -> {
@@ -62,13 +71,13 @@ public class PacketSyncProgressToServer {
         });
         ctx.setPacketHandled(true);
     }
+
     public static boolean checkRequisites(ServerPlayer player, String key) {
         ResearchEntry research = ResearchCategories.getResearch(key);
         if (research == null || research.getStages() == null) {
             return true;
         }
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player).orElse(null);
-        if (knowledge == null) return false;
         int currentStage = knowledge.getResearchStage(key) - 1;
         if (currentStage < 0) {
             return false;
@@ -147,16 +156,18 @@ public class PacketSyncProgressToServer {
         }
         return true;
     }
+
     private static TagKey<Item> parseItemTag(String tagName) {
         if (tagName == null || tagName.isEmpty()) {
             return null;
         }
         try {
-            return TagKey.create(Registries.ITEM, new ResourceLocation(tagName));
+            return TagKey.create(Registries.ITEM, ResourceLocation.tryParse(tagName));
         } catch (Exception e) {
             return null;
         }
     }
+
     private static ItemStack firstTagMember(ServerPlayer player, String tagName) {
         TagKey<Item> tag = parseItemTag(tagName);
         if (tag == null) {

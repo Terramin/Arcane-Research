@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.loot;
+
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,13 +18,17 @@ import net.minecraftforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
 import arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment;
 import arcaneresearch.common.lib.utils.Utils;
+
 import java.util.function.Supplier;
+
 public class RefiningLootModifier extends LootModifier {
     public static final Supplier<Codec<RefiningLootModifier>> CODEC = Suppliers.memoize(() ->
             RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, RefiningLootModifier::new)));
+
     public RefiningLootModifier(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
     }
+
     @Override
     protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot,
                                                           LootContext context) {
@@ -62,6 +67,7 @@ public class RefiningLootModifier extends LootModifier {
         }
         return generatedLoot;
     }
+
     @Override
     public Codec<? extends IGlobalLootModifier> codec() {
         return CODEC.get();

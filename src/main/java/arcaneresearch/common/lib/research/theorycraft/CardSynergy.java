@@ -1,24 +1,30 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.world.entity.player.Player;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 public class CardSynergy extends TheorycraftCard {
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getResearchCategory() {
         return "GOLEMANCY";
     }
+
     @Override
     public String getLocalizedName() {
         return "card.synergy.name";
     }
+
     @Override
     public String getLocalizedText() {
         return "card.synergy.text";
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         int tot = 0;
@@ -27,6 +33,7 @@ public class CardSynergy extends TheorycraftCard {
         tot += data.getTotal("INFUSION");
         return tot >= 15;
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         int tot = 0;

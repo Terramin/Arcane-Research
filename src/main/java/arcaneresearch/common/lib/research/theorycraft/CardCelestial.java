@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -10,10 +11,12 @@ import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
 import arcaneresearch.init.ModItems;
+
 public class CardCelestial extends TheorycraftCard {
     private int noteType1;
     private int noteType2;
     private String category = "BASICS";
+
     private static net.minecraft.world.item.Item noteItem(int md) {
         return switch (md) {
             case 0 -> ModItems.CELESTIAL_NOTES_SUN.get();
@@ -31,6 +34,7 @@ public class CardCelestial extends TheorycraftCard {
             default -> ModItems.CELESTIAL_NOTES_MOON_8.get();
         };
     }
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
@@ -39,6 +43,7 @@ public class CardCelestial extends TheorycraftCard {
         nbt.putString("cat", category);
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
@@ -46,10 +51,12 @@ public class CardCelestial extends TheorycraftCard {
         noteType2 = nbt.getInt("md2");
         category = nbt.getString("cat");
     }
+
     @Override
     public String getResearchCategory() {
         return category;
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         if (data.categoryTotals.isEmpty() || !ArcaneresearchCapabilities.knowsResearch(player, "CELESTIALSCANNING")) {
@@ -73,18 +80,22 @@ public class CardCelestial extends TheorycraftCard {
         category = highestKey;
         return category != null;
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getLocalizedName() {
         return "card.celestial.name";
     }
+
     @Override
     public String getLocalizedText() {
         return "card.celestial.text";
     }
+
     @Override
     public ItemStack[] getRequiredItems() {
         return new ItemStack[]{
@@ -92,10 +103,12 @@ public class CardCelestial extends TheorycraftCard {
                 new ItemStack(noteItem(noteType2))
         };
     }
+
     @Override
     public boolean[] getRequiredItemsConsumed() {
         return new boolean[]{true, true};
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         data.addTotal(getResearchCategory(), Mth.nextInt(player.getRandom(), 25, 50));

@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -39,10 +40,12 @@ import arcaneresearch.common.lib.utils.EntityUtils;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ToolEvents {
     public static final HashMap<String, ArrayList<BlockPos>> blockedBlocks = new HashMap<>();
@@ -50,12 +53,12 @@ public class ToolEvents {
     private static final Map<Integer, Long> collectorBreaks = new HashMap<>();
     private static final Map<Integer, BlockPos> collectorBreakPos = new HashMap<>();
     private static boolean blockDestructiveRecursion = false;
+
     @SubscribeEvent
     public static void playerAttack(AttackEntityEvent event) {
         Player player = event.getEntity();
         if (player == null) return;
         InteractionHand hand = player.getUsedItemHand();
-        if (hand == null) hand = InteractionHand.MAIN_HAND;
         ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.isEmpty()) return;
         List<EnumInfusionEnchantment> enchantments = EnumInfusionEnchantment.getInfusionEnchantments(heldItem);
@@ -65,7 +68,7 @@ public class ToolEvents {
                     event.getTarget().getBoundingBox().inflate(1.5 + rank, 1.0 + rank / 2.0, 1.5 + rank),
                     e -> e != player && e != event.getTarget());
             int count = 0;
-            if (targets.size() > 0) {
+            if (!targets.isEmpty()) {
                 for (Entity target : targets) {
                     if (target.isRemoved() || !target.isAlive()) continue;
                     if (EntityUtils.isFriendly(player, target)) continue;
@@ -99,6 +102,7 @@ public class ToolEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void playerRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getLevel().isClientSide || event.getEntity() == null) return;
@@ -120,12 +124,14 @@ public class ToolEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void playerLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getEntity() != null && event.getFace() != null) {
             lastFaceClicked.put(event.getEntity().getId(), event.getFace());
         }
     }
+
     public static void addBlockedBlock(Level level, BlockPos pos) {
         String dimKey = level.dimension().location().toString();
         blockedBlocks.computeIfAbsent(dimKey, k -> new ArrayList<>());
@@ -134,54 +140,58 @@ public class ToolEvents {
             list.add(pos);
         }
     }
+
     public static void clearBlockedBlock(Level level, BlockPos pos) {
         String dimKey = level.dimension().location().toString();
         blockedBlocks.computeIfAbsent(dimKey, k -> new ArrayList<>());
         blockedBlocks.get(dimKey).remove(pos);
     }
+
     @SubscribeEvent
     public static void breakBlockEvent(BlockEvent.BreakEvent event) {
         try {
-        if (!(event.getLevel() instanceof Level level)) return;
-        String dimKey = level.dimension().location().toString();
-        if (blockedBlocks.containsKey(dimKey)) {
-            ArrayList<BlockPos> list = blockedBlocks.get(dimKey);
-            if (list != null && list.contains(event.getPos())) {
-                event.setCanceled(true);
-                return;
-            }
-        }
-        if (!level.isClientSide) {
-            for (Direction face : Direction.values()) {
-                arcaneresearch.common.golems.seals.SealHandler.removeSealEntity(
-                        level,
-                        new arcaneresearch.api.golems.seals.SealPos(event.getPos(), face),
-                        false);
-            }
-        }
-        if (level.isClientSide || event.getPlayer() == null) return;
-        Player player = event.getPlayer();
-        InteractionHand usedHand = player.getUsedItemHand();
-        final InteractionHand hand = (usedHand != null) ? usedHand : InteractionHand.MAIN_HAND;
-        ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.isEmpty()) return;
-        List<EnumInfusionEnchantment> enchantments = EnumInfusionEnchantment.getInfusionEnchantments(heldItem);
-        if (enchantments.contains(EnumInfusionEnchantment.BURROWING) && !player.isShiftKeyDown()) {
-            if (isToolEffective(level, event.getPos(), heldItem) && isValidBurrowBlock(level, event.getPos())) {
-                event.setCanceled(true);
-                if (!player.getName().getString().equals("FakeArcaneresearchBore")) {
-                    heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            if (!(event.getLevel() instanceof Level level)) return;
+            String dimKey = level.dimension().location().toString();
+            if (blockedBlocks.containsKey(dimKey)) {
+                ArrayList<BlockPos> list = blockedBlocks.get(dimKey);
+                if (list != null && list.contains(event.getPos())) {
+                    event.setCanceled(true);
+                    return;
                 }
-                breakFurthestBlock(level, event.getPos(), event.getState(), player);
             }
-        }
+            if (!level.isClientSide) {
+                for (Direction face : Direction.values()) {
+                    arcaneresearch.common.golems.seals.SealHandler.removeSealEntity(
+                            level,
+                            new arcaneresearch.api.golems.seals.SealPos(event.getPos(), face),
+                            false);
+                }
+            }
+            if (level.isClientSide || event.getPlayer() == null) return;
+            Player player = event.getPlayer();
+            InteractionHand usedHand = player.getUsedItemHand();
+            final InteractionHand hand = (usedHand != null) ? usedHand : InteractionHand.MAIN_HAND;
+            ItemStack heldItem = player.getItemInHand(hand);
+            if (heldItem.isEmpty()) return;
+            List<EnumInfusionEnchantment> enchantments = EnumInfusionEnchantment.getInfusionEnchantments(heldItem);
+            if (enchantments.contains(EnumInfusionEnchantment.BURROWING) && !player.isShiftKeyDown()) {
+                if (isToolEffective(level, event.getPos(), heldItem) && isValidBurrowBlock(level, event.getPos())) {
+                    event.setCanceled(true);
+                    if (!player.getName().getString().equals("FakeArcaneresearchBore")) {
+                        heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                    }
+                    breakFurthestBlock(level, event.getPos(), event.getState(), player);
+                }
+            }
         } catch (Exception e) {
             Arcaneresearch.LOGGER.error("Error in breakBlockEvent at {}", event.getPos(), e);
         }
     }
+
     private static boolean isValidBurrowBlock(Level level, BlockPos pos) {
         return BlockUtils.isLog(level, pos) || BlockUtils.isOre(level, pos);
     }
+
     private static void breakFurthestBlock(Level level, BlockPos pos, BlockState state, Player player) {
         BlockPos furthest = findFurthestConnectedBlock(level, pos, state, 32);
         if (furthest != null && !furthest.equals(pos)) {
@@ -197,6 +207,7 @@ public class ToolEvents {
             level.destroyBlock(pos, false, player);
         }
     }
+
     private static BlockPos findFurthestConnectedBlock(Level level, BlockPos start, BlockState targetState, int maxDistance) {
         Block targetBlock = targetState.getBlock();
         BlockPos furthest = start;
@@ -225,74 +236,76 @@ public class ToolEvents {
         }
         return furthest;
     }
+
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         try {
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
-        if (event.getPlayer() == null) return;
-        Player player = event.getPlayer();
-        InteractionHand usedHand2 = player.getUsedItemHand();
-        final InteractionHand hand = (usedHand2 != null) ? usedHand2 : InteractionHand.MAIN_HAND;
-        ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.isEmpty()) return;
-        List<EnumInfusionEnchantment> enchantments = EnumInfusionEnchantment.getInfusionEnchantments(heldItem);
-        if (enchantments.isEmpty()) return;
-        BlockPos pos = event.getPos();
-        BlockState state = event.getState();
-        if (!isToolEffective(level, pos, heldItem)) return;
-        if (enchantments.contains(EnumInfusionEnchantment.COLLECTOR) && !player.isShiftKeyDown()) {
-            noteCollectorBreak(player, pos);
-        }
-        if (!blockDestructiveRecursion && enchantments.contains(EnumInfusionEnchantment.DESTRUCTIVE) && !player.isShiftKeyDown()) {
-            blockDestructiveRecursion = true;
-            try {
-            Direction face = lastFaceClicked.get(player.getId());
-            if (face == null) {
-                face = Direction.orderedByNearest(player)[0];
+            if (!(event.getLevel() instanceof ServerLevel level)) return;
+            if (event.getPlayer() == null) return;
+            Player player = event.getPlayer();
+            InteractionHand usedHand2 = player.getUsedItemHand();
+            final InteractionHand hand = (usedHand2 != null) ? usedHand2 : InteractionHand.MAIN_HAND;
+            ItemStack heldItem = player.getItemInHand(hand);
+            if (heldItem.isEmpty()) return;
+            List<EnumInfusionEnchantment> enchantments = EnumInfusionEnchantment.getInfusionEnchantments(heldItem);
+            if (enchantments.isEmpty()) return;
+            BlockPos pos = event.getPos();
+            BlockState state = event.getState();
+            if (!isToolEffective(level, pos, heldItem)) return;
+            if (enchantments.contains(EnumInfusionEnchantment.COLLECTOR) && !player.isShiftKeyDown()) {
+                noteCollectorBreak(player, pos);
             }
-            for (int aa = -1; aa <= 1; ++aa) {
-                for (int bb = -1; bb <= 1; ++bb) {
-                    if (aa == 0 && bb == 0) continue;
-                    int xx = 0, yy = 0, zz = 0;
-                    if (face.getAxis() == Direction.Axis.Y) {
-                        xx = aa;
-                        zz = bb;
-                    } else if (face.getAxis() == Direction.Axis.Z) {
-                        xx = aa;
-                        yy = bb;
-                    } else {
-                        zz = aa;
-                        yy = bb;
+            if (!blockDestructiveRecursion && enchantments.contains(EnumInfusionEnchantment.DESTRUCTIVE) && !player.isShiftKeyDown()) {
+                blockDestructiveRecursion = true;
+                try {
+                    Direction face = lastFaceClicked.get(player.getId());
+                    if (face == null) {
+                        face = Direction.orderedByNearest(player)[0];
                     }
-                    BlockPos targetPos = pos.offset(xx, yy, zz);
-                    BlockState targetState = level.getBlockState(targetPos);
-                    if (targetState.getDestroySpeed(level, targetPos) >= 0.0f &&
-                            isToolEffective(level, targetPos, heldItem)) {
-                        if (!player.getName().getString().equals("FakeArcaneresearchBore")) {
-                            heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                    for (int aa = -1; aa <= 1; ++aa) {
+                        for (int bb = -1; bb <= 1; ++bb) {
+                            if (aa == 0 && bb == 0) continue;
+                            int xx = 0, yy = 0, zz = 0;
+                            if (face.getAxis() == Direction.Axis.Y) {
+                                xx = aa;
+                                zz = bb;
+                            } else if (face.getAxis() == Direction.Axis.Z) {
+                                xx = aa;
+                                yy = bb;
+                            } else {
+                                zz = aa;
+                                yy = bb;
+                            }
+                            BlockPos targetPos = pos.offset(xx, yy, zz);
+                            BlockState targetState = level.getBlockState(targetPos);
+                            if (targetState.getDestroySpeed(level, targetPos) >= 0.0f &&
+                                    isToolEffective(level, targetPos, heldItem)) {
+                                if (!player.getName().getString().equals("FakeArcaneresearchBore")) {
+                                    heldItem.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                                }
+                                level.destroyBlock(targetPos, true, player);
+                            }
                         }
-                        level.destroyBlock(targetPos, true, player);
                     }
+                } finally {
+                    blockDestructiveRecursion = false;
                 }
             }
-            } finally {
-                blockDestructiveRecursion = false;
-            }
-        }
-        if (enchantments.contains(EnumInfusionEnchantment.LAMPLIGHT) && !player.isShiftKeyDown()) {
-            level.getServer().execute(() -> {
-                if (level.isEmptyBlock(pos) && level.getRawBrightness(pos, 0) < 10) {
-                    if (ModBlocks.EFFECT_GLIMMER != null && ModBlocks.EFFECT_GLIMMER.get() != null) {
-                        level.setBlock(pos, ModBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
+            if (enchantments.contains(EnumInfusionEnchantment.LAMPLIGHT) && !player.isShiftKeyDown()) {
+                level.getServer().execute(() -> {
+                    if (level.isEmptyBlock(pos) && level.getRawBrightness(pos, 0) < 10) {
+                        if (ModBlocks.EFFECT_GLIMMER != null && ModBlocks.EFFECT_GLIMMER.get() != null) {
+                            level.setBlock(pos, ModBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
         } catch (Exception e) {
             blockDestructiveRecursion = false;
             Arcaneresearch.LOGGER.error("Error in onBlockBreak at {}", event.getPos(), e);
         }
     }
+
     @SubscribeEvent
     public static void onLootTableLoad(net.minecraftforge.event.LootTableLoadEvent event) {
         float chance = nuggetChance(event.getName());
@@ -313,6 +326,7 @@ public class ToolEvents {
                         .randomChance(chance))
                 .build());
     }
+
     private static float nuggetChance(net.minecraft.resources.ResourceLocation table) {
         if (table == null) {
             return -1.0f;
@@ -335,10 +349,12 @@ public class ToolEvents {
             default -> -1.0f;
         };
     }
+
     public static void noteCollectorBreak(Player player, BlockPos pos) {
         collectorBreaks.put(player.getId(), player.level().getGameTime());
         collectorBreakPos.put(player.getId(), pos.immutable());
     }
+
     @SubscribeEvent
     public static void onItemSpawn(net.minecraftforge.event.entity.EntityJoinLevelEvent event) {
         if (!(event.getEntity() instanceof ItemEntity item)) return;
@@ -368,6 +384,7 @@ public class ToolEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void livingDrops(LivingDropsEvent event) {
         if (event.getSource() == null || event.getSource().getEntity() == null) return;
@@ -434,6 +451,7 @@ public class ToolEvents {
             }
         }
     }
+
     private static boolean isToolEffective(Level level, BlockPos pos, ItemStack tool) {
         if (tool.isEmpty()) return false;
         BlockState state = level.getBlockState(pos);

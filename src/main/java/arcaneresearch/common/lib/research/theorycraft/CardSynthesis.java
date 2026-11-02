@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -7,11 +8,14 @@ import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 import java.util.Random;
+
 public class CardSynthesis extends TheorycraftCard {
     Aspect aspect1;
     Aspect aspect2;
     Aspect aspect3;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
@@ -20,6 +24,7 @@ public class CardSynthesis extends TheorycraftCard {
         if (aspect3 != null) nbt.putString("aspect3", aspect3.getTag());
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
@@ -27,6 +32,7 @@ public class CardSynthesis extends TheorycraftCard {
         aspect2 = Aspect.getAspect(nbt.getString("aspect2"));
         aspect3 = Aspect.getAspect(nbt.getString("aspect3"));
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         Random r = new Random(getSeed());
@@ -36,18 +42,22 @@ public class CardSynthesis extends TheorycraftCard {
         aspect2 = aspect3.getComponents()[1];
         return true;
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getResearchCategory() {
         return "ALCHEMY";
     }
+
     @Override
     public String getLocalizedName() {
         return "card.synthesis.name";
     }
+
     @Override
     public String getLocalizedText() {
         String a1 = aspect1 != null ? aspect1.getName() : "";
@@ -56,6 +66,7 @@ public class CardSynthesis extends TheorycraftCard {
                 net.minecraft.ChatFormatting.BOLD + a1 + net.minecraft.ChatFormatting.RESET,
                 net.minecraft.ChatFormatting.BOLD + a2 + net.minecraft.ChatFormatting.RESET).getString();
     }
+
     @Override
     public ItemStack[] getRequiredItems() {
         return new ItemStack[]{
@@ -63,10 +74,12 @@ public class CardSynthesis extends TheorycraftCard {
                 ArcaneresearchApiHelper.makeCrystal(aspect2)
         };
     }
+
     @Override
     public boolean[] getRequiredItemsConsumed() {
         return new boolean[]{true, true};
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         ItemStack res = ArcaneresearchApiHelper.makeCrystal(aspect3);

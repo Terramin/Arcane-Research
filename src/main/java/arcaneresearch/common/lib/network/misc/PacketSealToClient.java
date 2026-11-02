@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.misc;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -9,7 +10,9 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.golems.seals.*;
 import arcaneresearch.common.golems.seals.SealEntity;
 import arcaneresearch.common.golems.seals.SealHandler;
+
 import java.util.function.Supplier;
+
 public class PacketSealToClient {
     private BlockPos pos;
     private Direction face;
@@ -25,9 +28,11 @@ public class PacketSealToClient {
     private boolean locked;
     private boolean redstone;
     private String owner;
+
     public PacketSealToClient() {
         props = null;
     }
+
     public PacketSealToClient(ISealEntity se) {
         props = null;
         pos = se.getSealPos().pos;
@@ -59,6 +64,7 @@ public class PacketSealToClient {
         redstone = se.isRedstoneSensitive();
         owner = se.getOwner();
     }
+
     public static void encode(PacketSealToClient msg, FriendlyByteBuf buf) {
         buf.writeLong(msg.pos.asLong());
         buf.writeByte(msg.face.ordinal());
@@ -89,6 +95,7 @@ public class PacketSealToClient {
             buf.writeByte(0);
         }
     }
+
     public static PacketSealToClient decode(FriendlyByteBuf buf) {
         PacketSealToClient msg = new PacketSealToClient();
         msg.pos = BlockPos.of(buf.readLong());
@@ -120,6 +127,7 @@ public class PacketSealToClient {
         }
         return msg;
     }
+
     public static void handle(PacketSealToClient msg, Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.enqueueWork(() -> {
@@ -127,6 +135,7 @@ public class PacketSealToClient {
         });
         ctx.setPacketHandled(true);
     }
+
     private static void handleOnClient(PacketSealToClient msg) {
         try {
             if (msg.type.equals("REMOVE")) {
@@ -171,6 +180,7 @@ public class PacketSealToClient {
             Arcaneresearch.LOGGER.error("Error handling seal packet at {}", msg.pos, e);
         }
     }
+
     private static void applyData(ISeal seal, SealEntity sealEntity, PacketSealToClient msg) {
         if (msg.area != 0L) {
             sealEntity.setArea(BlockPos.of(msg.area));

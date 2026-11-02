@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.aura;
+
 import arcaneresearch.common.tiles.aura.EldritchAltarTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
@@ -10,14 +11,14 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.IWand;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
-import arcaneresearch.common.lib.aura.INode;
-import arcaneresearch.common.lib.aura.NodeType;
 import arcaneresearch.common.lib.wands.WandResearchHelper;
 import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.common.tiles.aura.TileJarNode;
+
 public final class EldritchOculusRitual {
     private EldritchOculusRitual() {
     }
+
     public static boolean createOculus(ItemStack stack, Player player, Level level, BlockPos pos) {
         if (level.isClientSide) {
             return false;

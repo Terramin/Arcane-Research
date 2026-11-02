@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,7 @@ import arcaneresearch.api.capabilities.IPlayerWarp;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.init.ModItems;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CraftingEvents {
     @SubscribeEvent
@@ -60,6 +62,7 @@ public class CraftingEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void onAnvilUpdate(AnvilUpdateEvent event) {
         if (ModItems.PRIMORDIAL_PEARL == null) return;
@@ -70,6 +73,7 @@ public class CraftingEvents {
             event.setCanceled(true);
         }
     }
+
     public static int getBurnTime(ItemStack fuel) {
         if (fuel.isEmpty()) return 0;
         if (ModItems.ALUMENTUM != null && fuel.getItem() == ModItems.ALUMENTUM.get()) {
@@ -85,6 +89,7 @@ public class CraftingEvents {
         }
         return 0;
     }
+
     @SubscribeEvent
     public static void onFurnaceFuel(net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent event) {
         int burnTime = getBurnTime(event.getItemStack());

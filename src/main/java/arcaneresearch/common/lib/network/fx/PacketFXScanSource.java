@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -13,9 +14,11 @@ import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.client.fx.ParticleEngine;
 import arcaneresearch.client.fx.particles.FXGeneric;
 import arcaneresearch.common.lib.utils.Utils;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.function.Supplier;
+
 public class PacketFXScanSource {
     private static final int C_QUARTZ = 15064789;
     private static final int C_IRON = 14200723;
@@ -33,29 +36,35 @@ public class PacketFXScanSource {
     private static final int C_DEFAULT = 12632256;
     private final long loc;
     private final int size;
+
     public PacketFXScanSource(BlockPos pos, int size) {
         this.loc = pos.asLong();
         this.size = size;
     }
+
     private PacketFXScanSource(long loc, int size) {
         this.loc = loc;
         this.size = size;
     }
+
     public static void encode(PacketFXScanSource packet, FriendlyByteBuf buffer) {
         buffer.writeLong(packet.loc);
         buffer.writeByte(packet.size);
     }
+
     public static PacketFXScanSource decode(FriendlyByteBuf buffer) {
         long loc = buffer.readLong();
         int size = buffer.readByte();
         return new PacketFXScanSource(loc, size);
     }
+
     public static void handle(PacketFXScanSource packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             handleClient(packet);
         });
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXScanSource packet) {
         Level level = Minecraft.getInstance().level;
@@ -63,6 +72,7 @@ public class PacketFXScanSource {
         BlockPos center = BlockPos.of(packet.loc);
         startScan(level, center, packet.size);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void startScan(Level level, BlockPos pos, int r) {
         int range = 4 + r * 4;
@@ -118,6 +128,7 @@ public class PacketFXScanSource {
             }
         }
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void calcGroup(Level level, BlockPos start, ArrayList<BlockPos> group, ArrayList<BlockPos> positions) {
         BlockState startState = level.getBlockState(start);
@@ -138,6 +149,7 @@ public class PacketFXScanSource {
             }
         }
     }
+
     @OnlyIn(Dist.CLIENT)
     private static int getOreColor(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);

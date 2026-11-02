@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.misc;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,13 +14,16 @@ import arcaneresearch.api.golems.seals.ISealConfigFilter;
 import arcaneresearch.api.golems.seals.ISealEntity;
 import arcaneresearch.api.golems.seals.SealPos;
 import arcaneresearch.common.golems.seals.SealHandler;
+
 import java.util.function.Supplier;
+
 public class PacketSealFilterToClient {
     private final BlockPos pos;
     private final Direction face;
     private final byte filterSize;
     private final NonNullList<ItemStack> filter;
     private final NonNullList<Integer> filterStackSizes;
+
     public PacketSealFilterToClient(ISealEntity sealEntity) {
         this.pos = sealEntity.getSealPos().pos;
         this.face = sealEntity.getSealPos().face;
@@ -33,6 +37,7 @@ public class PacketSealFilterToClient {
             this.filterStackSizes = NonNullList.create();
         }
     }
+
     private PacketSealFilterToClient(BlockPos pos, Direction face, byte filterSize,
                                      NonNullList<ItemStack> filter, NonNullList<Integer> filterStackSizes) {
         this.pos = pos;
@@ -41,6 +46,7 @@ public class PacketSealFilterToClient {
         this.filter = filter;
         this.filterStackSizes = filterStackSizes;
     }
+
     public static void encode(PacketSealFilterToClient packet, FriendlyByteBuf buf) {
         buf.writeLong(packet.pos.asLong());
         buf.writeByte(packet.face.ordinal());
@@ -50,6 +56,7 @@ public class PacketSealFilterToClient {
             buf.writeShort(packet.filterStackSizes.get(i));
         }
     }
+
     public static PacketSealFilterToClient decode(FriendlyByteBuf buf) {
         BlockPos pos = BlockPos.of(buf.readLong());
         Direction face = Direction.values()[buf.readByte()];
@@ -62,10 +69,12 @@ public class PacketSealFilterToClient {
         }
         return new PacketSealFilterToClient(pos, face, filterSize, filter, filterStackSizes);
     }
+
     public static void handle(PacketSealFilterToClient packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> handleClient(packet));
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketSealFilterToClient packet) {
         Minecraft mc = Minecraft.getInstance();

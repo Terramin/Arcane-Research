@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.misc;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,25 +9,32 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.crafting.CrucibleRecipe;
 import arcaneresearch.common.tiles.crafting.TileThaumatorium;
+
 import java.util.function.Supplier;
+
 public class PacketSelectThaumotoriumRecipeToServer {
     private final long pos;
     private final int recipeHash;
+
     public PacketSelectThaumotoriumRecipeToServer(Player player, BlockPos pos, int recipeHash) {
         this.pos = pos.asLong();
         this.recipeHash = recipeHash;
     }
+
     private PacketSelectThaumotoriumRecipeToServer(long pos, int recipeHash) {
         this.pos = pos;
         this.recipeHash = recipeHash;
     }
+
     public static void encode(PacketSelectThaumotoriumRecipeToServer packet, FriendlyByteBuf buf) {
         buf.writeLong(packet.pos);
         buf.writeInt(packet.recipeHash);
     }
+
     public static PacketSelectThaumotoriumRecipeToServer decode(FriendlyByteBuf buf) {
         return new PacketSelectThaumotoriumRecipeToServer(buf.readLong(), buf.readInt());
     }
+
     public static void handle(PacketSelectThaumotoriumRecipeToServer packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();

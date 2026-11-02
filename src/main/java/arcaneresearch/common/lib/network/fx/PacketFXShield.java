@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -7,25 +8,32 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
+
 import java.util.function.Supplier;
+
 public class PacketFXShield {
     private final int sourceEntityId;
     private final int targetEntityId;
+
     public PacketFXShield(int sourceEntityId, int targetEntityId) {
         this.sourceEntityId = sourceEntityId;
         this.targetEntityId = targetEntityId;
     }
+
     public static void encode(PacketFXShield packet, FriendlyByteBuf buf) {
         buf.writeInt(packet.sourceEntityId);
         buf.writeInt(packet.targetEntityId);
     }
+
     public static PacketFXShield decode(FriendlyByteBuf buf) {
         return new PacketFXShield(buf.readInt(), buf.readInt());
     }
+
     public static void handle(PacketFXShield packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> handleClient(packet));
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXShield packet) {
         Minecraft mc = Minecraft.getInstance();
@@ -60,6 +68,7 @@ public class PacketFXShield {
             spawnShieldRunes(level, source, 0.0f, 90.0f);
         }
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void spawnShieldRunes(Level level, Entity entity, float yaw, float pitch) {
         if (!(level instanceof net.minecraft.client.multiplayer.ClientLevel clientLevel)) {

@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.capabilities;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -14,30 +15,36 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.api.capabilities.IPlayerWarp;
 import arcaneresearch.common.golems.seals.SealHandler;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ArcaneresearchCapabilities {
     public static final Capability<IPlayerKnowledge> KNOWLEDGE = CapabilityManager.get(new CapabilityToken<>() {
     });
     public static final Capability<IPlayerWarp> WARP = CapabilityManager.get(new CapabilityToken<>() {
     });
-    public static final ResourceLocation KNOWLEDGE_ID = new ResourceLocation(Arcaneresearch.MODID, "knowledge");
-    public static final ResourceLocation WARP_ID = new ResourceLocation(Arcaneresearch.MODID, "warp");
+    public static final ResourceLocation KNOWLEDGE_ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "knowledge");
+    public static final ResourceLocation WARP_ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "warp");
+
     public static LazyOptional<IPlayerKnowledge> getKnowledge(Player player) {
         return player.getCapability(KNOWLEDGE);
     }
+
     public static LazyOptional<IPlayerWarp> getWarp(Player player) {
         return player.getCapability(WARP);
     }
+
     public static boolean isResearchKnown(Player player, String research) {
         return getKnowledge(player)
                 .map(k -> k.isResearchKnown(research))
                 .orElse(false);
     }
+
     public static boolean isResearchComplete(Player player, String research) {
         return getKnowledge(player)
                 .map(k -> k.isResearchComplete(research))
                 .orElse(false);
     }
+
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
@@ -49,21 +56,15 @@ public class ArcaneresearchCapabilities {
             }
         }
     }
+
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
         if (event.isWasDeath()) {
-            event.getOriginal().getCapability(KNOWLEDGE).ifPresent(oldKnowledge -> {
-                event.getEntity().getCapability(KNOWLEDGE).ifPresent(newKnowledge -> {
-                    newKnowledge.deserializeNBT(oldKnowledge.serializeNBT());
-                });
-            });
-            event.getOriginal().getCapability(WARP).ifPresent(oldWarp -> {
-                event.getEntity().getCapability(WARP).ifPresent(newWarp -> {
-                    newWarp.deserializeNBT(oldWarp.serializeNBT());
-                });
-            });
+            event.getOriginal().getCapability(KNOWLEDGE).ifPresent(oldKnowledge -> event.getEntity().getCapability(KNOWLEDGE).ifPresent(newKnowledge -> newKnowledge.deserializeNBT(oldKnowledge.serializeNBT())));
+            event.getOriginal().getCapability(WARP).ifPresent(oldWarp -> event.getEntity().getCapability(WARP).ifPresent(newWarp -> newWarp.deserializeNBT(oldWarp.serializeNBT())));
         }
     }
+
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
@@ -72,6 +73,7 @@ public class ArcaneresearchCapabilities {
             SealHandler.syncAllSealsToPlayer(serverPlayer);
         }
     }
+
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
@@ -80,6 +82,7 @@ public class ArcaneresearchCapabilities {
             SealHandler.syncAllSealsToPlayer(serverPlayer);
         }
     }
+
     @SubscribeEvent
     public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {

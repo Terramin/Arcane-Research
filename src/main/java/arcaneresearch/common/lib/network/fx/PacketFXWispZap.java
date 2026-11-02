@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -9,26 +10,33 @@ import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.entities.monster.EntityWisp;
+
 import java.awt.*;
 import java.util.function.Supplier;
+
 public class PacketFXWispZap {
     private final int sourceEntityId;
     private final int targetEntityId;
+
     public PacketFXWispZap(int sourceEntityId, int targetEntityId) {
         this.sourceEntityId = sourceEntityId;
         this.targetEntityId = targetEntityId;
     }
+
     public static void encode(PacketFXWispZap packet, FriendlyByteBuf buf) {
         buf.writeInt(packet.sourceEntityId);
         buf.writeInt(packet.targetEntityId);
     }
+
     public static PacketFXWispZap decode(FriendlyByteBuf buf) {
         return new PacketFXWispZap(buf.readInt(), buf.readInt());
     }
+
     public static void handle(PacketFXWispZap packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> handleClient(packet));
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXWispZap packet) {
         Minecraft mc = Minecraft.getInstance();
@@ -54,6 +62,7 @@ public class PacketFXWispZap {
                 target.getX(), target.getY(), target.getZ(),
                 r, g, b, 0.6f);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static Entity getEntityById(int entityId, Minecraft mc) {
         if (mc.player != null && entityId == mc.player.getId()) {

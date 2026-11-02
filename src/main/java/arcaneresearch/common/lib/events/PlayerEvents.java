@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,8 +27,10 @@ import arcaneresearch.common.items.armor.ItemBootsTraveller;
 import arcaneresearch.common.items.resources.ItemCrystalEssence;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
+
 import java.util.HashMap;
 import java.util.Map;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerEvents {
     static final Map<Integer, Integer> runicCharge = new HashMap<>();
@@ -37,6 +40,7 @@ public class PlayerEvents {
     static final Map<String, Long> upgradeCooldown = new HashMap<>();
     static boolean runicDirty = true;
     static int rechargeDelay = 0;
+
     @SubscribeEvent
     public static void cloneCapabilitiesEvent(PlayerEvent.Clone event) {
         try {
@@ -57,6 +61,7 @@ public class PlayerEvents {
                     event.getOriginal().getName().getString(), e);
         }
     }
+
     @SubscribeEvent
     public static void playerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
@@ -86,6 +91,7 @@ public class PlayerEvents {
             Arcaneresearch.LOGGER.debug("Synced Arcaneresearch data for player: {}", player.getName().getString());
         }
     }
+
     @SubscribeEvent
     public static void livingTick(LivingEvent.LivingTickEvent event) {
         if (event.getEntity() instanceof Player player) {
@@ -115,6 +121,7 @@ public class PlayerEvents {
             }
         }
     }
+
     private static void handleMisc(Player player) {
         if (player.tickCount % 20 == 0 && !player.isSpectator()
                 && !player.getAbilities().instabuild && player.getAbilities().flying
@@ -129,6 +136,7 @@ public class PlayerEvents {
                     true);
         }
     }
+
     @SubscribeEvent
     public static void playerJumps(LivingEvent.LivingJumpEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
@@ -141,10 +149,12 @@ public class PlayerEvents {
             player.setDeltaMovement(motion.x, motion.y + 0.275D, motion.z);
         }
     }
+
     public static boolean isRunicShieldActive(Player player) {
         Integer id = player.getId();
         return runicInfo.containsKey(id) && runicCharge.getOrDefault(id, 0) > 0;
     }
+
     private static void sendRunicCharge(Player player, int charge, int max) {
         if (player instanceof ServerPlayer sp) {
             arcaneresearch.common.lib.network.PacketHandler.sendToPlayer(
@@ -153,6 +163,7 @@ public class PlayerEvents {
                     sp);
         }
     }
+
     private static void handleRunicArmor(Player player) {
         if (player.level().isClientSide) {
             return;
@@ -224,6 +235,7 @@ public class PlayerEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
         Player player = event.getEntity();
@@ -239,6 +251,7 @@ public class PlayerEvents {
             Arcaneresearch.LOGGER.info("Player {} received the Arcaneresearch dream", player.getName().getString());
         }
     }
+
     private static void giveDreamJournal(ServerPlayer player) {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) {
@@ -264,6 +277,7 @@ public class PlayerEvents {
         player.displayClientMessage(
                 Component.literal("§5" + Component.translatable("got.dream").getString()), false);
     }
+
     @SubscribeEvent
     public static void onItemPickup(PlayerEvent.ItemPickupEvent event) {
         Player player = event.getEntity();
@@ -315,12 +329,14 @@ public class PlayerEvents {
             }
         }
     }
+
     @SubscribeEvent
     public static void droppedItem(ItemTossEvent event) {
         ItemEntity itemEntity = event.getEntity();
         CompoundTag itemData = itemEntity.getPersistentData();
         itemData.putString("thrower", event.getPlayer().getName().getString());
     }
+
     @SubscribeEvent
     public static void pickupXP(net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp event) {
         Player player = event.getEntity();
@@ -353,6 +369,7 @@ public class PlayerEvents {
                     arcaneresearch.api.research.ResearchCategories.getResearchCategory(cat), 1);
         }
     }
+
     @SubscribeEvent
     public static void finishedUsingItem(net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Finish event) {
         if (event.getEntity().level().isClientSide
@@ -383,6 +400,7 @@ public class PlayerEvents {
         }
         player.sendSystemMessage(Component.translatable("warp.text.hunger.2"));
     }
+
     private static int[] countRunicProcs(Player player) {
         int[] out = new int[4];
         try {
@@ -403,9 +421,11 @@ public class PlayerEvents {
         }
         return out;
     }
+
     public static void markForSync(Player player) {
         arcaneresearch.common.lib.research.ResearchManager.syncList.put(player.getName().getString(), true);
     }
+
     public static int getRunicCharge(net.minecraft.world.item.ItemStack stack) {
         if (stack.isEmpty() || !(stack.getItem() instanceof arcaneresearch.api.items.IRunicArmor armor)) {
             return 0;
@@ -420,6 +440,7 @@ public class PlayerEvents {
         }
         return base;
     }
+
     public static int getFinalWarp(net.minecraft.world.item.ItemStack stack, Player player) {
         if (stack.isEmpty()) {
             return 0;
@@ -436,6 +457,7 @@ public class PlayerEvents {
         }
         return warp;
     }
+
     public static int getFinalDiscount(net.minecraft.world.item.ItemStack stack, Player player) {
         if (stack.isEmpty() || !(stack.getItem() instanceof arcaneresearch.api.items.IVisDiscountGear gear)) {
             return 0;

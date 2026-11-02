@@ -1,22 +1,27 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 public class CardExperimentation extends TheorycraftCard {
     @Override
     public int getInspirationCost() {
         return 2;
     }
+
     @Override
     public String getLocalizedName() {
         return "card.experimentation.name";
     }
+
     @Override
     public String getLocalizedText() {
         return "card.experimentation.text";
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         try {

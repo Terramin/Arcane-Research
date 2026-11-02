@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -6,7 +7,9 @@ import net.minecraft.world.item.Items;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 import java.util.Random;
+
 public class CardInfuse extends TheorycraftCard {
     private static final ItemStack[] OPTIONS = {
             new ItemStack(arcaneresearch.init.ModItems.ALUMENTUM.get()),
@@ -35,6 +38,7 @@ public class CardInfuse extends TheorycraftCard {
     };
     private Aspect aspect;
     private ItemStack stack = ItemStack.EMPTY;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
@@ -42,12 +46,14 @@ public class CardInfuse extends TheorycraftCard {
         nbt.put("stack", stack.save(new CompoundTag()));
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         aspect = Aspect.getAspect(nbt.getString("aspect"));
         stack = ItemStack.of(nbt.getCompound("stack"));
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         Random r = new Random(getSeed());
@@ -60,18 +66,22 @@ public class CardInfuse extends TheorycraftCard {
         stack = OPTIONS[r.nextInt(OPTIONS.length)].copy();
         return aspect != null && !stack.isEmpty();
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getResearchCategory() {
         return "INFUSION";
     }
+
     @Override
     public String getLocalizedName() {
         return "card.infuse.name";
     }
+
     @Override
     public String getLocalizedText() {
         String aspectName = aspect != null ? aspect.getName() : "";
@@ -79,6 +89,7 @@ public class CardInfuse extends TheorycraftCard {
                 net.minecraft.ChatFormatting.BOLD + aspectName + net.minecraft.ChatFormatting.RESET,
                 stack.getHoverName().getString(), getValue()).getString();
     }
+
     private int getValue() {
         int q = 10;
         try {
@@ -88,15 +99,18 @@ public class CardInfuse extends TheorycraftCard {
         }
         return q;
     }
+
     @Override
     public ItemStack[] getRequiredItems() {
         return new ItemStack[]{stack,
                 arcaneresearch.common.items.consumables.ItemPhial.makeFilledPhial(aspect)};
     }
+
     @Override
     public boolean[] getRequiredItemsConsumed() {
         return new boolean[]{true, true};
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         data.addTotal(getResearchCategory(), getValue());

@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -8,10 +9,12 @@ import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.monster.EntityEldritchGuardian;
 import arcaneresearch.init.ModItems;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class EldritchEyeDrops {
     private EldritchEyeDrops() {
     }
+
     @SubscribeEvent
     public static void onGuardianDeath(LivingDropsEvent event) {
         try {

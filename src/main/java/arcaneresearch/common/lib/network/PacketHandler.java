@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -14,18 +15,21 @@ import arcaneresearch.common.lib.network.misc.*;
 import arcaneresearch.common.lib.network.playerdata.*;
 import arcaneresearch.common.lib.network.tiles.PacketTileToClient;
 import arcaneresearch.common.lib.network.tiles.PacketTileToServer;
+
 public class PacketHandler {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(Arcaneresearch.MODID, "main"),
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
     private static int packetId = 0;
+
     private static int nextId() {
         return packetId++;
     }
+
     public static void init() {
         Arcaneresearch.LOGGER.info("Registering Arcaneresearch network packets");
         INSTANCE.messageBuilder(PacketSealToClient.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
@@ -256,24 +260,31 @@ public class PacketHandler {
                 .add();
         Arcaneresearch.LOGGER.info("Arcaneresearch network packets registered");
     }
+
     public static <MSG> void sendToPlayer(MSG packet, ServerPlayer player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
+
     public static <MSG> void sendToAll(MSG packet) {
         INSTANCE.send(PacketDistributor.ALL.noArg(), packet);
     }
+
     public static <MSG> void sendToAllTracking(MSG packet, net.minecraft.world.entity.Entity entity) {
         INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), packet);
     }
+
     public static <MSG> void sendToServer(MSG packet) {
         INSTANCE.sendToServer(packet);
     }
+
     public static <MSG> void sendToNear(MSG packet, PacketDistributor.TargetPoint targetPoint) {
         INSTANCE.send(PacketDistributor.NEAR.with(() -> targetPoint), packet);
     }
+
     public static <MSG> void sendToDimension(MSG packet, net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dimension) {
         INSTANCE.send(PacketDistributor.DIMENSION.with(() -> dimension), packet);
     }
+
     public static <MSG> void sendToAllTracking(MSG packet, BlockEntity blockEntity) {
         if (blockEntity.getLevel() instanceof ServerLevel serverLevel) {
             BlockPos pos = blockEntity.getBlockPos();
@@ -282,6 +293,7 @@ public class PacketHandler {
             ).forEach(player -> sendToPlayer(packet, player));
         }
     }
+
     public static <MSG> void sendToAllTrackingChunk(MSG packet, ServerLevel level, BlockPos pos) {
         INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)), packet);
     }

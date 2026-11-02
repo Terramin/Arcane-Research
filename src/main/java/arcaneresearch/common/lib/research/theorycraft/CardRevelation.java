@@ -1,27 +1,33 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.capabilities.IPlayerWarp;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 public class CardRevelation extends TheorycraftCard {
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getResearchCategory() {
         return "ELDRITCH";
     }
+
     @Override
     public String getLocalizedName() {
         return "card.revelation.name";
     }
+
     @Override
     public String getLocalizedText() {
         return "card.revelation.text";
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         String[] cats = arcaneresearch.api.research.ResearchCategories.researchCategories.keySet()

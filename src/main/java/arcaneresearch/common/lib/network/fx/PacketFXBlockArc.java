@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -6,7 +7,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.client.fx.FXDispatcher;
+
 import java.util.function.Supplier;
+
 public class PacketFXBlockArc {
     private final int x;
     private final int y;
@@ -17,6 +20,7 @@ public class PacketFXBlockArc {
     private final float r;
     private final float g;
     private final float b;
+
     public PacketFXBlockArc(BlockPos pos, Entity target, float r, float g, float b) {
         this.x = pos.getX();
         this.y = pos.getY();
@@ -28,6 +32,7 @@ public class PacketFXBlockArc {
         this.g = g;
         this.b = b;
     }
+
     public PacketFXBlockArc(BlockPos pos, BlockPos target, float r, float g, float b) {
         this.x = pos.getX();
         this.y = pos.getY();
@@ -39,6 +44,7 @@ public class PacketFXBlockArc {
         this.g = g;
         this.b = b;
     }
+
     public PacketFXBlockArc(int x, int y, int z, float tx, float ty, float tz, float r, float g, float b) {
         this.x = x;
         this.y = y;
@@ -50,6 +56,7 @@ public class PacketFXBlockArc {
         this.g = g;
         this.b = b;
     }
+
     public static void encode(PacketFXBlockArc packet, FriendlyByteBuf buffer) {
         buffer.writeInt(packet.x);
         buffer.writeInt(packet.y);
@@ -61,6 +68,7 @@ public class PacketFXBlockArc {
         buffer.writeFloat(packet.g);
         buffer.writeFloat(packet.b);
     }
+
     public static PacketFXBlockArc decode(FriendlyByteBuf buffer) {
         return new PacketFXBlockArc(
                 buffer.readInt(),
@@ -74,12 +82,14 @@ public class PacketFXBlockArc {
                 buffer.readFloat()
         );
     }
+
     public static void handle(PacketFXBlockArc packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             handleClient(packet);
         });
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXBlockArc packet) {
         FXDispatcher.INSTANCE.arcLightning(

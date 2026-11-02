@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.RandomSource;
@@ -9,10 +10,13 @@ import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.casters.FocusEffect;
 import arcaneresearch.api.casters.FocusEngine;
 import arcaneresearch.api.casters.IFocusElement;
+
 import java.util.function.Supplier;
+
 public class PacketFXFocusPartImpact {
     private final float x, y, z;
     private final String parts;
+
     public PacketFXFocusPartImpact(double x, double y, double z, String[] parts) {
         this.x = (float) x;
         this.y = (float) y;
@@ -24,18 +28,21 @@ public class PacketFXFocusPartImpact {
         }
         this.parts = sb.toString();
     }
+
     private PacketFXFocusPartImpact(float x, float y, float z, String parts) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.parts = parts;
     }
+
     public static void encode(PacketFXFocusPartImpact packet, FriendlyByteBuf buf) {
         buf.writeFloat(packet.x);
         buf.writeFloat(packet.y);
         buf.writeFloat(packet.z);
         buf.writeUtf(packet.parts);
     }
+
     public static PacketFXFocusPartImpact decode(FriendlyByteBuf buf) {
         return new PacketFXFocusPartImpact(
                 buf.readFloat(),
@@ -44,10 +51,12 @@ public class PacketFXFocusPartImpact {
                 buf.readUtf(32767)
         );
     }
+
     public static void handle(PacketFXFocusPartImpact packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> handleClient(packet));
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXFocusPartImpact packet) {
         Minecraft mc = Minecraft.getInstance();

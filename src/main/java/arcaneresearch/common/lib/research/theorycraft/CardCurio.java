@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -6,42 +7,52 @@ import net.minecraft.world.item.ItemStack;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 public class CardCurio extends TheorycraftCard {
     private ItemStack curio = ItemStack.EMPTY;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
         nbt.put("stack", curio.save(new CompoundTag()));
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         curio = ItemStack.of(nbt.getCompound("stack"));
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getLocalizedName() {
         return "card.curio.name";
     }
+
     @Override
     public String getLocalizedText() {
         return "card.curio.text";
     }
+
     @Override
     public ItemStack[] getRequiredItems() {
         return new ItemStack[]{curio};
     }
+
     @Override
     public boolean[] getRequiredItemsConsumed() {
         return new boolean[]{true};
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         Random r = new Random(getSeed());
@@ -58,6 +69,7 @@ public class CardCurio extends TheorycraftCard {
         }
         return !curio.isEmpty();
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         data.addTotal("BASICS", 5);

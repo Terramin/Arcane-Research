@@ -1,8 +1,8 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -15,9 +15,11 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.projectile.EntityPrimalArrow;
 import arcaneresearch.common.items.tools.ItemBoneBow;
 import arcaneresearch.common.items.tools.ItemPrimalArrow;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PrimalArrowEvents {
     private static int debugFires = 0;
+
     @SubscribeEvent
     public static void onArrowLoose(ArrowLooseEvent event) {
         Player player = event.getEntity();
@@ -85,6 +87,7 @@ public class PrimalArrowEvents {
         }
         event.setCanceled(true);
     }
+
     @SubscribeEvent
     public static void onArrowNock(ArrowNockEvent event) {
         if (event.getAction() != null) {
@@ -101,6 +104,7 @@ public class PrimalArrowEvents {
         player.startUsingItem(event.getHand());
         event.setAction(net.minecraft.world.InteractionResultHolder.consume(event.getBow()));
     }
+
     private static ItemStack findPrimalArrow(Player player) {
         for (ItemStack stack : player.getInventory().items) {
             if (!stack.isEmpty() && stack.getItem() instanceof ItemPrimalArrow) {
@@ -113,6 +117,7 @@ public class PrimalArrowEvents {
         }
         return null;
     }
+
     public static boolean holdsPrimalArrow(Player player) {
         return findPrimalArrow(player) != null;
     }

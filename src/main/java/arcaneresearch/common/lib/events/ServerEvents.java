@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -27,6 +28,7 @@ import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXBlockBamf;
 import arcaneresearch.common.world.aura.AuraHandler;
 import arcaneresearch.common.world.aura.AuraThreadManager;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Predicate;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvents {
     public static final Predicate<SwapperPredicate> DEFAULT_PREDICATE = pred -> true;
@@ -42,6 +45,7 @@ public class ServerEvents {
     private static final LinkedBlockingQueue<RunnableEntry> clientRunList = new LinkedBlockingQueue<>();
     private static final Map<String, LinkedBlockingQueue<VirtualSwapper>> swapList = new ConcurrentHashMap<>();
     private static final Map<String, LinkedBlockingQueue<BreakData>> breakList = new ConcurrentHashMap<>();
+
     @SubscribeEvent
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
         if (event.side == LogicalSide.CLIENT) {
@@ -92,6 +96,7 @@ public class ServerEvents {
             serverTicks.put(dimKey, ticks + 1);
         }
     }
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
@@ -117,6 +122,7 @@ public class ServerEvents {
             clientRunList.addAll(temp);
         }
     }
+
     private static void processRunnables(String dimKey) {
         LinkedBlockingQueue<RunnableEntry> rlist = serverRunList.get(dimKey);
         if (rlist == null) {
@@ -143,6 +149,7 @@ public class ServerEvents {
             rlist.addAll(temp);
         }
     }
+
     private static void tickBlockSwap(ServerLevel level) {
         String dimKey = level.dimension().location().toString();
         LinkedBlockingQueue<VirtualSwapper> queue = swapList.get(dimKey);
@@ -272,6 +279,7 @@ public class ServerEvents {
             swapList.put(dimKey, nextQueue);
         }
     }
+
     private static void tickBlockBreak(ServerLevel level) {
         String dimKey = level.dimension().location().toString();
         LinkedBlockingQueue<BreakData> queue = breakList.get(dimKey);
@@ -317,6 +325,7 @@ public class ServerEvents {
             breakList.put(dimKey, nextQueue);
         }
     }
+
     private static boolean isBlockExposed(Level level, BlockPos pos) {
         return level.getBlockState(pos.above()).isAir() ||
                 level.getBlockState(pos.below()).isAir() ||
@@ -325,6 +334,7 @@ public class ServerEvents {
                 level.getBlockState(pos.east()).isAir() ||
                 level.getBlockState(pos.west()).isAir();
     }
+
     private static int findItemSlot(Player player, ItemStack target) {
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);
@@ -334,6 +344,7 @@ public class ServerEvents {
         }
         return -1;
     }
+
     public static void addSwapper(Level level, BlockPos pos, BlockState source, ItemStack target,
                                   boolean consumeTarget, int life, Player player, boolean fx, boolean fancy,
                                   int color, boolean pickup, boolean silk, int fortune,
@@ -341,6 +352,7 @@ public class ServerEvents {
         addSwapper(level, pos, source, target, null, consumeTarget, life, player, fx, fancy,
                 color, pickup, silk, fortune, allowSwap, visCost);
     }
+
     public static void addSwapper(Level level, BlockPos pos, BlockState source, ItemStack target,
                                   BlockState targetState, boolean consumeTarget, int life, Player player, boolean fx, boolean fancy,
                                   int color, boolean pickup, boolean silk, int fortune,
@@ -350,6 +362,7 @@ public class ServerEvents {
         queue.offer(new VirtualSwapper(pos, source, target, targetState, consumeTarget, life, player,
                 fx, fancy, color, pickup, silk, fortune, allowSwap, visCost));
     }
+
     public static void addBreaker(Level level, BlockPos pos, BlockState source, Player player,
                                   boolean fx, boolean silk, int fortune, float strength,
                                   float durabilityCurrent, float durabilityMax, int delay, float visCost, Runnable onComplete) {
@@ -366,28 +379,33 @@ public class ServerEvents {
             }
         }
     }
+
     public static void addRunnableServer(Level level, Runnable runnable, int delay) {
         if (level.isClientSide()) return;
         String dimKey = level.dimension().location().toString();
         LinkedBlockingQueue<RunnableEntry> rlist = serverRunList.computeIfAbsent(dimKey, k -> new LinkedBlockingQueue<>());
         rlist.add(new RunnableEntry(runnable, delay));
     }
+
     public static void addRunnableClient(Level level, Runnable runnable, int delay) {
         if (!level.isClientSide()) return;
         clientRunList.add(new RunnableEntry(runnable, delay));
     }
+
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ServerLevel level) {
             AuraThreadManager.onLevelLoad(level);
         }
     }
+
     @SubscribeEvent
     public static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ServerLevel level) {
             AuraThreadManager.onLevelUnload(level);
         }
     }
+
     @SubscribeEvent
     public static void onServerStopping(net.minecraftforge.event.server.ServerStoppingEvent event) {
         AuraThreadManager.stopAllThreads();
@@ -399,24 +417,29 @@ public class ServerEvents {
         breakList.clear();
         Arcaneresearch.LOGGER.info("Arcaneresearch server events cleaned up");
     }
+
     public static class RunnableEntry {
         Runnable runnable;
         int delay;
+
         public RunnableEntry(Runnable runnable, int delay) {
             this.runnable = runnable;
             this.delay = delay;
         }
     }
+
     public static class SwapperPredicate {
         public Level level;
         public Player player;
         public BlockPos pos;
+
         public SwapperPredicate(Level level, Player player, BlockPos pos) {
             this.level = level;
             this.player = player;
             this.pos = pos;
         }
     }
+
     public static class VirtualSwapper {
         BlockPos pos;
         BlockState source;
@@ -433,6 +456,7 @@ public class ServerEvents {
         int fortune;
         Predicate<SwapperPredicate> allowSwap;
         float visCost;
+
         VirtualSwapper(BlockPos pos, BlockState source, ItemStack target, boolean consumeTarget,
                        int lifespan, Player player, boolean fx, boolean fancy, int color,
                        boolean pickup, boolean silk, int fortune,
@@ -440,6 +464,7 @@ public class ServerEvents {
             this(pos, source, target, null, consumeTarget, lifespan, player, fx, fancy, color,
                     pickup, silk, fortune, allowSwap, visCost);
         }
+
         VirtualSwapper(BlockPos pos, BlockState source, ItemStack target, BlockState targetState,
                        boolean consumeTarget,
                        int lifespan, Player player, boolean fx, boolean fancy, int color,
@@ -462,6 +487,7 @@ public class ServerEvents {
             this.visCost = visCost;
         }
     }
+
     public static class BreakData {
         float strength;
         float durabilityCurrent;
@@ -473,6 +499,7 @@ public class ServerEvents {
         boolean silk;
         int fortune;
         float visCost;
+
         public BreakData(float strength, float durabilityCurrent, float durabilityMax,
                          BlockPos pos, BlockState source, Player player,
                          boolean fx, boolean silk, int fortune, float visCost) {

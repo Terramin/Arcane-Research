@@ -1,14 +1,17 @@
 package arcaneresearch.common.lib.potions;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+
 public class PotionSunScorned extends MobEffect {
     public PotionSunScorned() {
         super(MobEffectCategory.HARMFUL, 0xFF8800);
     }
+
     @Override
     public void applyEffectTick(LivingEntity target, int amplifier) {
         if (target.level().isClientSide) return;
@@ -27,6 +30,7 @@ public class PotionSunScorned extends MobEffect {
             target.heal(1.0f);
         }
     }
+
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
         return duration % 40 == 0;

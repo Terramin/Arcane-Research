@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.misc;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -11,15 +12,19 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.tiles.devices.TileArcaneEar;
+
 import java.util.function.Supplier;
+
 public class PacketNote {
     private int x;
     private int y;
     private int z;
     private String dim;
     private byte note;
+
     public PacketNote() {
     }
+
     public PacketNote(int x, int y, int z, String dim) {
         this.x = x;
         this.y = y;
@@ -27,6 +32,7 @@ public class PacketNote {
         this.dim = dim;
         note = -1;
     }
+
     public PacketNote(int x, int y, int z, String dim, byte note) {
         this.x = x;
         this.y = y;
@@ -34,12 +40,15 @@ public class PacketNote {
         this.dim = dim;
         this.note = note;
     }
+
     public PacketNote(int x, int y, int z, int dimId) {
         this(x, y, z, String.valueOf(dimId));
     }
+
     public PacketNote(int x, int y, int z, int dimId, byte note) {
         this(x, y, z, String.valueOf(dimId), note);
     }
+
     public static void encode(PacketNote msg, FriendlyByteBuf buf) {
         buf.writeInt(msg.x);
         buf.writeInt(msg.y);
@@ -47,6 +56,7 @@ public class PacketNote {
         buf.writeUtf(msg.dim == null ? "" : msg.dim);
         buf.writeByte(msg.note);
     }
+
     public static PacketNote decode(FriendlyByteBuf buf) {
         PacketNote msg = new PacketNote();
         msg.x = buf.readInt();
@@ -56,6 +66,7 @@ public class PacketNote {
         msg.note = buf.readByte();
         return msg;
     }
+
     public static void handle(PacketNote msg, Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
         if (context.getDirection().getReceptionSide().isClient()) {
@@ -65,6 +76,7 @@ public class PacketNote {
         }
         context.setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleOnClient(PacketNote message) {
         if (message.note < 0) {
@@ -79,6 +91,7 @@ public class PacketNote {
             ear.note = message.note;
         }
     }
+
     private static void handleOnServer(PacketNote message, NetworkEvent.Context ctx) {
         if (message.note != -1 || ctx.getSender() == null) {
             return;
@@ -110,6 +123,7 @@ public class PacketNote {
                     new PacketNote(message.x, message.y, message.z, message.dim, note));
         }
     }
+
     @SuppressWarnings("unused")
     private static int instrumentId(NoteBlockInstrument instrument) {
         return instrument.ordinal();

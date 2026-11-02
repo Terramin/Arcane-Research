@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.events;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -54,10 +55,12 @@ import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModEffects;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.proxies.CommonProxy;
+
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityEvents {
     private static final TagKey<Biome> SPOOKY_TAG =
-            TagKey.create(Registries.BIOME, new ResourceLocation(Arcaneresearch.MODID, "is_spooky"));
+            TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "is_spooky"));
+
     @SubscribeEvent
     public static void onItemExpire(ItemExpireEvent event) {
         ItemEntity itemEntity = event.getEntity();
@@ -68,28 +71,35 @@ public class EntityEvents {
             BlockPos pos = itemEntity.blockPosition();
             BlockState state = itemEntity.level().getBlockState(pos);
             if (state.is(Blocks.WATER) && state.getFluidState().isSource()
-                    && ModBlocks.PURIFYING_FLUID != null && ModBlocks.PURIFYING_FLUID.get() != null) {
+                    && ModBlocks.PURIFYING_FLUID != null) {
+                ModBlocks.PURIFYING_FLUID.get();
                 itemEntity.level().setBlock(pos, ModBlocks.PURIFYING_FLUID.get().defaultBlockState(), 3);
             }
         }
     }
+
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingTickEvent event) {
         LivingEntity living = event.getEntity();
-        if (living == null || living.level().isClientSide) return;
+        if (living == null || living.level() == null || living.level().isClientSide) return;
         int t = ChampionModifier.getChampionId(living);
         try {
-            if (t >= 0 && t < ChampionModifier.MODS.length && ChampionModifier.MODS[t].type == 0) {
-                ChampionModifier.MODS[t].effect.performEffect(living, null, null, 0.0f);
+            if (t >= 0 && t < ChampionModifier.MODS.length) {
+                var mod = ChampionModifier.MODS[t];
+                if (mod != null && mod.type == 0 && mod.effect != null) {
+                    mod.effect.performEffect(living, null, null, 0.0f);
+                }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
+
     @SubscribeEvent
     public static void onEntityHurt(LivingHurtEvent event) {
         Entity entity = event.getEntity();
         DamageSource source = event.getSource();
-        if (entity instanceof Player player) {
+        if (entity == null || source == null) return;
+        if (entity instanceof Player) {
             handlePlayerHurt(event);
         }
         if (entity instanceof Player fallPlayer && !entity.level().isClientSide
@@ -104,6 +114,7 @@ public class EntityEvents {
                 }
             }
             if (!event.isCanceled()
+                    && ModItems.CLOUD_RING != null
                     && CuriosCompat.isEquipped(fallPlayer, ModItems.CLOUD_RING.get())) {
                 float f = Math.max(0.0F, event.getAmount() / 3.0F - 2.0F);
                 if (f < 1.0F) {
@@ -143,27 +154,33 @@ public class EntityEvents {
             int t = ChampionModifier.getChampionId(mob);
             boolean isEldritch = mob.getType().getDescriptionId().contains("eldritch");
             if ((t >= 0 && t < ChampionModifier.MODS.length) || isEldritch) {
+                var mod = (t >= 0 && t < ChampionModifier.MODS.length) ? ChampionModifier.MODS[t] : null;
                 if ((t == 5 || isEldritch) && mob.getAbsorptionAmount() > 0.0f) {
                     int target2 = source.getEntity() != null ? source.getEntity().getId() : -1;
                     PacketHandler.sendToAllTracking(new PacketFXShield(mob.getId(), target2), mob);
-                } else if (t >= 0 && t < ChampionModifier.MODS.length
-                        && ChampionModifier.MODS[t].type == 2 && source.getEntity() instanceof LivingEntity attacker2) {
-                    event.setAmount(ChampionModifier.MODS[t].effect.performEffect(mob, attacker2, source, event.getAmount()));
+                } else if (mod != null && mod.type == 2 && mod.effect != null
+                        && source.getEntity() instanceof LivingEntity attacker2) {
+                    event.setAmount(mod.effect.performEffect(mob, attacker2, source, event.getAmount()));
                 }
             }
             if (event.getAmount() > 0.0f && source.getEntity() instanceof Monster attackerMob) {
                 int at = ChampionModifier.getChampionId(attackerMob);
-                if (at >= 0 && at < ChampionModifier.MODS.length && ChampionModifier.MODS[at].type == 1
-                        && entity instanceof LivingEntity victim) {
-                    event.setAmount(ChampionModifier.MODS[at].effect.performEffect(attackerMob, victim, source, event.getAmount()));
+                if (at >= 0 && at < ChampionModifier.MODS.length) {
+                    var mod = ChampionModifier.MODS[at];
+                    if (mod != null && mod.type == 1 && mod.effect != null
+                            && entity instanceof LivingEntity victim) {
+                        event.setAmount(mod.effect.performEffect(attackerMob, victim, source, event.getAmount()));
+                    }
                 }
             }
         }
     }
+
     private static void handlePlayerHurt(LivingHurtEvent event) {
         Player player = (Player) event.getEntity();
         if (player.level().isClientSide) return;
         DamageSource source = event.getSource();
+        if (source == null) return;
         float amount = event.getAmount();
         if (source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) {
             if (ArcaneresearchCapabilities.knowsResearchStrict(player, "BASEAUROMANCY@2") &&
@@ -217,7 +234,7 @@ public class EntityEvents {
                 try {
                     attacker.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                             net.minecraft.world.effect.MobEffects.WITHER, 80));
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -246,6 +263,7 @@ public class EntityEvents {
             charge = 0;
         }
         Integer[] info = PlayerEvents.runicInfo.get(pid);
+        if (info == null || info.length < 5) return;
         String key = pid + ":2";
         if (charge <= 0 && info[2] > 0 && (!PlayerEvents.upgradeCooldown.containsKey(key)
                 || PlayerEvents.upgradeCooldown.get(key) < time)) {
@@ -263,9 +281,11 @@ public class EntityEvents {
                         net.minecraft.world.effect.MobEffects.REGENERATION, 240, info[3]));
             } catch (Exception ignored) {
             }
-            player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                    arcaneresearch.init.ModSounds.RUNIC_SHIELD_EFFECT.get(),
-                    net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+            if (arcaneresearch.init.ModSounds.RUNIC_SHIELD_EFFECT != null) {
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        arcaneresearch.init.ModSounds.RUNIC_SHIELD_EFFECT.get(),
+                        net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+            }
         }
         key = pid + ":4";
         if (charge <= 0 && info[4] > 0 && (!PlayerEvents.upgradeCooldown.containsKey(key)
@@ -274,9 +294,11 @@ public class EntityEvents {
             int t = 8 * info[4];
             charge = Math.min(info[0], t);
             PlayerEvents.runicDirty = true;
-            player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                    arcaneresearch.init.ModSounds.RUNIC_SHIELD_CHARGE.get(),
-                    net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+            if (arcaneresearch.init.ModSounds.RUNIC_SHIELD_CHARGE != null) {
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        arcaneresearch.init.ModSounds.RUNIC_SHIELD_CHARGE.get(),
+                        net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+            }
         }
         if (charge <= 0) {
             PlayerEvents.rechargeDelay =
@@ -290,6 +312,7 @@ public class EntityEvents {
                     sp);
         }
     }
+
     private static void handlePlayerAttack(Player player, LivingEntity target, float damage) {
         ItemStack helm = player.getInventory().getArmor(3);
         if (!helm.isEmpty() && helm.getItem() instanceof ItemFortressArmor
@@ -298,6 +321,7 @@ public class EntityEvents {
             player.heal(1.0f);
         }
     }
+
     @SubscribeEvent
     public static void onItemPickup(PlayerEvent.ItemPickupEvent event) {
         Player player = event.getEntity();
@@ -305,13 +329,15 @@ public class EntityEvents {
             event.setCanceled(true);
         }
     }
+
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
-        if (entity.level().isClientSide) return;
+        if (entity == null || entity.level().isClientSide) return;
         DamageSource source = event.getSource();
+        if (source == null) return;
         boolean fakePlayer = source.getEntity() instanceof FakePlayer;
-        if (entity instanceof Zombie && !(entity.getType().getDescriptionId().contains("brainy"))) {
+        if (entity instanceof Zombie && !entity.getType().getDescriptionId().contains("brainy")) {
             if (event.isRecentlyHit() && entity.level().random.nextInt(10) - event.getLootingLevel() < 1) {
                 if (ModItems.ZOMBIE_BRAIN != null) {
                     ItemEntity brainDrop = new ItemEntity(
@@ -324,22 +350,25 @@ public class EntityEvents {
                 }
             }
         }
-        if (source.getMsgId().equals("arcaneresearch.dissolve")) {
+        if ("arcaneresearch.dissolve".equals(source.getMsgId())) {
             AspectList aspects = AspectHelper.getEntityAspects(entity);
             if (aspects != null && aspects.size() > 0) {
                 Aspect[] aspectArray = aspects.getAspects();
-                int dropCount = entity.level().random.nextInt(1 + aspects.visSize() / 10) + 1;
-                for (int i = 0; i < dropCount && aspectArray.length > 0; i++) {
-                    Aspect aspect = aspectArray[entity.level().random.nextInt(aspectArray.length)];
-                    ItemStack crystal = ArcaneresearchApiHelper.makeCrystal(aspect);
-                    if (!crystal.isEmpty()) {
-                        ItemEntity crystalDrop = new ItemEntity(
-                                entity.level(),
-                                entity.getX(),
-                                entity.getY() + entity.getEyeHeight(),
-                                entity.getZ(),
-                                crystal);
-                        event.getDrops().add(crystalDrop);
+                if (aspectArray != null && aspectArray.length > 0) {
+                    int dropCount = entity.level().random.nextInt(1 + aspects.visSize() / 10) + 1;
+                    for (int i = 0; i < dropCount; i++) {
+                        Aspect aspect = aspectArray[entity.level().random.nextInt(aspectArray.length)];
+                        if (aspect == null) continue;
+                        ItemStack crystal = ArcaneresearchApiHelper.makeCrystal(aspect);
+                        if (!crystal.isEmpty()) {
+                            ItemEntity crystalDrop = new ItemEntity(
+                                    entity.level(),
+                                    entity.getX(),
+                                    entity.getY() + entity.getEyeHeight(),
+                                    entity.getZ(),
+                                    crystal);
+                            event.getDrops().add(crystalDrop);
+                        }
                     }
                 }
             }
@@ -361,7 +390,7 @@ public class EntityEvents {
         int champId = ChampionModifier.getChampionId(entity);
         if (champId >= 0 && champId != 13 && event.isRecentlyHit()
                 && !(entity instanceof arcaneresearch.common.entities.monster.boss.EntityArcaneresearchBoss)
-                && !(event.getSource().getEntity() instanceof FakePlayer)) {
+                && !(source.getEntity() instanceof FakePlayer)) {
             int lb = Math.min(2, (entity.level().random.nextInt(9) + event.getLootingLevel()) / 5);
             ItemStack bag = switch (lb) {
                 case 2 ->
@@ -378,12 +407,15 @@ public class EntityEvents {
             int xp = 5 + entity.level().random.nextInt(3);
             while (xp > 0) {
                 int split = net.minecraft.world.entity.ExperienceOrb.getExperienceValue(xp);
+                if (split <= 0) split = xp;
+                if (split > xp) split = xp;
                 xp -= split;
                 entity.level().addFreshEntity(new net.minecraft.world.entity.ExperienceOrb(
                         entity.level(), entity.getX(), entity.getY(), entity.getZ(), split));
             }
         }
     }
+
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
@@ -394,6 +426,7 @@ public class EntityEvents {
         player.level().broadcastEntityEvent(player, (byte) 35);
         event.setCanceled(true);
     }
+
     @SubscribeEvent
     public static void onEntitySpawn(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide()) return;
@@ -401,8 +434,8 @@ public class EntityEvents {
         if (!(entity instanceof Monster mob)) return;
         if (mob instanceof EntityArcaneresearchBoss) return;
         if (ChampionModifier.getChampionId(mob) != -1) return;
-        if (mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH) == null
-                || mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).getBaseValue() < 10.0) {
+        var maxHealth = mob.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH);
+        if (maxHealth == null || maxHealth.getBaseValue() < 10.0) {
             ChampionModifier.setChampionId(mob, -2);
             return;
         }
@@ -421,6 +454,7 @@ public class EntityEvents {
         int cc = 0;
         boolean whitelisted = false;
         for (var entry : CommonProxy.championModWhitelist.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) continue;
             EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(entry.getKey());
             if (type != null && type == mob.getType()) {
                 whitelisted = true;
@@ -437,6 +471,7 @@ public class EntityEvents {
             ChampionModifier.setChampionId(mob, -2);
         }
     }
+
     @SubscribeEvent
     public static void onEntityConstruct(EntityEvent.EntityConstructing event) {
     }

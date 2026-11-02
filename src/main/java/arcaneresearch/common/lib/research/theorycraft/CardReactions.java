@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -7,10 +8,13 @@ import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 import java.util.Random;
+
 public class CardReactions extends TheorycraftCard {
     Aspect aspect1;
     Aspect aspect2;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
@@ -18,12 +22,14 @@ public class CardReactions extends TheorycraftCard {
         if (aspect2 != null) nbt.putString("aspect2", aspect2.getTag());
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         aspect1 = Aspect.getAspect(nbt.getString("aspect1"));
         aspect2 = Aspect.getAspect(nbt.getString("aspect2"));
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         Random r = new Random(getSeed());
@@ -36,18 +42,22 @@ public class CardReactions extends TheorycraftCard {
         aspect2 = Aspect.getCompoundAspects().get(num2);
         return true;
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getResearchCategory() {
         return "ALCHEMY";
     }
+
     @Override
     public String getLocalizedName() {
         return "card.reactions.name";
     }
+
     @Override
     public String getLocalizedText() {
         String a1 = aspect1 != null ? aspect1.getName() : "";
@@ -56,6 +66,7 @@ public class CardReactions extends TheorycraftCard {
                 net.minecraft.ChatFormatting.BOLD + a1 + net.minecraft.ChatFormatting.RESET,
                 net.minecraft.ChatFormatting.BOLD + a2 + net.minecraft.ChatFormatting.RESET).getString();
     }
+
     @Override
     public ItemStack[] getRequiredItems() {
         return new ItemStack[]{
@@ -63,6 +74,7 @@ public class CardReactions extends TheorycraftCard {
                 ArcaneresearchApiHelper.makeCrystal(aspect2)
         };
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         data.addTotal(getResearchCategory(), 25);

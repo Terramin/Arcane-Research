@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.capabilities;
+
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -13,36 +14,45 @@ import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.ResearchCategory;
 import arcaneresearch.api.research.ResearchEntry;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+
 public class PlayerKnowledge {
-    public static final ResourceLocation ID = new ResourceLocation(Arcaneresearch.MODID, "knowledge");
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "knowledge");
+
     public static class DefaultImpl implements IPlayerKnowledge {
         private final HashSet<String> research = new HashSet<>();
         private final Map<String, Integer> stages = new HashMap<>();
         private final Map<String, HashSet<EnumResearchFlag>> flags = new HashMap<>();
         private final Map<String, Integer> knowledge = new HashMap<>();
         private final HashSet<String> presentedDiscoveries = new HashSet<>();
+
         @Override
         public boolean addPresentedDiscovery(@Nonnull String key) {
-            if (key == null || key.isEmpty()) {
+            if (key.isEmpty()) {
                 return false;
             }
             return presentedDiscoveries.add(key);
         }
+
         @Override
         public boolean hasPresentedDiscovery(@Nonnull String key) {
-            return key != null && presentedDiscoveries.contains(key);
+            return presentedDiscoveries.contains(key);
         }
+
         @Override
         public boolean consumePresentedDiscovery(@Nonnull String key) {
-            return key != null && presentedDiscoveries.remove(key);
+            return presentedDiscoveries.remove(key);
         }
+
         @Override
         public void clearPresentedDiscoveries() {
             presentedDiscoveries.clear();
         }
+
         @Override
         public void clear() {
             research.clear();
@@ -51,6 +61,7 @@ public class PlayerKnowledge {
             knowledge.clear();
             presentedDiscoveries.clear();
         }
+
         @Override
         public EnumResearchStatus getResearchStatus(@Nonnull String res) {
             if (!isResearchKnown(res)) {
@@ -62,6 +73,7 @@ public class PlayerKnowledge {
             }
             return EnumResearchStatus.IN_PROGRESS;
         }
+
         @Override
         public boolean isResearchKnown(String res) {
             if (res == null) {
@@ -73,6 +85,7 @@ public class PlayerKnowledge {
             String[] ss = res.split("@");
             return (ss.length <= 1 || getResearchStage(ss[0]) >= parseInt(ss[1], 0)) && research.contains(ss[0]);
         }
+
         private int parseInt(String s, int defaultValue) {
             try {
                 return Integer.parseInt(s);
@@ -80,26 +93,30 @@ public class PlayerKnowledge {
                 return defaultValue;
             }
         }
+
         @Override
         public boolean isResearchComplete(String res) {
             return getResearchStatus(res) == EnumResearchStatus.COMPLETE;
         }
+
         @Override
-        public int getResearchStage(String res) {
-            if (res == null || !research.contains(res)) {
+        public int getResearchStage(@NotNull String res) {
+            if (!research.contains(res)) {
                 return -1;
             }
             Integer stage = stages.get(res);
             return (stage == null) ? 0 : stage;
         }
+
         @Override
-        public boolean setResearchStage(String res, int stage) {
-            if (res == null || !research.contains(res) || stage <= 0) {
+        public boolean setResearchStage(@NotNull String res, int stage) {
+            if (!research.contains(res) || stage <= 0) {
                 return false;
             }
             stages.put(res, stage);
             return true;
         }
+
         @Override
         public boolean addResearch(@Nonnull String res) {
             if (!isResearchKnown(res)) {
@@ -108,6 +125,7 @@ public class PlayerKnowledge {
             }
             return false;
         }
+
         @Override
         public boolean removeResearch(@Nonnull String res) {
             if (isResearchKnown(res)) {
@@ -118,11 +136,13 @@ public class PlayerKnowledge {
             }
             return false;
         }
+
         @Nonnull
         @Override
         public Set<String> getResearchList() {
             return Collections.unmodifiableSet(research);
         }
+
         @Override
         public boolean setResearchFlag(@Nonnull String res, @Nonnull EnumResearchFlag flag) {
             HashSet<EnumResearchFlag> list = flags.computeIfAbsent(res, k -> new HashSet<>());
@@ -132,6 +152,7 @@ public class PlayerKnowledge {
             list.add(flag);
             return true;
         }
+
         @Override
         public boolean clearResearchFlag(@Nonnull String res, @Nonnull EnumResearchFlag flag) {
             HashSet<EnumResearchFlag> list = flags.get(res);
@@ -144,15 +165,18 @@ public class PlayerKnowledge {
             }
             return false;
         }
+
         @Override
         public boolean hasResearchFlag(@Nonnull String res, @Nonnull EnumResearchFlag flag) {
             return flags.get(res) != null && flags.get(res).contains(flag);
         }
+
         private String getKey(EnumKnowledgeType type, String category) {
             return type.getAbbreviation() + "_" + (category == null ? "" : category);
         }
+
         @Override
-        public boolean addKnowledge(EnumKnowledgeType type, String category, int amount) {
+        public boolean addKnowledge(@NotNull EnumKnowledgeType type, String category, int amount) {
             String key = getKey(type, category);
             int c = getKnowledgeRaw(type, category);
             if (c + amount < 0) {
@@ -162,17 +186,20 @@ public class PlayerKnowledge {
             knowledge.put(key, c);
             return true;
         }
+
         @Override
-        public int getKnowledge(EnumKnowledgeType type, String category) {
+        public int getKnowledge(@NotNull EnumKnowledgeType type, String category) {
             String key = getKey(type, category);
             int c = knowledge.getOrDefault(key, 0);
             return (int) Math.floor(c / (double) type.getProgression());
         }
+
         @Override
-        public int getKnowledgeRaw(EnumKnowledgeType type, String category) {
+        public int getKnowledgeRaw(@NotNull EnumKnowledgeType type, String category) {
             String key = getKey(type, category);
             return knowledge.getOrDefault(key, 0);
         }
+
         @Override
         public void sync(@Nonnull ServerPlayer player) {
             arcaneresearch.common.lib.network.PacketHandler.sendToPlayer(
@@ -180,6 +207,7 @@ public class PlayerKnowledge {
                     player
             );
         }
+
         @Override
         public CompoundTag serializeNBT() {
             CompoundTag rootTag = new CompoundTag();
@@ -195,7 +223,7 @@ public class PlayerKnowledge {
                     if (list != null && !list.isEmpty()) {
                         StringBuilder fs = new StringBuilder();
                         for (EnumResearchFlag flag : list) {
-                            if (fs.length() > 0) {
+                            if (!fs.isEmpty()) {
                                 fs.append(",");
                             }
                             fs.append(flag.name());
@@ -229,6 +257,7 @@ public class PlayerKnowledge {
             rootTag.put("presented", presentedList);
             return rootTag;
         }
+
         @Override
         public void deserializeNBT(CompoundTag rootTag) {
             if (rootTag == null) {
@@ -239,7 +268,7 @@ public class PlayerKnowledge {
             for (int i = 0; i < researchList.size(); i++) {
                 CompoundTag tag = researchList.getCompound(i);
                 String know = tag.getString("key");
-                if (know != null && !know.isEmpty() && !isResearchKnown(know)) {
+                if (!know.isEmpty() && !isResearchKnown(know)) {
                     if (know.equals("!gotcrystals")) {
                         know = "!gotcrystal";
                         if (isResearchKnown(know)) {
@@ -269,19 +298,20 @@ public class PlayerKnowledge {
                 CompoundTag tag = knowledgeList.getCompound(j);
                 String key = tag.getString("key");
                 int amount = tag.getInt("amount");
-                if (key != null && !key.isEmpty()) {
+                if (!key.isEmpty()) {
                     knowledge.put(key, amount);
                 }
             }
             ListTag presentedList = rootTag.getList("presented", Tag.TAG_COMPOUND);
             for (int j = 0; j < presentedList.size(); j++) {
                 String key = presentedList.getCompound(j).getString("key");
-                if (key != null && !key.isEmpty()) {
+                if (!key.isEmpty()) {
                     presentedDiscoveries.add(key);
                 }
             }
             addAutoUnlockResearch();
         }
+
         private void addAutoUnlockResearch() {
             for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
                 for (ResearchEntry ri : cat.research.values()) {
@@ -292,10 +322,12 @@ public class PlayerKnowledge {
             }
         }
     }
+
     public static class Provider implements ICapabilitySerializable<CompoundTag> {
         public static final ResourceLocation NAME = ID;
         private final DefaultImpl knowledge = new DefaultImpl();
         private final LazyOptional<IPlayerKnowledge> optional = LazyOptional.of(() -> knowledge);
+
         @Nonnull
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -304,14 +336,17 @@ public class PlayerKnowledge {
             }
             return LazyOptional.empty();
         }
+
         @Override
         public CompoundTag serializeNBT() {
             return knowledge.serializeNBT();
         }
+
         @Override
         public void deserializeNBT(CompoundTag nbt) {
             knowledge.deserializeNBT(nbt);
         }
+
         public void invalidate() {
             optional.invalidate();
         }

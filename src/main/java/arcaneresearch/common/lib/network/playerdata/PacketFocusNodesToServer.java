@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.playerdata;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -8,22 +9,27 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.common.tiles.crafting.FocusElementNode;
 import arcaneresearch.common.tiles.crafting.TileFocalManipulator;
+
 import java.util.HashMap;
 import java.util.function.Supplier;
+
 public class PacketFocusNodesToServer {
     private final long pos;
     private final HashMap<Integer, FocusElementNode> data;
     private final String name;
+
     public PacketFocusNodesToServer(BlockPos pos, HashMap<Integer, FocusElementNode> data, String name) {
         this.pos = pos.asLong();
         this.data = data;
         this.name = name;
     }
+
     private PacketFocusNodesToServer(long pos, HashMap<Integer, FocusElementNode> data, String name) {
         this.pos = pos;
         this.data = data;
         this.name = name;
     }
+
     public static void encode(PacketFocusNodesToServer packet, FriendlyByteBuf buf) {
         buf.writeLong(packet.pos);
         buf.writeByte(packet.data.size());
@@ -33,6 +39,7 @@ public class PacketFocusNodesToServer {
         }
         buf.writeUtf(packet.name);
     }
+
     public static PacketFocusNodesToServer decode(FriendlyByteBuf buf) {
         long pos = buf.readLong();
         int count = buf.readByte();
@@ -48,6 +55,7 @@ public class PacketFocusNodesToServer {
         String name = buf.readUtf(32767);
         return new PacketFocusNodesToServer(pos, data, name);
     }
+
     public static void handle(PacketFocusNodesToServer packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();

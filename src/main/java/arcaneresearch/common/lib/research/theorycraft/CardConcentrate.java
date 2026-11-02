@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -6,20 +7,25 @@ import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
+
 import java.util.Random;
+
 public class CardConcentrate extends TheorycraftCard {
     private Aspect aspect;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
         nbt.putString("aspect", aspect != null ? aspect.getTag() : "");
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         aspect = Aspect.getAspect(nbt.getString("aspect"));
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         Random r = new Random(getSeed());
@@ -31,26 +37,32 @@ public class CardConcentrate extends TheorycraftCard {
         }
         return true;
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getResearchCategory() {
         return "ALCHEMY";
     }
+
     @Override
     public String getLocalizedName() {
         return "card.concentrate.name";
     }
+
     @Override
     public String getLocalizedText() {
         return "card.concentrate.text";
     }
+
     @Override
     public ItemStack[] getRequiredItems() {
         return new ItemStack[]{ArcaneresearchApiHelper.makeCrystal(aspect)};
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         data.addTotal(getResearchCategory(), 15);

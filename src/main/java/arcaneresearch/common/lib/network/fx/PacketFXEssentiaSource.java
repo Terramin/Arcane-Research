@@ -1,11 +1,14 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.common.lib.events.EssentiaHandler;
+
 import java.util.function.Supplier;
+
 public class PacketFXEssentiaSource {
     private final int x;
     private final int y;
@@ -15,6 +18,7 @@ public class PacketFXEssentiaSource {
     private final byte dz;
     private final int color;
     private final int ext;
+
     public PacketFXEssentiaSource(BlockPos source, byte dx, byte dy, byte dz, int color, int ext) {
         this.x = source.getX();
         this.y = source.getY();
@@ -25,6 +29,7 @@ public class PacketFXEssentiaSource {
         this.color = color;
         this.ext = ext;
     }
+
     public PacketFXEssentiaSource(BlockPos source, BlockPos target, int color, int ext) {
         this(source,
                 (byte) (source.getX() - target.getX()),
@@ -32,6 +37,7 @@ public class PacketFXEssentiaSource {
                 (byte) (source.getZ() - target.getZ()),
                 color, ext);
     }
+
     private PacketFXEssentiaSource(int x, int y, int z, byte dx, byte dy, byte dz, int color, int ext) {
         this.x = x;
         this.y = y;
@@ -42,6 +48,7 @@ public class PacketFXEssentiaSource {
         this.color = color;
         this.ext = ext;
     }
+
     public static void encode(PacketFXEssentiaSource packet, FriendlyByteBuf buffer) {
         buffer.writeInt(packet.x);
         buffer.writeInt(packet.y);
@@ -52,6 +59,7 @@ public class PacketFXEssentiaSource {
         buffer.writeByte(packet.dz);
         buffer.writeShort(packet.ext);
     }
+
     public static PacketFXEssentiaSource decode(FriendlyByteBuf buffer) {
         int x = buffer.readInt();
         int y = buffer.readInt();
@@ -63,12 +71,14 @@ public class PacketFXEssentiaSource {
         int ext = buffer.readShort();
         return new PacketFXEssentiaSource(x, y, z, dx, dy, dz, color, ext);
     }
+
     public static void handle(PacketFXEssentiaSource packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             handleClient(packet);
         });
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXEssentiaSource packet) {
         int tx = packet.x - packet.dx;

@@ -1,15 +1,20 @@
 package arcaneresearch.common.lib.network.playerdata;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
+
 import java.util.function.Supplier;
+
 public class PacketSyncResearchFlagsToServer {
     private String key;
     private byte flags;
+
     public PacketSyncResearchFlagsToServer() {
     }
+
     public PacketSyncResearchFlagsToServer(ServerPlayer player, String key) {
         this.key = key;
         ArcaneresearchCapabilities.getKnowledge(player).ifPresent(knowledge -> {
@@ -19,20 +24,24 @@ public class PacketSyncResearchFlagsToServer {
             this.flags = pack(hasPage, hasPopup, hasResearch);
         });
     }
+
     public PacketSyncResearchFlagsToServer(String key, boolean hasPage, boolean hasPopup, boolean hasResearch) {
         this.key = key;
         this.flags = pack(hasPage, hasPopup, hasResearch);
     }
+
     public static void encode(PacketSyncResearchFlagsToServer msg, FriendlyByteBuf buf) {
         buf.writeUtf(msg.key);
         buf.writeByte(msg.flags);
     }
+
     public static PacketSyncResearchFlagsToServer decode(FriendlyByteBuf buf) {
         PacketSyncResearchFlagsToServer msg = new PacketSyncResearchFlagsToServer();
         msg.key = buf.readUtf(256);
         msg.flags = buf.readByte();
         return msg;
     }
+
     public static void handle(PacketSyncResearchFlagsToServer msg, Supplier<NetworkEvent.Context> ctxSupplier) {
         NetworkEvent.Context ctx = ctxSupplier.get();
         ctx.enqueueWork(() -> {
@@ -62,6 +71,7 @@ public class PacketSyncResearchFlagsToServer {
         });
         ctx.setPacketHandled(true);
     }
+
     private static byte pack(boolean b0, boolean b1, boolean b2) {
         byte result = 0;
         if (b0) result |= 1;
@@ -69,6 +79,7 @@ public class PacketSyncResearchFlagsToServer {
         if (b2) result |= 4;
         return result;
     }
+
     private static boolean[] unpack(byte packed) {
         return new boolean[]{
                 (packed & 1) != 0,

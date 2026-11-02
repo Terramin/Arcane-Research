@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.network.fx;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -6,7 +7,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.client.fx.FXDispatcher;
+
 import java.util.function.Supplier;
+
 public class PacketFXBlockBamf {
     private final double x;
     private final double y;
@@ -14,6 +17,7 @@ public class PacketFXBlockBamf {
     private final int color;
     private final byte flags;
     private final byte face;
+
     public PacketFXBlockBamf(double x, double y, double z, int color, boolean sound, boolean flair, Direction side) {
         this.x = x;
         this.y = y;
@@ -25,9 +29,11 @@ public class PacketFXBlockBamf {
         this.face = (side != null) ? (byte) side.ordinal() : -1;
         this.flags = (byte) f;
     }
+
     public PacketFXBlockBamf(BlockPos pos, int color, boolean sound, boolean flair, Direction side) {
         this(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, color, sound, flair, side);
     }
+
     private PacketFXBlockBamf(double x, double y, double z, int color, byte flags, byte face) {
         this.x = x;
         this.y = y;
@@ -36,6 +42,7 @@ public class PacketFXBlockBamf {
         this.flags = flags;
         this.face = face;
     }
+
     public static void encode(PacketFXBlockBamf packet, FriendlyByteBuf buffer) {
         buffer.writeDouble(packet.x);
         buffer.writeDouble(packet.y);
@@ -44,6 +51,7 @@ public class PacketFXBlockBamf {
         buffer.writeByte(packet.flags);
         buffer.writeByte(packet.face);
     }
+
     public static PacketFXBlockBamf decode(FriendlyByteBuf buffer) {
         return new PacketFXBlockBamf(
                 buffer.readDouble(),
@@ -54,12 +62,14 @@ public class PacketFXBlockBamf {
                 buffer.readByte()
         );
     }
+
     public static void handle(PacketFXBlockBamf packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             handleClient(packet);
         });
         ctx.get().setPacketHandled(true);
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void handleClient(PacketFXBlockBamf packet) {
         Direction side = null;
@@ -74,9 +84,11 @@ public class PacketFXBlockBamf {
             FXDispatcher.INSTANCE.drawBamf(packet.x, packet.y, packet.z, sound, flair, side);
         }
     }
+
     private static int setBit(int value, int bit) {
         return value | (1 << bit);
     }
+
     private static boolean getBit(int value, int bit) {
         return (value & (1 << bit)) != 0;
     }
