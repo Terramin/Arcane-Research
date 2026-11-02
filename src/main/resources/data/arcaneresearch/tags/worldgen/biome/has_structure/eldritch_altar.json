@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:is_overworld",
+    "arcaneresearch:magical_forest",
+    "arcaneresearch:outer_lands",
+    "arcaneresearch:eerie",
+    "arcaneresearch:eldritch"
+  ]
+}

@@ -2,7 +2,7 @@ package arcaneresearch.init;
 
 import arcaneresearch.common.world.maze.MazeFeature;
 import arcaneresearch.common.world.structures.AuraNodeStructure;
-import arcaneresearch.common.world.structures.EldritchRingStructure;
+import arcaneresearch.common.world.structures.EldritchAltarStructure;
 import arcaneresearch.common.world.structures.HilltopStonesStructure;
 import com.mojang.serialization.MapCodec;
 
@@ -38,6 +38,8 @@ public class ModFeatures {
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<BigMagicTreeFeature>> BIG_MAGIC_TREE =            FEATURES.register("big_magic_tree",                    () -> com.mojang.serialization.MapCodec.unit(() -> new BigMagicTreeFeature(BigMagicTreeFeature.TreeType.OAK)));
 
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<BigMagicTreeFeature>> BIG_GREATWOOD_TREE =            FEATURES.register("big_greatwood_tree",                    () -> com.mojang.serialization.MapCodec.unit(() -> new BigMagicTreeFeature(BigMagicTreeFeature.TreeType.GREATWOOD)));
+
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<BigMagicTreeFeature>> BIG_SILVERWOOD_TREE =            FEATURES.register("big_silverwood_tree",                    () -> com.mojang.serialization.MapCodec.unit(() -> new BigMagicTreeFeature(BigMagicTreeFeature.TreeType.SILVERWOOD)));
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ArcaneresearchPlantFeature>> CINDERPEARL_PATCH =            FEATURES.register("cinderpearl_patch",                    () -> com.mojang.serialization.MapCodec.unit(() -> new ArcaneresearchPlantFeature(ArcaneresearchPlantFeature.PlantType.CINDERPEARL)));
@@ -60,7 +62,7 @@ public class ModFeatures {
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<AuraNodeStructure>> AURA_NODE =            FEATURES.register("aura_node",                    () -> com.mojang.serialization.MapCodec.unit(AuraNodeStructure::new));
 
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<EldritchRingStructure.Feature>> ELDRITCH_RING =            FEATURES.register("eldritch_ring",                    () -> com.mojang.serialization.MapCodec.unit(EldritchRingStructure.Feature::new));
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<EldritchAltarStructure.Feature>> ELDRITCH_ALTAR =            FEATURES.register("eldritch_altar",                    () -> com.mojang.serialization.MapCodec.unit(EldritchAltarStructure.Feature::new));
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<HilltopStonesStructure.Feature>> HILLTOP_STONES =            FEATURES.register("hilltop_stones",                    () -> com.mojang.serialization.MapCodec.unit(HilltopStonesStructure.Feature::new));
 

@@ -34,17 +34,18 @@ public class BigMagicTreeFeature implements Feature {
     private BlockPos basePos;
     private int heightLimit;
     private int height;
-    private double heightAttenuation = 0.6618;
-    private double branchSlope = 0.381;
-    private double scaleWidth = 1.25;
-    private double leafDensity = 0.9;
-    private int trunkSize = 1;
-    private int heightLimitLimit = 11;
-    private int leafDistanceLimit = 4;
+    private final double heightAttenuation = 0.6618;
+    private final double branchSlope = 0.381;
+    private final double scaleWidth = 1.25;
+    private final double leafDensity = 0.9;
+    private final int trunkSize = 1;
+    private final int heightLimitLimit = 11;
+    private final int leafDistanceLimit = 4;
     private List<FoliageCoordinates> foliageCoords;
-    private TreeType treeType = TreeType.GREATWOOD;
+    private final TreeType treeType;
 
     public BigMagicTreeFeature() {
+        this.treeType = TreeType.GREATWOOD;
     }
 
     public BigMagicTreeFeature(TreeType type) {
@@ -361,21 +362,6 @@ public class BigMagicTreeFeature implements Feature {
         } else {
             return ModBlocks.GREATWOOD_LEAVES.get().defaultBlockState();
         }
-    }
-
-    public BigMagicTreeFeature withTreeType(TreeType type) {
-        this.treeType = type;
-        return this;
-    }
-
-    public BigMagicTreeFeature withLargeTrunk() {
-        this.trunkSize = 2;
-        return this;
-    }
-
-    public BigMagicTreeFeature withHeightLimit(int limit) {
-        this.heightLimitLimit = limit;
-        return this;
     }
 
     public enum TreeType {

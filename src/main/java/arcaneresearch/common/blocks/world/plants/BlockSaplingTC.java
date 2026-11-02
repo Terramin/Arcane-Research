@@ -57,7 +57,7 @@ public class BlockSaplingTC extends SaplingBlock {
 
     public static BlockSaplingTC createGreatwood(BlockBehaviour.Properties props) {
         return new BlockSaplingTC(
-                megaTreeGrower("greatwood", "greatwood_tree", "big_magic_tree"),
+                megaTreeGrower("greatwood", "greatwood_tree", "big_greatwood_tree"),
                 props
                         .mapColor(MapColor.PLANT)
                         .noCollision()

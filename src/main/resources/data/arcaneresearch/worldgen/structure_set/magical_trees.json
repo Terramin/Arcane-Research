@@ -10,14 +10,6 @@
     {
       "structure": "arcaneresearch:big_silverwood_tree",
       "weight": 1
-    },
-    {
-      "structure": "arcaneresearch:big_magic_tree",
-      "weight": 2
-    },
-    {
-      "structure": "arcaneresearch:big_magic_tree_common",
-      "weight": 3
     }
   ]
 }

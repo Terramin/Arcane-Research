@@ -1,31 +1,31 @@
 package arcaneresearch.common.world.structures;
-import arcaneresearch.common.tiles.aura.EldritchAltarTile;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import arcaneresearch.Arcaneresearch;
 
- 
+import java.io.InputStream;
 
-
-
-
-
-
-
-
-
-
- 
-public final class EldritchRingStructure {
+public final class EldritchAltarStructure {
     public static final String PAVEMENT = "arcaneresearch:ancient_stone";
     public static final String ALTAR_SEAT = "arcaneresearch:eldritch_stone_tile";
     public static final String OBELISK = "arcaneresearch:eldritch_pillar";
@@ -38,7 +38,7 @@ public final class EldritchRingStructure {
             {0, 3, 8}
     };
 
-    private EldritchRingStructure() {
+    private EldritchAltarStructure() {
     }
 
     public static boolean isValidGround(LevelAccessor level, BlockPos pos) {
@@ -49,7 +49,7 @@ public final class EldritchRingStructure {
         if (!above.isAir() && !above.canBeReplaced()) {
             return false;
         }
-        net.minecraft.world.level.block.state.BlockState ground = level.getBlockState(pos);
+        BlockState ground = level.getBlockState(pos);
         return ground.is(Blocks.SNOW) || ground.is(Blocks.SNOW_BLOCK)
                 || StructureHelper.isSurfaceGround(ground);
     }
@@ -58,11 +58,13 @@ public final class EldritchRingStructure {
         if (level == null) {
             return false;
         }
-        return isValidGround(level, new BlockPos(x - 3, y, z - 3))
-                && isValidGround(level, new BlockPos(x, y, z))
-                && isValidGround(level, new BlockPos(x + 3, y, z))
-                && isValidGround(level, new BlockPos(x + 3, y, z + 3))
-                && isValidGround(level, new BlockPos(x, y, z + 3));
+
+        int groundY = y - 1;
+        return isValidGround(level, new BlockPos(x - 3, groundY, z - 3))
+                && isValidGround(level, new BlockPos(x, groundY, z))
+                && isValidGround(level, new BlockPos(x + 3, groundY, z))
+                && isValidGround(level, new BlockPos(x + 3, groundY, z + 3))
+                && isValidGround(level, new BlockPos(x, groundY, z + 3));
     }
 
     public static boolean generate(LevelAccessor level, BlockPos center, RandomSource random) {
@@ -98,9 +100,6 @@ public final class EldritchRingStructure {
                         }
                     }
                     if (x == i && z == k) {
-                        
-                        
-                        
                         StructureHelper.set(level, new BlockPos(x, j + 1, z), altar);
                         StructureHelper.set(level, new BlockPos(x, j, z), pavement);
                         placeBanners(level, new BlockPos(x, j + 1, z));
@@ -138,12 +137,8 @@ public final class EldritchRingStructure {
         }
     }
 
-      
-    
-    
-    
-    
-    
+    private static volatile StructureTemplate templateCache;
+
     public static class Feature implements net.minecraft.world.level.levelgen.feature.Feature {
         public static final MapCodec<Feature> CODEC =
                 MapCodec.unit(new Feature());
@@ -158,8 +153,84 @@ public final class EldritchRingStructure {
 
         @Override
         public boolean place(WorldGenLevel level, ChunkGenerator generator, RandomSource random, BlockPos origin) {
-            int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, origin.getX(), origin.getZ());
-            return generate(level, new BlockPos(origin.getX(), y, origin.getZ()), random);
+            int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG,
+                    origin.getX(), origin.getZ());
+            BlockPos base = new BlockPos(origin.getX(), y, origin.getZ());
+            if (placeFromTemplate(level, base, random)) {
+                return true;
+            }
+            return generate(level, base, random);
+        }
+    }
+
+    private static boolean placeFromTemplate(WorldGenLevel level, BlockPos base, RandomSource random) {
+        StructureTemplate template = loadTemplate(level);
+        if (template == null) {
+            return false;
+        }
+        try {
+            Vec3i size = template.getSize();
+            if (size.equals(Vec3i.ZERO)) {
+                return false;
+            }
+
+            BlockPos origin = base.offset(-size.getX() / 2, 0, -size.getZ() / 2);
+            clearPlace(level, origin, size);
+            StructurePlaceSettings settings = new StructurePlaceSettings()
+                    .setMirror(Mirror.NONE)
+                    .setIgnoreEntities(true);
+            return template.placeInWorld(level, origin, BlockPos.ZERO, settings, random,
+                    Block.UPDATE_CLIENTS);
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.warn("Failed to place eldritch altar structure template", e);
+            return false;
+        }
+    }
+
+    private static void clearPlace(WorldGenLevel level, BlockPos origin, Vec3i size) {
+        final int headroom = 3;
+        int maxY = origin.getY() + size.getY() + headroom;
+        for (int x = 0; x < size.getX(); x++) {
+            for (int z = 0; z < size.getZ(); z++) {
+                for (int y = origin.getY(); y < maxY; y++) {
+                    BlockPos pos = new BlockPos(origin.getX() + x, y, origin.getZ() + z);
+                    if (!level.getBlockState(pos).isAir()) {
+                        level.removeBlock(pos, false);
+                    }
+                }
+            }
+        }
+    }
+
+    private static StructureTemplate loadTemplate(WorldGenLevel level) {
+        StructureTemplate cached = templateCache;
+        if (cached == null) {
+            synchronized (EldritchAltarStructure.class) {
+                if (templateCache == null) {
+                    templateCache = readTemplate(level);
+                }
+                cached = templateCache;
+            }
+        }
+        return cached;
+    }
+
+    private static StructureTemplate readTemplate(WorldGenLevel level) {
+        String path = "data/" + Arcaneresearch.MODID + "/structure/eldritch_altar_structure.nbt";
+        try (InputStream in = EldritchAltarStructure.class.getClassLoader().getResourceAsStream(path)) {
+            if (in == null) {
+                Arcaneresearch.LOGGER.warn("Eldritch altar structure template not found: {}", path);
+                return null;
+            }
+            CompoundTag tag = NbtIo.readCompressed(in, NbtAccounter.unlimitedHeap());
+            HolderGetter<Block> blockLookup = level.registryAccess()
+                    .lookupOrThrow(Registries.BLOCK);
+            StructureTemplate template = new StructureTemplate();
+            template.load(blockLookup, tag);
+            return template;
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.warn("Failed to read eldritch altar structure template {}", path, e);
+            return null;
         }
     }
 }
