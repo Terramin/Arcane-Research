@@ -1,4 +1,5 @@
 package arcaneresearch.client.fx.particles;
+
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TerrainParticle;
@@ -6,19 +7,23 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class FXDigging extends TerrainParticle {
     public FXDigging(ClientLevel level, double x, double y, double z,
                      double vx, double vy, double vz, BlockState state) {
         super(level, x, y, z, vx, vy, vz, state);
     }
+
     public FXDigging(ClientLevel level, double x, double y, double z,
                      double vx, double vy, double vz, BlockState state, BlockPos pos) {
         super(level, x, y, z, vx, vy, vz, state);
         this.updateSprite(state, pos);
     }
+
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NotNull ParticleRenderType getRenderType() {
         return ParticleRenderType.TERRAIN_SHEET;
     }
 }

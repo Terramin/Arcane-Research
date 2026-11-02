@@ -1,19 +1,22 @@
 package arcaneresearch.client.fx.particles;
+
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import arcaneresearch.client.fx.FXDispatcher;
+
 import java.util.ArrayList;
 import java.util.List;
+
 @OnlyIn(Dist.CLIENT)
 public class FXEssentiaTrail extends TextureSheetParticle {
     private final List<Vec3> trailPoints = new ArrayList<>();
@@ -28,6 +31,7 @@ public class FXEssentiaTrail extends TextureSheetParticle {
     private int count;
     private boolean growing = true;
     private static final int PARTICLE_INDEX = 144;
+
     public FXEssentiaTrail(ClientLevel level, double sx, double sy, double sz,
                            double tx, double ty, double tz,
                            int color, float scale, int extend) {
@@ -41,13 +45,13 @@ public class FXEssentiaTrail extends TextureSheetParticle {
         this.rCol = ((color >> 16) & 0xFF) / 255.0f;
         this.gCol = ((color >> 8) & 0xFF) / 255.0f;
         this.bCol = (color & 0xFF) / 255.0f;
-        this.quadSize = scale * (1.0f + (float)random.nextGaussian() * 0.15f);
+        this.quadSize = scale * (1.0f + (float) random.nextGaussian() * 0.15f);
         this.maxLength = Math.max(20, extend);
         this.count = 0;
         double dx = tx - sx;
         double dy = ty - sy;
         double dz = tz - sz;
-        int base = (int)(Mth.sqrt((float)(dx * dx + dy * dy + dz * dz)) * 21.0f);
+        int base = (int) (Mth.sqrt((float) (dx * dx + dy * dy + dz * dz)) * 21.0f);
         if (base < 1) base = 1;
         this.lifetime = base + maxLength;
         this.xd = Mth.sin(count / 4.0f) * 0.015f;
@@ -59,6 +63,7 @@ public class FXEssentiaTrail extends TextureSheetParticle {
         trailRadii.add(0.001f);
         trailRadii.add(0.001f);
     }
+
     @Override
     public void tick() {
         this.xo = x;
@@ -73,15 +78,17 @@ public class FXEssentiaTrail extends TextureSheetParticle {
         xd *= 0.985;
         yd *= 0.985;
         zd *= 0.985;
-        xd = Mth.clamp((float)xd, -0.05f, 0.05f);
-        yd = Mth.clamp((float)yd, -0.05f, 0.05f);
-        zd = Mth.clamp((float)zd, -0.05f, 0.05f);
+        xd = Mth.clamp((float) xd, -0.05f, 0.05f);
+        yd = Mth.clamp((float) yd, -0.05f, 0.05f);
+        zd = Mth.clamp((float) zd, -0.05f, 0.05f);
         double dx = targetX - x;
         double dy = targetY - y;
         double dz = targetZ - z;
-        double dist = Mth.sqrt((float)(dx * dx + dy * dy + dz * dz));
+        double dist = Mth.sqrt((float) (dx * dx + dy * dy + dz * dz));
         double accel = 0.01;
-        if (dist < 1.0e-4) { dist = 1.0e-4; }
+        if (dist < 1.0e-4) {
+            dist = 1.0e-4;
+        }
         dx /= dist;
         dy /= dist;
         dz /= dist;
@@ -90,7 +97,7 @@ public class FXEssentiaTrail extends TextureSheetParticle {
         zd += dz * (accel / Math.min(1.0, dist));
         float currentScale = quadSize * (0.75f + Mth.sin((count + age) / 2.0f) * 0.25f);
         if (dist < 1.0) {
-            float f = Mth.sin((float)(dist * Math.PI / 2.0));
+            float f = Mth.sin((float) (dist * Math.PI / 2.0));
             currentScale *= f;
             quadSize *= f;
         }
@@ -128,8 +135,9 @@ public class FXEssentiaTrail extends TextureSheetParticle {
         }
         count++;
     }
+
     @Override
-    public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+    public void render(@NotNull VertexConsumer buffer, @NotNull Camera camera, float partialTicks) {
         if (trailPoints.size() < 3) return;
         Vec3 camPos = camera.getPosition();
         Quaternionf rotation = camera.rotation();
@@ -140,22 +148,22 @@ public class FXEssentiaTrail extends TextureSheetParticle {
             float wobbleX = Mth.sin((i + age) / 6.0f) * 0.03f;
             float wobbleY = Mth.sin((i + age) / 7.0f) * 0.03f;
             float wobbleZ = Mth.sin((i + age) / 8.0f) * 0.03f;
-            float px = (float)(startX + point.x + wobbleX - camPos.x());
-            float py = (float)(startY + point.y + wobbleY - camPos.y());
-            float pz = (float)(startZ + point.z + wobbleZ - camPos.z());
+            float px = (float) (startX + point.x + wobbleX - camPos.x());
+            float py = (float) (startY + point.y + wobbleY - camPos.y());
+            float pz = (float) (startZ + point.z + wobbleZ - camPos.z());
             float size = radius * variance;
             if (i > trailPoints.size() - 10) {
-                size *= Mth.cos((float)((i - (trailPoints.size() - 12)) / 10.0f * Math.PI / 2.0));
+                size *= Mth.cos((float) ((i - (trailPoints.size() - 12)) / 10.0f * Math.PI / 2.0));
             }
             if (i < 5) {
                 size *= i / 5.0f;
             }
             if (size < 0.001f) continue;
-            Vector3f[] vertices = new Vector3f[] {
-                new Vector3f(-1.0f, -1.0f, 0.0f),
-                new Vector3f(-1.0f, 1.0f, 0.0f),
-                new Vector3f(1.0f, 1.0f, 0.0f),
-                new Vector3f(1.0f, -1.0f, 0.0f)
+            Vector3f[] vertices = new Vector3f[]{
+                    new Vector3f(-1.0f, -1.0f, 0.0f),
+                    new Vector3f(-1.0f, 1.0f, 0.0f),
+                    new Vector3f(1.0f, 1.0f, 0.0f),
+                    new Vector3f(1.0f, -1.0f, 0.0f)
             };
             for (Vector3f vertex : vertices) {
                 vertex.rotate(rotation);
@@ -182,8 +190,9 @@ public class FXEssentiaTrail extends TextureSheetParticle {
                     .uv2(light).endVertex();
         }
     }
+
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NotNull ParticleRenderType getRenderType() {
         return FXGeneric.TC_ADDITIVE;
     }
 }

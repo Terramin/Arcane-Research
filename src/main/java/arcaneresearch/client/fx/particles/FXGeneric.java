@@ -1,4 +1,5 @@
 package arcaneresearch.client.fx.particles;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -16,79 +17,101 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
 @OnlyIn(Dist.CLIENT)
 public class FXGeneric extends TextureSheetParticle {
+    protected static final int GRID_SIZE_DEFAULT = 64;
+    private static final float TWO_PI = (float) (Math.PI * 2.0);
+
     protected boolean doneFrames = false;
     protected boolean flipped = false;
     protected double windX = 0;
     protected double windZ = 0;
     protected int layer = 0;
+
     protected float startR, startG, startB;
     protected float endR, endG, endB;
+
     protected boolean loop = false;
     protected int startParticle = 0;
     protected int numParticles = 1;
     protected int particleInc = 1;
     protected int[] finalFrames = null;
+
     protected float[] scaleKeys = new float[]{1.0f};
     protected float[] scaleFrames = new float[]{0.0f};
     protected float[] alphaKeys = new float[]{1.0f};
     protected float[] alphaFrames = new float[]{0.0f};
+
     protected double slowDown = 0.98;
     protected float randomX = 0, randomY = 0, randomZ = 0;
     protected float rotationSpeed = 0.0f;
     protected boolean angled = false;
     protected float angleYaw = 0;
     protected float anglePitch = 0;
-    protected int gridSize = 64;
+
+    protected int gridSize = GRID_SIZE_DEFAULT;
     protected int spriteIndexX = 0;
     protected int spriteIndexY = 0;
+
     protected SpriteSet sprites;
+
+    private final Vector3f renderScratch = new Vector3f();
+    private final Quaternionf renderQuat = new Quaternionf();
+
     public static final ResourceLocation TC_TEXTURE =
-            new ResourceLocation("arcaneresearch", "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
+
     public static final ParticleRenderType TC_ADDITIVE = new ParticleRenderType() {
         @Override
-        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+        public void begin(BufferBuilder buffer, @NotNull TextureManager textureManager) {
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(770, 1);
             RenderSystem.depthMask(false);
             RenderSystem.setShaderTexture(0, TC_TEXTURE);
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
+
         @Override
         public void end(Tesselator tesselator) {
             tesselator.end();
             RenderSystem.depthMask(true);
         }
+
         @Override
         public String toString() {
             return "TC_ADDITIVE";
         }
     };
+
     public static final ParticleRenderType TC_NORMAL = new ParticleRenderType() {
         @Override
-        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+        public void begin(BufferBuilder buffer, @NotNull TextureManager textureManager) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.depthMask(false);
             RenderSystem.setShaderTexture(0, TC_TEXTURE);
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
+
         @Override
         public void end(Tesselator tesselator) {
             tesselator.end();
             RenderSystem.depthMask(true);
         }
+
         @Override
         public String toString() {
             return "TC_NORMAL";
         }
     };
+
     public static final ParticleRenderType TC_ADDITIVE_NO_DEPTH = new ParticleRenderType() {
         @Override
-        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+        public void begin(BufferBuilder buffer, @NotNull TextureManager textureManager) {
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(770, 1);
             RenderSystem.depthMask(false);
@@ -96,20 +119,23 @@ public class FXGeneric extends TextureSheetParticle {
             RenderSystem.setShaderTexture(0, TC_TEXTURE);
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
+
         @Override
         public void end(Tesselator tesselator) {
             tesselator.end();
             RenderSystem.enableDepthTest();
             RenderSystem.depthMask(true);
         }
+
         @Override
         public String toString() {
             return "TC_ADDITIVE_NO_DEPTH";
         }
     };
+
     public static final ParticleRenderType TC_NORMAL_NO_DEPTH = new ParticleRenderType() {
         @Override
-        public void begin(BufferBuilder buffer, TextureManager textureManager) {
+        public void begin(BufferBuilder buffer, @NotNull TextureManager textureManager) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.depthMask(false);
@@ -117,17 +143,20 @@ public class FXGeneric extends TextureSheetParticle {
             RenderSystem.setShaderTexture(0, TC_TEXTURE);
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
+
         @Override
         public void end(Tesselator tesselator) {
             tesselator.end();
             RenderSystem.enableDepthTest();
             RenderSystem.depthMask(true);
         }
+
         @Override
         public String toString() {
             return "TC_NORMAL_NO_DEPTH";
         }
     };
+
     public static ParticleRenderType renderTypeForLayer(int layer) {
         return switch (layer) {
             case 0, 4 -> TC_ADDITIVE;
@@ -136,17 +165,17 @@ public class FXGeneric extends TextureSheetParticle {
             default -> TC_NORMAL;
         };
     }
+
     public FXGeneric(ClientLevel level, double x, double y, double z) {
         super(level, x, y, z);
         init();
     }
+
     public FXGeneric(ClientLevel level, double x, double y, double z, double vx, double vy, double vz) {
         super(level, x, y, z, vx, vy, vz);
-        this.xd = vx;
-        this.yd = vy;
-        this.zd = vz;
         init();
     }
+
     private void init() {
         this.setSize(0.1f, 0.1f);
         this.startR = this.rCol;
@@ -156,85 +185,111 @@ public class FXGeneric extends TextureSheetParticle {
         this.endG = this.gCol;
         this.endB = this.bCol;
     }
+
     protected void calculateFrames() {
         doneFrames = true;
-        if (alphaKeys == null) {
-            alphaKeys = new float[]{1.0f};
+
+        if (this.lifetime <= 0) {
+            this.alphaFrames = new float[]{1.0f};
+            this.scaleFrames = new float[]{1.0f};
+            return;
         }
-        alphaFrames = new float[this.lifetime + 1];
-        float inc = (alphaKeys.length - 1) / (float) this.lifetime;
-        float is = 0.0f;
-        for (int a = 0; a <= this.lifetime; ++a) {
-            int isF = Mth.floor(is);
-            float diff = (isF < alphaKeys.length - 1) ? (alphaKeys[isF + 1] - alphaKeys[isF]) : 0.0f;
-            float pa = is - isF;
-            alphaFrames[a] = alphaKeys[isF] + diff * pa;
-            is += inc;
-        }
-        if (scaleKeys == null) {
-            scaleKeys = new float[]{1.0f};
-        }
-        scaleFrames = new float[this.lifetime + 1];
-        inc = (scaleKeys.length - 1) / (float) this.lifetime;
-        is = 0.0f;
-        for (int a = 0; a <= this.lifetime; ++a) {
-            int isF = Mth.floor(is);
-            float diff = (isF < scaleKeys.length - 1) ? (scaleKeys[isF + 1] - scaleKeys[isF]) : 0.0f;
-            float pa = is - isF;
-            scaleFrames[a] = scaleKeys[isF] + diff * pa;
-            is += inc;
-        }
+
+        if (alphaKeys == null) alphaKeys = new float[]{1.0f};
+        if (scaleKeys == null) scaleKeys = new float[]{1.0f};
+
+        this.alphaFrames = computeFrames(alphaKeys, this.lifetime);
+        this.scaleFrames = computeFrames(scaleKeys, this.lifetime);
     }
+
+    private static float[] computeFrames(float[] keys, int lifetime) {
+        float[] frames = new float[lifetime + 1];
+        float inc = (keys.length - 1) / (float) lifetime;
+        float is = 0.0f;
+
+        for (int a = 0; a <= lifetime; ++a) {
+            int isF = Mth.floor(is);
+            float diff = (isF < keys.length - 1) ? (keys[isF + 1] - keys[isF]) : 0.0f;
+            float pa = is - isF;
+            frames[a] = keys[isF] + diff * pa;
+            is += inc;
+        }
+
+        return frames;
+    }
+
     @Override
     public void tick() {
         if (!doneFrames) {
             calculateFrames();
         }
+
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
+
         if (this.age++ >= this.lifetime) {
             this.remove();
             return;
         }
+
         this.oRoll = this.roll;
-        this.roll += 3.1415927f * this.rotationSpeed * 2.0f;
+        this.roll += TWO_PI * this.rotationSpeed;
+
         this.yd -= 0.04 * this.gravity;
+
         this.move(this.xd, this.yd, this.zd);
+
         this.xd *= this.slowDown;
         this.yd *= this.slowDown;
         this.zd *= this.slowDown;
+
         if (randomX != 0 || randomY != 0 || randomZ != 0) {
             this.xd += this.random.nextGaussian() * randomX;
             this.yd += this.random.nextGaussian() * randomY;
             this.zd += this.random.nextGaussian() * randomZ;
         }
+
         this.xd += this.windX;
         this.zd += this.windZ;
+
         if (this.onGround && slowDown != 1.0) {
             this.xd *= 0.7;
             this.zd *= 0.7;
         }
+
         if (alphaFrames != null && alphaFrames.length > 0) {
             this.alpha = alphaFrames[Math.min(this.age, alphaFrames.length - 1)];
         }
+
         if (scaleFrames != null && scaleFrames.length > 0) {
             this.quadSize = scaleFrames[Math.min(this.age, scaleFrames.length - 1)];
         }
+
         float progress = (float) this.age / (float) this.lifetime;
         this.rCol = Mth.lerp(progress, this.startR, this.endR);
         this.gCol = Mth.lerp(progress, this.startG, this.endG);
         this.bCol = Mth.lerp(progress, this.startB, this.endB);
+
         updateSpriteIndex();
     }
+
     protected void updateSpriteIndex() {
+        if (numParticles <= 0) {
+            setParticleTextureIndex(startParticle);
+            return;
+        }
+
         int index;
+
         if (loop) {
-            index = startParticle + (this.age / particleInc) % numParticles;
+            int step = particleInc <= 0 ? 1 : particleInc;
+            index = startParticle + (this.age / step) % numParticles;
         } else {
             float fs = this.age / (float) this.lifetime;
             index = (int) (startParticle + Math.min(numParticles * fs, numParticles - 1));
         }
+
         if (finalFrames != null && finalFrames.length > 0 && this.age > this.lifetime - finalFrames.length) {
             int frame = this.lifetime - this.age;
             if (frame < 0) frame = 0;
@@ -242,95 +297,108 @@ public class FXGeneric extends TextureSheetParticle {
                 index = finalFrames[frame];
             }
         }
+
         setParticleTextureIndex(index);
     }
+
     public void setParticleTextureIndex(int index) {
         if (index < 0) index = 0;
         this.spriteIndexX = index % gridSize;
         this.spriteIndexY = index / gridSize;
     }
+
     @Override
     protected float getU0() {
         return (float) spriteIndexX / (float) gridSize;
     }
+
     @Override
     protected float getU1() {
         return ((float) spriteIndexX + 1.0f) / (float) gridSize;
     }
+
     @Override
     protected float getV0() {
         return (float) spriteIndexY / (float) gridSize;
     }
+
     @Override
     protected float getV1() {
         return ((float) spriteIndexY + 1.0f) / (float) gridSize;
     }
+
     @Override
-    public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+    public void render(@NotNull VertexConsumer buffer, @NotNull Camera camera, float partialTicks) {
+        if (this.lifetime <= 0) return;
+
         Vec3 cameraPos = camera.getPosition();
+
         float x = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
         float y = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
         float z = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
+
         float size = this.getQuadSize(partialTicks);
+
         float u0 = this.getU0();
         float u1 = this.getU1();
         float v0 = this.getV0();
         float v1 = this.getV1();
+
         if (flipped) {
             float temp = u0;
             u0 = u1;
             u1 = temp;
         }
+
         float progress = Mth.clamp((this.age + partialTicks) / this.lifetime, 0.0f, 1.0f);
+
         float pr = Mth.lerp(progress, startR, endR);
         float pg = Mth.lerp(progress, startG, endG);
         float pb = Mth.lerp(progress, startB, endB);
+
         int light = this.getLightColor(partialTicks);
+
         Quaternionf quaternion;
+
         if (this.roll == 0.0F && !angled) {
             quaternion = camera.rotation();
         } else if (angled) {
-            quaternion = new Quaternionf();
-            quaternion.rotateY((float) Math.toRadians(-angleYaw + 90.0f));
-            quaternion.rotateX((float) Math.toRadians(anglePitch + 90.0f));
+            quaternion = renderQuat.identity();
+            quaternion.rotateY((-angleYaw + 90.0f) * Mth.DEG_TO_RAD);
+            quaternion.rotateX((anglePitch + 90.0f) * Mth.DEG_TO_RAD);
+
             if (this.roll != 0.0f) {
                 float rollAngle = Mth.lerp(partialTicks, this.oRoll, this.roll);
                 quaternion.rotateZ(rollAngle);
             }
         } else {
-            quaternion = new Quaternionf(camera.rotation());
+            quaternion = renderQuat.set(camera.rotation());
             float rollAngle = Mth.lerp(partialTicks, this.oRoll, this.roll);
             quaternion.rotateZ(rollAngle);
         }
-        Vector3f[] vertices = new Vector3f[]{
-                new Vector3f(-1.0F, -1.0F, 0.0F),
-                new Vector3f(-1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, -1.0F, 0.0F)
-        };
-        for (int i = 0; i < 4; ++i) {
-            Vector3f vertex = vertices[i];
-            vertex.rotate(quaternion);
-            vertex.mul(size);
-            vertex.add(x, y, z);
-        }
-        buffer.vertex(vertices[0].x(), vertices[0].y(), vertices[0].z())
-                .uv(u1, v1).color(pr, pg, pb, this.alpha)
-                .uv2(light).endVertex();
-        buffer.vertex(vertices[1].x(), vertices[1].y(), vertices[1].z())
-                .uv(u1, v0).color(pr, pg, pb, this.alpha)
-                .uv2(light).endVertex();
-        buffer.vertex(vertices[2].x(), vertices[2].y(), vertices[2].z())
-                .uv(u0, v0).color(pr, pg, pb, this.alpha)
-                .uv2(light).endVertex();
-        buffer.vertex(vertices[3].x(), vertices[3].y(), vertices[3].z())
-                .uv(u0, v1).color(pr, pg, pb, this.alpha)
-                .uv2(light).endVertex();
+
+        float ca = this.alpha;
+
+        Vector3f v = renderScratch;
+
+        v.set(-1.0F, -1.0F, 0.0F).rotate(quaternion).mul(size).add(x, y, z);
+        buffer.vertex(v.x(), v.y(), v.z()).uv(u1, v1).color(pr, pg, pb, ca).uv2(light).endVertex();
+
+        v.set(-1.0F, 1.0F, 0.0F).rotate(quaternion).mul(size).add(x, y, z);
+        buffer.vertex(v.x(), v.y(), v.z()).uv(u1, v0).color(pr, pg, pb, ca).uv2(light).endVertex();
+
+        v.set(1.0F, 1.0F, 0.0F).rotate(quaternion).mul(size).add(x, y, z);
+        buffer.vertex(v.x(), v.y(), v.z()).uv(u0, v0).color(pr, pg, pb, ca).uv2(light).endVertex();
+
+        v.set(1.0F, -1.0F, 0.0F).rotate(quaternion).mul(size).add(x, y, z);
+        buffer.vertex(v.x(), v.y(), v.z()).uv(u0, v1).color(pr, pg, pb, ca).uv2(light).endVertex();
     }
+
     @Override
-    public ParticleRenderType getRenderType() {
+    public @NotNull ParticleRenderType getRenderType() {
         return renderTypeForLayer(layer);
     }
+
     @Override
     public void setColor(float r, float g, float b) {
         if (r > 1.0f) r /= 255.0f;
@@ -346,6 +414,7 @@ public class FXGeneric extends TextureSheetParticle {
         this.endG = g;
         this.endB = b;
     }
+
     public void setColorRange(float r1, float g1, float b1, float r2, float g2, float b2) {
         if (r1 > 1.0f) r1 /= 255.0f;
         if (g1 > 1.0f) g1 /= 255.0f;
@@ -363,91 +432,115 @@ public class FXGeneric extends TextureSheetParticle {
         this.endG = g2;
         this.endB = b2;
     }
+
     public void setAlphaF(float alpha) {
         this.alpha = alpha;
         this.alphaKeys = new float[]{alpha};
     }
+
     public void setAlphaKeyframes(float... alphaKeyframes) {
         this.alpha = alphaKeyframes[0];
         this.alphaKeys = alphaKeyframes;
     }
+
     public void setScale(float scale) {
         this.quadSize = scale;
         this.scaleKeys = new float[]{scale};
     }
+
     public void setScaleKeyframes(float... scaleKeyframes) {
         this.quadSize = scaleKeyframes[0];
         this.scaleKeys = scaleKeyframes;
     }
+
     public void setMaxAge(int maxAge) {
         this.lifetime = maxAge;
     }
+
     public void setGravity(float gravity) {
         this.gravity = gravity;
     }
+
     public void setLayer(int layer) {
         this.layer = layer;
     }
+
     public void setLoop(boolean loop) {
         this.loop = loop;
     }
+
     public void setParticles(int startParticle, int numParticles, int particleInc) {
         this.startParticle = startParticle;
-        this.numParticles = numParticles;
-        this.particleInc = particleInc;
+        this.numParticles = Math.max(1, numParticles);
+        this.particleInc = Math.max(1, particleInc);
         setParticleTextureIndex(startParticle);
     }
+
     public void setParticle(int particleIndex) {
         this.startParticle = particleIndex;
         this.numParticles = 1;
         this.particleInc = 1;
         setParticleTextureIndex(particleIndex);
     }
+
     public void setRotationSpeed(float speed) {
-        this.rotationSpeed = (float) (speed * 0.017453292519943);
+        this.rotationSpeed = speed * Mth.DEG_TO_RAD;
     }
+
     public void setRotationSpeedWithStart(float startAngle, float speed) {
         this.roll = (float) (startAngle * Math.PI * 2.0);
-        this.rotationSpeed = (float) (speed * 0.017453292519943);
+        this.rotationSpeed = speed * Mth.DEG_TO_RAD;
     }
+
     public void setSlowDown(double slowDown) {
         this.slowDown = slowDown;
     }
+
     public void setRandomMovementScale(float x, float y, float z) {
         this.randomX = x;
         this.randomY = y;
         this.randomZ = z;
     }
+
     public void setWindStrength(double windStrength) {
+
         int m = (int) ((this.level.getDayTime() / 24000L) % 8);
         double angle = m * (40 + this.random.nextInt(10)) / 180.0f * Math.PI;
         this.windX = Math.cos(angle) * windStrength;
         this.windZ = Math.sin(angle) * windStrength;
     }
+
     public void setWind(double windX, double windZ) {
         this.windX = windX;
         this.windZ = windZ;
     }
+
     public void setFinalFrames(int... frames) {
         this.finalFrames = frames;
     }
+
     public void setAngles(float yaw, float pitch) {
         this.angleYaw = yaw;
         this.anglePitch = pitch;
         this.angled = true;
     }
+
     public void setFlipped(boolean flipped) {
         this.flipped = flipped;
     }
+
     public void setGridSize(int size) {
         this.gridSize = size;
     }
+
     public void setNoClip(boolean noClip) {
         this.hasPhysics = !noClip;
     }
+
     public void setSprites(SpriteSet sprites) {
         this.sprites = sprites;
     }
+
     public boolean isFlipped() {
         return flipped;
     }

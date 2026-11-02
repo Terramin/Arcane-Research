@@ -1,13 +1,16 @@
 package arcaneresearch.client.fx.particles;
+
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
 @OnlyIn(Dist.CLIENT)
 public class FXGenericP2P extends FXGeneric {
     protected double targetX;
     protected double targetY;
     protected double targetZ;
+
     public FXGenericP2P(ClientLevel level, double x, double y, double z,
                         double targetX, double targetY, double targetZ) {
         super(level, x, y, z, 0, 0, 0);
@@ -27,6 +30,7 @@ public class FXGenericP2P extends FXGeneric {
         this.zd = this.random.nextGaussian() * f3;
         this.gravity = 0.2f;
     }
+
     @Override
     public void tick() {
         super.tick();
@@ -51,6 +55,7 @@ public class FXGenericP2P extends FXGeneric {
         this.yd = Mth.clamp(this.yd, -0.35, 0.35);
         this.zd = Mth.clamp(this.zd, -0.35, 0.35);
     }
+
     public void setTarget(double x, double y, double z) {
         this.targetX = x;
         this.targetY = y;
