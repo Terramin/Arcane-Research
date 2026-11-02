@@ -23,40 +23,31 @@ import org.joml.Vector3f;
 
 @OnlyIn(Dist.CLIENT)
 public class FXGeneric extends TextureSheetParticle {
-    protected static final int GRID_SIZE_DEFAULT = 64;
-    private static final float TWO_PI = (float) (Math.PI * 2.0);
-
     protected boolean doneFrames = false;
     protected boolean flipped = false;
     protected double windX = 0;
     protected double windZ = 0;
     protected int layer = 0;
-
     protected float startR, startG, startB;
     protected float endR, endG, endB;
-
     protected boolean loop = false;
     protected int startParticle = 0;
     protected int numParticles = 1;
     protected int particleInc = 1;
     protected int[] finalFrames = null;
-
     protected float[] scaleKeys = new float[]{1.0f};
     protected float[] scaleFrames = new float[]{0.0f};
     protected float[] alphaKeys = new float[]{1.0f};
     protected float[] alphaFrames = new float[]{0.0f};
-
     protected double slowDown = 0.98;
     protected float randomX = 0, randomY = 0, randomZ = 0;
     protected float rotationSpeed = 0.0f;
     protected boolean angled = false;
     protected float angleYaw = 0;
     protected float anglePitch = 0;
-
-    protected int gridSize = GRID_SIZE_DEFAULT;
+    protected int gridSize = 64;
     protected int spriteIndexX = 0;
     protected int spriteIndexY = 0;
-
     protected SpriteSet sprites;
 
     private final Vector3f renderScratch = new Vector3f();
@@ -173,6 +164,9 @@ public class FXGeneric extends TextureSheetParticle {
 
     public FXGeneric(ClientLevel level, double x, double y, double z, double vx, double vy, double vz) {
         super(level, x, y, z, vx, vy, vz);
+        this.xd = vx;
+        this.yd = vy;
+        this.zd = vz;
         init();
     }
 
@@ -189,33 +183,37 @@ public class FXGeneric extends TextureSheetParticle {
     protected void calculateFrames() {
         doneFrames = true;
 
-        if (this.lifetime <= 0) {
-            this.alphaFrames = new float[]{1.0f};
-            this.scaleFrames = new float[]{1.0f};
-            return;
+        if (alphaKeys == null || alphaKeys.length == 0) {
+            alphaKeys = new float[]{1.0f};
         }
 
-        if (alphaKeys == null) alphaKeys = new float[]{1.0f};
-        if (scaleKeys == null) scaleKeys = new float[]{1.0f};
-
-        this.alphaFrames = computeFrames(alphaKeys, this.lifetime);
-        this.scaleFrames = computeFrames(scaleKeys, this.lifetime);
-    }
-
-    private static float[] computeFrames(float[] keys, int lifetime) {
-        float[] frames = new float[lifetime + 1];
-        float inc = (keys.length - 1) / (float) lifetime;
+        alphaFrames = new float[this.lifetime + 1];
+        float inc = (alphaKeys.length - 1) / (float) this.lifetime;
         float is = 0.0f;
 
-        for (int a = 0; a <= lifetime; ++a) {
+        for (int a = 0; a <= this.lifetime; ++a) {
             int isF = Mth.floor(is);
-            float diff = (isF < keys.length - 1) ? (keys[isF + 1] - keys[isF]) : 0.0f;
+            float diff = (isF < alphaKeys.length - 1) ? (alphaKeys[isF + 1] - alphaKeys[isF]) : 0.0f;
             float pa = is - isF;
-            frames[a] = keys[isF] + diff * pa;
+            alphaFrames[a] = alphaKeys[isF] + diff * pa;
             is += inc;
         }
 
-        return frames;
+        if (scaleKeys == null || scaleKeys.length == 0) {
+            scaleKeys = new float[]{1.0f};
+        }
+
+        scaleFrames = new float[this.lifetime + 1];
+        inc = (scaleKeys.length - 1) / (float) this.lifetime;
+        is = 0.0f;
+
+        for (int a = 0; a <= this.lifetime; ++a) {
+            int isF = Mth.floor(is);
+            float diff = (isF < scaleKeys.length - 1) ? (scaleKeys[isF + 1] - scaleKeys[isF]) : 0.0f;
+            float pa = is - isF;
+            scaleFrames[a] = scaleKeys[isF] + diff * pa;
+            is += inc;
+        }
     }
 
     @Override
@@ -234,7 +232,7 @@ public class FXGeneric extends TextureSheetParticle {
         }
 
         this.oRoll = this.roll;
-        this.roll += TWO_PI * this.rotationSpeed;
+        this.roll += 3.1415927f * this.rotationSpeed * 2.0f;
 
         this.yd -= 0.04 * this.gravity;
 
@@ -275,16 +273,12 @@ public class FXGeneric extends TextureSheetParticle {
     }
 
     protected void updateSpriteIndex() {
-        if (numParticles <= 0) {
-            setParticleTextureIndex(startParticle);
-            return;
-        }
-
         int index;
 
         if (loop) {
             int step = particleInc <= 0 ? 1 : particleInc;
-            index = startParticle + (this.age / step) % numParticles;
+            int count = numParticles <= 0 ? 1 : numParticles;
+            index = startParticle + (this.age / step) % count;
         } else {
             float fs = this.age / (float) this.lifetime;
             index = (int) (startParticle + Math.min(numParticles * fs, numParticles - 1));
@@ -364,8 +358,8 @@ public class FXGeneric extends TextureSheetParticle {
             quaternion = camera.rotation();
         } else if (angled) {
             quaternion = renderQuat.identity();
-            quaternion.rotateY((-angleYaw + 90.0f) * Mth.DEG_TO_RAD);
-            quaternion.rotateX((anglePitch + 90.0f) * Mth.DEG_TO_RAD);
+            quaternion.rotateY((float) Math.toRadians(-angleYaw + 90.0f));
+            quaternion.rotateX((float) Math.toRadians(anglePitch + 90.0f));
 
             if (this.roll != 0.0f) {
                 float rollAngle = Mth.lerp(partialTicks, this.oRoll, this.roll);
@@ -378,7 +372,6 @@ public class FXGeneric extends TextureSheetParticle {
         }
 
         float ca = this.alpha;
-
         Vector3f v = renderScratch;
 
         v.set(-1.0F, -1.0F, 0.0F).rotate(quaternion).mul(size).add(x, y, z);
@@ -471,8 +464,8 @@ public class FXGeneric extends TextureSheetParticle {
 
     public void setParticles(int startParticle, int numParticles, int particleInc) {
         this.startParticle = startParticle;
-        this.numParticles = Math.max(1, numParticles);
-        this.particleInc = Math.max(1, particleInc);
+        this.numParticles = numParticles;
+        this.particleInc = particleInc;
         setParticleTextureIndex(startParticle);
     }
 
@@ -484,12 +477,12 @@ public class FXGeneric extends TextureSheetParticle {
     }
 
     public void setRotationSpeed(float speed) {
-        this.rotationSpeed = speed * Mth.DEG_TO_RAD;
+        this.rotationSpeed = (float) (speed * 0.017453292519943);
     }
 
     public void setRotationSpeedWithStart(float startAngle, float speed) {
         this.roll = (float) (startAngle * Math.PI * 2.0);
-        this.rotationSpeed = speed * Mth.DEG_TO_RAD;
+        this.rotationSpeed = (float) (speed * 0.017453292519943);
     }
 
     public void setSlowDown(double slowDown) {
@@ -503,7 +496,6 @@ public class FXGeneric extends TextureSheetParticle {
     }
 
     public void setWindStrength(double windStrength) {
-
         int m = (int) ((this.level.getDayTime() / 24000L) % 8);
         double angle = m * (40 + this.random.nextInt(10)) / 180.0f * Math.PI;
         this.windX = Math.cos(angle) * windStrength;

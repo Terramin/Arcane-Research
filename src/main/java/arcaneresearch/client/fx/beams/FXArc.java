@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FXArc extends TextureSheetParticle {
-    protected static final ResourceLocation BEAM_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/beamh.png");
+    protected static final ResourceLocation BEAM_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beamh.png");
     protected List<Vec3> points = new ArrayList<>();
     protected double targetX;
     protected double targetY;
