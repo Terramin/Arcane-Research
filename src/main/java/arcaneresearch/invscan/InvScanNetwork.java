@@ -2,19 +2,11 @@ package arcaneresearch.invscan;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 import arcaneresearch.Arcaneresearch;
 
- 
-
-
-
-
-
-
-
- 
 @EventBusSubscriber(modid = Arcaneresearch.MODID)
 public class InvScanNetwork {
 
@@ -29,5 +21,16 @@ public class InvScanNetwork {
                 MsgScanSelf.TYPE,
                 MsgScanSelf.STREAM_CODEC,
                 MsgScanSelf::handle);
+        registrar.playToClient(
+                MsgScannedSync.TYPE,
+                MsgScannedSync.STREAM_CODEC,
+                MsgScannedSync::handle);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
+            InvScanServer.sendScannedSync(player);
+        }
     }
 }

@@ -33,6 +33,10 @@ public class ScanningManager {
     }
 
     public static void scanTheThing(Player player, Object object) {
+        scanTheThing(player, object, false);
+    }
+
+    public static void scanTheThing(Player player, Object object, boolean silent) {
         boolean found = false;
         boolean suppress = false;
 
@@ -50,7 +54,7 @@ public class ScanningManager {
             }
         }
 
-        if (!suppress) {
+        if (!suppress && !silent) {
             if (!found) {
                 player.sendOverlayMessage(Component.literal("\u00a75\u00a7o")
                         .append(Component.translatable("tc.unknownobject")));
@@ -76,7 +80,7 @@ public class ScanningManager {
                         
                         ItemStack stack = net.neoforged.neoforge.transfer.item.ItemUtil.getStack(handler, slot);
                         if (!stack.isEmpty()) {
-                            scanTheThing(player, stack);
+                            scanTheThing(player, stack, silent);
                             scanned++;
                         }
                         if (scanned >= 100) {

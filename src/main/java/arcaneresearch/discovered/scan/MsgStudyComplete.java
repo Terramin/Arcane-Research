@@ -16,10 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.ArcaneresearchApi;
-import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.common.lib.network.PacketHandler;
 import org.jspecify.annotations.NonNull;
 
 public class MsgStudyComplete implements CustomPacketPayload {
@@ -117,45 +114,7 @@ public class MsgStudyComplete implements CustomPacketPayload {
                 return;
             }
             AspectList aspects = ScanTargets.aspectsFor(level, target, player);
-            if (aspects == null || aspects.aspects.isEmpty()) {
-                player.sendSystemMessage(Component.literal("Unknown object"), true);
-                return;
-            }
-            if (!ScanTargets.validScan(player, aspects)) {
-                player.sendSystemMessage(
-                        Component.literal("Unknown object: undiscovered components"), true);
-                return;
-            }
-            AspectList granted = new AspectList();
-            try {
-                for (Aspect aspect : aspects.getAspects()) {
-                    if (aspect == null) {
-                        continue;
-                    }
-                    int amount = aspects.getAmount(aspect);
-                    if (!ScanTargets.known(player, aspect)) {
-                        try {
-                            ArcaneresearchApi.internalMethods.progressResearch(
-                                    player, "!" + aspect.getTag());
-                        } catch (Exception ignored) {
-                        }
-                        amount += 2;
-                    }
-                    if (amount > 0) {
-                        ScanWallet.add(player, aspect, amount);
-                        granted.add(aspect, amount);
-                    }
-                }
-            } catch (Exception ignored) {
-            }
-            ScanWallet.markScanned(player, key);
-            if (!granted.aspects.isEmpty()) {
-                try {
-                    PacketHandler.sendToPlayer(new MsgStudyReward(granted), player);
-                } catch (Exception ignored) {
-                }
-            }
-            MsgWalletRequest.push(player);
+            ScanRewards.grant(player, key, aspects, false);
         });
     }
 

@@ -118,6 +118,25 @@ public final class ScanWallet {
         scannedTag(player).putBoolean(key, true);
     }
 
+    public static java.util.List<String> scannedKeys(Player player) {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        if (player == null) {
+            return out;
+        }
+        try {
+            CompoundTag scanned = root(player).getCompound(SCANNED).orElse(null);
+            if (scanned != null) {
+                for (String key : scanned.keySet()) {
+                    if (scanned.getBooleanOr(key, false)) {
+                        out.add(key);
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return out;
+    }
+
 
     public static java.util.Map<String, Integer> snapshot(Player player) {
         java.util.LinkedHashMap<String, Integer> out = new java.util.LinkedHashMap<>();
