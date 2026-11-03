@@ -46,70 +46,33 @@ git clone -b neoforge/26.3 https://github.com/Terramin/Arcane-Research.git
 
 <i>* Textures by Ufoss_xxs (free license with attribution).</i>
 
-## TODO
-
-<p align="center">
-  <img src="banner/todo.png" width="48%" alt="...">
-  <img src="banner/todo1.png" width="48%" alt="...">
-  <br>
-  <img src="banner/todo2.png" width="80%" alt="...">
-</p>
-<p align="center">
-  <img src="banner/todo3.png" width="48%" alt="...">
-  <img src="banner/todo4.png" width="48%" alt="...">
-  <br>
-  <img src="banner/todo5.png" width="80%" alt="...">
-</p>
 ## Showcase
 
 <p align="center">
-  <img src="banner/1.png" width="48%" alt="...">
-  <img src="banner/2.png" width="48%" alt="...">
-  <br>
-  <img src="banner/3.png" width="80%" alt="...">
-</p>
-
-<p align="center">
-  <img src="banner/4.png" width="48%" alt="...">
-  <img src="banner/5.png" width="48%" alt="...">
-  <br>
-  <img src="banner/6.png" width="80%" alt="...">
-</p>
-
-<p align="center">
-  <img src="banner/7.png" width="48%" alt="...">
-  <img src="banner/8.png" width="48%" alt="...">
-  <br>
-  <img src="banner/9.png" width="80%" alt="...">
-</p>
-
-<p align="center">
-  <img src="banner/10.png" width="48%" alt="...">
-  <img src="banner/11.png" width="48%" alt="...">
-  <br>
-  <img src="banner/12.png" width="40%" alt="...">
-
-<img src="banner/13.png" width="40%" alt="...">
+  <img src="banner/0.png" width="48%" alt="...">
+  <img src="banner/01.png" width="48%" alt="...">
 </p>
 <p align="center">
-  <img src="banner/14.png" width="48%" alt="...">
-  <img src="banner/15.png" width="48%" alt="...">
+  <img src="banner/1.gif" width="48%" alt="...">
+  <img src="banner/2.gif" width="48%" alt="...">
   <br>
-  <img src="banner/16.png" width="80%" alt="...">
+  <img src="banner/3.gif" width="80%" alt="...">
 </p>
 <p align="center">
-  <img src="banner/17.png" width="48%" alt="...">
-  <img src="banner/18.png" width="48%" alt="...">
+  <img src="banner/4.gif" width="48%" alt="...">
+  <img src="banner/5.gif" width="48%" alt="...">
   <br>
-  <img src="banner/19.png" width="80%" alt="...">
+  <img src="banner/6.gif" width="80%" alt="...">
 </p>
 <p align="center">
-  <img src="banner/20.png" width="48%" alt="...">
-  <img src="banner/21.png" width="48%" alt="...">
+  <img src="banner/7.gif" width="48%" alt="...">
+  <img src="banner/8.gif" width="48%" alt="...">
+  <br>
+  <img src="banner/9.gif" width="80%" alt="...">
 </p>
-
-
-
+<p align="center">
+  <img src="banner/10.gif" width="78%" alt="...">
+</p>
 
   ## DISCLAIMER AND ACCEPTANCE OF TERMS
 
