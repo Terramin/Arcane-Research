@@ -25,6 +25,19 @@ public class InvScanNetwork {
         CHANNEL.registerMessage(nextId++, MsgScanSelf.class,
                 MsgScanSelf::encode, MsgScanSelf::new, MsgScanSelf::handle,
                 Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(nextId++, MsgScannedSync.class,
+                MsgScannedSync::encode, MsgScannedSync::new, MsgScannedSync::handle,
+                Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    }
+
+    @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ForgeEvents {
+        @SubscribeEvent
+        public static void onPlayerLoggedIn(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent event) {
+            if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                InvScanServer.sendScannedSync(serverPlayer);
+            }
+        }
     }
 
     @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "arcaneresearch.invscan.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "arcaneresearch.refmap.json",
+  "client": [
+    "AbstractContainerScreenInvoker",
+    "InventoryScanHighlightMixin",
+    "InventoryScanLensMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -3,6 +3,8 @@ package arcaneresearch.invscan;
 import java.util.HashSet;
 import java.util.Set;
 
+import arcaneresearch.invscan.client.ScanFlightSystem;
+import arcaneresearch.invscan.mixin.AbstractContainerScreenInvoker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -22,12 +24,9 @@ import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.discovered.scan.ScanTargets;
-import arcaneresearch.discovered.scan.ScanWallet;
-import arcaneresearch.helper.RegsHelper;
 
 @OnlyIn(Dist.CLIENT)
 public final class InvScanClient {
@@ -37,9 +36,9 @@ public final class InvScanClient {
     private static final int PLAYER_Y1 = 8;
     private static final int PLAYER_X2 = 75;
     private static final int PLAYER_Y2 = 78;
-    private static final String SELF_SUBJECT = "self";
 
     private static final Set<String> LOCAL_SCANNED = new HashSet<>();
+    private static final Set<String> SCANNED_SYNCED = new HashSet<>();
 
     private static int mouseX;
     private static int mouseY;
@@ -55,6 +54,46 @@ public final class InvScanClient {
     private InvScanClient() {
     }
 
+    public static void applyScannedSync(java.util.List<String> keys, boolean replace) {
+        if (keys == null) {
+            return;
+        }
+        if (replace) {
+            SCANNED_SYNCED.clear();
+        }
+        SCANNED_SYNCED.addAll(keys);
+    }
+
+    public static boolean hasBeenScanned(String key) {
+        return LOCAL_SCANNED.contains(key) || SCANNED_SYNCED.contains(key);
+    }
+
+    public static boolean canUseThaumometer(AbstractContainerScreen<?> screen) {
+        return holdingThaumometer(screen);
+    }
+
+    public static boolean isScannableSlot(AbstractContainerScreen<?> screen, Slot slot) {
+        if (slot == null || !slot.hasItem() || !slot.isActive()) return false;
+        Player p = Minecraft.getInstance().player;
+        if (p == null) return false;
+        if (!slot.mayPickup(p)) return false;
+        return !(slot instanceof ResultSlot);
+    }
+
+    public static Slot scannableSlot(AbstractContainerScreen<?> screen, double mx, double my) {
+        Slot slot = ((AbstractContainerScreenInvoker) screen).invscan$findSlot(mx, my);
+        return isScannableSlot(screen, slot) ? slot : null;
+    }
+
+    public static int activeTicks(AbstractContainerScreen<?> screen, Slot slot) {
+        if (Minecraft.getInstance().screen != screen) return 0;
+        if (attempted || scanTicks <= 0) return 0;
+        if (slot == null) return 0;
+        String expected = InvScanServer.itemScanKey(slot.getItem());
+        if (!expected.equals(scanKey)) return 0;
+        return scanTicks;
+    }
+
     private static void reset() {
         scanKey = "";
         subjectAspects = null;
@@ -67,10 +106,7 @@ public final class InvScanClient {
     private static void resetAll() {
         reset();
         LOCAL_SCANNED.clear();
-    }
-
-    private static boolean hasBeenScanned(Player player, String key) {
-        return LOCAL_SCANNED.contains(key) || ScanWallet.hasScanned(player, key);
+        ScanFlightSystem.clear();
     }
 
     private static boolean holdingThaumometer(AbstractContainerScreen<?> screen) {
@@ -109,22 +145,24 @@ public final class InvScanClient {
         Slot slot = null;
 
         if (self) {
-            key = SELF_SUBJECT;
+            key = InvScanServer.SELF_KEY;
         } else {
             slot = ScreenAccess.hoveredSlot(screen);
             if (slot == null || slot.getItem().isEmpty() || slot instanceof ResultSlot
                     || !slot.mayPickup(player)) {
                 return false;
             }
-            key = slot.index + ":" + RegsHelper.itemKey(slot.getItem().getItem());
+            key = InvScanServer.itemScanKey(slot.getItem());
         }
-        if (key.equals(scanKey)) {
+        if (key.equals(scanKey)
+                && subjectAspects != null && subjectAspects.size() > 0) {
             return true;
         }
         scanKey = key;
         subjectIsSelf = self;
         subjectAspects = self ? getSelfAspects(player)
-                : AspectHelper.getObjectAspects(slot.getItem());
+                : arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager
+                        .getObjectTags(slot.getItem());
         scanTicks = 0;
         attempted = false;
         return true;
@@ -132,7 +170,7 @@ public final class InvScanClient {
 
     private static boolean scannable(Player player) {
         return subjectAspects != null && subjectAspects.size() > 0
-                && !hasBeenScanned(player, scanKey);
+                && !hasBeenScanned(scanKey);
     }
 
     @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID,
@@ -147,14 +185,17 @@ public final class InvScanClient {
         @SubscribeEvent
         public static void onClone(ClientPlayerNetworkEvent.Clone event) {
             reset();
+            ScanFlightSystem.clear();
         }
 
         @SubscribeEvent
-        @SuppressWarnings("resource")
         public static void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase != TickEvent.Phase.END) {
                 return;
             }
+
+            ScanFlightSystem.tick();
+
             Minecraft minecraft = Minecraft.getInstance();
             Player player = minecraft.player;
             AbstractContainerScreen<?> screen = player == null ? null : activeScreen(minecraft);
@@ -189,10 +230,16 @@ public final class InvScanClient {
                 attempted = true;
                 if (subjectAspects != null && ScanTargets.validScan(player, subjectAspects)) {
                     if (subjectIsSelf) {
+                        float ox = ScreenAccess.leftPos(screen) + (PLAYER_X1 + PLAYER_X2) * 0.5F;
+                        float oy = ScreenAccess.topPos(screen)  + (PLAYER_Y1 + PLAYER_Y2) * 0.5F;
+                        ScanFlightSystem.launchFromPoint(screen, ox, oy, subjectAspects, player);
+
                         InvScanNetwork.CHANNEL.sendToServer(new MsgScanSelf());
                     } else {
                         Slot slot = ScreenAccess.hoveredSlot(screen);
                         if (slot != null) {
+                            ScanFlightSystem.launchFromSlot(screen, slot, subjectAspects, player);
+
                             InvScanNetwork.CHANNEL.sendToServer(
                                     new MsgScanSlot(screen.getMenu().containerId, slot.index));
                         }
@@ -217,6 +264,8 @@ public final class InvScanClient {
                     && hoveringSelf(screen, minecraft.player)) {
                 drawSelfAspects(event.getGuiGraphics(), minecraft.player);
             }
+
+            ScanFlightSystem.render(event.getGuiGraphics(), event.getPartialTick());
         }
 
         private static void drawProgress(GuiGraphics graphics, Minecraft minecraft) {
@@ -230,18 +279,23 @@ public final class InvScanClient {
             } else if (progress >= 0.25F) {
                 text.append(".");
             }
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, 400.0F);
             graphics.drawString(minecraft.font, text.toString(),
                     mouseX, mouseY - 30, 0xFFFFAA00, true);
+            graphics.pose().popPose();
         }
 
         private static void drawSelfAspects(GuiGraphics graphics, Player player) {
-            if (!hasBeenScanned(player, InvScanServer.SELF_KEY)) {
+            if (!hasBeenScanned(InvScanServer.SELF_KEY)) {
                 return;
             }
             AspectList aspects = getSelfAspects(player);
             if (aspects == null || aspects.size() <= 0) {
                 return;
             }
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, 400.0F);
             int index = 0;
             for (Aspect aspect : aspects.getAspectsSortedByAmount()) {
                 if (aspect == null) {
@@ -256,6 +310,7 @@ public final class InvScanClient {
                         amount, 0, known ? 1.0F : 0.45F, !known);
                 index++;
             }
+            graphics.pose().popPose();
         }
     }
 }

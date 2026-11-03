@@ -102,51 +102,9 @@ public class MsgStudyComplete {
                 player.displayClientMessage(Component.literal("Unknown object"), true);
                 return;
             }
-            if (ScanWallet.hasScanned(player, key)) {
-                return;
-            }
             AspectList aspects = ScanTargets.aspectsFor(level, target, player);
-            if (aspects == null || aspects.aspects.isEmpty()) {
-                player.displayClientMessage(Component.literal("Unknown object"), true);
-                return;
-            }
-            if (!ScanTargets.validScan(player, aspects)) {
-                player.displayClientMessage(
-                        Component.literal("Unknown object: undiscovered components"), true);
-                return;
-            }
-            AspectList granted = new AspectList();
-            try {
-                for (Aspect aspect : aspects.getAspects()) {
-                    if (aspect == null) {
-                        continue;
-                    }
-                    int amount = aspects.getAmount(aspect);
-                    if (!ScanTargets.known(player, aspect)) {
-                        try {
-                            ArcaneresearchApi.internalMethods.progressResearch(
-                                    player, "!" + aspect.getTag());
-                        } catch (Exception ignored) {
-                        }
-                        amount += 2;
-                    }
-                    if (amount > 0) {
-                        ScanWallet.add(player, aspect, amount);
-                        granted.add(aspect, amount);
-                    }
-                }
-            } catch (Exception ignored) {
-            }
-            ScanWallet.markScanned(player, key);
-            if (!granted.aspects.isEmpty()) {
-                try {
-                    ScanNetwork.CHANNEL.send(
-                            net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> player),
-                            new MsgStudyReward(granted));
-                } catch (Exception ignored) {
-                }
-            }
-            MsgWalletRequest.push(player);
+            // Награды — общий конвейер с инвентарным сканированием.
+            ScanRewards.grant(player, key, aspects, false);
         });
         context.setPacketHandled(true);
     }

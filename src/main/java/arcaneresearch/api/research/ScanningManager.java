@@ -26,6 +26,10 @@ public class ScanningManager {
         return things.remove(obj);
     }
     public static void scanTheThing(Player player, Object object) {
+        scanTheThing(player, object, false);
+    }
+
+    public static void scanTheThing(Player player, Object object, boolean silent) {
         boolean found = false;
         boolean suppress = false;
         for (IScanThing thing : things) {
@@ -40,7 +44,7 @@ public class ScanningManager {
                 }
             }
         }
-        if (!suppress) {
+        if (!suppress && !silent) {
             if (!found) {
                 player.displayClientMessage(
                     Component.literal("\u00a75\u00a7o")
@@ -63,7 +67,7 @@ public class ScanningManager {
                     for (int slot = 0; slot < handler.getSlots(); slot++) {
                         ItemStack stack = handler.getStackInSlot(slot);
                         if (!stack.isEmpty()) {
-                            scanTheThing(player, stack);
+                            scanTheThing(player, stack, silent);
                             scanned++;
                         }
                         if (scanned >= 100) {

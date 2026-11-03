@@ -92,6 +92,20 @@ public final class ScanWallet {
         return false;
     }
 
+    public static ListTag scannedKeys(Player player) {
+        if (player == null) {
+            return new ListTag();
+        }
+        try {
+            CompoundTag root = root(player);
+            if (root.contains(SCANNED, Tag.TAG_LIST)) {
+                return root.getList(SCANNED, Tag.TAG_STRING);
+            }
+        } catch (Exception ignored) {
+        }
+        return new ListTag();
+    }
+
     public static void markScanned(Player player, String key) {
         if (player == null || key == null) {
             return;

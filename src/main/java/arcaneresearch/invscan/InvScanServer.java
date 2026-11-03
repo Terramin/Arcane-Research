@@ -1,5 +1,11 @@
 package arcaneresearch.invscan;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ResultSlot;
@@ -7,24 +13,25 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.ArcaneresearchApi;
-import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.aspects.AspectHelper;
+import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.common.items.tools.ItemThaumometer;
-import arcaneresearch.discovered.scan.MsgStudyReward;
-import arcaneresearch.discovered.scan.MsgWalletRequest;
-import arcaneresearch.discovered.scan.ScanNetwork;
+import arcaneresearch.discovered.scan.ScanRewards;
 import arcaneresearch.discovered.scan.ScanTargets;
 import arcaneresearch.discovered.scan.ScanWallet;
 import arcaneresearch.helper.RegsHelper;
 
 public final class InvScanServer {
 
-    public static final String KEY_PREFIX = "T:";
-    public static final String SELF_KEY = KEY_PREFIX + "self";
+    public static final String ITEM_SCAN_PREFIX = "B:";
+    public static final String SELF_KEY = "S:self";
+
+    private static final int MAX_SYNC_KEYS = 8192;
 
     private InvScanServer() {
+    }
+
+    public static String itemScanKey(ItemStack stack) {
+        return ITEM_SCAN_PREFIX + RegsHelper.itemKey(stack.getItem());
     }
 
     private static boolean holdingThaumometerOnCursor(ServerPlayer player) {
@@ -45,12 +52,20 @@ public final class InvScanServer {
             return;
         }
         ItemStack stack = slot.getItem();
-        String key = KEY_PREFIX + RegsHelper.itemKey(stack.getItem());
+        String key = itemScanKey(stack);
         if (ScanWallet.hasScanned(player, key)) {
             return;
         }
-        AspectList aspects = AspectHelper.getObjectAspects(stack);
-        completeScan(player, key, aspects);
+
+        ScanningManager.scanTheThing(player, stack, true);
+
+        arcaneresearch.api.aspects.AspectList aspects =
+                arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager
+                        .getObjectTags(stack);
+        if (aspects != null) {
+            aspects = aspects.copy();
+        }
+        ScanRewards.grant(player, key, aspects, true);
     }
 
     public static void handleSelf(ServerPlayer player) {
@@ -63,52 +78,48 @@ public final class InvScanServer {
         if (ScanWallet.hasScanned(player, SELF_KEY)) {
             return;
         }
-        AspectList aspects = ScanTargets.entityAspects(player);
-        completeScan(player, SELF_KEY, aspects);
+
+        ScanningManager.scanTheThing(player, player, true);
+
+        arcaneresearch.api.aspects.AspectList aspects = ScanTargets.entityAspects(player);
+        ScanRewards.grant(player, SELF_KEY, aspects, true);
     }
 
-    private static void completeScan(ServerPlayer player, String key, AspectList aspects) {
-        if (aspects == null || aspects.size() <= 0) {
-            Arcaneresearch.LOGGER.debug("InvScan: scan for {} produced no aspects", key);
+    public static void pushScanned(ServerPlayer player, String key) {
+        if (player == null || key == null || key.isEmpty()) {
             return;
         }
-        if (!ScanTargets.validScan(player, aspects)) {
-            Arcaneresearch.LOGGER.debug("InvScan: validScan rejected {}", key);
+        try {
+            InvScanNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                    new MsgScannedSync(java.util.List.of(key), false));
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.warn("InvScan: failed to push scanned key", e);
+        }
+    }
+
+    static void sendScannedSync(ServerPlayer player) {
+        if (player == null) {
             return;
         }
-
-        AspectList granted = new AspectList();
-        for (Aspect aspect : aspects.getAspects()) {
-            if (aspect == null) {
-                continue;
-            }
-            int amount = aspects.getAmount(aspect);
-
-            if (!ScanTargets.known(player, aspect)) {
-                String tag = aspect.getTag();
-                if (tag != null) {
-                    try {
-                        ArcaneresearchApi.internalMethods.progressResearch(player, "!" + tag);
-                    } catch (Exception e) {
-                        Arcaneresearch.LOGGER.warn(
-                                "InvScan: progressResearch failed for aspect '{}'", tag, e);
+        List<String> keys = new ArrayList<>();
+        try {
+            ListTag list = ScanWallet.scannedKeys(player);
+            for (Tag tag : list) {
+                if (tag instanceof StringTag s) {
+                    keys.add(s.getAsString());
+                    if (keys.size() >= MAX_SYNC_KEYS) {
+                        break;
                     }
                 }
-                amount += 2;
             }
-
-            if (amount > 0) {
-                ScanWallet.add(player, aspect, amount);
-                granted.add(aspect, amount);
-            }
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.warn("InvScan: failed to collect scanned keys", e);
         }
-
-        ScanWallet.markScanned(player, key);
-        if (granted.size() > 0) {
-            ScanNetwork.CHANNEL.send(
-                    PacketDistributor.PLAYER.with(() -> player),
-                    new MsgStudyReward(granted));
+        try {
+            InvScanNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                    new MsgScannedSync(keys, true));
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.warn("InvScan: failed to send scanned sync", e);
         }
-        MsgWalletRequest.push(player);
     }
 }
