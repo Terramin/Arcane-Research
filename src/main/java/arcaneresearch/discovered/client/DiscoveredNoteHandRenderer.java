@@ -173,7 +173,7 @@ public class DiscoveredNoteHandRenderer {
         float total = data.getTotalProgress();
         Component name = DiscoveredNotes.researchName(data.key);
         Component title = name == null ? Component.literal(data.key) : name;
-        if (total < 0.2F && !data.revealed) {
+        if (total < 0.2F) {
             title = scrambled(title);
         }
         pose.pushPose();
@@ -209,7 +209,7 @@ public class DiscoveredNoteHandRenderer {
                     icon = UNKNOWN_TAG;
                 }
                 float x = 15.0F + (index % 4) * 30.0F;
-                float y = 28.0F + ((float) index / 4) * 13.0F;
+                float y = 28.0F + (index / 4) * 13.0F;
                 int color = known ? tag.getColor() : 0xFFFFFF;
                 int r = (color >> 16) & 0xFF;
                 int g = (color >> 8) & 0xFF;
@@ -239,7 +239,7 @@ public class DiscoveredNoteHandRenderer {
         }
         Component desc = describe(data.key);
         if (desc != null) {
-            float startY = 25.0F + (1 + (float) (index - 1) / 4) * 13.0F;
+            float startY = 25.0F + (1 + (index - 1) / 4) * 13.0F;
             float availH = Math.max(0.0F, 130.0F - startY);
             DiscoveredNoteText.Fit fit = DiscoveredNoteText.parchmentFit(
                     font, desc, total < 0.5F, 180, 0.63F, availH, 0.30F);
