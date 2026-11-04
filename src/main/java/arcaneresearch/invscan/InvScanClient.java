@@ -37,7 +37,6 @@ public final class InvScanClient {
     private static final int PLAYER_X2 = 75;
     private static final int PLAYER_Y2 = 78;
 
-    private static final Set<String> LOCAL_SCANNED = new HashSet<>();
     private static final Set<String> SCANNED_SYNCED = new HashSet<>();
 
     private static int mouseX;
@@ -65,7 +64,7 @@ public final class InvScanClient {
     }
 
     public static boolean hasBeenScanned(String key) {
-        return LOCAL_SCANNED.contains(key) || SCANNED_SYNCED.contains(key);
+        return SCANNED_SYNCED.contains(key);
     }
 
     public static boolean canUseThaumometer(AbstractContainerScreen<?> screen) {
@@ -105,7 +104,6 @@ public final class InvScanClient {
 
     private static void resetAll() {
         reset();
-        LOCAL_SCANNED.clear();
         ScanFlightSystem.clear();
     }
 
@@ -162,7 +160,7 @@ public final class InvScanClient {
         subjectIsSelf = self;
         subjectAspects = self ? getSelfAspects(player)
                 : arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager
-                        .getObjectTags(slot.getItem());
+                .getObjectTags(slot.getItem());
         scanTicks = 0;
         attempted = false;
         return true;
@@ -228,7 +226,7 @@ public final class InvScanClient {
             }
             if (scanTicks >= SCAN_TICKS) {
                 attempted = true;
-                if (subjectAspects != null && ScanTargets.validScan(player, subjectAspects)) {
+                if (subjectAspects != null && subjectAspects.size() > 0) {
                     if (subjectIsSelf) {
                         float ox = ScreenAccess.leftPos(screen) + (PLAYER_X1 + PLAYER_X2) * 0.5F;
                         float oy = ScreenAccess.topPos(screen)  + (PLAYER_Y1 + PLAYER_Y2) * 0.5F;
@@ -244,7 +242,6 @@ public final class InvScanClient {
                                     new MsgScanSlot(screen.getMenu().containerId, slot.index));
                         }
                     }
-                    LOCAL_SCANNED.add(scanKey);
                 }
                 scanTicks = 0;
             }

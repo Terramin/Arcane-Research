@@ -11,8 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkEvent;
-import arcaneresearch.api.ArcaneresearchApi;
-import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 
 public class MsgStudyComplete {
@@ -102,8 +100,10 @@ public class MsgStudyComplete {
                 player.displayClientMessage(Component.literal("Unknown object"), true);
                 return;
             }
+            if (ScanWallet.hasScanned(player, key)) {
+                return;
+            }
             AspectList aspects = ScanTargets.aspectsFor(level, target, player);
-            // Награды — общий конвейер с инвентарным сканированием.
             ScanRewards.grant(player, key, aspects, false);
         });
         context.setPacketHandled(true);

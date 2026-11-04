@@ -35,7 +35,11 @@ public class MsgScannedSync {
         buf.writeBoolean(replace);
         buf.writeVarInt(keys.size());
         for (String k : keys) {
-            buf.writeUtf(k, MAX_KEY_LEN);
+            String safe = k == null ? "" : k;
+            if (safe.length() > MAX_KEY_LEN) {
+                safe = safe.substring(0, MAX_KEY_LEN);
+            }
+            buf.writeUtf(safe, MAX_KEY_LEN);
         }
     }
 

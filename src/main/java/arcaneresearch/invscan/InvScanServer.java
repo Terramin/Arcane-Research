@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.discovered.scan.ScanRewards;
@@ -36,7 +37,7 @@ public final class InvScanServer {
 
     private static boolean holdingThaumometerOnCursor(ServerPlayer player) {
         AbstractContainerMenu menu = player.containerMenu;
-        return menu.getCarried().getItem() instanceof ItemThaumometer;
+        return menu != null && menu.getCarried().getItem() instanceof ItemThaumometer;
     }
 
     public static void handleSlot(ServerPlayer player, int containerId, int index) {
@@ -57,15 +58,16 @@ public final class InvScanServer {
             return;
         }
 
-        ScanningManager.scanTheThing(player, stack, true);
-
         arcaneresearch.api.aspects.AspectList aspects =
                 arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager
                         .getObjectTags(stack);
         if (aspects != null) {
             aspects = aspects.copy();
         }
-        ScanRewards.grant(player, key, aspects, true);
+
+        if (ScanRewards.grant(player, key, aspects, true)) {
+            ScanningManager.scanTheThing(player, stack, true);
+        }
     }
 
     public static void handleSelf(ServerPlayer player) {
@@ -79,10 +81,11 @@ public final class InvScanServer {
             return;
         }
 
-        ScanningManager.scanTheThing(player, player, true);
+        AspectList aspects = ScanTargets.entityAspects(player);
 
-        arcaneresearch.api.aspects.AspectList aspects = ScanTargets.entityAspects(player);
-        ScanRewards.grant(player, SELF_KEY, aspects, true);
+        if (ScanRewards.grant(player, SELF_KEY, aspects, true)) {
+            ScanningManager.scanTheThing(player, player, true);
+        }
     }
 
     public static void pushScanned(ServerPlayer player, String key) {

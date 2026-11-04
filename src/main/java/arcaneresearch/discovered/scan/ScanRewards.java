@@ -26,13 +26,6 @@ public final class ScanRewards {
             }
             return false;
         }
-        if (!ScanTargets.validScan(player, aspects)) {
-            if (!silent) {
-                player.displayClientMessage(
-                        Component.literal("Unknown object: undiscovered components"), true);
-            }
-            return false;
-        }
 
         AspectList granted = new AspectList();
         try {
@@ -57,14 +50,20 @@ public final class ScanRewards {
         } catch (Exception ignored) {
         }
 
-        ScanWallet.markScanned(player, key);
-        if (!granted.aspects.isEmpty()) {
-            try {
-                ScanNetwork.CHANNEL.send(
-                        PacketDistributor.PLAYER.with(() -> player),
-                        new MsgStudyReward(granted));
-            } catch (Exception ignored) {
+        if (granted.aspects.isEmpty()) {
+            if (!silent) {
+                player.displayClientMessage(
+                        Component.literal("Unknown object: no aspects gained"), true);
             }
+            return false;
+        }
+
+        ScanWallet.markScanned(player, key);
+        try {
+            ScanNetwork.CHANNEL.send(
+                    PacketDistributor.PLAYER.with(() -> player),
+                    new MsgStudyReward(granted));
+        } catch (Exception ignored) {
         }
         try {
             InvScanServer.pushScanned(player, key);
