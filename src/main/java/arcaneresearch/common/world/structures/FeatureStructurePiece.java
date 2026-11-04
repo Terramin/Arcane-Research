@@ -67,12 +67,11 @@ public class FeatureStructurePiece extends StructurePiece {
             Registry<PlacedFeature> registry = level.registryAccess()
                     .lookupOrThrow(Registries.PLACED_FEATURE);
             var holder = registry.getOrThrow(this.featureKey);
-            if (holder == null) {
-                Arcaneresearch.LOGGER.warn("FeatureStructurePiece: missing placed feature {}",
-                        this.featureKey.identifier());
-                return;
+            boolean placed = holder.value().place(level, generator, random, this.genPos);
+            if (!placed) {
+                Arcaneresearch.LOGGER.warn("FeatureStructurePiece: placement returned false for feature {} at {}",
+                        this.featureKey.identifier(), this.genPos);
             }
-            holder.value().place(level, generator, random, this.genPos);
         } catch (Exception e) {
             Arcaneresearch.LOGGER.warn("FeatureStructurePiece: failed to place {}", this.featureKey, e);
         }
