@@ -22,7 +22,8 @@ import org.jspecify.annotations.NonNull;
 public class MsgStudyComplete implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MsgStudyComplete> TYPE =
-            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "scan_study_complete"));
+            new CustomPacketPayload.Type<>(
+                    Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "scan_study_complete"));
 
     public static final StreamCodec<ByteBuf, MsgStudyComplete> STREAM_CODEC = new StreamCodec<>() {
         @Override
@@ -36,7 +37,8 @@ public class MsgStudyComplete implements CustomPacketPayload {
                 buf.writeLong(packet.pos);
             } else if (kind == 2) {
                 buf.writeInt(packet.entityId);
-                ByteBufCodecs.STRING_UTF8.encode(buf, packet.entityType == null ? "" : packet.entityType);
+                ByteBufCodecs.STRING_UTF8.encode(buf,
+                        packet.entityType == null ? "" : packet.entityType);
             }
         }
 
@@ -107,7 +109,7 @@ public class MsgStudyComplete implements CustomPacketPayload {
             Level level = player.level();
             String key = ScanTargets.scannedKey(level, target, player);
             if (key.isEmpty()) {
-                player.sendSystemMessage(Component.literal("Unknown object"), true);
+                player.sendOverlayMessage(Component.literal("Unknown object"));
                 return;
             }
             if (ScanWallet.hasScanned(player, key)) {
@@ -126,11 +128,13 @@ public class MsgStudyComplete implements CustomPacketPayload {
             Level level = player.level();
             if (msg.kind == 1 || msg.kind == 3) {
                 BlockPos blockPos = BlockPos.of(msg.pos);
-                if (player.getEyePosition().distanceTo(Vec3.atCenterOf(blockPos)) > ScanTargets.RANGE + 1.0D) {
+                if (player.getEyePosition().distanceTo(Vec3.atCenterOf(blockPos))
+                        > ScanTargets.RANGE + 1.0D) {
                     return null;
                 }
                 BlockHitResult hit = ScanTargets.blockRay(level, player, ScanTargets.RANGE);
-                if (hit == null || hit.getType() != HitResult.Type.BLOCK || !hit.getBlockPos().equals(blockPos)) {
+                if (hit == null || hit.getType() != HitResult.Type.BLOCK
+                        || !hit.getBlockPos().equals(blockPos)) {
                     return null;
                 }
                 if (msg.kind == 3) {

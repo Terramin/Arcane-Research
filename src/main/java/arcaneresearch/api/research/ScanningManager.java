@@ -13,7 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities; 
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 
@@ -66,19 +68,13 @@ public class ScanningManager {
 
         if (object instanceof BlockPos pos) {
             Level level = player.level();
-            level.getBlockEntity(pos);
-
             var blockEntity = level.getBlockEntity(pos);
             if (blockEntity != null) {
-                
-                
-                
                 var handler = level.getCapability(Capabilities.Item.BLOCK, pos, Direction.UP);
                 if (handler != null) {
                     int scanned = 0;
                     for (int slot = 0; slot < handler.size(); slot++) {
-                        
-                        ItemStack stack = net.neoforged.neoforge.transfer.item.ItemUtil.getStack(handler, slot);
+                        ItemStack stack = ItemUtil.getStack(handler, slot);
                         if (!stack.isEmpty()) {
                             scanTheThing(player, stack, silent);
                             scanned++;
@@ -99,7 +95,8 @@ public class ScanningManager {
             if (thing.checkThing(player, object)) {
                 try {
                     String key = thing.getResearchKey(player, object);
-                    if (!ArcaneresearchCapabilities.isResearchKnown(player, key)) {
+                    if (key != null && !key.isEmpty()
+                            && !ArcaneresearchCapabilities.isResearchKnown(player, key)) {
                         return true;
                     }
                 } catch (Exception ignored) {
@@ -123,11 +120,9 @@ public class ScanningManager {
             BlockHitResult hit = rayTrace(player);
             if (hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
                     && hit.getBlockPos().equals(pos)) {
-                
                 result = state.getCloneItemStack(pos, level, false, player);
             }
             if (result.isEmpty()) {
-                
                 result = state.getCloneItemStack(level, pos, false);
             }
 
@@ -150,10 +145,10 @@ public class ScanningManager {
         Vec3 endPos = eyePos.add(lookVec.x * 4, lookVec.y * 4, lookVec.z * 4);
 
         return player.level().clip(new ClipContext(
-            eyePos, endPos,
-            ClipContext.Block.OUTLINE,
-            ClipContext.Fluid.ANY,
-            player
+                eyePos, endPos,
+                ClipContext.Block.OUTLINE,
+                ClipContext.Fluid.ANY,
+                player
         ));
     }
 
@@ -161,8 +156,6 @@ public class ScanningManager {
         if (arcaneresearch.api.ArcaneresearchApi.internalMethods != null) {
             return arcaneresearch.api.ArcaneresearchApi.internalMethods.progressResearch(player, researchKey);
         }
-        
-        
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null && !knowledge.isResearchKnown(researchKey)) {
             knowledge.addResearch(researchKey);

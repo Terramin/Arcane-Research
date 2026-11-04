@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
@@ -56,14 +57,14 @@ public final class InvScanServer {
             return;
         }
 
-        ScanningManager.scanTheThing(player, stack, true);
-
-        arcaneresearch.api.aspects.AspectList aspects =
-                ArcaneresearchCraftingManager.getObjectTags(stack);
+        AspectList aspects = ArcaneresearchCraftingManager.getObjectTags(stack);
         if (aspects != null) {
             aspects = aspects.copy();
         }
-        ScanRewards.grant(player, key, aspects, true);
+
+        if (ScanRewards.grant(player, key, aspects, true)) {
+            ScanningManager.scanTheThing(player, stack, true);
+        }
     }
 
     public static void handleSelf(ServerPlayer player) {
@@ -77,10 +78,11 @@ public final class InvScanServer {
             return;
         }
 
-        ScanningManager.scanTheThing(player, player, true);
+        AspectList aspects = ScanTargets.entityAspects(player);
 
-        arcaneresearch.api.aspects.AspectList aspects = ScanTargets.entityAspects(player);
-        ScanRewards.grant(player, SELF_KEY, aspects, true);
+        if (ScanRewards.grant(player, SELF_KEY, aspects, true)) {
+            ScanningManager.scanTheThing(player, player, true);
+        }
     }
 
     public static void pushScanned(ServerPlayer player, String key) {

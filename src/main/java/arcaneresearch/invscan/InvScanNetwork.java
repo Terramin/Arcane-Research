@@ -13,18 +13,9 @@ public class InvScanNetwork {
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
         final var registrar = event.registrar(Arcaneresearch.MODID).versioned("1");
-        registrar.playToServer(
-                MsgScanSlot.TYPE,
-                MsgScanSlot.STREAM_CODEC,
-                MsgScanSlot::handle);
-        registrar.playToServer(
-                MsgScanSelf.TYPE,
-                MsgScanSelf.STREAM_CODEC,
-                MsgScanSelf::handle);
-        registrar.playToClient(
-                MsgScannedSync.TYPE,
-                MsgScannedSync.STREAM_CODEC,
-                MsgScannedSync::handle);
+        registrar.playToServer(MsgScanSlot.TYPE, MsgScanSlot.STREAM_CODEC, MsgScanSlot::handle);
+        registrar.playToServer(MsgScanSelf.TYPE, MsgScanSelf.STREAM_CODEC, MsgScanSelf::handle);
+        registrar.playToClient(MsgScannedSync.TYPE, MsgScannedSync.STREAM_CODEC, MsgScannedSync::handle);
     }
 
     @SubscribeEvent

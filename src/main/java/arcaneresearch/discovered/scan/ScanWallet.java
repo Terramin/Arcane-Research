@@ -51,7 +51,6 @@ public final class ScanWallet {
         }
     }
 
-
     public static void add(Player player, Aspect aspect, int amount) {
         if (player == null || aspect == null || amount <= 0) {
             return;
@@ -63,7 +62,6 @@ public final class ScanWallet {
         CompoundTag tags = aspectsTag(player);
         tags.putInt(key, tags.getIntOr(key, 0) + amount);
     }
-
 
     public static int remove(Player player, Aspect aspect, int amount) {
         if (player == null || aspect == null || amount <= 0) {
@@ -87,7 +85,6 @@ public final class ScanWallet {
         return take;
     }
 
-
     public static boolean hasScanned(Player player, String key) {
         if (player == null || key == null) {
             return true;
@@ -104,7 +101,6 @@ public final class ScanWallet {
         }
         return false;
     }
-
 
     public static void markScanned(Player player, String key) {
         if (player == null || key == null) {
@@ -136,7 +132,6 @@ public final class ScanWallet {
         return out;
     }
 
-
     public static java.util.Map<String, Integer> snapshot(Player player) {
         java.util.LinkedHashMap<String, Integer> out = new java.util.LinkedHashMap<>();
         if (player == null) {
@@ -154,7 +149,6 @@ public final class ScanWallet {
         }
         return out;
     }
-
 
     private static final java.util.Map<String, Integer> VIEW = new java.util.HashMap<>();
     private static final java.util.Map<String, Integer> VIEW_BONUS = new java.util.HashMap<>();
@@ -183,7 +177,6 @@ public final class ScanWallet {
         }
     }
 
-
     public static synchronized int viewAmount(Aspect aspect) {
         if (aspect == null) {
             return 0;
@@ -195,7 +188,6 @@ public final class ScanWallet {
         Integer amount = VIEW.get(key);
         return amount == null ? 0 : amount;
     }
-
 
     public static synchronized int viewBonus(Aspect aspect) {
         if (aspect == null) {

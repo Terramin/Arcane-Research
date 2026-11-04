@@ -6,8 +6,8 @@ import net.minecraft.server.level.ServerPlayer;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.invscan.InvScanServer;
 import arcaneresearch.common.lib.network.PacketHandler;
+import arcaneresearch.invscan.InvScanServer;
 
 public final class ScanRewards {
 
@@ -23,14 +23,7 @@ public final class ScanRewards {
         }
         if (aspects == null || aspects.aspects.isEmpty()) {
             if (!silent) {
-                player.sendSystemMessage(Component.literal("Unknown object"), true);
-            }
-            return false;
-        }
-        if (!ScanTargets.validScan(player, aspects)) {
-            if (!silent) {
-                player.sendSystemMessage(
-                        Component.literal("Unknown object: undiscovered components"), true);
+                player.sendOverlayMessage(Component.literal("Unknown object"));
             }
             return false;
         }
@@ -58,12 +51,18 @@ public final class ScanRewards {
         } catch (Exception ignored) {
         }
 
-        ScanWallet.markScanned(player, key);
-        if (!granted.aspects.isEmpty()) {
-            try {
-                PacketHandler.sendToPlayer(new MsgStudyReward(granted), player);
-            } catch (Exception ignored) {
+        if (granted.aspects.isEmpty()) {
+            if (!silent) {
+                player.sendOverlayMessage(
+                        Component.literal("Unknown object: no aspects gained"));
             }
+            return false;
+        }
+
+        ScanWallet.markScanned(player, key);
+        try {
+            PacketHandler.sendToPlayer(new MsgStudyReward(granted), player);
+        } catch (Exception ignored) {
         }
         try {
             InvScanServer.pushScanned(player, key);

@@ -18,7 +18,11 @@ public class MsgScannedSync implements CustomPacketPayload {
     private static final int MAX_KEY_LEN = 128;
 
     public static final CustomPacketPayload.Type<MsgScannedSync> TYPE =
-            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "invscan_scanned_sync"));
+            new CustomPacketPayload.Type<>(
+                    Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "invscan_scanned_sync"));
+
+    private static final StreamCodec<ByteBuf, String> KEY_CODEC =
+            ByteBufCodecs.stringUtf8(MAX_KEY_LEN);
 
     public static final StreamCodec<ByteBuf, MsgScannedSync> STREAM_CODEC = new StreamCodec<>() {
         @Override
@@ -26,7 +30,11 @@ public class MsgScannedSync implements CustomPacketPayload {
             ByteBufCodecs.BOOL.encode(buf, packet.replace);
             ByteBufCodecs.VAR_INT.encode(buf, packet.keys.size());
             for (String key : packet.keys) {
-                ByteBufCodecs.STRING_UTF8.encode(buf, key == null ? "" : key);
+                String safe = key == null ? "" : key;
+                if (safe.length() > MAX_KEY_LEN) {
+                    safe = safe.substring(0, MAX_KEY_LEN);
+                }
+                KEY_CODEC.encode(buf, safe);
             }
         }
 
@@ -39,7 +47,7 @@ public class MsgScannedSync implements CustomPacketPayload {
             }
             List<String> keys = new ArrayList<>(n);
             for (int i = 0; i < n; i++) {
-                String key = ByteBufCodecs.STRING_UTF8.decode(buf);
+                String key = KEY_CODEC.decode(buf);
                 if (key != null && !key.isEmpty()) {
                     keys.add(key);
                 }

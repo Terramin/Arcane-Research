@@ -13,7 +13,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -43,7 +42,6 @@ public final class InvScanClient {
     private static final int PLAYER_X2 = 75;
     private static final int PLAYER_Y2 = 78;
 
-    private static final Set<String> LOCAL_SCANNED = new HashSet<>();
     private static final Set<String> SCANNED_SYNCED = new HashSet<>();
 
     private static int mouseX;
@@ -71,7 +69,7 @@ public final class InvScanClient {
     }
 
     public static boolean hasBeenScanned(String key) {
-        return LOCAL_SCANNED.contains(key) || SCANNED_SYNCED.contains(key);
+        return SCANNED_SYNCED.contains(key);
     }
 
     public static boolean canUseThaumometer(AbstractContainerScreen<?> screen) {
@@ -111,7 +109,6 @@ public final class InvScanClient {
 
     private static void resetAll() {
         reset();
-        LOCAL_SCANNED.clear();
         ScanFlightSystem.clear();
     }
 
@@ -197,7 +194,7 @@ public final class InvScanClient {
             ScanFlightSystem.tick();
 
             Minecraft minecraft = Minecraft.getInstance();
-            Player player = minecraft == null ? null : minecraft.player;
+            Player player = minecraft.player;
             AbstractContainerScreen<?> screen = player == null ? null : activeScreen(minecraft);
             boolean resolved = screen != null && resolveSubject(screen, player);
             if (!resolved) {
@@ -220,14 +217,14 @@ public final class InvScanClient {
                             ModSounds.TICKS.get(),
                             SoundSource.PLAYERS,
                             0.2F,
-                            0.45F + minecraft.level.getRandom().nextFloat() * 0.1F,
+                            0.45F + player.getRandom().nextFloat() * 0.1F,
                             false);
                 } catch (Exception ignored) {
                 }
             }
             if (scanTicks >= SCAN_TICKS) {
                 attempted = true;
-                if (subjectAspects != null) {
+                if (subjectAspects != null && subjectAspects.size() > 0) {
                     if (subjectIsSelf) {
                         float ox = ScreenAccess.leftPos(screen) + (PLAYER_X1 + PLAYER_X2) * 0.5F;
                         float oy = ScreenAccess.topPos(screen) + (PLAYER_Y1 + PLAYER_Y2) * 0.5F;
@@ -243,9 +240,6 @@ public final class InvScanClient {
                                     new MsgScanSlot(screen.getMenu().containerId, slot.index));
                         }
                     }
-                }
-                if (subjectAspects != null && ScanTargets.validScan(player, subjectAspects)) {
-                    LOCAL_SCANNED.add(scanKey);
                 }
                 scanTicks = 0;
             }
@@ -266,7 +260,7 @@ public final class InvScanClient {
                 drawSelfAspects(event.getGuiGraphics(), minecraft.player);
             }
 
-            ScanFlightSystem.render(event.getGuiGraphics(), 0.0F);
+            ScanFlightSystem.render(event.getGuiGraphics(), event.getPartialTick());
         }
 
         private static void drawProgress(GuiGraphicsExtractor graphics, Minecraft minecraft) {
@@ -297,8 +291,8 @@ public final class InvScanClient {
                 if (aspect == null) {
                     continue;
                 }
-                int x = mouseX + 17 + index * 18 - 8;
-                int y = mouseY + 7 - 33 - 8;
+                int x = mouseX + 9 + index * 18;
+                int y = mouseY - 34;
                 graphics.fill(x - 1, y - 1, x + 17, y + 17, 0x66000000);
                 int amount = aspects.getAmount(aspect);
                 boolean known = ScanTargets.known(player, aspect);
