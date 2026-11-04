@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -66,18 +67,17 @@ public class NodeConverterRenderer implements BlockEntityRenderer<NodeConverterT
         float[] glow = statusColor(status);
         int glowLightBase = glowLightForPiston(ticks, v, 0);
 
+        RenderType baseType = TCRenderTypes.objSolidCulled(TEXTURE);
+        RenderType overType = TCRenderTypes.objSolidCulled(TEXTURE_OVER);
+
+        VertexConsumer base = buffer.getBuffer(baseType);
         poseStack.pushPose();
         try {
             poseStack.translate(0.5, 1.0, 0.5);
             poseStack.mulPose(ROT_XP_90);
 
-            VertexConsumer base = buffer.getBuffer(TCRenderTypes.objSolidCulled(TEXTURE));
             model.renderGroup(poseStack, base, "lock", packedLight, packedOverlay,
                     1.0F, 1.0F, 1.0F, 1.0F);
-
-            VertexConsumer over = buffer.getBuffer(TCRenderTypes.objSolidCulled(TEXTURE_OVER));
-            model.renderGroup(poseStack, over, "lock", glowLightBase, packedOverlay,
-                    glow[0], glow[1], glow[2], 1.0F);
 
             for (int a = 0; a < 4; a++) {
                 poseStack.pushPose();
@@ -87,6 +87,29 @@ public class NodeConverterRenderer implements BlockEntityRenderer<NodeConverterT
                     poseStack.translate(0.0, 0.0, v);
                     model.renderGroup(poseStack, base, "piston", packedLight, packedOverlay,
                             1.0F, 1.0F, 1.0F, 1.0F);
+                } finally {
+                    poseStack.popPose();
+                }
+            }
+        } finally {
+            poseStack.popPose();
+        }
+
+        VertexConsumer over = buffer.getBuffer(overType);
+        poseStack.pushPose();
+        try {
+            poseStack.translate(0.5, 1.0, 0.5);
+            poseStack.mulPose(ROT_XP_90);
+
+            model.renderGroup(poseStack, over, "lock", glowLightBase, packedOverlay,
+                    glow[0], glow[1], glow[2], 1.0F);
+
+            for (int a = 0; a < 4; a++) {
+                poseStack.pushPose();
+                try {
+                    poseStack.mulPose(PISTON_ROTATIONS[a]);
+                    poseStack.mulPose(ROT_YP_45);
+                    poseStack.translate(0.0, 0.0, v);
                     model.renderGroup(poseStack, over, "piston", glowLightForPiston(ticks, v, a),
                             packedOverlay, glow[0], glow[1], glow[2], 1.0F);
                 } finally {

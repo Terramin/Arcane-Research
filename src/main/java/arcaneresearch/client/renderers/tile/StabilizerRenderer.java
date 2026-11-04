@@ -6,6 +6,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -62,16 +63,19 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile> {
         float v = Math.max(0, count) / 100.0F;
         float[] glow = lock == 2 ? GLOW_RED : GLOW_WHITE;
 
+        RenderType baseType = TCRenderTypes.objSolidCulled(TEXTURE);
+        RenderType overType = TCRenderTypes.objSolidCulled(TEXTURE_OVER);
+        RenderType bubbleType = TCRenderTypes.additiveTextured(BUBBLE);
+
+        VertexConsumer base = buffer.getBuffer(baseType);
         poseStack.pushPose();
         try {
             poseStack.translate(0.5, 0.0, 0.5);
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
 
-            VertexConsumer base = buffer.getBuffer(TCRenderTypes.objSolidCulled(TEXTURE));
             model.renderGroup(poseStack, base, "lock", packedLight, packedOverlay,
                     1.0F, 1.0F, 1.0F, 1.0F);
 
-            VertexConsumer over = buffer.getBuffer(TCRenderTypes.objSolidCulled(TEXTURE_OVER));
             for (int a = 0; a < 4; a++) {
                 poseStack.pushPose();
                 try {
@@ -80,6 +84,26 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile> {
                     poseStack.translate(0.0, 0.0, v);
                     model.renderGroup(poseStack, base, "piston", packedLight, packedOverlay,
                             1.0F, 1.0F, 1.0F, 1.0F);
+                } finally {
+                    poseStack.popPose();
+                }
+            }
+        } finally {
+            poseStack.popPose();
+        }
+
+        VertexConsumer over = buffer.getBuffer(overType);
+        poseStack.pushPose();
+        try {
+            poseStack.translate(0.5, 0.0, 0.5);
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+
+            for (int a = 0; a < 4; a++) {
+                poseStack.pushPose();
+                try {
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F * a));
+                    poseStack.mulPose(Axis.YP.rotationDegrees(45.0F));
+                    poseStack.translate(0.0, 0.0, v);
                     model.renderGroup(poseStack, over, "piston", glowLight(ticks, count, a),
                             packedOverlay, glow[0], glow[1], glow[2], 1.0F);
                 } finally {
@@ -92,9 +116,9 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile> {
 
         if (bubble && count > 0) {
             float alphaPulse = Mth.sin(ticks / 8.0F) * 0.1F + 0.5F;
-            float alpha = count / 37.0F * alphaPulse;
+            float alpha = Mth.clamp(count / 37.0F * alphaPulse, 0.0F, 1.0F);
             int color = lock == 1 ? 0xFFFFFF : 16729156;
-            VertexConsumer bubbleQuad = buffer.getBuffer(TCRenderTypes.additiveTextured(BUBBLE));
+            VertexConsumer bubbleQuad = buffer.getBuffer(bubbleType);
             poseStack.pushPose();
             try {
                 UtilsFX.renderFacingQuad(poseStack, bubbleQuad, 0.5D, 1.5D, 0.5D,
