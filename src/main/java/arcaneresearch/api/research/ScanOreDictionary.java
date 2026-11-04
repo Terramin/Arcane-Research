@@ -26,9 +26,7 @@ public class ScanOreDictionary implements IScanThing {
         if (obj != null) {
             if (obj instanceof BlockPos pos) {
                 BlockState state = player.level().getBlockState(pos);
-                
-                
-                stack = state.getCloneItemStack(player.level(), pos, false);
+                stack = new ItemStack(state.getBlock());
             } else if (obj instanceof ItemStack) {
                 stack = (ItemStack) obj;
             } else if (obj instanceof ItemEntity itemEntity && !itemEntity.getItem().isEmpty()) {

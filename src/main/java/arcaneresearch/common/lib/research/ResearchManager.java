@@ -37,6 +37,8 @@ public class ResearchManager {
     public static boolean noFlags = false;
     public static LinkedHashSet<Integer> craftingReferences = new LinkedHashSet<>();
 
+    private static final int COMPLETE_RESEARCH_MAX_ITERATIONS = 1000;
+
     static {
 
         LEGACY_ITEM_MAPPINGS.put("arcaneresearch:ingot", "arcaneresearch:thaumium_ingot");
@@ -87,6 +89,7 @@ public class ResearchManager {
 
     public static boolean addKnowledge(Player player, IPlayerKnowledge.EnumKnowledgeType type,
                                        ResearchCategory category, int amount) {
+        if (player == null || type == null) return false;
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) return false;
 
@@ -119,14 +122,22 @@ public class ResearchManager {
     }
 
     public static boolean completeResearch(Player player, String researchKey, boolean sync) {
+        if (player == null || researchKey == null) return false;
+        IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+        if (knowledge == null) return false;
+
         boolean success = false;
-        while (progressResearch(player, researchKey, sync)) {
+        for (int i = 0; i < COMPLETE_RESEARCH_MAX_ITERATIONS; i++) {
+            if (!progressResearch(player, researchKey, sync)) break;
             success = true;
+            if (knowledge.isResearchComplete(researchKey)) break;
         }
         return success;
     }
 
     public static boolean startResearchWithPopup(Player player, String researchKey) {
+        if (player == null || researchKey == null) return false;
+
         boolean success = progressResearch(player, researchKey, true);
         if (success) {
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
@@ -143,6 +154,7 @@ public class ResearchManager {
     }
 
     public static boolean progressResearch(Player player, String researchKey, boolean sync) {
+        if (player == null || researchKey == null) return false;
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) return false;
 
@@ -167,51 +179,48 @@ public class ResearchManager {
             }
             return true;
         }
-        if (entry != null) {
-            boolean showPopups = true;
+        ResearchStage[] stages = entry.getStages();
+        if (stages != null && stages.length > 0) {
+            int currentStage = knowledge.getResearchStage(researchKey);
+            ResearchStage stage = null;
 
-            if (entry.getStages() != null && entry.getStages().length > 0) {
-                int currentStage = knowledge.getResearchStage(researchKey);
-                ResearchStage stage = null;
+            if (currentStage > 0) {
+                currentStage = Math.min(currentStage, stages.length);
+                stage = stages[currentStage - 1];
+            }
 
-                if (currentStage > 0) {
-                    currentStage = Math.min(currentStage, entry.getStages().length);
-                    stage = entry.getStages()[currentStage - 1];
-                }
+            if (stages.length == 1 && currentStage == 0 && isStageAutoComplete(stages[0])) {
+                currentStage++;
+            } else if (stages.length > 1 && stages.length <= currentStage + 1
+                    && currentStage < stages.length && isStageAutoComplete(stages[currentStage])) {
+                currentStage++;
+            }
 
-                if (entry.getStages().length == 1 && currentStage == 0 && isStageAutoComplete(entry.getStages()[0])) {
-                    currentStage++;
-                } else if (entry.getStages().length > 1 && entry.getStages().length <= currentStage + 1
-                        && currentStage < entry.getStages().length && isStageAutoComplete(entry.getStages()[currentStage])) {
-                    currentStage++;
-                }
+            knowledge.setResearchStage(researchKey, Math.min(stages.length + 1, currentStage + 1));
+            boolean showPopups = (currentStage >= stages.length);
 
-                knowledge.setResearchStage(researchKey, Math.min(entry.getStages().length + 1, currentStage + 1));
-                showPopups = (currentStage >= entry.getStages().length);
+            int warp = 0;
+            if (stage != null) {
+                warp = stage.getWarp();
+            }
+            if (showPopups) {
+                currentStage = stages.length;
+                stage = stages[currentStage - 1];
+            }
+            if (stage != null) {
+                warp += stage.getWarp();
+                if (warp > 0 && !ModConfig.wussMode && !player.level().isClientSide()) {
 
-                int warp = 0;
-                if (stage != null) {
-                    warp = stage.getWarp();
-                }
-                if (showPopups && currentStage > 0) {
-                    currentStage = Math.min(currentStage, entry.getStages().length);
-                    stage = entry.getStages()[currentStage - 1];
-                }
-                if (stage != null) {
-                    warp += stage.getWarp();
-                    if (warp > 0 && !ModConfig.wussMode && !player.level().isClientSide()) {
-
-                        if (warp > 1) {
-                            int w2 = warp / 2;
-                            if (warp - w2 > 0) {
-                                ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp - w2, IPlayerWarp.EnumWarpType.PERMANENT);
-                            }
-                            if (w2 > 0) {
-                                ArcaneresearchApi.internalMethods.addWarpToPlayer(player, w2, IPlayerWarp.EnumWarpType.NORMAL);
-                            }
-                        } else {
-                            ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp, IPlayerWarp.EnumWarpType.PERMANENT);
+                    if (warp > 1) {
+                        int w2 = warp / 2;
+                        if (warp - w2 > 0) {
+                            ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp - w2, IPlayerWarp.EnumWarpType.PERMANENT);
                         }
+                        if (w2 > 0) {
+                            ArcaneresearchApi.internalMethods.addWarpToPlayer(player, w2, IPlayerWarp.EnumWarpType.NORMAL);
+                        }
+                    } else {
+                        ArcaneresearchApi.internalMethods.addWarpToPlayer(player, warp, IPlayerWarp.EnumWarpType.PERMANENT);
                     }
                 }
             }
@@ -227,6 +236,7 @@ public class ResearchManager {
 
                     if (entry.getRewardItem() != null) {
                         for (ItemStack reward : entry.getRewardItem()) {
+                            if (reward == null || reward.isEmpty()) continue;
                             if (!player.getInventory().add(reward.copy())) {
                                 
                                 
@@ -239,6 +249,7 @@ public class ResearchManager {
 
                     if (entry.getRewardKnow() != null) {
                         for (ResearchStage.Knowledge rk : entry.getRewardKnow()) {
+                            if (rk == null) continue;
                             addKnowledge(player, rk.type, rk.category, rk.type.getProgression() * rk.amount);
                         }
                     }
@@ -258,9 +269,7 @@ public class ResearchManager {
 
         if (sync) {
             syncList.put(player.getName().getString(), true);
-            if (entry != null) {
-                player.giveExperienceLevels(5);
-            }
+            player.giveExperienceLevels(5);
         }
 
         return true;
@@ -294,6 +303,7 @@ public class ResearchManager {
     }
 
     public static boolean doesPlayerHaveRequisites(Player player, String key) {
+        if (player == null || key == null) return false;
         ResearchEntry entry = ResearchCategories.getResearch(key);
         if (entry == null) return true;
 

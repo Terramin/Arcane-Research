@@ -1,6 +1,8 @@
 package arcaneresearch.discovered.scan;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.world.entity.player.Player;
 
 import arcaneresearch.api.aspects.Aspect;
@@ -33,17 +35,6 @@ public final class ScanWallet {
         }
         return sub;
     }
-
-    private static CompoundTag scannedTag(Player player) {
-        CompoundTag root = root(player);
-        CompoundTag sub = root.getCompound(SCANNED).orElse(null);
-        if (sub == null) {
-            sub = new CompoundTag();
-            root.put(SCANNED, sub);
-        }
-        return sub;
-    }
-
 
     public static int getAmount(Player player, Aspect aspect) {
         if (player == null || aspect == null) {
@@ -101,21 +92,33 @@ public final class ScanWallet {
         if (player == null || key == null) {
             return true;
         }
-        try {
-            CompoundTag root = root(player);
-            CompoundTag scanned = root.getCompound(SCANNED).orElse(null);
-            return scanned != null && scanned.getBooleanOr(key, false);
-        } catch (Exception e) {
-            return true;
+        CompoundTag root = root(player);
+        if (!root.contains(SCANNED)) {
+            return false;
         }
+        ListTag list = root.getListOrEmpty(SCANNED);
+        for (int i = 0; i < list.size(); i++) {
+            if (key.equals(list.getStringOr(i, ""))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
     public static void markScanned(Player player, String key) {
-        if (player == null || key == null || hasScanned(player, key)) {
+        if (player == null || key == null) {
             return;
         }
-        scannedTag(player).putBoolean(key, true);
+        CompoundTag root = root(player);
+        ListTag list = root.getListOrEmpty(SCANNED);
+        for (int i = 0; i < list.size(); i++) {
+            if (key.equals(list.getStringOr(i, ""))) {
+                return;
+            }
+        }
+        list.add(StringTag.valueOf(key));
+        root.put(SCANNED, list);
     }
 
     public static java.util.List<String> scannedKeys(Player player) {
@@ -123,16 +126,12 @@ public final class ScanWallet {
         if (player == null) {
             return out;
         }
-        try {
-            CompoundTag scanned = root(player).getCompound(SCANNED).orElse(null);
-            if (scanned != null) {
-                for (String key : scanned.keySet()) {
-                    if (scanned.getBooleanOr(key, false)) {
-                        out.add(key);
-                    }
-                }
+        CompoundTag root = root(player);
+        if (root.contains(SCANNED)) {
+            ListTag list = root.getListOrEmpty(SCANNED);
+            for (int i = 0; i < list.size(); i++) {
+                out.add(list.getStringOr(i, ""));
             }
-        } catch (Exception ignored) {
         }
         return out;
     }
