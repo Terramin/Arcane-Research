@@ -29,11 +29,11 @@ public class ArcaneresearchMaterials {
         }
     };
     public static final Tier TOOLMAT_ELEMENTAL = new Tier() {
-        @Override public int getUses() { return 1500; }
+        @Override public int getUses() { return 2031; }
         @Override public float getSpeed() { return 9.0F; }
-        @Override public float getAttackDamageBonus() { return 3.0F; }
-        @Override public int getLevel() { return 3; }
-        @Override public int getEnchantmentValue() { return 18; }
+        @Override public float getAttackDamageBonus() { return 4.5F; }
+        @Override public int getLevel() { return 4; }
+        @Override public int getEnchantmentValue() { return 25; }
         @Override public Ingredient getRepairIngredient() {
             return Ingredient.of(ModItems.THAUMIUM_INGOT.get());
         }
