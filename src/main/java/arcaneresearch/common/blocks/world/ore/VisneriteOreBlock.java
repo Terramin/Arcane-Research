@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import org.jetbrains.annotations.NotNull;
 
 public class VisneriteOreBlock extends DropExperienceBlock {
     public VisneriteOreBlock(BlockBehaviour.Properties properties, UniformInt experience) {
@@ -27,7 +28,7 @@ public class VisneriteOreBlock extends DropExperienceBlock {
     }
 
     @Override
-    public int getLightBlock(BlockState state, BlockGetter level, BlockPos pos) {
+    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
         return 15;
     }
 
