@@ -22,6 +22,7 @@ import arcaneresearch.common.blocks.world.BlockGrassAmbient;
 import arcaneresearch.common.blocks.world.BlockLoot;
 import arcaneresearch.common.blocks.world.ore.BlockCrystalTC;
 import arcaneresearch.common.blocks.world.ore.BlockOreTC;
+import arcaneresearch.common.blocks.world.ore.VisneriteOreBlock;
 import arcaneresearch.common.blocks.world.plants.*;
 import arcaneresearch.common.blocks.world.taint.*;
 import java.util.function.Supplier;
@@ -500,6 +501,7 @@ public class ModBlocks {
             BlockBannerTC::createBlack, BannerBlockItem::new);
     public static final RegistryObject<Block> BANNER_CRIMSON_CULT = registerBlock("banner_crimson_cult",
             BlockBannerTC::createCrimsonCult, BannerBlockItem::new);
+    public static final RegistryObject<Block> VISNERITEORE = registerBlock("visnerite_ore", VisneriteOreBlock::createVisneriteOre);
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> blockObj = BLOCKS.register(name, block);
         registerBlockItem(name, blockObj);

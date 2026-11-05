@@ -24,6 +24,8 @@ import arcaneresearch.common.items.resources.ItemCrystalEssence;
 import arcaneresearch.common.items.resources.ItemMagicDust;
 import arcaneresearch.common.items.resources.ItemMaterial;
 import arcaneresearch.common.items.resources.ItemTallow;
+import arcaneresearch.common.items.resources.ItemVisneriteIngot;
+import arcaneresearch.common.items.resources.ItemVisneriteScrap;
 import arcaneresearch.common.items.tools.*;
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
@@ -517,4 +519,7 @@ public class ModItems {
                     new Item.Properties()));
     public static final RegistryObject<Item> CREATIVE_FLUX_SPONGE = ITEMS.register("creative_flux_sponge",
             () -> new ItemCreativeFluxSponge(new Item.Properties()));
+
+    public static final RegistryObject<Item> VISNERITEINGOT = ITEMS.register("visnerite_ingot", () -> new ItemVisneriteIngot());
+    public static final RegistryObject<Item> VISNERITESCRAP = ITEMS.register("visnerite_scrap", () -> new ItemVisneriteScrap());
 }

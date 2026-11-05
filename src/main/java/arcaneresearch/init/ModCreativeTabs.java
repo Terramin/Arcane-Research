@@ -26,6 +26,7 @@ public class ModCreativeTabs {
                     .title(Component.translatable("itemGroup.arcaneresearch"))
                     .icon(() -> new ItemStack(ModItems.THAUMONOMICON.get()))
                     .displayItems((parameters, output) -> {
+                        acceptBlock(output, ModBlocks.VISNERITEORE.get());
                         acceptBlock(output, ModBlocks.AMBER_ORE.get());
                         acceptBlock(output, ModBlocks.CINNABAR_ORE.get());
                         acceptBlock(output, ModBlocks.QUARTZ_ORE.get());
@@ -291,6 +292,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.QUICKSILVER.get());
                         output.accept(ModItems.THAUMIUM_INGOT.get());
                         output.accept(ModItems.VOID_METAL_INGOT.get());
+                        output.accept(ModItems.VISNERITEINGOT.get());
                         output.accept(ModItems.BRASS_INGOT.get());
                         output.accept(Items.IRON_NUGGET);
                         output.accept(ModItems.COPPER_NUGGET.get());
@@ -300,6 +302,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.QUICKSILVER_NUGGET.get());
                         output.accept(ModItems.THAUMIUM_NUGGET.get());
                         output.accept(ModItems.VOID_METAL_NUGGET.get());
+                        output.accept(ModItems.VISNERITESCRAP.get());
                         output.accept(ModItems.BRASS_NUGGET.get());
                         output.accept(ModItems.QUARTZ_NUGGET.get());
                         output.accept(ModItems.RAREEARTH_NUGGET.get());
