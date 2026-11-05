@@ -13,15 +13,11 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.List;
 public class BlockPillarTC extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 8, 16);
-    private static final VoxelShape COLLISION_SHAPE = Shapes.or(
-            Block.box(0, 0, 0, 16, 16, 16),
-            Block.box(0, 16, 0, 16, 32, 16));
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
     public BlockPillarTC(Properties properties) {
         super(properties);
         this.registerDefaultState(
@@ -43,7 +39,10 @@ public class BlockPillarTC extends Block {
     }
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return COLLISION_SHAPE;
+        // Оставляем коллизию внутри ячейки 0..16: VoxelShape блока не должен выходить за
+        // пределы 0..16 — координаты выше 16 дают молча испорченный out-of-bounds шейп
+        // (см. Shapes#create/findBits в 1.20.1).
+        return state.getShape(level, pos, context);
     }
     @Override
     public PushReaction getPistonPushReaction(BlockState state) {
@@ -59,21 +58,16 @@ public class BlockPillarTC extends Block {
     }
     @Override
     public List<ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootParams.Builder params) {
-        Block self = this;
-        Block stone = null;
-        try {
-            if (self == arcaneresearch.init.ModBlocks.ARCANE_PILLAR.get()) {
-                stone = arcaneresearch.init.ModBlocks.ARCANE_STONE.get();
-            } else if (self == arcaneresearch.init.ModBlocks.ANCIENT_PILLAR.get()) {
-                stone = arcaneresearch.init.ModBlocks.ANCIENT_STONE.get();
-            } else if (self == arcaneresearch.init.ModBlocks.ELDRITCH_PILLAR.get()) {
-                stone = arcaneresearch.init.ModBlocks.ELDRITCH_STONE_TILE.get();
-            }
-        } catch (Exception ignored) {
+        Block stone;
+        if (this == arcaneresearch.init.ModBlocks.ARCANE_PILLAR.get()) {
+            stone = arcaneresearch.init.ModBlocks.ARCANE_STONE.get();
+        } else if (this == arcaneresearch.init.ModBlocks.ANCIENT_PILLAR.get()) {
+            stone = arcaneresearch.init.ModBlocks.ANCIENT_STONE.get();
+        } else if (this == arcaneresearch.init.ModBlocks.ELDRITCH_PILLAR.get()) {
+            stone = arcaneresearch.init.ModBlocks.ELDRITCH_STONE_TILE.get();
+        } else {
+            return super.getDrops(state, params);
         }
-        if (stone != null) {
-            return List.of(new ItemStack(stone, 2));
-        }
-        return super.getDrops(state, params);
+        return List.of(new ItemStack(stone, 2));
     }
 }

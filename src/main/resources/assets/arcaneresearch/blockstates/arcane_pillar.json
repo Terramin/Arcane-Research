@@ -9,11 +9,11 @@
     },
     "facing=east": {
       "model": "arcaneresearch:block/arcane_pillar",
-      "y": 270
+      "y": 90
     },
     "facing=west": {
       "model": "arcaneresearch:block/arcane_pillar",
-      "y": 90
+      "y": 270
     }
   }
 }
