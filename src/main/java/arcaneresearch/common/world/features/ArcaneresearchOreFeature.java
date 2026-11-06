@@ -25,6 +25,8 @@ public class ArcaneresearchOreFeature extends Feature<NoneFeatureConfiguration> 
     private static final int SET_BLOCK_FLAGS = 2;
     private static final int BIOME_BIAS      = 6;
     private static final int BIOME_RANGE     = 13;
+    private static final int ANCIENT_DEBRIS_MIN_Y = 8;
+    private static final int ANCIENT_DEBRIS_MAX_Y = 24;
 
     private final OreType oreType;
     private final BlockState stoneState;
@@ -38,12 +40,14 @@ public class ArcaneresearchOreFeature extends Feature<NoneFeatureConfiguration> 
             case CINNABAR -> ModBlocks.CINNABAR_ORE.get();
             case QUARTZ -> ModBlocks.QUARTZ_ORE.get();
             case AMBER -> ModBlocks.AMBER_ORE.get();
+            case VISNERITE -> ModBlocks.VISNERITEORE.get();
         };
 
         Block deepslateBlock = switch (oreType) {
             case CINNABAR -> ModBlocks.DEEPSLATE_CINNABAR_ORE.get();
             case QUARTZ -> ModBlocks.DEEPSLATE_QUARTZ_ORE.get();
             case AMBER -> ModBlocks.DEEPSLATE_AMBER_ORE.get();
+            case VISNERITE -> ModBlocks.VISNERITEORE.get();
         };
 
         this.stoneState     = stoneBlock.defaultBlockState();
@@ -51,6 +55,7 @@ public class ArcaneresearchOreFeature extends Feature<NoneFeatureConfiguration> 
         this.baseAttempts   = switch (oreType) {
             case CINNABAR, QUARTZ -> 18;
             case AMBER            -> 20;
+            case VISNERITE        -> 20;
         };
     }
 
@@ -88,6 +93,7 @@ public class ArcaneresearchOreFeature extends Feature<NoneFeatureConfiguration> 
                 case QUARTZ   -> DEEP_MIN_Y + random.nextInt(64 - DEEP_MIN_Y);
                 case AMBER    -> level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, px, pz)
                         - random.nextInt(25);
+                case VISNERITE -> ANCIENT_DEBRIS_MIN_Y + random.nextInt(ANCIENT_DEBRIS_MAX_Y - ANCIENT_DEBRIS_MIN_Y + 1);
             };
             py = Mth.clamp(py, minBuild, maxY);
 
@@ -99,6 +105,8 @@ public class ArcaneresearchOreFeature extends Feature<NoneFeatureConfiguration> 
                 toPlace = stoneState;
             } else if (current.is(BlockTags.DEEPSLATE_ORE_REPLACEABLES)) {
                 toPlace = deepslateState;
+            } else if (oreType == OreType.VISNERITE && current.is(BlockTags.BASE_STONE_NETHER)) {
+                toPlace = stoneState;
             }
             if (toPlace != null) {
                 level.setBlock(cursor, toPlace, SET_BLOCK_FLAGS);
@@ -113,12 +121,14 @@ public class ArcaneresearchOreFeature extends Feature<NoneFeatureConfiguration> 
             case CINNABAR -> ModConfig.generateCinnabar;
             case QUARTZ   -> ModConfig.generateQuartz;
             case AMBER    -> ModConfig.generateAmber;
+            case VISNERITE -> ModConfig.generateVisnerite;
         };
     }
 
     public enum OreType {
         CINNABAR,
         QUARTZ,
-        AMBER
+        AMBER,
+        VISNERITE
     }
 }

@@ -65,6 +65,10 @@ public class ModFeatures {
             FEATURES.register("ore_amber",
                     () -> new ArcaneresearchOreFeature(NoneFeatureConfiguration.CODEC,
                             ArcaneresearchOreFeature.OreType.AMBER));
+    public static final RegistryObject<ArcaneresearchOreFeature> ORE_VISNERITE =
+            FEATURES.register("ore_visnerite",
+                    () -> new ArcaneresearchOreFeature(NoneFeatureConfiguration.CODEC,
+                            ArcaneresearchOreFeature.OreType.VISNERITE));
     public static final RegistryObject<CultistPortalFeature> CULTIST_PORTAL =
             FEATURES.register("cultist_portal",
                     () -> new CultistPortalFeature(NoneFeatureConfiguration.CODEC));

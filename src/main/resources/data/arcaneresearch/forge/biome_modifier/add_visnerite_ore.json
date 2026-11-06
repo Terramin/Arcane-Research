@@ -1,0 +1,8 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": [
+    "arcaneresearch:ore_visnerite"
+  ],
+  "step": "underground_ores"
+}

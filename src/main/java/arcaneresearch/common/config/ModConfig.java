@@ -40,6 +40,7 @@ public class ModConfig {
     public static boolean generateCinnabar = CONFIG_WORLD.generateCinnabar;
     public static boolean generateAmber = CONFIG_WORLD.generateAmber;
     public static boolean generateQuartz = CONFIG_WORLD.generateQuartz;
+    public static boolean generateVisnerite = CONFIG_WORLD.generateVisnerite;
     public static boolean generateMagicForest = CONFIG_WORLD.generateMagicForest;
     public static int biomeMagicalForestWeight = CONFIG_WORLD.biomeMagicalForestWeight;
     public static boolean allowSpawnAngryZombie = CONFIG_WORLD.allowSpawnAngryZombie;
@@ -78,6 +79,7 @@ public class ModConfig {
         generateCinnabar = CONFIG_WORLD.generateCinnabar;
         generateAmber = CONFIG_WORLD.generateAmber;
         generateQuartz = CONFIG_WORLD.generateQuartz;
+        generateVisnerite = CONFIG_WORLD.generateVisnerite;
         generateMagicForest = CONFIG_WORLD.generateMagicForest;
         biomeMagicalForestWeight = CONFIG_WORLD.biomeMagicalForestWeight;
         allowSpawnAngryZombie = CONFIG_WORLD.allowSpawnAngryZombie;
@@ -318,6 +320,7 @@ public class ModConfig {
         public static boolean generateCinnabar = true;
         public static boolean generateAmber = true;
         public static boolean generateQuartz = true;
+        public static boolean generateVisnerite = true;
         public static boolean generateCrystals = true;
         public static boolean generateTrees = true;
         public static String regenKey = "DEFAULT";
