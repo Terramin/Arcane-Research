@@ -1,4 +1,5 @@
 package arcaneresearch.common.golems.seals;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -23,16 +24,20 @@ import arcaneresearch.api.golems.seals.ISealEntity;
 import arcaneresearch.api.golems.seals.ISealGui;
 import arcaneresearch.api.golems.tasks.Task;
 import arcaneresearch.common.golems.tasks.TaskHandler;
+
 import java.util.List;
 import java.util.Random;
+
 public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
     private int delay;
     private boolean wait = false;
     private ResourceLocation icon;
+
     public SealButcher() {
         delay = new Random(System.nanoTime()).nextInt(200);
-        icon = new ResourceLocation(Arcaneresearch.MODID, "item/seals/seal_butcher");
+        icon = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "item/seals/seal_butcher");
     }
+
     private static boolean isAnimalLike(LivingEntity target) {
         if (target instanceof Animal) {
             return true;
@@ -44,10 +49,12 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
                 || cat == net.minecraft.world.entity.MobCategory.WATER_CREATURE
                 || cat == net.minecraft.world.entity.MobCategory.UNDERGROUND_WATER_CREATURE;
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch:butcher";
     }
+
     @Override
     public void tickSeal(Level level, ISealEntity seal) {
         if (delay++ % 200 != 0 || wait) {
@@ -77,6 +84,7 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
             }
         }
     }
+
     private boolean isValidTarget(LivingEntity target) {
         if (!isAnimalLike(target)) {
             return false;
@@ -95,6 +103,7 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
         }
         return true;
     }
+
     @Override
     public void onTaskStarted(Level level, IGolemAPI golem, Task task) {
         if (task.getEntity() != null &&
@@ -108,53 +117,66 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
         task.setSuspended(true);
         wait = false;
     }
+
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         task.setSuspended(true);
         wait = false;
         return true;
     }
+
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         return true;
     }
+
     @Override
     public boolean canPlaceAt(Level level, BlockPos pos, Direction side) {
         return !level.isEmptyBlock(pos);
     }
+
     @Override
     public ResourceLocation getSealIcon() {
         return icon;
     }
+
     public int[] getGuiCategories() {
         return new int[]{2, 0, 4};
     }
+
     @Override
     public EnumGolemTrait[] getRequiredTags() {
         return new EnumGolemTrait[]{EnumGolemTrait.FIGHTER, EnumGolemTrait.SMART};
     }
+
     @Override
     public EnumGolemTrait[] getForbiddenTags() {
         return null;
     }
+
     @Override
     public void onTaskSuspension(Level level, Task task) {
         wait = false;
     }
+
     @Override
     public void readCustomNBT(CompoundTag nbt) {
     }
+
     @Override
     public void writeCustomNBT(CompoundTag nbt) {
     }
+
     @Override
     public void onRemoval(Level level, BlockPos pos, Direction side) {
         wait = false;
     }
+
     @Override
     public Object returnContainer(Level level, Player player, BlockPos pos, Direction side, ISealEntity seal) {
         return null;
     }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public Object returnGui(Level level, Player player, BlockPos pos, Direction side, ISealEntity seal) {

@@ -1,23 +1,28 @@
 package arcaneresearch.common.items.casters.foci;
+
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.casters.FocusMedium;
 import arcaneresearch.api.casters.FocusPackage;
 import arcaneresearch.api.casters.NodeSetting;
 import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.common.entities.projectile.EntityFocusProjectile;
+
 public class FocusMediumProjectile extends FocusMedium {
     public static final int OPTION_NONE = 0;
     public static final int OPTION_BOUNCY = 1;
     public static final int OPTION_SEEKING_HOSTILE = 2;
     public static final int OPTION_SEEKING_FRIENDLY = 3;
+
     @Override
     public String getResearch() {
         return "FOCUSPROJECTILE@2";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.PROJECTILE";
     }
+
     @Override
     public int getComplexity() {
         int c = 4 + (getSettingValue("speed") - 1) / 2;
@@ -32,14 +37,17 @@ public class FocusMediumProjectile extends FocusMedium {
         }
         return c;
     }
+
     @Override
     public EnumSupplyType[] willSupply() {
         return new EnumSupplyType[]{EnumSupplyType.TARGET, EnumSupplyType.TRAJECTORY};
     }
+
     @Override
     public EnumSupplyType[] mustBeSupplied() {
         return new EnumSupplyType[]{EnumSupplyType.TRAJECTORY};
     }
+
     @Override
     public boolean execute(Trajectory trajectory) {
         float speed = getSettingValue("speed") / 3.0f;
@@ -53,10 +61,12 @@ public class FocusMediumProjectile extends FocusMedium {
         }
         return false;
     }
+
     @Override
     public boolean hasIntermediary() {
         return true;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         int[] option = {OPTION_NONE, OPTION_BOUNCY, OPTION_SEEKING_HOSTILE, OPTION_SEEKING_FRIENDLY};
@@ -73,6 +83,7 @@ public class FocusMediumProjectile extends FocusMedium {
                         new NodeSetting.NodeSettingIntRange(1, 5))
         };
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.MOTION;

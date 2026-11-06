@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.EntityHitResult;
@@ -11,26 +12,33 @@ import arcaneresearch.api.casters.IFocusElement;
 import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXZap;
+
 import java.awt.*;
 import java.util.List;
+
 public class FocusMediumBolt extends FocusMediumTouch {
     private static final float BOLT_RANGE = 16.0f;
+
     @Override
     public String getResearch() {
         return "FOCUSBOLT";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.BOLT";
     }
+
     @Override
     public int getComplexity() {
         return 5;
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.ENERGY;
     }
+
     @Override
     public boolean execute(Trajectory trajectory) {
         if (getPackage() == null || getPackage().world == null) {
@@ -48,10 +56,10 @@ public class FocusMediumBolt extends FocusMediumTouch {
                     ClipContext.Block.OUTLINE,
                     ClipContext.Fluid.NONE,
                     null));
-            if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
+            if (hit.getType() == HitResult.Type.BLOCK) {
                 end = hit.getLocation();
             }
-        } else if (hit instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
+        } else if (hit instanceof EntityHitResult entityHit) {
             end = start.add(direction.scale(start.distanceTo(entityHit.getEntity().position())));
         }
         int color = calculateEffectColor();
@@ -61,10 +69,12 @@ public class FocusMediumBolt extends FocusMediumTouch {
         }
         return true;
     }
+
     @Override
     protected double getRange(Entity caster) {
         return BOLT_RANGE;
     }
+
     private int calculateEffectColor() {
         List<IFocusElement> effects = getPackage().getEffects();
         if (effects == null || effects.isEmpty()) {

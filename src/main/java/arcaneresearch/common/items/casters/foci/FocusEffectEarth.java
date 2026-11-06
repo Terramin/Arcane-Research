@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -22,28 +23,35 @@ import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.events.ServerEvents;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXFocusPartImpact;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectEarth extends FocusEffect {
     @Override
     public String getResearch() {
         return "FOCUSELEMENTAL";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.EARTH";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.EARTH;
     }
+
     @Override
     public int getComplexity() {
         return getSettingValue("power") * 3;
     }
+
     @Override
     public float getDamageForDisplay(float finalPower) {
         return 2 * getSettingValue("power") * finalPower;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -81,6 +89,7 @@ public class FocusEffectEarth extends FocusEffect {
         }
         return false;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         return new NodeSetting[]{
@@ -88,6 +97,7 @@ public class FocusEffectEarth extends FocusEffect {
                         new NodeSetting.NodeSettingIntRange(1, 5))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -106,6 +116,7 @@ public class FocusEffectEarth extends FocusEffect {
         pp.scale = new float[]{s, s / 2.0f};
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, motionX, motionY, motionZ, pp);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

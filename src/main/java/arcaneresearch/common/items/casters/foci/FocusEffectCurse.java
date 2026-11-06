@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -22,28 +23,35 @@ import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXBlockBamf;
 import arcaneresearch.init.ModBlocks;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectCurse extends FocusEffect {
     @Override
     public String getResearch() {
         return "FOCUSCURSE";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.CURSE";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.DEATH;
     }
+
     @Override
     public int getComplexity() {
         return getSettingValue("duration") + getSettingValue("power") * 3;
     }
+
     @Override
     public float getDamageForDisplay(float finalPower) {
         return (1.0f + getSettingValue("power")) * finalPower;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -111,6 +119,7 @@ public class FocusEffectCurse extends FocusEffect {
             return true;
         }
     }
+
     @Override
     public NodeSetting[] createSettings() {
         return new NodeSetting[]{
@@ -120,6 +129,7 @@ public class FocusEffectCurse extends FocusEffect {
                         new NodeSetting.NodeSettingIntRange(1, 10))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -145,6 +155,7 @@ public class FocusEffectCurse extends FocusEffect {
         part.delay = level.random.nextInt(4);
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, motionX, motionY, motionZ, part);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

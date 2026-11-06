@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.armor;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
@@ -12,35 +13,45 @@ import arcaneresearch.api.ArcaneresearchMaterials;
 import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.client.models.armor.CultistPlateArmorModel;
 import arcaneresearch.common.entities.monster.EntityInhabitedZombie;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
+
 public class ItemCultistPlateArmor extends ArmorItem implements IRunicArmor {
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
+
     @OnlyIn(Dist.CLIENT)
     private static HumanoidModel<LivingEntity> cultistPlateModel;
+
     public ItemCultistPlateArmor(Type type) {
         super(ArcaneresearchMaterials.ARMORMAT_CULTIST_PLATE, type,
                 new Item.Properties()
                         .stacksTo(1)
                         .rarity(Rarity.UNCOMMON));
     }
+
     public static ItemCultistPlateArmor createHelmet() {
         return new ItemCultistPlateArmor(Type.HELMET);
     }
+
     public static ItemCultistPlateArmor createChestplate() {
         return new ItemCultistPlateArmor(Type.CHESTPLATE);
     }
+
     public static ItemCultistPlateArmor createLeggings() {
         return new ItemCultistPlateArmor(Type.LEGGINGS);
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(Items.IRON_INGOT) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
@@ -49,6 +60,7 @@ public class ItemCultistPlateArmor extends ArmorItem implements IRunicArmor {
         }
         return "arcaneresearch:textures/entity/armor/cultist_plate_armor.png";
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -56,7 +68,6 @@ public class ItemCultistPlateArmor extends ArmorItem implements IRunicArmor {
             @Override
             @Nonnull
             @OnlyIn(Dist.CLIENT)
-            @SuppressWarnings("unchecked")
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack,
                                                           EquipmentSlot slot, HumanoidModel<?> original) {
                 if (cultistPlateModel == null) {

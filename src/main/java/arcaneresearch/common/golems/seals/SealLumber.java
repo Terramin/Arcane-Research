@@ -1,4 +1,5 @@
 package arcaneresearch.common.golems.seals;
+
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,10 +28,12 @@ import arcaneresearch.api.golems.seals.ISealGui;
 import arcaneresearch.api.golems.tasks.Task;
 import arcaneresearch.common.golems.tasks.TaskHandler;
 import arcaneresearch.common.lib.utils.BlockUtils;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.UUID;
+
 public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
     private static final GameProfile GOLEM_PROFILE = new GameProfile(
             UUID.fromString("41C82C87-7F55-4A23-8F37-4B2B6F2E3A5E"),
@@ -38,10 +41,12 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
     private int delay;
     private HashMap<Integer, Long> cache = new HashMap<>();
     private ResourceLocation icon;
+
     public SealLumber() {
         delay = new Random(System.nanoTime()).nextInt(33);
-        icon = new ResourceLocation(Arcaneresearch.MODID, "item/seals/seal_lumber");
+        icon = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "item/seals/seal_lumber");
     }
+
     private static FakePlayer getFakePlayer(Level level, IGolemAPI golem) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return null;
@@ -54,10 +59,12 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
         }
         return fp;
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch:lumber";
     }
+
     @Override
     public void tickSeal(Level level, ISealEntity seal) {
         if (delay % 100 == 0) {
@@ -78,6 +85,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
             cache.put(task.getId(), pos.asLong());
         }
     }
+
     private boolean isWoodLog(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (state.is(BlockTags.LOGS)) {
@@ -89,6 +97,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
         }
         return block.getClass().getSimpleName().toLowerCase(java.util.Locale.ROOT).contains("log");
     }
+
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         if (cache.containsKey(task.getId()) && isWoodLog(level, task.getPos())) {
@@ -109,6 +118,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
         task.setSuspended(true);
         return true;
     }
+
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         if (cache.containsKey(task.getId()) && isWoodLog(golem.getGolemWorld(), task.getPos())) {
@@ -116,47 +126,59 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
         }
         return false;
     }
+
     @Override
     public void onTaskStarted(Level level, IGolemAPI golem, Task task) {
     }
+
     @Override
     public void onTaskSuspension(Level level, Task task) {
         cache.remove(task.getId());
     }
+
     @Override
     public boolean canPlaceAt(Level level, BlockPos pos, Direction side) {
         return !level.isEmptyBlock(pos);
     }
+
     @Override
     public ResourceLocation getSealIcon() {
         return icon;
     }
+
     @Override
     public void onRemoval(Level level, BlockPos pos, Direction side) {
     }
+
     @Override
     public Object returnContainer(Level level, Player player, BlockPos pos, Direction side, ISealEntity seal) {
         return null;
     }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public Object returnGui(Level level, Player player, BlockPos pos, Direction side, ISealEntity seal) {
         return null;
     }
+
     public int[] getGuiCategories() {
         return new int[]{2, 0, 4};
     }
+
     @Override
     public EnumGolemTrait[] getRequiredTags() {
         return new EnumGolemTrait[]{EnumGolemTrait.BREAKER, EnumGolemTrait.SMART};
     }
+
     @Override
     public EnumGolemTrait[] getForbiddenTags() {
         return null;
     }
+
     @Override
     public void readCustomNBT(CompoundTag nbt) {
     }
+
     @Override
     public void writeCustomNBT(CompoundTag nbt) {
     }

@@ -19,6 +19,8 @@ import arcaneresearch.init.ModSounds;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.HashMap;
+import java.util.Objects;
+
 public class ItemCloudRing extends Item implements ICurioItem {
     private static final HashMap<String, Boolean> jumpList = new HashMap<>();
     public ItemCloudRing() {
@@ -44,7 +46,7 @@ public class ItemCloudRing extends Item implements ICurioItem {
             Vec3 motion = player.getDeltaMovement();
             double boost = 0.75D;
             if (player.hasEffect(MobEffects.JUMP)) {
-                boost += (player.getEffect(MobEffects.JUMP).getAmplifier() + 1) * 0.1F;
+                boost += (Objects.requireNonNull(player.getEffect(MobEffects.JUMP)).getAmplifier() + 1) * 0.1F;
             }
             player.setDeltaMovement(motion.x, boost, motion.z);
             if (player.isSprinting()) {

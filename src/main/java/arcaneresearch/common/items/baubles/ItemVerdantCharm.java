@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.baubles;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffects;
@@ -12,27 +13,35 @@ import net.minecraft.world.level.Level;
 import arcaneresearch.api.items.IRechargable;
 import arcaneresearch.api.items.RechargeHelper;
 import arcaneresearch.init.ModEffects;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
+
 import javax.annotation.Nullable;
 import java.util.List;
+
 public class ItemVerdantCharm extends Item implements ICurioItem, IRechargable {
     private final CharmType type;
+
     public ItemVerdantCharm(CharmType type) {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));
         this.type = type;
     }
+
     public static ItemVerdantCharm createBasic() {
         return new ItemVerdantCharm(CharmType.BASIC);
     }
+
     public static ItemVerdantCharm createLife() {
         return new ItemVerdantCharm(CharmType.LIFE);
     }
+
     public static ItemVerdantCharm createSustain() {
         return new ItemVerdantCharm(CharmType.SUSTAIN);
     }
+
     @Override
     public void curioTick(SlotContext slotContext, ItemStack stack) {
         LivingEntity entity = slotContext.entity();
@@ -40,14 +49,17 @@ public class ItemVerdantCharm extends Item implements ICurioItem, IRechargable {
             tickWorn(player, stack);
         }
     }
+
     @Override
     public boolean canEquip(SlotContext slotContext, ItemStack stack) {
         return slotContext.identifier().equals("charm");
     }
+
     @Override
     public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
         return true;
     }
+
     public void tickWorn(Player player, ItemStack stack) {
         if (player.tickCount % 20 != 0) {
             return;
@@ -80,8 +92,9 @@ public class ItemVerdantCharm extends Item implements ICurioItem, IRechargable {
             }
         }
     }
+
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         switch (type) {
             case LIFE -> tooltip.add(Component.translatable("item.arcaneresearch.verdant_charm.life.text")
                     .withStyle(ChatFormatting.GOLD));
@@ -91,22 +104,27 @@ public class ItemVerdantCharm extends Item implements ICurioItem, IRechargable {
             }
         }
     }
+
     @Override
     public int getMaxCharge(ItemStack stack, LivingEntity entity) {
         return 200;
     }
+
     @Override
     public EnumChargeDisplay showInHud(ItemStack stack, LivingEntity entity) {
         return EnumChargeDisplay.NORMAL;
     }
+
     public enum CharmType {
         BASIC(0),
         LIFE(1),
         SUSTAIN(2);
         public final int id;
+
         CharmType(int id) {
             this.id = id;
         }
+
         public static CharmType fromId(int id) {
             return switch (id) {
                 case 1 -> LIFE;

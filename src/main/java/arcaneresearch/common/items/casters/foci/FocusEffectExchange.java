@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -19,26 +20,32 @@ import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.items.casters.ItemCaster;
 import arcaneresearch.common.lib.events.ServerEvents;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectExchange extends FocusEffect implements IFocusBlockPicker {
     @Override
     public String getResearch() {
         return "FOCUSEXCHANGE";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.EXCHANGE";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.EXCHANGE;
     }
+
     @Override
     public int getComplexity() {
         int fortuneValue = getSettingValue("fortune");
         int fortuneComplexity = (fortuneValue == 0) ? 0 : ((fortuneValue + 1) * 3);
         return 5 + getSettingValue("silk") * 4 + fortuneComplexity;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -77,6 +84,7 @@ public class FocusEffectExchange extends FocusEffect implements IFocusBlockPicke
         }
         return true;
     }
+
     private boolean canModifyBlock(ServerPlayer player, Level world, BlockPos pos, BlockState state) {
         if (state.getDestroySpeed(world, pos) < 0) {
             return false;
@@ -89,6 +97,7 @@ public class FocusEffectExchange extends FocusEffect implements IFocusBlockPicke
         }
         return true;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         int[] silk = {0, 1};
@@ -102,6 +111,7 @@ public class FocusEffectExchange extends FocusEffect implements IFocusBlockPicke
                         new NodeSetting.NodeSettingIntList(silk, silkDesc))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -128,6 +138,7 @@ public class FocusEffectExchange extends FocusEffect implements IFocusBlockPicke
         double jz = motionZ + level.random.nextGaussian() * 0.01;
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, jx, jy, jz, part);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

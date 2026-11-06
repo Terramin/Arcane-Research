@@ -1,4 +1,5 @@
 package arcaneresearch.common.golems.seals;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -18,15 +19,18 @@ import arcaneresearch.api.golems.seals.ISealEntity;
 import arcaneresearch.api.golems.tasks.Task;
 import arcaneresearch.common.golems.EntityArcaneresearchGolem;
 import arcaneresearch.common.golems.tasks.TaskHandler;
+
 import java.util.*;
+
 public class SealPickup extends SealFiltered implements ISealConfigArea, ISealConfigToggles {
     protected SealToggle[] props;
     private int delay;
     private HashMap<Integer, Integer> itemEntities = new HashMap<>();
     private ResourceLocation icon;
+
     public SealPickup() {
         delay = new Random(System.nanoTime()).nextInt(100);
-        icon = new ResourceLocation(Arcaneresearch.MODID, "item/seals/seal_pickup");
+        icon = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "item/seals/seal_pickup");
         props = new SealToggle[]{
                 new SealToggle(true, "pmeta", "golem.prop.meta"),
                 new SealToggle(true, "pnbt", "golem.prop.nbt"),
@@ -34,10 +38,12 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
                 new SealToggle(false, "pmod", "golem.prop.mod")
         };
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch:pickup";
     }
+
     @Override
     public void tickSeal(Level level, ISealEntity seal) {
         if (delay++ % 5 != 0) {
@@ -75,10 +81,12 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
             }
         }
     }
+
     private boolean matchesFilter(ItemStack stack) {
         return arcaneresearch.common.lib.utils.InventoryUtils.matchesFilters(
                 filter, isBlacklist(), stack, invFilter(props));
     }
+
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         ItemEntity itemEntity = getItemEntity(level, task);
@@ -111,6 +119,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
         }
         return true;
     }
+
     protected ItemEntity getItemEntity(Level level, Task task) {
         Integer entityId = itemEntities.get(task.getId());
         if (entityId != null) {
@@ -121,6 +130,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
         }
         return null;
     }
+
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         ItemEntity itemEntity = getItemEntity(golem.getGolemWorld(), task);
@@ -133,39 +143,49 @@ public class SealPickup extends SealFiltered implements ISealConfigArea, ISealCo
         }
         return golem.canCarry(itemEntity.getItem(), true);
     }
+
     @Override
     public boolean canPlaceAt(Level level, BlockPos pos, Direction side) {
         return !level.isEmptyBlock(pos);
     }
+
     @Override
     public ResourceLocation getSealIcon() {
         return icon;
     }
+
     @Override
     public int[] getGuiCategories() {
         return new int[]{2, 1, 0, 4};
     }
+
     @Override
     public EnumGolemTrait[] getRequiredTags() {
         return null;
     }
+
     @Override
     public EnumGolemTrait[] getForbiddenTags() {
         return new EnumGolemTrait[]{EnumGolemTrait.CLUMSY};
     }
+
     @Override
     public void onTaskStarted(Level level, IGolemAPI golem, Task task) {
     }
+
     @Override
     public void onTaskSuspension(Level level, Task task) {
     }
+
     @Override
     public void onRemoval(Level level, BlockPos pos, Direction side) {
     }
+
     @Override
     public SealToggle[] getToggles() {
         return props;
     }
+
     @Override
     public void setToggle(int index, boolean value) {
         if (index >= 0 && index < props.length) {

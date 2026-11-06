@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
@@ -13,29 +14,36 @@ import arcaneresearch.api.casters.IFocusElement;
 import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXFocusEffect;
+
 import java.util.ArrayList;
 import java.util.List;
+
 public class FocusMediumTouch extends FocusMedium {
     @Override
     public String getResearch() {
         return "BASEAUROMANCY";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.TOUCH";
     }
+
     @Override
     public int getComplexity() {
         return 2;
     }
+
     @Override
     public EnumSupplyType[] willSupply() {
         return new EnumSupplyType[]{EnumSupplyType.TRAJECTORY, EnumSupplyType.TARGET};
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.AVERSION;
     }
+
     @Override
     public Trajectory[] supplyTrajectories() {
         if (getPackage() == null || getPackage().world == null) {
@@ -69,6 +77,7 @@ public class FocusMediumTouch extends FocusMedium {
         }
         return out.toArray(new Trajectory[0]);
     }
+
     @Override
     public HitResult[] supplyTargets() {
         if (getPackage() == null || getPackage().world == null) {
@@ -98,6 +107,7 @@ public class FocusMediumTouch extends FocusMedium {
         }
         return out.toArray(new HitResult[0]);
     }
+
     protected Trajectory[] getSourceTrajectories(Entity caster) {
         if (getParent() != null) {
             Trajectory[] parents = getParent().supplyTrajectories();
@@ -107,12 +117,14 @@ public class FocusMediumTouch extends FocusMedium {
         }
         return new Trajectory[]{new Trajectory(caster.getEyePosition(), caster.getLookAngle())};
     }
+
     protected double getRange(Entity caster) {
         if (caster instanceof Player player) {
             return player.getAbilities().instabuild ? 5.0 : 4.5;
         }
         return 4.5;
     }
+
     protected Entity getCaster() {
         if (getPackage() == null || getPackage().getCasterUUID() == null) {
             return null;
@@ -126,6 +138,7 @@ public class FocusMediumTouch extends FocusMedium {
         }
         return null;
     }
+
     @Override
     public boolean execute(Trajectory trajectory) {
         if (getPackage() == null || getPackage().world == null) {

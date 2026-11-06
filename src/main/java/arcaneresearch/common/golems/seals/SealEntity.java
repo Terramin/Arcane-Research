@@ -1,4 +1,5 @@
 package arcaneresearch.common.golems.seals;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -8,6 +9,7 @@ import arcaneresearch.api.golems.tasks.Task;
 import arcaneresearch.common.golems.tasks.TaskHandler;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketSealToClient;
+
 public class SealEntity implements ISealEntity {
     SealPos sealPos;
     ISeal seal;
@@ -18,8 +20,10 @@ public class SealEntity implements ISealEntity {
     String owner = "";
     boolean stopped = false;
     private BlockPos area = new BlockPos(1, 1, 1);
+
     public SealEntity() {
     }
+
     public SealEntity(Level level, SealPos sealPos, ISeal seal) {
         this.sealPos = sealPos;
         this.seal = seal;
@@ -30,6 +34,7 @@ public class SealEntity implements ISealEntity {
             area = new BlockPos(x, y, z);
         }
     }
+
     @Override
     public void tickSealEntity(Level level) {
         if (seal == null) return;
@@ -47,6 +52,7 @@ public class SealEntity implements ISealEntity {
         stopped = false;
         seal.tickSeal(level, this);
     }
+
     @Override
     public boolean isStoppedByRedstone(Level level) {
         if (!isRedstoneSensitive()) return false;
@@ -54,54 +60,67 @@ public class SealEntity implements ISealEntity {
         Direction face = getSealPos().face;
         return level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.relative(face));
     }
+
     @Override
     public ISeal getSeal() {
         return seal;
     }
+
     @Override
     public SealPos getSealPos() {
         return sealPos;
     }
+
     @Override
     public byte getPriority() {
         return priority;
     }
+
     @Override
     public void setPriority(byte priority) {
         this.priority = priority;
     }
+
     @Override
     public byte getColor() {
         return color;
     }
+
     @Override
     public void setColor(byte color) {
         this.color = color;
     }
+
     @Override
     public String getOwner() {
         return owner;
     }
+
     @Override
     public void setOwner(String owner) {
         this.owner = owner;
     }
+
     @Override
     public boolean isLocked() {
         return locked;
     }
+
     @Override
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
+
     @Override
     public boolean isRedstoneSensitive() {
         return redstone;
     }
+
     @Override
     public void setRedstoneSensitive(boolean redstone) {
         this.redstone = redstone;
     }
+
     @Override
     public void readNBT(CompoundTag nbt) {
         BlockPos pos = BlockPos.of(nbt.getLong("pos"));
@@ -133,6 +152,7 @@ public class SealEntity implements ISealEntity {
             }
         }
     }
+
     @Override
     public CompoundTag writeNBT() {
         CompoundTag nbt = new CompoundTag();
@@ -157,16 +177,19 @@ public class SealEntity implements ISealEntity {
         }
         return nbt;
     }
+
     @Override
     public void syncToClient(Level level) {
         if (!level.isClientSide) {
             PacketHandler.sendToDimension(new PacketSealToClient(this), level.dimension());
         }
     }
+
     @Override
     public BlockPos getArea() {
         return area;
     }
+
     @Override
     public void setArea(BlockPos area) {
         this.area = area;

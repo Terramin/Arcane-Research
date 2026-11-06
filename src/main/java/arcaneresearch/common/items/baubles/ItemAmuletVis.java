@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.baubles;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,28 +13,37 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.wands.IWand;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
+
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
+
 public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
     private final boolean isCrafted;
+
     public ItemAmuletVis(boolean crafted) {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(crafted ? Rarity.RARE : Rarity.UNCOMMON));
         this.isCrafted = crafted;
     }
+
     public static ItemAmuletVis createFound() {
         return new ItemAmuletVis(false);
     }
+
     public static ItemAmuletVis createCrafted() {
         return new ItemAmuletVis(true);
     }
+
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
+
     @Override
     public void curioTick(SlotContext slotContext, ItemStack stack) {
         LivingEntity entity = slotContext.entity();
@@ -41,14 +51,17 @@ public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
             tickWorn(player, stack);
         }
     }
+
     @Override
     public boolean canEquip(SlotContext slotContext, ItemStack stack) {
         return slotContext.identifier().equals("necklace");
     }
+
     @Override
     public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
         return true;
     }
+
     public void tickWorn(Player player, ItemStack stack) {
         if (player.tickCount % 5 != 0) {
             return;
@@ -62,7 +75,7 @@ public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
                         if (aspect == null || getVis(stack, aspect) <= 0) {
                             continue;
                         }
-                        int wandVis = held.hasTag() ? held.getTag().getInt(aspect.getTag()) : 0;
+                        int wandVis = held.hasTag() ? Objects.requireNonNull(held.getTag()).getInt(aspect.getTag()) : 0;
                         int amt = Math.min(5, wand.getMaxVis(held) * 100 - wandVis);
                         amt = Math.min(amt, getVis(stack, aspect));
                         if (amt > 0) {
@@ -75,8 +88,9 @@ public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
         } catch (Exception ignored) {
         }
     }
+
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag flag) {
         tooltip.add(Component.translatable("item.arcaneresearch.amulet_vis.text")
                 .withStyle(ChatFormatting.AQUA));
         if (isCrafted) {
@@ -90,30 +104,34 @@ public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
                     .withStyle(ChatFormatting.GOLD));
             if (stack.hasTag()) {
                 for (Aspect aspect : Aspect.getPrimalAspects()) {
-                    if (aspect != null && stack.getTag().contains(aspect.getTag())) {
+                    if (aspect != null && Objects.requireNonNull(stack.getTag()).contains(aspect.getTag())) {
                         String amount = fmt.format(stack.getTag().getInt(aspect.getTag()) / 100.0F);
                         tooltip.add(Component.literal(" §" + aspect.getChatcolor() + aspect.getName()
-                                        + "§r x " + amount));
+                                + "§r x " + amount));
                     }
                 }
             }
         } catch (Exception ignored) {
         }
     }
+
     public int getMaxVis(ItemStack stack) {
         return isCrafted ? 25000 : 2500;
     }
+
     public int getVis(ItemStack stack, Aspect aspect) {
-        if (aspect != null && stack.hasTag() && stack.getTag().contains(aspect.getTag())) {
+        if (aspect != null && stack.hasTag() && Objects.requireNonNull(stack.getTag()).contains(aspect.getTag())) {
             return stack.getTag().getInt(aspect.getTag());
         }
         return 0;
     }
+
     public void storeVis(ItemStack stack, Aspect aspect, int amount) {
         if (aspect != null && !stack.isEmpty()) {
             stack.getOrCreateTag().putInt(aspect.getTag(), Math.max(0, amount));
         }
     }
+
     public AspectList getAllVis(ItemStack stack) {
         AspectList out = new AspectList();
         try {
@@ -121,12 +139,13 @@ public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
                 if (aspect == null) {
                     continue;
                 }
-                out.merge(aspect, stack.hasTag() ? stack.getTag().getInt(aspect.getTag()) : 0);
+                out.merge(aspect, stack.hasTag() ? Objects.requireNonNull(stack.getTag()).getInt(aspect.getTag()) : 0);
             }
         } catch (Exception ignored) {
         }
         return out;
     }
+
     public AspectList getAspectsWithRoom(ItemStack stack) {
         AspectList out = new AspectList();
         try {
@@ -140,6 +159,7 @@ public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
         }
         return out;
     }
+
     public boolean consumeAllVis(ItemStack stack, Player player, AspectList cost,
                                  boolean doit, boolean crafting) {
         if (cost == null || cost.size() == 0) {
@@ -167,6 +187,7 @@ public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
         }
         return true;
     }
+
     public int addVis(ItemStack stack, Aspect aspect, int amount, boolean simulate) {
         if (aspect == null || !aspect.isPrimal()) {
             return amount;

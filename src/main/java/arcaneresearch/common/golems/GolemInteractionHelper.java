@@ -1,4 +1,5 @@
 package arcaneresearch.common.golems;
+
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,11 +15,14 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import arcaneresearch.api.golems.IGolemAPI;
 import arcaneresearch.common.lib.utils.InventoryUtils;
+
 import java.util.UUID;
+
 public class GolemInteractionHelper {
     private static final GameProfile GOLEM_PROFILE = new GameProfile(
             UUID.fromString("41C82C87-7F55-4A23-8F37-4B2B6F2E3A5E"),
             "FakeArcaneresearchGolem");
+
     public static void golemClick(Level level, IGolemAPI golem, BlockPos pos, Direction face,
                                   ItemStack clickStack, boolean sneaking, boolean rightClick) {
         if (!(level instanceof ServerLevel serverLevel)) {
@@ -73,12 +77,14 @@ public class GolemInteractionHelper {
         dropSomeItems(fp, golem);
         golem.swingArm();
     }
+
     private static boolean mayPlace(Level level, net.minecraft.world.level.block.Block blockIn, BlockPos pos) {
         net.minecraft.world.phys.shapes.VoxelShape shape =
                 blockIn.defaultBlockState().getShape(level, pos);
         return shape.isEmpty()
                 || level.noCollision((net.minecraft.world.entity.Entity) null, shape.bounds().move(pos));
     }
+
     private static void dropSomeItems(FakePlayer fp, IGolemAPI golem) {
         for (int i = 0; i < fp.getInventory().items.size(); i++) {
             ItemStack stack = fp.getInventory().items.get(i);
@@ -109,6 +115,7 @@ public class GolemInteractionHelper {
             }
         }
     }
+
     public static boolean harvestCrop(Level level, IGolemAPI golem, BlockPos pos) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return false;
@@ -120,6 +127,7 @@ public class GolemInteractionHelper {
         golemClick(level, golem, pos, Direction.UP, ItemStack.EMPTY, false, false);
         return true;
     }
+
     public static boolean useItemOnBlock(Level level, IGolemAPI golem, BlockPos pos,
                                          ItemStack item, Direction face) {
         if (item.isEmpty()) {

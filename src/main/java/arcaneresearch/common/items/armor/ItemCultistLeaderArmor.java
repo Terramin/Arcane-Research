@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.armor;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
@@ -10,40 +11,51 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import arcaneresearch.api.ArcaneresearchMaterials;
 import arcaneresearch.api.items.IRunicArmor;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
+
 public class ItemCultistLeaderArmor extends ArmorItem implements IRunicArmor {
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
+
     @OnlyIn(Dist.CLIENT)
     private static HumanoidModel<LivingEntity> leaderModel;
+
     public ItemCultistLeaderArmor(Type type) {
         super(ArcaneresearchMaterials.ARMORMAT_CULTIST_LEADER, type,
                 new Item.Properties()
                         .stacksTo(1)
                         .rarity(Rarity.RARE));
     }
+
     public static ItemCultistLeaderArmor createHelmet() {
         return new ItemCultistLeaderArmor(Type.HELMET);
     }
+
     public static ItemCultistLeaderArmor createChestplate() {
         return new ItemCultistLeaderArmor(Type.CHESTPLATE);
     }
+
     public static ItemCultistLeaderArmor createLeggings() {
         return new ItemCultistLeaderArmor(Type.LEGGINGS);
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(Items.IRON_INGOT) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return "arcaneresearch:textures/entity/armor/cultist_leader_armor.png";
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -51,7 +63,6 @@ public class ItemCultistLeaderArmor extends ArmorItem implements IRunicArmor {
             @Override
             @Nonnull
             @OnlyIn(Dist.CLIENT)
-            @SuppressWarnings("unchecked")
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack,
                                                           EquipmentSlot slot, HumanoidModel<?> original) {
                 if (leaderModel == null) {

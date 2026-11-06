@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.armor;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
@@ -22,42 +23,53 @@ import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.items.IVisDiscountGear;
 import arcaneresearch.client.models.armor.RobeArmorModel;
 import arcaneresearch.init.ModItems;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
+
 public class ItemRobeArmor extends ArmorItem implements IVisDiscountGear, DyeableLeatherItem, IRunicArmor {
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
+
     private static final int DEFAULT_COLOR = 0x6A4C00;
     @OnlyIn(Dist.CLIENT)
     private static HumanoidModel<LivingEntity> robeModelOuter;
     @OnlyIn(Dist.CLIENT)
     private static HumanoidModel<LivingEntity> robeModelInner;
+
     public ItemRobeArmor(Type type) {
         super(ArcaneresearchMaterials.ARMORMAT_SPECIAL, type,
                 new Item.Properties()
                         .stacksTo(1)
                         .rarity(Rarity.UNCOMMON));
     }
+
     public static ItemRobeArmor createChest() {
         return new ItemRobeArmor(Type.CHESTPLATE);
     }
+
     public static ItemRobeArmor createLegs() {
         return new ItemRobeArmor(Type.LEGGINGS);
     }
+
     public static ItemRobeArmor createBoots() {
         return new ItemRobeArmor(Type.BOOTS);
     }
+
     @Override
     public int getVisDiscount(ItemStack stack, Player player) {
         return this.getType() == Type.BOOTS ? 2 : 3;
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(ModItems.ENCHANTED_FABRIC.get()) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
@@ -68,6 +80,7 @@ public class ItemRobeArmor extends ArmorItem implements IVisDiscountGear, Dyeabl
         return type == null ? "arcaneresearch:textures/entity/armor/robes_1.png"
                 : "arcaneresearch:textures/entity/armor/robes_1_overlay.png";
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -75,7 +88,6 @@ public class ItemRobeArmor extends ArmorItem implements IVisDiscountGear, Dyeabl
             @Override
             @Nonnull
             @OnlyIn(Dist.CLIENT)
-            @SuppressWarnings("unchecked")
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack,
                                                           EquipmentSlot slot, HumanoidModel<?> original) {
                 HumanoidModel<LivingEntity> robeModel;
@@ -127,16 +139,19 @@ public class ItemRobeArmor extends ArmorItem implements IVisDiscountGear, Dyeabl
             }
         });
     }
+
     @Override
     public int getColor(ItemStack stack) {
         CompoundTag tag = stack.getTagElement("display");
         return tag != null && tag.contains("color") ? tag.getInt("color") : DEFAULT_COLOR;
     }
+
     @Override
     public boolean hasCustomColor(ItemStack stack) {
         CompoundTag tag = stack.getTagElement("display");
         return tag != null && tag.contains("color");
     }
+
     @Override
     public void clearColor(ItemStack stack) {
         CompoundTag tag = stack.getTagElement("display");
@@ -144,12 +159,14 @@ public class ItemRobeArmor extends ArmorItem implements IVisDiscountGear, Dyeabl
             tag.remove("color");
         }
     }
+
     @Override
     public void setColor(ItemStack stack, int color) {
         stack.getOrCreateTagElement("display").putInt("color", color);
     }
+
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);

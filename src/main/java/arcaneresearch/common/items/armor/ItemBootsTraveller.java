@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.armor;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,15 +14,21 @@ import arcaneresearch.api.ArcaneresearchMaterials;
 import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.items.IRechargable;
 import arcaneresearch.api.items.RechargeHelper;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 import java.util.UUID;
+
 public class ItemBootsTraveller extends ArmorItem implements IRechargable, IRunicArmor {
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
+
     private static final UUID STEP_UUID =
             UUID.fromString("0d3d95f5-4a9e-4c8a-9b2e-6f2a6c9e4b11");
     private static final double STEP_BONUS = 0.4;
+
     public ItemBootsTraveller() {
         super(ArcaneresearchMaterials.ARMORMAT_SPECIAL, Type.BOOTS,
                 new Item.Properties()
@@ -29,16 +36,19 @@ public class ItemBootsTraveller extends ArmorItem implements IRechargable, IRuni
                         .durability(350)
                         .rarity(Rarity.RARE));
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(Items.LEATHER) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return "arcaneresearch:textures/entity/armor/bootstraveler.png";
     }
+
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
         if (!(entity instanceof Player player)) {
             return;
@@ -46,7 +56,7 @@ public class ItemBootsTraveller extends ArmorItem implements IRechargable, IRuni
         boolean worn = player.getItemBySlot(EquipmentSlot.FEET) == stack;
         boolean hasCharge = RechargeHelper.getCharge(stack) > 0;
         if (worn && !level.isClientSide() && entity.tickCount % 20 == 0) {
-            int e = stack.hasTag() ? stack.getTag().getInt("energy") : 0;
+            int e = stack.hasTag() ? Objects.requireNonNull(stack.getTag()).getInt("energy") : 0;
             if (e > 0) {
                 e--;
             } else if (RechargeHelper.consumeCharge(stack, player, 1)) {
@@ -86,10 +96,12 @@ public class ItemBootsTraveller extends ArmorItem implements IRechargable, IRuni
             }
         }
     }
+
     @Override
     public int getMaxCharge(ItemStack stack, LivingEntity entity) {
         return 240;
     }
+
     @Override
     public EnumChargeDisplay showInHud(ItemStack stack, LivingEntity entity) {
         return EnumChargeDisplay.PERIODIC;

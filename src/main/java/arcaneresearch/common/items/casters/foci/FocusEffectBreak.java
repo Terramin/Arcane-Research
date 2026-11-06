@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,26 +21,32 @@ import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.events.ServerEvents;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXFocusPartImpact;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectBreak extends FocusEffect {
     @Override
     public String getResearch() {
         return "FOCUSBREAK";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.BREAK";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.ENTROPY;
     }
+
     @Override
     public int getComplexity() {
         int fortuneValue = getSettingValue("fortune");
         int fortuneComplexity = (fortuneValue == 0) ? 0 : ((fortuneValue + 1) * 3);
         return getSettingValue("power") * 3 + getSettingValue("silk") * 4 + fortuneComplexity;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -70,6 +77,7 @@ public class FocusEffectBreak extends FocusEffect {
                 0.25f + (silk ? 0.25f : 0.0f) + fortune * 0.1f, null);
         return true;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         int[] silk = {0, 1};
@@ -85,6 +93,7 @@ public class FocusEffectBreak extends FocusEffect {
                         new NodeSetting.NodeSettingIntList(silk, silkDesc))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -101,6 +110,7 @@ public class FocusEffectBreak extends FocusEffect {
         part.layer = 0;
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, motionX, motionY, motionZ, part);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -20,28 +21,35 @@ import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXFocusPartImpact;
 import arcaneresearch.init.ModSounds;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectAir extends FocusEffect {
     @Override
     public String getResearch() {
         return "FOCUSELEMENTAL";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.AIR";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.AIR;
     }
+
     @Override
     public int getComplexity() {
         return getSettingValue("power") * 2;
     }
+
     @Override
     public float getDamageForDisplay(float finalPower) {
         return (1 + getSettingValue("power")) * finalPower;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -86,6 +94,7 @@ public class FocusEffectAir extends FocusEffect {
         }
         return false;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         return new NodeSetting[]{
@@ -93,6 +102,7 @@ public class FocusEffectAir extends FocusEffect {
                         new NodeSetting.NodeSettingIntRange(1, 5))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -111,6 +121,7 @@ public class FocusEffectAir extends FocusEffect {
         pp.scale = new float[]{s, s * 2.0f};
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, motionX, motionY, motionZ, pp);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

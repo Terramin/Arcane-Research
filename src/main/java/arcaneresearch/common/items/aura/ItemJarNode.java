@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.aura;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -18,12 +19,17 @@ import arcaneresearch.common.lib.aura.NodeModifier;
 import arcaneresearch.common.lib.aura.NodeStackData;
 import arcaneresearch.common.lib.aura.NodeType;
 import arcaneresearch.common.tiles.aura.TileJarNode;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
+
 public class ItemJarNode extends BlockItem implements IEssentiaContainerItem {
     public ItemJarNode(Block block, Properties properties) {
         super(block, properties);
     }
+
     public static ItemStack createStack(NodeType type, NodeModifier modifier, AspectList aspects) {
         try {
             return NodeStackData.create(AuraBlocks.JAR_NODE_ITEM.get(), type, modifier, aspects);
@@ -31,6 +37,7 @@ public class ItemJarNode extends BlockItem implements IEssentiaContainerItem {
             return ItemStack.EMPTY;
         }
     }
+
     public static ItemStack createStack(NodeType type, NodeModifier modifier,
                                         AspectList aspects, AspectList base) {
         try {
@@ -39,6 +46,7 @@ public class ItemJarNode extends BlockItem implements IEssentiaContainerItem {
             return ItemStack.EMPTY;
         }
     }
+
     public static ItemStack createStack(TileJarNode jar) {
         try {
             return NodeStackData.create(AuraBlocks.JAR_NODE_ITEM.get(),
@@ -48,14 +56,15 @@ public class ItemJarNode extends BlockItem implements IEssentiaContainerItem {
             return ItemStack.EMPTY;
         }
     }
+
     @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player,
-                                                 ItemStack stack, BlockState state) {
+    protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, @NotNull Level level, @Nullable Player player,
+                                                 @NotNull ItemStack stack, @NotNull BlockState state) {
         boolean result = super.updateCustomBlockEntityTag(pos, level, player, stack, state);
         try {
             BlockEntity tile = level.getBlockEntity(pos);
             if (tile instanceof TileJarNode jar && stack.hasTag()) {
-                NodeStackData.applyTo(jar, stack.getTag());
+                NodeStackData.applyTo(jar, Objects.requireNonNull(stack.getTag()));
                 jar.syncTile(true);
                 return true;
             }
@@ -63,16 +72,19 @@ public class ItemJarNode extends BlockItem implements IEssentiaContainerItem {
         }
         return result;
     }
+
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip,
-                                TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip,
+                                @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
         NodeStackData.appendTooltip(stack, tooltip);
     }
+
     @Override
     public AspectList getAspects(ItemStack itemstack) {
         return NodeStackData.readAspects(itemstack);
     }
+
     @Override
     public void setAspects(ItemStack itemstack, AspectList aspects) {
         try {
@@ -80,16 +92,19 @@ public class ItemJarNode extends BlockItem implements IEssentiaContainerItem {
         } catch (Exception ignored) {
         }
     }
+
     @Override
     public boolean ignoreContainedAspects() {
         return false;
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(
             java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
         consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
             private arcaneresearch.client.renderers.item.NodeItemRenderer renderer;
+
             @Override
             public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 if (renderer == null) {

@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,35 +18,44 @@ import arcaneresearch.api.casters.NodeSetting;
 import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.api.items.IArchitect;
 import arcaneresearch.common.items.casters.CasterManager;
+
 import java.util.*;
+
 public class FocusMediumPlan extends FocusMedium implements IArchitect {
     public static final int METHOD_FULL = 0;
     public static final int METHOD_SURFACE = 1;
     private final Set<BlockPos> checked = new HashSet<>();
+
     @Override
     public String getResearch() {
         return "FOCUSPLAN";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.PLAN";
     }
+
     @Override
     public int getComplexity() {
         return 4;
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.CRAFT;
     }
+
     @Override
     public EnumSupplyType[] mustBeSupplied() {
         return new EnumSupplyType[]{EnumSupplyType.TRAJECTORY};
     }
+
     @Override
     public EnumSupplyType[] willSupply() {
         return new EnumSupplyType[]{EnumSupplyType.TARGET};
     }
+
     @Override
     public HitResult[] supplyTargets() {
         if (getParent() == null || getPackage() == null || getPackage().world == null) {
@@ -86,6 +96,7 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         }
         return targets.toArray(new HitResult[0]);
     }
+
     @Override
     public NodeSetting[] createSettings() {
         int[] method = {METHOD_FULL, METHOD_SURFACE};
@@ -95,13 +106,16 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
                         new NodeSetting.NodeSettingIntList(method, methodDesc))
         };
     }
+
     @Override
     public boolean isExclusive() {
         return true;
     }
+
     private List<BlockPos> getAffectedBlocks(Level world, BlockPos hitPos, Direction side, Player player) {
         return getAffectedBlocks(world, hitPos, side, getCasterStack(player));
     }
+
     private List<BlockPos> getAffectedBlocks(Level world, BlockPos hitPos, Direction side, ItemStack casterStack) {
         List<BlockPos> result = new ArrayList<>();
         checked.clear();
@@ -123,6 +137,7 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         }
         return result;
     }
+
     private void checkNeighboursFull(Level world, BlockPos origin, BlockPos current, Direction side,
                                      int sizeX, int sizeY, int sizeZ, List<BlockPos> result) {
         if (checked.contains(current)) {
@@ -147,6 +162,7 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
             }
         }
     }
+
     private void checkNeighboursSurface(Level world, BlockPos origin, BlockState targetState, BlockPos current,
                                         Direction side, int sizeX, int sizeY, int sizeZ, List<BlockPos> result) {
         if (checked.contains(current)) {
@@ -180,6 +196,7 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
             }
         }
     }
+
     private ItemStack getCasterStack(Player player) {
         if (player == null) {
             return ItemStack.EMPTY;
@@ -194,6 +211,7 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         }
         return ItemStack.EMPTY;
     }
+
     private Player getCasterPlayer() {
         if (getPackage() == null || getPackage().getCasterUUID() == null) {
             return null;
@@ -207,6 +225,7 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         }
         return null;
     }
+
     @Override
     public BlockHitResult getArchitectMOP(ItemStack stack, Level world, LivingEntity player) {
         Vec3 start = player.getEyePosition();
@@ -214,10 +233,12 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         return world.clip(new ClipContext(start, end,
                 ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
+
     @Override
     public boolean useBlockHighlight(ItemStack stack) {
         return false;
     }
+
     @Override
     public boolean showAxis(ItemStack stack, Level world, Player player, Direction side,
                             IArchitect.EnumAxis axis) {
@@ -226,32 +247,23 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         }
         int dim = CasterManager.getAreaDim(stack);
         if (getSettingValue("method") == METHOD_FULL) {
-            switch (axis) {
-                case Y:
-                    return dim == 0 || dim == 3;
-                case Z:
-                    return dim == 0 || dim == 2;
-                case X:
-                    return dim == 0 || dim == 1;
-                default:
-                    return false;
-            }
+            return switch (axis) {
+                case Y -> dim == 0 || dim == 3;
+                case Z -> dim == 0 || dim == 2;
+                case X -> dim == 0 || dim == 1;
+            };
         } else {
-            switch (side.getAxis()) {
-                case Y:
-                    return (axis == IArchitect.EnumAxis.X && (dim == 0 || dim == 1))
-                            || (axis == IArchitect.EnumAxis.Z && (dim == 0 || dim == 2));
-                case Z:
-                    return (axis == IArchitect.EnumAxis.Y && (dim == 0 || dim == 1))
-                            || (axis == IArchitect.EnumAxis.X && (dim == 0 || dim == 2));
-                case X:
-                    return (axis == IArchitect.EnumAxis.Y && (dim == 0 || dim == 1))
-                            || (axis == IArchitect.EnumAxis.Z && (dim == 0 || dim == 2));
-                default:
-                    return false;
-            }
+            return switch (side.getAxis()) {
+                case Y -> (axis == EnumAxis.X && (dim == 0 || dim == 1))
+                        || (axis == EnumAxis.Z && (dim == 0 || dim == 2));
+                case Z -> (axis == EnumAxis.Y && (dim == 0 || dim == 1))
+                        || (axis == EnumAxis.X && (dim == 0 || dim == 2));
+                case X -> (axis == EnumAxis.Y && (dim == 0 || dim == 1))
+                        || (axis == EnumAxis.Z && (dim == 0 || dim == 2));
+            };
         }
     }
+
     @Override
     public ArrayList<BlockPos> getArchitectBlocks(ItemStack stack, Level world, BlockPos pos,
                                                   Direction side, Player player) {

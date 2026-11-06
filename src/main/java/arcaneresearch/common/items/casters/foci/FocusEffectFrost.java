@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,28 +28,35 @@ import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXFocusPartImpact;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectFrost extends FocusEffect {
     @Override
     public String getResearch() {
         return "FOCUSELEMENTAL";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.FROST";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.COLD;
     }
+
     @Override
     public int getComplexity() {
         return getSettingValue("duration") + getSettingValue("power") * 2;
     }
+
     @Override
     public float getDamageForDisplay(float finalPower) {
         return (3 + getSettingValue("power")) * finalPower;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -103,6 +111,7 @@ public class FocusEffectFrost extends FocusEffect {
         }
         return false;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         return new NodeSetting[]{
@@ -112,6 +121,7 @@ public class FocusEffectFrost extends FocusEffect {
                         new NodeSetting.NodeSettingIntRange(2, 10))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -132,6 +142,7 @@ public class FocusEffectFrost extends FocusEffect {
         pp.rot = (float) level.random.nextGaussian() / 4.0f;
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, motionX, motionY, motionZ, pp);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

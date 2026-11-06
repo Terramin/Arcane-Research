@@ -1,11 +1,11 @@
 package arcaneresearch.common.golems;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -31,25 +31,35 @@ import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.menu.LogisticsMenu;
 import arcaneresearch.common.menu.SealMenu;
 import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+
 public class ItemGolemBell extends Item implements ISealDisplayer {
+
+    private static final double SEAL_RAYTRACE_RANGE = 5.0;
+    private static final Direction[] HORIZONTAL_AND_VERTICAL = Direction.values();
+
     public ItemGolemBell() {
-        super(new Item.Properties()
-                .stacksTo(1)
-                .rarity(Rarity.UNCOMMON));
+        super(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
+
     public static void openSealGui(Player player, ISealEntity sealEntity) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
+        if (!(player instanceof ServerPlayer serverPlayer) || sealEntity == null) {
             return;
         }
-        BlockPos sealBlockPos = sealEntity.getSealPos().pos;
-        Direction sealFace = sealEntity.getSealPos().face;
+        SealPos sealPos = sealEntity.getSealPos();
+        if (sealPos == null) {
+            return;
+        }
+        BlockPos sealBlockPos = sealPos.pos;
+        Direction sealFace = sealPos.face;
         NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
             @Override
-            public Component getDisplayName() {
+            public @NotNull Component getDisplayName() {
                 return Component.translatable("item.arcaneresearch.seal.blank");
             }
+
             @Override
-            public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player p) {
+            public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player p) {
                 return new SealMenu(containerId, inventory, sealEntity);
             }
         }, buf -> {
@@ -57,20 +67,23 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
             buf.writeByte((byte) sealFace.ordinal());
         });
     }
+
     public static void openLogisticsGui(Player player, BlockPos pos, Direction side) {
         openLogisticsGui(player, pos, side, false);
     }
+
     public static void openLogisticsGui(Player player, BlockPos pos, Direction side, boolean deliverToPlayer) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
         NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
             @Override
-            public Component getDisplayName() {
+            public @NotNull Component getDisplayName() {
                 return Component.translatable("gui.arcaneresearch.logistics");
             }
+
             @Override
-            public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player p) {
+            public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player p) {
                 return new LogisticsMenu(containerId, inventory, pos, side, deliverToPlayer);
             }
         }, buf -> {
@@ -79,6 +92,7 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
             buf.writeBoolean(deliverToPlayer);
         });
     }
+
     private static InteractionResult handleSealClick(Player player, Level level, BlockPos pos, Direction side) {
         ISealEntity seal = SealHandler.getSealEntity(level.dimension(), new SealPos(pos, side));
         if (seal == null && player.isShiftKeyDown()) {
@@ -87,8 +101,7 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         if (seal != null) {
             if (player.isShiftKeyDown()) {
                 SealHandler.removeSealEntity(level, seal.getSealPos(), false);
-                level.playSound(null, pos, ModSounds.ZAP.get(),
-                        SoundSource.BLOCKS, 0.5f, 1.0f);
+                level.playSound(null, pos, ModSounds.ZAP.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
             } else {
                 openSealGui(player, seal);
             }
@@ -101,10 +114,13 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         }
         return InteractionResult.PASS;
     }
+
     private static ISealEntity findLoneSealOnBlock(Level level, BlockPos pos, Direction clickedFace) {
         ISealEntity found = null;
-        for (Direction d : Direction.values()) {
-            if (d == clickedFace) continue;
+        for (Direction d : HORIZONTAL_AND_VERTICAL) {
+            if (d == clickedFace) {
+                continue;
+            }
             ISealEntity s = SealHandler.getSealEntity(level.dimension(), new SealPos(pos, d));
             if (s != null) {
                 if (found != null) {
@@ -115,82 +131,54 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         }
         return found;
     }
+
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Player player = context.getPlayer();
-        Level level = context.getLevel();
         if (player == null) {
             return InteractionResult.PASS;
         }
         player.swing(context.getHand());
-        if (!level.isClientSide()) {
-            return handleSealClick(player, level, context.getClickedPos(), context.getClickedFace());
+        if (!context.getLevel().isClientSide()) {
+            handleSealClick(player, context.getLevel(), context.getClickedPos(), context.getClickedFace());
         }
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
+
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        Direction side = context.getClickedFace();
-        Player player = context.getPlayer();
-        if (player == null) {
-            return InteractionResult.PASS;
-        }
-        player.swing(context.getHand());
-        if (!level.isClientSide()) {
-            return handleSealClick(player, level, pos, side);
-        }
-        return InteractionResult.PASS;
-    }
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         player.swing(hand);
-        if (!level.isClientSide()) {
-            ISealEntity sealEntity = getSealFromRaytrace(player);
-            if (sealEntity != null) {
-                handleSealClick(player, level,
-                        sealEntity.getSealPos().pos, sealEntity.getSealPos().face);
-                return InteractionResultHolder.success(player.getItemInHand(hand));
-            }
-            if (player.isShiftKeyDown()
-                    && ArcaneresearchCapabilities.isResearchKnown(player, "GOLEMLOGISTICS")) {
-                openLogisticsGui(player, player.blockPosition(), Direction.UP, true);
-                return InteractionResultHolder.success(player.getItemInHand(hand));
-            }
-        } else {
-            player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.6f, 1.0f + level.random.nextFloat() * 0.1f);
+        if (level.isClientSide()) {
+            return InteractionResultHolder.pass(stack);
         }
-        return super.use(level, player, hand);
+        ISealEntity sealEntity = getSealFromRaytrace(player);
+        if (sealEntity != null) {
+            BlockPos pos = sealEntity.getSealPos().pos;
+            Direction face = sealEntity.getSealPos().face;
+            level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS,
+                    0.6f, 1.0f + level.random.nextFloat() * 0.1f);
+            handleSealClick(player, level, pos, face);
+            return InteractionResultHolder.success(stack);
+        }
+        if (player.isShiftKeyDown()
+                && ArcaneresearchCapabilities.isResearchKnown(player, "GOLEMLOGISTICS")) {
+            openLogisticsGui(player, player.blockPosition(), Direction.UP, true);
+            return InteractionResultHolder.success(stack);
+        }
+        return InteractionResultHolder.pass(stack);
     }
+
     private ISealEntity getSealFromRaytrace(Player player) {
-        float pitch = player.getXRot();
-        float yaw = player.getYRot();
+        Level level = player.level();
         Vec3 eyePos = player.getEyePosition();
-        float cosYaw = Mth.cos(-yaw * Mth.DEG_TO_RAD - Mth.PI);
-        float sinYaw = Mth.sin(-yaw * Mth.DEG_TO_RAD - Mth.PI);
-        float cosPitch = -Mth.cos(-pitch * Mth.DEG_TO_RAD);
-        float sinPitch = Mth.sin(-pitch * Mth.DEG_TO_RAD);
-        float lookX = sinYaw * cosPitch;
-        float lookY = sinPitch;
-        float lookZ = cosYaw * cosPitch;
-        double range = 5.0;
-        Vec3 lookVec = new Vec3(lookX * range, lookY * range, lookZ * range);
-        Vec3 endPos = eyePos.add(lookVec);
-        Vec3 step = lookVec.scale(0.1);
-        Vec3 checkPos = eyePos;
-        for (int i = 0; i < (int) (range * 10); i++) {
-            BlockHitResult hitResult = player.level().clip(new ClipContext(
-                    eyePos, checkPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
-            if (hitResult.getType() == HitResult.Type.BLOCK) {
-                ISealEntity sealEntity = SealHandler.getSealEntity(
-                        player.level().dimension(),
-                        new SealPos(hitResult.getBlockPos(), hitResult.getDirection()));
-                if (sealEntity != null) {
-                    return sealEntity;
-                }
-            }
-            checkPos = checkPos.add(step);
+        Vec3 endPos = eyePos.add(player.getLookAngle().scale(SEAL_RAYTRACE_RANGE));
+        BlockHitResult hitResult = level.clip(new ClipContext(
+                eyePos, endPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        if (hitResult.getType() == HitResult.Type.BLOCK) {
+            return SealHandler.getSealEntity(
+                    level.dimension(),
+                    new SealPos(hitResult.getBlockPos(), hitResult.getDirection()));
         }
         return null;
     }

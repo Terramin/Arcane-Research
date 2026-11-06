@@ -1,4 +1,8 @@
 package arcaneresearch.common.golems.seals;
+
+import arcaneresearch.api.golems.ISealDisplayer;
+import arcaneresearch.api.golems.seals.ISeal;
+import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -12,68 +16,69 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import arcaneresearch.api.golems.ISealDisplayer;
-import arcaneresearch.api.golems.seals.ISeal;
-import arcaneresearch.init.ModItems;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.List;
+
 public class ItemSealPlacer extends Item implements ISealDisplayer {
+
+    private static final Logger LOGGER = LogManager.getLogger(ItemSealPlacer.class);
+    private static final String SEAL_KEY_BLANK = "blank";
+
     private final String sealKey;
+    private final boolean isBlank;
+
     public ItemSealPlacer(String sealKey) {
-        super(new Item.Properties()
-                .stacksTo(64));
+        super(new Item.Properties().stacksTo(64));
         this.sealKey = sealKey;
+        this.isBlank = SEAL_KEY_BLANK.equals(sealKey);
     }
+
     public static ItemSealPlacer createBlank() {
-        return new ItemSealPlacer("blank");
+        return new ItemSealPlacer(SEAL_KEY_BLANK);
     }
+
     public static ItemSealPlacer create(String sealKey) {
         return new ItemSealPlacer(sealKey);
     }
+
+    private static String stripNamespace(String sealKey) {
+        int colon = sealKey.indexOf(':');
+        return colon >= 0 ? sealKey.substring(colon + 1) : sealKey;
+    }
+
     public static ItemStack getSealStack(String sealKey) {
-        return switch (sealKey) {
-            case "arcaneresearch:pickup" -> new ItemStack(ModItems.SEAL_PICKUP.get());
-            case "arcaneresearch:pickup_advanced" -> new ItemStack(ModItems.SEAL_PICKUP_ADVANCED.get());
-            case "arcaneresearch:empty" -> new ItemStack(ModItems.SEAL_EMPTY.get());
-            case "arcaneresearch:empty_advanced" -> new ItemStack(ModItems.SEAL_EMPTY_ADVANCED.get());
-            case "arcaneresearch:fill" -> new ItemStack(ModItems.SEAL_FILL.get());
-            case "arcaneresearch:fill_advanced" -> new ItemStack(ModItems.SEAL_FILL_ADVANCED.get());
-            case "arcaneresearch:guard" -> new ItemStack(ModItems.SEAL_GUARD.get());
-            case "arcaneresearch:guard_advanced" -> new ItemStack(ModItems.SEAL_GUARD_ADVANCED.get());
-            case "arcaneresearch:butcher" -> new ItemStack(ModItems.SEAL_BUTCHER.get());
-            case "arcaneresearch:harvest" -> new ItemStack(ModItems.SEAL_HARVEST.get());
-            case "arcaneresearch:lumber" -> new ItemStack(ModItems.SEAL_LUMBER.get());
-            case "arcaneresearch:breaker" -> new ItemStack(ModItems.SEAL_BREAKER.get());
-            case "arcaneresearch:breaker_advanced" -> new ItemStack(ModItems.SEAL_BREAKER_ADVANCED.get());
-            case "arcaneresearch:provider" -> new ItemStack(ModItems.SEAL_PROVIDE.get());
-            case "arcaneresearch:stock" -> new ItemStack(ModItems.SEAL_STOCK.get());
-            case "arcaneresearch:use" -> new ItemStack(ModItems.SEAL_USE.get());
-            case "blank" -> new ItemStack(ModItems.SEAL_BLANK.get());
+        String key = stripNamespace(sealKey);
+        return switch (key) {
+            case "pickup" -> new ItemStack(ModItems.SEAL_PICKUP.get());
+            case "pickup_advanced" -> new ItemStack(ModItems.SEAL_PICKUP_ADVANCED.get());
+            case "empty" -> new ItemStack(ModItems.SEAL_EMPTY.get());
+            case "empty_advanced" -> new ItemStack(ModItems.SEAL_EMPTY_ADVANCED.get());
+            case "fill" -> new ItemStack(ModItems.SEAL_FILL.get());
+            case "fill_advanced" -> new ItemStack(ModItems.SEAL_FILL_ADVANCED.get());
+            case "guard" -> new ItemStack(ModItems.SEAL_GUARD.get());
+            case "guard_advanced" -> new ItemStack(ModItems.SEAL_GUARD_ADVANCED.get());
+            case "butcher" -> new ItemStack(ModItems.SEAL_BUTCHER.get());
+            case "harvest" -> new ItemStack(ModItems.SEAL_HARVEST.get());
+            case "lumber" -> new ItemStack(ModItems.SEAL_LUMBER.get());
+            case "breaker" -> new ItemStack(ModItems.SEAL_BREAKER.get());
+            case "breaker_advanced" -> new ItemStack(ModItems.SEAL_BREAKER_ADVANCED.get());
+            case "provider" -> new ItemStack(ModItems.SEAL_PROVIDE.get());
+            case "stock" -> new ItemStack(ModItems.SEAL_STOCK.get());
+            case "use" -> new ItemStack(ModItems.SEAL_USE.get());
+            case SEAL_KEY_BLANK -> new ItemStack(ModItems.SEAL_BLANK.get());
             default -> ItemStack.EMPTY;
         };
     }
+
     public String getSealKey() {
         return sealKey;
     }
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        Direction side = context.getClickedFace();
-        Player player = context.getPlayer();
-        ItemStack stack = context.getItemInHand();
-        if (player == null) {
-            return InteractionResult.FAIL;
-        }
-        if (sealKey.equals("blank")) {
-            return InteractionResult.PASS;
-        }
-        if (player.isShiftKeyDown()) {
-            return InteractionResult.PASS;
-        }
-        if (level.isClientSide()) {
-            return InteractionResult.PASS;
-        }
+
+    private InteractionResult tryPlaceSeal(Level level, BlockPos pos, Direction side, Player player, ItemStack stack) {
         if (!player.mayUseItemAt(pos, side, stack)) {
             return InteractionResult.FAIL;
         }
@@ -87,68 +92,71 @@ public class ItemSealPlacer extends Item implements ISealDisplayer {
         ISeal seal;
         try {
             seal = sealTemplate.getClass().getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ReflectiveOperationException e) {
+            LOGGER.error("Failed to instantiate seal '{}'", sealKey, e);
             return InteractionResult.FAIL;
         }
-        if (SealHandler.addSealEntity(level, pos, side, seal, player)) {
-            if (!player.getAbilities().instabuild) {
-                stack.shrink(1);
-            }
-            return InteractionResult.CONSUME;
-        }
-        return InteractionResult.FAIL;
-    }
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, LevelReader level, BlockPos pos, Player player) {
-        return true;
-    }
-    @Override
-    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-        Player player = context.getPlayer();
-        Level level = context.getLevel();
-        if (player == null) {
-            return InteractionResult.PASS;
-        }
-        if (level.isClientSide() || sealKey.equals("blank") || player.isShiftKeyDown()) {
-            return InteractionResult.PASS;
-        }
-        BlockPos pos = context.getClickedPos();
-        Direction side = context.getClickedFace();
-        if (!player.mayUseItemAt(pos, side, stack)) {
+        if (!SealHandler.addSealEntity(level, pos, side, seal, player)) {
             return InteractionResult.FAIL;
         }
-        ISeal sealTemplate = SealHandler.getSeal(sealKey);
-        if (sealTemplate == null) {
-            return InteractionResult.FAIL;
-        }
-        ISeal seal;
-        try {
-            seal = sealTemplate.getClass().getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return InteractionResult.FAIL;
-        }
-        if (seal == null || !seal.canPlaceAt(level, pos, side)) {
-            return InteractionResult.FAIL;
-        }
-        if (SealHandler.addSealEntity(level, pos, side, seal, player)
-                && !player.getAbilities().instabuild) {
+        if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
         return InteractionResult.SUCCESS;
     }
+
+    @Override
+    public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
+        if (isBlank) {
+            return InteractionResult.PASS;
+        }
+        Player player = context.getPlayer();
+        if (player == null) {
+            return InteractionResult.FAIL;
+        }
+        if (player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
+        Level level = context.getLevel();
+        if (level.isClientSide()) {
+            return InteractionResult.PASS;
+        }
+        return tryPlaceSeal(level, context.getClickedPos(), context.getClickedFace(),
+                player, context.getItemInHand());
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(ItemStack stack, LevelReader level, BlockPos pos, Player player) {
+        return true;
+    }
+
+    @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        Player player = context.getPlayer();
+        if (player == null) {
+            return InteractionResult.PASS;
+        }
+        if (isBlank || player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
+        Level level = context.getLevel();
+        if (level.isClientSide()) {
+            return InteractionResult.PASS;
+        }
+        return tryPlaceSeal(level, context.getClickedPos(), context.getClickedFace(), player, stack);
+    }
+
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
     }
+
     @Override
-    public Component getName(ItemStack stack) {
-        if (sealKey.equals("blank")) {
+    public @NotNull Component getName(@NotNull ItemStack stack) {
+        if (isBlank) {
             return Component.translatable("item.arcaneresearch.seal.blank");
         }
-        String shortKey = sealKey.contains(":") ? sealKey.substring(sealKey.indexOf(':') + 1) : sealKey;
-        return Component.translatable("item.arcaneresearch.seal." + shortKey);
+        return Component.translatable("item.arcaneresearch.seal." + stripNamespace(sealKey));
     }
 }

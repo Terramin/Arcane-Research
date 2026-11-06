@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.armor;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
@@ -25,45 +26,56 @@ import arcaneresearch.api.items.IVisDiscountGear;
 import arcaneresearch.api.items.IWarpingGear;
 import arcaneresearch.client.models.armor.VoidRobeArmorModel;
 import arcaneresearch.init.ModItems;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
+
 public class ItemVoidRobeArmor extends ArmorItem
         implements IVisDiscountGear, IGoggles, IRevealer, IWarpingGear, DyeableLeatherItem, IRunicArmor {
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
+
     private static final int DEFAULT_COLOR = 6961280;
     @OnlyIn(Dist.CLIENT)
     private static HumanoidModel<LivingEntity> voidRobeModel;
+
     public ItemVoidRobeArmor(Type type) {
         super(ArcaneresearchMaterials.ARMORMAT_VOIDROBE, type,
                 new Item.Properties()
                         .stacksTo(1)
                         .rarity(Rarity.EPIC));
     }
+
     public static ItemVoidRobeArmor createHelmet() {
         return new ItemVoidRobeArmor(Type.HELMET);
     }
+
     public static ItemVoidRobeArmor createChestplate() {
         return new ItemVoidRobeArmor(Type.CHESTPLATE);
     }
+
     public static ItemVoidRobeArmor createLeggings() {
         return new ItemVoidRobeArmor(Type.LEGGINGS);
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(ModItems.VOID_METAL_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return type == null ? "arcaneresearch:textures/entity/armor/void_robe_armor_overlay.png"
                 : "arcaneresearch:textures/entity/armor/void_robe_armor.png";
     }
+
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
         if (!level.isClientSide() && stack.isDamaged() && entity.tickCount % 20 == 0
                 && entity instanceof LivingEntity living) {
@@ -76,22 +88,27 @@ public class ItemVoidRobeArmor extends ArmorItem
             }
         }
     }
+
     @Override
     public int getVisDiscount(ItemStack stack, Player player) {
         return 5;
     }
+
     @Override
     public boolean showNodes(ItemStack itemstack, LivingEntity player) {
         return this.getType() == Type.HELMET;
     }
+
     @Override
     public boolean showIngamePopups(ItemStack itemstack, LivingEntity player) {
         return this.getType() == Type.HELMET;
     }
+
     @Override
     public int getWarp(ItemStack itemstack, Player player) {
         return 3;
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -99,7 +116,6 @@ public class ItemVoidRobeArmor extends ArmorItem
             @Override
             @Nonnull
             @OnlyIn(Dist.CLIENT)
-            @SuppressWarnings("unchecked")
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack,
                                                           EquipmentSlot slot, HumanoidModel<?> original) {
                 if (voidRobeModel == null) {
@@ -136,16 +152,19 @@ public class ItemVoidRobeArmor extends ArmorItem
             }
         });
     }
+
     @Override
     public int getColor(ItemStack stack) {
         CompoundTag tag = stack.getTagElement("display");
         return tag != null && tag.contains("color") ? tag.getInt("color") : DEFAULT_COLOR;
     }
+
     @Override
     public boolean hasCustomColor(ItemStack stack) {
         CompoundTag tag = stack.getTagElement("display");
         return tag != null && tag.contains("color");
     }
+
     @Override
     public void clearColor(ItemStack stack) {
         CompoundTag tag = stack.getTagElement("display");
@@ -153,12 +172,14 @@ public class ItemVoidRobeArmor extends ArmorItem
             tag.remove("color");
         }
     }
+
     @Override
     public void setColor(ItemStack stack, int color) {
         stack.getOrCreateTagElement("display").putInt("color", color);
     }
+
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);

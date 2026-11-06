@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,28 +19,35 @@ import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXFocusPartImpact;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectHeal extends FocusEffect {
     @Override
     public String getResearch() {
         return "FOCUSHEAL";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.HEAL";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.LIFE;
     }
+
     @Override
     public int getComplexity() {
         return getSettingValue("power") * 4;
     }
+
     @Override
     public float getDamageForDisplay(float finalPower) {
         return -getSettingValue("power") * finalPower;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -74,6 +82,7 @@ public class FocusEffectHeal extends FocusEffect {
         }
         return false;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         return new NodeSetting[]{
@@ -81,6 +90,7 @@ public class FocusEffectHeal extends FocusEffect {
                         new NodeSetting.NodeSettingIntRange(1, 5))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -108,6 +118,7 @@ public class FocusEffectHeal extends FocusEffect {
         pp.delay = level.random.nextInt(4);
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, vx, vy, vz, pp);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

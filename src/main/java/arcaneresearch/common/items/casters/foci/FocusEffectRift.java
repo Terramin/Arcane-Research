@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -20,7 +21,9 @@ import arcaneresearch.common.blocks.misc.BlockHole;
 import arcaneresearch.common.lib.utils.BlockUtils;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModSounds;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectRift extends FocusEffect {
     public static boolean createHole(Level world, BlockPos pos, Direction side, byte count, int max) {
         BlockState bs = world.getBlockState(pos);
@@ -34,22 +37,27 @@ public class FocusEffectRift extends FocusEffect {
         }
         return false;
     }
+
     @Override
     public String getResearch() {
         return "FOCUSRIFT";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.RIFT";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.ELDRITCH;
     }
+
     @Override
     public int getComplexity() {
         return 3 + getSettingValue("duration") / 2 + getSettingValue("depth") / 4;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -68,7 +76,7 @@ public class FocusEffectRift extends FocusEffect {
         float maxDist = getSettingValue("depth") * finalPower;
         int dur = 20 * getSettingValue("duration");
         Direction hitSide = blockHit.getDirection();
-        int distance = 0;
+        int distance;
         BlockPos pos = blockHit.getBlockPos();
         for (distance = 0; distance < maxDist; distance++) {
             BlockState bi = world.getBlockState(pos);
@@ -84,6 +92,7 @@ public class FocusEffectRift extends FocusEffect {
         createHole(world, blockHit.getBlockPos(), hitSide, (byte) (distance + 1), dur);
         return true;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         int[] depth = {8, 16, 24, 32};
@@ -95,6 +104,7 @@ public class FocusEffectRift extends FocusEffect {
                         new NodeSetting.NodeSettingIntRange(2, 10))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -118,9 +128,10 @@ public class FocusEffectRift extends FocusEffect {
         part.randZ = 0.01;
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, motionX, motionY, motionZ, part);
     }
+
     @Override
     public void onCast(Entity caster) {
-        if (caster != null && caster.level() != null) {
+        if (caster != null) {
             caster.level().playSound(null, caster.blockPosition().above(),
                     SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS,
                     0.2f, 0.7f);

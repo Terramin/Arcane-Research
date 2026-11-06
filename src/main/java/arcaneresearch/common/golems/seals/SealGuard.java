@@ -1,4 +1,5 @@
 package arcaneresearch.common.golems.seals;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -22,12 +23,15 @@ import arcaneresearch.api.golems.IGolemAPI;
 import arcaneresearch.api.golems.seals.*;
 import arcaneresearch.api.golems.tasks.Task;
 import arcaneresearch.common.golems.tasks.TaskHandler;
+
 import java.util.List;
 import java.util.Random;
+
 public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigToggles {
     protected SealToggle[] props;
     private int delay;
     private ResourceLocation icon;
+
     public SealGuard() {
         delay = new Random(System.nanoTime()).nextInt(22);
         props = new SealToggle[]{
@@ -35,8 +39,9 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
                 new SealToggle(false, "panimal", "golem.prop.animal"),
                 new SealToggle(false, "pplayer", "golem.prop.player")
         };
-        icon = new ResourceLocation(Arcaneresearch.MODID, "item/seals/seal_guard");
+        icon = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "item/seals/seal_guard");
     }
+
     private static boolean isAnimalLike(LivingEntity target) {
         if (target instanceof Animal) {
             return true;
@@ -48,10 +53,12 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
                 || cat == net.minecraft.world.entity.MobCategory.WATER_CREATURE
                 || cat == net.minecraft.world.entity.MobCategory.UNDERGROUND_WATER_CREATURE;
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch:guard";
     }
+
     @Override
     public void tickSeal(Level level, ISealEntity seal) {
         if (delay++ % 20 != 0) {
@@ -70,6 +77,7 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
             }
         }
     }
+
     private boolean isValidTarget(LivingEntity target) {
         boolean valid = false;
         if (props[0].getValue() && (target instanceof Enemy || target instanceof Monster)) {
@@ -86,6 +94,7 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
         }
         return valid;
     }
+
     @Override
     public void onTaskStarted(Level level, IGolemAPI golem, Task task) {
         if (task.getEntity() != null &&
@@ -98,59 +107,74 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea, ISealConfigT
         }
         task.setSuspended(true);
     }
+
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         task.setSuspended(true);
         return true;
     }
+
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         return task.getEntity() == null || !golem.getGolemEntity().isAlliedTo(task.getEntity());
     }
+
     @Override
     public boolean canPlaceAt(Level level, BlockPos pos, Direction side) {
         return !level.isEmptyBlock(pos);
     }
+
     @Override
     public ResourceLocation getSealIcon() {
         return icon;
     }
+
     public int[] getGuiCategories() {
         return new int[]{2, 0, 4};
     }
+
     @Override
     public EnumGolemTrait[] getRequiredTags() {
         return new EnumGolemTrait[]{EnumGolemTrait.FIGHTER};
     }
+
     @Override
     public EnumGolemTrait[] getForbiddenTags() {
         return null;
     }
+
     @Override
     public void onTaskSuspension(Level level, Task task) {
     }
+
     @Override
     public void readCustomNBT(CompoundTag nbt) {
     }
+
     @Override
     public void writeCustomNBT(CompoundTag nbt) {
     }
+
     @Override
     public void onRemoval(Level level, BlockPos pos, Direction side) {
     }
+
     @Override
     public Object returnContainer(Level level, Player player, BlockPos pos, Direction side, ISealEntity seal) {
         return null;
     }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public Object returnGui(Level level, Player player, BlockPos pos, Direction side, ISealEntity seal) {
         return null;
     }
+
     @Override
     public SealToggle[] getToggles() {
         return props;
     }
+
     @Override
     public void setToggle(int index, boolean value) {
         if (index >= 0 && index < props.length) {

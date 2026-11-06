@@ -1,4 +1,5 @@
 package arcaneresearch.common.golems.seals;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -16,18 +17,21 @@ import arcaneresearch.api.golems.seals.ISealEntity;
 import arcaneresearch.api.golems.tasks.Task;
 import arcaneresearch.common.golems.tasks.TaskHandler;
 import arcaneresearch.common.lib.utils.InventoryUtils;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+
 public class SealEmpty extends SealFiltered implements ISealConfigToggles {
     protected SealToggle[] props;
     private int delay;
     private int filterInc = 0;
     private HashMap<Integer, ItemStack> cache = new HashMap<>();
     private ResourceLocation icon;
+
     public SealEmpty() {
         delay = new Random(System.nanoTime()).nextInt(30);
-        icon = new ResourceLocation(Arcaneresearch.MODID, "item/seals/seal_empty");
+        icon = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "item/seals/seal_empty");
         props = new SealToggle[]{
                 new SealToggle(true, "pmeta", "golem.prop.meta"),
                 new SealToggle(true, "pnbt", "golem.prop.nbt"),
@@ -37,10 +41,12 @@ public class SealEmpty extends SealFiltered implements ISealConfigToggles {
                 new SealToggle(false, "pleave", "golem.prop.leave")
         };
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch:empty";
     }
+
     @Override
     public void tickSeal(Level level, ISealEntity seal) {
         if (delay % 100 == 0) {
@@ -66,9 +72,11 @@ public class SealEmpty extends SealFiltered implements ISealConfigToggles {
             cache.put(task.getId(), stack);
         }
     }
+
     public NonNullList<ItemStack> getInv(int c) {
         return getInv();
     }
+
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         ItemStack stack = cache.get(task.getId());
@@ -98,45 +106,56 @@ public class SealEmpty extends SealFiltered implements ISealConfigToggles {
         task.setSuspended(true);
         return true;
     }
+
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         ItemStack stack = cache.get(task.getId());
         return stack != null && !stack.isEmpty() && golem.canCarry(stack, true);
     }
+
     @Override
     public boolean canPlaceAt(Level level, BlockPos pos, Direction side) {
         return ArcaneresearchInvHelper.getItemHandlerAt(level, pos, side) != null;
     }
+
     @Override
     public ResourceLocation getSealIcon() {
         return icon;
     }
+
     @Override
     public int[] getGuiCategories() {
         return new int[]{1, 0, 4};
     }
+
     @Override
     public EnumGolemTrait[] getRequiredTags() {
         return null;
     }
+
     @Override
     public EnumGolemTrait[] getForbiddenTags() {
         return new EnumGolemTrait[]{EnumGolemTrait.CLUMSY};
     }
+
     @Override
     public void onTaskStarted(Level level, IGolemAPI golem, Task task) {
     }
+
     @Override
     public void onTaskSuspension(Level level, Task task) {
         cache.remove(task.getId());
     }
+
     @Override
     public void onRemoval(Level level, BlockPos pos, Direction side) {
     }
+
     @Override
     public SealToggle[] getToggles() {
         return props;
     }
+
     @Override
     public void setToggle(int index, boolean value) {
         if (index >= 0 && index < props.length) {

@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.casters.foci;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,28 +21,35 @@ import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXFocusPartImpact;
+
 import javax.annotation.Nullable;
+
 public class FocusEffectFire extends FocusEffect {
     @Override
     public String getResearch() {
         return "BASEAUROMANCY";
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.FIRE";
     }
+
     @Override
     public Aspect getAspect() {
         return Aspect.FIRE;
     }
+
     @Override
     public int getComplexity() {
         return getSettingValue("duration") + getSettingValue("power") * 2;
     }
+
     @Override
     public float getDamageForDisplay(float finalPower) {
         return (3 + getSettingValue("power")) * finalPower;
     }
+
     @Override
     public boolean execute(HitResult target, @Nullable Trajectory trajectory, float finalPower, int num) {
         if (getPackage() == null || getPackage().world == null) {
@@ -91,6 +99,7 @@ public class FocusEffectFire extends FocusEffect {
         }
         return false;
     }
+
     @Override
     public NodeSetting[] createSettings() {
         return new NodeSetting[]{
@@ -100,6 +109,7 @@ public class FocusEffectFire extends FocusEffect {
                         new NodeSetting.NodeSettingIntRange(0, 5))
         };
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void renderParticleFX(Level level, double posX, double posY, double posZ,
@@ -115,6 +125,7 @@ public class FocusEffectFire extends FocusEffect {
         pp.scale = new float[]{(float) (1.5 + level.random.nextGaussian() * 0.20000000298023224)};
         FXDispatcher.INSTANCE.drawGenericParticles(posX, posY, posZ, motionX, motionY, motionZ, pp);
     }
+
     @Override
     public void onCast(Entity caster) {
         if (caster != null && caster.level() != null) {

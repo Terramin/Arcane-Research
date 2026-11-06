@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.armor;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
@@ -14,48 +15,61 @@ import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.items.IVisDiscountGear;
 import arcaneresearch.api.items.IWarpingGear;
 import arcaneresearch.client.models.armor.CultistRobeArmorModel;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
+
 public class ItemCultistRobeArmor extends ArmorItem implements IVisDiscountGear, IWarpingGear, IRunicArmor {
     @Override
     public int getRunicCharge(ItemStack stack) {
         return 0;
     }
+
     @OnlyIn(Dist.CLIENT)
     private static HumanoidModel<LivingEntity> cultistRobeModel;
+
     public ItemCultistRobeArmor(Type type) {
         super(ArcaneresearchMaterials.ARMORMAT_CULTIST_ROBE, type,
                 new Item.Properties()
                         .stacksTo(1)
                         .rarity(Rarity.UNCOMMON));
     }
+
     public static ItemCultistRobeArmor createHelmet() {
         return new ItemCultistRobeArmor(Type.HELMET);
     }
+
     public static ItemCultistRobeArmor createChestplate() {
         return new ItemCultistRobeArmor(Type.CHESTPLATE);
     }
+
     public static ItemCultistRobeArmor createLeggings() {
         return new ItemCultistRobeArmor(Type.LEGGINGS);
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(Items.IRON_INGOT) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         return "arcaneresearch:textures/entity/armor/cultist_robe_armor.png";
     }
+
     @Override
     public int getVisDiscount(ItemStack stack, Player player) {
         return 1;
     }
+
     @Override
     public int getWarp(ItemStack itemstack, Player player) {
         return 1;
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -63,7 +77,6 @@ public class ItemCultistRobeArmor extends ArmorItem implements IVisDiscountGear,
             @Override
             @Nonnull
             @OnlyIn(Dist.CLIENT)
-            @SuppressWarnings("unchecked")
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack,
                                                           EquipmentSlot slot, HumanoidModel<?> original) {
                 if (cultistRobeModel == null) {
