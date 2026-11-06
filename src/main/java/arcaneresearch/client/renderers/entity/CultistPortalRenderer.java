@@ -20,7 +20,7 @@ import arcaneresearch.common.entities.monster.cult.EntityCultistPortalLesser;
 @OnlyIn(Dist.CLIENT)
 public class CultistPortalRenderer extends EntityRenderer<EntityCultistPortalLesser> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/cultist_portal.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/cultist_portal.png");
     public CultistPortalRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;

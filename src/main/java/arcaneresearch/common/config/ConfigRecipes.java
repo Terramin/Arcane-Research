@@ -17,8 +17,8 @@ import arcaneresearch.init.ModItems;
 public class ConfigRecipes {
     public static void registerFakeRecipes() {
         ArcaneresearchApi.addFakeCraftingRecipe(
-                new ResourceLocation(Arcaneresearch.MODID, "salis_mundus_fake"),
-                new ShapelessRecipe(new ResourceLocation(Arcaneresearch.MODID, "salis_mundus_fake"),
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "salis_mundus_fake"),
+                new ShapelessRecipe(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "salis_mundus_fake"),
                         "", CraftingBookCategory.MISC,
                         new ItemStack(ModItems.SALIS_MUNDUS.get()),
                         NonNullList.of(Ingredient.EMPTY,
@@ -29,8 +29,8 @@ public class ConfigRecipes {
                                 Ingredient.of(ModItems.CRYSTAL_ESSENCE.get()),
                                 Ingredient.of(ModItems.CRYSTAL_ESSENCE.get()))));
         ArcaneresearchApi.addFakeCraftingRecipe(
-                new ResourceLocation(Arcaneresearch.MODID, "triple_meat_treat_fake"),
-                new ShapelessRecipe(new ResourceLocation(Arcaneresearch.MODID, "triple_meat_treat_fake"),
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "triple_meat_treat_fake"),
+                new ShapelessRecipe(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "triple_meat_treat_fake"),
                         "", CraftingBookCategory.MISC,
                         new ItemStack(ModItems.TRIPLE_MEAT_TREAT.get()),
                         NonNullList.of(Ingredient.EMPTY,
@@ -74,7 +74,7 @@ public class ConfigRecipes {
                     arcaneresearch.common.lib.crafting.InfusionRunicAugmentRecipe
                             .componentsForCharge(level).toArray();
             ArcaneresearchApi.addFakeCraftingRecipe(
-                    new ResourceLocation(Arcaneresearch.MODID, "runic_armor_fake_" + level),
+                    ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "runic_armor_fake_" + level),
                     new InfusionRecipe("RUNICSHIELDING", ring, 5 + level / 2, runicCost,
                             new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()),
                             runicComponents));
@@ -91,7 +91,7 @@ public class ConfigRecipes {
                     arcaneresearch.common.lib.crafting.InfusionRunicAugmentRecipe
                             .componentsForCharge(level).toArray();
             ArcaneresearchApi.addFakeCraftingRecipe(
-                    new ResourceLocation(Arcaneresearch.MODID, "runic_armor_chest_fake_" + level),
+                    ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "runic_armor_chest_fake_" + level),
                     new InfusionRecipe("RUNICSHIELDING", chest, 5 + level / 2, chestCost,
                             new ItemStack(ModItems.CLOTH_CHEST.get()),
                             chestComponents));
@@ -142,7 +142,7 @@ public class ConfigRecipes {
         ItemStack output = tool.copy();
         EnumInfusionEnchantment.addInfusionEnchantment(output, ench, 1);
         ArcaneresearchApi.addFakeCraftingRecipe(
-                new ResourceLocation(Arcaneresearch.MODID, "ie_" + name + "_fake"),
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "ie_" + name + "_fake"),
                 new InfusionRecipe("INFUSIONENCHANTMENT", output, 4, aspects,
                         new ItemStack(Items.ENCHANTED_BOOK),
                         new ItemStack(Items.ENCHANTED_BOOK), extra));

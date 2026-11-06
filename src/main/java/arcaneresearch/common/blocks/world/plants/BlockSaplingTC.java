@@ -29,7 +29,7 @@ public class BlockSaplingTC extends SaplingBlock {
                     @Override
                     protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource random, boolean hasFlowers) {
                         return ResourceKey.create(Registries.CONFIGURED_FEATURE,
-                                new ResourceLocation(Arcaneresearch.MODID, "greatwood_tree"));
+                                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "greatwood_tree"));
                     }
                 },
                 BlockBehaviour.Properties.of()
@@ -46,7 +46,7 @@ public class BlockSaplingTC extends SaplingBlock {
                     @Override
                     protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource random, boolean hasFlowers) {
                         return ResourceKey.create(Registries.CONFIGURED_FEATURE,
-                                new ResourceLocation(Arcaneresearch.MODID, "big_silverwood_tree"));
+                                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "big_silverwood_tree"));
                     }
                 },
                 BlockBehaviour.Properties.of()
@@ -88,7 +88,7 @@ public class BlockSaplingTC extends SaplingBlock {
                         BlockPos origin = pos.offset(i, 0, j);
                         net.minecraft.resources.ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(
                                 Registries.CONFIGURED_FEATURE,
-                                new ResourceLocation(Arcaneresearch.MODID, "big_greatwood_tree"));
+                                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "big_greatwood_tree"));
                         var holder = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key);
                         if (holder.isPresent()) {
                             BlockState air = Blocks.AIR.defaultBlockState();

@@ -10,7 +10,7 @@ import arcaneresearch.common.entities.monster.mods.ChampionModifier;
 public class PotionFluxTaint extends MobEffect {
     public static MobEffect instance = null;
     private int statusIconIndex = -1;
-    static final ResourceLocation rl = new ResourceLocation("arcaneresearch", "textures/misc/potions.png");
+    static final ResourceLocation rl = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/potions.png");
     public PotionFluxTaint() {
         super(MobEffectCategory.HARMFUL, 0x6600AA);
     }

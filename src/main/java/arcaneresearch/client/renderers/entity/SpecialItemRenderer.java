@@ -21,7 +21,7 @@ import java.util.Random;
 @OnlyIn(Dist.CLIENT)
 public class SpecialItemRenderer extends EntityRenderer<ItemEntity> {
     private static final ResourceLocation BLANK =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/blank.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/blank.png");
     private final ItemRenderer itemRenderer;
     private final Random random = new Random(187L);
     public SpecialItemRenderer(EntityRendererProvider.Context context) {

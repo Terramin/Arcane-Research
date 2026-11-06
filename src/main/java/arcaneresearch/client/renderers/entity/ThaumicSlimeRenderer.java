@@ -15,7 +15,7 @@ import arcaneresearch.common.entities.monster.EntityThaumicSlime;
 @OnlyIn(Dist.CLIENT)
 public class ThaumicSlimeRenderer extends MobRenderer<EntityThaumicSlime, SlimeModel<EntityThaumicSlime>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/tslime.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/tslime.png");
     public ThaumicSlimeRenderer(EntityRendererProvider.Context context) {
         super(context, new SlimeModel<>(context.bakeLayer(ModelLayers.SLIME)), 0.25F);
         this.addLayer(new SlimeOuterLayer<>(this, context.getModelSet()));

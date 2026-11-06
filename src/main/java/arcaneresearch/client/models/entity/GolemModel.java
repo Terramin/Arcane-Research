@@ -14,7 +14,7 @@ import arcaneresearch.common.golems.EntityArcaneresearchGolem;
 @OnlyIn(Dist.CLIENT)
 public class GolemModel extends EntityModel<EntityArcaneresearchGolem> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "golem"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "golem"), "main");
     public GolemModel(ModelPart root) {
     }
     public static LayerDefinition createBodyLayer() {

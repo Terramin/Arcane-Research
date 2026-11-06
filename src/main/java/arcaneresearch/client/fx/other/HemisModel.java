@@ -16,7 +16,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public final class HemisModel {
     private static final ResourceLocation MODEL =
-            new ResourceLocation(Arcaneresearch.MODID, "models/obj/hemis.obj");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "models/obj/hemis.obj");
     private static float[] verts;
     private static boolean tried = false;
     private HemisModel() {

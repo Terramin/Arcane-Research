@@ -10,13 +10,13 @@ import net.minecraft.world.level.Level;
 import arcaneresearch.Arcaneresearch;
 public class DamageSourceArcaneresearch {
     public static final ResourceKey<DamageType> TAINT = ResourceKey.create(
-            Registries.DAMAGE_TYPE, new ResourceLocation(Arcaneresearch.MODID, "taint"));
+            Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "taint"));
     public static final ResourceKey<DamageType> TENTACLE = ResourceKey.create(
-            Registries.DAMAGE_TYPE, new ResourceLocation(Arcaneresearch.MODID, "tentacle"));
+            Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "tentacle"));
     public static final ResourceKey<DamageType> SWARM = ResourceKey.create(
-            Registries.DAMAGE_TYPE, new ResourceLocation(Arcaneresearch.MODID, "swarm"));
+            Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "swarm"));
     public static final ResourceKey<DamageType> DISSOLVE = ResourceKey.create(
-            Registries.DAMAGE_TYPE, new ResourceLocation(Arcaneresearch.MODID, "dissolve"));
+            Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "dissolve"));
     public static DamageSource createTaint(Level level) {
         return new DamageSource(
                 level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(TAINT)

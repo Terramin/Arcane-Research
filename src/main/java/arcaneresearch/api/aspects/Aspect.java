@@ -36,11 +36,11 @@ public class Aspect {
     }
     public Aspect(String tag, int color, Aspect[] components) {
         this(tag, color, components,
-                new ResourceLocation(Arcaneresearch.MODID, "textures/aspects/" + tag.toLowerCase() + ".png"), 1);
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/" + tag.toLowerCase() + ".png"), 1);
     }
     public Aspect(String tag, int color, Aspect[] components, int blend) {
         this(tag, color, components,
-                new ResourceLocation(Arcaneresearch.MODID, "textures/aspects/" + tag.toLowerCase() + ".png"), blend);
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/" + tag.toLowerCase() + ".png"), blend);
     }
     public Aspect(String tag, int color, String chatcolor, int blend) {
         this(tag, color, (Aspect[]) null, blend);

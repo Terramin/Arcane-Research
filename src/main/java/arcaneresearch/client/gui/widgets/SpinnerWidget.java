@@ -14,7 +14,7 @@ import arcaneresearch.api.casters.NodeSetting;
 @OnlyIn(Dist.CLIENT)
 public class SpinnerWidget extends AbstractWidget {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private final NodeSetting setting;
     private final OnValueChange onValueChange;
     public SpinnerWidget(int x, int y, int width, NodeSetting setting, OnValueChange onValueChange) {

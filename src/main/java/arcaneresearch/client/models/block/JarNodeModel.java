@@ -15,7 +15,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class JarNodeModel extends EntityModel<Entity> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "jar_node"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "jar_node"), "main");
     private final ModelPart core;
     private final ModelPart brine;
     private final ModelPart lid;

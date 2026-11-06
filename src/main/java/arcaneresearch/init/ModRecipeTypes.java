@@ -15,21 +15,21 @@ public class ModRecipeTypes {
             RECIPE_TYPES.register("arcane_workbench", () -> new RecipeType<IArcaneRecipe>() {
                 @Override
                 public String toString() {
-                    return new ResourceLocation(Arcaneresearch.MODID, "arcane_workbench").toString();
+                    return ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_workbench").toString();
                 }
             });
     public static final RegistryObject<RecipeType<CrucibleRecipeType>> CRUCIBLE =
             RECIPE_TYPES.register("crucible", () -> new RecipeType<CrucibleRecipeType>() {
                 @Override
                 public String toString() {
-                    return new ResourceLocation(Arcaneresearch.MODID, "crucible").toString();
+                    return ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "crucible").toString();
                 }
             });
     public static final RegistryObject<RecipeType<InfusionRecipeType>> INFUSION =
             RECIPE_TYPES.register("infusion", () -> new RecipeType<InfusionRecipeType>() {
                 @Override
                 public String toString() {
-                    return new ResourceLocation(Arcaneresearch.MODID, "infusion").toString();
+                    return ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "infusion").toString();
                 }
             });
 }

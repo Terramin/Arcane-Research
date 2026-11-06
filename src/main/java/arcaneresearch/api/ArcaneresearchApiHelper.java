@@ -118,13 +118,13 @@ public class ArcaneresearchApiHelper {
         }
         try {
             if (name.contains(":")) {
-                return new ResourceLocation(name);
+                return ResourceLocation.parse(name);
             }
             ResourceLocation mapped = OreDictionaryEntries.ORE_TAGS.get(name);
             if (mapped != null) {
                 return mapped;
             }
-            return new ResourceLocation("forge", name);
+            return ResourceLocation.fromNamespaceAndPath("forge", name);
         } catch (Exception e) {
             return null;
         }
@@ -290,7 +290,7 @@ public class ArcaneresearchApiHelper {
     public static ItemStack makeCrystal(Aspect aspect, int stackSize) {
         if (aspect == null) return ItemStack.EMPTY;
         Item crystalItem = ForgeRegistries.ITEMS.getValue(
-                new ResourceLocation("arcaneresearch", "crystal_essence"));
+                ResourceLocation.fromNamespaceAndPath("arcaneresearch", "crystal_essence"));
         if (crystalItem == null) return ItemStack.EMPTY;
         ItemStack stack = new ItemStack(crystalItem, stackSize);
         if (crystalItem instanceof IEssentiaContainerItem container) {

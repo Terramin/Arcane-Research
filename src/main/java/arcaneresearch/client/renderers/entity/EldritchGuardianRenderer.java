@@ -17,7 +17,7 @@ import arcaneresearch.common.world.maze.MazeFeature;
 @OnlyIn(Dist.CLIENT)
 public class EldritchGuardianRenderer extends MobRenderer<EntityEldritchGuardian, EldritchGuardianModel<EntityEldritchGuardian>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/eldritch_guardian.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/eldritch_guardian.png");
     public EldritchGuardianRenderer(EntityRendererProvider.Context context) {
         super(context, new EldritchGuardianModel<>(context.bakeLayer(EldritchGuardianModel.LAYER_LOCATION)), 0.5F);
     }

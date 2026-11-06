@@ -14,7 +14,7 @@ import arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment;
 import javax.annotation.Nullable;
 public class InfusionEnchantmentRecipeSerializer implements RecipeSerializer<InfusionEnchantmentRecipe> {
     public static final InfusionEnchantmentRecipeSerializer INSTANCE = new InfusionEnchantmentRecipeSerializer();
-    public static final ResourceLocation ID = new ResourceLocation(Arcaneresearch.MODID, "infusion_enchantment");
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "infusion_enchantment");
     @Override
     public InfusionEnchantmentRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
         String enchantmentName = GsonHelper.getAsString(json, "enchantment");

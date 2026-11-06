@@ -15,7 +15,7 @@ import arcaneresearch.common.entities.monster.EntityEldritchCrab;
 @OnlyIn(Dist.CLIENT)
 public class EldritchCrabModel extends EntityModel<EntityEldritchCrab> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "eldritch_crab"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "eldritch_crab"), "main");
     private final ModelPart tailHelm;
     private final ModelPart tailBare;
     private final ModelPart rClaw1;

@@ -122,7 +122,7 @@ public class ConfigEntities {
     }
     private static void whitelistChampion(String namespace, String path, int level) {
         try {
-            ResourceLocation id = new ResourceLocation(namespace, path);
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path);
             if (ForgeRegistries.ENTITY_TYPES.containsKey(id)
                     && ForgeRegistries.ENTITY_TYPES.getValue(id) instanceof EntityType) {
                 CommonProxy.championModWhitelist.put(id, level);

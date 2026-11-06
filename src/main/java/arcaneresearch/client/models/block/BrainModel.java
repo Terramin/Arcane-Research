@@ -17,7 +17,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class BrainModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "brain"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "brain"), "main");
     private final ModelPart mainBrain;
     private final ModelPart brainStem;
     private final ModelPart spinalCord;

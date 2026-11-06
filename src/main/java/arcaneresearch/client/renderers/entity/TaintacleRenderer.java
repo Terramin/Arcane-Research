@@ -11,7 +11,7 @@ import arcaneresearch.common.entities.monster.tainted.EntityTaintacle;
 @OnlyIn(Dist.CLIENT)
 public class TaintacleRenderer extends MobRenderer<EntityTaintacle, TaintacleModel<EntityTaintacle>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/taintacle.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/taintacle.png");
     public TaintacleRenderer(EntityRendererProvider.Context context) {
         super(context, new TaintacleModel<>(context.bakeLayer(TaintacleModel.LAYER_LOCATION)), 0.6F);
     }

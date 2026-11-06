@@ -23,11 +23,11 @@ import arcaneresearch.common.entities.projectile.EntityGrapple;
 @OnlyIn(Dist.CLIENT)
 public class GrappleRenderer extends EntityRenderer<EntityGrapple> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/grappler.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/grappler.png");
     private static final ResourceLocation ROPE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/rope.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/rope.png");
     private static final ResourceLocation PARTICLES =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
     private final GrapplerModel model;
     private final arcaneresearch.lib.CoreGLE gle = new arcaneresearch.lib.CoreGLE();
     public GrappleRenderer(EntityRendererProvider.Context context) {

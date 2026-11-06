@@ -15,7 +15,7 @@ import arcaneresearch.common.entities.monster.boss.EntityEldritchGolem;
 @OnlyIn(Dist.CLIENT)
 public class EldritchGolemModel extends EntityModel<EntityEldritchGolem> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "eldritch_golem"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "eldritch_golem"), "main");
     private final ModelPart head;
     private final ModelPart headStump;
     private final ModelPart torso;

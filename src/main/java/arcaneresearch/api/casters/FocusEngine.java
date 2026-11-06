@@ -138,9 +138,9 @@ public class FocusEngine {
         if (parts.length >= 2) {
             String modid = parts[0].toLowerCase();
             String name = parts[1].toLowerCase();
-            return new ResourceLocation(modid, "textures/foci/" + name + ".png");
+            return ResourceLocation.fromNamespaceAndPath(modid, "textures/foci/" + name + ".png");
         }
-        return new ResourceLocation("arcaneresearch", "textures/foci/unknown.png");
+        return ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/unknown.png");
     }
     @Nullable
     public static IFocusElement getElement(String key) {

@@ -15,7 +15,7 @@ import arcaneresearch.common.entities.monster.tainted.EntityTaintSeed;
 @OnlyIn(Dist.CLIENT)
 public class TaintSeedModel<T extends EntityTaintSeed> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "taint_seed"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "taint_seed"), "main");
     private static final int SEGMENTS = 7;
     private final ModelPart tentacle;
     private final ModelPart[] tents = new ModelPart[SEGMENTS];

@@ -17,7 +17,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class ResearchTableModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "research_table_model"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "research_table_model"), "main");
     private final ModelPart inkwell;
     private final ModelPart scrollTube;
     private final ModelPart scrollRibbon;

@@ -13,7 +13,7 @@ import arcaneresearch.common.entities.monster.boss.EntityEldritchWarden;
 @OnlyIn(Dist.CLIENT)
 public class EldritchWardenRenderer extends MobRenderer<EntityEldritchWarden, EldritchGuardianModel<EntityEldritchWarden>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/eldritch_warden.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/eldritch_warden.png");
     public EldritchWardenRenderer(EntityRendererProvider.Context context) {
         super(context, new EldritchGuardianModel<>(context.bakeLayer(EldritchGuardianModel.LAYER_LOCATION)), 0.6F);
     }

@@ -15,7 +15,7 @@ import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
 @OnlyIn(Dist.CLIENT)
 public class CrossbowModel extends EntityModel<EntityTurretCrossbow> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "turret_crossbow"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "turret_crossbow"), "main");
     private final ModelPart crossbow;
     private final ModelPart tripod;
     private final ModelPart leg1;

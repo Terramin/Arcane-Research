@@ -10,7 +10,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class GuiGolemCraftButton extends Button {
     static final ResourceLocation TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_golembuilder.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_golembuilder.png");
     public GuiGolemCraftButton(int x, int y, OnPress onPress) {
         super(x, y, 24, 16, Component.empty(), onPress, Button.DEFAULT_NARRATION);
     }

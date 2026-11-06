@@ -15,7 +15,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class EldritchPortalItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final ResourceLocation PORTAL_TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/eldritch_portal.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/eldritch_portal.png");
     private static final int FRAMES = 16;
     private static final int FULLBRIGHT = 0xF000F0;
     public EldritchPortalItemRenderer() {

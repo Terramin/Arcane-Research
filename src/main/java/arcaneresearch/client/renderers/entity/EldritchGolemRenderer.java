@@ -11,7 +11,7 @@ import arcaneresearch.common.entities.monster.boss.EntityEldritchGolem;
 @OnlyIn(Dist.CLIENT)
 public class EldritchGolemRenderer extends MobRenderer<EntityEldritchGolem, EldritchGolemModel> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/eldritch_golem.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/eldritch_golem.png");
     public EldritchGolemRenderer(EntityRendererProvider.Context context) {
         super(context, new EldritchGolemModel(context.bakeLayer(EldritchGolemModel.LAYER_LOCATION)), 0.7F);
     }

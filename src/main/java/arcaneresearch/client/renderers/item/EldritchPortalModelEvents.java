@@ -19,7 +19,7 @@ public class EldritchPortalModelEvents {
         try {
             Map<ResourceLocation, BakedModel> models = event.getModels();
             ModelResourceLocation key = new ModelResourceLocation(
-                    new ResourceLocation(Arcaneresearch.MODID, "eldritch_portal"), "inventory");
+                    ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "eldritch_portal"), "inventory");
             BakedModel base = models.get(key);
             if (base != null && !base.isCustomRenderer()) {
                 models.put(key, new CustomRendererItemModel(base));

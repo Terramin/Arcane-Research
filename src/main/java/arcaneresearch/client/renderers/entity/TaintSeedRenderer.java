@@ -11,7 +11,7 @@ import arcaneresearch.common.entities.monster.tainted.EntityTaintSeed;
 @OnlyIn(Dist.CLIENT)
 public class TaintSeedRenderer extends MobRenderer<EntityTaintSeed, TaintSeedModel<EntityTaintSeed>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/taintseed.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/taintseed.png");
     public TaintSeedRenderer(EntityRendererProvider.Context context) {
         super(context, new TaintSeedModel<>(context.bakeLayer(TaintSeedModel.LAYER_LOCATION)), 0.4F);
     }

@@ -17,7 +17,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class BellowsModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "bellows"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "bellows"), "main");
     private final ModelPart bottomPlank;
     private final ModelPart middlePlank;
     private final ModelPart topPlank;

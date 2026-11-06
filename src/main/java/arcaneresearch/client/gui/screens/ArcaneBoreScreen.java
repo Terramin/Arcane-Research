@@ -16,7 +16,7 @@ import arcaneresearch.common.menu.ArcaneBoreMenu;
 @OnlyIn(Dist.CLIENT)
 public class ArcaneBoreScreen extends AbstractContainerScreen<ArcaneBoreMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_arcanebore.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_arcanebore.png");
     public ArcaneBoreScreen(ArcaneBoreMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 175;

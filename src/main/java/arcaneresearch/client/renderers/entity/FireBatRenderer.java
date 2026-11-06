@@ -12,7 +12,7 @@ import arcaneresearch.common.entities.monster.EntityFireBat;
 @OnlyIn(Dist.CLIENT)
 public class FireBatRenderer extends MobRenderer<EntityFireBat, FireBatModel> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/firebat.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/firebat.png");
     public FireBatRenderer(EntityRendererProvider.Context context) {
         super(context, new FireBatModel(context.bakeLayer(FireBatModel.LAYER_LOCATION)), 0.25F);
     }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FXVoidStream extends ArcaneresearchParticle {
-    private static final ResourceLocation VOID_TEX = new ResourceLocation("textures/entity/end_portal.png");
+    private static final ResourceLocation VOID_TEX = ResourceLocation.parse("textures/entity/end_portal.png");
     private final double targetX, targetY, targetZ;
     private final double startX, startY, startZ;
     private final int seed;

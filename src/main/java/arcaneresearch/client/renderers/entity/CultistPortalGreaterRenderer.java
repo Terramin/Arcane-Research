@@ -19,7 +19,7 @@ import arcaneresearch.common.entities.monster.boss.EntityCultistPortalGreater;
 @OnlyIn(Dist.CLIENT)
 public class CultistPortalGreaterRenderer extends EntityRenderer<EntityCultistPortalGreater> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/cultist_portal.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/cultist_portal.png");
     public CultistPortalGreaterRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.1F;

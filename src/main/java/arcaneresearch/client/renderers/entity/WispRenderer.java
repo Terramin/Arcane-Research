@@ -18,9 +18,9 @@ import arcaneresearch.common.entities.monster.EntityWisp;
 @OnlyIn(Dist.CLIENT)
 public class WispRenderer extends EntityRenderer<EntityWisp> {
     private static final ResourceLocation PARTICLES_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
     private static final ResourceLocation NODE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/auranodes.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/auranodes.png");
     public WispRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;

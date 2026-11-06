@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @OnlyIn(Dist.CLIENT)
 public class FXBoreStream extends TextureSheetParticle {
     private static final ResourceLocation TEX0 =
-            new ResourceLocation("arcaneresearch", "textures/misc/essentia.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/essentia.png");
     private final Entity target;
     private final double startX;
     private final double startY;

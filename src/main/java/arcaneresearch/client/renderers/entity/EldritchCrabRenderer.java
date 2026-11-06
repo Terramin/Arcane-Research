@@ -11,7 +11,7 @@ import arcaneresearch.common.entities.monster.EntityEldritchCrab;
 @OnlyIn(Dist.CLIENT)
 public class EldritchCrabRenderer extends MobRenderer<EntityEldritchCrab, EldritchCrabModel> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/crab.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/crab.png");
     public EldritchCrabRenderer(EntityRendererProvider.Context context) {
         super(context, new EldritchCrabModel(context.bakeLayer(EldritchCrabModel.LAYER_LOCATION)), 0.5F);
     }

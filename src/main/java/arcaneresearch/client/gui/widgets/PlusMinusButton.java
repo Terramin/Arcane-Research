@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 @OnlyIn(Dist.CLIENT)
 public class PlusMinusButton extends AbstractWidget {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private final boolean minus;
     private final Consumer<PlusMinusButton> onPress;
     public PlusMinusButton(int x, int y, boolean minus, Consumer<PlusMinusButton> onPress) {

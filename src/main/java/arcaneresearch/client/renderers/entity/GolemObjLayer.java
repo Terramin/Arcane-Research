@@ -27,7 +27,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class GolemObjLayer extends RenderLayer<EntityArcaneresearchGolem, arcaneresearch.client.models.entity.GolemModel> {
     private static final ResourceLocation BASE_MODEL =
-            new ResourceLocation(Arcaneresearch.MODID, "models/obj/golem_base.obj");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "models/obj/golem_base.obj");
     private final Map<Integer, EnumMap<PartModel.EnumAttachPoint, List<PartModel>>> partsCache = new HashMap<>();
     private final Map<Integer, Long> partsCacheProps = new HashMap<>();
     private boolean ghost = false;

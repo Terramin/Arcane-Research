@@ -13,7 +13,7 @@ import arcaneresearch.common.entities.monster.EntityGiantBrainyZombie;
 @OnlyIn(Dist.CLIENT)
 public class BrainyZombieRenderer extends HumanoidMobRenderer<EntityBrainyZombie, ZombieModel<EntityBrainyZombie>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/bzombie.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/bzombie.png");
     public BrainyZombieRenderer(EntityRendererProvider.Context context) {
         super(context, new ZombieModel<>(context.bakeLayer(ModelLayers.ZOMBIE)), 0.5F);
     }

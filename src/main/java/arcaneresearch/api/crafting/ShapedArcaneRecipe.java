@@ -42,7 +42,7 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         this.height = parsed.height;
         this.ingredients = parsed.ingredients;
         this.group = group != null ? group.toString() : "";
-        this.id = group != null ? group : new ResourceLocation("arcaneresearch", "legacy_arcane_shaped");
+        this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shaped");
     }
     public ShapedArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, ItemStack result,
                               int width, int height, NonNullList<Ingredient> ingredients) {
@@ -54,7 +54,7 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         this.height = height;
         this.ingredients = ingredients;
         this.group = group != null ? group.toString() : "";
-        this.id = group != null ? group : new ResourceLocation("arcaneresearch", "legacy_arcane_shaped");
+        this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shaped");
     }
     private static final class ParsedShaped {
         final int width;

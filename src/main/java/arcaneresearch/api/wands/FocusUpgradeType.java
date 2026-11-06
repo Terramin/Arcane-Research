@@ -43,39 +43,39 @@ public class FocusUpgradeType {
         return this.id;
     }
     public static FocusUpgradeType potency = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/potency.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/potency.png"),
             "focus.upgrade.potency.name", "focus.upgrade.potency.text",
             new AspectList().add(Aspect.AVERSION, 1));
     public static FocusUpgradeType frugal = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/frugal.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/frugal.png"),
             "focus.upgrade.frugal.name", "focus.upgrade.frugal.text",
             new AspectList().add(Aspect.DESIRE, 1));
     public static FocusUpgradeType treasure = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/treasure.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/treasure.png"),
             "focus.upgrade.treasure.name", "focus.upgrade.treasure.text",
             new AspectList().add(Aspect.DESIRE, 1));
     public static FocusUpgradeType enlarge = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/enlarge.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/enlarge.png"),
             "focus.upgrade.enlarge.name", "focus.upgrade.enlarge.text",
             new AspectList().add(Aspect.MOTION, 1));
     public static FocusUpgradeType alchemistsfire = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/alchemistsfire.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/alchemistsfire.png"),
             "focus.upgrade.alchemistsfire.name", "focus.upgrade.alchemistsfire.text",
             new AspectList().add(Aspect.ENERGY, 1).add(Aspect.WATER, 1));
     public static FocusUpgradeType alchemistsfrost = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/alchemistsfrost.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/alchemistsfrost.png"),
             "focus.upgrade.alchemistsfrost.name", "focus.upgrade.alchemistsfrost.text",
             new AspectList().add(Aspect.COLD, 1).add(Aspect.TRAP, 1));
     public static FocusUpgradeType architect = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/architect.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/architect.png"),
             "focus.upgrade.architect.name", "focus.upgrade.architect.text",
             new AspectList().add(Aspect.CRAFT, 1));
     public static FocusUpgradeType extend = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/extend.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/extend.png"),
             "focus.upgrade.extend.name", "focus.upgrade.extend.text",
             new AspectList().add(Aspect.EXCHANGE, 1));
     public static FocusUpgradeType silktouch = new FocusUpgradeType(
-            new ResourceLocation("arcaneresearch", "foci/silktouch.png"),
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/silktouch.png"),
             "focus.upgrade.silktouch.name", "focus.upgrade.silktouch.text",
             new AspectList().add(Aspect.DESIRE, 1));
 }

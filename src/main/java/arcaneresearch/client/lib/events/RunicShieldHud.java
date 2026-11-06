@@ -18,8 +18,7 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RunicShieldHud {
-    private static final ResourceLocation SHEET = new ResourceLocation("arcaneresearch",
-            "textures/misc/particles_1710.png");
+    private static final ResourceLocation SHEET = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles_1710.png");
     private static final Map<Integer, Integer> charge = new HashMap<>();
     private static final Map<Integer, Integer> total = new HashMap<>();
     public static void applySync(int playerId, int current, int max) {

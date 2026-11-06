@@ -1,5 +1,6 @@
 package arcaneresearch.common.blocks.misc;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -40,7 +41,7 @@ public class BlockHole extends BaseEntityBlock {
             tileData = existingTile.saveWithoutMetadata();
         }
         Block holeBlock = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getValue(
-                new net.minecraft.resources.ResourceLocation("arcaneresearch", "hole"));
+                ResourceLocation.fromNamespaceAndPath("arcaneresearch", "hole"));
         if (holeBlock == null) return false;
         level.setBlock(pos, holeBlock.defaultBlockState(), 3);
         if (level.getBlockEntity(pos) instanceof TileHole holeTile) {

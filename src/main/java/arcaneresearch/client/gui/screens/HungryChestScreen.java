@@ -12,7 +12,7 @@ import arcaneresearch.common.menu.HungryChestMenu;
 @OnlyIn(Dist.CLIENT)
 public class HungryChestScreen extends AbstractContainerScreen<HungryChestMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
+            ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/container/generic_54.png");
     private static final int ROWS = 3;
     public HungryChestScreen(HungryChestMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

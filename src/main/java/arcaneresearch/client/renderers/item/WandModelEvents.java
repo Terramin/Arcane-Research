@@ -19,8 +19,8 @@ import arcaneresearch.common.items.wands.WandItems;
 public class WandModelEvents {
     @SubscribeEvent
     public static void registerWandPartModels(ModelEvent.RegisterAdditional event) {
-        event.register(new ModelResourceLocation(new ResourceLocation("arcaneresearch", "wand/parts_stitch"), "inventory"));
-        event.register(new ModelResourceLocation(new ResourceLocation("arcaneresearch", "staff"), "inventory"));
+        event.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "wand/parts_stitch"), "inventory"));
+        event.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "staff"), "inventory"));
     }
     @SubscribeEvent
     public static void bakeWandModels(ModelEvent.ModifyBakingResult event) {
@@ -35,9 +35,8 @@ public class WandModelEvents {
     }
     private static void registerWandMesh(java.util.Map<ResourceLocation, BakedModel> models,
                                          String itemName, boolean staff) {
-        ModelResourceLocation key = new ModelResourceLocation(new ResourceLocation("arcaneresearch", itemName), "inventory");
-        ResourceLocation icon = new ResourceLocation("arcaneresearch",
-                staff ? "item/wand/rod_greatwood_mat" : "item/wand/rod_wood_mat");
+        ModelResourceLocation key = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", itemName), "inventory");
+        ResourceLocation icon = ResourceLocation.fromNamespaceAndPath("arcaneresearch", staff ? "item/wand/rod_greatwood_mat" : "item/wand/rod_wood_mat");
         // 26.3-паритет: display-трансформы живут в JSON (models/item/wand.json
         // / staff.json — дословный порт display-блока 26.3). Забираем их у
         // запечённого плейсхолдера ДО подмены на мешь-модель; WandTransforms

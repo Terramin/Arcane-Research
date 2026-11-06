@@ -17,49 +17,49 @@ public class WandEntities {
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(8)
                             .updateInterval(5)
-                            .build(new ResourceLocation(Arcaneresearch.MODID, "wand_ember").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand_ember").toString()));
     public static final RegistryObject<EntityType<EntityExplosiveOrb>> EXPLOSIVE_ORB =
             ENTITY_TYPES.register("wand_explosive_orb", () ->
                     EntityType.Builder.<EntityExplosiveOrb>of(EntityExplosiveOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(8)
                             .updateInterval(5)
-                            .build(new ResourceLocation(Arcaneresearch.MODID, "wand_explosive_orb").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand_explosive_orb").toString()));
     public static final RegistryObject<EntityType<EntityFrostShard>> FROST_SHARD =
             ENTITY_TYPES.register("wand_frost_shard", () ->
                     EntityType.Builder.<EntityFrostShard>of(EntityFrostShard::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(8)
                             .updateInterval(5)
-                            .build(new ResourceLocation(Arcaneresearch.MODID, "wand_frost_shard").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand_frost_shard").toString()));
     public static final RegistryObject<EntityType<EntityShockOrb>> SHOCK_ORB =
             ENTITY_TYPES.register("wand_shock_orb", () ->
                     EntityType.Builder.<EntityShockOrb>of(EntityShockOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(8)
                             .updateInterval(5)
-                            .build(new ResourceLocation(Arcaneresearch.MODID, "wand_shock_orb").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand_shock_orb").toString()));
     public static final RegistryObject<EntityType<EntityPrimalOrb>> PRIMAL_ORB =
             ENTITY_TYPES.register("wand_primal_orb", () ->
                     EntityType.Builder.<EntityPrimalOrb>of(EntityPrimalOrb::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(8)
                             .updateInterval(5)
-                            .build(new ResourceLocation(Arcaneresearch.MODID, "wand_primal_orb").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand_primal_orb").toString()));
     public static final RegistryObject<EntityType<EntityPechBlast>> PECH_BLAST =
             ENTITY_TYPES.register("wand_pech_blast", () ->
                     EntityType.Builder.<EntityPechBlast>of(EntityPechBlast::new, MobCategory.MISC)
                             .sized(0.25F, 0.25F)
                             .clientTrackingRange(8)
                             .updateInterval(5)
-                            .build(new ResourceLocation(Arcaneresearch.MODID, "wand_pech_blast").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand_pech_blast").toString()));
     public static final RegistryObject<EntityType<EntityHellbat>> HELLBAT =
             ENTITY_TYPES.register("wand_hellbat", () ->
                     EntityType.Builder.<EntityHellbat>of(EntityHellbat::new, MobCategory.MONSTER)
                             .sized(0.5F, 0.9F)
                             .clientTrackingRange(8)
                             .updateInterval(5)
-                            .build(new ResourceLocation(Arcaneresearch.MODID, "wand_hellbat").toString()));
+                            .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand_hellbat").toString()));
     private WandEntities() {
     }
 }

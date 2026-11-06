@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @OnlyIn(Dist.CLIENT)
 public class RiftBlastRenderer extends EntityRenderer<EntityRiftBlast> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation("textures/entity/end_portal.png");
+            ResourceLocation.parse("textures/entity/end_portal.png");
     private static final int TRAIL_LENGTH = 9;
     private static final Map<Integer, Deque<Vec3>> TRAILS = new ConcurrentHashMap<>();
     private final arcaneresearch.lib.CoreGLE gle =

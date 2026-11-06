@@ -30,9 +30,9 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class GolemBuilderScreen extends AbstractContainerScreen<GolemBuilderMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_golembuilder.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_golembuilder.png");
     private static final ResourceLocation MAT_ICON =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/item/golem.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/item/golem.png");
     static int headIndex = 0;
     static int matIndex = 0;
     static int armIndex = 0;

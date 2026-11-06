@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.stream.Stream;
 public class CrystalAspectIngredient extends AbstractIngredient {
     public static final ResourceLocation TYPE_ID =
-            new ResourceLocation(Arcaneresearch.MODID, "crystal");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "crystal");
     private final Aspect aspect;
     public CrystalAspectIngredient(Aspect aspect) {
         super(Stream.of(new Ingredient.ItemValue(displayStack(aspect))));

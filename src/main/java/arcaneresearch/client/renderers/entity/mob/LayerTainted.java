@@ -21,7 +21,7 @@ import arcaneresearch.common.entities.monster.mods.ChampionModifier;
 @OnlyIn(Dist.CLIENT)
 public class LayerTainted<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
     private static final ResourceLocation TAINT_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/taint_fibres.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/taint_fibres.png");
     public LayerTainted(RenderLayerParent<T, M> parent) {
         super(parent);
     }

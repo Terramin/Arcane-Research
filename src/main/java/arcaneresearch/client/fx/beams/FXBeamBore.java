@@ -18,12 +18,12 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 @OnlyIn(Dist.CLIENT)
 public class FXBeamBore extends TextureSheetParticle {
-    private static final ResourceLocation BEAM_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/beam.png");
-    private static final ResourceLocation BEAM1_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/beam1.png");
-    private static final ResourceLocation BEAM2_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/beam2.png");
-    private static final ResourceLocation BEAM3_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/beam3.png");
-    private static final ResourceLocation PARTICLE_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/particles.png");
-    private static final ResourceLocation NODE_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/auranodes.png");
+    private static final ResourceLocation BEAM_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam.png");
+    private static final ResourceLocation BEAM1_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam1.png");
+    private static final ResourceLocation BEAM2_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam2.png");
+    private static final ResourceLocation BEAM3_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam3.png");
+    private static final ResourceLocation PARTICLE_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
+    private static final ResourceLocation NODE_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/auranodes.png");
     public int impact = 0;
     protected double targetX;
     protected double targetY;

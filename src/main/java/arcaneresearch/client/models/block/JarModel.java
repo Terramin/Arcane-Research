@@ -14,7 +14,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class JarModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "jar_fittings"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "jar_fittings"), "main");
     private final ModelPart lid;
     private final ModelPart lidExtension;
     private final ModelPart brine;

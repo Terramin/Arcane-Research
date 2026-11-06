@@ -13,7 +13,7 @@ import arcaneresearch.common.entities.monster.EntitySpellBat;
 @OnlyIn(Dist.CLIENT)
 public class SpellBatRenderer extends MobRenderer<EntitySpellBat, SpellBatModel> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/spellbat.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/spellbat.png");
     public SpellBatRenderer(EntityRendererProvider.Context context) {
         super(context, new SpellBatModel(context.bakeLayer(SpellBatModel.LAYER_LOCATION)), 0.25F);
     }

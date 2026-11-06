@@ -18,7 +18,7 @@ import arcaneresearch.common.entities.projectile.EntityGolemDart;
 @OnlyIn(Dist.CLIENT)
 public class GolemDartRenderer extends EntityRenderer<EntityGolemDart> {
     private static final ResourceLocation ARROW_TEXTURE =
-            new ResourceLocation("textures/entity/projectiles/arrow.png");
+            ResourceLocation.parse("textures/entity/projectiles/arrow.png");
     public GolemDartRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;

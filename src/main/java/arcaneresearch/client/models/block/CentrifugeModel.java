@@ -17,7 +17,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class CentrifugeModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "centrifuge"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "centrifuge"), "main");
     private final ModelPart top;
     private final ModelPart bottom;
     private final ModelPart spinnyBit;

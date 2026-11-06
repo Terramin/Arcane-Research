@@ -17,7 +17,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class TubeValveModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "tube_valve"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "tube_valve"), "main");
     private final ModelPart valveRod;
     private final ModelPart valveRing;
     public TubeValveModel(ModelPart root) {

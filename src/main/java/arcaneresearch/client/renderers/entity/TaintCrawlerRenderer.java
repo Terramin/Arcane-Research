@@ -12,7 +12,7 @@ import arcaneresearch.common.entities.monster.tainted.EntityTaintCrawler;
 @OnlyIn(Dist.CLIENT)
 public class TaintCrawlerRenderer extends MobRenderer<EntityTaintCrawler, SilverfishModel<EntityTaintCrawler>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/crawler.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/crawler.png");
     public TaintCrawlerRenderer(EntityRendererProvider.Context context) {
         super(context, new SilverfishModel<>(context.bakeLayer(ModelLayers.SILVERFISH)), 0.2F);
     }

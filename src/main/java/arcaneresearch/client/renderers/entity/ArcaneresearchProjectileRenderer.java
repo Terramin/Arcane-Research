@@ -86,9 +86,9 @@ public class ArcaneresearchProjectileRenderer<T extends Entity> extends EntityRe
     }
     public static class Factory {
         private static final ResourceLocation ORB_TEXTURE =
-                new ResourceLocation(Arcaneresearch.MODID, "textures/entity/orb.png");
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/orb.png");
         private static final ResourceLocation DART_TEXTURE =
-                new ResourceLocation(Arcaneresearch.MODID, "textures/entity/dart.png");
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/dart.png");
         public static <T extends Entity> ArcaneresearchProjectileRenderer<T> orb(
                 EntityRendererProvider.Context context, int color) {
             return new ArcaneresearchProjectileRenderer<>(context, ORB_TEXTURE, 0.25F, color, true);

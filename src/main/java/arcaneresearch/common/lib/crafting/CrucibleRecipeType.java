@@ -103,7 +103,7 @@ public class CrucibleRecipeType implements Recipe<Container>, IArcaneresearchRec
     }
     public static class Serializer implements RecipeSerializer<CrucibleRecipeType> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation ID = new ResourceLocation(Arcaneresearch.MODID, "crucible");
+        public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "crucible");
         @Override
         public CrucibleRecipeType fromJson(ResourceLocation recipeId, JsonObject json) {
             String group = GsonHelper.getAsString(json, "group", "");

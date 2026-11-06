@@ -14,7 +14,7 @@ import arcaneresearch.common.entities.monster.EntityMindSpider;
 @OnlyIn(Dist.CLIENT)
 public class MindSpiderRenderer extends MobRenderer<EntityMindSpider, SpiderModel<EntityMindSpider>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation("minecraft", "textures/entity/spider/spider.png");
+            ResourceLocation.fromNamespaceAndPath("minecraft", "textures/entity/spider/spider.png");
     public MindSpiderRenderer(EntityRendererProvider.Context context) {
         super(context, new SpiderModel<>(context.bakeLayer(ModelLayers.SPIDER)), 0.5F);
         this.addLayer(new SpiderEyesLayer<>(this));

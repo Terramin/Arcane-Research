@@ -14,7 +14,7 @@ import arcaneresearch.common.entities.monster.boss.EntityCultistLeader;
 @OnlyIn(Dist.CLIENT)
 public class CultistLeaderRenderer extends HumanoidMobRenderer<EntityCultistLeader, HumanoidModel<EntityCultistLeader>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/cultist.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/cultist.png");
     public CultistLeaderRenderer(EntityRendererProvider.Context context) {
         super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));

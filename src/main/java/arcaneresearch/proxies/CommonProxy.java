@@ -150,12 +150,12 @@ public class CommonProxy implements IProxy {
                             String[] t = s.split(":");
                             if (t != null && t.length == 3) {
                                 try {
-                                    BiomeHandler.addDimBlacklist(new ResourceLocation(t[0], t[1]), Integer.parseInt(t[2]));
+                                    BiomeHandler.addDimBlacklist(ResourceLocation.fromNamespaceAndPath(t[0], t[1]), Integer.parseInt(t[2]));
                                 } catch (Exception ignored) {
                                 }
                             } else if (t != null && t.length == 2) {
                                 try {
-                                    BiomeHandler.addDimBlacklist(new ResourceLocation(t[0]), Integer.parseInt(t[1]));
+                                    BiomeHandler.addDimBlacklist(ResourceLocation.parse(t[0]), Integer.parseInt(t[1]));
                                 } catch (Exception ignored) {
                                 }
                             }
@@ -166,12 +166,12 @@ public class CommonProxy implements IProxy {
                             String[] t = s.split(":");
                             if (t != null && t.length == 3) {
                                 try {
-                                    BiomeHandler.addBiomeBlacklist(new ResourceLocation(t[0], t[1]), Integer.parseInt(t[2]));
+                                    BiomeHandler.addBiomeBlacklist(ResourceLocation.fromNamespaceAndPath(t[0], t[1]), Integer.parseInt(t[2]));
                                 } catch (Exception ignored) {
                                 }
                             } else if (t != null && t.length == 2) {
                                 try {
-                                    BiomeHandler.addBiomeBlacklist(new ResourceLocation(t[0]), Integer.parseInt(t[1]));
+                                    BiomeHandler.addBiomeBlacklist(ResourceLocation.parse(t[0]), Integer.parseInt(t[1]));
                                 } catch (Exception ignored) {
                                 }
                             }
@@ -182,14 +182,14 @@ public class CommonProxy implements IProxy {
                             try {
                                 String[] t = s.split(":");
                                 if (t != null && t.length == 3) {
-                                    ResourceLocation id = new ResourceLocation(t[0], t[1]);
+                                    ResourceLocation id = ResourceLocation.fromNamespaceAndPath(t[0], t[1]);
                                     int lvl = Integer.parseInt(t[2]);
                                     if (ForgeRegistries.ENTITY_TYPES.containsKey(id)
                                             && ForgeRegistries.ENTITY_TYPES.getValue(id) instanceof EntityType) {
                                         championModWhitelist.put(id, lvl);
                                     }
                                 } else if (t != null && t.length == 2) {
-                                    ResourceLocation id = new ResourceLocation(t[0]);
+                                    ResourceLocation id = ResourceLocation.parse(t[0]);
                                     int lvl = Integer.parseInt(t[1]);
                                     if (ForgeRegistries.ENTITY_TYPES.containsKey(id)) {
                                         championModWhitelist.put(id, lvl);

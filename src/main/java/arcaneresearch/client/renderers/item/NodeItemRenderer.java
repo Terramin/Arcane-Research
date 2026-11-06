@@ -23,9 +23,9 @@ import arcaneresearch.common.lib.aura.NodeType;
 @OnlyIn(Dist.CLIENT)
 public class NodeItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final ResourceLocation JAR_TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/models/jar.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/jar.png");
     private static final ResourceLocation NODETEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/nodes.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/nodes.png");
     private static final int FRAMES = 32;
     private static final int FULLBRIGHT = 0xF000F0;
     private final boolean jar;

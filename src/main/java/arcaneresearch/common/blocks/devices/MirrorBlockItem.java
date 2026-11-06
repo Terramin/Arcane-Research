@@ -43,7 +43,7 @@ public class MirrorBlockItem extends BlockItem {
             if (stack.getTag().contains("linkDim")) {
                 try {
                     dim = ResourceKey.create(Registries.DIMENSION,
-                            new ResourceLocation(stack.getTag().getString("linkDim")));
+                            ResourceLocation.parse(stack.getTag().getString("linkDim")));
                 } catch (Exception ignored) {
                 }
             }

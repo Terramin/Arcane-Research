@@ -16,7 +16,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class HungryChestItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/block/chesthungry.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/chesthungry.png");
     private final ModelPart lid;
     private final ModelPart bottom;
     private final ModelPart lock;

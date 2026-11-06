@@ -80,13 +80,13 @@ class MaterialLibrary extends Dictionary<String, Material> {
                 } else if (keyword.equalsIgnoreCase("map_Ka")) {
                     currentMaterial.AmbientTextureMap = data;
                     try {
-                        ResourceLocation resourceLocation = new ResourceLocation(data);
+                        ResourceLocation resourceLocation = ResourceLocation.parse(data);
                     } catch (Exception ignored) {
                     }
                 } else if (keyword.equalsIgnoreCase("map_Kd")) {
                     currentMaterial.DiffuseTextureMap = data;
                     try {
-                        ResourceLocation resourceLocation2 = new ResourceLocation(data);
+                        ResourceLocation resourceLocation2 = ResourceLocation.parse(data);
                     } catch (Exception ignored) {
                     }
                 } else if (keyword.equalsIgnoreCase("map_Ks")) {

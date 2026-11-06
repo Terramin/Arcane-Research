@@ -122,7 +122,7 @@ public class InfusionRecipeType implements Recipe<Container>, IArcaneresearchRec
     }
     public static class Serializer implements RecipeSerializer<InfusionRecipeType> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation ID = new ResourceLocation(Arcaneresearch.MODID, "infusion");
+        public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "infusion");
         @Override
         public InfusionRecipeType fromJson(ResourceLocation recipeId, JsonObject json) {
             String group = GsonHelper.getAsString(json, "group", "");

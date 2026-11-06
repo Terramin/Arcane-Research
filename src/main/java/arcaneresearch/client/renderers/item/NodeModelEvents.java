@@ -19,7 +19,7 @@ public class NodeModelEvents {
             Map<ResourceLocation, BakedModel> models = event.getModels();
             for (String path : new String[]{"jar_node", "aura_node"}) {
                 ModelResourceLocation key = new ModelResourceLocation(
-                        new ResourceLocation(Arcaneresearch.MODID, path), "inventory");
+                        ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, path), "inventory");
                 BakedModel base = models.get(key);
                 if (base != null && !base.isCustomRenderer()) {
                     models.put(key, new CustomRendererItemModel(base));

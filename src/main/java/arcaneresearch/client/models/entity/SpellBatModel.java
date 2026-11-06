@@ -15,7 +15,7 @@ import arcaneresearch.common.entities.monster.EntitySpellBat;
 @OnlyIn(Dist.CLIENT)
 public class SpellBatModel extends EntityModel<EntitySpellBat> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "spell_bat"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "spell_bat"), "main");
     private final ModelPart batHead;
     private final ModelPart ear1;
     private final ModelPart ear2;

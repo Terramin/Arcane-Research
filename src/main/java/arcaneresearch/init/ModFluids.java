@@ -32,7 +32,7 @@ public class ModFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
                     .sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH)) {
                 private static final ResourceLocation STILL =
-                        new ResourceLocation(Arcaneresearch.MODID, "block/animatedglow");
+                        ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "block/animatedglow");
                 @Override
                 @OnlyIn(Dist.CLIENT)
                 public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
@@ -77,9 +77,9 @@ public class ModFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
                     .sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH)) {
                 private static final ResourceLocation STILL =
-                        new ResourceLocation("minecraft", "block/water_still");
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "block/water_still");
                 private static final ResourceLocation FLOWING =
-                        new ResourceLocation("minecraft", "block/water_flow");
+                        ResourceLocation.fromNamespaceAndPath("minecraft", "block/water_flow");
                 @Override
                 @OnlyIn(Dist.CLIENT)
                 public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
@@ -123,7 +123,7 @@ public class ModFluids {
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
                     .sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH)) {
                 private static final ResourceLocation STILL =
-                        new ResourceLocation(Arcaneresearch.MODID, "block/fluxgas");
+                        ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "block/fluxgas");
                 @Override
                 @OnlyIn(Dist.CLIENT)
                 public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {

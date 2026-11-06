@@ -12,7 +12,7 @@ import java.util.function.BooleanSupplier;
 @OnlyIn(Dist.CLIENT)
 public class GuiGolemPropButton extends Button {
     static final ResourceLocation TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private final BooleanSupplier value;
     public GuiGolemPropButton(int x, int y, int width, int height, Component label, BooleanSupplier value, OnPress onPress) {
         super(x, y, width, height, label, onPress, Button.DEFAULT_NARRATION);

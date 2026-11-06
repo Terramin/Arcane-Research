@@ -23,9 +23,9 @@ import arcaneresearch.common.items.tools.ItemPrimalArrow;
 @OnlyIn(Dist.CLIENT)
 public class PrimalArrowRenderer extends EntityRenderer<EntityPrimalArrow> {
     private static final ResourceLocation ARROW_TEXTURE =
-            new ResourceLocation("textures/entity/projectiles/arrow.png");
+            ResourceLocation.parse("textures/entity/projectiles/arrow.png");
     private static final ResourceLocation WISP_TEXTURE =
-            new ResourceLocation("arcaneresearch", "textures/misc/wispy.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/wispy.png");
     public PrimalArrowRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;

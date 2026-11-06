@@ -1,5 +1,6 @@
 package arcaneresearch.api.research;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +36,7 @@ public class ScanOreDictionary implements IScanThing {
             var tags = ForgeRegistries.ITEMS.tags();
             for (String entry : entries) {
                 var tagKey = net.minecraft.tags.TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(),
-                    new net.minecraft.resources.ResourceLocation(translateEntry(entry)));
+                        ResourceLocation.tryParse(translateEntry(entry)));
                 if (stack.is(tagKey)) {
                     cache.put(hid, true);
                     return true;

@@ -35,17 +35,17 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipulatorMenu> {
     private static final ResourceLocation TEX_MAIN =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_wandtable.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_wandtable.png");
     private static final ResourceLocation TEX_BG =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_wandtable2.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_wandtable2.png");
     private static final ResourceLocation TEX_SIDE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_wandtable3.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_wandtable3.png");
     private static final ResourceLocation TEX_BASE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private static final ResourceLocation TEX_MEDIUM =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/foci/_medium.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/foci/_medium.png");
     private static final ResourceLocation TEX_EFFECT =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/foci/_effect.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/foci/_effect.png");
     private final List<SpinnerWidget> settingSpinners = new ArrayList<>();
     private final List<HoverButton> crystalButtons = new ArrayList<>();
     private final List<String> shownParts = new ArrayList<>();
@@ -141,13 +141,13 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         addRenderableWidget(confirmButton);
         infoComplexityButton = new HoverButton(leftPos + 241, topPos + 39, 32, 16,
                 Component.translatable("wandtable.text5").getString(), null,
-                new ResourceLocation(Arcaneresearch.MODID, "textures/gui/complex.png"));
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/complex.png"));
         infoXpButton = new HoverButton(leftPos + 241, topPos + 53, 32, 16,
                 Component.translatable("wandtable.text2").getString(), null,
-                new ResourceLocation(Arcaneresearch.MODID, "textures/gui/costxp.png"));
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/costxp.png"));
         infoVisButton = new HoverButton(leftPos + 241, topPos + 67, 32, 16,
                 Component.translatable("wandtable.text1").getString(), null,
-                new ResourceLocation(Arcaneresearch.MODID, "textures/gui/costvis.png"));
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/costvis.png"));
         addRenderableWidget(infoComplexityButton);
         addRenderableWidget(infoXpButton);
         addRenderableWidget(infoVisButton);

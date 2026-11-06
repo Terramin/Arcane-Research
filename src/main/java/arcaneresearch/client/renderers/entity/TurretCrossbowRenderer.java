@@ -12,7 +12,7 @@ import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
 @OnlyIn(Dist.CLIENT)
 public class TurretCrossbowRenderer extends MobRenderer<EntityTurretCrossbow, CrossbowModel> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/crossbow.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/crossbow.png");
     public TurretCrossbowRenderer(EntityRendererProvider.Context context) {
         super(context, new CrossbowModel(context.bakeLayer(CrossbowModel.LAYER_LOCATION)), 0.5F);
     }

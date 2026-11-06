@@ -15,7 +15,7 @@ import arcaneresearch.init.ModSounds;
 @OnlyIn(Dist.CLIENT)
 public class PechScreen extends AbstractContainerScreen<PechMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_pech.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_pech.png");
     private static final int TRADE_X = 67;
     private static final int TRADE_Y = 24;
     private static final int TRADE_SIZE = 25;

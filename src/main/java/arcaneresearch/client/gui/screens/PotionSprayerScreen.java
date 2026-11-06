@@ -18,7 +18,7 @@ import java.util.Objects;
 @OnlyIn(Dist.CLIENT)
 public class PotionSprayerScreen extends AbstractContainerScreen<PotionSprayerMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_potion_sprayer.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_potion_sprayer.png");
     public PotionSprayerScreen(PotionSprayerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 192;

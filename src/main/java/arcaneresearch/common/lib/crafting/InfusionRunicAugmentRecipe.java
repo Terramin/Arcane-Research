@@ -17,7 +17,7 @@ import arcaneresearch.init.ModRecipeSerializers;
 import java.util.List;
 public class InfusionRunicAugmentRecipe extends InfusionRecipeType {
     public static final ResourceLocation ID =
-            new ResourceLocation(Arcaneresearch.MODID, "runic_augment");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "runic_augment");
     public InfusionRunicAugmentRecipe() {
         super(ID, "", Ingredient.EMPTY, baseComponents(), new AspectList(),
                 ItemStack.EMPTY, "RUNICSHIELDING", 5);

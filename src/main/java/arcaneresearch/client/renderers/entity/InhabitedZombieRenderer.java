@@ -8,7 +8,7 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class InhabitedZombieRenderer extends ZombieRenderer {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/czombie.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/czombie.png");
     public InhabitedZombieRenderer(EntityRendererProvider.Context context) {
         super(context);
     }

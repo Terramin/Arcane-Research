@@ -120,7 +120,7 @@ public class WandMeshModel implements BakedModel {
     private static TextureAtlasSprite spriteOrNull(String name) {
         try {
             return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-                    .apply(new ResourceLocation(name));
+                    .apply(ResourceLocation.parse(name));
         } catch (Exception e) {
             return null;
         }
@@ -128,9 +128,9 @@ public class WandMeshModel implements BakedModel {
     public void setup(String variant, boolean staff) {
         this.variant = variant;
         if (staff) {
-            this.model = new ResourceLocation("arcaneresearch", "models/obj/staff.obj");
+            this.model = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "models/obj/staff.obj");
         } else {
-            this.model = new ResourceLocation("arcaneresearch", "models/obj/wand.obj");
+            this.model = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "models/obj/wand.obj");
         }
         this.faceQuads = new ArrayList<>();
         this.generalQuads = new ArrayList<>();

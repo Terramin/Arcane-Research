@@ -37,9 +37,9 @@ public class CrystalModel implements BakedModel {
     public static final ModelProperty<Boolean> EAST = new ModelProperty<>();
     public static final ModelProperty<Boolean> WEST = new ModelProperty<>();
     public static final ResourceLocation OBJ_LOCATION =
-            new ResourceLocation(Arcaneresearch.MODID, "models/obj/crystal.obj");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "models/obj/crystal.obj");
     public static final ResourceLocation TEXTURE_LOCATION =
-            new ResourceLocation(Arcaneresearch.MODID, "block/crystal");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "block/crystal");
     ResourceLocation model;
     MeshModel sourceMesh;
     TextureAtlasSprite tex;

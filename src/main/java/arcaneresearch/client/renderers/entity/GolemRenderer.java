@@ -18,7 +18,7 @@ import arcaneresearch.common.lib.utils.EntityUtils;
 @OnlyIn(Dist.CLIENT)
 public class GolemRenderer extends MobRenderer<EntityArcaneresearchGolem, GolemModel> {
     private static final ResourceLocation DEFAULT_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/golems/mat_wood.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/golems/mat_wood.png");
     private final GolemObjLayer objLayer;
     public GolemRenderer(EntityRendererProvider.Context context) {
         super(context, new GolemModel(context.bakeLayer(GolemModel.LAYER_LOCATION)), 0.3F);

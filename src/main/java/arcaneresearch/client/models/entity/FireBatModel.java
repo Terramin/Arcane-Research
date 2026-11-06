@@ -15,7 +15,7 @@ import arcaneresearch.common.entities.monster.EntityFireBat;
 @OnlyIn(Dist.CLIENT)
 public class FireBatModel extends EntityModel<EntityFireBat> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "fire_bat"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "fire_bat"), "main");
     private final ModelPart batHead;
     private final ModelPart ear1;
     private final ModelPart ear2;

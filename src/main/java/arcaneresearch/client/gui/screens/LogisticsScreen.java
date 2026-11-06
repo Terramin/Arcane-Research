@@ -27,9 +27,9 @@ import arcaneresearch.init.ModSounds;
 @OnlyIn(Dist.CLIENT)
 public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_logistics.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_logistics.png");
     private static final ResourceLocation GUI_BASE_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private int selectedSlot = -1;
     private ItemStack selectedStack = ItemStack.EMPTY;
     private int lastScrollPos = 0;

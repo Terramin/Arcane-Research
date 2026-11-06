@@ -14,7 +14,7 @@ import arcaneresearch.common.entities.construct.EntityArcaneBore;
 @OnlyIn(Dist.CLIENT)
 public class ArcaneBoreModel extends EntityModel<EntityArcaneBore> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "arcane_bore"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_bore"), "main");
     private final ModelPart tripod;
     private final ModelPart leg1;
     private final ModelPart leg2;

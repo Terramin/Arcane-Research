@@ -16,7 +16,7 @@ import arcaneresearch.common.entities.projectile.EntityFocusMine;
 @OnlyIn(Dist.CLIENT)
 public class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/mine.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/mine.png");
     private final GrapplerModel model;
     public FocusMineRenderer(EntityRendererProvider.Context context) {
         super(context);

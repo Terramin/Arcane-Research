@@ -36,7 +36,7 @@ public class ItemFocusBasic extends Item {
         this(id, texture, renderColor, new Properties());
     }
     public ItemFocusBasic(String id, int renderColor) {
-        this(id, new ResourceLocation("arcaneresearch", "item/wand/focus"), renderColor, new Properties());
+        this(id, ResourceLocation.fromNamespaceAndPath("arcaneresearch", "item/wand/focus"), renderColor, new Properties());
     }
     public int getFocusColor(ItemStack focusstack) {
         return this.focusColor;

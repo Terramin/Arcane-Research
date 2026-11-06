@@ -16,7 +16,7 @@ import arcaneresearch.common.entities.monster.tainted.EntityTaintacle;
 @OnlyIn(Dist.CLIENT)
 public class TaintacleModel<T extends Entity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "taintacle"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "taintacle"), "main");
     private static final int MAX_SEGMENTS = 13;
     private static final int SMALL_TIP = 4;
     private static final int NORMAL_TIP = 8;

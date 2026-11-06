@@ -19,7 +19,7 @@ import arcaneresearch.common.tiles.crafting.TileArcaneWorkbench;
 @OnlyIn(Dist.CLIENT)
 public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkbenchMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/arcaneworkbench.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/arcaneworkbench.png");
     private static final int[] ASPECT_COLORS = {
             Aspect.AIR.getColor(),
             Aspect.FIRE.getColor(),

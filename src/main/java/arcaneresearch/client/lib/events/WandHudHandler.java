@@ -20,7 +20,7 @@ import java.util.HashMap;
 @OnlyIn(Dist.CLIENT)
 public class WandHudHandler {
     public static AspectList currentAura = new AspectList();
-    final ResourceLocation hudTex = new ResourceLocation("arcaneresearch:textures/gui/wand_hud.png");
+    final ResourceLocation hudTex = ResourceLocation.parse("arcaneresearch:textures/gui/wand_hud.png");
     HashMap<Integer, AspectList> oldvals = new HashMap<>();
     long nextsync = 0L;
     DecimalFormat secondsFormatter = new DecimalFormat("#######.#");

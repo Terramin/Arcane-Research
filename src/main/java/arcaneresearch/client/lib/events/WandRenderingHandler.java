@@ -33,8 +33,8 @@ public class WandRenderingHandler {
             return off;
         }
         return ItemStack.EMPTY;
-    }    final ResourceLocation radialTex = new ResourceLocation("arcaneresearch:textures/misc/radial.png");
-    final ResourceLocation radial2Tex = new ResourceLocation("arcaneresearch:textures/misc/radial2.png");
+    }    final ResourceLocation radialTex = ResourceLocation.parse("arcaneresearch:textures/misc/radial.png");
+    final ResourceLocation radial2Tex = ResourceLocation.parse("arcaneresearch:textures/misc/radial2.png");
     TreeMap<String, Integer> foci = new TreeMap<>();
     HashMap<String, ItemStack> fociItem = new HashMap<>();
     HashMap<String, Boolean> fociHover = new HashMap<>();

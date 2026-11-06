@@ -13,7 +13,7 @@ import arcaneresearch.api.aspects.Aspect;
 @OnlyIn(Dist.CLIENT)
 public class AuraTotemScreen extends AbstractContainerScreen<AuraTotemMenu> {
     private static final ResourceLocation BACKDROP =
-            new ResourceLocation(arcaneresearch.Arcaneresearch.MODID, "textures/gui/gui_auratotem.png");
+            ResourceLocation.fromNamespaceAndPath(arcaneresearch.Arcaneresearch.MODID, "textures/gui/gui_auratotem.png");
     public AuraTotemScreen(AuraTotemMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 176;

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FXTimedStream extends Particle {
-    private static final ResourceLocation ESSENTIA_TEX = new ResourceLocation(Arcaneresearch.MODID, "textures/misc/essentia.png");
+    private static final ResourceLocation ESSENTIA_TEX = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/essentia.png");
     private static final float STEP = 0.35f;
     private static final float BASE_WIDTH = 0.09f;
     private List<Vec3> path;

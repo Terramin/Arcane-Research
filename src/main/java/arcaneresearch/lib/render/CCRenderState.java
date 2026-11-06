@@ -257,7 +257,7 @@ public class CCRenderState {
     }
     @OnlyIn(Dist.CLIENT)
     public static void changeTexture(String texture) {
-        changeTexture(new ResourceLocation(texture));
+        changeTexture(ResourceLocation.parse(texture));
     }
     @OnlyIn(Dist.CLIENT)
     public static void changeTexture(ResourceLocation texture) {

@@ -99,7 +99,7 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
     }
     public static class Serializer implements RecipeSerializer<ShapelessArcaneRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation ID = new ResourceLocation(Arcaneresearch.MODID, "arcane_workbench_shapeless");
+        public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_workbench_shapeless");
         private static NonNullList<Ingredient> itemsFromJson(JsonArray jsonArray) {
             NonNullList<Ingredient> list = NonNullList.create();
             for (int i = 0; i < jsonArray.size(); i++) {

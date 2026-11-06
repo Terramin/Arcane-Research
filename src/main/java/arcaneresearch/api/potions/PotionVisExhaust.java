@@ -6,7 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class PotionVisExhaust extends MobEffect {
     public static MobEffect instance = null;
     private int statusIconIndex = -1;
-    static final ResourceLocation rl = new ResourceLocation("arcaneresearch", "textures/misc/potions.png");
+    static final ResourceLocation rl = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/potions.png");
     public PotionVisExhaust() {
         super(MobEffectCategory.HARMFUL, 0x555577);
     }

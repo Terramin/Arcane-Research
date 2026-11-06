@@ -1,4 +1,5 @@
 package arcaneresearch.init;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -520,15 +521,15 @@ public class ModBlocks {
         try {
             net.minecraft.world.level.block.FlowerPotBlock pot =
                     (net.minecraft.world.level.block.FlowerPotBlock) net.minecraft.world.level.block.Blocks.FLOWER_POT;
-            pot.addPlant(new net.minecraft.resources.ResourceLocation(Arcaneresearch.MODID, "greatwood_sapling"),
+            pot.addPlant(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "greatwood_sapling"),
                     POTTED_GREATWOOD_SAPLING);
-            pot.addPlant(new net.minecraft.resources.ResourceLocation(Arcaneresearch.MODID, "silverwood_sapling"),
+            pot.addPlant(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "silverwood_sapling"),
                     POTTED_SILVERWOOD_SAPLING);
-            pot.addPlant(new net.minecraft.resources.ResourceLocation(Arcaneresearch.MODID, "shimmerleaf"),
+            pot.addPlant(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shimmerleaf"),
                     POTTED_SHIMMERLEAF);
-            pot.addPlant(new net.minecraft.resources.ResourceLocation(Arcaneresearch.MODID, "cinderpearl"),
+            pot.addPlant(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "cinderpearl"),
                     POTTED_CINDERPEARL);
-            pot.addPlant(new net.minecraft.resources.ResourceLocation(Arcaneresearch.MODID, "vishroom"),
+            pot.addPlant(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "vishroom"),
                     POTTED_VISHROOM);
         } catch (Exception e) {
             Arcaneresearch.LOGGER.warn("Failed to register Arcaneresearch flower pot plants", e);

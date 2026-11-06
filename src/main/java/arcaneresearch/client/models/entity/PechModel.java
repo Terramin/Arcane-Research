@@ -17,7 +17,7 @@ import arcaneresearch.common.entities.monster.EntityPech;
 @OnlyIn(Dist.CLIENT)
 public class PechModel extends EntityModel<EntityPech> implements ArmedModel {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "pech"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "pech"), "main");
     private final ModelPart head;
     private final ModelPart jowls;
     private final ModelPart body;

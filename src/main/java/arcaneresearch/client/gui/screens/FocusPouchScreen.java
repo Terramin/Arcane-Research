@@ -14,7 +14,7 @@ import arcaneresearch.common.menu.FocusPouchMenu;
 @OnlyIn(Dist.CLIENT)
 public class FocusPouchScreen extends AbstractContainerScreen<FocusPouchMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_focuspouch.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_focuspouch.png");
     private final int blockSlot;
     public FocusPouchScreen(FocusPouchMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

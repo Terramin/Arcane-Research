@@ -8,7 +8,7 @@ import arcaneresearch.common.items.casters.foci.*;
 public class FocusInit {
     public static void registerFoci() {
         FocusEngine.registerElement(FocusMediumRoot.class,
-                new ResourceLocation("arcaneresearch", "textures/foci/root.png"), 0x999999);
+                ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/root.png"), 0x999999);
         FocusEngine.registerFocusNode("arcaneresearch.TOUCH", FocusMediumTouch::new, 0xAD8585);
         FocusEngine.registerFocusNode("arcaneresearch.BOLT", FocusMediumBolt::new, 0xAD9985);
         FocusEngine.registerFocusNode("arcaneresearch.PROJECTILE", FocusMediumProjectile::new, 0xADAD85);

@@ -13,11 +13,11 @@ import arcaneresearch.common.entities.monster.EntityPech;
 @OnlyIn(Dist.CLIENT)
 public class PechRenderer extends MobRenderer<EntityPech, PechModel> {
     private static final ResourceLocation TEXTURE_FORAGER =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/pech_forage.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/pech_forage.png");
     private static final ResourceLocation TEXTURE_MAGE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/pech_thaum.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/pech_thaum.png");
     private static final ResourceLocation TEXTURE_STALKER =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/pech_stalker.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/pech_stalker.png");
     public PechRenderer(EntityRendererProvider.Context context) {
         super(context, new PechModel(context.bakeLayer(PechModel.LAYER_LOCATION)), 0.4F);
         this.addLayer(new PechHeldItemLayer(this, context.getItemInHandRenderer()));

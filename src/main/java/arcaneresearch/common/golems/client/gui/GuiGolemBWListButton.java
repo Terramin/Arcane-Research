@@ -12,7 +12,7 @@ import java.util.function.BooleanSupplier;
 @OnlyIn(Dist.CLIENT)
 public class GuiGolemBWListButton extends Button {
     static final ResourceLocation TEX =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_base.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_base.png");
     private final BooleanSupplier blacklist;
     public GuiGolemBWListButton(int x, int y, BooleanSupplier blacklist, OnPress onPress) {
         super(x, y, 16, 16, Component.empty(), onPress, Button.DEFAULT_NARRATION);

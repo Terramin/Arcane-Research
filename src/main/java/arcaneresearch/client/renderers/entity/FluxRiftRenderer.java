@@ -25,7 +25,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FluxRiftRenderer extends EntityRenderer<EntityFluxRift> {
     private static final ResourceLocation RIFT_TEXTURE =
-            new ResourceLocation("textures/entity/end_portal.png");
+            ResourceLocation.parse("textures/entity/end_portal.png");
     private static final RenderType RIFT_HALO = makeRiftType("tc_rift_halo", true, false);
     private static final RenderType RIFT_HALO_NOFOG = makeRiftType("tc_rift_halo_nodepth", true, true);
     private static final RenderType RIFT_CORE = makeRiftType("tc_rift_core", false, false);

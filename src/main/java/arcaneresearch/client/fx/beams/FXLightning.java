@@ -25,9 +25,9 @@ import java.util.Random;
 @OnlyIn(Dist.CLIENT)
 public class FXLightning extends TextureSheetParticle {
     private static final ResourceLocation LARGE =
-            new ResourceLocation("arcaneresearch", "textures/misc/p_large.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/p_large.png");
     private static final ResourceLocation SMALL =
-            new ResourceLocation("arcaneresearch", "textures/misc/p_small.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/p_small.png");
     private static final float[][] OUTER = {
             {0.6F, 0.3F, 0.6F}, {0.6F, 0.6F, 0.1F}, {0.1F, 0.1F, 0.6F}, {0.1F, 1.0F, 0.1F},
             {0.6F, 0.1F, 0.1F}, {0.6F, 0.2F, 0.6F}, {0.75F, 1.0F, 1.0F},

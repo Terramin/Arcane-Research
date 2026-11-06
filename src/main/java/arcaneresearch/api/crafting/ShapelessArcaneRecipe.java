@@ -38,7 +38,7 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
         this.result = result.copy();
         this.ingredients = input;
         this.group = group != null ? group.toString() : "";
-        this.id = group != null ? group : new ResourceLocation("arcaneresearch", "legacy_arcane_shapeless");
+        this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shapeless");
     }
     public ShapelessArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, ItemStack result, Object[] recipe) {
         this.research = res;
@@ -47,7 +47,7 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
         this.result = result.copy();
         this.ingredients = parseShapeless(recipe);
         this.group = group != null ? group.toString() : "";
-        this.id = group != null ? group : new ResourceLocation("arcaneresearch", "legacy_arcane_shapeless");
+        this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shapeless");
     }
     private static NonNullList<Ingredient> parseShapeless(Object[] recipe) {
         NonNullList<Ingredient> ingredients = NonNullList.create();

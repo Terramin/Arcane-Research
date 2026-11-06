@@ -14,7 +14,7 @@ import arcaneresearch.common.menu.HandMirrorMenu;
 @OnlyIn(Dist.CLIENT)
 public class HandMirrorScreen extends AbstractContainerScreen<HandMirrorMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/gui/gui_handmirror.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_handmirror.png");
     public HandMirrorScreen(HandMirrorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth = 176;

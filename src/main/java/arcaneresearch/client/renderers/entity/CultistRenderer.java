@@ -23,9 +23,9 @@ import java.util.Random;
 @OnlyIn(Dist.CLIENT)
 public class CultistRenderer extends HumanoidMobRenderer<EntityCultist, HumanoidModel<EntityCultist>> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/cultist.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/cultist.png");
     private static final ResourceLocation TETHER_TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/wispy.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/wispy.png");
     public CultistRenderer(EntityRendererProvider.Context context) {
         super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
         this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));

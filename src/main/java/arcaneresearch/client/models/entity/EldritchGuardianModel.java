@@ -17,7 +17,7 @@ import arcaneresearch.common.entities.monster.boss.EntityEldritchWarden;
 @OnlyIn(Dist.CLIENT)
 public class EldritchGuardianModel<T extends LivingEntity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "eldritch_guardian"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "eldritch_guardian"), "main");
     private final ModelPart beltR;
     private final ModelPart mbelt;
     private final ModelPart mbeltL;

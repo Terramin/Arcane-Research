@@ -17,9 +17,9 @@ import arcaneresearch.common.entities.construct.EntityTurretCrossbowAdvanced;
 @OnlyIn(Dist.CLIENT)
 public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretCrossbowAdvanced> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/entity/crossbow_advanced.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/crossbow_advanced.png");
     private static final ResourceLocation MODEL =
-            new ResourceLocation(Arcaneresearch.MODID, "models/obj/crossbow_advanced.obj");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "models/obj/crossbow_advanced.obj");
     public TurretCrossbowAdvancedRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;

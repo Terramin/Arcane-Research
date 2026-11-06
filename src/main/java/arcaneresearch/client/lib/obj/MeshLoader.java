@@ -83,7 +83,7 @@ public class MeshLoader {
         String prefix = locOfParent.getPath();
         int pp = prefix.lastIndexOf(47);
         prefix = ((pp >= 0) ? prefix.substring(0, pp + 1) : "");
-        ResourceLocation loc = new ResourceLocation(locOfParent.getNamespace(), prefix + path);
+        ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(locOfParent.getNamespace(), prefix + path);
         currentMatLib.loadFromStream(loc);
     }
     public MeshModel loadFromResource(ResourceLocation loc) throws IOException {

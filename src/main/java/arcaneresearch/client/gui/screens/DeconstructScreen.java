@@ -17,7 +17,7 @@ import arcaneresearch.common.menu.DeconstructMenu;
 import arcaneresearch.init.ModSounds;
 @OnlyIn(Dist.CLIENT)
 public class DeconstructScreen extends AbstractContainerScreen<DeconstructMenu> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(
             Arcaneresearch.MODID, "textures/gui/gui_decontable.png");
     private static final int ASPECT_X = 64;
     private static final int ASPECT_Y = 48;

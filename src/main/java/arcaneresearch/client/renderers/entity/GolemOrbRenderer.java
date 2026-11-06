@@ -17,7 +17,7 @@ import arcaneresearch.common.entities.projectile.EntityGolemOrb;
 @OnlyIn(Dist.CLIENT)
 public class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb> {
     private static final ResourceLocation PARTICLES =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
     public GolemOrbRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;

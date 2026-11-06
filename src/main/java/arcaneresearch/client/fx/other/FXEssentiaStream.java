@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class FXEssentiaStream extends ArcaneresearchParticle {
-    private static final ResourceLocation ESSENTIA_TEX = new ResourceLocation(Arcaneresearch.MODID, "textures/misc/essentia.png");
+    private static final ResourceLocation ESSENTIA_TEX = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/essentia.png");
     private static final Map<String, FXEssentiaStream> activeStreams = new HashMap<>();
     private final double targetX, targetY, targetZ;
     private final double startX, startY, startZ;

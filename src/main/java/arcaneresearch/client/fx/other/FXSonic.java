@@ -19,7 +19,7 @@ public class FXSonic extends ArcaneresearchParticle {
     private static final ResourceLocation[] RIPPLE_TEXTURES = new ResourceLocation[15];
     static {
         for (int i = 0; i < 15; i++) {
-            RIPPLE_TEXTURES[i] = new ResourceLocation(Arcaneresearch.MODID, "textures/models/ripple" + (i + 1) + ".png");
+            RIPPLE_TEXTURES[i] = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/ripple" + (i + 1) + ".png");
         }
     }
     private final Entity target;

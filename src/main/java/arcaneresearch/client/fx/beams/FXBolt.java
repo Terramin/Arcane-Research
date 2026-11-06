@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Random;
 @OnlyIn(Dist.CLIENT)
 public class FXBolt extends TextureSheetParticle {
-    protected static final ResourceLocation BEAM_TEXTURE = new ResourceLocation("arcaneresearch", "textures/misc/essentia.png");
+    protected static final ResourceLocation BEAM_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/essentia.png");
     protected static final double BEHIND_START = 1.0;
     protected static final double FIRST_PERSON_DIST = 0.4;
     protected float beamWidth;

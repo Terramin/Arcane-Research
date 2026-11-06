@@ -12,9 +12,9 @@ import arcaneresearch.Arcaneresearch;
 @OnlyIn(Dist.CLIENT)
 public class VoidArmorModel extends HumanoidModel<LivingEntity> {
     public static final ModelLayerLocation LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "void_armor"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "void_armor"), "main");
     public static final ModelLayerLocation INNER_LAYER_LOCATION =
-            new ModelLayerLocation(new ResourceLocation(Arcaneresearch.MODID, "void_armor_inner"), "main");
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "void_armor_inner"), "main");
     public VoidArmorModel(ModelPart root) {
         super(root);
     }

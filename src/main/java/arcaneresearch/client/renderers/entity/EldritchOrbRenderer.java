@@ -18,7 +18,7 @@ import arcaneresearch.common.entities.projectile.EntityEldritchOrb;
 @OnlyIn(Dist.CLIENT)
 public class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(Arcaneresearch.MODID, "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
     private final RandomSource random = RandomSource.create();
     public EldritchOrbRenderer(EntityRendererProvider.Context context) {
         super(context);

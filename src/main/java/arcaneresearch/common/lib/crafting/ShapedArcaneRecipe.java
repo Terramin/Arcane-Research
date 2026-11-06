@@ -127,7 +127,7 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
     }
     public static class Serializer implements RecipeSerializer<ShapedArcaneRecipe> {
         public static final Serializer INSTANCE = new Serializer();
-        public static final ResourceLocation ID = new ResourceLocation(Arcaneresearch.MODID, "arcane_workbench_shaped");
+        public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "arcane_workbench_shaped");
         private static Map<String, Ingredient> keyFromJson(JsonObject json) {
             Map<String, Ingredient> map = new java.util.HashMap<>();
             for (Map.Entry<String, com.google.gson.JsonElement> entry : json.entrySet()) {
