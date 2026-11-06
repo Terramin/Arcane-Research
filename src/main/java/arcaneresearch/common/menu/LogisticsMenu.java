@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.List;
 
 public class LogisticsMenu extends AbstractContainerMenu {
 
@@ -108,7 +108,7 @@ public class LogisticsMenu extends AbstractContainerMenu {
         if (full) {
             newTotal = 0;
             tempItems = new TreeMap<>();
-            CopyOnWriteArrayList<SealEntity> seals = SealHandler.getSealsInRange(level, player.blockPosition(), 32);
+            List<SealEntity> seals = SealHandler.getSealsInRange(level, player.blockPosition(), 32);
             String needle = searchText.isEmpty() ? null : searchText.toLowerCase(Locale.ROOT);
             String ownerUuid = player.getUUID().toString();
 
@@ -257,7 +257,7 @@ public class LogisticsMenu extends AbstractContainerMenu {
     public void requestItem(ItemStack stack, int amount) {
         if (stack == null || stack.isEmpty() || amount <= 0) return;
 
-        CopyOnWriteArrayList<SealEntity> seals = SealHandler.getSealsInRange(level, player.blockPosition(), 32);
+        List<SealEntity> seals = SealHandler.getSealsInRange(level, player.blockPosition(), 32);
         String ownerUuid = player.getUUID().toString();
 
         for (SealEntity seal : seals) {

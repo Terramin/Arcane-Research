@@ -54,6 +54,8 @@ public class GolemBuilderScreen extends AbstractContainerScreen<GolemBuilderMenu
     boolean[] owns = null;
     boolean disableAll = false;
     CraftButton craftButton = null;
+    boolean pendingRebuild = false;
+    long lastSentGolem = Long.MIN_VALUE;
     int lastMenuCost = -1;
     int lastMenuMaxCost = -1;
     boolean[] lastHasStuff = null;
@@ -175,11 +177,13 @@ public class GolemBuilderScreen extends AbstractContainerScreen<GolemBuilderMenu
         props.setArms(valArms.get(armIndex));
         props.setLegs(valLegs.get(legIndex));
         props.setAddon(valAddons.get(addonIndex));
+        long propsLong = props.toLong();
         TileGolemBuilder tile = menu.getBlockEntity();
-        if (tile != null) {
+        if (tile != null && lastSentGolem != propsLong) {
+            lastSentGolem = propsLong;
             CompoundTag nbt = new CompoundTag();
             nbt.putBoolean("check", true);
-            nbt.putLong("golem", props.toLong());
+            nbt.putLong("golem", propsLong);
             tile.sendMessageToServer(nbt);
         }
         redoComps();
@@ -373,11 +377,11 @@ public class GolemBuilderScreen extends AbstractContainerScreen<GolemBuilderMenu
                     (int) (46.0f * (1.0f - (float) menuCost / (float) menuMax)), 6);
             if (!disableAll) {
                 disableAll = true;
-                redoComps();
+                pendingRebuild = true;
             }
         } else if (disableAll) {
             disableAll = false;
-            redoComps();
+            pendingRebuild = true;
         }
         String heartsStr = "" + hearts;
         String armorStr = "" + armor;
@@ -407,7 +411,18 @@ public class GolemBuilderScreen extends AbstractContainerScreen<GolemBuilderMenu
             lastMenuCost = menuCost;
             lastMenuMaxCost = menuMax;
             lastHasStuff = stuffNow == null ? null : stuffNow.clone();
-            redoComps();
+            pendingRebuild = true;
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        // Rebuilding the widget list is only safe outside of the render pass;
+        // deferred changes detected in renderBg()/renderLabels() are applied here.
+        if (pendingRebuild) {
+            pendingRebuild = false;
+            gatherInfo();
         }
     }
     static class CraftButton extends Button {

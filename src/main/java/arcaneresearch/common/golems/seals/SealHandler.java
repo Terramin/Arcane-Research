@@ -84,13 +84,14 @@ public class SealHandler {
         return types.get(key);
     }
 
+    /** Snapshot list of seals whose positions are within {@code range} of {@code source}. Local to the caller and only iterated, so a plain ArrayList suffices. */
     public static List<SealEntity> getSealsInRange(Level level, BlockPos source, int range) {
         ConcurrentHashMap<SealPos, SealEntity> dimSeals =
                 sealEntities.get(getDimKey(level.dimension()));
-        if (dimSeals == null || dimSeals.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<SealEntity> out = new ArrayList<>();
+        if (dimSeals == null || dimSeals.isEmpty()) {
+            return out;
+        }
         long rangeSq = (long) range * range;
         for (SealEntity se : dimSeals.values()) {
             SealPos sp = se.getSealPos();
@@ -104,10 +105,10 @@ public class SealHandler {
     public static List<SealEntity> getSealsInChunk(Level level, ChunkPos chunk) {
         ConcurrentHashMap<SealPos, SealEntity> dimSeals =
                 sealEntities.get(getDimKey(level.dimension()));
-        if (dimSeals == null || dimSeals.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<SealEntity> out = new ArrayList<>();
+        if (dimSeals == null || dimSeals.isEmpty()) {
+            return out;
+        }
         for (SealEntity se : dimSeals.values()) {
             SealPos sp = se.getSealPos();
             if (sp == null || se.getSeal() == null) {
