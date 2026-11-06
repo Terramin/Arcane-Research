@@ -7,9 +7,13 @@
   },
   "ingredients": [
     { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "item": "arcaneresearch:visnerite_ingot" },
     { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    { "item": "arcaneresearch:visnerite_ingot" },
     { "item": "arcaneresearch:nugget_rareearth" },
-    { "item": "arcaneresearch:greatwood_planks" }
+    { "item": "arcaneresearch:visnerite_ingot" },
+    { "item": "arcaneresearch:greatwood_planks" },
+    { "item": "arcaneresearch:visnerite_ingot" }
   ],
   "aspects": {
     "aer": 30,
