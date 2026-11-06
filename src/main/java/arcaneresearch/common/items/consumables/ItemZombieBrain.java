@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.consumables;
+
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,6 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.capabilities.IPlayerWarp;
+import org.jetbrains.annotations.NotNull;
+
 public class ItemZombieBrain extends Item {
     public ItemZombieBrain() {
         super(new Properties()
@@ -19,8 +22,9 @@ public class ItemZombieBrain extends Item {
                         .effect(() -> new MobEffectInstance(MobEffects.HUNGER, 30, 0), 0.8f)
                         .build()));
     }
+
     @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, Level level, @NotNull LivingEntity entity) {
         if (!level.isClientSide && entity instanceof Player player) {
             if (level.random.nextFloat() < 0.1f) {
                 ArcaneresearchApi.internalMethods.addWarpToPlayer(player, 1, IPlayerWarp.EnumWarpType.NORMAL);

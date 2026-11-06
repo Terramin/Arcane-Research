@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.consumables;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -11,31 +12,42 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.blocks.ILabelable;
+import org.jetbrains.annotations.NotNull;
+
 public class ItemLabel extends Item {
     private final boolean isFilled;
+
     public ItemLabel(boolean filled) {
         super(new Item.Properties());
         this.isFilled = filled;
     }
+
     public static ItemLabel createBlank() {
         return new ItemLabel(false);
     }
+
     public static ItemLabel createFilled() {
         return new ItemLabel(true);
     }
+
     public Aspect getAspect(ItemStack stack) {
-        if (isFilled && stack.hasTag() && stack.getTag().contains("aspect")) {
-            return Aspect.getAspect(stack.getTag().getString("aspect"));
+        if (isFilled && stack.hasTag()) {
+            assert stack.getTag() != null;
+            if (stack.getTag().contains("aspect")) {
+                return Aspect.getAspect(stack.getTag().getString("aspect"));
+            }
         }
         return null;
     }
+
     public void setAspect(ItemStack stack, Aspect aspect) {
         if (aspect != null) {
             stack.getOrCreateTag().putString("aspect", aspect.getTag());
         }
     }
+
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Direction side = context.getClickedFace();

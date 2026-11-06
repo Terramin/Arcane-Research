@@ -1,4 +1,6 @@
 package arcaneresearch.common.items.misc;
+
+import arcaneresearch.common.blocks.aura.AuraBlocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,39 +15,56 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.List;
-import arcaneresearch.common.blocks.aura.AuraBlocks;
+
 public class ItemEldritchObeliskPlacer extends Item {
+
     public ItemEldritchObeliskPlacer() {
         super(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
+
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         if (player == null || context.getClickedFace() != Direction.UP) {
             return InteractionResult.PASS;
         }
-        player.swing(InteractionHand.MAIN_HAND);
-        for (int a = 1; a <= 6; a++) {
-            if (!level.getBlockState(pos.above(a)).isAir()) {
+
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+
+        BlockPos.MutableBlockPos cursor = pos.mutable().move(Direction.UP);
+        for (int i = 0; i < 7; i++) {
+            if (!level.isEmptyBlock(cursor)) {
                 return InteractionResult.FAIL;
             }
+            cursor.move(Direction.UP);
         }
-        if (!level.isClientSide) {
-            level.setBlock(pos.above(1), AuraBlocks.ELDRITCH_ALTAR.get().defaultBlockState(), 3);
-            level.setBlock(pos.above(3), AuraBlocks.ELDRITCH_OBELISK.get().defaultBlockState(), 3);
-            Block body = AuraBlocks.ELDRITCH_OBELISK_BODY.get();
-            for (int a = 4; a <= 7; a++) {
-                level.setBlock(pos.above(a), body.defaultBlockState(), 3);
-            }
+
+        player.swing(InteractionHand.MAIN_HAND);
+
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
         }
-        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+
+        Block altar = AuraBlocks.ELDRITCH_ALTAR.get();
+        Block obelisk = AuraBlocks.ELDRITCH_OBELISK.get();
+        Block body = AuraBlocks.ELDRITCH_OBELISK_BODY.get();
+
+        level.setBlock(pos.above(1), altar.defaultBlockState(), Block.UPDATE_CLIENTS);
+        level.setBlock(pos.above(3), obelisk.defaultBlockState(), Block.UPDATE_CLIENTS);
+        for (int a = 4; a <= 7; a++) {
+            level.setBlock(pos.above(a), body.defaultBlockState(), Block.UPDATE_CLIENTS);
+        }
+
+        return InteractionResult.CONSUME;
     }
+
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
         tooltip.add(Component.translatable("item.arcaneresearch.eldritch_obelisk_placer.tooltip")
                 .withStyle(ChatFormatting.ITALIC));

@@ -1,8 +1,21 @@
 package arcaneresearch.common.items.curios;
+
+import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
+import arcaneresearch.api.capabilities.IPlayerKnowledge;
+import arcaneresearch.api.research.ResearchCategories;
+import arcaneresearch.api.research.ResearchCategory;
+import arcaneresearch.api.research.ResearchEntry;
+import arcaneresearch.client.gui.screens.ResearchBrowserScreen;
+import arcaneresearch.common.config.ModConfig;
+import arcaneresearch.common.items.ItemTC;
+import arcaneresearch.common.lib.CommandArcaneresearch;
+import arcaneresearch.common.lib.research.ResearchManager;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,50 +26,94 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import arcaneresearch.api.capabilities.IPlayerKnowledge;
-import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
-import arcaneresearch.api.research.ResearchCategories;
-import arcaneresearch.api.research.ResearchCategory;
-import arcaneresearch.api.research.ResearchEntry;
-import arcaneresearch.client.gui.screens.ResearchBrowserScreen;
-import arcaneresearch.common.config.ModConfig;
-import arcaneresearch.common.items.ItemTC;
-import arcaneresearch.common.lib.CommandArcaneresearch;
-import arcaneresearch.common.lib.research.ResearchManager;
-import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.List;
+
 public class ItemThaumonomicon extends ItemTC {
+
     protected final boolean cheat;
+
     public ItemThaumonomicon() {
         this(false);
     }
+
     public ItemThaumonomicon(boolean cheat) {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(cheat ? Rarity.EPIC : Rarity.UNCOMMON));
         this.cheat = cheat;
     }
+
     public boolean isCheat() {
         return cheat;
     }
+
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            if (cheat && ModConfig.allowCheatSheet) {
-                for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
-                    for (ResearchEntry ri : cat.research.values()) {
-                        CommandArcaneresearch.giveRecursiveResearch(serverPlayer, ri.getKey());
+
+        if (level.isClientSide) {
+            SoundEvent page = ModSounds.PAGE.get();
+            level.playLocalSound(
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    page,
+                    SoundSource.PLAYERS,
+                    1.0f,
+                    1.0f,
+                    false
+            );
+            openThaumonomiconGui();
+            return InteractionResultHolder.sidedSuccess(stack, true);
+        }
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            var categories = ResearchCategories.researchCategories;
+
+            if (categories != null) {
+                if (cheat && ModConfig.allowCheatSheet) {
+                    for (ResearchCategory cat : categories.values()) {
+                        if (cat == null || cat.research == null) {
+                            continue;
+                        }
+
+                        for (ResearchEntry ri : cat.research.values()) {
+                            if (ri == null) {
+                                continue;
+                            }
+
+                            String key = ri.getKey();
+                            if (key != null) {
+                                CommandArcaneresearch.giveRecursiveResearch(serverPlayer, key);
+                            }
+                        }
                     }
-                }
-            } else {
-                for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
-                    for (ResearchEntry ri : cat.research.values()) {
-                        if (ArcaneresearchCapabilities.knowsResearch(player, ri.getKey())
-                                && ri.getSiblings() != null) {
-                            for (String sib : ri.getSiblings()) {
-                                if (!ArcaneresearchCapabilities.knowsResearch(player, sib)) {
+                } else {
+                    for (ResearchCategory cat : categories.values()) {
+                        if (cat == null || cat.research == null) {
+                            continue;
+                        }
+
+                        for (ResearchEntry ri : cat.research.values()) {
+                            if (ri == null) {
+                                continue;
+                            }
+
+                            String key = ri.getKey();
+                            if (key == null || !ArcaneresearchCapabilities.knowsResearch(player, key)) {
+                                continue;
+                            }
+
+                            String[] siblings = ri.getSiblings();
+                            if (siblings == null) {
+                                continue;
+                            }
+
+                            for (String sib : siblings) {
+                                if (sib != null && !ArcaneresearchCapabilities.knowsResearch(player, sib)) {
                                     ResearchManager.completeResearch(player, sib);
                                 }
                             }
@@ -64,31 +121,31 @@ public class ItemThaumonomicon extends ItemTC {
                     }
                 }
             }
+
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {
                 knowledge.sync(serverPlayer);
             }
         }
-        if (level.isClientSide) {
-            level.playLocalSound(player.getX(), player.getY(), player.getZ(),
-                    ModSounds.PAGE.get(), SoundSource.PLAYERS, 1.0f, 1.0f, false);
-            openThaumonomiconGui();
-        }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+
+        return InteractionResultHolder.sidedSuccess(stack, false);
     }
+
     @OnlyIn(Dist.CLIENT)
     private void openThaumonomiconGui() {
         Minecraft.getInstance().setScreen(new ResearchBrowserScreen());
     }
+
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         if (cheat) {
             tooltip.add(Component.literal("Creative only")
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
     }
+
     @Override
-    public Component getName(ItemStack stack) {
+    public @NotNull Component getName(@NotNull ItemStack stack) {
         return Component.translatable(cheat
                 ? "item.arcaneresearch.thaumonomicon.cheat"
                 : "item.arcaneresearch.thaumonomicon");

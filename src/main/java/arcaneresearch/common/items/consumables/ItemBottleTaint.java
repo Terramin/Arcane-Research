@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.consumables;
+
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -7,13 +8,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import arcaneresearch.common.entities.projectile.EntityBottleTaint;
+import org.jetbrains.annotations.NotNull;
+
 public class ItemBottleTaint extends Item {
     public ItemBottleTaint() {
         super(new Item.Properties()
                 .stacksTo(8));
     }
+
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);

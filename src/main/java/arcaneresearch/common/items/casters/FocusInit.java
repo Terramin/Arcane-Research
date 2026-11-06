@@ -1,8 +1,10 @@
 package arcaneresearch.common.items.casters;
+
 import net.minecraft.resources.ResourceLocation;
 import arcaneresearch.api.casters.FocusEngine;
 import arcaneresearch.api.casters.FocusMediumRoot;
 import arcaneresearch.common.items.casters.foci.*;
+
 public class FocusInit {
     public static void registerFoci() {
         FocusEngine.registerElement(FocusMediumRoot.class,
@@ -28,10 +30,11 @@ public class FocusInit {
         FocusEngine.registerFocusNode("arcaneresearch.SPLITTRAJECTORY", FocusModSplitTrajectory::new, 0x999999);
         FocusEngine.registerFocusNode("arcaneresearch.SPLITTARGET", FocusModSplitTarget::new, 0x999999);
         FocusEngine.registerElement(FocusModSplitTrajectory.class,
-                new ResourceLocation("arcaneresearch", "textures/foci/split_trajectory.png"), 0x999999);
+                ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/split_trajectory.png"), 0x999999);
         FocusEngine.registerElement(FocusModSplitTarget.class,
-                new ResourceLocation("arcaneresearch", "textures/foci/split_target.png"), 0x999999);
+                ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/split_target.png"), 0x999999);
     }
+
     public static String[] getAllFocusKeys() {
         return new String[]{
                 "arcaneresearch.TOUCH",
