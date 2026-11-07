@@ -1,5 +1,6 @@
 package arcaneresearch.common.lib.network.fx;
 
+import arcaneresearch.helper.OreColorAnalyzerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -8,8 +9,10 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.client.fx.ParticleEngine;
 import arcaneresearch.client.fx.particles.FXGeneric;
@@ -20,21 +23,21 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class PacketFXScanSource {
-    private static final int C_QUARTZ = 15064789;
-    private static final int C_IRON = 14200723;
-    private static final int C_LAPIS = 1328572;
-    private static final int C_GOLD = 16576075;
-    private static final int C_DIAMOND = 6155509;
-    private static final int C_EMERALD = 1564002;
-    private static final int C_REDSTONE = 16711680;
-    private static final int C_COAL = 1052688;
-    private static final int C_SILVER = 14342653;
-    private static final int C_TIN = 15724539;
-    private static final int C_COPPER = 16620629;
-    private static final int C_AMBER = 16626469;
-    private static final int C_CINNABAR = 10159368;
+    private static final int C_QUARTZ = 0xE5DED5;
+    private static final int C_IRON = 0xD8AF93;
+    private static final int C_LAPIS = 0x1445BC;
+    private static final int C_GOLD = 0xFCEE4B;
+    private static final int C_DIAMOND = 0x5DECF5;
+    private static final int C_EMERALD = 0x17DD62;
+    private static final int C_REDSTONE = 0xFF0000;
+    private static final int C_COAL = 0x101010;
+    private static final int C_SILVER = 0xDAD9FD;
+    private static final int C_TIN = 0xEFEFFB;
+    private static final int C_COPPER = 0xFD9C55;
+    private static final int C_AMBER = 0xFDB325;
+    private static final int C_CINNABAR = 0x9B0508;
     private static final int C_VISNERITE = 0x8A2BE2;
-    private static final int C_DEFAULT = 12632256;
+    private static final int C_DEFAULT = 0xC0C0C0;
     private final long loc;
     private final int size;
 
@@ -191,6 +194,9 @@ public class PacketFXScanSource {
         if (regName.contains("cinnabar")) return C_CINNABAR;
         if (regName.contains("quartz")) return C_QUARTZ;
         if (regName.contains("visnerite")) return C_VISNERITE;
+        if (state.is(Tags.Blocks.ORES)) {
+            return OreColorAnalyzerHelper.getGeneratedOreColor(state, level, pos);
+        }
         return C_DEFAULT;
     }
 }
