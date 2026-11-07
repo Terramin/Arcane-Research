@@ -21,9 +21,15 @@ public final class TCShaderHandler {
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/hunger.json"),
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/sunscorned.json")
     };
-    private static ResourceLocation active = null;
+    static ResourceLocation active = null;
+
+    static boolean isBlurActive() {
+        return active != null && active.getPath().endsWith("blurtc.json");
+    }
+
     private TCShaderHandler() {
     }
+
     public static void tick() {
         Minecraft mc = Minecraft.getInstance();
         if (arcaneresearch.common.config.ModConfig.CONFIG_GRAPHICS.disableShaders) {
@@ -63,23 +69,6 @@ public final class TCShaderHandler {
                         want = null;
                     } else {
                         LOGGER.info("[Arcaneresearch] post shader on: {}", want);
-                        try {
-                            net.minecraft.client.renderer.PostChain chain =
-                                    mc.gameRenderer.currentEffect();
-                            com.mojang.blaze3d.pipeline.RenderTarget main =
-                                    mc.getMainRenderTarget();
-                            com.mojang.blaze3d.pipeline.RenderTarget swap = null;
-                            try {
-                                swap = chain.getTempTarget("swap");
-                            } catch (Exception ignored) {
-                            }
-                            LOGGER.info("[Arcaneresearch] post chain '{}': main={}x{}, swap={}x{}",
-                                    chain.getName(), main.width, main.height,
-                                    swap == null ? -1 : swap.width,
-                                    swap == null ? -1 : swap.height);
-                        } catch (Exception e) {
-                            LOGGER.warn("[Arcaneresearch] post chain introspection failed", e);
-                        }
                     }
                 } catch (Exception e) {
                     LOGGER.warn("Failed to load Arcaneresearch post shader {}", want, e);
