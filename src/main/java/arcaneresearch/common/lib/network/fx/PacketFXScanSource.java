@@ -33,6 +33,7 @@ public class PacketFXScanSource {
     private static final int C_COPPER = 16620629;
     private static final int C_AMBER = 16626469;
     private static final int C_CINNABAR = 10159368;
+    private static final int C_VISNERITE = 0x8A2BE2;
     private static final int C_DEFAULT = 12632256;
     private final long loc;
     private final int size;
@@ -189,6 +190,7 @@ public class PacketFXScanSource {
         if (regName.contains("amber")) return C_AMBER;
         if (regName.contains("cinnabar")) return C_CINNABAR;
         if (regName.contains("quartz")) return C_QUARTZ;
+        if (regName.contains("visnerite")) return C_VISNERITE;
         return C_DEFAULT;
     }
 }
