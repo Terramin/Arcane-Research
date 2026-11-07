@@ -1,10 +1,12 @@
 package arcaneresearch.common.lib.utils;
 
+import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.internal.WeightedRandomLoot;
 import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -17,7 +19,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.Tags;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -495,6 +499,9 @@ public class Utils {
                 || state.is(BlockTags.REDSTONE_ORES)
                 || state.is(BlockTags.LAPIS_ORES)
                 || state.is(BlockTags.DIAMOND_ORES)
-                || state.is(BlockTags.EMERALD_ORES);
+                || state.is(BlockTags.EMERALD_ORES)
+                || state.is(Blocks.NETHER_QUARTZ_ORE)
+                || state.is(BlockTags.create(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "ores")))
+                || state.is(Tags.Blocks.ORES);
     }
 }
