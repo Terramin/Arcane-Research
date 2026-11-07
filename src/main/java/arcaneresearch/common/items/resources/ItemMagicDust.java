@@ -7,19 +7,18 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.crafting.IDustTrigger;
-import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.items.ItemTCBase;
+import arcaneresearch.common.lib.network.PacketHandler;
+import arcaneresearch.common.lib.network.fx.PacketFXMagicDustSparkles;
 import arcaneresearch.init.ModSounds;
 import java.util.List;
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -69,55 +68,24 @@ public class ItemMagicDust extends ItemTCBase {
         for (IDustTrigger trigger : IDustTrigger.triggers) {
             IDustTrigger.Placement place = trigger.getValidFace(level, player, pos, face);
             if (place != null) {
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-                trigger.execute(level, player, pos, place, face);
-                if (level.isClientSide) {
-                    doSparkles(player, level, pos, context.getClickLocation(), hand, trigger, place);
+                if (!level.isClientSide) {
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                    trigger.execute(level, player, pos, place, face);
+                    List<BlockPos> sparkles = trigger.sparkle(level, player, pos, place);
+                    PacketHandler.sendToNear(
+                            new PacketFXMagicDustSparkles(player, pos, context.getClickLocation(), hand, sparkles),
+                            new PacketDistributor.TargetPoint(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                                    64.0, level.dimension()));
+                    if (ModSounds.DUST.get() != null) {
+                        level.playSound(null, pos, ModSounds.DUST.get(), SoundSource.PLAYERS,
+                                0.33f, 1.0f + (float) level.random.nextGaussian() * 0.05f);
+                    }
                 }
                 return InteractionResult.SUCCESS;
             }
         }
         return super.useOn(context);
-    }
-    @OnlyIn(Dist.CLIENT)
-    private void doSparkles(Player player, Level level, BlockPos pos, Vec3 hitVec, InteractionHand hand, IDustTrigger trigger, IDustTrigger.Placement place) {
-        float handOffset = (hand == InteractionHand.MAIN_HAND) ? 0.0f : 180.0f;
-        double px = player.getX();
-        double py = player.getBoundingBox().minY + player.getBbHeight() / 2.0f + 0.25;
-        double pz = player.getZ();
-        px += -net.minecraft.util.Mth.cos((player.getYRot() + handOffset) / 180.0f * (float) Math.PI) * 0.3f;
-        pz += -net.minecraft.util.Mth.sin((player.getYRot() + handOffset) / 180.0f * (float) Math.PI) * 0.3f;
-        Vec3 look = player.getLookAngle();
-        px += look.x * 0.3;
-        py += look.y * 0.3;
-        pz += look.z * 0.3;
-        Vec3 v1 = new Vec3(px, py, pz);
-        Vec3 v2 = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5).subtract(v1);
-        java.util.Random rand = new java.util.Random();
-        for (int cnt = 50, a = 0; a < cnt; ++a) {
-            boolean floaty = a < cnt / 3;
-            float r = 1.0f;
-            float g = (189 + level.random.nextInt(67)) / 255.0f;
-            float b = (64 + level.random.nextInt(192)) / 255.0f;
-            FXDispatcher.INSTANCE.drawSimpleSparkle(rand, v1.x, v1.y, v1.z,
-                    v2.x / 6.0 + level.random.nextGaussian() * 0.05,
-                    v2.y / 6.0 + level.random.nextGaussian() * 0.05 + (floaty ? 0.05 : 0.15),
-                    v2.z / 6.0 + level.random.nextGaussian() * 0.05,
-                    0.5f, r, g, b, level.random.nextInt(5),
-                    floaty ? (0.3f + level.random.nextFloat() * 0.5f) : 0.85f,
-                    floaty ? 0.2f : 0.5f, 16);
-        }
-        if (ModSounds.DUST.get() != null) {
-            level.playSound(player, pos, ModSounds.DUST.get(), SoundSource.PLAYERS,
-                    0.33f, 1.0f + (float) level.random.nextGaussian() * 0.05f);
-        }
-        List<BlockPos> sparkles = trigger.sparkle(level, player, pos, place);
-        if (sparkles != null) {
-            for (BlockPos p : sparkles) {
-                FXDispatcher.INSTANCE.drawBlockSparkles(p, hitVec);
-            }
-        }
     }
 }

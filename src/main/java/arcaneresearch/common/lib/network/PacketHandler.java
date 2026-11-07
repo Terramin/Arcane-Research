@@ -163,6 +163,11 @@ public class PacketHandler {
                 .decoder(PacketFXBlockMist::decode)
                 .consumerMainThread(PacketFXBlockMist::handle)
                 .add();
+        INSTANCE.messageBuilder(PacketFXMagicDustSparkles.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(PacketFXMagicDustSparkles::encode)
+                .decoder(PacketFXMagicDustSparkles::decode)
+                .consumerMainThread(PacketFXMagicDustSparkles::handle)
+                .add();
         INSTANCE.messageBuilder(PacketSyncProgressToServer.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
                 .encoder(PacketSyncProgressToServer::encode)
                 .decoder(PacketSyncProgressToServer::decode)

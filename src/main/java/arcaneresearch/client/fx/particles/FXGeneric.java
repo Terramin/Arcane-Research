@@ -183,37 +183,39 @@ public class FXGeneric extends TextureSheetParticle {
     protected void calculateFrames() {
         doneFrames = true;
 
+        if (this.lifetime <= 0) {
+            this.alphaFrames = new float[]{1.0f};
+            this.scaleFrames = new float[]{1.0f};
+            return;
+        }
+
         if (alphaKeys == null || alphaKeys.length == 0) {
             alphaKeys = new float[]{1.0f};
         }
 
-        alphaFrames = new float[this.lifetime + 1];
-        float inc = (alphaKeys.length - 1) / (float) this.lifetime;
-        float is = 0.0f;
-
-        for (int a = 0; a <= this.lifetime; ++a) {
-            int isF = Mth.floor(is);
-            float diff = (isF < alphaKeys.length - 1) ? (alphaKeys[isF + 1] - alphaKeys[isF]) : 0.0f;
-            float pa = is - isF;
-            alphaFrames[a] = alphaKeys[isF] + diff * pa;
-            is += inc;
-        }
+        alphaFrames = computeFrames(alphaKeys, this.lifetime);
 
         if (scaleKeys == null || scaleKeys.length == 0) {
             scaleKeys = new float[]{1.0f};
         }
 
-        scaleFrames = new float[this.lifetime + 1];
-        inc = (scaleKeys.length - 1) / (float) this.lifetime;
-        is = 0.0f;
+        scaleFrames = computeFrames(scaleKeys, this.lifetime);
+    }
 
-        for (int a = 0; a <= this.lifetime; ++a) {
+    private static float[] computeFrames(float[] keys, int lifetime) {
+        float[] frames = new float[lifetime + 1];
+        float inc = (keys.length - 1) / (float) lifetime;
+        float is = 0.0f;
+
+        for (int a = 0; a <= lifetime; ++a) {
             int isF = Mth.floor(is);
-            float diff = (isF < scaleKeys.length - 1) ? (scaleKeys[isF + 1] - scaleKeys[isF]) : 0.0f;
+            float diff = (isF < keys.length - 1) ? (keys[isF + 1] - keys[isF]) : 0.0f;
             float pa = is - isF;
-            scaleFrames[a] = scaleKeys[isF] + diff * pa;
+            frames[a] = keys[isF] + diff * pa;
             is += inc;
         }
+
+        return frames;
     }
 
     @Override
@@ -280,6 +282,10 @@ public class FXGeneric extends TextureSheetParticle {
             int count = numParticles <= 0 ? 1 : numParticles;
             index = startParticle + (this.age / step) % count;
         } else {
+            if (numParticles <= 0) {
+                setParticleTextureIndex(startParticle);
+                return;
+            }
             float fs = this.age / (float) this.lifetime;
             index = (int) (startParticle + Math.min(numParticles * fs, numParticles - 1));
         }
@@ -432,6 +438,9 @@ public class FXGeneric extends TextureSheetParticle {
     }
 
     public void setAlphaKeyframes(float... alphaKeyframes) {
+        if (alphaKeyframes == null || alphaKeyframes.length == 0) {
+            alphaKeyframes = new float[]{1.0f};
+        }
         this.alpha = alphaKeyframes[0];
         this.alphaKeys = alphaKeyframes;
     }
@@ -442,6 +451,9 @@ public class FXGeneric extends TextureSheetParticle {
     }
 
     public void setScaleKeyframes(float... scaleKeyframes) {
+        if (scaleKeyframes == null || scaleKeyframes.length == 0) {
+            scaleKeyframes = new float[]{1.0f};
+        }
         this.quadSize = scaleKeyframes[0];
         this.scaleKeys = scaleKeyframes;
     }
@@ -464,8 +476,8 @@ public class FXGeneric extends TextureSheetParticle {
 
     public void setParticles(int startParticle, int numParticles, int particleInc) {
         this.startParticle = startParticle;
-        this.numParticles = numParticles;
-        this.particleInc = particleInc;
+        this.numParticles = Math.max(1, numParticles);
+        this.particleInc = Math.max(1, particleInc);
         setParticleTextureIndex(startParticle);
     }
 
