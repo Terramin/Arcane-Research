@@ -1,5 +1,7 @@
 package arcaneresearch.common.lib.network;
 
+import arcaneresearch.message.api.PacketStoryMessage;
+import arcaneresearch.message.api.PacketStoryMessageAck;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -262,6 +264,16 @@ public class PacketHandler {
                 .encoder(arcaneresearch.common.lib.network.misc.PacketNote::encode)
                 .decoder(arcaneresearch.common.lib.network.misc.PacketNote::decode)
                 .consumerMainThread(arcaneresearch.common.lib.network.misc.PacketNote::handle)
+                .add();
+        INSTANCE.messageBuilder(PacketStoryMessage.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(PacketStoryMessage::encode)
+                .decoder(PacketStoryMessage::decode)
+                .consumerMainThread(PacketStoryMessage::handle)
+                .add();
+        INSTANCE.messageBuilder(PacketStoryMessageAck.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(PacketStoryMessageAck::encode)
+                .decoder(PacketStoryMessageAck::decode)
+                .consumerMainThread(PacketStoryMessageAck::handle)
                 .add();
         Arcaneresearch.LOGGER.info("Arcaneresearch network packets registered");
     }
