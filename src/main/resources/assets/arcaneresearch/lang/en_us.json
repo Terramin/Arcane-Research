@@ -593,6 +593,7 @@
   "entity.arcaneresearch.primal_arrow": "Primal Arrow",
   "fail.crimsonrites": "This book contains nothing but crazed ravings.",
   "false.start": "This feels like it should work, but something is missing...",
+  "fluid_type.arcaneresearch.flux_gas": "Flux Gas",
   "fluid_type.arcaneresearch.flux_goo": "Flux Goo",
   "fluid_type.arcaneresearch.liquid_death": "Liquid Death",
   "fluid_type.arcaneresearch.purifying_fluid": "Purifying Fluid",

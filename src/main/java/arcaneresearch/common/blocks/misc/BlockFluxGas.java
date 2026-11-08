@@ -74,7 +74,7 @@ public class BlockFluxGas extends LiquidBlock {
         } else {
             living.addEffect(new MobEffectInstance(MobEffects.HUNGER, 80 + meta * 20, 0, false, true));
         }
-        if (meta > 0) {
+        if (meta > 1) {
             level.setBlock(pos, state.setValue(LEVEL, meta - 1), 3);
         } else {
             level.removeBlock(pos, false);

@@ -1614,6 +1614,7 @@
   "stability.gain": "Прирост / цикл",
   "stability.range": "0 до 100",
   "stability.loss": "Потери / цикл",
+  "fluid_type.arcaneresearch.flux_gas": "Газовые выбросы",
   "fluid_type.arcaneresearch.flux_goo": "Выброс",
   "fluid_type.arcaneresearch.purifying_fluid": "Очищающая жидкость",
   "fluid_type.arcaneresearch.liquid_death": "Жидкая смерть",

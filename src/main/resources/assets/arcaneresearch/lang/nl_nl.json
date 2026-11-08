@@ -1435,6 +1435,7 @@
   "stability.gain": "gain / cycle",
   "stability.range": "0 to",
   "stability.loss": "loss / cycle",
+  "fluid_type.arcaneresearch.flux_gas": "Flux Gas",
   "fluid_type.arcaneresearch.flux_goo": "Flux Goo",
   "fluid_type.arcaneresearch.purifying_fluid": "Purifying Fluid",
   "fluid_type.arcaneresearch.liquid_death": "Liquid Death",
