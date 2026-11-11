@@ -49,6 +49,7 @@ import arcaneresearch.common.items.armor.ItemFortressArmor;
 import arcaneresearch.common.items.baubles.ItemCharmUndying;
 import arcaneresearch.common.lib.compat.CuriosCompat;
 import arcaneresearch.common.lib.network.PacketHandler;
+import arcaneresearch.message.api.StoryTellingAPI;
 import arcaneresearch.common.lib.network.fx.PacketFXShield;
 import arcaneresearch.common.lib.utils.EntityUtils;
 import arcaneresearch.init.ModBlocks;
@@ -190,9 +191,9 @@ public class EntityEvents {
                     knowledge.addResearch("f_onfire");
                     if (player instanceof ServerPlayer serverPlayer) {
                         knowledge.sync(serverPlayer);
-                        serverPlayer.displayClientMessage(
-                                net.minecraft.network.chat.Component.translatable("got.onfire")
-                                        .withStyle(net.minecraft.ChatFormatting.DARK_PURPLE), true);
+                        StoryTellingAPI.sendStandartMsg(serverPlayer,
+                                net.minecraft.network.chat.Component.literal("§5" +
+                                        net.minecraft.network.chat.Component.translatable("got.onfire").getString()));
                     }
                 }
             }
@@ -219,9 +220,9 @@ public class EntityEvents {
                 }
                 if (discovered && player instanceof ServerPlayer sp) {
                     knowledge.sync(sp);
-                    sp.displayClientMessage(
-                            net.minecraft.network.chat.Component.translatable("got.projectile")
-                                    .withStyle(net.minecraft.ChatFormatting.DARK_PURPLE), true);
+                    StoryTellingAPI.sendStandartMsg(sp,
+                            net.minecraft.network.chat.Component.literal("§5" +
+                                    net.minecraft.network.chat.Component.translatable("got.projectile").getString()));
                 }
             }
         }

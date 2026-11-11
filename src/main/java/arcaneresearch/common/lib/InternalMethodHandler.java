@@ -30,6 +30,7 @@ import arcaneresearch.common.lib.network.fx.PacketFXPollute;
 import arcaneresearch.common.lib.network.playerdata.PacketWarpMessage;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.common.world.aura.AuraHandler;
+import arcaneresearch.message.api.StoryTellingAPI;
 
 public class InternalMethodHandler implements IInternalMethodHandler {
     @Override
@@ -91,7 +92,10 @@ public class InternalMethodHandler implements IInternalMethodHandler {
                 && ArcaneresearchCapabilities.knowsResearchStrict(player, "FIRSTSTEPS")
                 && !ArcaneresearchCapabilities.knowsResearchStrict(player, "WARP")) {
             completeResearch(player, "WARP");
-            player.sendSystemMessage(Component.translatable("research.WARP.warn"));
+            if (player instanceof ServerPlayer serverPlayer) {
+                StoryTellingAPI.sendStandartMsg(serverPlayer, Component.literal("§5§o" +
+                        Component.translatable("research.WARP.warn").getString()));
+            }
         }
         if (player instanceof ServerPlayer serverPlayer) {
             pw.sync(serverPlayer);

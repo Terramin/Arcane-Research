@@ -23,6 +23,7 @@ import arcaneresearch.common.entities.monster.EntityMindSpider;
 import arcaneresearch.common.entities.monster.cult.EntityCultistPortalLesser;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketMiscEvent;
+import arcaneresearch.message.api.StoryTellingAPI;
 import arcaneresearch.init.ModEffects;
 import arcaneresearch.init.ModEntities;
 
@@ -62,7 +63,7 @@ public class WarpEvents {
             }
             if (actualwarp > 10 && !ArcaneresearchCapabilities.knowsResearch(player, "BATHSALTS")
                     && !ArcaneresearchCapabilities.knowsResearch(player, "!BATHSALTS")) {
-                player.displayClientMessage(getWarpText(8), true);
+                sendWarpText(player, 8);
                 ArcaneresearchApi.internalMethods.completeResearch(player, "!BATHSALTS");
             }
             if (actualwarp > 25 && !ArcaneresearchCapabilities.knowsResearch(player, "ELDRITCHMINOR")) {
@@ -93,30 +94,30 @@ public class WarpEvents {
                         SoundSource.AMBIENT, 4.0f, (1.0f + (level.random.nextFloat() - level.random.nextFloat()) * 0.2f) * 0.7f);
             }
         } else if (eff <= 12) {
-            player.displayClientMessage(getWarpText(11), true);
+            sendWarpText(player, 11);
         } else if (eff <= 16) {
             MobEffectInstance pe = new MobEffectInstance(ModEffects.VIS_EXHAUST.get(), 5000, Math.min(3, warp / 15), true, true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(1), true);
+            sendWarpText(player, 1);
         } else if (eff <= 20) {
             MobEffectInstance pe = new MobEffectInstance(ModEffects.THAUMARHIA.get(), Math.min(32000, 10 * warp), 0, true, true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(15), true);
+            sendWarpText(player, 15);
         } else if (eff <= 24) {
             MobEffectInstance pe = new MobEffectInstance(ModEffects.UNNATURAL_HUNGER.get(), 5000, Math.min(3, warp / 15), true, true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(2), true);
+            sendWarpText(player, 2);
         } else if (eff <= 28) {
-            player.displayClientMessage(getWarpText(12), true);
+            sendWarpText(player, 12);
         } else if (eff <= 32) {
             spawnMist(player, warp, 1);
         } else if (eff <= 36) {
@@ -130,34 +131,34 @@ public class WarpEvents {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(5), true);
+            sendWarpText(player, 5);
         } else if (eff <= 44) {
             try {
                 player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 1200, Math.min(3, warp / 15), true, true));
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(9), true);
+            sendWarpText(player, 9);
         } else if (eff <= 48) {
             MobEffectInstance pe = new MobEffectInstance(ModEffects.INFECTIOUS_VIS_EXHAUST.get(), 6000, Math.min(3, warp / 15), true, true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(1), true);
+            sendWarpText(player, 1);
         } else if (eff <= 52) {
             player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, Math.min(40 * warp, 6000), 0, true, true));
-            player.displayClientMessage(getWarpText(10), true);
+            sendWarpText(player, 10);
         } else if (eff <= 56) {
             MobEffectInstance pe = new MobEffectInstance(ModEffects.DEATH_GAZE.get(), 6000, Math.min(3, warp / 15), true, true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(4), true);
+            sendWarpText(player, 4);
         } else if (eff <= 60) {
             suddenlySpiders(player, warp, false);
         } else if (eff <= 64) {
-            player.displayClientMessage(getWarpText(13), true);
+            sendWarpText(player, 13);
         } else if (eff <= 68) {
             spawnMist(player, warp, warp / 30);
         } else if (eff <= 72) {
@@ -169,14 +170,14 @@ public class WarpEvents {
             if (nw > 0) {
                 ArcaneresearchApi.internalMethods.addWarpToPlayer(player, -1, IPlayerWarp.EnumWarpType.NORMAL);
             }
-            player.displayClientMessage(getWarpText(14), true);
+            sendWarpText(player, 14);
         } else if (eff <= 80) {
             MobEffectInstance pe = new MobEffectInstance(ModEffects.UNNATURAL_HUNGER.get(), 6000, Math.min(3, warp / 15), true, true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
-            player.displayClientMessage(getWarpText(2), true);
+            sendWarpText(player, 2);
         } else if (eff <= 88) {
             spawnPortal(player);
         } else if (eff <= 92) {
@@ -196,7 +197,7 @@ public class WarpEvents {
                 spawnGuardian(player);
             }
         }
-        player.displayClientMessage(getWarpText(6), true);
+        sendWarpText(player, 6);
     }
 
     private static void spawnPortal(Player player) {
@@ -220,7 +221,7 @@ public class WarpEvents {
                         net.minecraft.world.entity.MobSpawnType.MOB_SUMMONED,
                         null, null);
                 level.addFreshEntity(portal);
-                player.displayClientMessage(getWarpText(16), true);
+                sendWarpText(player, 16);
                 break;
             }
         }
@@ -281,7 +282,7 @@ public class WarpEvents {
                 level.addFreshEntity(spider);
             }
         }
-        player.displayClientMessage(getWarpText(7), true);
+        sendWarpText(player, 7);
     }
 
     public static void checkDeathGaze(Player player) {
@@ -325,6 +326,12 @@ public class WarpEvents {
                 stack -> curiosWarp[0] += PlayerEvents.getFinalWarp(stack, player));
         w += curiosWarp[0];
         return w;
+    }
+
+    private static void sendWarpText(Player player, int index) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            StoryTellingAPI.sendStandartMsg(serverPlayer, getWarpText(index));
+        }
     }
 
     private static net.minecraft.network.chat.Component getWarpText(int index) {

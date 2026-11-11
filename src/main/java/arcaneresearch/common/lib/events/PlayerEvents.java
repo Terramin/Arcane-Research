@@ -1,5 +1,6 @@
 package arcaneresearch.common.lib.events;
 
+import arcaneresearch.message.api.StoryTellingAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -252,6 +253,12 @@ public class PlayerEvents {
         }
     }
 
+    private static void sendStoryMessage(Player player, Component text) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            StoryTellingAPI.sendStandartMsg(serverPlayer, text);
+        }
+    }
+
     private static void giveDreamJournal(ServerPlayer player) {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge == null) {
@@ -274,8 +281,7 @@ public class PlayerEvents {
         if (!player.getInventory().add(book)) {
             player.drop(book, false);
         }
-        player.displayClientMessage(
-                Component.literal("§5" + Component.translatable("got.dream").getString()), false);
+        StoryTellingAPI.sendStandartMsg(player, Component.literal("§5" + Component.translatable("got.dream").getString()));
     }
 
     @SubscribeEvent
@@ -306,8 +312,7 @@ public class PlayerEvents {
                 if (player instanceof ServerPlayer serverPlayer) {
                     knowledge.sync(serverPlayer);
                 }
-                player.displayClientMessage(
-                        Component.translatable("tc.crystal.pickup"), true);
+                sendStoryMessage(player, Component.translatable("tc.crystal.pickup"));
                 if (arcaneresearch.common.config.ModConfig.noSleep
                         && !knowledge.isResearchKnown("!gotdream")
                         && player instanceof ServerPlayer serverPlayer2) {
@@ -384,7 +389,7 @@ public class PlayerEvents {
         boolean isRemedy = eaten.is(net.minecraft.world.item.Items.ROTTEN_FLESH)
                 || (ModItems.ZOMBIE_BRAIN != null && eaten.is(ModItems.ZOMBIE_BRAIN.get()));
         if (!isRemedy) {
-            player.sendSystemMessage(Component.translatable("warp.text.hunger.1"));
+            sendStoryMessage(player, Component.translatable("warp.text.hunger.1"));
             return;
         }
         var active = player.getEffect(effectHolder.get());
@@ -398,7 +403,7 @@ public class PlayerEvents {
             player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     effectHolder.get(), duration, amp, true, false));
         }
-        player.sendSystemMessage(Component.translatable("warp.text.hunger.2"));
+        sendStoryMessage(player, Component.translatable("warp.text.hunger.2"));
     }
 
     private static int[] countRunicProcs(Player player) {

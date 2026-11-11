@@ -8,6 +8,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import arcaneresearch.message.api.StoryTellingAPI;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -112,8 +114,11 @@ public class EntityFluxRift extends Entity {
                         new AABB(spawnPos).inflate(32.0));
                 for (Player target : targets) {
                     if (!ArcaneresearchCapabilities.isResearchKnown(target, "f_toomuchflux")) {
-                        target.displayClientMessage(Component.translatable("tc.fluxevent.3")
-                                .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC), true);
+                        if (target instanceof ServerPlayer serverPlayer) {
+                            StoryTellingAPI.sendStandartMsg(serverPlayer,
+                                    Component.translatable("tc.fluxevent.3")
+                                            .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC));
+                        }
                         ArcaneresearchApi.internalMethods.completeResearch(target, "f_toomuchflux");
                     }
                 }
@@ -393,8 +398,11 @@ public class EntityFluxRift extends Entity {
                     for (LivingEntity target : targets) {
                         didit = true;
                         if (target instanceof Player player) {
-                            player.displayClientMessage(Component.translatable("tc.fluxevent.2")
-                                    .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC), true);
+                            if (player instanceof ServerPlayer serverPlayer) {
+                                StoryTellingAPI.sendStandartMsg(serverPlayer,
+                                        Component.translatable("tc.fluxevent.2")
+                                                .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC));
+                            }
                         }
                         MobEffectInstance pe = new MobEffectInstance(
                                 ModEffects.INFECTIOUS_VIS_EXHAUST.get(), 3000, 2);

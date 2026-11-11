@@ -50,6 +50,8 @@ import arcaneresearch.common.lib.network.fx.PacketFXInfusionStream;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.common.lib.utils.StreamPathHelper;
+import arcaneresearch.message.api.StoryTellingAPI;
+import net.minecraft.server.level.ServerPlayer;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.common.tiles.devices.TileStabilizer;
 import arcaneresearch.init.ModBlockEntities;
@@ -1038,10 +1040,10 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         for (Player player : targets) {
             if (!ArcaneresearchCapabilities.knowsResearch(player, "!INSTABILITY")) {
                 ResearchManager.completeResearch(player, "!INSTABILITY");
-                player.displayClientMessage(
-                        Component.translatable("got.instability")
-                                .withStyle(net.minecraft.ChatFormatting.DARK_PURPLE),
-                        true);
+                if (player instanceof ServerPlayer serverPlayer) {
+                    StoryTellingAPI.sendStandartMsg(serverPlayer,
+                            Component.literal("§5" + Component.translatable("got.instability").getString()));
+                }
             }
         }
     }

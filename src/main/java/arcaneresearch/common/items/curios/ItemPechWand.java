@@ -10,6 +10,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerPlayer;
+import arcaneresearch.message.api.StoryTellingAPI;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -65,8 +67,10 @@ public class ItemPechWand extends Item {
         if (!clientSide) {
             if (!knowledge.isResearchKnown("FOCUSPECH")) {
                 ArcaneresearchApi.internalMethods.progressResearch(player, "FOCUSPECH");
-                player.sendSystemMessage(Component.translatable("got.pechwand")
-                        .withStyle(ChatFormatting.DARK_PURPLE));
+                if (player instanceof ServerPlayer serverPlayer) {
+                    StoryTellingAPI.sendStandartMsg(serverPlayer,
+                            Component.literal("§5" + Component.translatable("got.pechwand").getString()));
+                }
             }
 
             var categories = ResearchCategories.researchCategories;

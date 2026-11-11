@@ -36,6 +36,7 @@ import arcaneresearch.common.lib.research.*;
 import arcaneresearch.common.lib.research.theorycraft.TheoryRegistry;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
+import arcaneresearch.message.api.StoryTellingAPI;
 public class ConfigResearch {
     public static final String[] TC_CATEGORIES = {
             "BASICS", "ALCHEMY", "AUROMANCY", "ARTIFICE", "INFUSION", "GOLEMANCY", "ELDRITCH", "LEGACY"
@@ -250,36 +251,32 @@ public class ConfigResearch {
         if (!knowledge.isResearchKnown("m_hellandback") && dimKey.getPath().contains("nether")) {
             knowledge.addResearch("m_hellandback");
             knowledge.sync(serverPlayer);
-            player.displayClientMessage(
+            StoryTellingAPI.sendStandartMsg(serverPlayer,
                     net.minecraft.network.chat.Component.literal("\u00A75" +
-                            net.minecraft.network.chat.Component.translatable("got.hellandback").getString()),
-                    true);
+                            net.minecraft.network.chat.Component.translatable("got.hellandback").getString()));
         }
         if (!knowledge.isResearchKnown("m_endoftheworld") && dimKey.getPath().contains("end")) {
             knowledge.addResearch("m_endoftheworld");
             knowledge.sync(serverPlayer);
-            player.displayClientMessage(
+            StoryTellingAPI.sendStandartMsg(serverPlayer,
                     net.minecraft.network.chat.Component.literal("\u00A75" +
-                            net.minecraft.network.chat.Component.translatable("got.endoftheworld").getString()),
-                    true);
+                            net.minecraft.network.chat.Component.translatable("got.endoftheworld").getString()));
         }
         if (knowledge.isResearchKnown("UNLOCKAUROMANCY@1") && !knowledge.isResearchKnown("UNLOCKAUROMANCY@2")) {
             if (player.getY() < 10 && !knowledge.isResearchKnown("m_deepdown")) {
                 knowledge.addResearch("m_deepdown");
                 knowledge.sync(serverPlayer);
-                player.displayClientMessage(
+                StoryTellingAPI.sendStandartMsg(serverPlayer,
                         net.minecraft.network.chat.Component.literal("\u00A75" +
-                                net.minecraft.network.chat.Component.translatable("got.deepdown").getString()),
-                        true);
+                                net.minecraft.network.chat.Component.translatable("got.deepdown").getString()));
             }
             int worldHeight = player.level().getMaxBuildHeight();
             if (player.getY() > worldHeight * 0.4 && !knowledge.isResearchKnown("m_uphigh")) {
                 knowledge.addResearch("m_uphigh");
                 knowledge.sync(serverPlayer);
-                player.displayClientMessage(
+                StoryTellingAPI.sendStandartMsg(serverPlayer,
                         net.minecraft.network.chat.Component.literal("\u00A75" +
-                                net.minecraft.network.chat.Component.translatable("got.uphigh").getString()),
-                        true);
+                                net.minecraft.network.chat.Component.translatable("got.uphigh").getString()));
             }
         }
         var stats = serverPlayer.getStats();

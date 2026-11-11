@@ -2,6 +2,7 @@ package arcaneresearch.message.api;
 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.lib.network.PacketHandler;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +27,13 @@ public final class StoryTellingAPI {
 
     public static void send(StoryMessage msg, ServerPlayer player) {
         send(msg, player, null);
+    }
+
+    public static void sendStandartMsg(ServerPlayer player, Component text) {
+        if (text == null) return;
+        int duration = Math.max(300, text.getString().length() * 5);
+        send(new StoryMessage(player.getName(), text, StoryMessage.NONE,
+                0xFFFFFF, 0xFFFFFF, duration, 100, false, true), player);
     }
 
     public static void send(StoryMessage msg, ServerPlayer player,
