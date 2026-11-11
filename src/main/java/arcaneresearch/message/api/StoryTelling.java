@@ -30,7 +30,7 @@ public final class StoryTelling {
     private static final int FADE_IN = 8;
     private static final int FADE_OUT = 12;
     private static final int GAP_TICKS = 4;
-    private static final int MAX_WIDTH = 120;
+    private static final int MAX_WIDTH = 240;
     private static final int PADDING = 4;
     private static final int ICON_SIZE = 16;
     private static final int ICON_TEXT_SPACING = 6;
@@ -78,10 +78,6 @@ public final class StoryTelling {
     }
 
     public static void receiveFromServer(StoryMessage msg, UUID id) {
-        if (!isForLocalPlayer(msg)) {
-            notifyDelivery(id, DeliveryStatus.DROPPED);
-            return;
-        }
         enqueue(msg, id);
     }
 
@@ -127,13 +123,6 @@ public final class StoryTelling {
     public static void skip() {
         if (current == null) return;
         finishCurrent(DeliveryStatus.SKIPPED, false);
-    }
-
-    private static boolean isForLocalPlayer(StoryMessage msg) {
-        UUID target = msg.target();
-        if (target.equals(StoryMessage.ALL)) return true;
-        var player = Minecraft.getInstance().player;
-        return player != null && player.getUUID().equals(target);
     }
 
     private static boolean sameContent(StoryMessage a, StoryMessage b) {
@@ -205,8 +194,8 @@ public final class StoryTelling {
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        clientTicks++;
         if (Minecraft.getInstance().isPaused()) return;
+        clientTicks++;
 
         if (current == null) {
             if (gapTicks > 0) gapTicks--;
@@ -289,6 +278,9 @@ public final class StoryTelling {
         int y = screenHeight - HOTBAR_HEIGHT - HUD_ABOVE_HOTBAR_HEIGHT - HUD_GAP - cachedBoxHeight;
         y = Math.max(MIN_TOP_MARGIN, y);
 
+        g.pose().pushPose();
+        g.pose().translate(0.0F, 0.0F, 200.0F);
+
         g.fill(x, y, x + cachedBoxWidth, y + cachedBoxHeight, withAlpha(BG_COLOR, bgAlpha));
 
         if (cachedHasIcon) {
@@ -327,6 +319,8 @@ public final class StoryTelling {
             textY += font.lineHeight;
             budget -= len;
         }
+
+        g.pose().popPose();
     }
 
     private static int charCount(FormattedCharSequence seq) {

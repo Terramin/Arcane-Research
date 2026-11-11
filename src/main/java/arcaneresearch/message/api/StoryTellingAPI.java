@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.Map;
@@ -29,16 +31,14 @@ public final class StoryTellingAPI {
     public static void send(StoryMessage msg, ServerPlayer player,
                             BiConsumer<UUID, DeliveryStatus> callback) {
         if (msg == null || player == null) return;
-        UUID playerId = player.getUUID();
         UUID id = callback != null ? UUID.randomUUID() : null;
-        if (id != null) PENDING.put(id, new Pending(playerId, callback));
-        PacketHandler.sendToPlayer(
-                new PacketStoryMessage(id, withTarget(msg, playerId)), player);
+        if (id != null) PENDING.put(id, new Pending(player.getUUID(), callback));
+        PacketHandler.sendToPlayer(new PacketStoryMessage(id, msg), player);
     }
 
     public static void sendToAll(StoryMessage msg) {
         if (msg == null) return;
-        PacketHandler.sendToAll(new PacketStoryMessage(null, withTarget(msg, StoryMessage.ALL)));
+        PacketHandler.sendToAll(new PacketStoryMessage(null, msg));
     }
 
     public static void sendToAll(StoryMessage msg,
@@ -52,14 +52,12 @@ public final class StoryTellingAPI {
 
     public static void sendToDimension(StoryMessage msg, ResourceKey<Level> dimension) {
         if (msg == null || dimension == null) return;
-        PacketHandler.sendToDimension(
-                new PacketStoryMessage(null, withTarget(msg, StoryMessage.ALL)), dimension);
+        PacketHandler.sendToDimension(new PacketStoryMessage(null, msg), dimension);
     }
 
     public static void sendToTrackers(StoryMessage msg, ServerPlayer seen) {
         if (msg == null || seen == null) return;
-        PacketHandler.sendToAllTracking(
-                new PacketStoryMessage(null, withTarget(msg, StoryMessage.ALL)), seen);
+        PacketHandler.sendToAllTracking(new PacketStoryMessage(null, msg), seen);
     }
 
     static void onAck(UUID id, DeliveryStatus status) {
@@ -87,10 +85,14 @@ public final class StoryTellingAPI {
         }
     }
 
-    private static StoryMessage withTarget(StoryMessage msg, UUID target) {
-        if (target.equals(msg.target())) return msg;
-        return new StoryMessage(msg.title(), msg.text(), msg.icon(),
-                msg.titleColor(), msg.textColor(), msg.durationTicks(),
-                msg.maxWaitTicks(), target, msg.shake(), msg.typewriter());
+    public static void sendDistClient(StoryMessage msg) {
+        sendDistClient(msg, null);
+    }
+
+    public static void sendDistClient(StoryMessage msg,
+                                      BiConsumer<UUID, DeliveryStatus> callback) {
+        if (msg == null) return;
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                () -> () -> ClientStoryMessageSender.send(msg, callback));
     }
 }

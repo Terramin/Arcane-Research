@@ -40,7 +40,6 @@ public class PacketStoryMessage {
         buf.writeInt(msg.textColor());
         buf.writeInt(msg.durationTicks());
         buf.writeInt(msg.maxWaitTicks());
-        buf.writeUUID(msg.target());
         buf.writeBoolean(msg.shake());
         buf.writeBoolean(msg.typewriter());
     }
@@ -50,7 +49,7 @@ public class PacketStoryMessage {
         StoryMessage msg = new StoryMessage(
                 buf.readComponent(), buf.readComponent(), buf.readResourceLocation(),
                 buf.readInt(), buf.readInt(), buf.readInt(), buf.readInt(),
-                buf.readUUID(), buf.readBoolean(), buf.readBoolean());
+                buf.readBoolean(), buf.readBoolean());
         return new PacketStoryMessage(id, msg);
     }
 }
