@@ -134,8 +134,7 @@ public final class StoryTelling {
         if (current != null || gapTicks > 0) return;
         while (!QUEUE.isEmpty()) {
             Queued q = QUEUE.pollFirst();
-            if (q.msg().maxWaitTicks() >= 0
-                    && clientTicks - q.enqueuedAt() > q.msg().maxWaitTicks()) {
+            if (clientTicks - q.enqueuedAt() > q.msg().maxWaitTicks()) {
                 notifyDelivery(q.id(), DeliveryStatus.DROPPED);
                 continue;
             }

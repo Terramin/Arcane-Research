@@ -24,6 +24,7 @@ public record StoryMessage(
         Objects.requireNonNull(title, "title");
         Objects.requireNonNull(text, "text");
         Objects.requireNonNull(icon, "icon");
-        durationTicks = Math.max(0, durationTicks);
+        durationTicks = Math.max(1, durationTicks);
+        maxWaitTicks = Math.max(1, maxWaitTicks);
     }
 }
