@@ -33,12 +33,10 @@ public class AspectCompoundCategory implements IRecipeCategory<Aspect> {
     private static final int WIDTH = 108;
     private static final int HEIGHT = 40;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
 
     public AspectCompoundCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.SALIS_MUNDUS.get()));
         this.title = Component.translatable("gui.arcaneresearch.aspect_compound");
     }
@@ -85,11 +83,6 @@ public class AspectCompoundCategory implements IRecipeCategory<Aspect> {
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
-    }
-
-    @Override
     public int getWidth() {
         return WIDTH;
     }
@@ -124,10 +117,6 @@ public class AspectCompoundCategory implements IRecipeCategory<Aspect> {
     @Override
     public void draw(@NotNull Aspect recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics,
                      double mouseX, double mouseY) {
-        if (background != null) {
-            background.draw(guiGraphics, 0, 0);
-        }
-
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;
 

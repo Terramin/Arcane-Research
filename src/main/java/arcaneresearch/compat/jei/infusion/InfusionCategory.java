@@ -45,7 +45,6 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
     private static final int OX = 75;
     private static final int OY = 95;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
 
@@ -53,7 +52,6 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
     private List<AspectSpot> cachedSpots = List.of();
 
     public InfusionCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModBlocks.INFUSION_MATRIX.get()));
         this.title = Component.translatable("gui.arcaneresearch.infusion");
     }
@@ -116,11 +114,6 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
-    }
-
-    @Override
     public int getWidth() {
         return WIDTH;
     }
@@ -172,10 +165,6 @@ public class InfusionCategory implements IRecipeCategory<InfusionRecipeType> {
     @Override
     public void draw(@NotNull InfusionRecipeType recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics,
                      double mouseX, double mouseY) {
-        if (background != null) {
-            background.draw(guiGraphics, 0, 0);
-        }
-
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;
 

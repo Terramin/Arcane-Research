@@ -2,13 +2,11 @@ package arcaneresearch.compat.jei.aspect;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -36,12 +34,10 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
     private static final int HEIGHT = 76;
     private static final int PAGE_SIZE = 18;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
 
     public AspectSourcesCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.THAUMONOMICON.get()));
         this.title = Component.translatable("gui.arcaneresearch.aspect_sources");
     }
@@ -136,11 +132,6 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
     }
 
     @Override
-    public IDrawable getBackground() {
-        return background;
-    }
-
-    @Override
     public int getWidth() {
         return WIDTH;
     }
@@ -148,14 +139,6 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
     @Override
     public int getHeight() {
         return HEIGHT;
-    }
-
-    @Override
-    public void draw(@NotNull Sources recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics,
-                     double mouseX, double mouseY) {
-        if (background != null) {
-            background.draw(guiGraphics, 0, 0);
-        }
     }
 
     @Override

@@ -37,14 +37,12 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     private static final float ROT_X = 25.0f;
     private static final float ROT_Y = -45.0f;
     private static final int PARTS_Y = 124;
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
     private ArcaneresearchApi.BluePrint currentRecipe;
     private BlueprintBlockAccess access;
 
     public MultiblockCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.SALIS_MUNDUS.get()));
         this.title = Component.translatable("gui.arcaneresearch.multiblock");
     }
@@ -57,11 +55,6 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     @Override
     public @NotNull Component getTitle() {
         return title;
-    }
-
-    @Override
-    public IDrawable getBackground() {
-        return background;
     }
 
     @Override
