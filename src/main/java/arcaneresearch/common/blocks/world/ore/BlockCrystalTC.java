@@ -1,6 +1,7 @@
 package arcaneresearch.common.blocks.world.ore;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -27,12 +28,17 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aura.AuraHelper;
 import arcaneresearch.common.world.aura.AuraHandler;
 import arcaneresearch.init.ModSounds;
+import net.minecraft.tags.TagKey;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import arcaneresearch.Arcaneresearch;
 public class BlockCrystalTC extends Block {
     public static final IntegerProperty SIZE = IntegerProperty.create("size", 0, 3);
     public static final IntegerProperty GENERATION = IntegerProperty.create("gen", 1, 4);
+    public static final TagKey<Block> NO_CRYSTAL_SUPPORT = TagKey.create(
+            net.minecraft.core.registries.Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "no_crystal_support"));
     private static final VoxelShape SHAPE_FULL = Shapes.block();
     private static final VoxelShape SHAPE_UP = Block.box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
     private static final VoxelShape SHAPE_DOWN = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
@@ -97,6 +103,9 @@ public class BlockCrystalTC extends Block {
     }
     public static boolean isValidSupport(BlockState state, BlockGetter level, BlockPos pos, Direction face) {
         if (!state.isFaceSturdy(level, pos, face)) {
+            return false;
+        }
+        if (state.is(NO_CRYSTAL_SUPPORT)) {
             return false;
         }
         return state.getSoundType() == net.minecraft.world.level.block.SoundType.STONE
