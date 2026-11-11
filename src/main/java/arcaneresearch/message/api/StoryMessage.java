@@ -25,6 +25,6 @@ public record StoryMessage(
         Objects.requireNonNull(text, "text");
         Objects.requireNonNull(icon, "icon");
         durationTicks = Math.max(1, durationTicks);
-        maxWaitTicks = Math.max(1, maxWaitTicks);
+        maxWaitTicks = Math.max(durationTicks*5, maxWaitTicks);
     }
 }
