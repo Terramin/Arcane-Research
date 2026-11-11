@@ -13,11 +13,19 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.List;
 public class BlockPillarTC extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
+
+    private static final VoxelShape SHAPE_BASE = Block.box(0, 0, 0, 16, 8, 16);
+    private static final VoxelShape SHAPE_SHAFT = Block.box(2, 8, 2, 14, 16, 14);
+    private static final VoxelShape SHAPE_TOP_SHAFT = Block.box(4, 16, 4, 15, 27, 15);
+    private static final VoxelShape SHAPE_TOP_CAP = Block.box(11, 26, 11, 17, 33, 17);
+    private static final VoxelShape SELECTION_SHAPE = SHAPE_BASE;
+    private static final VoxelShape COLLISION_SHAPE =
+            Shapes.or(SHAPE_BASE, SHAPE_SHAFT, SHAPE_TOP_SHAFT, SHAPE_TOP_CAP);
     public BlockPillarTC(Properties properties) {
         super(properties);
         this.registerDefaultState(
@@ -35,14 +43,11 @@ public class BlockPillarTC extends Block {
     }
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return SELECTION_SHAPE;
     }
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        // Оставляем коллизию внутри ячейки 0..16: VoxelShape блока не должен выходить за
-        // пределы 0..16 — координаты выше 16 дают молча испорченный out-of-bounds шейп
-        // (см. Shapes#create/findBits в 1.20.1).
-        return state.getShape(level, pos, context);
+        return COLLISION_SHAPE;
     }
     @Override
     public PushReaction getPistonPushReaction(BlockState state) {
