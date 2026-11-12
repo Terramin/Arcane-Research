@@ -26,7 +26,8 @@ public class ScanSky implements IScanThing {
         if (!player.level().canSeeSky(player.blockPosition().above())) return false;
         if (!player.level().dimension().equals(Level.OVERWORLD)) return false;
         if (!ArcaneresearchCapabilities.knowsResearchStrict(player, "CELESTIALSCANNING")) return false;
-        return true;
+        SkyState sky = computeSkyState(player, player.level());
+        return sky.aligned() || sky.isNight();
     }
 
     @Override
@@ -38,44 +39,26 @@ public class ScanSky implements IScanThing {
         if (!level.canSeeSky(player.blockPosition().above())) return;
         if (!ArcaneresearchCapabilities.knowsResearchStrict(player, "CELESTIALSCANNING")) return;
 
-        int yaw = (int) Mth.wrapDegrees(player.getYRot() + 90.0f);
-        int pitch = (int) Math.abs(player.getXRot());
-
-        int celestialAngle = (int) ((level.getDayTime() / 24000.0 + 0.25) * 360.0) % 360;
-        boolean isNight = celestialAngle > 180;
-        if (isNight) {
-            celestialAngle -= 180;
-        }
-
-        boolean inRangeYaw;
-        boolean inRangePitch;
-        if (celestialAngle > 90) {
-            inRangeYaw = Math.abs(Math.abs(yaw) - 180) < 10;
-            inRangePitch = Math.abs(180 - celestialAngle - pitch) < 7;
-        } else {
-            inRangeYaw = Math.abs(yaw) < 10;
-            inRangePitch = Math.abs(celestialAngle - pitch) < 7;
-        }
-
+        SkyState sky = computeSkyState(player, level);
         long worldDay = level.getDayTime() / 24000L;
         String dayPrefix = "CEL_" + worldDay + "_";
 
-        if (inRangeYaw && inRangePitch) {
+        if (sky.aligned()) {
             int moonPhase = (int) (level.getDayTime() / 24000L % 8L);
-            String key = dayPrefix + (isNight ? ("Moon" + moonPhase) : "Sun");
+            String key = dayPrefix + (sky.isNight() ? ("Moon" + moonPhase) : "Sun");
             if (ArcaneresearchCapabilities.isResearchKnown(player, key)) {
                 player.displayClientMessage(Component.translatable("tc.celestial.fail.1"), true);
                 return;
             }
             if (hasScribingTools(player)
                     && InventoryUtils.consumePlayerItem(player, new ItemStack(Items.PAPER), false, true)) {
-                giveNote(player, isNight ? 5 + moonPhase : 0);
+                giveNote(player, sky.isNight() ? 5 + moonPhase : 0);
                 ArcaneresearchApi.internalMethods.progressResearch(player, key);
             } else {
                 player.displayClientMessage(Component.translatable("tc.celestial.fail.2"), true);
             }
             cleanResearch(player, dayPrefix);
-        } else if (isNight) {
+        } else if (sky.isNight()) {
             int starDirection = getStarDirection(player);
             String key = dayPrefix + "Star" + starDirection;
             if (ArcaneresearchCapabilities.isResearchKnown(player, key)) {
@@ -104,13 +87,35 @@ public class ScanSky implements IScanThing {
     }
 
     private int getStarDirection(Player player) {
-        float yaw = Mth.wrapDegrees(player.getYRot());
-        if (yaw < 0) yaw += 360.0f;
+        return switch (player.getDirection()) {
+            case NORTH -> 0;
+            case SOUTH -> 1;
+            case WEST -> 2;
+            default -> 3;
+        };
+    }
 
-        if (yaw < 45 || yaw >= 315) return 0;
-        if (yaw < 135) return 1;
-        if (yaw < 225) return 2;
-        return 3;
+    private record SkyState(boolean isNight, boolean aligned) {
+    }
+
+    private SkyState computeSkyState(Player player, Level level) {
+        int yaw = (int) Mth.wrapDegrees(player.getYRot() + 90.0f);
+        int pitch = (int) Math.abs(player.getXRot());
+
+        int celestialAngle = (int) ((level.getDayTime() % 24000L) * 360.0 / 24000.0) % 360;
+        boolean isNight = celestialAngle > 180;
+        int bodyAngle = isNight ? celestialAngle - 180 : celestialAngle;
+
+        boolean inRangeYaw;
+        boolean inRangePitch;
+        if (bodyAngle > 90) {
+            inRangeYaw = Math.abs(Math.abs(yaw) - 180) < 10;
+            inRangePitch = Math.abs(180 - bodyAngle - pitch) < 7;
+        } else {
+            inRangeYaw = Math.abs(yaw) < 10;
+            inRangePitch = Math.abs(bodyAngle - pitch) < 7;
+        }
+        return new SkyState(isNight, inRangeYaw && inRangePitch);
     }
 
     private void giveNote(Player player, int meta) {
