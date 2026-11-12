@@ -7,7 +7,8 @@
   "client": [
     "AbstractContainerScreenInvoker",
     "InventoryScanHighlightMixin",
-    "InventoryScanLensMixin"
+    "InventoryScanLensMixin",
+    "ThaumometerItemUsedMixin"
   ],
   "injectors": {
     "defaultRequire": 1
