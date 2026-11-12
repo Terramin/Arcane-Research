@@ -78,7 +78,7 @@ public class ResearchToast implements Toast {
             var fp = arcaneresearch.api.casters.FocusEngine.getElement(str.replace("focus:", "").trim());
             if (fp instanceof arcaneresearch.api.casters.FocusNode node) {
                 arcaneresearch.client.gui.screens.FocalManipulatorScreen.drawPart(
-                        graphics, node, iconX + 8, iconY + 8, 24.0f, true);
+                        graphics, node, iconX + 8, iconY + 8, 24.0f, false);
             }
         }
     }
