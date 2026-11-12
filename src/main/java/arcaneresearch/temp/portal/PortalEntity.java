@@ -6,6 +6,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -21,13 +24,14 @@ import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 
 public class PortalEntity extends PathfinderMob {
-    private static final int DEFAULT_LIFETIME = 600;
+    private static final int DEFAULT_LIFETIME = 6000;
     private static final int OPEN_ANIMATION_TICKS = 20;
     private static final float WIDTH = 2.4F;
     private static final float HEIGHT = 4.2F;
@@ -38,8 +42,12 @@ public class PortalEntity extends PathfinderMob {
     /** Смещение модели живой сущности при отрисовке (LivingEntityRenderer). */
     private static final double MODEL_RENDER_BASE = 1.501;
 
-    private BlockPos teleportTarget = BlockPos.ZERO;
-    private ResourceKey<Level> teleportDimension = Level.OVERWORLD;
+    /** Цель телепорта — синхронизируется на клиент (нужна для рендера вида "через" портал). */
+    private static final EntityDataAccessor<BlockPos> DATA_TELEPORT_TARGET =
+            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BLOCK_POS);
+    /** Измерение цели телепорта — строка вида "namespace:path" (у ResourceKey нет сериализатора). */
+    private static final EntityDataAccessor<String> DATA_TELEPORT_DIM =
+            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.STRING);
     private float portalWidth = WIDTH;
     private float portalHeight = HEIGHT;
     private int lifetime = DEFAULT_LIFETIME;
@@ -59,24 +67,34 @@ public class PortalEntity extends PathfinderMob {
     }
 
     public void setTeleportTarget(BlockPos pos) {
-        this.teleportTarget = pos == null ? BlockPos.ZERO : pos.immutable();
+        this.entityData.set(DATA_TELEPORT_TARGET, pos == null ? BlockPos.ZERO : pos.immutable());
     }
 
     public void setTeleportDimension(ResourceKey<Level> dimension) {
-        this.teleportDimension = dimension == null ? Level.OVERWORLD : dimension;
+        ResourceKey<Level> key = dimension == null ? Level.OVERWORLD : dimension;
+        this.entityData.set(DATA_TELEPORT_DIM, key.location().toString());
     }
 
+    /** Ключ измерения цели — парсится из синхронизированной строки. */
     public ResourceKey<Level> getTeleportDimension() {
-        return teleportDimension;
+        ResourceLocation dim = parseResourceLocation(this.entityData.get(DATA_TELEPORT_DIM));
+        return dim == null ? Level.OVERWORLD : ResourceKey.create(Registries.DIMENSION, dim);
+    }
+
+    public BlockPos getTeleportTarget() {
+        return this.entityData.get(DATA_TELEPORT_TARGET);
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_TELEPORT_TARGET, BlockPos.ZERO);
+        this.entityData.define(DATA_TELEPORT_DIM, Level.OVERWORLD.location().toString());
     }
 
     public void setSize(float width, float height) {
         this.portalWidth = width;
         this.portalHeight = height;
-    }
-
-    public BlockPos getTeleportTarget() {
-        return teleportTarget;
     }
 
     /**
@@ -87,6 +105,70 @@ public class PortalEntity extends PathfinderMob {
         float f = Math.min((this.tickCount + partialTicks) / (float) OPEN_ANIMATION_TICKS, 1f);
         // плавное ускорение/замедление (smoothstep)
         return f * f * (3f - 2f * f);
+    }
+
+    /** Позиция плоскости портала (интерполяция по partialTicks) — плоскость проходит через центр сущности. */
+    public Vec3 getPortalPlanePos(float partialTicks) {
+        return new Vec3(
+                Mth.lerp((double) partialTicks, this.xo, this.getX()),
+                Mth.lerp((double) partialTicks, this.yo, this.getY()),
+                Mth.lerp((double) partialTicks, this.zo, this.getZ()));
+    }
+
+    /** Фактический yaw портала (интерполяция по partialTicks). */
+    public float getPortalYaw(float partialTicks) {
+        return Mth.rotLerp(partialTicks, this.yRotO, this.getYRot());
+    }
+
+    /** Нормаль плоскости портала (горизонтальное направление "лица" портала). */
+    public Vec3 getFacingNormal(float partialTicks) {
+        double rad = Math.toRadians(getPortalYaw(partialTicks));
+        return new Vec3(-Math.sin(rad), 0.0D, Math.cos(rad));
+    }
+
+    /** Точка выхода: центр позиции, куда портал телепортирует — с тем же поиском безопасной
+     *  позиции вверх, что и в teleportPlayer (иначе вид строится вокруг сырой цели и камера
+     *  может оказаться внутри блока цели — чёрная картинка из-за отсечения back-faces). */
+    public Vec3 getExitBase() {
+        BlockPos target = getTeleportTarget();
+        BlockPos safe = target.above();
+        if (level().hasChunkAt(target)) {
+            for (int i = 0; i < 8; i++) {
+                if (level().getBlockState(safe).isAir() && level().getBlockState(safe.above()).isAir()) {
+                    break;
+                }
+                safe = safe.above();
+            }
+        }
+        return new Vec3(safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5);
+    }
+
+    /**
+     * Преобразование точки "через" портал: составляющая вдоль нормали отражается,
+     * перпендикулярная сохраняется; плоскость источника отображается на плоскость выхода.
+     * Точки перед порталом оказываются за плоскостью выхода (виртуальная камера вида).
+     */
+    public Vec3 transformThrough(Vec3 worldPos, float partialTicks) {
+        Vec3 normal = getFacingNormal(partialTicks);
+        Vec3 d = worldPos.subtract(getPortalPlanePos(partialTicks));
+        double along = d.dot(normal);
+        Vec3 flat = d.subtract(normal.scale(along));
+        return getExitBase().add(flat).subtract(normal.scale(along));
+    }
+
+    /** Преобразование направления "через" портал — отражение по нормали. */
+    public Vec3 transformDirectionThrough(Vec3 direction, float partialTicks) {
+        Vec3 normal = getFacingNormal(partialTicks);
+        return direction.subtract(normal.scale(2.0D * direction.dot(normal)));
+    }
+
+    /** Возможно ли рендерить вид через портал: точка выхода задана, портал в том же измерении,
+     *  открыт и чанки у точки выхода загружены (иначе показать нечего). */
+    public boolean canRenderView(float partialTicks) {
+        return getTeleportTarget() != BlockPos.ZERO
+                && getTeleportDimension() == level().dimension()
+                && level().hasChunkAt(getTeleportTarget())
+                && getOpenFraction(partialTicks) > 0.05F;
     }
 
     @Override
@@ -202,7 +284,7 @@ public class PortalEntity extends PathfinderMob {
 
     private void teleportPlayer(ServerPlayer player) {
         ServerLevel targetLevel = resolveTargetLevel(player);
-        BlockPos safe = teleportTarget.above();
+        BlockPos safe = getTeleportTarget().above();
 
         for (int i = 0; i < 8; i++) {
             if (targetLevel.getBlockState(safe).isAir() && targetLevel.getBlockState(safe.above()).isAir()) {
@@ -226,8 +308,8 @@ public class PortalEntity extends PathfinderMob {
 
     private ServerLevel resolveTargetLevel(ServerPlayer player) {
         MinecraftServer server = player.getServer();
-        if (server != null && teleportDimension != null) {
-            ServerLevel target = server.getLevel(teleportDimension);
+        if (server != null) {
+            ServerLevel target = server.getLevel(getTeleportDimension());
             if (target != null) {
                 return target;
             }
@@ -238,12 +320,11 @@ public class PortalEntity extends PathfinderMob {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("Pos_X", teleportTarget.getX());
-        tag.putInt("Pos_Y", teleportTarget.getY());
-        tag.putInt("Pos_Z", teleportTarget.getZ());
-        if (teleportDimension != null) {
-            tag.putString("Dim", teleportDimension.location().toString());
-        }
+        BlockPos target = getTeleportTarget();
+        tag.putInt("Pos_X", target.getX());
+        tag.putInt("Pos_Y", target.getY());
+        tag.putInt("Pos_Z", target.getZ());
+        tag.putString("Dim", getTeleportDimension().location().toString());
         tag.putInt("Timer", lifetime);
         tag.putFloat("Width", portalWidth);
         tag.putFloat("Height", portalHeight);
@@ -253,12 +334,12 @@ public class PortalEntity extends PathfinderMob {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.contains("Pos_X") && tag.contains("Pos_Y") && tag.contains("Pos_Z")) {
-            teleportTarget = new BlockPos(tag.getInt("Pos_X"), tag.getInt("Pos_Y"), tag.getInt("Pos_Z"));
+            setTeleportTarget(new BlockPos(tag.getInt("Pos_X"), tag.getInt("Pos_Y"), tag.getInt("Pos_Z")));
         }
         if (tag.contains("Dim")) {
             ResourceLocation dim = parseResourceLocation(tag.getString("Dim"));
             if (dim != null) {
-                teleportDimension = ResourceKey.create(Registries.DIMENSION, dim);
+                setTeleportDimension(ResourceKey.create(Registries.DIMENSION, dim));
             }
         }
         if (tag.contains("Timer")) {
