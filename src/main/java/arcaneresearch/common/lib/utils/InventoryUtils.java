@@ -199,6 +199,7 @@ public class InventoryUtils {
             if (checkEnchantedPlaceholder(item, slotStack) || areItemStacksEqual(slotStack, item, filter)) {
                 if (slotStack.getCount() > count) {
                     slotStack.shrink(count);
+                    count = 0;
                 } else {
                     count -= slotStack.getCount();
                     invItems.set(slot, ItemStack.EMPTY);
