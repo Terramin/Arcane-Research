@@ -1,4 +1,4 @@
-package arcaneresearch.api;
+package arcaneresearch.api.rarity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.Rarity;

@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "arcaneresearch.api.lore.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "arcaneresearch.refmap.json",
+  "client": [
+    "ItemStackLoreMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
