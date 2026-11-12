@@ -238,8 +238,8 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag("forge:ingots/gold", new AspectList().add(Aspect.METAL, 10).add(Aspect.DESIRE, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.COAL_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ENERGY, 15).add(Aspect.FIRE, 15));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Items.COAL), new AspectList().add(Aspect.ENERGY, 10).add(Aspect.FIRE, 10));
-        ArcaneresearchApi.registerObjectTag("forge:dusts/redstone", new AspectList().add(Aspect.ENERGY, 10));
-        ArcaneresearchApi.registerObjectTag("forge:dusts/glowstone", new AspectList().add(Aspect.SENSES, 5).add(Aspect.LIGHT, 10));
+        ArcaneresearchApi.registerObjectTag("forge:dusts/redstone", new AspectList().add(Aspect.ENERGY, 10).add(Aspect.MECHANISM, 1));
+        ArcaneresearchApi.registerObjectTag("forge:dusts/glowstone", new AspectList().add(Aspect.SENSES, 5).add(Aspect.LIGHT, 5));
         ArcaneresearchApi.registerObjectTag("forge:ingots/copper", new AspectList().add(Aspect.METAL, 10).add(Aspect.EXCHANGE, 5));
         ArcaneresearchApi.registerObjectTag("forge:dusts/copper", new AspectList().add(Aspect.METAL, 10).add(Aspect.ENTROPY, 1).add(Aspect.EXCHANGE, 5));
         ArcaneresearchApi.registerObjectTag("forge:ores/copper", new AspectList().add(Aspect.METAL, 10).add(Aspect.EARTH, 5).add(Aspect.EXCHANGE, 5));
@@ -304,6 +304,24 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag("minecraft:tall_flowers", new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 1).add(Aspect.SENSES, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.POPPY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 1).add(Aspect.SENSES, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DANDELION), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 1).add(Aspect.SENSES, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLUE_ORCHID), new AspectList().add(Aspect.PLANT, 5).add(Aspect.WATER, 5).add(Aspect.SENSES, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ALLIUM), new AspectList().add(Aspect.PLANT, 5).add(Aspect.MAGIC, 3).add(Aspect.LIFE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.AZURE_BLUET), new AspectList().add(Aspect.PLANT, 5).add(Aspect.AIR, 3).add(Aspect.SENSES, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RED_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.FIRE, 3).add(Aspect.SENSES, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ORANGE_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.FIRE, 2).add(Aspect.LIGHT, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.WHITE_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIGHT, 2).add(Aspect.ORDER, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PINK_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 2).add(Aspect.SENSES, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.OXEYE_DAISY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.SENSES, 5).add(Aspect.LIFE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.CORNFLOWER), new AspectList().add(Aspect.PLANT, 5).add(Aspect.WATER, 2).add(Aspect.SENSES, 2).add(Aspect.ORDER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LILY_OF_THE_VALLEY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 3).add(Aspect.DEATH, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.WITHER_ROSE), new AspectList().add(Aspect.PLANT, 3).add(Aspect.DEATH, 10).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.TORCHFLOWER), new AspectList().add(Aspect.PLANT, 5).add(Aspect.FIRE, 5).add(Aspect.LIGHT, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.SUNFLOWER), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIGHT, 10).add(Aspect.LIFE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LILAC), new AspectList().add(Aspect.PLANT, 5).add(Aspect.SENSES, 5).add(Aspect.MAGIC, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ROSE_BUSH), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 3).add(Aspect.AVERSION, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PEONY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 5).add(Aspect.SENSES, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PITCHER_PLANT), new AspectList().add(Aspect.PLANT, 5).add(Aspect.WATER, 5).add(Aspect.TRAP, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BROWN_MUSHROOM), new AspectList().add(Aspect.PLANT, 5).add(Aspect.DARKNESS, 2).add(Aspect.EARTH, 2));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RED_MUSHROOM), new AspectList().add(Aspect.PLANT, 5).add(Aspect.DARKNESS, 2).add(Aspect.FIRE, 2));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BROWN_MUSHROOM_BLOCK), new AspectList().add(Aspect.PLANT, 5).add(Aspect.DARKNESS, 2).add(Aspect.EARTH, 2));
@@ -535,6 +553,108 @@ public class ConfigAspects {
         ArcaneresearchApi.registerEntityTag("minecraft:pillager", new AspectList().add(Aspect.AVERSION, 10).add(Aspect.MAN, 15));
         ArcaneresearchApi.registerEntityTag("minecraft:wandering_trader", new AspectList().add(Aspect.MAN, 15).add(Aspect.EXCHANGE, 10));
         ArcaneresearchApi.registerEntityTag("minecraft:trader_llama", new AspectList().add(Aspect.BEAST, 15).add(Aspect.EXCHANGE, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:zombie_villager", new AspectList().add(Aspect.UNDEAD, 20).add(Aspect.MAN, 15).add(Aspect.MIND, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:cod", new AspectList().add(Aspect.BEAST, 5).add(Aspect.WATER, 10).add(Aspect.LIFE, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:salmon", new AspectList().add(Aspect.BEAST, 5).add(Aspect.WATER, 10).add(Aspect.LIFE, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:pufferfish", new AspectList().add(Aspect.BEAST, 5).add(Aspect.WATER, 10).add(Aspect.DEATH, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:tropical_fish", new AspectList().add(Aspect.BEAST, 5).add(Aspect.WATER, 10).add(Aspect.LIFE, 5).add(Aspect.SENSES, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.COD_BUCKET), new AspectList().add(Aspect.VOID, 5).add(Aspect.METAL, 5).add(Aspect.WATER, 20).add(Aspect.BEAST, 5).add(Aspect.LIFE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.SALMON_BUCKET), new AspectList().add(Aspect.VOID, 5).add(Aspect.METAL, 5).add(Aspect.WATER, 20).add(Aspect.BEAST, 5).add(Aspect.LIFE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.TROPICAL_FISH_BUCKET), new AspectList().add(Aspect.VOID, 5).add(Aspect.METAL, 5).add(Aspect.WATER, 20).add(Aspect.BEAST, 5).add(Aspect.LIFE, 5).add(Aspect.SENSES, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.AXOLOTL_BUCKET), new AspectList().add(Aspect.VOID, 5).add(Aspect.METAL, 5).add(Aspect.WATER, 15).add(Aspect.BEAST, 5).add(Aspect.LIFE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.TADPOLE_BUCKET), new AspectList().add(Aspect.VOID, 5).add(Aspect.METAL, 5).add(Aspect.WATER, 15).add(Aspect.BEAST, 3).add(Aspect.LIFE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.POWDER_SNOW_BUCKET), new AspectList().add(Aspect.VOID, 5).add(Aspect.METAL, 5).add(Aspect.COLD, 20));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.GOAT_HORN), new AspectList().add(Aspect.SENSES, 10).add(Aspect.AIR, 10).add(Aspect.BEAST, 10).add(Aspect.MOTION, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.NAUTILUS_SHELL), new AspectList().add(Aspect.WATER, 10).add(Aspect.EARTH, 5).add(Aspect.PROTECT, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.SCUTE), new AspectList().add(Aspect.PROTECT, 10).add(Aspect.BEAST, 5).add(Aspect.WATER, 3));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.DIAMOND), new AspectList().add(Aspect.CRYSTAL, 15).add(Aspect.DESIRE, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.LAPIS_LAZULI), new AspectList().add(Aspect.SENSES, 15).add(Aspect.EARTH, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.EMERALD), new AspectList().add(Aspect.CRYSTAL, 15).add(Aspect.DESIRE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.CHARCOAL), new AspectList().add(Aspect.ENERGY, 10).add(Aspect.FIRE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.IRON_NUGGET), new AspectList().add(Aspect.METAL, 1).add(Aspect.TOOL, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.GOLD_NUGGET), new AspectList().add(Aspect.METAL, 1).add(Aspect.DESIRE, 1));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_COAL_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ENERGY, 15).add(Aspect.FIRE, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_IRON_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.METAL, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_COPPER_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.METAL, 10).add(Aspect.EXCHANGE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_GOLD_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.METAL, 10).add(Aspect.DESIRE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_REDSTONE_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ENERGY, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_EMERALD_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.DESIRE, 10).add(Aspect.CRYSTAL, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_LAPIS_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.SENSES, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DEEPSLATE_DIAMOND_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.DESIRE, 15).add(Aspect.CRYSTAL, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.NETHER_GOLD_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.METAL, 10).add(Aspect.DESIRE, 10).add(Aspect.FIRE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.NETHER_QUARTZ_ORE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.CRYSTAL, 10).add(Aspect.FIRE, 2));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.RAW_IRON), new AspectList().add(Aspect.METAL, 10).add(Aspect.EARTH, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.RAW_GOLD), new AspectList().add(Aspect.METAL, 10).add(Aspect.EARTH, 5).add(Aspect.DESIRE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RAW_IRON_BLOCK), new AspectList().add(Aspect.METAL, 80).add(Aspect.EARTH, 40));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RAW_GOLD_BLOCK), new AspectList().add(Aspect.METAL, 80).add(Aspect.EARTH, 40).add(Aspect.DESIRE, 40));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.MUSIC_DISC_5), new AspectList().add(Aspect.SENSES, 15).add(Aspect.AIR, 5).add(Aspect.ELDRITCH, 5).add(Aspect.DARKNESS, 5).add(Aspect.DESIRE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Items.MUSIC_DISC_RELIC), new AspectList().add(Aspect.SENSES, 15).add(Aspect.AIR, 5).add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.DESIRE, 10));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.FIRE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.WHITE_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.LIGHT, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ORANGE_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.FIRE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.MAGENTA_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.MAGIC, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIGHT_BLUE_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.AIR, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.YELLOW_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.LIGHT, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIME_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.PLANT, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PINK_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.LIFE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GRAY_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.ENTROPY, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIGHT_GRAY_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.ORDER, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.CYAN_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.WATER, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PURPLE_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.MAGIC, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLUE_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.WATER, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BROWN_TERRACOTTA), new AspectList().add(Aspect.EARTH, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GREEN_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.PLANT, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RED_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.FIRE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLACK_TERRACOTTA), new AspectList().add(Aspect.EARTH, 4).add(Aspect.DARKNESS, 2));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.WHITE_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.LIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ORANGE_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.FIRE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.MAGENTA_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.MAGIC, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIGHT_BLUE_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.AIR, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.YELLOW_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.LIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIME_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.PLANT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PINK_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.LIFE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GRAY_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIGHT_GRAY_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.ORDER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.CYAN_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.WATER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PURPLE_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.MAGIC, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLUE_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.WATER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BROWN_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 4).add(Aspect.ENTROPY, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GREEN_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.PLANT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RED_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.FIRE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLACK_CONCRETE_POWDER), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 2).add(Aspect.DARKNESS, 1));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.WHITE_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.LIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ORANGE_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.FIRE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.MAGENTA_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.MAGIC, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIGHT_BLUE_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.AIR, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.YELLOW_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.LIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIME_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.PLANT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PINK_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.LIFE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GRAY_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.ENTROPY, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LIGHT_GRAY_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.ORDER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.CYAN_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.WATER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PURPLE_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.MAGIC, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLUE_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.WATER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BROWN_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.EARTH, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GREEN_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.PLANT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RED_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.FIRE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLACK_SHULKER_BOX), new AspectList().add(Aspect.VOID, 10).add(Aspect.PROTECT, 5).add(Aspect.ELDRITCH, 3).add(Aspect.DARKNESS, 1));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.SPORE_BLOSSOM), new AspectList().add(Aspect.PLANT, 5).add(Aspect.AIR, 3).add(Aspect.SENSES, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.AZALEA), new AspectList().add(Aspect.PLANT, 10).add(Aspect.LIFE, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.FLOWERING_AZALEA), new AspectList().add(Aspect.PLANT, 10).add(Aspect.LIFE, 3).add(Aspect.SENSES, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PINK_PETALS), new AspectList().add(Aspect.PLANT, 3).add(Aspect.LIFE, 1).add(Aspect.SENSES, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.MANGROVE_PROPAGULE), new AspectList().add(Aspect.PLANT, 5).add(Aspect.WATER, 2).add(Aspect.LIFE, 1));
+
         for (Potion potion : ForgeRegistries.POTIONS.getValues()) {
             ItemStack stack = PotionUtils.setPotion(new ItemStack(Items.POTION), potion);
             ArcaneresearchApi.registerObjectTag(stack, getPotionAspects(stack).add(Aspect.WATER, 5));
