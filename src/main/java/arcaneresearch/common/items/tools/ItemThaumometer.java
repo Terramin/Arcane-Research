@@ -116,6 +116,13 @@ public class ItemThaumometer extends ItemTC {
             BlockPos pos = hit.getBlockPos();
             return "B:" + pos.getX() + "," + pos.getY() + "," + pos.getZ();
         }
+
+        if (player.getXRot() <= 0.0f
+                && level.canSeeSky(player.blockPosition().above())
+                && level.dimension().equals(Level.OVERWORLD)) {
+            return "SKY";
+        }
+        
         return "";
     }
     @Override
