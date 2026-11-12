@@ -857,7 +857,7 @@ public class ResearchBrowserScreen extends Screen {
         } else if (icon instanceof String s && s.startsWith("focus:")) {
             IFocusElement fp = FocusEngine.getElement(s.replace("focus:", "").trim());
             if (fp instanceof FocusNode node) {
-                FocalManipulatorScreen.drawPart(graphics, node, x + 8, y + 8, 24.0f, canUnlockResearch(research));
+                FocalManipulatorScreen.drawPart(graphics, node, x + 8, y + 8, 24.0f, false);
             }
         }
     }
