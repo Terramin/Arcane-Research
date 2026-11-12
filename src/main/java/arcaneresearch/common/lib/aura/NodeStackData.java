@@ -208,18 +208,5 @@ public class NodeStackData {
         } else {
             tooltip.add(typeName);
         }
-        AspectList aspects = readAspects(stack);
-        if (aspects != null && aspects.size() > 0) {
-            Aspect[] sorted = aspects.getAspectsSortedByAmount();
-            if (sorted != null) {
-                for (Aspect aspect : sorted) {
-                    if (aspect == null) {
-                        continue;
-                    }
-                    String name = aspect.getName();
-                    tooltip.add(Component.literal((name == null ? "" : name) + " x " + aspects.getAmount(aspect)));
-                }
-            }
-        }
     }
 }
