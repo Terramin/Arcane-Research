@@ -27,6 +27,7 @@ import arcaneresearch.common.items.resources.ItemTallow;
 import arcaneresearch.common.items.resources.ItemVisneriteIngot;
 import arcaneresearch.common.items.resources.ItemVisneriteScrap;
 import arcaneresearch.common.items.tools.*;
+import arcaneresearch.temp.portal.PortalScrollItem;
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, Arcaneresearch.MODID);
@@ -522,4 +523,5 @@ public class ModItems {
 
     public static final RegistryObject<Item> VISNERITEINGOT = ITEMS.register("visnerite_ingot", () -> new ItemVisneriteIngot());
     public static final RegistryObject<Item> VISNERITESCRAP = ITEMS.register("visnerite_scrap", () -> new ItemVisneriteScrap());
+    public static final RegistryObject<Item> PORTAL_SCROLL = ITEMS.register("portal_scroll", PortalScrollItem::new);
 }
