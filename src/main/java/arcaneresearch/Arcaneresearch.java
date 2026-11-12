@@ -143,6 +143,7 @@ public class Arcaneresearch {
             arcaneresearch.common.config.ConfigBlocks.initMisc();
             arcaneresearch.common.config.ConfigItems.initMisc();
             arcaneresearch.api.items.ItemsTC.init();
+            arcaneresearch.init.ModLore.init();
             arcaneresearch.common.config.ModConfig.postInitLoot();
             arcaneresearch.common.config.ConfigEntities.postInitEntitySpawns();
             ConfigMultiblocks.init();
