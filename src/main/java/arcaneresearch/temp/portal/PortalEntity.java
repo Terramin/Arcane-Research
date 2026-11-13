@@ -33,6 +33,8 @@ import net.minecraftforge.network.PlayMessages;
 public class PortalEntity extends PathfinderMob {
     private static final int DEFAULT_LIFETIME = 600; // 30 секунд
     private static final int OPEN_ANIMATION_TICKS = 20;
+    /** Длительность плавного исчезновения портала после закрытия (2 секунды). */
+    private static final int FADE_TICKS = 40;
     private static final float WIDTH = 2.4F;
     private static final float HEIGHT = 4.2F;
     /** Сдвиг частей модели от стандартного состояния к центру портала в закрытом виде (в пикселях модели).
@@ -53,6 +55,9 @@ public class PortalEntity extends PathfinderMob {
     /** Оставшееся время существования — синхронизируется на клиент для таймера над порталом. */
     private static final EntityDataAccessor<Integer> DATA_LIFETIME =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.INT);
+    /** Прогресс плавного исчезновения в тиках (после закрытия), -1 — не исчезает. */
+    private static final EntityDataAccessor<Integer> DATA_FADE =
+            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.INT);
     private float portalWidth = WIDTH;
     private float portalHeight = HEIGHT;
     private int lifetime = DEFAULT_LIFETIME;
@@ -61,6 +66,10 @@ public class PortalEntity extends PathfinderMob {
     private int closeTicks = 0;
     /** Прогресс открытия на момент начала закрытия (сервер). */
     private float closeFromFraction = 1f;
+    /** После закрытия: порт надо погасить (исчезновение за 2 секунды) — при истечении времени. */
+    private boolean expireOnClose = false;
+    /** Сервер: тики фазы исчезновения (-1 — фаза не начата). */
+    private int fadeTicks = -1;
     /** Закрытие (клиент): локальный тик начала закрытия и прогресс открытия на тот момент. */
     private int clientCloseStartTick = -1;
     private float clientCloseFromFraction = 1f;
@@ -105,6 +114,7 @@ public class PortalEntity extends PathfinderMob {
         this.entityData.define(DATA_TELEPORT_DIM, Level.OVERWORLD.location().toString());
         this.entityData.define(DATA_CLOSING, false);
         this.entityData.define(DATA_LIFETIME, DEFAULT_LIFETIME);
+        this.entityData.define(DATA_FADE, -1);
     }
 
     public void setSize(float width, float height) {
@@ -114,9 +124,19 @@ public class PortalEntity extends PathfinderMob {
 
     /** Запускает закрытие портала с обратной анимацией (сервер). */
     public void startClosing() {
+        startClosing(false);
+    }
+
+    /**
+     * Запускает закрытие портала с обратной анимацией (сервер).
+     * @param expire если true — после закрытия портал плавно исчезает за 2 секунды (истечение времени).
+     */
+    public void startClosing(boolean expire) {
         if (this.closing) return;
         this.closing = true;
         this.closeTicks = 0;
+        this.fadeTicks = -1;
+        this.expireOnClose = expire;
         this.closeFromFraction = openProgress(0f);
         this.entityData.set(DATA_CLOSING, true);
     }
@@ -129,6 +149,20 @@ public class PortalEntity extends PathfinderMob {
     /** Оставшееся время существования в тиках (для таймера на клиенте). */
     public int getDisplayedLifetime() {
         return this.entityData.get(DATA_LIFETIME);
+    }
+
+    /**
+     * Прозрачность портала при исчезновении (1 — непрозрачный, 0 — невидимый).
+     * После закрытия портал плавно гаснет за FADE_TICKS.
+     */
+    public float getFadeAlpha(float partialTicks) {
+        int fade = this.entityData.get(DATA_FADE);
+        if (fade < 0) {
+            return 1f;
+        }
+        float f = Math.min((fade + partialTicks) / (float) FADE_TICKS, 1f);
+        // плавное ускорение/замедление
+        return 1f - f * f * (3f - 2f * f);
     }
 
     /** Плавное ускорение/замедление (smoothstep) от 0 до 1. */
@@ -267,17 +301,32 @@ public class PortalEntity extends PathfinderMob {
         super.baseTick();
         if (!level().isClientSide) {
             if (this.closing) {
-                // идёт обратная анимация: время не тратится, по завершении портал убирается
-                this.closeTicks++;
-                if (this.closeTicks >= OPEN_ANIMATION_TICKS) {
-                    this.discard();
-                    return;
+                if (this.fadeTicks >= 0) {
+                    // фаза исчезновения: портал закрыт, плавно гаснем 2 секунды
+                    this.fadeTicks++;
+                    this.entityData.set(DATA_FADE, this.fadeTicks);
+                    if (this.fadeTicks >= FADE_TICKS) {
+                        this.discard();
+                        return;
+                    }
+                } else {
+                    // идёт обратная анимация: время не тратится, по завершении либо гаснем, либо убираем
+                    this.closeTicks++;
+                    if (this.closeTicks >= OPEN_ANIMATION_TICKS) {
+                        if (this.expireOnClose) {
+                            this.fadeTicks = 0;
+                            this.entityData.set(DATA_FADE, 0);
+                        } else {
+                            this.discard();
+                            return;
+                        }
+                    }
                 }
             } else if (this.tickCount >= OPEN_ANIMATION_TICKS) {
                 // время существования не убывает, пока портал не открыт полностью
                 if (--this.lifetime <= 0) {
-                    this.discard();
-                    return;
+                    // время вышло — портал закрывается, потом плавно исчезает
+                    startClosing(true);
                 }
             }
             this.entityData.set(DATA_LIFETIME, this.lifetime);

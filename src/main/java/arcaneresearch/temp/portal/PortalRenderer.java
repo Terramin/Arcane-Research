@@ -53,8 +53,25 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     @Override
     public void render(PortalEntity entity, float entityYaw, float partialTicks,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        // при истечении времени портал после закрытия плавно гаснет: альфа 1 → 0
+        float alpha = entity.getFadeAlpha(partialTicks);
+        if (alpha <= 0.001f) {
+            return; // полностью прозрачный — не рисуем
+        }
+        if (alpha < 0.999f) {
+            bufferSource = new FadingBufferSource(bufferSource, alpha);
+        }
         super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
         renderLifetimeTimer(entity, partialTicks, poseStack, bufferSource, packedLight);
+    }
+
+    @Override
+    protected RenderType getRenderType(PortalEntity entity, boolean bodyVisible, boolean translucent, boolean glowing) {
+        // во время исчезновения нужен полупрозрачный рендер-тип
+        if (entity.getFadeAlpha(0f) < 0.999f) {
+            return RenderType.entityTranslucentCull(TEXTURE);
+        }
+        return super.getRenderType(entity, bodyVisible, translucent, glowing);
     }
 
     /** Таймер оставшегося времени существования над порталом (показывается только у полностью открытого портала). */
@@ -77,8 +94,94 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
         poseStack.scale(-scale, -scale, scale);
         Font font = this.getFont();
         float halfWidth = -font.width(text) / 2.0F;
-        font.drawInBatch(text, halfWidth, 0.0F, 0xFFFFD700, false,
+        font.drawInBatch(text, halfWidth, 0.0F, 0xFFFFFFFF, false,
                 poseStack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0x40000000, packedLight);
         poseStack.popPose();
+    }
+
+    /** MultiBufferSource-обёртка: умножает альфу всех вершин на коэффициент исчезновения. */
+    private static final class FadingBufferSource implements MultiBufferSource {
+        private final MultiBufferSource parent;
+        private final float alpha;
+
+        private FadingBufferSource(MultiBufferSource parent, float alpha) {
+            this.parent = parent;
+            this.alpha = alpha;
+        }
+
+        @Override
+        public VertexConsumer getBuffer(RenderType renderType) {
+            return new FadingVertexConsumer(this.parent.getBuffer(renderType), this.alpha);
+        }
+    }
+
+    /** VertexConsumer-обёртка: уменьшает альфу записываемых вершин. */
+    private static final class FadingVertexConsumer implements VertexConsumer {
+        private final VertexConsumer inner;
+        private final float alpha;
+
+        private FadingVertexConsumer(VertexConsumer inner, float alpha) {
+            this.inner = inner;
+            this.alpha = alpha;
+        }
+
+        @Override
+        public VertexConsumer vertex(double x, double y, double z) {
+            this.inner.vertex(x, y, z);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer color(int red, int green, int blue, int alphaInt) {
+            this.inner.color(red, green, blue, (int) (alphaInt * this.alpha));
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv(float u, float v) {
+            this.inner.uv(u, v);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer overlayCoords(int u, int v) {
+            this.inner.overlayCoords(u, v);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv2(int u, int v) {
+            this.inner.uv2(u, v);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer normal(float x, float y, float z) {
+            this.inner.normal(x, y, z);
+            return this;
+        }
+
+        @Override
+        public void endVertex() {
+            this.inner.endVertex();
+        }
+
+        @Override
+        public void defaultColor(int red, int green, int blue, int alphaInt) {
+            this.inner.defaultColor(red, green, blue, (int) (alphaInt * this.alpha));
+        }
+
+        @Override
+        public void unsetDefaultColor() {
+            this.inner.unsetDefaultColor();
+        }
+
+        @Override
+        public void vertex(float x, float y, float z, float red, float green, float blue, float a,
+                           float texU, float texV, int overlayUV, int lightUV,
+                           float normalX, float normalY, float normalZ) {
+            this.inner.vertex(x, y, z, red, green, blue, a * this.alpha,
+                    texU, texV, overlayUV, lightUV, normalX, normalY, normalZ);
+        }
     }
 }
