@@ -80,6 +80,18 @@ public class HudHandler {
         com.mojang.blaze3d.platform.GlStateManager._enableDepthTest();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     };
+    public static final IGuiOverlay HUNGER_TINT = (gui, graphics, partialTick, screenWidth, screenHeight) -> {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.options.hideGui) return;
+        if (!mc.player.hasEffect(arcaneresearch.init.ModEffects.UNNATURAL_HUNGER.get())) return;
+        float pulse = 0.85f + 0.15f * (float) Math.sin(mc.player.tickCount * 0.05f);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(0.53f, 0.27f, 0.13f, 0.35f * pulse);
+        graphics.fill(0, 0, screenWidth, screenHeight, 0x55884422);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.disableBlend();
+    };
     public static final IGuiOverlay ARCANERESEARCH_HUD = (gui, graphics, partialTick, screenWidth, screenHeight) -> {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
@@ -160,6 +172,7 @@ public class HudHandler {
     public static void registerOverlays(RegisterGuiOverlaysEvent event) {
         event.registerAboveAll("arcaneresearch_hud", ARCANERESEARCH_HUD);
         event.registerAboveAll("arcaneresearch_warp_vignette", WARP_VIGNETTE);
+        event.registerAboveAll("arcaneresearch_hunger_tint", HUNGER_TINT);
         Arcaneresearch.LOGGER.info("Registered Arcaneresearch HUD overlay");
     }
     private static void renderKnowledgeGains(GuiGraphics graphics, Minecraft mc, float partialTick) {
