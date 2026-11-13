@@ -1,16 +1,12 @@
 package arcaneresearch.temp.portal;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -25,8 +21,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.util.function.IntSupplier;
-
 @OnlyIn(Dist.CLIENT)
 public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<PortalEntity>> {
     private static final ResourceLocation TEXTURE =
@@ -34,55 +28,14 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     private static final ResourceLocation GLOW_TEXTURE =
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/entity/glowportal.png");
 
-    /** Квад экрана выталкивается к камере, если плоскость портала ближе этого к камере
-     *  (больше near-plane главной камеры 0.05 — иначе квад срезается и видна дыра). */
+    /** Квад волны выталкивается к камере, если плоскость портала ближе этого к камере
+     *  (больше near-plane главной камеры 0.05 — иначе квад срезается и волна пропадает). */
     private static final double QUAD_PUSH_MARGIN = 0.1D;
-    /** Порог "угол за камерой" (clip.w <= 0 — позади плоскости камеры). */
-    private static final float BEHIND_CAMERA_EPS = 1.0E-4F;
-    /** Заменитель w для UV углов за камерой: конечное значение вместо Infinity/NaN. */
-    private static final float UV_W_EPS = 1.0E-3F;
+    /** Шаг проекции для перспективного масштаба искажения (мировые единицы). */
+    private static final float SCALE_PROBE_STEP = 0.25F;
+    /** Мировая единица = столько NDC; упаковка масштаба в байт цвета (см. шейдер). */
+    private static final float MAX_SCALE_PACKED = 2.0F;
 
-    /** Доступ к protected-состояниям RenderStateShard для сборки собственного RenderType. */
-    private static class Shards extends RenderStateShard {
-        private Shards() {
-            super("portal_shards", () -> {
-            }, () -> {
-            });
-        }
-
-        static final RenderStateShard.ShaderStateShard SHADER_POSITION_TEX = POSITION_TEX_SHADER;
-        static final RenderStateShard.CullStateShard SHARD_NO_CULL = NO_CULL;
-    }
-
-    /** Текстура-шард: биндит цветовую текстуру фреймбуфера вида портала (не ResourceLocation). */
-    private static class FbTextureShard extends RenderStateShard.EmptyTextureStateShard {
-        private FbTextureShard(IntSupplier textureId) {
-            super(() -> {
-                int id = textureId.getAsInt();
-                if (id != 0) {
-                    // clamp по краям: проецированные UV могут выходить за границы фреймбуфера
-                    GlStateManager._texParameter(3553, 10242, 33071); // GL_TEXTURE_2D, WRAP_S, CLAMP_TO_EDGE
-                    GlStateManager._texParameter(3553, 10243, 33071); // GL_TEXTURE_2D, WRAP_T, CLAMP_TO_EDGE
-                }
-                RenderSystem.setShaderTexture(0, id);
-            }, () -> {
-            });
-        }
-    }
-
-    /**
-     * RenderType экрана с видом через портал: шейдер position_tex — без alpha-теста
-     * (альфа фреймбуфера непредсказуема) и без смешивания; no-cull — виден с обеих сторон;
-     * depth-test LEQUAL по умолчанию, как у модели.
-     */
-    private static final RenderType PORTAL_VIEW = RenderType.create(
-            "portal_view", com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS,
-            256, false, true,
-            RenderType.CompositeState.builder()
-                    .setShaderState(Shards.SHADER_POSITION_TEX)
-                    .setTextureState(new FbTextureShard(PortalViewManager::getTextureId))
-                    .setCullState(Shards.SHARD_NO_CULL)
-                    .createCompositeState(false));
     public PortalRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelPortalJava<>(context.bakeLayer(ModelPortalJava.LAYER_LOCATION)), 0f);
 
@@ -103,134 +56,145 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     @Override
     public void render(PortalEntity entity, float entityYaw, float partialTicks, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight) {
-        // Во вложенном проходе вида портал не рисуется вовсе (ни рамка, ни свечение):
-        // экран в проходе вида недоступен (его фреймбуфер — цель рендера), и рамка со
-        // "сквозной" серединой выглядела бы фантомным порталом внутри вида.
-        if (PortalViewManager.isRenderingView()) {
-            return;
+        // прозрачный экран с кольцевой волной (модель рамки рисуется следом, поверх)
+        if (PortalWaveFx.isActive()) {
+            // копия фона снимается до отрисовки первого портала в кадре
+            PortalWaveFx.ensureBackgroundCopied();
+            drawWaveRing(entity, partialTicks, poseStack, buffer);
         }
-        // экран в плоскости портала (на него рендерится вид "через" портал):
-        // бока на 1px уже золотой полосы с каждой стороны, высота — между золотыми кромками (пересчёт по анимации),
-        // глубина плоская (z=0), растёт из центра при открытии.
-        double[] contour = entity.getContourBounds(partialTicks);
-        double baseY = Mth.lerp(partialTicks, entity.yo, entity.getY());
-        double halfWidth = contour[2] - 1.0 / 16.0; // 25px - 1px = 24px с каждой стороны
-        double y0 = contour[1] - baseY;
-        double y1 = contour[0] - baseY;
-        float yaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
-
-        // Экран рисуется только когда есть вид через портал. Заглушка — ОТСУТСТВИЕ экрана:
-        // сквозь рамку видно мир за порталом.
-        float[] viewUvs = computeViewUvs(entity, partialTicks, halfWidth, y0, y1);
-
-        if (viewUvs != null) {
-            poseStack.pushPose();
-            // тот же поворот, что и у модели (setupRotations: 180 - yaw)
-            poseStack.mulPose(Axis.YP.rotationDegrees(180f - yaw));
-
-            // у самой плоскости портала near-plane главной камеры (0.05) режет квад экрана
-            // (дыра в изображении); выталкиваем квад к камере.
-            // UV-карта от положения квада не зависит — она считается по лучам через пиксели.
-            pushQuadTowardCamera(entity, partialTicks, poseStack);
-
-            // вид через портал: UV углов проецируются матрицей виртуальной камеры
-            renderViewQuad(buffer.getBuffer(PORTAL_VIEW), poseStack, halfWidth, y0, y1, viewUvs);
-
-            poseStack.popPose();
-        }
-
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
     /**
-     * UV-координаты углов экрана во фреймбуфере вида портала. Вид рендерится с той же матрицей
-     * проекции и ориентацией, что и основной проход, и с камерой ВИДА (перенесённой через
-     * портал, боковое смещение ограничено). Содержимое точки экрана q — перенос через портал
-     * q' = q + (выход - плоскость), поэтому UV угла = проекция q' камерой вида: картинка
-     * на экране согласована с фактической камерой вида и не искажается (без ограничения
-     * смещения камера вида = перенесённая камера игрока, и соответствие экрану 1:1).
-     * null — вид не для этого портала или весь экран за камерой. Отдельные углы за камерой
-     * допустимы: GPU сам отсечёт квад по near-plane, UV таких вершин в шейдинг не попадут —
-     * важно лишь, чтобы их значения были конечными.
+     * Квад волны в плоскости портала (границы — внутренние кромки золотой полосы рамки,
+     * пересчёт по анимации открытия). Квад полностью прозрачный: рисуется только кольцо
+     * волны, расходящееся от центра раз в секунду. UV хранит локальные координаты от
+     * центра волны (мировые единицы), цвет — экранные направление и перспективный
+     * масштаб искажения для этого угла (шейдер сэмплирует копию фона со смещением).
      */
-    private static float[] computeViewUvs(PortalEntity entity, float partialTicks,
-                                          double halfWidth, double y0, double y1) {
-        if (!PortalViewManager.hasViewFor(entity)) {
-            return null;
+    private static void drawWaveRing(PortalEntity entity, float partialTicks, PoseStack poseStack,
+                                     MultiBufferSource buffer) {
+        double[] contour = entity.getContourBounds(partialTicks);
+        double baseY = Mth.lerp((double) partialTicks, entity.yo, entity.getY());
+        double halfWidth = contour[2];
+        double y0 = contour[1] - baseY;
+        double y1 = contour[0] - baseY;
+        if (y1 - y0 < 0.05D) {
+            return; // портал ещё не раскрылся
         }
-        Vec3 viewCamPos = PortalViewManager.getActiveViewCameraPos();
-        if (viewCamPos == null) {
-            return null;
-        }
+        double centerY = (y0 + y1) * 0.5;
+        float yaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
+
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (camera.getEntity() == null) {
-            return null;
+            return;
         }
-        Matrix4f projection = RenderSystem.getProjectionMatrix();
-        if (projection == null) {
-            return null;
-        }
-        PoseStack pose = new PoseStack();
-        pose.mulPoseMatrix(new Matrix4f(projection));
-        pose.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
-        pose.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180.0F));
-        // проекция точки содержимого q' = q + (exit - plane) камерой вида:
-        // перенос в матрицу сворачиваем как -(viewCamPos - (exit - plane))
+        Vec3 camPos = camera.getPosition();
         Vec3 planePos = entity.getPortalPlanePos(partialTicks);
-        Vec3 exitBase = entity.getExitBase();
-        pose.translate(
-                (float) (exitBase.x - planePos.x - viewCamPos.x),
-                (float) (exitBase.y - planePos.y - viewCamPos.y),
-                (float) (exitBase.z - planePos.z - viewCamPos.z));
-        Matrix4f projView = pose.last().pose();
 
-        double ex = Mth.lerp((double) partialTicks, entity.xo, entity.getX());
-        double ey = Mth.lerp((double) partialTicks, entity.yo, entity.getY());
-        double ez = Mth.lerp((double) partialTicks, entity.zo, entity.getZ());
-        Matrix4f rot = new Matrix4f().rotationY((float) Math.toRadians(180f - entity.getPortalYaw(partialTicks)));
+        // мировые координаты -> clip (проекция + поворот камеры + перенос)
+        PoseStack projViewPose = new PoseStack();
+        projViewPose.mulPoseMatrix(new Matrix4f(RenderSystem.getProjectionMatrix()));
+        projViewPose.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
+        projViewPose.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180.0F));
+        projViewPose.translate((float) -camPos.x, (float) -camPos.y, (float) -camPos.z);
+        Matrix4f projView = projViewPose.last().pose();
 
+        // мировые направления -> пространство камеры (только поворот)
+        PoseStack worldToCamPose = new PoseStack();
+        worldToCamPose.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
+        worldToCamPose.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180.0F));
+        Matrix4f worldToCam = worldToCamPose.last().pose();
+
+        // поворот портала: локальные координаты -> мировые
+        Matrix4f portalRot = new Matrix4f().rotationY((float) Math.toRadians(180f - yaw));
+
+        poseStack.pushPose();
+        // тот же поворот, что и у модели (setupRotations: 180 - yaw)
+        poseStack.mulPose(Axis.YP.rotationDegrees(180f - yaw));
+        // выталкивание квада к камере у near-plane (позиция квада не влияет на UV/цвет)
+        pushQuadTowardCamera(entity, partialTicks, poseStack);
+
+        VertexConsumer buf = buffer.getBuffer(PortalWaveFx.getWaveType());
+        Matrix4f matrix = poseStack.last().pose();
+
+        float fx0 = (float) -halfWidth;
+        float fx1 = (float) halfWidth;
+        float fy0 = (float) y0;
+        float fy1 = (float) y1;
         float[][] corners = {
-                {-(float) halfWidth, (float) y0},
-                {(float) halfWidth, (float) y0},
-                {(float) halfWidth, (float) y1},
-                {-(float) halfWidth, (float) y1}
+                {fx0, fy0},
+                {fx1, fy0},
+                {fx1, fy1},
+                {fx0, fy1}
         };
-        float[] uvs = new float[8];
-        int behind = 0;
-        for (int i = 0; i < corners.length; i++) {
-            Vector3f local = new Vector3f(corners[i][0], corners[i][1], 0f);
-            rot.transformPosition(local);
-            // projView содержит перенос фактической камеры вида, подаём мировые координаты угла
-            Vector4f clip = new Vector4f(
-                    (float) (ex + local.x),
-                    (float) (ey + local.y),
-                    (float) (ez + local.z),
-                    1.0F);
-            projView.transform(clip);
-            if (clip.w <= BEHIND_CAMERA_EPS) {
-                behind++;
-                // угол за камерой: GPU отсечёт его по near-plane; UV заменяем конечным,
-                // иначе Infinity/NaN при клиппинге интерполируется в NaN и портит соседей
-                float w = clip.w < 0.0F ? -UV_W_EPS : UV_W_EPS;
-                uvs[i * 2] = clip.x / w * 0.5F + 0.5F;
-                uvs[i * 2 + 1] = clip.y / w * 0.5F + 0.5F;
-                continue;
+        for (float[] corner : corners) {
+            // радиальный луч из центра волны (в плоскости портала, мировые единицы)
+            float rx = corner[0];
+            float ry = corner[1] - (float) centerY;
+            float len = (float) Math.sqrt(rx * rx + ry * ry);
+            Vector3f localDir = len > 1.0E-4F ? new Vector3f(rx / len, ry / len, 0f) : new Vector3f(0f, 1f, 0f);
+
+            Vector3f worldDir = new Vector3f(localDir);
+            portalRot.transformPosition(worldDir);
+
+            // направление луча на экране (NDC)
+            Vector3f camDir = new Vector3f(worldDir);
+            worldToCam.transformDirection(camDir);
+            Vector4f clipDir = new Vector4f(camDir.x, camDir.y, camDir.z, 0f);
+            projView.transform(clipDir);
+            float dirX = 0f;
+            float dirY = 1f;
+            if (Math.abs(clipDir.w) > 1.0E-4F) {
+                dirX = clipDir.x / clipDir.w;
+                dirY = clipDir.y / clipDir.w;
+                float l = (float) Math.sqrt(dirX * dirX + dirY * dirY);
+                if (l > 1.0E-5F) {
+                    dirX /= l;
+                    dirY /= l;
+                } else {
+                    dirX = 0f;
+                    dirY = 1f;
+                }
             }
-            uvs[i * 2] = clip.x / clip.w * 0.5F + 0.5F;
-            uvs[i * 2 + 1] = clip.y / clip.w * 0.5F + 0.5F;
+
+            // перспективный масштаб: NDC-сдвиг на мировую единицу у этого угла
+            Vector3f cornerWorld = new Vector3f(corner[0], corner[1], 0f);
+            portalRot.transformPosition(cornerWorld);
+            Vector3f p0 = new Vector3f(
+                    (float) planePos.x + cornerWorld.x,
+                    (float) planePos.y + cornerWorld.y,
+                    (float) planePos.z + cornerWorld.z);
+            Vector3f p1 = new Vector3f(p0).add(
+                    worldDir.x * SCALE_PROBE_STEP,
+                    worldDir.y * SCALE_PROBE_STEP,
+                    worldDir.z * SCALE_PROBE_STEP);
+            Vector4f clipP0 = new Vector4f(p0.x, p0.y, p0.z, 1f);
+            Vector4f clipP1 = new Vector4f(p1.x, p1.y, p1.z, 1f);
+            projView.transform(clipP0);
+            projView.transform(clipP1);
+            float scale = 0f;
+            if (clipP0.w > 1.0E-4F && clipP1.w > 1.0E-4F) {
+                float ndcDx = clipP1.x / clipP1.w - clipP0.x / clipP0.w;
+                float ndcDy = clipP1.y / clipP1.w - clipP0.y / clipP0.w;
+                scale = (float) Math.sqrt(ndcDx * ndcDx + ndcDy * ndcDy) / SCALE_PROBE_STEP;
+            }
+
+            buf.vertex(matrix, corner[0], corner[1], 0f)
+                    .color(dirX * 0.5f + 0.5f, dirY * 0.5f + 0.5f,
+                            Mth.clamp(scale / MAX_SCALE_PACKED, 0f, 1f), 1f)
+                    .uv(corner[0], corner[1] - (float) centerY)
+                    .endVertex();
         }
-        if (behind == corners.length) {
-            return null; // весь экран за камерой
-        }
-        return uvs;
+
+        poseStack.popPose();
     }
 
     /**
-     * Сдвиг квада экрана к камере, когда плоскость портала ближе QUAD_PUSH_MARGIN:
-     * near-plane главной камеры (0.05) вплотную срезает квад в плоскости портала,
-     * оставляя дыру. Сдвиг выполняется по локальной Z pose (после поворота 180-yaw
-     * локальный +Z направлен ПРОТИВ нормали портала: (sin yaw, 0, -cos yaw)).
-     * UV-проекция считается по лучам через пиксели, поэтому от сдвига квада не меняется.
+     * Сдвиг квада к камере, когда плоскость портала ближе QUAD_PUSH_MARGIN:
+     * near-plane главной камеры (0.05) вплотную срезает квад в плоскости портала.
+     * Сдвиг по локальной Z pose (после поворота 180-yaw локальный +Z направлен
+     * ПРОТИВ нормали портала). На UV/цвет волны не влияет.
      */
     private static void pushQuadTowardCamera(PortalEntity entity, float partialTicks, PoseStack poseStack) {
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
@@ -247,24 +211,6 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
         // локальная Z = -нормаль, значит сдвиг "к камере" (по нормали) — это локальный -Z * sign
         poseStack.translate(0.0F, 0.0F, (float) (-push));
     }
-
-    /** Quad экрана с видом через портал (формат POSITION_TEX — без цвета/света: картинка уже освещена). */
-    private static void renderViewQuad(VertexConsumer consumer, PoseStack poseStack,
-                                       double halfWidth, double y0, double y1, float[] uvs) {
-        Matrix4f matrix = poseStack.last().pose();
-        float x0 = (float) -halfWidth;
-        float x1 = (float) halfWidth;
-        float fy0 = (float) y0;
-        float fy1 = (float) y1;
-        float[][] corners = {{x0, fy0}, {x1, fy0}, {x1, fy1}, {x0, fy1}};
-        for (int i = 0; i < corners.length; i++) {
-            consumer.vertex(matrix, corners[i][0], corners[i][1], 0f)
-                    .uv(uvs[i * 2], uvs[i * 2 + 1])
-                    .endVertex();
-        }
-    }
-
-
 
     protected void setupRotations(PortalEntity entity, PoseStack poseStack, float bob, float yBodyRot, float partialTicks) {
         // модель поворачивается по фактическому yaw сущности (yBodyRot у "noAi" сущности не обновляется)

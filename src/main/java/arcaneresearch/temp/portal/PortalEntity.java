@@ -41,8 +41,7 @@ public class PortalEntity extends PathfinderMob {
     public static final float OPEN_SLIDE_PX = 27.5F;
     /** Смещение модели живой сущности при отрисовке (LivingEntityRenderer). */
     private static final double MODEL_RENDER_BASE = 1.501;
-
-    /** Цель телепорта — синхронизируется на клиент (нужна для рендера вида "через" портал). */
+    /** Цель телепорта — синхронизируется на клиент. */
     private static final EntityDataAccessor<BlockPos> DATA_TELEPORT_TARGET =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BLOCK_POS);
     /** Измерение цели телепорта — строка вида "namespace:path" (у ResourceKey нет сериализатора). */
@@ -126,49 +125,17 @@ public class PortalEntity extends PathfinderMob {
         return new Vec3(-Math.sin(rad), 0.0D, Math.cos(rad));
     }
 
-    /** Точка выхода: центр позиции, куда портал телепортирует — с тем же поиском безопасной
-     *  позиции вверх, что и в teleportPlayer (иначе вид строится вокруг сырой цели и камера
-     *  может оказаться внутри блока цели — чёрная картинка из-за отсечения back-faces). */
-    public Vec3 getExitBase() {
-        BlockPos target = getTeleportTarget();
-        BlockPos safe = target.above();
-        if (level().hasChunkAt(target)) {
-            for (int i = 0; i < 8; i++) {
-                if (level().getBlockState(safe).isAir() && level().getBlockState(safe.above()).isAir()) {
-                    break;
-                }
-                safe = safe.above();
-            }
-        }
-        return new Vec3(safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5);
-    }
-
-    /**
-     * Преобразование точки "через" портал: составляющая вдоль нормали отражается,
-     * перпендикулярная сохраняется; плоскость источника отображается на плоскость выхода.
-     * Точки перед порталом оказываются за плоскостью выхода (виртуальная камера вида).
-     */
-    public Vec3 transformThrough(Vec3 worldPos, float partialTicks) {
-        Vec3 normal = getFacingNormal(partialTicks);
-        Vec3 d = worldPos.subtract(getPortalPlanePos(partialTicks));
-        double along = d.dot(normal);
-        Vec3 flat = d.subtract(normal.scale(along));
-        return getExitBase().add(flat).subtract(normal.scale(along));
-    }
-
-    /** Преобразование направления "через" портал — отражение по нормали. */
-    public Vec3 transformDirectionThrough(Vec3 direction, float partialTicks) {
-        Vec3 normal = getFacingNormal(partialTicks);
-        return direction.subtract(normal.scale(2.0D * direction.dot(normal)));
-    }
-
-    /** Возможно ли рендерить вид через портал: точка выхода задана, портал в том же измерении,
-     *  открыт и чанки у точки выхода загружены (иначе показать нечего). */
-    public boolean canRenderView(float partialTicks) {
-        return getTeleportTarget() != BlockPos.ZERO
-                && getTeleportDimension() == level().dimension()
-                && level().hasChunkAt(getTeleportTarget())
-                && getOpenFraction(partialTicks) > 0.05F;
+    /** Границы области волны — по внутренней кромке ЗОЛОТОЙ полосы рамки (мировые координаты):
+     *  [0]=верх, [1]=низ, [2]=полуширина.
+     *  Золотая полоса (box2, UV(0,16), 50px): верхняя рамка — модельные Y (slide-38)..(slide-36),
+     *  нижняя рамка — (19-slide)..(21-slide). В закрытом виде кромки сходятся в центре (36-27.5 = 27.5-19 = 8.5). */
+    public double[] getContourBounds(float partialTicks) {
+        float slide = (1f - getOpenFraction(partialTicks)) * OPEN_SLIDE_PX;
+        double topEdge = MODEL_RENDER_BASE + (36.0 - slide) / 16.0;    // нижняя кромка золотой полосы верхней рамки
+        double bottomEdge = MODEL_RENDER_BASE + (slide - 19.0) / 16.0; // верхняя кромка золотой полосы нижней рамки
+        double topY = getY() + Math.max(topEdge, bottomEdge);
+        double bottomY = getY() + Math.min(topEdge, bottomEdge);
+        return new double[]{topY, bottomY, 25.0 / 16.0};
     }
 
     @Override
@@ -246,19 +213,6 @@ public class PortalEntity extends PathfinderMob {
                 }
             }
         }
-    }
-
-    /** Границы чёрного прямоугольника — по внутренней кромке ЗОЛОТОЙ полосы рамки (мировые координаты):
-     *  [0]=верх, [1]=низ, [2]=полуширина.
-     *  Золотая полоса (box2, UV(0,16), 50px): верхняя рамка — модельные Y (slide-38)..(slide-36),
-     *  нижняя рамка — (19-slide)..(21-slide). В закрытом виде кромки сходятся в центре (36-27.5 = 27.5-19 = 8.5). */
-    public double[] getContourBounds(float partialTicks) {
-        float slide = (1f - getOpenFraction(partialTicks)) * OPEN_SLIDE_PX;
-        double topEdge = MODEL_RENDER_BASE + (36.0 - slide) / 16.0;    // нижняя кромка золотой полосы верхней рамки
-        double bottomEdge = MODEL_RENDER_BASE + (slide - 19.0) / 16.0; // верхняя кромка золотой полосы нижней рамки
-        double topY = getY() + Math.max(topEdge, bottomEdge);
-        double bottomY = getY() + Math.min(topEdge, bottomEdge);
-        return new double[]{topY, bottomY, 25.0 / 16.0};
     }
 
     @Override
