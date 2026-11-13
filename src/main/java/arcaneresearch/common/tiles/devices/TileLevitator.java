@@ -207,8 +207,12 @@ public class TileLevitator extends TileArcaneresearch {
     }
 
     private boolean isEnabled() {
-        assert level != null;
-        return !level.hasNeighborSignal(worldPosition);
+        if (level == null) return true;
+        BlockState state = getBlockState();
+        if (state.hasProperty(arcaneresearch.common.blocks.devices.BlockLevitator.ENABLED)) {
+            return state.getValue(arcaneresearch.common.blocks.devices.BlockLevitator.ENABLED);
+        }
+        return level.hasNeighborSignal(worldPosition);
     }
 
     @Override

@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
@@ -30,6 +31,7 @@ import arcaneresearch.init.ModSounds;
 import javax.annotation.Nullable;
 public class BlockLevitator extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
     private static final float INDENT = 0.125f;
     private static final VoxelShape SHAPE_DOWN = Block.box(0, 2, 0, 16, 16, 16);
     private static final VoxelShape SHAPE_UP = Block.box(0, 0, 0, 16, 14, 16);
@@ -44,16 +46,18 @@ public class BlockLevitator extends Block implements EntityBlock {
                 .sound(SoundType.WOOD)
                 .noOcclusion());
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.UP));
+                .setValue(FACING, Direction.UP)
+                .setValue(ENABLED, false));
     }
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, ENABLED);
     }
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState()
-                .setValue(FACING, context.getClickedFace());
+                .setValue(FACING, context.getClickedFace())
+                .setValue(ENABLED, context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -83,9 +87,24 @@ public class BlockLevitator extends Block implements EntityBlock {
         return InteractionResult.PASS;
     }
     @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+        updateEnabled(level, pos, state);
+    }
+
+    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
                                 BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
+        updateEnabled(level, pos, state);
+    }
+
+    private void updateEnabled(Level level, BlockPos pos, BlockState state) {
+        if (level.isClientSide) return;
+        boolean enabled = level.hasNeighborSignal(pos);
+        if (state.hasProperty(ENABLED) && state.getValue(ENABLED) != enabled) {
+            level.setBlock(pos, state.setValue(ENABLED, enabled), 3);
+        }
     }
     @Nullable
     @Override
