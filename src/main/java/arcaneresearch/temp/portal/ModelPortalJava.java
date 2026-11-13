@@ -14,6 +14,7 @@ import net.minecraft.client.model.EntityModel;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.PoseStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ModelPortalJava<T extends Entity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION =
@@ -39,7 +40,6 @@ public class ModelPortalJava<T extends Entity> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        // верхняя и нижняя части разъезжаются от центра к стандартному состоянию при открытии портала
         float partialTicks = ageInTicks - entity.tickCount;
         float open = entity instanceof PortalEntity portal ? portal.getOpenFraction(partialTicks) : 1f;
         float slide = (1f - open) * PortalEntity.OPEN_SLIDE_PX;
@@ -51,7 +51,7 @@ public class ModelPortalJava<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         top.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
         bottom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
     }

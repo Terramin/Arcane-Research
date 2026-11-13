@@ -16,8 +16,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PortalScrollItem extends Item {
     private static final String TAG_X = "Pos_X";
@@ -43,7 +45,7 @@ public class PortalScrollItem extends Item {
 
     public static BlockPos getSavedPosition(ItemStack stack) {
         if (!hasSavedPosition(stack)) return null;
-        CompoundTag tag = stack.getTag();
+        CompoundTag tag = stack.getOrCreateTag();
         return new BlockPos(tag.getInt(TAG_X), tag.getInt(TAG_Y), tag.getInt(TAG_Z));
     }
 
@@ -65,13 +67,12 @@ public class PortalScrollItem extends Item {
     }
 
     @Override
-    public boolean isFoil(ItemStack stack) {
-        // свечение зачарования, когда в свитке сохранены координаты
+    public boolean isFoil(@NotNull ItemStack stack) {
         return hasSavedPosition(stack);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@NotNull ItemStack stack, Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
 
         BlockPos pos = getSavedPosition(stack);
@@ -92,7 +93,7 @@ public class PortalScrollItem extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
@@ -100,7 +101,6 @@ public class PortalScrollItem extends Item {
 
         if (player == null) return InteractionResult.PASS;
 
-        // Phase 1 - save position
         if (!hasSavedPosition(stack)) {
             if (!level.isClientSide) {
                 CompoundTag tag = stack.getOrCreateTag();
@@ -123,8 +123,8 @@ public class PortalScrollItem extends Item {
             PortalEntity portal = ModEntities.PORTAL.get().create(level);
             if (portal == null) return InteractionResult.FAIL;
 
-            float width = stack.getTag().contains(TAG_W) ? stack.getTag().getFloat(TAG_W) : DEFAULT_WIDTH;
-            float height = stack.getTag().contains(TAG_H) ? stack.getTag().getFloat(TAG_H) : DEFAULT_HEIGHT;
+            float width = stack.getOrCreateTag().contains(TAG_W) ? Objects.requireNonNull(stack.getTag()).getFloat(TAG_W) : DEFAULT_WIDTH;
+            float height = stack.getOrCreateTag().contains(TAG_H) ? Objects.requireNonNull(stack.getTag()).getFloat(TAG_H) : DEFAULT_HEIGHT;
 
             portal.setSize(width, height);
             float yaw = Mth.wrapDegrees(Math.round(player.getYRot() / 90f) * 90f);

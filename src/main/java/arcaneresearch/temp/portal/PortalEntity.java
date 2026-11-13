@@ -29,47 +29,34 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
+import org.jetbrains.annotations.NotNull;
 
 public class PortalEntity extends PathfinderMob {
-    private static final int DEFAULT_LIFETIME = 600; // 30 секунд
+    private static final int DEFAULT_LIFETIME = 600;
     private static final int OPEN_ANIMATION_TICKS = 20;
-    /** Длительность плавного исчезновения портала после закрытия (2 секунды). */
     private static final int FADE_TICKS = 40;
     private static final float WIDTH = 2.4F;
     private static final float HEIGHT = 4.2F;
-    /** Сдвиг частей модели от стандартного состояния к центру портала в закрытом виде (в пикселях модели).
-     *  27.5px — ровно столько, чтобы в закрытом виде рамки сошлись в центре портала,
-     *  а внутренние кромки их золотых полос совпали (36-27.5 = 27.5-19 = 8.5). */
     public static final float OPEN_SLIDE_PX = 27.5F;
-    /** Смещение модели живой сущности при отрисовке (LivingEntityRenderer). */
     private static final double MODEL_RENDER_BASE = 1.501;
-    /** Цель телепорта — синхронизируется на клиент. */
+    private static final double CONTOUR_HALF_WIDTH = 25.0 / 16.0;
     private static final EntityDataAccessor<BlockPos> DATA_TELEPORT_TARGET =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BLOCK_POS);
-    /** Измерение цели телепорта — строка вида "namespace:path" (у ResourceKey нет сериализатора). */
     private static final EntityDataAccessor<String> DATA_TELEPORT_DIM =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.STRING);
-    /** Флаг закрытия портала — синхронизируется на клиент для обратной анимации. */
     private static final EntityDataAccessor<Boolean> DATA_CLOSING =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BOOLEAN);
-    /** Оставшееся время существования — синхронизируется на клиент для таймера над порталом. */
     private static final EntityDataAccessor<Integer> DATA_LIFETIME =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.INT);
-    /** Прогресс плавного исчезновения в тиках (после закрытия), -1 — не исчезает. */
     private static final EntityDataAccessor<Integer> DATA_FADE =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.INT);
     private float portalWidth = WIDTH;
     private float portalHeight = HEIGHT;
     private int lifetime = DEFAULT_LIFETIME;
-    /** Закрытие (сервер): запущено ли и сколько тиков анимации закрытия прошло. */
-    private boolean closing = false;
-    private int closeTicks = 0;
-    /** Прогресс открытия на момент начала закрытия (сервер). */
+    private boolean closing;
+    private int closeTicks;
     private float closeFromFraction = 1f;
-    /** После закрытия портал плавно гаснет (исчезновение за 2 секунды). */
-    // Сервер: тики фазы исчезновения (-1 — фаза не начата).
     private int fadeTicks = -1;
-    /** Закрытие (клиент): локальный тик начала закрытия и прогресс открытия на тот момент. */
     private int clientCloseStartTick = -1;
     private float clientCloseFromFraction = 1f;
 
@@ -96,7 +83,6 @@ public class PortalEntity extends PathfinderMob {
         this.entityData.set(DATA_TELEPORT_DIM, key.location().toString());
     }
 
-    /** Ключ измерения цели — парсится из синхронизированной строки. */
     public ResourceKey<Level> getTeleportDimension() {
         ResourceLocation dim = parseResourceLocation(this.entityData.get(DATA_TELEPORT_DIM));
         return dim == null ? Level.OVERWORLD : ResourceKey.create(Registries.DIMENSION, dim);
@@ -121,7 +107,6 @@ public class PortalEntity extends PathfinderMob {
         this.portalHeight = height;
     }
 
-    /** Запускает закрытие портала с обратной анимацией; после закрытия портал плавно исчезает за 2 секунды (сервер). */
     public void startClosing() {
         if (this.closing) return;
         this.closing = true;
@@ -131,115 +116,97 @@ public class PortalEntity extends PathfinderMob {
         this.entityData.set(DATA_CLOSING, true);
     }
 
-    /** Закрывается ли портал сейчас (идёт обратная анимация). */
     public boolean isClosing() {
         return this.entityData.get(DATA_CLOSING);
     }
 
-    /** Оставшееся время существования в тиках (для таймера на клиенте). */
     public int getDisplayedLifetime() {
         return this.entityData.get(DATA_LIFETIME);
     }
 
-    /**
-     * Прозрачность портала при исчезновении (1 — непрозрачный, 0 — невидимый).
-     * После закрытия портал плавно гаснет за FADE_TICKS.
-     */
     public float getFadeAlpha(float partialTicks) {
         int fade = this.entityData.get(DATA_FADE);
         if (fade < 0) {
             return 1f;
         }
         float f = Math.min((fade + partialTicks) / (float) FADE_TICKS, 1f);
-        // плавное ускорение/замедление
         return 1f - f * f * (3f - 2f * f);
     }
 
-    /** Плавное ускорение/замедление (smoothstep) от 0 до 1. */
     private static float ease(float f) {
         return f * f * (3f - 2f * f);
     }
 
-    /** Прогресс открытия по tickCount без учёта закрытия. */
     private float openProgress(float partialTicks) {
         float f = Math.min((this.tickCount + partialTicks) / (float) OPEN_ANIMATION_TICKS, 1f);
         return ease(f);
     }
 
-    /**
-     * Прогресс открытия портала: 0 — части модели у центра (закрыт), 1 — полностью открыт.
-     * При закрытии идёт в обратную сторону: от прогресса на момент закрытия до 0.
-     */
     public float getOpenFraction(float partialTicks) {
-        if (!isClosing()) {
+        boolean closing = isClosing();
+        if (!closing) {
             return openProgress(partialTicks);
         }
         float elapsed;
+        float fromFraction;
         if (this.level().isClientSide) {
-            // клиент: старт закрытия фиксируется в первом тике, когда пришёл флаг
             if (this.clientCloseStartTick < 0) {
                 this.clientCloseStartTick = this.tickCount;
                 this.clientCloseFromFraction = openProgress(0f);
             }
             elapsed = (this.tickCount - this.clientCloseStartTick) + partialTicks;
-            float f = ease(Math.min(elapsed / (float) OPEN_ANIMATION_TICKS, 1f));
-            return this.clientCloseFromFraction * (1f - f);
+            fromFraction = this.clientCloseFromFraction;
+        } else {
+            elapsed = this.closeTicks + partialTicks;
+            fromFraction = this.closeFromFraction;
         }
-        elapsed = this.closeTicks + partialTicks;
         float f = ease(Math.min(elapsed / (float) OPEN_ANIMATION_TICKS, 1f));
-        return this.closeFromFraction * (1f - f);
+        return fromFraction * (1f - f);
     }
 
-    /** Позиция плоскости портала (интерполяция по partialTicks) — плоскость проходит через центр сущности. */
     public Vec3 getPortalPlanePos(float partialTicks) {
         return new Vec3(
-                Mth.lerp((double) partialTicks, this.xo, this.getX()),
-                Mth.lerp((double) partialTicks, this.yo, this.getY()),
-                Mth.lerp((double) partialTicks, this.zo, this.getZ()));
+                Mth.lerp(partialTicks, this.xo, this.getX()),
+                Mth.lerp(partialTicks, this.yo, this.getY()),
+                Mth.lerp(partialTicks, this.zo, this.getZ()));
     }
 
-    /** Фактический yaw портала (интерполяция по partialTicks). */
     public float getPortalYaw(float partialTicks) {
         return Mth.rotLerp(partialTicks, this.yRotO, this.getYRot());
     }
 
-    /** Нормаль плоскости портала (горизонтальное направление "лица" портала). */
     public Vec3 getFacingNormal(float partialTicks) {
         double rad = Math.toRadians(getPortalYaw(partialTicks));
         return new Vec3(-Math.sin(rad), 0.0D, Math.cos(rad));
     }
 
-    /** Границы области волны — по внутренней кромке ЗОЛОТОЙ полосы рамки (мировые координаты):
-     *  [0]=верх, [1]=низ, [2]=полуширина.
-     *  Золотая полоса (box2, UV(0,16), 50px): верхняя рамка — модельные Y (slide-38)..(slide-36),
-     *  нижняя рамка — (19-slide)..(21-slide). В закрытом виде кромки сходятся в центре (36-27.5 = 27.5-19 = 8.5). */
     public double[] getContourBounds(float partialTicks) {
         float slide = (1f - getOpenFraction(partialTicks)) * OPEN_SLIDE_PX;
-        double topEdge = MODEL_RENDER_BASE + (36.0 - slide) / 16.0;    // нижняя кромка золотой полосы верхней рамки
-        double bottomEdge = MODEL_RENDER_BASE + (slide - 19.0) / 16.0; // верхняя кромка золотой полосы нижней рамки
+        double topEdge = MODEL_RENDER_BASE + (36.0 - slide) / 16.0;
+        double bottomEdge = MODEL_RENDER_BASE + (slide - 19.0) / 16.0;
         double topY = getY() + Math.max(topEdge, bottomEdge);
         double bottomY = getY() + Math.min(topEdge, bottomEdge);
-        return new double[]{topY, bottomY, 25.0 / 16.0};
+        return new double[]{topY, bottomY, CONTOUR_HALF_WIDTH};
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    protected PathNavigation createNavigation(Level level) {
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
         return new FlyingPathNavigation(this, level);
     }
 
     @Override
-    public MobType getMobType() {
+    public @NotNull MobType getMobType() {
         return MobType.UNDEFINED;
     }
 
     @Override
-    public EntityDimensions getDimensions(Pose pose) {
-        return EntityDimensions.scalable((float) portalWidth, (float) portalHeight);
+    public @NotNull EntityDimensions getDimensions(@NotNull Pose pose) {
+        return EntityDimensions.scalable(portalWidth, portalHeight);
     }
 
     @Override
@@ -248,12 +215,12 @@ public class PortalEntity extends PathfinderMob {
     }
 
     @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurt(@NotNull DamageSource source, float amount) {
         return false;
     }
 
@@ -268,7 +235,7 @@ public class PortalEntity extends PathfinderMob {
     }
 
     @Override
-    protected void doPush(Entity entity) {
+    protected void doPush(@NotNull Entity entity) {
     }
 
     @Override
@@ -292,7 +259,6 @@ public class PortalEntity extends PathfinderMob {
         if (!level().isClientSide) {
             if (this.closing) {
                 if (this.fadeTicks >= 0) {
-                    // фаза исчезновения: портал закрыт, плавно гаснем 2 секунды
                     this.fadeTicks++;
                     this.entityData.set(DATA_FADE, this.fadeTicks);
                     if (this.fadeTicks >= FADE_TICKS) {
@@ -300,7 +266,6 @@ public class PortalEntity extends PathfinderMob {
                         return;
                     }
                 } else {
-                    // идёт обратная анимация: время не тратится, по завершении портал плавно гаснет
                     this.closeTicks++;
                     if (this.closeTicks >= OPEN_ANIMATION_TICKS) {
                         this.fadeTicks = 0;
@@ -308,23 +273,23 @@ public class PortalEntity extends PathfinderMob {
                     }
                 }
             } else if (this.tickCount >= OPEN_ANIMATION_TICKS) {
-                // время существования не убывает, пока портал не открыт полностью
                 if (--this.lifetime <= 0) {
-                    // время вышло — портал закрывается, потом плавно исчезает
                     startClosing();
                 }
             }
-            this.entityData.set(DATA_LIFETIME, this.lifetime);
+            if (this.entityData.get(DATA_LIFETIME) != this.lifetime) {
+                this.entityData.set(DATA_LIFETIME, this.lifetime);
+            }
         }
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         return handleInteraction(player);
     }
 
     @Override
-    public InteractionResult interactAt(Player player, Vec3 hitVec, InteractionHand hand) {
+    public @NotNull InteractionResult interactAt(@NotNull Player player, @NotNull Vec3 hitVec, @NotNull InteractionHand hand) {
         return handleInteraction(player);
     }
 
@@ -333,12 +298,10 @@ public class PortalEntity extends PathfinderMob {
             return InteractionResult.SUCCESS;
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            if (isClosing()) {
-                // портал уже закрывается — ничего не делаем
+            if (this.closing) {
                 return InteractionResult.SUCCESS;
             }
             if (player.isShiftKeyDown()) {
-                // Shift + ПКМ — закрыть портал с обратной анимацией, затем плавное исчезновение
                 startClosing();
             } else {
                 teleportPlayer(serverPlayer);
@@ -348,15 +311,16 @@ public class PortalEntity extends PathfinderMob {
         return InteractionResult.PASS;
     }
 
-    private void teleportPlayer(ServerPlayer player) {
+    private void teleportPlayer(@NotNull ServerPlayer player) {
         ServerLevel targetLevel = resolveTargetLevel(player);
         BlockPos safe = getTeleportTarget().above();
 
         for (int i = 0; i < 8; i++) {
-            if (targetLevel.getBlockState(safe).isAir() && targetLevel.getBlockState(safe.above()).isAir()) {
+            BlockPos above = safe.above();
+            if (targetLevel.getBlockState(safe).isAir() && targetLevel.getBlockState(above).isAir()) {
                 break;
             }
-            safe = safe.above();
+            safe = above;
         }
 
         double x = safe.getX() + 0.5;
@@ -384,7 +348,7 @@ public class PortalEntity extends PathfinderMob {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    public void addAdditionalSaveData(@NotNull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         BlockPos target = getTeleportTarget();
         tag.putInt("Pos_X", target.getX());
@@ -397,7 +361,7 @@ public class PortalEntity extends PathfinderMob {
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.contains("Pos_X") && tag.contains("Pos_Y") && tag.contains("Pos_Z")) {
             setTeleportTarget(new BlockPos(tag.getInt("Pos_X"), tag.getInt("Pos_Y"), tag.getInt("Pos_Z")));

@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
@@ -21,6 +20,8 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/entity/portal.png");
     private static final ResourceLocation GLOW_TEXTURE =
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/entity/glowportal.png");
+    private static final int SECONDS_PER_TICK_GROUP = 20;
+    private float lastFadeAlpha = 1f;
 
     public PortalRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelPortalJava<>(context.bakeLayer(ModelPortalJava.LAYER_LOCATION)), 0f);
@@ -40,7 +41,6 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     }
 
     protected void setupRotations(PortalEntity entity, PoseStack poseStack, float bob, float yBodyRot, float partialTicks) {
-        // модель поворачивается по фактическому yaw сущности (yBodyRot у "noAi" сущности не обновляется)
         float yaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
         super.setupRotations(entity, poseStack, bob, yaw, partialTicks);
     }
@@ -53,10 +53,10 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     @Override
     public void render(PortalEntity entity, float entityYaw, float partialTicks,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-        // при истечении времени портал после закрытия плавно гаснет: альфа 1 → 0
         float alpha = entity.getFadeAlpha(partialTicks);
+        this.lastFadeAlpha = alpha;
         if (alpha <= 0.001f) {
-            return; // полностью прозрачный — не рисуем
+            return;
         }
         if (alpha < 0.999f) {
             bufferSource = new FadingBufferSource(bufferSource, alpha);
@@ -67,25 +67,23 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
 
     @Override
     protected RenderType getRenderType(PortalEntity entity, boolean bodyVisible, boolean translucent, boolean glowing) {
-        // во время исчезновения нужен полупрозрачный рендер-тип
-        if (entity.getFadeAlpha(0f) < 0.999f) {
+        if (this.lastFadeAlpha < 0.999f) {
             return RenderType.entityTranslucentCull(TEXTURE);
         }
         return super.getRenderType(entity, bodyVisible, translucent, glowing);
     }
 
-    /** Таймер оставшегося времени существования над порталом (показывается только у полностью открытого портала). */
     private void renderLifetimeTimer(PortalEntity entity, float partialTicks,
                                      PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (entity.isClosing() || entity.getOpenFraction(partialTicks) < 0.999f) {
-            return; // портал закрыт/открывается/закрывается — таймер скрыт
+            return;
         }
         int lifetime = entity.getDisplayedLifetime();
         if (lifetime <= 0) {
             return;
         }
 
-        Component text = Component.literal(Integer.toString(Mth.ceil(lifetime / 20f)));
+        String text = Integer.toString((lifetime + SECONDS_PER_TICK_GROUP - 1) / SECONDS_PER_TICK_GROUP);
         float scale = 0.025F;
 
         poseStack.pushPose();
@@ -99,7 +97,6 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
         poseStack.popPose();
     }
 
-    /** MultiBufferSource-обёртка: умножает альфу всех вершин на коэффициент исчезновения. */
     private static final class FadingBufferSource implements MultiBufferSource {
         private final MultiBufferSource parent;
         private final float alpha;
@@ -115,7 +112,6 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
         }
     }
 
-    /** VertexConsumer-обёртка: уменьшает альфу записываемых вершин. */
     private static final class FadingVertexConsumer implements VertexConsumer {
         private final VertexConsumer inner;
         private final float alpha;
