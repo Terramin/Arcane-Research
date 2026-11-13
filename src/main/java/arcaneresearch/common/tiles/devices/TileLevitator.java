@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -56,7 +57,7 @@ public class TileLevitator extends TileArcaneresearch {
         int p = counter % maxRange;
         BlockPos checkPos = worldPosition.relative(facing, 1 + p);
         assert level != null;
-        if (level.getBlockState(checkPos).canOcclude()) {
+        if (level.getBlockState(checkPos).isSolidRender(level, checkPos)) {
             if (1 + p < rangeActual) {
                 rangeActual = 1 + p;
             }
@@ -70,10 +71,8 @@ public class TileLevitator extends TileArcaneresearch {
 
         if (!client && vis < 10) {
             float drained = AuraHelper.drainVis(level, worldPosition, 1.0f, false);
-            if (drained > 0) {
-                vis += (int) (drained * 1200.0f);
-                markDirtyAndSync();
-            }
+            vis += (int) (drained * 1200.0f);
+            markDirtyAndSync();
         }
 
         if (rangeActual <= 0 || vis <= 0 || !isEnabled()) {
@@ -82,7 +81,7 @@ public class TileLevitator extends TileArcaneresearch {
 
         AABB box = createSelectionBox(facing);
         List<Entity> targets = level.getEntitiesOfClass(Entity.class, box,
-                e -> e instanceof ItemEntity || e instanceof AbstractHorse || e.isPushable());
+                e -> e instanceof ItemEntity || e instanceof AbstractHorse || e instanceof LivingEntity || e.isPushable());
         int cost = getCost();
         boolean lifted = false;
 
@@ -99,6 +98,7 @@ public class TileLevitator extends TileArcaneresearch {
                             entity.getDeltaMovement().x,
                             entity.getDeltaMovement().y * 0.9,
                             entity.getDeltaMovement().z);
+                    entity.hurtMarked = true;
                 }
             } else {
                 double mx = entity.getDeltaMovement().x + 0.1 * facing.getStepX();
@@ -114,6 +114,7 @@ public class TileLevitator extends TileArcaneresearch {
                 my = clamp(my);
                 mz = clamp(mz);
                 entity.setDeltaMovement(mx, my, mz);
+                entity.hurtMarked = true;
             }
             entity.fallDistance = 0;
             vis -= cost;

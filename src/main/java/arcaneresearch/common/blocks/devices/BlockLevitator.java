@@ -28,17 +28,31 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import arcaneresearch.common.tiles.devices.TileLevitator;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModSounds;
+import arcaneresearch.lib.raytracer.ExtendedMOP;
+import arcaneresearch.lib.raytracer.IndexedCuboid6;
+import arcaneresearch.lib.raytracer.RayTracer;
+import arcaneresearch.lib.vec.BlockCoord;
+import arcaneresearch.lib.vec.Cuboid6;
+import arcaneresearch.lib.vec.Vector3;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 public class BlockLevitator extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
     private static final float INDENT = 0.125f;
-    private static final VoxelShape SHAPE_DOWN = Block.box(0, 2, 0, 16, 16, 16);
-    private static final VoxelShape SHAPE_UP = Block.box(0, 0, 0, 16, 14, 16);
-    private static final VoxelShape SHAPE_NORTH = Block.box(0, 0, 2, 16, 16, 16);
-    private static final VoxelShape SHAPE_SOUTH = Block.box(0, 0, 0, 16, 16, 14);
-    private static final VoxelShape SHAPE_WEST = Block.box(2, 0, 0, 16, 16, 16);
-    private static final VoxelShape SHAPE_EAST = Block.box(0, 0, 0, 14, 16, 16);
+    private static final VoxelShape SHAPE_DOWN = Block.box(0, 0, 0, 16, 14, 16);
+    private static final VoxelShape SHAPE_UP = Block.box(0, 2, 0, 16, 16, 16);
+    private static final VoxelShape SHAPE_NORTH = Block.box(0, 0, 0, 16, 16, 14);
+    private static final VoxelShape SHAPE_SOUTH = Block.box(0, 0, 2, 16, 16, 16);
+    private static final VoxelShape SHAPE_WEST = Block.box(0, 0, 0, 14, 16, 16);
+    private static final VoxelShape SHAPE_EAST = Block.box(2, 0, 0, 16, 16, 16);
+    private static final VoxelShape BUTTON_UP = Block.box(6, 1, 6, 10, 2, 10);
+    private static final VoxelShape BUTTON_DOWN = Block.box(6, 14, 6, 10, 15, 10);
+    private static final VoxelShape BUTTON_NORTH = Block.box(6, 6, 14, 10, 10, 15);
+    private static final VoxelShape BUTTON_SOUTH = Block.box(6, 6, 1, 10, 10, 2);
+    private static final VoxelShape BUTTON_WEST = Block.box(14, 6, 6, 15, 10, 10);
+    private static final VoxelShape BUTTON_EAST = Block.box(1, 6, 6, 2, 10, 10);
     public BlockLevitator() {
         super(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.WOOD)
@@ -70,6 +84,30 @@ public class BlockLevitator extends Block implements EntityBlock {
             case EAST -> SHAPE_EAST;
         };
     }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return switch (state.getValue(FACING)) {
+            case DOWN -> SHAPE_DOWN;
+            case UP -> SHAPE_UP;
+            case NORTH -> SHAPE_NORTH;
+            case SOUTH -> SHAPE_SOUTH;
+            case WEST -> SHAPE_WEST;
+            case EAST -> SHAPE_EAST;
+        };
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return switch (state.getValue(FACING)) {
+            case DOWN -> SHAPE_DOWN;
+            case UP -> SHAPE_UP;
+            case NORTH -> SHAPE_NORTH;
+            case SOUTH -> SHAPE_SOUTH;
+            case WEST -> SHAPE_WEST;
+            case EAST -> SHAPE_EAST;
+        };
+    }
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
@@ -78,13 +116,33 @@ public class BlockLevitator extends Block implements EntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hit) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof TileLevitator levitator) {
-            levitator.increaseRange(player);
-            level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    ModSounds.KEY.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+        if (!(be instanceof TileLevitator levitator)) {
+            return InteractionResult.PASS;
         }
-        return InteractionResult.PASS;
+        Direction facing = state.getValue(FACING);
+        Cuboid6 buttonCuboid = switch (facing) {
+            case DOWN -> new Cuboid6(0.375, 0.875, 0.375, 0.625, 0.9375, 0.625);
+            case UP -> new Cuboid6(0.375, 0.0625, 0.375, 0.625, 0.125, 0.625);
+            case NORTH -> new Cuboid6(0.375, 0.375, 0.875, 0.625, 0.625, 0.9375);
+            case SOUTH -> new Cuboid6(0.375, 0.375, 0.0625, 0.625, 0.625, 0.125);
+            case WEST -> new Cuboid6(0.875, 0.375, 0.375, 0.9375, 0.625, 0.625);
+            case EAST -> new Cuboid6(0.0625, 0.375, 0.375, 0.125, 0.625, 0.625);
+        };
+        buttonCuboid.add(new Vector3(pos.getX(), pos.getY(), pos.getZ()));
+        List<IndexedCuboid6> cuboids = new ArrayList<>();
+        cuboids.add(new IndexedCuboid6(0, buttonCuboid));
+        List<ExtendedMOP> hits = new ArrayList<>();
+        RayTracer.instance().rayTraceCuboids(
+                new Vector3(RayTracer.getStartVec(player)),
+                new Vector3(RayTracer.getEndVec(player)),
+                cuboids, new BlockCoord(pos), this, hits);
+        if (hits.isEmpty()) {
+            return InteractionResult.PASS;
+        }
+        levitator.increaseRange(player);
+        level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                ModSounds.KEY.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
