@@ -47,9 +47,23 @@ public class PortalEntity extends PathfinderMob {
     /** Измерение цели телепорта — строка вида "namespace:path" (у ResourceKey нет сериализатора). */
     private static final EntityDataAccessor<String> DATA_TELEPORT_DIM =
             SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.STRING);
+    /** Флаг закрытия портала — синхронизируется на клиент для обратной анимации. */
+    private static final EntityDataAccessor<Boolean> DATA_CLOSING =
+            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BOOLEAN);
+    /** Оставшееся время существования — синхронизируется на клиент для таймера над порталом. */
+    private static final EntityDataAccessor<Integer> DATA_LIFETIME =
+            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.INT);
     private float portalWidth = WIDTH;
     private float portalHeight = HEIGHT;
     private int lifetime = DEFAULT_LIFETIME;
+    /** Закрытие (сервер): запущено ли и сколько тиков анимации закрытия прошло. */
+    private boolean closing = false;
+    private int closeTicks = 0;
+    /** Прогресс открытия на момент начала закрытия (сервер). */
+    private float closeFromFraction = 1f;
+    /** Закрытие (клиент): локальный тик начала закрытия и прогресс открытия на тот момент. */
+    private int clientCloseStartTick = -1;
+    private float clientCloseFromFraction = 1f;
 
     public PortalEntity(PlayMessages.SpawnEntity packet, Level level) {
         this(ModEntities.PORTAL.get(), level);
@@ -89,6 +103,8 @@ public class PortalEntity extends PathfinderMob {
         super.defineSynchedData();
         this.entityData.define(DATA_TELEPORT_TARGET, BlockPos.ZERO);
         this.entityData.define(DATA_TELEPORT_DIM, Level.OVERWORLD.location().toString());
+        this.entityData.define(DATA_CLOSING, false);
+        this.entityData.define(DATA_LIFETIME, DEFAULT_LIFETIME);
     }
 
     public void setSize(float width, float height) {
@@ -96,14 +112,58 @@ public class PortalEntity extends PathfinderMob {
         this.portalHeight = height;
     }
 
+    /** Запускает закрытие портала с обратной анимацией (сервер). */
+    public void startClosing() {
+        if (this.closing) return;
+        this.closing = true;
+        this.closeTicks = 0;
+        this.closeFromFraction = openProgress(0f);
+        this.entityData.set(DATA_CLOSING, true);
+    }
+
+    /** Закрывается ли портал сейчас (идёт обратная анимация). */
+    public boolean isClosing() {
+        return this.entityData.get(DATA_CLOSING);
+    }
+
+    /** Оставшееся время существования в тиках (для таймера на клиенте). */
+    public int getDisplayedLifetime() {
+        return this.entityData.get(DATA_LIFETIME);
+    }
+
+    /** Плавное ускорение/замедление (smoothstep) от 0 до 1. */
+    private static float ease(float f) {
+        return f * f * (3f - 2f * f);
+    }
+
+    /** Прогресс открытия по tickCount без учёта закрытия. */
+    private float openProgress(float partialTicks) {
+        float f = Math.min((this.tickCount + partialTicks) / (float) OPEN_ANIMATION_TICKS, 1f);
+        return ease(f);
+    }
+
     /**
      * Прогресс открытия портала: 0 — части модели у центра (закрыт), 1 — полностью открыт.
-     * Основан на tickCount, поэтому одинаково работает на сервере и на клиенте.
+     * При закрытии идёт в обратную сторону: от прогресса на момент закрытия до 0.
      */
     public float getOpenFraction(float partialTicks) {
-        float f = Math.min((this.tickCount + partialTicks) / (float) OPEN_ANIMATION_TICKS, 1f);
-        // плавное ускорение/замедление (smoothstep)
-        return f * f * (3f - 2f * f);
+        if (!isClosing()) {
+            return openProgress(partialTicks);
+        }
+        float elapsed;
+        if (this.level().isClientSide) {
+            // клиент: старт закрытия фиксируется в первом тике, когда пришёл флаг
+            if (this.clientCloseStartTick < 0) {
+                this.clientCloseStartTick = this.tickCount;
+                this.clientCloseFromFraction = openProgress(0f);
+            }
+            elapsed = (this.tickCount - this.clientCloseStartTick) + partialTicks;
+            float f = ease(Math.min(elapsed / (float) OPEN_ANIMATION_TICKS, 1f));
+            return this.clientCloseFromFraction * (1f - f);
+        }
+        elapsed = this.closeTicks + partialTicks;
+        float f = ease(Math.min(elapsed / (float) OPEN_ANIMATION_TICKS, 1f));
+        return this.closeFromFraction * (1f - f);
     }
 
     /** Позиция плоскости портала (интерполяция по partialTicks) — плоскость проходит через центр сущности. */
@@ -206,12 +266,21 @@ public class PortalEntity extends PathfinderMob {
     public void baseTick() {
         super.baseTick();
         if (!level().isClientSide) {
-            // время существования не убывает, пока портал не открыт полностью
-            if (this.tickCount >= OPEN_ANIMATION_TICKS) {
+            if (this.closing) {
+                // идёт обратная анимация: время не тратится, по завершении портал убирается
+                this.closeTicks++;
+                if (this.closeTicks >= OPEN_ANIMATION_TICKS) {
+                    this.discard();
+                    return;
+                }
+            } else if (this.tickCount >= OPEN_ANIMATION_TICKS) {
+                // время существования не убывает, пока портал не открыт полностью
                 if (--this.lifetime <= 0) {
                     this.discard();
+                    return;
                 }
             }
+            this.entityData.set(DATA_LIFETIME, this.lifetime);
         }
     }
 
@@ -230,7 +299,16 @@ public class PortalEntity extends PathfinderMob {
             return InteractionResult.SUCCESS;
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            teleportPlayer(serverPlayer);
+            if (isClosing()) {
+                // портал уже закрывается — ничего не делаем
+                return InteractionResult.SUCCESS;
+            }
+            if (player.isShiftKeyDown()) {
+                // Shift + ПКМ — закрыть портал с обратной анимацией
+                startClosing();
+            } else {
+                teleportPlayer(serverPlayer);
+            }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
