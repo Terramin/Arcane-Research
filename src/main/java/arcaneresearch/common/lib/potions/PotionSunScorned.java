@@ -16,12 +16,12 @@ public class PotionSunScorned extends MobEffect {
     public void applyEffectTick(LivingEntity target, int amplifier) {
         if (target.level().isClientSide) return;
         Level level = target.level();
-        float brightness = target.getLightLevelDependentMagicValue();
         BlockPos pos = BlockPos.containing(
                 Mth.floor(target.getX()),
-                Mth.floor(target.getY()),
+                Mth.floor(target.getEyeY()),
                 Mth.floor(target.getZ())
         );
+        float brightness = level.getLightLevelDependentMagicValue(pos);
         if (brightness > 0.5f
                 && level.random.nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f
                 && level.canSeeSky(pos)) {
