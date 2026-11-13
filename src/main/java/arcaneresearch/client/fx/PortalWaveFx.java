@@ -1,6 +1,7 @@
-package arcaneresearch.temp.portal;
+package arcaneresearch.client.fx;
 
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.common.entities.EntityPortal;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
@@ -142,14 +143,14 @@ public final class PortalWaveFx {
         ensureBackgroundCopied();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         for (Entity entity : Objects.requireNonNull(mc.level).entitiesForRendering()) {
-            if (entity instanceof PortalEntity portal) {
+            if (entity instanceof EntityPortal portal) {
                 drawWave(portal, event.getPartialTick(), event.getCamera(), bufferSource);
             }
         }
         bufferSource.endBatch(WAVE_TYPE);
     }
 
-    private static void drawWave(PortalEntity entity, float partialTicks, Camera camera,
+    private static void drawWave(EntityPortal entity, float partialTicks, Camera camera,
                                  MultiBufferSource.BufferSource bufferSource) {
         double[] contour = entity.getContourBounds(partialTicks);
         double baseY = Mth.lerp(partialTicks, entity.yo, entity.getY());
@@ -259,7 +260,7 @@ public final class PortalWaveFx {
         }
     }
 
-    private static void pushQuadTowardCamera(PortalEntity entity, float partialTicks, PoseStack poseStack) {
+    private static void pushQuadTowardCamera(EntityPortal entity, float partialTicks, PoseStack poseStack) {
         Vec3 normal = entity.getFacingNormal(partialTicks);
         double along = cameraPos().subtract(entity.getPortalPlanePos(partialTicks)).dot(normal);
         double absAlong = Math.abs(along);

@@ -1,5 +1,6 @@
-package arcaneresearch.temp.portal;
+package arcaneresearch.client.models.entity;
 
+import arcaneresearch.common.entities.EntityPortal;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.model.geom.builders.PartDefinition;
@@ -16,13 +17,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelPortalJava<T extends Entity> extends EntityModel<T> {
+public class PortalModel<T extends Entity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "model_portal_java"), "main");
     public final ModelPart top;
     public final ModelPart bottom;
 
-    public ModelPortalJava(ModelPart root) {
+    public PortalModel(ModelPart root) {
         this.top = root.getChild("top");
         this.bottom = root.getChild("bottom");
     }
@@ -41,8 +42,8 @@ public class ModelPortalJava<T extends Entity> extends EntityModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float partialTicks = ageInTicks - entity.tickCount;
-        float open = entity instanceof PortalEntity portal ? portal.getOpenFraction(partialTicks) : 1f;
-        float slide = (1f - open) * PortalEntity.OPEN_SLIDE_PX;
+        float open = entity instanceof EntityPortal portal ? portal.getOpenFraction(partialTicks) : 1f;
+        float slide = (1f - open) * EntityPortal.OPEN_SLIDE_PX;
 
         float time = (ageInTicks / 10.0F) % 2.0F;
         float sineValue = (float) Math.sin(time * Math.PI) * open;

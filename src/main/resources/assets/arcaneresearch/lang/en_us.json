@@ -590,6 +590,7 @@
   "entity.arcaneresearch.cultist_leader.name.custom": "Praetor %s the %s",
   "entity.arcaneresearch.eldritch_golem.name.custom": "%s Eldritch Construct",
   "entity.arcaneresearch.eldritch_warden.name.custom": "%s the %s",
+  "entity.arcaneresearch.portal": "Portal",
   "entity.arcaneresearch.primal_arrow": "Primal Arrow",
   "fail.crimsonrites": "This book contains nothing but crazed ravings.",
   "false.start": "This feels like it should work, but something is missing...",

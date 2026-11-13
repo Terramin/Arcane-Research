@@ -9,6 +9,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.EntityFallingTaint;
 import arcaneresearch.common.entities.EntityFluxRift;
 import arcaneresearch.common.entities.EntityFollowingItem;
+import arcaneresearch.common.entities.EntityPortal;
 import arcaneresearch.common.entities.EntitySpecialItem;
 import arcaneresearch.common.entities.construct.EntityArcaneBore;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
@@ -20,7 +21,6 @@ import arcaneresearch.common.entities.monster.cult.EntityCultistCleric;
 import arcaneresearch.common.entities.monster.cult.EntityCultistKnight;
 import arcaneresearch.common.entities.monster.cult.EntityCultistPortalLesser;
 import arcaneresearch.common.entities.monster.tainted.*;
-import arcaneresearch.temp.portal.PortalEntity;
 import arcaneresearch.common.entities.projectile.*;
 import arcaneresearch.common.golems.EntityArcaneresearchGolem;
 public class ModEntities {
@@ -361,13 +361,13 @@ public class ModEntities {
                             .clientTrackingRange(10)
                             .updateInterval(20)
                             .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "falling_taint").toString()));
-    public static final RegistryObject<EntityType<PortalEntity>> PORTAL =
+    public static final RegistryObject<EntityType<EntityPortal>> PORTAL =
             ENTITY_TYPES.register("portal", () ->
-                    EntityType.Builder.<PortalEntity>of(PortalEntity::new, MobCategory.MISC)
+                    EntityType.Builder.<EntityPortal>of(EntityPortal::new, MobCategory.MISC)
                             .setShouldReceiveVelocityUpdates(true)
                             .setTrackingRange(64)
                             .setUpdateInterval(3)
-                            .setCustomClientFactory((net.minecraftforge.network.PlayMessages.SpawnEntity packet, net.minecraft.world.level.Level level) -> new PortalEntity(packet, level))
+                            .setCustomClientFactory((net.minecraftforge.network.PlayMessages.SpawnEntity packet, net.minecraft.world.level.Level level) -> new EntityPortal(packet, level))
                             .fireImmune()
                             .sized(2.4f, 4.2f)
                             .build(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "portal").toString()));

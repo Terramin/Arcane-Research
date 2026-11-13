@@ -1,4 +1,4 @@
-package arcaneresearch.temp.portal;
+package arcaneresearch.common.entities;
 
 import arcaneresearch.init.ModEntities;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,7 @@ import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PortalEntity extends PathfinderMob {
+public class EntityPortal extends PathfinderMob {
     private static final int DEFAULT_LIFETIME = 600;
     private static final int OPEN_ANIMATION_TICKS = 20;
     private static final int FADE_TICKS = 40;
@@ -46,15 +46,15 @@ public class PortalEntity extends PathfinderMob {
     private static final double MODEL_RENDER_BASE = 1.501;
     private static final double CONTOUR_HALF_WIDTH = 25.0 / 16.0;
     private static final EntityDataAccessor<BlockPos> DATA_TELEPORT_TARGET =
-            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BLOCK_POS);
+            SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.BLOCK_POS);
     private static final EntityDataAccessor<String> DATA_TELEPORT_DIM =
-            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.STRING);
+            SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> DATA_CLOSING =
-            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.BOOLEAN);
+            SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> DATA_LIFETIME =
-            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_FADE =
-            SynchedEntityData.defineId(PortalEntity.class, EntityDataSerializers.INT);
+            SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.INT);
     private float portalWidth = WIDTH;
     private float portalHeight = HEIGHT;
     private int lifetime = DEFAULT_LIFETIME;
@@ -65,11 +65,11 @@ public class PortalEntity extends PathfinderMob {
     private int clientCloseStartTick = -1;
     private float clientCloseFromFraction = 1f;
 
-    public PortalEntity(PlayMessages.SpawnEntity packet, Level level) {
+    public EntityPortal(PlayMessages.SpawnEntity packet, Level level) {
         this(ModEntities.PORTAL.get(), level);
     }
 
-    public PortalEntity(EntityType<PortalEntity> type, Level level) {
+    public EntityPortal(EntityType<EntityPortal> type, Level level) {
         super(type, level);
         setMaxUpStep(0f);
         xpReward = 0;

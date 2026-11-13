@@ -1,5 +1,7 @@
-package arcaneresearch.temp.portal;
+package arcaneresearch.client.renderers.entity;
 
+import arcaneresearch.client.models.entity.PortalModel;
+import arcaneresearch.common.entities.EntityPortal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.Font;
@@ -16,7 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<PortalEntity>> {
+public class PortalRenderer extends MobRenderer<EntityPortal, PortalModel<EntityPortal>> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/entity/portal.png");
     private static final ResourceLocation GLOW_TEXTURE =
@@ -25,12 +27,12 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     private float lastFadeAlpha = 1f;
 
     public PortalRenderer(EntityRendererProvider.Context context) {
-        super(context, new ModelPortalJava<>(context.bakeLayer(ModelPortalJava.LAYER_LOCATION)), 0f);
+        super(context, new PortalModel<>(context.bakeLayer(PortalModel.LAYER_LOCATION)), 0f);
 
         this.addLayer(new RenderLayer<>(this) {
             @Override
             public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight,
-                               @NotNull PortalEntity entity, float limbSwing, float limbSwingAmount,
+                               @NotNull EntityPortal entity, float limbSwing, float limbSwingAmount,
                                float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
                 VertexConsumer consumer = bufferSource.getBuffer(RenderType.eyes(GLOW_TEXTURE));
                 this.getParentModel().renderToBuffer(
@@ -41,18 +43,18 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
         });
     }
 
-    protected void setupRotations(PortalEntity entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTicks) {
+    protected void setupRotations(EntityPortal entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTicks) {
         float yaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
         super.setupRotations(entity, poseStack, bob, yaw, partialTicks);
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull PortalEntity entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull EntityPortal entity) {
         return TEXTURE;
     }
 
     @Override
-    public void render(PortalEntity entity, float entityYaw, float partialTicks,
+    public void render(EntityPortal entity, float entityYaw, float partialTicks,
                        @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         float alpha = entity.getFadeAlpha(partialTicks);
         this.lastFadeAlpha = alpha;
@@ -67,14 +69,14 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     }
 
     @Override
-    protected RenderType getRenderType(@NotNull PortalEntity entity, boolean bodyVisible, boolean translucent, boolean glowing) {
+    protected RenderType getRenderType(@NotNull EntityPortal entity, boolean bodyVisible, boolean translucent, boolean glowing) {
         if (this.lastFadeAlpha < 0.999f) {
             return RenderType.entityTranslucentCull(TEXTURE);
         }
         return super.getRenderType(entity, bodyVisible, translucent, glowing);
     }
 
-    private void renderLifetimeTimer(PortalEntity entity, float partialTicks,
+    private void renderLifetimeTimer(EntityPortal entity, float partialTicks,
                                      PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
         if (entity.isClosing() || entity.getOpenFraction(partialTicks) < 0.999f) {
             return;

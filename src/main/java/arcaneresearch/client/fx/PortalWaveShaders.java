@@ -1,4 +1,4 @@
-package arcaneresearch.temp.portal;
+package arcaneresearch.client.fx;
 
 import arcaneresearch.Arcaneresearch;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;

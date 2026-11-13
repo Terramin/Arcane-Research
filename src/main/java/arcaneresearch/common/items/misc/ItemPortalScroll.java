@@ -1,5 +1,6 @@
-package arcaneresearch.temp.portal;
+package arcaneresearch.common.items.misc;
 
+import arcaneresearch.common.entities.EntityPortal;
 import arcaneresearch.init.ModEntities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-public class PortalScrollItem extends Item {
+public class ItemPortalScroll extends Item {
     private static final String TAG_X = "Pos_X";
     private static final String TAG_Y = "Pos_Y";
     private static final String TAG_Z = "Pos_Z";
@@ -31,7 +32,7 @@ public class PortalScrollItem extends Item {
     private static final float DEFAULT_WIDTH = 2.4F;
     private static final float DEFAULT_HEIGHT = 4.2F;
 
-    public PortalScrollItem() {
+    public ItemPortalScroll() {
         super(new Properties().stacksTo(1));
     }
 
@@ -120,7 +121,7 @@ public class PortalScrollItem extends Item {
 
             BlockPos spawnPos = clickedPos.relative(context.getClickedFace());
 
-            PortalEntity portal = ModEntities.PORTAL.get().create(level);
+            EntityPortal portal = ModEntities.PORTAL.get().create(level);
             if (portal == null) return InteractionResult.FAIL;
 
             float width = stack.getOrCreateTag().contains(TAG_W) ? Objects.requireNonNull(stack.getTag()).getFloat(TAG_W) : DEFAULT_WIDTH;
