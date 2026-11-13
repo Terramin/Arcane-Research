@@ -4,12 +4,22 @@
     ],
     "passes": [
         {
-            "name": "bloomcolor",
+            "name": "color_convolve",
             "intarget": "minecraft:main",
-            "outtarget": "swap"
+            "outtarget": "swap",
+            "uniforms": [
+                {
+                    "name": "ColorScale",
+                    "values": [ 1.2, 1.0, 0.7 ]
+                },
+                {
+                    "name": "Saturation",
+                    "values": [ 1.2 ]
+                }
+            ]
         },
         {
-            "name": "bloom2",
+            "name": "blit",
             "intarget": "swap",
             "outtarget": "minecraft:main"
         }
