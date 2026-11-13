@@ -7,10 +7,6 @@ in vec2 UV0;
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 
-// vLocal — локальные координаты квадрата в плоскости портала (мировые единицы):
-// x — поперёк портала, y — вверх от центра квада (центр волны = (0,0)).
-// vDir — экранным (NDC) направление радиального "луча" из центра (упаковано в Color.rg).
-// vScale — сколько NDC приходится на одну мировую единицу у этого угла (упаковано в Color.b).
 out vec2 vLocal;
 out vec2 vDir;
 out float vScale;

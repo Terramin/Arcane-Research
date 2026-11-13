@@ -22,10 +22,19 @@ public class PortalModel<T extends Entity> extends EntityModel<T> {
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "model_portal_java"), "main");
     public final ModelPart top;
     public final ModelPart bottom;
+    private float fadeAlpha = 1.0F;
 
     public PortalModel(ModelPart root) {
         this.top = root.getChild("top");
         this.bottom = root.getChild("bottom");
+    }
+
+    public void setFadeAlpha(float alpha) {
+        this.fadeAlpha = alpha;
+    }
+
+    public float getFadeAlpha() {
+        return this.fadeAlpha;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -53,7 +62,8 @@ public class PortalModel<T extends Entity> extends EntityModel<T> {
 
     @Override
     public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        top.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        bottom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+        float a = alpha * this.fadeAlpha;
+        top.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, a);
+        bottom.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, a);
     }
 }
