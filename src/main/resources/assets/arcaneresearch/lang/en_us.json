@@ -555,7 +555,7 @@
   "entity.arcaneresearch.ExplosiveOrb": "Explosive Fireball",
   "entity.arcaneresearch.FallingTaint": "Tainted Crust",
   "entity.arcaneresearch.Firebat": "Firebat",
-  "entity.arcaneresearch.FluxRift": "Flux Rift",
+  "entity.arcaneresearch.flux_rift": "Flux Rift",
   "entity.arcaneresearch.FocusCloud": "Focus Cloud",
   "entity.arcaneresearch.FocusMine": "Focus Mine",
   "entity.arcaneresearch.FocusProjectile": "Focus Projectile",

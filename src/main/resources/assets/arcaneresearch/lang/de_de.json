@@ -1268,7 +1268,7 @@
   "entity.arcaneresearch.FocusProjectile": "Focus Projectile",
   "entity.arcaneresearch.FocusCloud": "Focus Cloud",
   "entity.arcaneresearch.FocusMine": "Focus Mine",
-  "entity.arcaneresearch.FluxRift": "Flux Rift",
+  "entity.arcaneresearch.flux_rift": "Flux Rift",
   "research.complete": "Research Completed!",
   "stability.gain": "gain / cycle",
   "stability.range": "0 to",
