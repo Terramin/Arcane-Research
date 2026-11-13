@@ -5,6 +5,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IAspectContainer;
 import arcaneresearch.api.aspects.IEssentiaTransport;
+import arcaneresearch.common.blocks.essentia.BlockTube;
 import arcaneresearch.common.tiles.devices.TileBellows;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModSounds;
@@ -255,18 +256,21 @@ public class TileTubeBuffer extends TileTube implements IAspectContainer {
     @Override
     public boolean onCasterRightClick(Level level, ItemStack casterStack, Player player,
                                       BlockPos pos, Direction side, InteractionHand hand) {
+        if (player == null) return false;
+        int subHit = BlockTube.getSubHit(level, pos, player);
+        Direction targetSide = (subHit >= 0 && subHit < 6) ? DIRECTIONS[subHit] : side;
         player.swing(hand);
         if (player.isShiftKeyDown()) {
             level.playSound(player, worldPosition, ModSounds.SQUEEK.get(), SoundSource.BLOCKS, 0.6f,
                     2.0f + level.random.nextFloat() * 0.2f);
             if (!level.isClientSide) {
-                cycleChoke(side);
+                cycleChoke(targetSide);
             }
             return true;
         }
         level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
                 0.9f + level.random.nextFloat() * 0.2f);
-        toggleSide(side);
+        toggleSide(targetSide);
         return true;
     }
 }

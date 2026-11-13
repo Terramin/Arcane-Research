@@ -6,6 +6,7 @@ import arcaneresearch.api.aspects.IEssentiaTransport;
 import arcaneresearch.api.casters.IInteractWithCaster;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.config.ModConfig;
+import arcaneresearch.common.blocks.essentia.BlockTube;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModSounds;
@@ -219,7 +220,7 @@ public class TileTube extends TileArcaneresearch implements IEssentiaTransport, 
         Aspect ourSuctionType = getSuctionType(null);
         int ourSuctionAmount = getSuctionAmount(null);
         for (Direction dir : DIRECTIONS) {
-            if (directional && facing != dir.getOpposite()) continue;
+            if (directional && facing == dir.getOpposite()) continue;
             if (!isConnectable(dir)) continue;
             assert level != null;
             BlockEntity te = ArcaneresearchApiHelper.getConnectableTile(level, worldPosition, dir);
@@ -406,6 +407,23 @@ public class TileTube extends TileArcaneresearch implements IEssentiaTransport, 
     @Override
     public boolean onCasterRightClick(Level level, ItemStack casterStack, Player player,
                                       BlockPos pos, Direction side, InteractionHand hand) {
+        if (player == null) return false;
+        int subHit = BlockTube.getSubHit(level, pos, player);
+        if (subHit >= 0 && subHit < 6) {
+            Direction dir = DIRECTIONS[subHit];
+            level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
+                    0.9f + level.random.nextFloat() * 0.2f);
+            player.swing(hand);
+            toggleSide(dir);
+            return true;
+        }
+        if (subHit == 6) {
+            level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
+                    0.9f + level.random.nextFloat() * 0.2f);
+            player.swing(hand);
+            cycleFacing();
+            return true;
+        }
         if (player.isShiftKeyDown()) {
             level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
                     0.9f + level.random.nextFloat() * 0.2f);
