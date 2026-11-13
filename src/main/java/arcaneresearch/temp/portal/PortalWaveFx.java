@@ -201,6 +201,10 @@ public final class PortalWaveFx {
         Vec3 pos = entity.getPortalPlanePos(partialTicks);
 
         PoseStack poseStack = new PoseStack();
+        // тот же поворот камеры, что в мировом poseStack LevelRenderer (в проходе
+        // сущностей он уже входит в CPU-трансформ вершин; ModelViewMat = identity)
+        poseStack.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
+        poseStack.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180.0F));
         poseStack.translate(
                 (float) (pos.x - camPos.x),
                 (float) (pos.y - camPos.y),
