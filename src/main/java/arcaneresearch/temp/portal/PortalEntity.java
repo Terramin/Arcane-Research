@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,16 +26,20 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PortalEntity extends PathfinderMob {
     private static final int DEFAULT_LIFETIME = 600;
     private static final int OPEN_ANIMATION_TICKS = 20;
     private static final int FADE_TICKS = 40;
+    private static final int TARGET_TICKET_DISTANCE = 3;
+    private static final int TICKET_REFRESH_TICKS = 20;
     private static final float WIDTH = 2.4F;
     private static final float HEIGHT = 4.2F;
     public static final float OPEN_SLIDE_PX = 27.5F;
@@ -257,6 +262,9 @@ public class PortalEntity extends PathfinderMob {
     public void baseTick() {
         super.baseTick();
         if (!level().isClientSide) {
+            if (this.tickCount % TICKET_REFRESH_TICKS == 0) {
+                holdTargetChunkTicket();
+            }
             if (this.closing) {
                 if (this.fadeTicks >= 0) {
                     this.fadeTicks++;
@@ -313,6 +321,9 @@ public class PortalEntity extends PathfinderMob {
 
     private void teleportPlayer(@NotNull ServerPlayer player) {
         ServerLevel targetLevel = resolveTargetLevel(player);
+        if (targetLevel == null) {
+            return;
+        }
         BlockPos safe = getTeleportTarget().above();
 
         for (int i = 0; i < 8; i++) {
@@ -337,14 +348,42 @@ public class PortalEntity extends PathfinderMob {
     }
 
     private ServerLevel resolveTargetLevel(ServerPlayer player) {
-        MinecraftServer server = player.getServer();
+        ServerLevel target = resolveTargetLevel();
+        return target != null ? target : player.serverLevel();
+    }
+
+    @Nullable
+    private ServerLevel resolveTargetLevel() {
+        MinecraftServer server = this.getServer();
         if (server != null) {
             ServerLevel target = server.getLevel(getTeleportDimension());
             if (target != null) {
                 return target;
             }
         }
-        return player.serverLevel();
+        return null;
+    }
+
+    private void holdTargetChunkTicket() {
+        ServerLevel target = resolveTargetLevel();
+        if (target == null) {
+            return;
+        }
+        target.getChunkSource().addRegionTicket(TicketType.PORTAL, new ChunkPos(getTeleportTarget()), TARGET_TICKET_DISTANCE, getTeleportTarget());
+    }
+
+    private void releaseTargetChunkTicket() {
+        ServerLevel target = resolveTargetLevel();
+        if (target == null) {
+            return;
+        }
+        target.getChunkSource().removeRegionTicket(TicketType.PORTAL, new ChunkPos(getTeleportTarget()), TARGET_TICKET_DISTANCE, getTeleportTarget());
+    }
+
+    @Override
+    public void remove(@NotNull RemovalReason reason) {
+        releaseTargetChunkTicket();
+        super.remove(reason);
     }
 
     @Override
