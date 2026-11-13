@@ -228,6 +228,8 @@ public class Arcaneresearch {
                     arcaneresearch.common.entities.construct.EntityArcaneBore.createAttributes().build());
             event.put(ModEntities.ARCANERESEARCH_GOLEM.get(),
                     arcaneresearch.common.golems.EntityArcaneresearchGolem.createAttributes().build());
+            event.put(ModEntities.PORTAL.get(),
+                    arcaneresearch.common.entities.EntityPortal.createAttributes().build());
             LOGGER.info("Registered Arcaneresearch entity attributes");
         }
     }
@@ -347,6 +349,10 @@ public class Arcaneresearch {
                 net.minecraft.client.renderer.entity.EntityRenderers.register(
                     ModEntities.ARCANE_BORE.get(),
                     arcaneresearch.client.renderers.entity.ArcaneBoreRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.PORTAL.get(),
+                    arcaneresearch.client.renderers.entity.PortalRenderer::new
                 );
                 net.minecraft.client.renderer.entity.EntityRenderers.register(
                     ModEntities.PECH.get(),
@@ -737,6 +743,10 @@ public class Arcaneresearch {
             event.registerLayerDefinition(
                 arcaneresearch.client.models.block.ResearchTableModel.LAYER_LOCATION,
                 arcaneresearch.client.models.block.ResearchTableModel::createBodyLayer
+            );
+            event.registerLayerDefinition(
+                arcaneresearch.client.models.entity.PortalModel.LAYER_LOCATION,
+                arcaneresearch.client.models.entity.PortalModel::createBodyLayer
             );
             LOGGER.info("Registered Arcaneresearch model layers");
         }

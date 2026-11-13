@@ -20,6 +20,7 @@ import arcaneresearch.common.items.consumables.*;
 import arcaneresearch.common.items.curios.*;
 import arcaneresearch.common.items.misc.ItemCreativeFluxSponge;
 import arcaneresearch.common.items.misc.ItemCrimsonRites;
+import arcaneresearch.common.items.misc.ItemPortalScroll;
 import arcaneresearch.common.items.resources.ItemCrystalEssence;
 import arcaneresearch.common.items.resources.ItemMagicDust;
 import arcaneresearch.common.items.resources.ItemMaterial;
@@ -522,4 +523,5 @@ public class ModItems {
 
     public static final RegistryObject<Item> VISNERITEINGOT = ITEMS.register("visnerite_ingot", () -> new ItemVisneriteIngot());
     public static final RegistryObject<Item> VISNERITESCRAP = ITEMS.register("visnerite_scrap", () -> new ItemVisneriteScrap());
+    public static final RegistryObject<Item> PORTAL_SCROLL = ITEMS.register("portal_scroll", ItemPortalScroll::new);
 }
