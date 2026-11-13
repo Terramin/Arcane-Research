@@ -1,5 +1,9 @@
 package arcaneresearch.common.entities;
 
+import arcaneresearch.api.portals.IPortal;
+import arcaneresearch.api.portals.IPortalShape;
+import arcaneresearch.api.portals.PortalApi;
+import arcaneresearch.api.portals.PortalDestination;
 import arcaneresearch.init.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -11,7 +15,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
@@ -34,15 +37,14 @@ import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EntityPortal extends PathfinderMob {
+public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape {
     private static final int DEFAULT_LIFETIME = 600;
     private static final int OPEN_ANIMATION_TICKS = 20;
     private static final int FADE_TICKS = 40;
     private static final int TARGET_TICKET_DISTANCE = 3;
     private static final int TICKET_REFRESH_TICKS = 20;
-    private static final float WIDTH = 2.4F;
-    private static final float HEIGHT = 4.2F;
-    public static final float OPEN_SLIDE_PX = 27.5F;
+    private static final float WIDTH = PortalDestination.DEFAULT_WIDTH;
+    private static final float HEIGHT = PortalDestination.DEFAULT_HEIGHT;
     private static final double MODEL_RENDER_BASE = 1.501;
     private static final double CONTOUR_HALF_WIDTH = 25.0 / 16.0;
     private static final EntityDataAccessor<BlockPos> DATA_TELEPORT_TARGET =
@@ -79,20 +81,24 @@ public class EntityPortal extends PathfinderMob {
         this.moveControl = new FlyingMoveControl(this, 10, true);
     }
 
+    @Override
     public void setTeleportTarget(BlockPos pos) {
         this.entityData.set(DATA_TELEPORT_TARGET, pos == null ? BlockPos.ZERO : pos.immutable());
     }
 
+    @Override
     public void setTeleportDimension(ResourceKey<Level> dimension) {
         ResourceKey<Level> key = dimension == null ? Level.OVERWORLD : dimension;
         this.entityData.set(DATA_TELEPORT_DIM, key.location().toString());
     }
 
+    @Override
     public ResourceKey<Level> getTeleportDimension() {
-        ResourceLocation dim = parseResourceLocation(this.entityData.get(DATA_TELEPORT_DIM));
+        ResourceLocation dim = PortalApi.parseResourceLocation(this.entityData.get(DATA_TELEPORT_DIM));
         return dim == null ? Level.OVERWORLD : ResourceKey.create(Registries.DIMENSION, dim);
     }
 
+    @Override
     public BlockPos getTeleportTarget() {
         return this.entityData.get(DATA_TELEPORT_TARGET);
     }
@@ -107,11 +113,13 @@ public class EntityPortal extends PathfinderMob {
         this.entityData.define(DATA_FADE, -1);
     }
 
+    @Override
     public void setSize(float width, float height) {
         this.portalWidth = width;
         this.portalHeight = height;
     }
 
+    @Override
     public void startClosing() {
         if (this.closing) return;
         this.closing = true;
@@ -121,14 +129,17 @@ public class EntityPortal extends PathfinderMob {
         this.entityData.set(DATA_CLOSING, true);
     }
 
+    @Override
     public boolean isClosing() {
         return this.entityData.get(DATA_CLOSING);
     }
 
+    @Override
     public int getDisplayedLifetime() {
         return this.entityData.get(DATA_LIFETIME);
     }
 
+    @Override
     public float getFadeAlpha(float partialTicks) {
         int fade = this.entityData.get(DATA_FADE);
         if (fade < 0) {
@@ -147,6 +158,7 @@ public class EntityPortal extends PathfinderMob {
         return ease(f);
     }
 
+    @Override
     public float getOpenFraction(float partialTicks) {
         boolean closing = isClosing();
         if (!closing) {
@@ -169,6 +181,7 @@ public class EntityPortal extends PathfinderMob {
         return fromFraction * (1f - f);
     }
 
+    @Override
     public Vec3 getPortalPlanePos(float partialTicks) {
         return new Vec3(
                 Mth.lerp(partialTicks, this.xo, this.getX()),
@@ -176,15 +189,18 @@ public class EntityPortal extends PathfinderMob {
                 Mth.lerp(partialTicks, this.zo, this.getZ()));
     }
 
+    @Override
     public float getPortalYaw(float partialTicks) {
         return Mth.rotLerp(partialTicks, this.yRotO, this.getYRot());
     }
 
+    @Override
     public Vec3 getFacingNormal(float partialTicks) {
         double rad = Math.toRadians(getPortalYaw(partialTicks));
         return new Vec3(-Math.sin(rad), 0.0D, Math.cos(rad));
     }
 
+    @Override
     public double[] getContourBounds(float partialTicks) {
         float slide = (1f - getOpenFraction(partialTicks)) * OPEN_SLIDE_PX;
         double topEdge = MODEL_RENDER_BASE + (36.0 - slide) / 16.0;
@@ -312,56 +328,16 @@ public class EntityPortal extends PathfinderMob {
             if (player.isShiftKeyDown()) {
                 startClosing();
             } else {
-                teleportPlayer(serverPlayer);
+                PortalApi.teleport(serverPlayer, this);
             }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
 
-    private void teleportPlayer(@NotNull ServerPlayer player) {
-        ServerLevel targetLevel = resolveTargetLevel(player);
-        if (targetLevel == null) {
-            return;
-        }
-        BlockPos safe = getTeleportTarget().above();
-
-        for (int i = 0; i < 8; i++) {
-            BlockPos above = safe.above();
-            if (targetLevel.getBlockState(safe).isAir() && targetLevel.getBlockState(above).isAir()) {
-                break;
-            }
-            safe = above;
-        }
-
-        double x = safe.getX() + 0.5;
-        double y = safe.getY();
-        double z = safe.getZ() + 0.5;
-
-        if (player.isPassenger()) {
-            player.stopRiding();
-        }
-
-        player.teleportTo(targetLevel, x, y, z, player.getYRot(), player.getXRot());
-        player.setDeltaMovement(0, 0, 0);
-        player.resetFallDistance();
-    }
-
-    private ServerLevel resolveTargetLevel(ServerPlayer player) {
-        ServerLevel target = resolveTargetLevel();
-        return target != null ? target : player.serverLevel();
-    }
-
     @Nullable
     private ServerLevel resolveTargetLevel() {
-        MinecraftServer server = this.getServer();
-        if (server != null) {
-            ServerLevel target = server.getLevel(getTeleportDimension());
-            if (target != null) {
-                return target;
-            }
-        }
-        return null;
+        return PortalApi.resolveTargetLevel(this);
     }
 
     private void holdTargetChunkTicket() {
@@ -389,50 +365,27 @@ public class EntityPortal extends PathfinderMob {
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        BlockPos target = getTeleportTarget();
-        tag.putInt("Pos_X", target.getX());
-        tag.putInt("Pos_Y", target.getY());
-        tag.putInt("Pos_Z", target.getZ());
-        tag.putString("Dim", getTeleportDimension().location().toString());
-        tag.putInt("Timer", lifetime);
-        tag.putFloat("Width", portalWidth);
-        tag.putFloat("Height", portalHeight);
+        PortalApi.writeDestination(tag, getTeleportTarget(), getTeleportDimension(), portalWidth, portalHeight);
+        tag.putInt(PortalApi.TAG_TIMER, lifetime);
     }
 
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (tag.contains("Pos_X") && tag.contains("Pos_Y") && tag.contains("Pos_Z")) {
-            setTeleportTarget(new BlockPos(tag.getInt("Pos_X"), tag.getInt("Pos_Y"), tag.getInt("Pos_Z")));
+        PortalDestination destination = PortalApi.readDestination(tag);
+        if (destination != null) {
+            setTeleportTarget(destination.pos());
+            setTeleportDimension(destination.dimension());
+            portalWidth = destination.width();
+            portalHeight = destination.height();
         }
-        if (tag.contains("Dim")) {
-            ResourceLocation dim = parseResourceLocation(tag.getString("Dim"));
-            if (dim != null) {
-                setTeleportDimension(ResourceKey.create(Registries.DIMENSION, dim));
-            }
-        }
-        if (tag.contains("Timer")) {
-            lifetime = tag.getInt("Timer");
-        }
-        if (tag.contains("Width")) {
-            portalWidth = tag.getFloat("Width");
-        }
-        if (tag.contains("Height")) {
-            portalHeight = tag.getFloat("Height");
+        if (tag.contains(PortalApi.TAG_TIMER)) {
+            lifetime = tag.getInt(PortalApi.TAG_TIMER);
         }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
-    }
-
-    private static ResourceLocation parseResourceLocation(String value) {
-        if (value == null || value.isEmpty()) return null;
-        int sep = value.indexOf(':');
-        if (sep >= 0) {
-            return ResourceLocation.fromNamespaceAndPath(value.substring(0, sep), value.substring(sep + 1));
-        }
-        return ResourceLocation.fromNamespaceAndPath("minecraft", value);
     }
 }

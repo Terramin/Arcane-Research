@@ -1,7 +1,7 @@
 package arcaneresearch.client.fx;
 
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.common.entities.EntityPortal;
+import arcaneresearch.api.portals.IPortalShape;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
@@ -143,16 +143,16 @@ public final class PortalWaveFx {
         ensureBackgroundCopied();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
         for (Entity entity : Objects.requireNonNull(mc.level).entitiesForRendering()) {
-            if (entity instanceof EntityPortal portal) {
-                drawWave(portal, event.getPartialTick(), event.getCamera(), bufferSource);
+            if (entity instanceof IPortalShape shape) {
+                drawWave(entity, shape, event.getPartialTick(), event.getCamera(), bufferSource);
             }
         }
         bufferSource.endBatch(WAVE_TYPE);
     }
 
-    private static void drawWave(EntityPortal entity, float partialTicks, Camera camera,
+    private static void drawWave(Entity entity, IPortalShape shape, float partialTicks, Camera camera,
                                  MultiBufferSource.BufferSource bufferSource) {
-        double[] contour = entity.getContourBounds(partialTicks);
+        double[] contour = shape.getContourBounds(partialTicks);
         double baseY = Mth.lerp(partialTicks, entity.yo, entity.getY());
         double halfWidth = contour[2] - 1.0 / 16.0;
         double y0 = contour[1] - baseY;
@@ -164,7 +164,7 @@ public final class PortalWaveFx {
         float yaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
 
         Vec3 camPos = camera.getPosition();
-        Vec3 pos = entity.getPortalPlanePos(partialTicks);
+        Vec3 pos = shape.getPortalPlanePos(partialTicks);
 
         PoseStack poseStack = new PoseStack();
         poseStack.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
@@ -174,7 +174,7 @@ public final class PortalWaveFx {
                 (float) (pos.y - camPos.y),
                 (float) (pos.z - camPos.z));
         poseStack.mulPose(Axis.YP.rotationDegrees(180f - yaw));
-        pushQuadTowardCamera(entity, partialTicks, poseStack);
+        pushQuadTowardCamera(shape, partialTicks, poseStack);
 
         PoseStack projViewPose = new PoseStack();
         projViewPose.mulPoseMatrix(new Matrix4f(RenderSystem.getProjectionMatrix()));
@@ -260,9 +260,9 @@ public final class PortalWaveFx {
         }
     }
 
-    private static void pushQuadTowardCamera(EntityPortal entity, float partialTicks, PoseStack poseStack) {
-        Vec3 normal = entity.getFacingNormal(partialTicks);
-        double along = cameraPos().subtract(entity.getPortalPlanePos(partialTicks)).dot(normal);
+    private static void pushQuadTowardCamera(IPortalShape shape, float partialTicks, PoseStack poseStack) {
+        Vec3 normal = shape.getFacingNormal(partialTicks);
+        double along = cameraPos().subtract(shape.getPortalPlanePos(partialTicks)).dot(normal);
         double absAlong = Math.abs(along);
         if (absAlong >= QUAD_PUSH_MARGIN) {
             return;

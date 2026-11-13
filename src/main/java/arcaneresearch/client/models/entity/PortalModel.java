@@ -1,6 +1,6 @@
 package arcaneresearch.client.models.entity;
 
-import arcaneresearch.common.entities.EntityPortal;
+import arcaneresearch.api.portals.IPortal;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.model.geom.builders.PartDefinition;
@@ -42,8 +42,8 @@ public class PortalModel<T extends Entity> extends EntityModel<T> {
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float partialTicks = ageInTicks - entity.tickCount;
-        float open = entity instanceof EntityPortal portal ? portal.getOpenFraction(partialTicks) : 1f;
-        float slide = (1f - open) * EntityPortal.OPEN_SLIDE_PX;
+        float open = entity instanceof IPortal portal ? portal.getOpenFraction(partialTicks) : 1f;
+        float slide = (1f - open) * IPortal.OPEN_SLIDE_PX;
 
         float time = (ageInTicks / 10.0F) % 2.0F;
         float sineValue = (float) Math.sin(time * Math.PI) * open;
