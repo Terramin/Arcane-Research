@@ -31,7 +31,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 
 public class PortalEntity extends PathfinderMob {
-    private static final int DEFAULT_LIFETIME = 6000;
+    private static final int DEFAULT_LIFETIME = 600; // 30 секунд
     private static final int OPEN_ANIMATION_TICKS = 20;
     private static final float WIDTH = 2.4F;
     private static final float HEIGHT = 4.2F;
