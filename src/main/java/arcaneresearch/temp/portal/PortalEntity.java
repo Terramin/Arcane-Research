@@ -66,9 +66,8 @@ public class PortalEntity extends PathfinderMob {
     private int closeTicks = 0;
     /** Прогресс открытия на момент начала закрытия (сервер). */
     private float closeFromFraction = 1f;
-    /** После закрытия: порт надо погасить (исчезновение за 2 секунды) — при истечении времени. */
-    private boolean expireOnClose = false;
-    /** Сервер: тики фазы исчезновения (-1 — фаза не начата). */
+    /** После закрытия портал плавно гаснет (исчезновение за 2 секунды). */
+    // Сервер: тики фазы исчезновения (-1 — фаза не начата).
     private int fadeTicks = -1;
     /** Закрытие (клиент): локальный тик начала закрытия и прогресс открытия на тот момент. */
     private int clientCloseStartTick = -1;
@@ -122,21 +121,12 @@ public class PortalEntity extends PathfinderMob {
         this.portalHeight = height;
     }
 
-    /** Запускает закрытие портала с обратной анимацией (сервер). */
+    /** Запускает закрытие портала с обратной анимацией; после закрытия портал плавно исчезает за 2 секунды (сервер). */
     public void startClosing() {
-        startClosing(false);
-    }
-
-    /**
-     * Запускает закрытие портала с обратной анимацией (сервер).
-     * @param expire если true — после закрытия портал плавно исчезает за 2 секунды (истечение времени).
-     */
-    public void startClosing(boolean expire) {
         if (this.closing) return;
         this.closing = true;
         this.closeTicks = 0;
         this.fadeTicks = -1;
-        this.expireOnClose = expire;
         this.closeFromFraction = openProgress(0f);
         this.entityData.set(DATA_CLOSING, true);
     }
@@ -310,23 +300,18 @@ public class PortalEntity extends PathfinderMob {
                         return;
                     }
                 } else {
-                    // идёт обратная анимация: время не тратится, по завершении либо гаснем, либо убираем
+                    // идёт обратная анимация: время не тратится, по завершении портал плавно гаснет
                     this.closeTicks++;
                     if (this.closeTicks >= OPEN_ANIMATION_TICKS) {
-                        if (this.expireOnClose) {
-                            this.fadeTicks = 0;
-                            this.entityData.set(DATA_FADE, 0);
-                        } else {
-                            this.discard();
-                            return;
-                        }
+                        this.fadeTicks = 0;
+                        this.entityData.set(DATA_FADE, 0);
                     }
                 }
             } else if (this.tickCount >= OPEN_ANIMATION_TICKS) {
                 // время существования не убывает, пока портал не открыт полностью
                 if (--this.lifetime <= 0) {
                     // время вышло — портал закрывается, потом плавно исчезает
-                    startClosing(true);
+                    startClosing();
                 }
             }
             this.entityData.set(DATA_LIFETIME, this.lifetime);
@@ -353,7 +338,7 @@ public class PortalEntity extends PathfinderMob {
                 return InteractionResult.SUCCESS;
             }
             if (player.isShiftKeyDown()) {
-                // Shift + ПКМ — закрыть портал с обратной анимацией
+                // Shift + ПКМ — закрыть портал с обратной анимацией, затем плавное исчезновение
                 startClosing();
             } else {
                 teleportPlayer(serverPlayer);
