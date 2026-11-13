@@ -191,7 +191,9 @@ public class ModConfig {
                 }
                 String path = id.getPath();
                 if (!id.getNamespace().equals("minecraft") && !id.getNamespace().equals("arcaneresearch")) {
-                    if (path.endsWith("_ore") || path.startsWith("ore_") || path.contains("ore_")) {
+                    boolean isOre = path.endsWith("_ore") || path.startsWith("ore_") || path.contains("ore_");
+                    boolean isRaw = path.contains("raw");
+                    if (isOre || isRaw) {
                         String lower = path.toLowerCase(java.util.Locale.ROOT);
                         if (lower.contains("iron") && !isVanillaIronOre(item)) {
                             Utils.addSpecialMiningResult(new ItemStack(item), new ItemStack(ModItems.CLUSTER_IRON.get()), 1.0f);
@@ -290,6 +292,11 @@ public class ModConfig {
         Utils.addSpecialMiningResult(new ItemStack(Blocks.GOLD_ORE), new ItemStack(ModItems.CLUSTER_GOLD.get()), 1.0f);
         Utils.addSpecialMiningResult(new ItemStack(ModBlocks.CINNABAR_ORE.get()), new ItemStack(ModItems.CLUSTER_CINNABAR.get()), 1.0f);
         Utils.addSpecialMiningResult(new ItemStack(Items.QUARTZ), new ItemStack(ModItems.CLUSTER_QUARTZ.get()), 1.0f);
+        // 1.17+: ores drop raw materials instead of ore blocks
+        Utils.addSpecialMiningResult(new ItemStack(Items.RAW_IRON), new ItemStack(ModItems.CLUSTER_IRON.get()), 1.0f);
+        Utils.addSpecialMiningResult(new ItemStack(Items.RAW_GOLD), new ItemStack(ModItems.CLUSTER_GOLD.get()), 1.0f);
+        Utils.addSpecialMiningResult(new ItemStack(Items.RAW_COPPER), new ItemStack(ModItems.CLUSTER_COPPER.get()), 1.0f);
+        Utils.addSpecialMiningResult(new ItemStack(ModItems.QUICKSILVER.get()), new ItemStack(ModItems.CLUSTER_CINNABAR.get()), 1.0f);
         initAspectOrder();
     }
     public static void load() {
