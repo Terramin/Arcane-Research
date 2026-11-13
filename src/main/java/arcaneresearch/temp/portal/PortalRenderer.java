@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<PortalEntity>> {
@@ -26,10 +27,10 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     public PortalRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelPortalJava<>(context.bakeLayer(ModelPortalJava.LAYER_LOCATION)), 0f);
 
-        this.addLayer(new RenderLayer<PortalEntity, ModelPortalJava<PortalEntity>>(this) {
+        this.addLayer(new RenderLayer<>(this) {
             @Override
-            public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight,
-                               PortalEntity entity, float limbSwing, float limbSwingAmount,
+            public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight,
+                               @NotNull PortalEntity entity, float limbSwing, float limbSwingAmount,
                                float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
                 VertexConsumer consumer = bufferSource.getBuffer(RenderType.eyes(GLOW_TEXTURE));
                 this.getParentModel().renderToBuffer(
@@ -40,19 +41,19 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
         });
     }
 
-    protected void setupRotations(PortalEntity entity, PoseStack poseStack, float bob, float yBodyRot, float partialTicks) {
+    protected void setupRotations(PortalEntity entity, @NotNull PoseStack poseStack, float bob, float yBodyRot, float partialTicks) {
         float yaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
         super.setupRotations(entity, poseStack, bob, yaw, partialTicks);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(PortalEntity entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull PortalEntity entity) {
         return TEXTURE;
     }
 
     @Override
     public void render(PortalEntity entity, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+                       @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         float alpha = entity.getFadeAlpha(partialTicks);
         this.lastFadeAlpha = alpha;
         if (alpha <= 0.001f) {
@@ -66,7 +67,7 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
     }
 
     @Override
-    protected RenderType getRenderType(PortalEntity entity, boolean bodyVisible, boolean translucent, boolean glowing) {
+    protected RenderType getRenderType(@NotNull PortalEntity entity, boolean bodyVisible, boolean translucent, boolean glowing) {
         if (this.lastFadeAlpha < 0.999f) {
             return RenderType.entityTranslucentCull(TEXTURE);
         }
@@ -97,87 +98,73 @@ public class PortalRenderer extends MobRenderer<PortalEntity, ModelPortalJava<Po
         poseStack.popPose();
     }
 
-    private static final class FadingBufferSource implements MultiBufferSource {
-        private final MultiBufferSource parent;
-        private final float alpha;
-
-        private FadingBufferSource(MultiBufferSource parent, float alpha) {
-            this.parent = parent;
-            this.alpha = alpha;
-        }
+    private record FadingBufferSource(MultiBufferSource parent, float alpha) implements MultiBufferSource {
 
         @Override
-        public VertexConsumer getBuffer(RenderType renderType) {
-            return new FadingVertexConsumer(this.parent.getBuffer(renderType), this.alpha);
+            public @NotNull VertexConsumer getBuffer(@NotNull RenderType renderType) {
+                return new FadingVertexConsumer(this.parent.getBuffer(renderType), this.alpha);
+            }
         }
-    }
 
-    private static final class FadingVertexConsumer implements VertexConsumer {
-        private final VertexConsumer inner;
-        private final float alpha;
-
-        private FadingVertexConsumer(VertexConsumer inner, float alpha) {
-            this.inner = inner;
-            this.alpha = alpha;
-        }
+    private record FadingVertexConsumer(VertexConsumer inner, float alpha) implements VertexConsumer {
 
         @Override
-        public VertexConsumer vertex(double x, double y, double z) {
-            this.inner.vertex(x, y, z);
-            return this;
-        }
+            public @NotNull VertexConsumer vertex(double x, double y, double z) {
+                this.inner.vertex(x, y, z);
+                return this;
+            }
 
-        @Override
-        public VertexConsumer color(int red, int green, int blue, int alphaInt) {
-            this.inner.color(red, green, blue, (int) (alphaInt * this.alpha));
-            return this;
-        }
+            @Override
+            public @NotNull VertexConsumer color(int red, int green, int blue, int alphaInt) {
+                this.inner.color(red, green, blue, (int) (alphaInt * this.alpha));
+                return this;
+            }
 
-        @Override
-        public VertexConsumer uv(float u, float v) {
-            this.inner.uv(u, v);
-            return this;
-        }
+            @Override
+            public @NotNull VertexConsumer uv(float u, float v) {
+                this.inner.uv(u, v);
+                return this;
+            }
 
-        @Override
-        public VertexConsumer overlayCoords(int u, int v) {
-            this.inner.overlayCoords(u, v);
-            return this;
-        }
+            @Override
+            public @NotNull VertexConsumer overlayCoords(int u, int v) {
+                this.inner.overlayCoords(u, v);
+                return this;
+            }
 
-        @Override
-        public VertexConsumer uv2(int u, int v) {
-            this.inner.uv2(u, v);
-            return this;
-        }
+            @Override
+            public @NotNull VertexConsumer uv2(int u, int v) {
+                this.inner.uv2(u, v);
+                return this;
+            }
 
-        @Override
-        public VertexConsumer normal(float x, float y, float z) {
-            this.inner.normal(x, y, z);
-            return this;
-        }
+            @Override
+            public @NotNull VertexConsumer normal(float x, float y, float z) {
+                this.inner.normal(x, y, z);
+                return this;
+            }
 
-        @Override
-        public void endVertex() {
-            this.inner.endVertex();
-        }
+            @Override
+            public void endVertex() {
+                this.inner.endVertex();
+            }
 
-        @Override
-        public void defaultColor(int red, int green, int blue, int alphaInt) {
-            this.inner.defaultColor(red, green, blue, (int) (alphaInt * this.alpha));
-        }
+            @Override
+            public void defaultColor(int red, int green, int blue, int alphaInt) {
+                this.inner.defaultColor(red, green, blue, (int) (alphaInt * this.alpha));
+            }
 
-        @Override
-        public void unsetDefaultColor() {
-            this.inner.unsetDefaultColor();
-        }
+            @Override
+            public void unsetDefaultColor() {
+                this.inner.unsetDefaultColor();
+            }
 
-        @Override
-        public void vertex(float x, float y, float z, float red, float green, float blue, float a,
-                           float texU, float texV, int overlayUV, int lightUV,
-                           float normalX, float normalY, float normalZ) {
-            this.inner.vertex(x, y, z, red, green, blue, a * this.alpha,
-                    texU, texV, overlayUV, lightUV, normalX, normalY, normalZ);
+            @Override
+            public void vertex(float x, float y, float z, float red, float green, float blue, float a,
+                               float texU, float texV, int overlayUV, int lightUV,
+                               float normalX, float normalY, float normalZ) {
+                this.inner.vertex(x, y, z, red, green, blue, a * this.alpha,
+                        texU, texV, overlayUV, lightUV, normalX, normalY, normalZ);
+            }
         }
-    }
 }

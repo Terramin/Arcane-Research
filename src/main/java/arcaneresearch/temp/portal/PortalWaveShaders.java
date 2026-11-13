@@ -11,11 +11,9 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
 
-/** Регистрация core-шейдера кольцевой волны портала (mod-bus, клиент). */
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class PortalWaveShaders {
-    /** Скомпилированный шейдер portal_wave (null до первой загрузки ресурсов). */
     public static ShaderInstance portalWave;
 
     private PortalWaveShaders() {

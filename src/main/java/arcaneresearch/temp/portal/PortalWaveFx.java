@@ -34,26 +34,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
 
-/**
- * Эффект экрана портала: полностью прозрачный квад в плоскости портала, из центра
- * которого раз в секунду расходится кольцевая волна, искажающая фон только по краям
- * кольца (как линза у чёрной дыры).
- *
- * Волна рисуется на поздней стадии кадра (после частиц): к этому моменту
- * фреймбуфер содержит ВЕСЬ мир (блоки, сущности, блочные сущности, воду, частицы),
- * поэтому копия фона, снятая прямо перед отрисовкой, искажает любые объекты
- * позади портала — включая те, что рисуются после сущностей (кровати,
- * тайловые сущности, эффекты и т.д.).
- *
- * Механика: раз в кадр цветовой буфер копируется в текстуру; шейдер portal_wave
- * сэмплирует её со смещением вдоль радиального направления у гребня волны.
- * Между волнами и вне кольца экран полностью прозрачен.
- */
+import java.util.Objects;
+
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class PortalWaveFx {
 
-    /** Доступ к protected-состояниям RenderStateShard для сборки собственного RenderType. */
     private static class Shards extends RenderStateShard {
         private Shards() {
             super("portal_wave_shards", () -> {
@@ -63,15 +49,11 @@ public final class PortalWaveFx {
 
         static final ShaderStateShard SHADER = new ShaderStateShard(() -> PortalWaveShaders.portalWave);
 
-        /** Текстура-шард: биндит копию цветового буфера (не ResourceLocation). */
-        static final EmptyTextureStateShard BACKGROUND = new EmptyTextureStateShard(() -> {
-            RenderSystem.setShaderTexture(0, getBackgroundTextureId());
-        }, () -> {
+        static final EmptyTextureStateShard BACKGROUND = new EmptyTextureStateShard(() -> RenderSystem.setShaderTexture(0, getBackgroundTextureId()), () -> {
         });
 
         static final TransparencyStateShard TRANSLUCENT = TRANSLUCENT_TRANSPARENCY;
         static final CullStateShard SHARD_NO_CULL = NO_CULL;
-        /** Без записи глубины: волна не должна перекрывать то, что рисуется после неё. */
         static final WriteMaskStateShard COLOR_ONLY = COLOR_WRITE;
     }
 
@@ -86,25 +68,18 @@ public final class PortalWaveFx {
                     .setWriteMaskState(Shards.COLOR_ONLY)
                     .createCompositeState(false));
 
-    /** Квад волны выталкивается к камере, если плоскость портала ближе этого к камере
-     *  (больше near-plane главной камеры 0.05 — иначе квад срезается и волна пропадает). */
     private static final double QUAD_PUSH_MARGIN = 0.1D;
-    /** Шаг проекции для перспективного масштаба искажения (мировые единицы). */
     private static final float SCALE_PROBE_STEP = 0.25F;
-    /** Мировая единица = столько NDC; упаковка масштаба в байт цвета (см. шейдер). */
     private static final float MAX_SCALE_PACKED = 2.0F;
 
-    /** Копия цветового буфера основного прохода (id GL-текстуры, -1 — нет). */
     private static int backgroundTexture = -1;
     private static int backgroundWidth;
     private static int backgroundHeight;
-    /** Скопирован ли фон в этом кадре (несколько порталов — одна копия). */
     private static boolean copiedThisFrame;
 
     private PortalWaveFx() {
     }
 
-    /** Эффект активен: шейдер загружен и график не Fabulous (там вложенные фреймбуферы). */
     static boolean isActive() {
         Minecraft mc = Minecraft.getInstance();
         return PortalWaveShaders.portalWave != null
@@ -112,12 +87,10 @@ public final class PortalWaveFx {
                 && mc.options.graphicsMode().get() != GraphicsStatus.FABULOUS;
     }
 
-    /** GL-id текстуры с копией фона (0 — нет). */
     private static int getBackgroundTextureId() {
         return backgroundTexture == -1 ? 0 : backgroundTexture;
     }
 
-    /** Ленивое копирование фона: один раз за кадр, до отрисовки первой волны. */
     private static void ensureBackgroundCopied() {
         if (copiedThisFrame) {
             return;
@@ -125,7 +98,7 @@ public final class PortalWaveFx {
         copiedThisFrame = true;
         Minecraft mc = Minecraft.getInstance();
         RenderTarget main = mc.getMainRenderTarget();
-        if (main == null || main.width <= 0 || main.height <= 0) {
+        if (main.width <= 0 || main.height <= 0) {
             return;
         }
         if (backgroundTexture == -1 || backgroundWidth != main.width || backgroundHeight != main.height) {
@@ -162,14 +135,13 @@ public final class PortalWaveFx {
             updateUniforms();
             return;
         }
-        // рисуем волны после частиц: в буфере уже весь мир, копия фона полная
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES || !isActive()) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
         ensureBackgroundCopied();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
-        for (Entity entity : mc.level.entitiesForRendering()) {
+        for (Entity entity : Objects.requireNonNull(mc.level).entitiesForRendering()) {
             if (entity instanceof PortalEntity portal) {
                 drawWave(portal, event.getPartialTick(), event.getCamera(), bufferSource);
             }
@@ -177,22 +149,15 @@ public final class PortalWaveFx {
         bufferSource.endBatch(WAVE_TYPE);
     }
 
-    /**
-     * Квад волны в плоскости портала (границы — на 1px уже золотой полосы рамки,
-     * пересчёт по анимации открытия). Квад полностью прозрачный: рисуется только
-     * кольцо волны. UV хранит локальные координаты от центра волны (мировые
-     * единицы), цвет — экранные направление и перспективный масштаб искажения
-     * для этого угла (шейдер сэмплирует копию фона со смещением).
-     */
     private static void drawWave(PortalEntity entity, float partialTicks, Camera camera,
                                  MultiBufferSource.BufferSource bufferSource) {
         double[] contour = entity.getContourBounds(partialTicks);
-        double baseY = Mth.lerp((double) partialTicks, entity.yo, entity.getY());
-        double halfWidth = contour[2] - 1.0 / 16.0; // на 1px уже золотой полосы
+        double baseY = Mth.lerp(partialTicks, entity.yo, entity.getY());
+        double halfWidth = contour[2] - 1.0 / 16.0;
         double y0 = contour[1] - baseY;
         double y1 = contour[0] - baseY;
         if (y1 - y0 < 0.05D) {
-            return; // портал ещё не раскрылся
+            return;
         }
         double centerY = (y0 + y1) * 0.5;
         float yaw = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
@@ -201,20 +166,15 @@ public final class PortalWaveFx {
         Vec3 pos = entity.getPortalPlanePos(partialTicks);
 
         PoseStack poseStack = new PoseStack();
-        // тот же поворот камеры, что в мировом poseStack LevelRenderer (в проходе
-        // сущностей он уже входит в CPU-трансформ вершин; ModelViewMat = identity)
         poseStack.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
         poseStack.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180.0F));
         poseStack.translate(
                 (float) (pos.x - camPos.x),
                 (float) (pos.y - camPos.y),
                 (float) (pos.z - camPos.z));
-        // тот же поворот, что и у модели портала (180 - yaw)
         poseStack.mulPose(Axis.YP.rotationDegrees(180f - yaw));
-        // выталкивание квада к камере у near-plane (позиция квада не влияет на UV/цвет)
         pushQuadTowardCamera(entity, partialTicks, poseStack);
 
-        // мировые координаты -> clip (проекция + поворот камеры + перенос)
         PoseStack projViewPose = new PoseStack();
         projViewPose.mulPoseMatrix(new Matrix4f(RenderSystem.getProjectionMatrix()));
         projViewPose.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
@@ -222,13 +182,11 @@ public final class PortalWaveFx {
         projViewPose.translate((float) -camPos.x, (float) -camPos.y, (float) -camPos.z);
         Matrix4f projView = projViewPose.last().pose();
 
-        // мировые направления -> пространство камеры (только поворот)
         PoseStack worldToCamPose = new PoseStack();
         worldToCamPose.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
         worldToCamPose.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180.0F));
         Matrix4f worldToCam = worldToCamPose.last().pose();
 
-        // поворот портала: локальные координаты -> мировые
         Matrix4f portalRot = new Matrix4f().rotationY((float) Math.toRadians(180f - yaw));
 
         VertexConsumer buf = bufferSource.getBuffer(WAVE_TYPE);
@@ -245,7 +203,6 @@ public final class PortalWaveFx {
                 {fx0, fy1}
         };
         for (float[] corner : corners) {
-            // радиальный луч из центра волны (в плоскости портала, мировые единицы)
             float rx = corner[0];
             float ry = corner[1] - (float) centerY;
             float len = (float) Math.sqrt(rx * rx + ry * ry);
@@ -254,7 +211,6 @@ public final class PortalWaveFx {
             Vector3f worldDir = new Vector3f(localDir);
             portalRot.transformPosition(worldDir);
 
-            // направление луча на экране (NDC)
             Vector3f camDir = new Vector3f(worldDir);
             worldToCam.transformDirection(camDir);
             Vector4f clipDir = new Vector4f(camDir.x, camDir.y, camDir.z, 0f);
@@ -274,7 +230,6 @@ public final class PortalWaveFx {
                 }
             }
 
-            // перспективный масштаб: NDC-сдвиг на мировую единицу у этого угла
             Vector3f cornerWorld = new Vector3f(corner[0], corner[1], 0f);
             portalRot.transformPosition(cornerWorld);
             Vector3f p0 = new Vector3f(
@@ -304,12 +259,6 @@ public final class PortalWaveFx {
         }
     }
 
-    /**
-     * Сдвиг квада к камере, когда плоскость портала ближе QUAD_PUSH_MARGIN:
-     * near-plane главной камеры (0.05) вплотную срезает квад в плоскости портала.
-     * Сдвиг по локальной Z pose (после поворота 180-yaw локальный +Z направлен
-     * ПРОТИВ нормали портала). На UV/цвет волны не влияет.
-     */
     private static void pushQuadTowardCamera(PortalEntity entity, float partialTicks, PoseStack poseStack) {
         Vec3 normal = entity.getFacingNormal(partialTicks);
         double along = cameraPos().subtract(entity.getPortalPlanePos(partialTicks)).dot(normal);
@@ -318,7 +267,6 @@ public final class PortalWaveFx {
             return;
         }
         double push = (QUAD_PUSH_MARGIN - absAlong) * (along >= 0.0D ? 1.0D : -1.0D);
-        // локальная Z = -нормаль, значит сдвиг "к камере" (по нормали) — это локальный -Z * sign
         poseStack.translate(0.0F, 0.0F, (float) (-push));
     }
 
@@ -326,7 +274,6 @@ public final class PortalWaveFx {
         return Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
     }
 
-    /** Глобальные uniforms эффекта (не зависят от портала). */
     private static void updateUniforms() {
         ShaderInstance shader = PortalWaveShaders.portalWave;
         if (shader == null) {
@@ -334,7 +281,6 @@ public final class PortalWaveFx {
         }
         Uniform time = shader.getUniform("Time");
         if (time != null) {
-            // секунды; fract в шейдере задаёт период волны
             time.set((float) (Util.getMillis() % 1000000L) / 1000.0F);
         }
         Uniform screenSize = shader.getUniform("ScreenSize");
