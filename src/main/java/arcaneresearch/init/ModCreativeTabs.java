@@ -262,6 +262,7 @@ public class ModCreativeTabs {
                         acceptBlock(output, ModBlocks.ESSENTIA_RESERVOIR.get());
                         acceptBlock(output, ModBlocks.FLUX_SCRUBBER.get());
                         output.accept(ModItems.THAUMONOMICON.get());
+                        output.accept(ModItems.THAUMONOMICON_CREATIVE.get());
                         output.accept(ModItems.PORTAL_SCROLL.get());
                         if (arcaneresearch.common.config.ModConfig.allowCheatSheet) {
                             output.accept(ModItems.THAUMONOMICON_CHEAT.get());

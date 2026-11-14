@@ -200,6 +200,20 @@ public class CommandArcaneresearch {
         return 1;
     }
 
+    public static void giveAllResearchQuiet(ServerPlayer player) {
+        for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
+            for (ResearchEntry ri : cat.research.values()) {
+                giveRecursiveResearch(player, ri.getKey());
+            }
+        }
+        IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+        if (knowledge != null) {
+            for (String key : knowledge.getResearchList()) {
+                knowledge.clearResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.POPUP);
+            }
+        }
+    }
+
     private static int resetResearch(CommandSourceStack source, ServerPlayer player) {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
         if (knowledge != null) {

@@ -34,20 +34,30 @@ import java.util.List;
 public class ItemThaumonomicon extends ItemTC {
 
     protected final boolean cheat;
+    protected final boolean creative;
 
     public ItemThaumonomicon() {
         this(false);
     }
 
     public ItemThaumonomicon(boolean cheat) {
+        this(cheat, false);
+    }
+
+    public ItemThaumonomicon(boolean cheat, boolean creative) {
         super(new Properties()
                 .stacksTo(1)
-                .rarity(cheat ? Rarity.EPIC : Rarity.UNCOMMON));
+                .rarity(cheat || creative ? Rarity.EPIC : Rarity.UNCOMMON));
         this.cheat = cheat;
+        this.creative = creative;
     }
 
     public boolean isCheat() {
         return cheat;
+    }
+
+    public boolean isCreative() {
+        return creative;
     }
 
     @Override
@@ -74,7 +84,9 @@ public class ItemThaumonomicon extends ItemTC {
             var categories = ResearchCategories.researchCategories;
 
             if (categories != null) {
-                if (cheat && ModConfig.allowCheatSheet) {
+                if (creative) {
+                    CommandArcaneresearch.giveAllResearchQuiet(serverPlayer);
+                } else if (cheat && ModConfig.allowCheatSheet) {
                     for (ResearchCategory cat : categories.values()) {
                         if (cat == null || cat.research == null) {
                             continue;
@@ -138,7 +150,7 @@ public class ItemThaumonomicon extends ItemTC {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        if (cheat) {
+        if (cheat || creative) {
             tooltip.add(Component.literal("Creative only")
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
@@ -146,7 +158,9 @@ public class ItemThaumonomicon extends ItemTC {
 
     @Override
     public @NotNull Component getName(@NotNull ItemStack stack) {
-        return Component.translatable(cheat
+        return Component.translatable(creative
+                ? "item.arcaneresearch.thaumonomicon_creative"
+                : cheat
                 ? "item.arcaneresearch.thaumonomicon.cheat"
                 : "item.arcaneresearch.thaumonomicon");
     }
