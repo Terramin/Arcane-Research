@@ -1,0 +1,12 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shapeless",
+  "vis": 150,
+  "crystals": {},
+  "ingredients": [
+    {"item": "minecraft:book"},
+    {"item": "arcaneresearch:salis_mundus"}
+  ],
+  "result": {
+    "item": "arcaneresearch:thaumonomicon_written"
+  }
+}

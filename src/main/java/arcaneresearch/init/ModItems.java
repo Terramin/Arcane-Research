@@ -37,6 +37,8 @@ public class ModItems {
             () -> new ItemThaumonomicon(true));
     public static final RegistryObject<Item> THAUMONOMICON_CREATIVE = ITEMS.register("thaumonomicon_creative",
             () -> new ItemThaumonomicon(false, true));
+    public static final RegistryObject<Item> THAUMONOMICON_WRITTEN = ITEMS.register("thaumonomicon_written",
+            ItemThaumonomiconWritten::new);
     public static final RegistryObject<Item> CRIMSON_RITES = ITEMS.register("crimson_rites",
             ItemCrimsonRites::new);
     public static final RegistryObject<Item> ELDRITCH_OBELISK_PLACER = ITEMS.register("eldritch_obelisk_placer",
