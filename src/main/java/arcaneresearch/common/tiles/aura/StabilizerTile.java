@@ -3,6 +3,7 @@ package arcaneresearch.common.tiles.aura;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -31,8 +32,9 @@ public class StabilizerTile extends TileArcaneresearch {
     public static void clientTick(Level level, BlockPos pos, BlockState state, StabilizerTile tile) {
         if (level == null) return;
 
+        BlockEntity above = level.getBlockEntity(pos.above());
         if (pos.getY() < level.getMaxBuildHeight() - 1
-                && level.getBlockEntity(pos.above()) instanceof AuraNodeTile
+                && (above instanceof AuraNodeTile || above instanceof TileNodeEnergized)
                 && !level.hasNeighborSignal(pos)) {
 
             if (tile.count < 37) {

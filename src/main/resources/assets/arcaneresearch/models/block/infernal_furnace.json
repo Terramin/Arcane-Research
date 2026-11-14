@@ -38,7 +38,8 @@
     "textures": {
         "side": "arcaneresearch:block/infernal_furnace",
         "core": "minecraft:block/lava_still",
-        "fire": "minecraft:block/fire_0"
+        "fire": "minecraft:block/fire_0",
+        "particle": "arcaneresearch:block/infernal_furnace"
     },
     "elements": [
         

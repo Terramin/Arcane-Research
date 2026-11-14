@@ -20,13 +20,7 @@ public class TransducerRenderer implements BlockEntityRenderer<TransducerTile> {
                        @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         Level level = tile.getLevel();
         if (level == null) return;
-        int scaled = tile.count * 50 / 1000;
-        if (scaled < 0) {
-            scaled = 0;
-        } else if (scaled > 50) {
-            scaled = 50;
-        }
         NodeConverterRenderer.renderDevice(poseStack, buffer,
-                scaled, tile.status, packedLight, packedOverlay);
+                tile.count, tile.status, packedLight, packedOverlay);
     }
 }

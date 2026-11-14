@@ -11,6 +11,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.blocks.aura.BlockAiry;
+import arcaneresearch.common.blocks.aura.BlockEnergizedNode;
 import arcaneresearch.common.lib.aura.NodeModifier;
 import arcaneresearch.common.lib.aura.NodeType;
 import arcaneresearch.common.tiles.TileArcaneresearch;
@@ -34,14 +35,16 @@ public class NodeConverterTile extends TileArcaneresearch {
 
     @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, NodeConverterTile tile) {
-        if (level == null || tile.count <= 50) return;
-        if (!level.random.nextBoolean()) return;
+        if (level == null) return;
 
-        double x = pos.getX() + 0.25D + level.random.nextFloat() * 0.5D;
-        double z = pos.getZ() + 0.25D + level.random.nextFloat() * 0.5D;
+        boolean powered = level.hasNeighborSignal(pos);
+        if (tile.status == 0 || !powered) {
+            if (tile.count > 0) tile.count--;
+        } else if (tile.count < 1000) {
+            tile.count++;
+        }
 
-        arcaneresearch.client.fx.FXDispatcher.INSTANCE.drawLightningFlash(
-                x, pos.getY() + 0.5D, z, 0.6F, 0.3F, 0.9F, 0.5F, 1.0F);
+        if (tile.count > 1000) tile.count = 1000;
     }
 
     protected void serverTick() {
@@ -52,8 +55,13 @@ public class NodeConverterTile extends TileArcaneresearch {
         }
 
         BlockPos belowPos = this.worldPosition.below();
+        boolean powered = level.hasNeighborSignal(this.worldPosition);
 
-        if (isStagingAiry(belowPos)) {
+        if (this.status == 1 && !powered) {
+            checkStatus();
+        }
+
+        if (isStagingAiry(belowPos) && this.status == 1 && powered) {
             if (this.stage > 0) this.stage--;
 
             if (this.stage <= 0) {
@@ -96,11 +104,21 @@ public class NodeConverterTile extends TileArcaneresearch {
             checkStatus();
         }
 
-        if (this.status == 0) {
+        if (this.status == 2 && this.count <= 50) {
+            revertEnergized(belowPos);
+        }
+
+        if (this.status == 0 || !powered) {
             if (this.count > 0) this.count--;
+            if (this.count > 50) {
+                TransducerTile.spawnNodeBolts(level, this.worldPosition, hasStabilizer());
+            }
         } else if (this.count < 1000) {
             this.count++;
             drainBelow();
+            if (this.count > 50) {
+                TransducerTile.spawnNodeBolts(level, this.worldPosition, hasStabilizer());
+            }
         }
 
         if (this.count > 1000) {
@@ -149,6 +167,43 @@ public class NodeConverterTile extends TileArcaneresearch {
         }
     }
 
+    protected void revertEnergized(BlockPos belowPos) {
+        if (level == null || level.isClientSide) return;
+
+        BlockEntity below = level.getBlockEntity(belowPos);
+        if (!(below instanceof TileNodeEnergized en)
+                || !level.getBlockState(belowPos).is(AuraBlocks.ENERGIZED_NODE.get())) return;
+
+        AspectList base = en.getAuraBase().copy();
+        NodeType type = en.getNodeType();
+        NodeModifier mod = en.getNodeModifier();
+        String nid = en.getId();
+
+        level.removeBlock(belowPos, false);
+        level.setBlockAndUpdate(belowPos, AuraBlocks.AURA_NODE.get().defaultBlockState());
+
+        BlockEntity fresh = level.getBlockEntity(belowPos);
+        if (fresh instanceof AuraNodeTile node) {
+            node.setNodeModifier(mod);
+            node.setNodeType(type);
+            node.setId(nid);
+            node.setAspects(base);
+
+            Aspect[] snapshot = node.getAspects().getAspects();
+            for (Aspect a : snapshot) {
+                if (a != null) {
+                    node.takeFromContainer(a, node.getAspects().getAmount(a));
+                }
+            }
+
+            node.setChanged();
+        }
+
+        this.status = 0;
+        setChanged();
+        level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
     public void checkStatus() {
         if (level == null || level.isClientSide) return;
 
@@ -159,9 +214,10 @@ public class NodeConverterTile extends TileArcaneresearch {
         BlockPos belowPos = this.worldPosition.below();
         BlockState belowState = level.getBlockState(belowPos);
         BlockEntity below = level.getBlockEntity(belowPos);
+        boolean powered = level.hasNeighborSignal(this.worldPosition);
 
         if (isStagingAiry(belowPos)) {
-            if (hasStabilizer()) {
+            if (powered && hasStabilizer()) {
                 this.status = 1;
             } else {
                 restoreNode();
@@ -175,7 +231,7 @@ public class NodeConverterTile extends TileArcaneresearch {
             explodify();
             this.status = 0;
             this.count = 50;
-        } else if (belowState.is(AuraBlocks.AURA_NODE.get()) && below instanceof AuraNodeTile && hasStabilizer()) {
+        } else if (powered && belowState.is(AuraBlocks.AURA_NODE.get()) && below instanceof AuraNodeTile && hasStabilizer()) {
 
             this.status = 1;
         } else if (belowState.is(AuraBlocks.ENERGIZED_NODE.get())
@@ -270,28 +326,7 @@ public class NodeConverterTile extends TileArcaneresearch {
     protected void explodify() {
         if (level == null || level.isClientSide) return;
 
-        BlockPos belowPos = this.worldPosition.below();
-
-        level.removeBlock(belowPos, false);
-        level.explode(null,
-                belowPos.getX() + 0.5D, belowPos.getY() + 0.5D, belowPos.getZ() + 0.5D,
-                3.0F, Level.ExplosionInteraction.NONE);
-
-        Block goo = arcaneresearch.init.ModBlocks.FLUX_GOO.get();
-        Block gas = arcaneresearch.init.ModBlocks.FLUX_GAS.get();
-
-        for (int a = 0; a < 50; a++) {
-            int xx = belowPos.getX() + level.random.nextInt(8) - level.random.nextInt(8);
-            int yy = belowPos.getY() + level.random.nextInt(8) - level.random.nextInt(8);
-            int zz = belowPos.getZ() + level.random.nextInt(8) - level.random.nextInt(8);
-
-            BlockPos scatter = new BlockPos(xx, yy, zz);
-
-            if (!level.isEmptyBlock(scatter)) continue;
-
-            Block target = yy < belowPos.getY() ? goo : gas;
-            level.setBlock(scatter, target.defaultBlockState(), 3);
-        }
+        BlockEnergizedNode.explodify(level, this.worldPosition.below());
     }
 
     @Override

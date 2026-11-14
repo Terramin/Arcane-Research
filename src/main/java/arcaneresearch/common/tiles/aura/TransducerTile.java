@@ -1,20 +1,23 @@
 package arcaneresearch.common.tiles.aura;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.sounds.SoundSource;
+import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
+import arcaneresearch.common.blocks.aura.BlockEnergizedNode;
 import arcaneresearch.common.lib.aura.AuraFX;
 import arcaneresearch.common.lib.aura.NodeModifier;
 import arcaneresearch.common.lib.aura.NodeType;
+import arcaneresearch.common.lib.network.PacketHandler;
+import arcaneresearch.common.lib.network.fx.PacketFXNodeBolt;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +66,7 @@ public class TransducerTile extends TileArcaneresearch {
 
                 tile.checkStatus(level);
                 tile.setChanged();
+                level.blockEvent(pos, state.getBlock(), 10, 10);
                 level.sendBlockUpdated(pos, state, state, 3);
                 AuraFX.nodeSparkle(level, below, 0xFFFFFF);
                 return;
@@ -103,16 +107,25 @@ public class TransducerTile extends TileArcaneresearch {
 
                 tile.status = 0;
                 tile.setChanged();
+                level.blockEvent(pos, state.getBlock(), 10, 10);
                 level.sendBlockUpdated(pos, state, state, 3);
             }
         }
 
         boolean powered = level.hasNeighborSignal(pos);
 
+        if (tile.status == 1 && !powered) {
+            tile.status = 0;
+            tile.setChanged();
+        }
+
         if (tile.status == 0 || !powered) {
             if (tile.count > 0) {
                 tile.count--;
                 tile.setChanged();
+            }
+            if (tile.count > 50) {
+                spawnNodeBolts(level, pos, tile.hasStabilizer(level));
             }
         } else if (tile.count < 1000) {
             tile.count++;
@@ -136,6 +149,10 @@ public class TransducerTile extends TileArcaneresearch {
                     }
                 }
             }
+
+            if (tile.count > 50) {
+                spawnNodeBolts(level, pos, tile.hasStabilizer(level));
+            }
         }
 
         if (tile.count > 1000) {
@@ -145,46 +162,66 @@ public class TransducerTile extends TileArcaneresearch {
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, TransducerTile tile) {
-        if (level == null || tile.count <= 50) return;
-        if (!level.random.nextBoolean()) return;
+        if (level == null) return;
+
+        boolean powered = level.hasNeighborSignal(pos);
+        if (tile.status == 0 || !powered) {
+            if (tile.count > 0) {
+                tile.count--;
+            }
+        } else if (tile.count < 1000) {
+            tile.count++;
+        }
+
+        if (tile.count > 1000) {
+            tile.count = 1000;
+        }
+    }
+
+    static void spawnNodeBolts(Level level, BlockPos pos, boolean withStabilizer) {
+        if (level == null || level.isClientSide) return;
 
         double x = pos.getX();
         double y = pos.getY();
         double z = pos.getZ();
+        PacketDistributor.TargetPoint target = new PacketDistributor.TargetPoint(
+                x + 0.5D, y - 0.5D, z + 0.5D, 32.0D, level.dimension());
 
-        nodeBoltFx(level,
-                x + 0.25D + level.random.nextFloat() * 0.5D, y + 0.5D, z + 0.25D + level.random.nextFloat() * 0.5D,
-                x + 0.5D, y - 0.5D, z + 0.5D);
+        if (level.random.nextInt(4) == 0) {
+            PacketHandler.sendToNear(new PacketFXNodeBolt(
+                    x + 0.25D + level.random.nextFloat() * 0.5D,
+                    y + 0.5D,
+                    z + 0.25D + level.random.nextFloat() * 0.5D,
+                    x + 0.5D, y - 0.5D, z + 0.5D,
+                    level.random.nextLong()), target);
+        }
 
-        if (level.random.nextBoolean() && tile.hasStabilizer(level)) {
-            nodeBoltFx(level,
-                    x + 0.25D + level.random.nextFloat() * 0.5D, y - 1.5D, z + 0.25D + level.random.nextFloat() * 0.5D,
-                    x + 0.5D, y - 0.5D, z + 0.5D);
+        if (withStabilizer && level.random.nextInt(4) == 0) {
+            PacketHandler.sendToNear(new PacketFXNodeBolt(
+                    x + 0.25D + level.random.nextFloat() * 0.5D,
+                    y - 1.5D,
+                    z + 0.25D + level.random.nextFloat() * 0.5D,
+                    x + 0.5D, y - 0.5D, z + 0.5D,
+                    level.random.nextLong()), target);
         }
     }
 
-    public static void nodeBoltFx(Level level, double x1, double y1, double z1,
-                                  double x2, double y2, double z2) {
-        if (level == null) return;
+    @Override
+    public boolean triggerEvent(int id, int param) {
+        if (id == 10 && param == 10 && level != null && level.isClientSide) {
+            arcaneresearch.client.fx.FXDispatcher.INSTANCE.burst(
+                    worldPosition.getX() + 0.5D, worldPosition.getY() - 0.5D,
+                    worldPosition.getZ() + 0.5D, 1.0F);
 
-        int segments = 8;
-        ServerLevel server = level instanceof ServerLevel s ? s : null;
-
-        for (int i = 0; i <= segments; i++) {
-            double t = i / (double) segments;
-            double jitter = i == 0 || i == segments ? 0.0D : 0.18D;
-
-            double px = x1 + (x2 - x1) * t + (level.random.nextDouble() - 0.5D) * jitter;
-            double py = y1 + (y2 - y1) * t + (level.random.nextDouble() - 0.5D) * jitter;
-            double pz = z1 + (z2 - z1) * t + (level.random.nextDouble() - 0.5D) * jitter;
-
-            if (server != null) {
-                server.sendParticles(ParticleTypes.ELECTRIC_SPARK, px, py, pz,
-                        2, 0.02D, 0.02D, 0.02D, 0.1D);
-            } else {
-                level.addParticle(ParticleTypes.ELECTRIC_SPARK, px, py, pz, 0.0D, 0.0D, 0.0D);
-            }
+            level.playLocalSound(
+                    worldPosition.getX() + 0.5D, worldPosition.getY() - 0.5D,
+                    worldPosition.getZ() + 0.5D,
+                    arcaneresearch.init.ModSounds.CRAFT_FAIL.get(),
+                    SoundSource.BLOCKS, 0.5F, 1.0F, false);
+            return true;
         }
+
+        return super.triggerEvent(id, param);
     }
 
     private boolean hasStabilizer(Level level) {
@@ -224,10 +261,7 @@ public class TransducerTile extends TileArcaneresearch {
         if (this.status == 2 && this.count > 50
                 && (!stabilizer || belowBlock != energizedNode)) {
 
-            level.removeBlock(below, false);
-            level.explode(null, below.getX() + 0.5D, below.getY() + 0.5D, below.getZ() + 0.5D,
-                    3.0F, Level.ExplosionInteraction.BLOCK);
-
+            BlockEnergizedNode.explodify(level, below);
             this.status = 0;
             this.count = 50;
             setChanged();

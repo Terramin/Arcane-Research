@@ -15,7 +15,10 @@ import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import arcaneresearch.common.tiles.aura.NodeConverterTile;
+import arcaneresearch.common.tiles.aura.StabilizerTile;
 import arcaneresearch.common.tiles.aura.TileNodeEnergized;
+import arcaneresearch.common.tiles.aura.TransducerTile;
 import javax.annotation.Nullable;
 public class BlockEnergizedNode extends BaseEntityBlock {
     private static final VoxelShape TARGET = Block.box(5.0D, 5.0D, 5.0D, 11.0D, 11.0D, 11.0D);
@@ -40,6 +43,49 @@ public class BlockEnergizedNode extends BaseEntityBlock {
                                         CollisionContext context) {
         return Shapes.empty();
     }
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos,
+                                Block neighborBlock, BlockPos neighborPos, boolean moved) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, moved);
+        if (level.isClientSide) return;
+        if (!(level.getBlockEntity(pos) instanceof TileNodeEnergized)) return;
+
+        BlockPos belowPos = pos.below();
+        BlockEntity belowTE = level.getBlockEntity(belowPos);
+        if (level.hasNeighborSignal(belowPos) || !(belowTE instanceof StabilizerTile)) {
+            explodify(level, pos);
+            return;
+        }
+
+        BlockEntity aboveTE = level.getBlockEntity(pos.above());
+        if (!(aboveTE instanceof TransducerTile) && !(aboveTE instanceof NodeConverterTile)) {
+            explodify(level, pos);
+        }
+    }
+
+    public static void explodify(Level level, BlockPos pos) {
+        if (level == null || level.isClientSide) return;
+
+        level.removeBlock(pos, false);
+        level.explode(null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D,
+                3.0F, Level.ExplosionInteraction.BLOCK);
+
+        Block goo = arcaneresearch.init.ModBlocks.FLUX_GOO.get();
+        Block gas = arcaneresearch.init.ModBlocks.FLUX_GAS.get();
+
+        for (int a = 0; a < 50; a++) {
+            BlockPos scatter = pos.offset(
+                    level.random.nextInt(8) - level.random.nextInt(8),
+                    level.random.nextInt(8) - level.random.nextInt(8),
+                    level.random.nextInt(8) - level.random.nextInt(8));
+
+            if (!level.isEmptyBlock(scatter)) continue;
+
+            Block target = scatter.getY() < pos.getY() ? goo : gas;
+            level.setBlock(scatter, target.defaultBlockState(), 3);
+        }
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
