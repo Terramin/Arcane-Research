@@ -1,0 +1,24 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "vis": 200,
+  "crystals": {},
+  "pattern": [
+    " D ",
+    " P ",
+    " C "
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "C": {
+      "item": "arcaneresearch:crystal_essence"
+    }
+  },
+  "result": {
+    "item": "arcaneresearch:portal_scroll"
+  }
+}
