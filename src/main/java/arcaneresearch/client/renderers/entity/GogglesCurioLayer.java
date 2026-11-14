@@ -42,14 +42,13 @@ public class GogglesCurioLayer extends RenderLayer<Player, PlayerModel<Player>> 
     private static final ResourceLocation GOGGLES_OBJ =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "models/obj/googles_head.obj");
     private static final String HEAD_BOX_GROUP = "goggles_head_cube";
-    private static final float OBJ_SCALE_Y = 0.8F;
+    private static final float OBJ_SCALE_Y = 0.85F;
     private static final float OBJ_SCALE_XZ = 0.85F;
     private static final float OBJ_SHIFT_DOWN_PX = 1.0F;
 
     private static final float EXTRA_Z_OFFSET = 0.001F;
 
     private static RenderType renderType(ResourceLocation tex) {
-        // стандартный рендеринг cutout без ZOffset: фикс Z-fighting сделан в самой модели
         return RenderType.entityCutoutNoCull(tex);
     }
 
@@ -180,13 +179,10 @@ public class GogglesCurioLayer extends RenderLayer<Player, PlayerModel<Player>> 
         } else {
             n = new Vector3f(0.0F, 1.0F, 0.0F);
         }
-        float len = (float) Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
-        if (len > 1.0e-4F) {
-            n.x /= len;
-            n.y /= len;
-            n.z /= len;
-        }
-        consumer.normal(normal, n.x, n.y, n.z);
+        n.mul(normal);
+        n.normalize();
+
+        consumer.normal(n.x, n.y, n.z);
         consumer.endVertex();
     }
 
