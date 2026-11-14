@@ -98,6 +98,10 @@ public class ModCreativeTabs {
                         acceptBlock(output, ModBlocks.GRASS_AMBIENT.get());
                         acceptBlock(output, ModBlocks.TABLE_WOOD.get());
                         acceptBlock(output, ModBlocks.TABLE_STONE.get());
+                        Item singleTableItem = arcaneresearch.discovered.table.DiscoveredTableSetup.getSingleTableItem();
+                        if (singleTableItem != null) {
+                            output.accept(singleTableItem);
+                        }
                         acceptBlock(output, ModBlocks.PEDESTAL_ARCANE.get());
                         acceptBlock(output, ModBlocks.PEDESTAL_ANCIENT.get());
                         acceptBlock(output, ModBlocks.PEDESTAL_ELDRITCH.get());

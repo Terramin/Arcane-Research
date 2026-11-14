@@ -89,17 +89,33 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
                 .addItemStack(result);
 
         NonNullList<Ingredient> ingredients = recipe.getIngredients();
+        int cols = 3;
+        int rows = 3;
+        if (recipe instanceof arcaneresearch.common.lib.crafting.ShapedArcaneRecipe shaped) {
+            cols = Math.min(shaped.getWidth(), 3);
+            rows = Math.min(shaped.getHeight(), 3);
+        } else if (recipe instanceof arcaneresearch.api.crafting.ShapedArcaneRecipe shaped) {
+            cols = Math.min(shaped.getWidth(), 3);
+            rows = Math.min(shaped.getHeight(), 3);
+        }
+        int colOffset = (3 - cols) / 2;
+        int rowOffset = (3 - rows) / 2;
         int limit = Math.min(ingredients.size(), 9);
-        for (int i = 0; i < limit; i++) {
-            Ingredient ingredient = ingredients.get(i);
-            if (ingredient.isEmpty()) {
-                continue;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                int index = col + row * cols;
+                if (index >= limit) {
+                    continue;
+                }
+                Ingredient ingredient = ingredients.get(index);
+                if (ingredient.isEmpty()) {
+                    continue;
+                }
+                builder.addSlot(RecipeIngredientRole.INPUT,
+                                OX - 41 + (col + colOffset) * 32,
+                                OY - 41 + (row + rowOffset) * 32)
+                        .addIngredients(ingredient);
             }
-            int gridX = i % 3;
-            int gridY = i / 3;
-            builder.addSlot(RecipeIngredientRole.INPUT,
-                            OX - 41 + gridX * 32, OY - 41 + gridY * 32)
-                    .addIngredients(ingredient);
         }
 
         AspectList crystals = recipe.getCrystals();

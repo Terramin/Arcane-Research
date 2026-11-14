@@ -25,7 +25,6 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.discovered.note.DiscoveredNoteData;
 import arcaneresearch.discovered.table.DiscoveredTableResearch;
-import arcaneresearch.discovered.table.DiscoveredTableSetup;
 
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DiscoveredNoteSetup {
@@ -68,9 +67,6 @@ public class DiscoveredNoteSetup {
                 if (note != null) {
                     event.accept(note);
                 }
-            }
-            if (DiscoveredTableSetup.getSingleTableItem() != null) {
-                event.accept(DiscoveredTableSetup.getSingleTableItem());
             }
         }
     }
