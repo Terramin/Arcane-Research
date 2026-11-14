@@ -109,17 +109,14 @@ public class GogglesCurioLayer extends RenderLayer<Player, PlayerModel<Player>> 
             return;
         }
         ItemStack helm = player.getItemBySlot(EquipmentSlot.HEAD);
-        if (!helm.isEmpty()) {
-            if (helm.getItem() instanceof IGoggles) {
-                return;
-            }
-            if (helm.getItem() instanceof ItemFortressArmor && ItemFortressArmor.hasGoggles(helm)) {
-                return;
-            }
+        if (!helm.isEmpty() && helm.getItem() instanceof ItemFortressArmor && ItemFortressArmor.hasGoggles(helm)) {
+            return;
         }
+        boolean helmetGoggles = !helm.isEmpty() && helm.getItem() instanceof IGoggles
+                && !(helm.getItem() instanceof ItemFortressArmor);
         List<ItemStack> headCurios = CuriosCompat.findHeadSlotItems(player,
                 s -> !s.isEmpty() && s.getItem() instanceof IGoggles);
-        if (headCurios.isEmpty()) {
+        if (headCurios.isEmpty() && !helmetGoggles) {
             return;
         }
 
