@@ -7,7 +7,7 @@
   ],
   "key": {
     "K": {"tag": "forge:stone"},
-    "C": {"item": "arcaneresearch:crystal_essence"}
+    "C": {"type": "arcaneresearch:crystal"}
   },
   "result": {
     "item": "arcaneresearch:arcane_stone",
