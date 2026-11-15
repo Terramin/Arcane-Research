@@ -25,6 +25,8 @@ import arcaneresearch.common.lib.crafting.ArcaneWandDynamicRecipe;
 import arcaneresearch.common.lib.crafting.CrucibleRecipeType;
 import arcaneresearch.common.lib.crafting.InfusionRecipeType;
 import arcaneresearch.common.menu.ArcaneWorkbenchMenu;
+import arcaneresearch.common.blocks.aura.AuraBlocks;
+import arcaneresearch.common.items.wands.WandItems;
 import arcaneresearch.compat.jei.arcane.ArcaneWorkbenchCategory;
 import arcaneresearch.compat.jei.aspect.AspectCompoundCategory;
 import arcaneresearch.compat.jei.aspect.AspectIngredient;
@@ -80,6 +82,68 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
                     new AspectIngredient.Helper(), new AspectIngredientRenderer());
         } catch (Exception e) {
             Arcaneresearch.LOGGER.error("JEI: failed to register aspects", e);
+        }
+    }
+
+
+    @Override
+    public void registerItemSubtypes(@NotNull ISubtypeRegistration registration) {
+        try {
+            registration.useNbtForSubtypes(
+
+                    ModBlocks.JAR_NORMAL.get().asItem(),
+                    AuraBlocks.JAR_NODE_ITEM.get(),
+                    AuraBlocks.AURA_NODE_ITEM.get(),
+
+                    ModItems.CRYSTAL_ESSENCE.get(),
+                    ModItems.WISP_ESSENCE.get(),
+                    ModItems.LABEL_FILLED.get(),
+                    ModItems.PHIAL_EMPTY.get(),
+                    ModItems.PHIAL_FILLED.get(),
+
+                    ModItems.ELEMENTAL_PICK.get(),
+                    ModItems.ELEMENTAL_AXE.get(),
+                    ModItems.ELEMENTAL_SWORD.get(),
+                    ModItems.ELEMENTAL_SHOVEL.get(),
+                    ModItems.PRIMAL_CRUSHER.get(),
+
+                    WandItems.WAND.get(),
+                    WandItems.WAND_CAP.get(),
+
+                    ModItems.GOGGLES.get(),
+                    ModItems.CLOTH_CHEST.get(),
+                    ModItems.CLOTH_LEGS.get(),
+                    ModItems.CLOTH_BOOTS.get(),
+                    ModItems.THAUMIUM_HELM.get(),
+                    ModItems.THAUMIUM_CHEST.get(),
+                    ModItems.THAUMIUM_LEGS.get(),
+                    ModItems.THAUMIUM_BOOTS.get(),
+                    ModItems.TRAVELLER_BOOTS.get(),
+                    ModItems.FORTRESS_HELM.get(),
+                    ModItems.FORTRESS_CHEST.get(),
+                    ModItems.FORTRESS_LEGS.get(),
+                    ModItems.VOID_HELM.get(),
+                    ModItems.VOID_CHEST.get(),
+                    ModItems.VOID_LEGS.get(),
+                    ModItems.VOID_BOOTS.get(),
+                    ModItems.VOID_ROBE_HELM.get(),
+                    ModItems.VOID_ROBE_CHEST.get(),
+                    ModItems.VOID_ROBE_LEGS.get(),
+                    ModItems.CRIMSON_PLATE_HELM.get(),
+                    ModItems.CRIMSON_PLATE_CHEST.get(),
+                    ModItems.CRIMSON_PLATE_LEGS.get(),
+                    ModItems.CRIMSON_BOOTS.get(),
+                    ModItems.CRIMSON_ROBE_HELM.get(),
+                    ModItems.CRIMSON_ROBE_CHEST.get(),
+                    ModItems.CRIMSON_ROBE_LEGS.get(),
+                    ModItems.CRIMSON_PRAETOR_HELM.get(),
+                    ModItems.CRIMSON_PRAETOR_CHEST.get(),
+                    ModItems.CRIMSON_PRAETOR_LEGS.get(),
+
+                    ModItems.GOLEM_PLACER.get()
+            );
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.error("JEI: failed to register item subtypes", e);
         }
     }
 
