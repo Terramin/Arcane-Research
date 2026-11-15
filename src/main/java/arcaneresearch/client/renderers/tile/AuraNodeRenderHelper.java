@@ -75,7 +75,7 @@ public class AuraNodeRenderHelper extends RenderStateShard {
 
     private static RenderType createFloatyLayer() {
         return RenderType.create("aura_floaty", DefaultVertexFormat.NEW_ENTITY,
-                VertexFormat.Mode.TRIANGLE_STRIP, 256, true, false,
+                VertexFormat.Mode.QUADS, 256, true, false,
                 RenderType.CompositeState.builder()
                         .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
                         .setTextureState(new RenderStateShard.EmptyTextureStateShard(
@@ -293,7 +293,7 @@ public class AuraNodeRenderHelper extends RenderStateShard {
         if (dist < 0.001F) return;
 
         float length = Math.max(1.0F, Math.round(dist) * QUALITY / 2.0F);
-        float time = System.nanoTime() / 30000000L;
+        float time = (System.nanoTime() / 30000000L) % 10000L;
         int steps = (int) (length * distance);
 
         VertexConsumer builder = buffer.getBuffer(floatyLayer());
@@ -306,9 +306,13 @@ public class AuraNodeRenderHelper extends RenderStateShard {
         float timeFactor = time % 32767.0F / 5.0F;
         float halfQuality = QUALITY / 2.0F;
 
-        float lastX = 0, lastY = 0, lastZ = 0;
+        float prevX = 0, prevY = 0, prevZ = 0;
+        float prevU = 0;
+        float prevEnvelope = 0;
+        boolean firstVertex = true;
 
         for (int pass = 0; pass < 2; pass++) {
+            firstVertex = true;
             for (int i = 0; i <= steps; i++) {
                 float f2 = i / length;
                 float envelope = 1.0F - Math.abs(i - length / 2.0F) / length / 2.0F;
@@ -328,20 +332,27 @@ public class AuraNodeRenderHelper extends RenderStateShard {
                 float pz = tz + dz * f2;
 
                 if (pass == 0) {
-                    stripVertex(pose, builder, px, py - width, pz, u, 1.0F, r, g, b, envelope);
-                    stripVertex(pose, builder, px, py + width, pz, u, 0.0F, r, g, b, envelope);
-                    lastX = px;
-                    lastY = py + width;
-                    lastZ = pz;
-                } else {
-                    if (i == 0) {
-                        stripVertex(pose, builder, lastX, lastY, lastZ, u, 0.0F, r, g, b, 0.0F);
-                        stripVertex(pose, builder, px - width, py, pz, u, 1.0F, r, g, b, 0.0F);
+                    if (!firstVertex) {
+                        stripVertex(pose, builder, prevX, prevY - width, prevZ, prevU, 1.0F, r, g, b, prevEnvelope);
+                        stripVertex(pose, builder, prevX, prevY + width, prevZ, prevU, 0.0F, r, g, b, prevEnvelope);
+                        stripVertex(pose, builder, px, py + width, pz, u, 0.0F, r, g, b, envelope);
+                        stripVertex(pose, builder, px, py - width, pz, u, 1.0F, r, g, b, envelope);
                     }
-
-                    stripVertex(pose, builder, px - width, py, pz, u, 1.0F, r, g, b, envelope);
-                    stripVertex(pose, builder, px + width, py, pz, u, 0.0F, r, g, b, envelope);
+                } else {
+                    if (!firstVertex) {
+                        stripVertex(pose, builder, prevX - width, prevY, prevZ, prevU, 1.0F, r, g, b, prevEnvelope);
+                        stripVertex(pose, builder, prevX + width, prevY, prevZ, prevU, 0.0F, r, g, b, prevEnvelope);
+                        stripVertex(pose, builder, px + width, py, pz, u, 0.0F, r, g, b, envelope);
+                        stripVertex(pose, builder, px - width, py, pz, u, 1.0F, r, g, b, envelope);
+                    }
                 }
+
+                prevX = px;
+                prevY = py;
+                prevZ = pz;
+                prevU = u;
+                prevEnvelope = envelope;
+                firstVertex = false;
             }
         }
     }
