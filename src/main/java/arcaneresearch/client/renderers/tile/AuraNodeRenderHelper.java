@@ -293,7 +293,10 @@ public class AuraNodeRenderHelper extends RenderStateShard {
             for (int i = 0; i <= steps; i++) {
                 float f2 = i / length;
                 float envelope = 1.0F - Math.abs(i - length / 2.0F) / length / 2.0F;
-                float wobble = envelope * 0.5F;
+
+
+                float anchor = Math.min(1.0F, Math.min(i, steps - i) * 0.5F);
+                float wobble = envelope * 0.5F * anchor;
 
                 float distFactor = dist * (1.0F - f2) * halfQuality - timeFactor;
 
