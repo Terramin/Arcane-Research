@@ -621,6 +621,10 @@ public class Arcaneresearch {
                 arcaneresearch.client.models.armor.GogglesHeadModel::createBodyLayer
             );
             event.registerLayerDefinition(
+                arcaneresearch.client.models.armor.GogglesHeadModel.EMPTY_ARMOR_LAYER_LOCATION,
+                arcaneresearch.client.models.armor.GogglesHeadModel::createEmptyArmorLayer
+            );
+            event.registerLayerDefinition(
                 arcaneresearch.client.models.entity.GolemModel.LAYER_LOCATION,
                 arcaneresearch.client.models.entity.GolemModel::createBodyLayer
             );

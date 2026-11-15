@@ -17,6 +17,9 @@ import arcaneresearch.Arcaneresearch;
 public class GogglesHeadModel extends EntityModel<Player> {
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "goggles_head"), "main");
+
+    public static final ModelLayerLocation EMPTY_ARMOR_LAYER_LOCATION =
+            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "goggles_empty_armor"), "main");
     private final ModelPart head;
     public GogglesHeadModel(ModelPart root) {
         this.head = root.getChild("head");
@@ -29,6 +32,19 @@ public class GogglesHeadModel extends EntityModel<Player> {
                         .addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F,
                                 new CubeDeformation(1.0F)),
                 PartPose.ZERO);
+        return LayerDefinition.create(mesh, 64, 32);
+    }
+    
+    public static LayerDefinition createEmptyArmorLayer() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("right_arm", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("left_arm", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.ZERO);
         return LayerDefinition.create(mesh, 64, 32);
     }
     public void copyHeadPose(ModelPart playerHead) {

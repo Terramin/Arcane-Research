@@ -6,7 +6,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -64,7 +63,7 @@ public class ItemGoggles extends ArmorItem implements IVisDiscountGear, IReveale
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-        return "arcaneresearch:textures/entity/armor/googles.png";
+        return "arcaneresearch:textures/entity/armor/goggles.png";
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -80,9 +79,9 @@ public class ItemGoggles extends ArmorItem implements IVisDiscountGear, IReveale
                                                           EquipmentSlot slot, HumanoidModel<?> original) {
                 if (gogglesArmorModel == null) {
                     gogglesArmorModel = new HumanoidModel<>(
-                            Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER));
+                            Minecraft.getInstance().getEntityModels()
+                                    .bakeLayer(arcaneresearch.client.models.armor.GogglesHeadModel.EMPTY_ARMOR_LAYER_LOCATION));
                 }
-                gogglesArmorModel.setAllVisible(false);
                 gogglesArmorModel.crouching = original.crouching;
                 gogglesArmorModel.riding = original.riding;
                 gogglesArmorModel.young = original.young;
