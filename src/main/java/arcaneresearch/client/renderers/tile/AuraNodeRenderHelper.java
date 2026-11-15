@@ -1,5 +1,6 @@
 package arcaneresearch.client.renderers.tile;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -8,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -20,6 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL30;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -56,12 +59,28 @@ public class AuraNodeRenderHelper extends RenderStateShard {
         return FLOATY;
     }
 
+    private static int lastWispyTextureId = -1;
+
+    private static void setupWispyTexture() {
+        AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(WISPYTEX);
+        texture.setFilter(true, true);
+        int id = texture.getId();
+        if (id != lastWispyTextureId) {
+            texture.bind();
+            GL30.glGenerateMipmap(3553);
+            lastWispyTextureId = id;
+        }
+        RenderSystem.setShaderTexture(0, WISPYTEX);
+    }
+
     private static RenderType createFloatyLayer() {
         return RenderType.create("aura_floaty", DefaultVertexFormat.NEW_ENTITY,
                 VertexFormat.Mode.TRIANGLE_STRIP, 256, true, false,
                 RenderType.CompositeState.builder()
                         .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-                        .setTextureState(new RenderStateShard.TextureStateShard(WISPYTEX, true, false))
+                        .setTextureState(new RenderStateShard.EmptyTextureStateShard(
+                                AuraNodeRenderHelper::setupWispyTexture, () -> {
+                        }))
                         .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
                         .setCullState(RenderStateShard.NO_CULL)
                         .setLightmapState(RenderStateShard.LIGHTMAP)
