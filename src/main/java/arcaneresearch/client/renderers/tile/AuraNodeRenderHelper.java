@@ -61,7 +61,7 @@ public class AuraNodeRenderHelper extends RenderStateShard {
                 VertexFormat.Mode.TRIANGLE_STRIP, 256, true, false,
                 RenderType.CompositeState.builder()
                         .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-                        .setTextureState(new RenderStateShard.TextureStateShard(WISPYTEX, false, false))
+                        .setTextureState(new RenderStateShard.TextureStateShard(WISPYTEX, true, false))
                         .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
                         .setCullState(RenderStateShard.NO_CULL)
                         .setLightmapState(RenderStateShard.LIGHTMAP)
@@ -293,8 +293,6 @@ public class AuraNodeRenderHelper extends RenderStateShard {
             for (int i = 0; i <= steps; i++) {
                 float f2 = i / length;
                 float envelope = 1.0F - Math.abs(i - length / 2.0F) / length / 2.0F;
-
-
                 float anchor = Math.min(1.0F, Math.min(i, steps - i) * 0.5F);
                 float wobble = envelope * 0.5F * anchor;
 
