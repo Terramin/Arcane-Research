@@ -20,6 +20,7 @@ import java.io.IOException;
 public final class PortalWaveShaders {
     public static ShaderInstance portalWave;
     public static ShaderInstance playerGlitch;
+    public static ShaderInstance scanRipple;
     private static RenderType playerGlitchType;
 
     private PortalWaveShaders() {
@@ -34,6 +35,10 @@ public final class PortalWaveShaders {
                 ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "player_glitch"),
                 DefaultVertexFormat.NEW_ENTITY),
                 shader -> playerGlitch = shader);
+        event.registerShader(new ShaderInstance(event.getResourceProvider(),
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "scan_ripple"),
+                DefaultVertexFormat.POSITION_COLOR_TEX),
+                shader -> scanRipple = shader);
     }
 
     public static RenderType playerGlitchType() {

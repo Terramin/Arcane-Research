@@ -22,6 +22,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.client.fx.ScanRippleFx;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.init.ModSounds;
 
@@ -103,6 +104,7 @@ public final class ScanClient {
             player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
                     SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.5F, 1.0F, false);
         }
+        ScanRippleFx.trigger();
     }
 
     @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID,

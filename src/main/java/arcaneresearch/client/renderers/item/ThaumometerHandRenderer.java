@@ -37,6 +37,7 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.client.lib.UtilsFX;
+import arcaneresearch.client.fx.ScanRippleFx;
 import arcaneresearch.client.renderers.ScanPopupRenderer;
 import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.common.lib.aura.INode;
@@ -129,6 +130,7 @@ public class ThaumometerHandRenderer {
         quad(pose, buffer, RenderType.text(SCANSCREEN),
                 -1.25F, -1.25F, 1.25F, 1.25F, 0.0F,
                 0.0F, 0.0F, 1.0F, 1.0F, 255, 255, 255, 255, flick);
+        ScanRippleFx.drawScreen(pose, buffer, -1.25F, -1.25F, 1.25F, 1.25F, -0.002F);
         renderScanOverlay(mc, player, level, pose, buffer, flick);
         pose.popPose();
         pose.popPose();
