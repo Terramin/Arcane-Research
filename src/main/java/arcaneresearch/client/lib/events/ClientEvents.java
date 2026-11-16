@@ -1,8 +1,12 @@
 package arcaneresearch.client.lib.events;
+import arcaneresearch.common.entities.monster.mods.ChampionModifier;
+import arcaneresearch.common.tiles.crafting.TileInfusionMatrix;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
@@ -45,7 +49,7 @@ public class ClientEvents {
             }
             net.minecraft.core.BlockPos dest = fx.start;
             if (mc.level.getBlockEntity(dest)
-                    instanceof arcaneresearch.common.tiles.crafting.TileInfusionMatrix) {
+                    instanceof TileInfusionMatrix) {
                 dest = dest.below();
             }
             FXDispatcher.INSTANCE.essentiaTrailFx(fx.end, dest,
@@ -54,22 +58,23 @@ public class ClientEvents {
         }
     }
     @SubscribeEvent
-    public static void onLivingTick(net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent event) {
+    public static void onLivingTick(LivingEvent.LivingTickEvent event) {
         net.minecraft.world.entity.LivingEntity living = event.getEntity();
-        if (living instanceof net.minecraft.world.entity.player.Player) {
+        if (living instanceof Player) {
             return;
         }
         if (!living.level().isClientSide || !living.isAlive()) {
             return;
         }
-        int t = arcaneresearch.common.entities.monster.mods.ChampionModifier.getChampionId(living);
-        if (t >= 0 && t < arcaneresearch.common.entities.monster.mods.ChampionModifier.MODS.length
-                && arcaneresearch.common.entities.monster.mods.ChampionModifier.MODS[t] != null
-                && arcaneresearch.common.entities.monster.mods.ChampionModifier.MODS[t].effect != null) {
-            arcaneresearch.common.entities.monster.mods.ChampionModifier.MODS[t].effect.showFX(living);
+        int t = ChampionModifier.getChampionId(living);
+        if (t >= 0 && t < ChampionModifier.MODS.length
+                && ChampionModifier.MODS[t] != null
+                && ChampionModifier.MODS[t].effect != null) {
+            ChampionModifier.MODS[t].effect.showFX(living);
         }
     }
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
+        PortalWarpFx.onRenderTick(event);
     }
 }

@@ -31,18 +31,27 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape {
     private static final int DEFAULT_LIFETIME = 600;
-    private static final int OPEN_ANIMATION_TICKS = 20;
+    public static final int OPEN_ANIMATION_TICKS = 20;
     private static final int FADE_TICKS = 40;
     private static final int TARGET_TICKET_DISTANCE = 3;
     private static final int TICKET_REFRESH_TICKS = 20;
+    public static final int STAND_TELEPORT_TICKS = 100;
+    private static final double SCREEN_THICKNESS = 0.4D;
     private static final float WIDTH = PortalDestination.DEFAULT_WIDTH;
     private static final float HEIGHT = PortalDestination.DEFAULT_HEIGHT;
     private static final double MODEL_RENDER_BASE = 1.501;
@@ -57,6 +66,10 @@ public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape
             SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_FADE =
             SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_WIDTH =
+            SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_HEIGHT =
+            SynchedEntityData.defineId(EntityPortal.class, EntityDataSerializers.FLOAT);
     private float portalWidth = WIDTH;
     private float portalHeight = HEIGHT;
     private int lifetime = DEFAULT_LIFETIME;
@@ -66,6 +79,7 @@ public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape
     private int fadeTicks = -1;
     private int clientCloseStartTick = -1;
     private float clientCloseFromFraction = 1f;
+    private final Map<UUID, Integer> standingTicks = new HashMap<>();
 
     public EntityPortal(PlayMessages.SpawnEntity packet, Level level) {
         this(ModEntities.PORTAL.get(), level);
@@ -111,12 +125,24 @@ public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape
         this.entityData.define(DATA_CLOSING, false);
         this.entityData.define(DATA_LIFETIME, DEFAULT_LIFETIME);
         this.entityData.define(DATA_FADE, -1);
+        this.entityData.define(DATA_WIDTH, WIDTH);
+        this.entityData.define(DATA_HEIGHT, HEIGHT);
     }
 
     @Override
     public void setSize(float width, float height) {
         this.portalWidth = width;
         this.portalHeight = height;
+        this.entityData.set(DATA_WIDTH, width);
+        this.entityData.set(DATA_HEIGHT, height);
+    }
+
+    public float getPortalWidth() {
+        return this.entityData.get(DATA_WIDTH);
+    }
+
+    public float getPortalHeight() {
+        return this.entityData.get(DATA_HEIGHT);
     }
 
     @Override
@@ -278,6 +304,7 @@ public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape
     public void baseTick() {
         super.baseTick();
         if (!level().isClientSide) {
+            tickStandingTeleport();
             if (this.tickCount % TICKET_REFRESH_TICKS == 0) {
                 holdTargetChunkTicket();
             }
@@ -317,22 +344,63 @@ public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape
         return handleInteraction(player);
     }
 
-    private InteractionResult handleInteraction(Player player) {
-        if (level().isClientSide) {
-            return InteractionResult.SUCCESS;
-        }
-        if (player instanceof ServerPlayer serverPlayer) {
-            if (this.closing) {
+    private InteractionResult handleInteraction(@NotNull Player player) {
+        if (player.isShiftKeyDown()) {
+            if (level().isClientSide) {
                 return InteractionResult.SUCCESS;
             }
-            if (player.isShiftKeyDown()) {
+            if (player instanceof ServerPlayer) {
+                if (this.closing) {
+                    return InteractionResult.SUCCESS;
+                }
                 startClosing();
-            } else {
-                PortalApi.teleport(serverPlayer, this);
+                return InteractionResult.SUCCESS;
             }
-            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
+    }
+
+    private void tickStandingTeleport() {
+        if (this.tickCount < OPEN_ANIMATION_TICKS || this.closing) {
+            this.standingTicks.clear();
+            return;
+        }
+        Set<UUID> inside = new HashSet<>();
+        AABB screen = getScreenBounds();
+        for (Player player : level().getEntitiesOfClass(Player.class, screen,
+                p -> p.isAlive() && !p.isSpectator() && p instanceof ServerPlayer)) {
+            inside.add(player.getUUID());
+            int ticks = this.standingTicks.merge(player.getUUID(), 1, Integer::sum);
+            if (ticks >= STAND_TELEPORT_TICKS) {
+                this.standingTicks.remove(player.getUUID());
+                PortalApi.teleport((ServerPlayer) player, this);
+            }
+        }
+        this.standingTicks.keySet().removeIf(uuid -> !inside.contains(uuid));
+    }
+
+    private AABB getScreenBounds() {
+        return screenBounds(getX(), getY(), getZ(), getPortalYaw(0f),
+                getPortalWidth(), getPortalHeight());
+    }
+
+    public static AABB screenBounds(double x, double y, double z, float yaw,
+                                    float width, float height) {
+        double rad = Math.toRadians(yaw);
+        double nx = -Math.sin(rad);
+        double nz = Math.cos(rad);
+        double rx = -nz;
+        double rz = nx;
+        double halfW = width * 0.5D;
+        Vec3 c1 = new Vec3(x, y, z).add(new Vec3(rx * halfW, 0, rz * halfW)).add(new Vec3(nx * SCREEN_THICKNESS, 0, nz * SCREEN_THICKNESS));
+        Vec3 c2 = new Vec3(x, y, z).add(new Vec3(rx * halfW, 0, rz * halfW)).add(new Vec3(nx * -SCREEN_THICKNESS, 0, nz * -SCREEN_THICKNESS));
+        Vec3 c3 = new Vec3(x, y, z).add(new Vec3(rx * -halfW, 0, rz * -halfW)).add(new Vec3(nx * SCREEN_THICKNESS, 0, nz * SCREEN_THICKNESS));
+        Vec3 c4 = new Vec3(x, y, z).add(new Vec3(rx * -halfW, 0, rz * -halfW)).add(new Vec3(nx * -SCREEN_THICKNESS, 0, nz * -SCREEN_THICKNESS));
+        double minX = Math.min(Math.min(c1.x, c2.x), Math.min(c3.x, c4.x));
+        double maxX = Math.max(Math.max(c1.x, c2.x), Math.max(c3.x, c4.x));
+        double minZ = Math.min(Math.min(c1.z, c2.z), Math.min(c3.z, c4.z));
+        double maxZ = Math.max(Math.max(c1.z, c2.z), Math.max(c3.z, c4.z));
+        return new AABB(minX, y - 0.2D, minZ, maxX, y + height, maxZ);
     }
 
     @Nullable
@@ -376,8 +444,7 @@ public class EntityPortal extends PathfinderMob implements IPortal, IPortalShape
         if (destination != null) {
             setTeleportTarget(destination.pos());
             setTeleportDimension(destination.dimension());
-            portalWidth = destination.width();
-            portalHeight = destination.height();
+            setSize(destination.width(), destination.height());
         }
         if (tag.contains(PortalApi.TAG_TIMER)) {
             lifetime = tag.getInt(PortalApi.TAG_TIMER);

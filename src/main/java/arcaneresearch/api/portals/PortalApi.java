@@ -166,6 +166,15 @@ public final class PortalApi {
                 player.getYRot(), player.getXRot());
         player.setDeltaMovement(0, 0, 0);
         player.resetFallDistance();
+        sendTeleportFx(player);
         return true;
+    }
+
+    public static void sendTeleportFx(ServerPlayer player) {
+        if (player == null) {
+            return;
+        }
+        arcaneresearch.common.lib.network.PacketHandler.sendToPlayer(
+                new arcaneresearch.common.lib.network.fx.PacketFXTeleport(), player);
     }
 }

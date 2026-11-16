@@ -6,10 +6,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.init.ModEffects;
-import arcaneresearch.invscan.mixin.GameRendererAccessor;
 import arcaneresearch.invscan.mixin.GameRendererAccessor;
 
 @OnlyIn(Dist.CLIENT)
@@ -36,14 +36,17 @@ public final class TCShaderHandler {
     }
 
     public static void tick() {
-        Minecraft mc = Minecraft.getInstance();
+        @NotNull Minecraft mc = Minecraft.getInstance();
         if (arcaneresearch.common.config.ModConfig.CONFIG_GRAPHICS.disableShaders) {
             stop(mc);
             return;
         }
         Player player = mc.player;
-        if (player == null || mc.level == null || mc.gameRenderer == null) {
+        if (player == null || mc.level == null) {
             stop(mc);
+            return;
+        }
+        if (PortalWarpFx.isActive()) {
             return;
         }
         ResourceLocation want = desiredShader(player);
@@ -98,8 +101,8 @@ public final class TCShaderHandler {
         }
     }
 
-    private static void stop(Minecraft mc) {
-        if (active != null && mc.gameRenderer != null) {
+    private static void stop(@NotNull Minecraft mc) {
+        if (active != null) {
             mc.gameRenderer.shutdownEffect();
         }
         active = null;

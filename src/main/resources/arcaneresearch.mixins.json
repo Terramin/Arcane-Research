@@ -9,7 +9,8 @@
     "InventoryScanHighlightMixin",
     "InventoryScanLensMixin",
     "ThaumometerItemUsedMixin",
-    "GameRendererAccessor"
+    "GameRendererAccessor",
+    "PostChainAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

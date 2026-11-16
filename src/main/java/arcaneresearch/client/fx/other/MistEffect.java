@@ -1,7 +1,7 @@
 package arcaneresearch.client.fx.other;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-@Deprecated(forRemoval = true)
+
 @OnlyIn(Dist.CLIENT)
 public class MistEffect {
     public static boolean active = false;

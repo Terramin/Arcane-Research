@@ -275,6 +275,11 @@ public class PacketHandler {
                 .decoder(PacketStoryMessageAck::decode)
                 .consumerMainThread(PacketStoryMessageAck::handle)
                 .add();
+        INSTANCE.messageBuilder(PacketFXTeleport.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(PacketFXTeleport::encode)
+                .decoder(PacketFXTeleport::decode)
+                .consumerMainThread(PacketFXTeleport::handle)
+                .add();
         Arcaneresearch.LOGGER.info("Arcaneresearch network packets registered");
     }
 
