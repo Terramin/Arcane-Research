@@ -29,11 +29,11 @@ public class PlayerGlitchLayer extends RenderLayer<AbstractClientPlayer, PlayerM
         if (amount <= 0.01F) {
             return;
         }
-        ShaderInstance shader = PortalWaveShaders.playerGlitch;
+        ShaderInstance shader = FxWaveShaders.playerGlitch;
         if (shader == null) {
             return;
         }
-        VertexConsumer consumer = buffer.getBuffer(PortalWaveShaders.playerGlitchType());
+        VertexConsumer consumer = buffer.getBuffer(FxWaveShaders.playerGlitchType());
         float time = (Util.getMillis() % 3600000L) / 1000.0F;
         shader.safeGetUniform("GlitchTime").set(time);
         shader.safeGetUniform("GlitchAmount").set(amount);

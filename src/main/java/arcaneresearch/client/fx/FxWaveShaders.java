@@ -17,13 +17,13 @@ import java.io.IOException;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public final class PortalWaveShaders {
+public final class FxWaveShaders {
     public static ShaderInstance portalWave;
     public static ShaderInstance playerGlitch;
     public static ShaderInstance scanRipple;
     private static RenderType playerGlitchType;
 
-    private PortalWaveShaders() {
+    private FxWaveShaders() {
     }
 
     @SubscribeEvent

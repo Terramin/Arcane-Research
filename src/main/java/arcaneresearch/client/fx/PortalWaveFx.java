@@ -48,7 +48,7 @@ public final class PortalWaveFx {
             });
         }
 
-        static final ShaderStateShard SHADER = new ShaderStateShard(() -> PortalWaveShaders.portalWave);
+        static final ShaderStateShard SHADER = new ShaderStateShard(() -> FxWaveShaders.portalWave);
 
         static final EmptyTextureStateShard BACKGROUND = new EmptyTextureStateShard(() -> RenderSystem.setShaderTexture(0, getBackgroundTextureId()), () -> {
         });
@@ -83,7 +83,7 @@ public final class PortalWaveFx {
 
     static boolean isActive() {
         Minecraft mc = Minecraft.getInstance();
-        return PortalWaveShaders.portalWave != null
+        return FxWaveShaders.portalWave != null
                 && mc.level != null
                 && mc.options.graphicsMode().get() != GraphicsStatus.FABULOUS;
     }
@@ -276,7 +276,7 @@ public final class PortalWaveFx {
     }
 
     private static void updateUniforms() {
-        ShaderInstance shader = PortalWaveShaders.portalWave;
+        ShaderInstance shader = FxWaveShaders.portalWave;
         if (shader == null) {
             return;
         }

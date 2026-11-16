@@ -55,7 +55,7 @@ public final class ScanRippleFx {
         return startMs >= 0L
                 && Util.getMillis() - startMs < DURATION_MS
                 && mc.level != null
-                && PortalWaveShaders.scanRipple != null
+                && FxWaveShaders.scanRipple != null
                 && mc.options.graphicsMode().get() != GraphicsStatus.FABULOUS;
     }
 
@@ -71,7 +71,7 @@ public final class ScanRippleFx {
             });
         }
 
-        static final ShaderStateShard SHADER = new ShaderStateShard(() -> PortalWaveShaders.scanRipple);
+        static final ShaderStateShard SHADER = new ShaderStateShard(() -> FxWaveShaders.scanRipple);
 
         static final EmptyTextureStateShard BACKGROUND = new EmptyTextureStateShard(() -> {
 
@@ -100,7 +100,7 @@ public final class ScanRippleFx {
     public static void onRenderLevelStage(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_SKY) {
             copiedThisFrame = false;
-            ShaderInstance shader = PortalWaveShaders.scanRipple;
+            ShaderInstance shader = FxWaveShaders.scanRipple;
             if (shader != null) {
                 Window window = Minecraft.getInstance().getWindow();
                 shader.safeGetUniform("ScreenSize").set((float) window.getWidth(), (float) window.getHeight());
@@ -153,7 +153,7 @@ public final class ScanRippleFx {
         ensureBackgroundCopied();
         VertexConsumer vc = buffer.getBuffer(TYPE);
 
-        PortalWaveShaders.scanRipple.safeGetUniform("Progress").set(progress());
+        FxWaveShaders.scanRipple.safeGetUniform("Progress").set(progress());
         var m = pose.last().pose();
         vc.vertex(m, x0, y1, z).color(1.0F, 1.0F, 1.0F, 1.0F).uv(0.0F, 1.0F).endVertex();
         vc.vertex(m, x1, y1, z).color(1.0F, 1.0F, 1.0F, 1.0F).uv(1.0F, 1.0F).endVertex();
