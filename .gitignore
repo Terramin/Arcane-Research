@@ -1,6 +1,3 @@
-# Local port notes (not for the repo)
-PORT_NOTES.md
-
 # Gradle build cache and outputs
 .gradle/
 build/
@@ -8,3 +5,6 @@ build/
 # IDE
 .idea/
 /run/
+/run-data/
+/patches/
+/org/
