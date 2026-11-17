@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -62,6 +63,9 @@ import arcaneresearch.client.models.armor.RobeArmorModel;
 import arcaneresearch.client.models.armor.ThaumiumArmorModel;
 import arcaneresearch.client.models.armor.VoidArmorModel;
 import arcaneresearch.client.models.armor.VoidRobeArmorModel;
+
+import java.util.Objects;
+
 @Mod(Arcaneresearch.MODID)
 public class Arcaneresearch {
     public static final String MODID = "arcaneresearch";
@@ -236,6 +240,16 @@ public class Arcaneresearch {
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
+        public static void onRegisterRecipeBookCategories(
+                RegisterRecipeBookCategoriesEvent event) {
+            event.registerRecipeCategoryFinder(ModRecipeTypes.ARCANE_WORKBENCH.get(),
+                    recipe -> net.minecraft.client.RecipeBookCategories.UNKNOWN);
+            event.registerRecipeCategoryFinder(ModRecipeTypes.CRUCIBLE.get(),
+                    recipe -> net.minecraft.client.RecipeBookCategories.UNKNOWN);
+            event.registerRecipeCategoryFinder(ModRecipeTypes.INFUSION.get(),
+                    recipe -> net.minecraft.client.RecipeBookCategories.UNKNOWN);
+        }
+        @SubscribeEvent
         public static void onAddPackFinders(AddPackFindersEvent event) {
             if (event.getPackType() != PackType.CLIENT_RESOURCES) {
                 return;
@@ -280,7 +294,7 @@ public class Arcaneresearch {
                 ItemProperties.register(ModItems.GRAPPLE_GUN.get(),
                         ResourceLocation.fromNamespaceAndPath(MODID, "type"),
                         (stack, level, entity, seed) ->
-                                (stack.hasTag() && stack.getTag().getByte("loaded") == 1) ? 1.0F : 0.0F);
+                                (stack.hasTag() && Objects.requireNonNull(stack.getTag()).getByte("loaded") == 1) ? 1.0F : 0.0F);
                 ItemProperties.register(ModItems.PRIMORDIAL_PEARL.get(),
                         ResourceLocation.fromNamespaceAndPath(MODID, "type"),
                         (stack, level, entity, seed) -> {
@@ -293,7 +307,7 @@ public class Arcaneresearch {
                 ItemProperties.register(ModItems.VERDANT_CHARM.get(),
                         ResourceLocation.fromNamespaceAndPath(MODID, "type"),
                         (stack, level, entity, seed) ->
-                                (stack.hasTag() ? stack.getTag().getByte("type") : 0));
+                                (stack.hasTag() ? Objects.requireNonNull(stack.getTag()).getByte("type") : 0));
                 for (net.minecraft.world.item.Item caster : casters) {
                     ItemProperties.register(caster,
                             ResourceLocation.fromNamespaceAndPath(MODID, "focus"),
@@ -308,7 +322,7 @@ public class Arcaneresearch {
                 ItemProperties.register(ModBlocks.MIRROR_ESSENTIA.get().asItem(),
                         ResourceLocation.fromNamespaceAndPath(MODID, "linked"),
                         (stack, level, entity, seed) ->
-                                (stack.hasTag() && stack.getTag().contains("linkX")) ? 1.0F : 0.0F);
+                                (stack.hasTag() && Objects.requireNonNull(stack.getTag()).contains("linkX")) ? 1.0F : 0.0F);
                 ItemProperties.register(ModItems.BONE_BOW.get(),
                         ResourceLocation.parse("pulling"),
                         (stack, level, entity, seed) ->

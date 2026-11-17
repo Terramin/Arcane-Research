@@ -9,7 +9,9 @@ import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,6 +38,7 @@ import arcaneresearch.compat.jei.crucible.CrucibleCategory;
 import arcaneresearch.compat.jei.gui.ResearchGuiHandlers;
 import arcaneresearch.compat.jei.infusion.InfusionCategory;
 import arcaneresearch.compat.jei.multiblock.MultiblockCategory;
+import arcaneresearch.discovered.note.DiscoveredNoteSetup;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModMenuTypes;
@@ -89,6 +92,17 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
     @Override
     public void registerItemSubtypes(@NotNull ISubtypeRegistration registration) {
         try {
+            // Research notes store their content in NBT; without a subtype
+            // interpreter JEI treats every note stack in the creative tab as a
+            // duplicate of the same item ("N duplicate items were found...").
+            Item noteItem = DiscoveredNoteSetup.getNoteItem();
+            if (noteItem != null && noteItem != Items.AIR) {
+                registration.useNbtForSubtypes(noteItem);
+            }
+            Item discoveryItem = DiscoveredNoteSetup.getDiscoveryItem();
+            if (discoveryItem != null && discoveryItem != Items.AIR) {
+                registration.useNbtForSubtypes(discoveryItem);
+            }
             registration.useNbtForSubtypes(
 
                     ModBlocks.JAR_NORMAL.get().asItem(),

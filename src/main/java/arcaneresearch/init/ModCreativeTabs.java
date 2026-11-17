@@ -562,7 +562,6 @@ public class ModCreativeTabs {
                         output.accept(createGolemStackById(0, 1, 1, 0, 0));
                         output.accept(createGolemStackById(1, 1, 2, 0, 0));
                         output.accept(createGolemStackById(4, 1, 3, 0, 0));
-                        acceptBlock(output, ModBlocks.GOLEM_BUILDER.get());
                         output.accept(ModItems.SEAL_BLANK.get());
                         output.accept(ModItems.SEAL_PICKUP.get());
                         output.accept(ModItems.SEAL_PICKUP_ADVANCED.get());

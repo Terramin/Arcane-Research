@@ -91,6 +91,18 @@ mixin {
     config "${mod_id}.mixins.json"
 }
 
+
+def mixinRefmapFile = layout.buildDirectory.file("tmp/compileJava/${mod_id}.refmap.json")
+def mixinRefmapDir = layout.buildDirectory.dir('generated/mixinRefmap')
+tasks.register('copyMixinRefmap', Copy) {
+    dependsOn tasks.named('compileJava')
+    from(mixinRefmapFile)
+    into(mixinRefmapDir)
+    onlyIf { mixinRefmapFile.get().asFile.exists() }
+}
+sourceSets.main.resources.srcDir mixinRefmapDir
+tasks.named('processResources').configure { dependsOn tasks.named('copyMixinRefmap') }
+
 repositories {
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
@@ -154,6 +166,7 @@ tasks.named("processResources").configure { dependsOn generateModMetadata }
 
 // Example for how to get properties into the manifest for reading at runtime.
 tasks.named('jar', Jar).configure {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
