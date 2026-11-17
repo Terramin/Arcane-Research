@@ -18,6 +18,8 @@ import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.models.entity.ArcaneBoreModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.construct.EntityArcaneBore;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBoreModel> {
     private static final ResourceLocation TEXTURE =
@@ -37,21 +39,21 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
     private static Vec3 rotateAroundZ(Vec3 vec, float angle) {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
-        double x = vec.x * cos - vec.y * sin;
-        double y = vec.x * sin + vec.y * cos;
+        double x = vec.x * cos + vec.y * sin;
+        double y = vec.y * cos - vec.x * sin;
         return new Vec3(x, y, vec.z);
     }
     @Override
-    public ResourceLocation getTextureLocation(EntityArcaneBore entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull EntityArcaneBore entity) {
         return TEXTURE;
     }
     @Override
-    protected RenderType getRenderType(EntityArcaneBore entity, boolean bodyVisible, boolean translucent, boolean glowing) {
+    protected RenderType getRenderType(@NotNull EntityArcaneBore entity, boolean bodyVisible, boolean translucent, boolean glowing) {
         return RenderType.entityTranslucent(getTextureLocation(entity));
     }
     @Override
     public void render(EntityArcaneBore entity, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+                       @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         entity.yBodyRot = 0.0F;
         entity.yBodyRotO = 0.0F;
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
@@ -62,14 +64,14 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
     private void renderMiningBeam(EntityArcaneBore entity, float partialTicks,
                                   PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
-        float yaw = Mth.lerp(partialTicks, entity.yRotO, entity.getYRot());
+        float yaw = Mth.lerp(partialTicks, entity.yHeadRotO, entity.getYHeadRot());
         float pitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
         Vec3 offset = new Vec3(0.5, 0.075, 0.0);
         offset = rotateAroundZ(offset, pitch * Mth.DEG_TO_RAD);
         offset = rotateAroundY(offset, -((yaw + 90.0F) * Mth.DEG_TO_RAD));
         poseStack.translate(offset.x, entity.getEyeHeight() + offset.y, offset.z);
         renderGlow(poseStack, buffer, entity.tickCount, partialTicks);
-        renderBeam(poseStack, buffer, entity, partialTicks, packedLight);
+        renderBeam(poseStack, buffer, entity, partialTicks, yaw, pitch, packedLight);
         poseStack.popPose();
     }
     private void renderGlow(PoseStack poseStack, MultiBufferSource buffer, int tickCount, float partialTicks) {
@@ -79,15 +81,13 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
                 0.0F, 1.0F, 0.4F, 0.8F, LightTexture.pack(13, 0));
     }
     private void renderBeam(PoseStack poseStack, MultiBufferSource buffer,
-                            EntityArcaneBore entity, float partialTicks, int packedLight) {
+                            EntityArcaneBore entity, float partialTicks, float yaw, float pitch, int packedLight) {
         float beamLength = 5.0F;
         float beamWidth = 0.15F;
         float opacity = 0.4F;
         float rotation = (entity.level().getGameTime() % 72L) * 5L + 5.0F * partialTicks;
         float time = entity.tickCount + partialTicks;
         float scroll = time * 0.2F - Mth.floor(time * 0.1F);
-        float yaw = Mth.lerp(partialTicks, entity.yRotO, entity.getYRot());
-        float pitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
         poseStack.pushPose();
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
         poseStack.mulPose(Axis.ZN.rotationDegrees(180.0F + yaw));
@@ -138,7 +138,7 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
         poseStack.popPose();
     }
     @Override
-    protected boolean shouldShowName(EntityArcaneBore entity) {
+    protected boolean shouldShowName(@NotNull EntityArcaneBore entity) {
         return false;
     }
 }

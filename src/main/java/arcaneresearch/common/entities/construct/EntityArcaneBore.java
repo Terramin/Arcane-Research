@@ -36,6 +36,9 @@ import arcaneresearch.common.lib.network.fx.PacketFXBoreDig;
 import arcaneresearch.common.world.aura.AuraHandler;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
+import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -108,42 +111,69 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             }
             net.minecraft.core.BlockPos railPos = new BlockPos(k, l, i1);
             net.minecraft.world.level.block.state.BlockState railState = level().getBlockState(railPos);
-            if (net.minecraft.world.level.block.BaseRailBlock.isRail(railState)) {
-                if (railState.is(arcaneresearch.init.ModBlocks.ACTIVATOR_RAIL.get())) {
-                    setActive(!railState.getValue(
-                            net.minecraft.world.level.block.PoweredRailBlock.POWERED));
-                }
+            if (railState.is(arcaneresearch.init.ModBlocks.ACTIVATOR_RAIL.get())) {
+                setActive(!railState.getValue(
+                        net.minecraft.world.level.block.PoweredRailBlock.POWERED));
             } else if (!isPassenger()) {
-                setActive(level().hasNeighborSignal(blockPosition().below()));
+                setActive(level().hasNeighborSignal(blockPosition())
+                        || level().hasNeighborSignal(blockPosition().below()));
             }
             if (validInventory()) {
             }
         }
-        if (!isActive()) {
-            digTarget = null;
-        }
-        if (digTarget != null && charge >= digCost && !level().isClientSide) {
-            if (digDelay-- <= 0 && dig()) {
-                charge -= digCost;
-                if (soundDelay < System.currentTimeMillis()) {
-                    soundDelay = System.currentTimeMillis() + 1200L + random.nextInt(100);
-                    if (ModSounds.RUMBLE != null) {
-                        playSound(ModSounds.RUMBLE.get(), 0.25f, 0.9f + random.nextFloat() * 0.2f);
+        if (!level().isClientSide) {
+            if (!isActive()) {
+                digTarget = null;
+                Direction facing = getFacing();
+                lookTowards(new Vec3(getX() + facing.getStepX(), getY(), getZ() + facing.getStepZ()), 10.0f, 33.0f);
+            }
+            if (digTarget != null && charge >= digCost) {
+                lookTowards(new Vec3(digTarget.getX() + 0.5, digTarget.getY(), digTarget.getZ() + 0.5), 10.0f, 90.0f);
+                if (digDelay-- <= 0 && dig()) {
+                    charge -= digCost;
+                    if (soundDelay < System.currentTimeMillis()) {
+                        soundDelay = System.currentTimeMillis() + 1200L + random.nextInt(100);
+                        if (ModSounds.RUMBLE != null) {
+                            playSound(ModSounds.RUMBLE.get(), 0.25f, 0.9f + random.nextFloat() * 0.2f);
+                        }
                     }
                 }
             }
-        }
-        if (!level().isClientSide && digTarget == null && isActive() && validInventory()) {
-            findNextBlockToDig();
-            if (digTarget != null) {
-                level().broadcastEntityEvent(this, (byte) 16);
-                PacketHandler.sendToAllTrackingChunk(
-                        new PacketFXBoreDig(digTarget, this, digDelayMax),
-                        (ServerLevel) level(), digTarget);
-            } else {
-                level().broadcastEntityEvent(this, (byte) 17);
+            if (digTarget == null && isActive() && validInventory()) {
+                findNextBlockToDig();
+                if (digTarget != null) {
+                    level().broadcastEntityEvent(this, (byte) 16);
+                    PacketHandler.sendToAllTrackingChunk(
+                            new PacketFXBoreDig(digTarget, this, digDelayMax),
+                            (ServerLevel) level(), digTarget);
+                } else {
+                    level().broadcastEntityEvent(this, (byte) 17);
+                    Direction facing = getFacing();
+                    lookTowards(new Vec3(getX() + facing.getStepX() * 2.0,
+                            getY() + facing.getStepY() * 2.0 + getEyeHeight(),
+                            getZ() + facing.getStepZ() * 2.0), 10.0f, 33.0f);
+                }
             }
         }
+        alignRotation();
+    }
+    private void lookTowards(Vec3 target, float yawSpeed, float pitchSpeed) {
+        double dx = target.x - getX();
+        double dy = target.y - getEyeY();
+        double dz = target.z - getZ();
+        double horiz = Math.sqrt(dx * dx + dz * dz);
+        float targetYaw = getYRot();
+        float targetPitch = getXRot();
+        if (horiz > 1.0E-4) {
+            targetYaw = (float) (Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
+            targetPitch = (float) (-(Math.atan2(dy, horiz) * (180.0 / Math.PI)));
+        }
+        setYRot(getYRot() + Mth.clamp(Mth.wrapDegrees(targetYaw - getYRot()), -yawSpeed, yawSpeed));
+        setXRot(getXRot() + Mth.clamp(Mth.wrapDegrees(targetPitch - getXRot()), -pitchSpeed, pitchSpeed));
+    }
+    private void alignRotation() {
+        yBodyRot = getYRot();
+        setYHeadRot(getYRot());
     }
     public boolean validInventory() {
         ItemStack held = getMainHandItem();
@@ -368,7 +398,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         charge += drained;
     }
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide && isOwner(player) && isAlive()) {
             if (player.isShiftKeyDown()) {
                 if (ModSounds.ZAP != null) {
@@ -385,14 +415,14 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                     net.minecraftforge.network.NetworkHooks.openScreen(serverPlayer,
                             new net.minecraft.world.MenuProvider() {
                                 @Override
-                                public net.minecraft.network.chat.Component getDisplayName() {
+                                public net.minecraft.network.chat.@NotNull Component getDisplayName() {
                                     return EntityArcaneBore.this.getDisplayName();
                                 }
                                 @Override
                                 public net.minecraft.world.inventory.AbstractContainerMenu createMenu(
                                         int containerId,
-                                        net.minecraft.world.entity.player.Inventory inventory,
-                                        Player p) {
+                                        net.minecraft.world.entity.player.@NotNull Inventory inventory,
+                                        @NotNull Player p) {
                                     return new arcaneresearch.common.menu.ArcaneBoreMenu(
                                             containerId, inventory, EntityArcaneBore.this);
                                 }
@@ -412,6 +442,8 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             }
             return false;
         }
+        setYRot(getYRot() + (float) (random.nextGaussian() * 45.0));
+        setXRot(getXRot() + (float) (random.nextGaussian() * 20.0));
         return super.hurt(source, amount);
     }
     @Override
@@ -424,7 +456,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         }
     }
     @Override
-    public void move(MoverType type, Vec3 motion) {
+    public void move(@NotNull MoverType type, Vec3 motion) {
         super.move(type, new Vec3(motion.x / 5.0, motion.y, motion.z / 5.0));
     }
     @Override
@@ -483,7 +515,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         return super.getTeam();
     }
     @Override
-    protected float getStandingEyeHeight(net.minecraft.world.entity.Pose pose, net.minecraft.world.entity.EntityDimensions dimensions) {
+    protected float getStandingEyeHeight(net.minecraft.world.entity.@NotNull Pose pose, net.minecraft.world.entity.@NotNull EntityDimensions dimensions) {
         return 0.8125f;
     }
 }

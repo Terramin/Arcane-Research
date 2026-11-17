@@ -47,6 +47,8 @@ public class ArcaneBoreScreen extends AbstractContainerScreen<ArcaneBoreMenu> {
         graphics.drawString(this.font, "Width: " + (1 + bore.getDigRadius() * 2), 0, 0, 0xFFFFFF, false);
         graphics.drawString(this.font, "Depth: " + bore.getDigDepth(), 64, 0, 0xFFFFFF, false);
         graphics.drawString(this.font, "Speed: +" + bore.getDigSpeed(Blocks.STONE.defaultBlockState()), 0, 10, 0xFFFFFF, false);
+        graphics.drawString(this.font, bore.isActive() ? "Status: Active" : "Status: Inactive",
+                64, 10, bore.isActive() ? 0x55FF55 : 0xFF5555, false);
         int base = 0;
         int refining = bore.getRefining();
         int fortune = bore.getFortune();
