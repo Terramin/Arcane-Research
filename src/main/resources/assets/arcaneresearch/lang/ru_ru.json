@@ -2373,5 +2373,7 @@
   "item.arcaneresearch.portal_scroll": "Свиток портала",
   "key.arcaneresearch.scroll.teleport": "Телепорт",
   "key.arcaneresearch.scroll.dimension": "Измерение",
-  "key.arcaneresearch.scroll.not_set": "Не задана"
+  "key.arcaneresearch.scroll.not_set": "Не задана",
+  "key.arcaneresearch.label.marked": "Помечен",
+  "key.arcaneresearch.label.not_set": "Не задан"
 }

@@ -1,11 +1,14 @@
 package arcaneresearch.common.items.consumables;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -13,6 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.blocks.ILabelable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ItemLabel extends Item {
     private final boolean isFilled;
@@ -43,6 +48,27 @@ public class ItemLabel extends Item {
     public void setAspect(ItemStack stack, Aspect aspect) {
         if (aspect != null) {
             stack.getOrCreateTag().putString("aspect", aspect.getTag());
+        }
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+
+        if (!isFilled) {
+            return;
+        }
+
+        Aspect aspect = getAspect(stack);
+        if (aspect != null) {
+            tooltip.add(Component.translatable("key.arcaneresearch.label.marked").withStyle(ChatFormatting.GOLD)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GOLD))
+                    .append(Component.translatable("tc.aspect." + aspect.getTag())
+                            .withStyle(style -> style.withColor(aspect.getColor()))));
+        } else {
+            tooltip.add(Component.translatable("key.arcaneresearch.label.marked").withStyle(ChatFormatting.GOLD)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GOLD))
+                    .append(Component.translatable("key.arcaneresearch.label.not_set").withStyle(ChatFormatting.GRAY)));
         }
     }
 

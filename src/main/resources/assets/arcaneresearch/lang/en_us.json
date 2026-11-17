@@ -2370,5 +2370,7 @@
   "item.arcaneresearch.portal_scroll": "Portal Scroll",
   "key.arcaneresearch.scroll.teleport": "Teleport",
   "key.arcaneresearch.scroll.dimension": "Dimension",
-  "key.arcaneresearch.scroll.not_set": "Not set"
+  "key.arcaneresearch.scroll.not_set": "Not set",
+  "key.arcaneresearch.label.marked": "Marked",
+  "key.arcaneresearch.label.not_set": "Not set"
 }
