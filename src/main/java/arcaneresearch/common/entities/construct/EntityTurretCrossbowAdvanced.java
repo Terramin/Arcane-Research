@@ -35,6 +35,8 @@ import arcaneresearch.common.menu.TurretMenu;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -55,8 +57,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     }
     public static AttributeSupplier.Builder createAttributes() {
         return EntityTurretCrossbow.createAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.ARMOR, 8.0);
+                .add(Attributes.MAX_HEALTH, 40.0);
     }
     @Override
     protected void registerGoals() {
@@ -74,7 +75,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
         this.entityData.define(DATA_FLAGS, (byte) 0);
     }
     @Override
-    protected float getStandingEyeHeight(net.minecraft.world.entity.Pose pose, net.minecraft.world.entity.EntityDimensions dimensions) {
+    protected float getStandingEyeHeight(net.minecraft.world.entity.@NotNull Pose pose, net.minecraft.world.entity.EntityDimensions dimensions) {
         return 1.0f;
     }
     private byte getFlags() {
@@ -151,11 +152,15 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
         }
     }
     @Override
-    public void move(MoverType type, Vec3 motion) {
+    public void move(@NotNull MoverType type, Vec3 motion) {
         super.move(type, new Vec3(motion.x / 15.0, motion.y, motion.z / 15.0));
     }
     @Override
-    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public void knockback(double strength, double x, double z) {
+        super.knockback(strength, x / 10.0, z / 10.0);
+    }
+    @Override
+    protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide && isOwner(player) && !isRemoved()) {
             if (player.isShiftKeyDown()) {
                 playSound(ModSounds.ZAP.get(), 1.0f, 1.0f);
@@ -168,11 +173,11 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
                 if (player instanceof ServerPlayer serverPlayer) {
                     NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
                         @Override
-                        public Component getDisplayName() {
+                        public @NotNull Component getDisplayName() {
                             return Component.translatable("item.arcaneresearch.turret_placer_advanced");
                         }
                         @Override
-                        public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player p) {
+                        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player p) {
                             return new TurretMenu(containerId, playerInventory, EntityTurretCrossbowAdvanced.this);
                         }
                     }, buf -> buf.writeInt(getId()));
@@ -187,7 +192,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
         return new ItemStack(ModItems.TURRET_PLACER_ADVANCED.get());
     }
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+    protected void dropCustomDeathLoot(@NotNull DamageSource source, int looting, boolean recentlyHit) {
         float bonus = looting * 0.15f;
         if (random.nextFloat() < 0.2f + bonus) spawnAtLocation(new ItemStack(ModItems.BRAIN_CURIOUS.get()), 0.5f);
         if (random.nextFloat() < 0.5f + bonus) spawnAtLocation(new ItemStack(ModItems.MECHANISM_SIMPLE.get()), 0.5f);

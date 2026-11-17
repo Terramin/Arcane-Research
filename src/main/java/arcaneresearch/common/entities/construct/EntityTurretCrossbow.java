@@ -41,6 +41,8 @@ import arcaneresearch.common.menu.TurretMenu;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -53,6 +55,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     protected float prevLoadProgress = 0.0f;
     protected boolean attackedLastTick = false;
     protected int attackCount = 0;
+    private float baseYaw = 0.0f;
     public EntityTurretCrossbow(EntityType<? extends EntityTurretCrossbow> type, Level level) {
         super(type, level);
         this.setMaxUpStep(0.0f);
@@ -64,8 +67,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     public static AttributeSupplier.Builder createAttributes() {
         return EntityOwnedConstruct.createAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0)
-                .add(Attributes.FOLLOW_RANGE, 24.0)
-                .add(Attributes.ARMOR, 2.0);
+                .add(Attributes.FOLLOW_RANGE, 24.0);
     }
     @Override
     protected void registerGoals() {
@@ -79,8 +81,29 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     protected void defineSynchedData() {
         super.defineSynchedData();
     }
+    public void setBaseYaw(float yaw) {
+        baseYaw = yaw;
+        setYRot(yaw);
+        setXRot(0.0f);
+        yBodyRot = yaw;
+        setYHeadRot(yaw);
+    }
+    private void lookTowards(Vec3 target, float yawSpeed, float pitchSpeed) {
+        double dx = target.x - getX();
+        double dy = target.y - getEyeY();
+        double dz = target.z - getZ();
+        double horiz = Math.sqrt(dx * dx + dz * dz);
+        float targetYaw = getYRot();
+        float targetPitch = getXRot();
+        if (horiz > 1.0E-4) {
+            targetYaw = (float) (Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
+            targetPitch = (float) (-(Math.atan2(dy, horiz) * (180.0 / Math.PI)));
+        }
+        setYRot(getYRot() + net.minecraft.util.Mth.clamp(net.minecraft.util.Mth.wrapDegrees(targetYaw - getYRot()), -yawSpeed, yawSpeed));
+        setXRot(getXRot() + net.minecraft.util.Mth.clamp(net.minecraft.util.Mth.wrapDegrees(targetPitch - getXRot()), -pitchSpeed, pitchSpeed));
+    }
     @Override
-    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+    public void performRangedAttack(@NotNull LivingEntity target, float distanceFactor) {
         ItemStack ammo = getMainHandItem();
         if (!ammo.isEmpty() && ammo.getCount() > 0) {
             Arrow arrow = new Arrow(level(), this);
@@ -194,6 +217,15 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             setTarget(null);
         }
         if (!level().isClientSide) {
+            if (!isNoAi() && getTarget() == null) {
+                double rad = Math.toRadians(baseYaw);
+                lookTowards(new Vec3(
+                        getX() - Math.sin(rad),
+                        getEyeY(),
+                        getZ() + Math.cos(rad)), 10.0f, 33.0f);
+                yBodyRot = getYRot();
+                setYHeadRot(getYRot());
+            }
             setYRot(yHeadRot);
             if (tickCount % 80 == 0) {
                 heal(1.0f);
@@ -214,12 +246,12 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         }
     }
     @Override
-    protected float getStandingEyeHeight(net.minecraft.world.entity.Pose pose, net.minecraft.world.entity.EntityDimensions dimensions) {
+    protected float getStandingEyeHeight(net.minecraft.world.entity.@NotNull Pose pose, net.minecraft.world.entity.EntityDimensions dimensions) {
         return dimensions.height * 0.66f;
     }
     @Override
     public boolean isPushable() {
-        return false;
+        return true;
     }
     @Override
     public boolean isPickable() {
@@ -230,7 +262,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         return 20;
     }
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurt(@NotNull DamageSource source, float amount) {
         setYRot(getYRot() + (float) (getRandom().nextGaussian() * 45.0));
         setXRot(getXRot() + (float) (getRandom().nextGaussian() * 20.0));
         return super.hurt(source, amount);
@@ -244,11 +276,11 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         }
     }
     @Override
-    public void move(MoverType type, Vec3 motion) {
+    public void move(@NotNull MoverType type, Vec3 motion) {
         super.move(type, new Vec3(motion.x / 20.0, motion.y, motion.z / 20.0));
     }
     @Override
-    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+    protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide && isOwner(player) && !isRemoved()) {
             if (player.isShiftKeyDown()) {
                 playSound(ModSounds.ZAP.get(), 1.0f, 1.0f);
@@ -261,11 +293,11 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
                 if (player instanceof ServerPlayer serverPlayer) {
                     NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
                         @Override
-                        public Component getDisplayName() {
+                        public @NotNull Component getDisplayName() {
                             return Component.translatable("item.arcaneresearch.turret_placer_basic");
                         }
                         @Override
-                        public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player p) {
+                        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player p) {
                             return new TurretMenu(containerId, playerInventory, EntityTurretCrossbow.this);
                         }
                     }, buf -> buf.writeInt(getId()));
@@ -294,7 +326,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         }
     }
     @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+    protected void dropCustomDeathLoot(@NotNull DamageSource source, int looting, boolean recentlyHit) {
         super.dropCustomDeathLoot(source, looting, recentlyHit);
         float bonus = looting * 0.15f;
         if (random.nextFloat() < 0.2f + bonus) spawnAtLocation(new ItemStack(ModItems.BRAIN_CLOCKWORK.get()), 0.5f);
@@ -305,10 +337,15 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+        tag.putFloat("baseYaw", baseYaw);
     }
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        baseYaw = tag.getFloat("baseYaw");
+        setYRot(baseYaw);
+        yBodyRot = baseYaw;
+        setYHeadRot(baseYaw);
     }
     protected static class NearestValidTargetGoal<T extends LivingEntity> extends TargetGoal {
         protected final Class<T> targetClass;
@@ -348,7 +385,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             if (targets.isEmpty()) {
                 return false;
             }
-            targets.sort(Comparator.comparingDouble(e -> mob.distanceToSqr(e)));
+            targets.sort(Comparator.comparingDouble(mob::distanceToSqr));
             target = targets.get(0);
             return true;
         }

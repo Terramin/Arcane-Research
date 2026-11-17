@@ -9,6 +9,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.entity.CrossbowModel;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class TurretCrossbowRenderer extends MobRenderer<EntityTurretCrossbow, CrossbowModel> {
     private static final ResourceLocation TEXTURE =
@@ -17,23 +19,21 @@ public class TurretCrossbowRenderer extends MobRenderer<EntityTurretCrossbow, Cr
         super(context, new CrossbowModel(context.bakeLayer(CrossbowModel.LAYER_LOCATION)), 0.5F);
     }
     @Override
-    public ResourceLocation getTextureLocation(EntityTurretCrossbow entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull EntityTurretCrossbow entity) {
         return TEXTURE;
     }
     @Override
     public void render(EntityTurretCrossbow entity, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+                       @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         entity.loadProgressForRender = entity.getLoadProgress(partialTicks);
-        entity.yBodyRot = 0.0F;
-        entity.yBodyRotO = 0.0F;
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
     @Override
-    protected void scale(EntityTurretCrossbow entity, PoseStack poseStack, float partialTicks) {
+    protected void scale(@NotNull EntityTurretCrossbow entity, @NotNull PoseStack poseStack, float partialTicks) {
         super.scale(entity, poseStack, partialTicks);
     }
     @Override
-    protected boolean shouldShowName(EntityTurretCrossbow entity) {
+    protected boolean shouldShowName(@NotNull EntityTurretCrossbow entity) {
         return false;
     }
 }

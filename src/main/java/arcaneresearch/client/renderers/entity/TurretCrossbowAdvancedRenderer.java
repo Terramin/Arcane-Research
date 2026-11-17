@@ -14,6 +14,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbowAdvanced;
+import org.jetbrains.annotations.NotNull;
+
 @OnlyIn(Dist.CLIENT)
 public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretCrossbowAdvanced> {
     private static final ResourceLocation TEXTURE =
@@ -25,12 +27,12 @@ public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretC
         this.shadowRadius = 0.0F;
     }
     @Override
-    public ResourceLocation getTextureLocation(EntityTurretCrossbowAdvanced entity) {
+    public @NotNull ResourceLocation getTextureLocation(@NotNull EntityTurretCrossbowAdvanced entity) {
         return TEXTURE;
     }
     @Override
-    public void render(EntityTurretCrossbowAdvanced turret, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(@NotNull EntityTurretCrossbowAdvanced turret, float entityYaw, float partialTicks,
+                       @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         super.render(turret, entityYaw, partialTicks, poseStack, buffer, packedLight);
         TurretObjModel model = TurretObjModel.load(MODEL);
         if (model == null) {
@@ -52,7 +54,7 @@ public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretC
         if (turret.isPassenger() && turret.getVehicle() instanceof AbstractMinecart) {
             poseStack.scale(0.66f, 0.75f, 0.66f);
         }
-        model.renderGroup(poseStack, consumer, "legs", packedLight, OverlayTexture.NO_OVERLAY, r, g, b, 1.0f);
+        model.renderGroup(poseStack, consumer, "legs", packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
         poseStack.popPose();
         if (turret.hurtTime > 0) {
             float jiggle = turret.hurtTime / 500.0f;
@@ -89,7 +91,7 @@ public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretC
         poseStack.popPose();
     }
     @Override
-    protected boolean shouldShowName(EntityTurretCrossbowAdvanced entity) {
+    protected boolean shouldShowName(@NotNull EntityTurretCrossbowAdvanced entity) {
         return false;
     }
 }
