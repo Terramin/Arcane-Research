@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class ItemCurio extends Item {
+public class KnowledgeCurioItem extends Item {
 
     public static final String[] VARIANTS = {
             "arcane", "preserved", "ancient", "eldritch", "knowledge", "twisted", "rites"
@@ -36,7 +36,7 @@ public class ItemCurio extends Item {
 
     private final String variant;
 
-    public ItemCurio(String variant) {
+    public KnowledgeCurioItem(String variant) {
         super(new Item.Properties().rarity(Rarity.UNCOMMON));
         this.variant = Objects.requireNonNull(variant, "variant");
     }

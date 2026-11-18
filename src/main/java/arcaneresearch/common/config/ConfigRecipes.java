@@ -63,7 +63,7 @@ public class ConfigRecipes {
                 new AspectList().add(Aspect.LIGHT, 80).add(Aspect.AIR, 20),
                 new ItemStack(ModBlocks.NITOR_YELLOW.get()), new ItemStack(Items.GOLDEN_PICKAXE));
         for (int level = 0; level <= 4; level++) {
-            ItemStack ring = new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get());
+            ItemStack ring = new ItemStack(ModItems.CURIOS_RING_MUNDANE.get());
             if (level > 0) {
                 ring.getOrCreateTag().putByte("TC.RUNIC", (byte) level);
             }
@@ -76,7 +76,7 @@ public class ConfigRecipes {
             ArcaneresearchApi.addFakeCraftingRecipe(
                     ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "runic_armor_fake_" + level),
                     new InfusionRecipe("RUNICSHIELDING", ring, 5 + level / 2, runicCost,
-                            new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()),
+                            new ItemStack(ModItems.CURIOS_RING_MUNDANE.get()),
                             runicComponents));
         }
         for (int level = 0; level <= 4; level++) {

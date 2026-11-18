@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.baubles;
+package arcaneresearch.common.items.curios;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -9,8 +9,8 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.List;
 
-public class ItemCharmUndying extends Item implements ICurioItem {
-    public ItemCharmUndying() {
+public class CharmUndyingItem extends Item implements ICurioItem {
+    public CharmUndyingItem() {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));
@@ -18,17 +18,17 @@ public class ItemCharmUndying extends Item implements ICurioItem {
 
     public static ItemStack findCharm(net.minecraft.world.entity.player.Player player) {
         List<ItemStack> curiosCharms = CuriosCompat.findCuriosItems(player,
-                s -> !s.isEmpty() && s.getItem() instanceof ItemCharmUndying);
+                s -> !s.isEmpty() && s.getItem() instanceof CharmUndyingItem);
         if (!curiosCharms.isEmpty()) {
             return curiosCharms.get(0);
         }
         for (ItemStack stack : player.getInventory().items) {
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemCharmUndying) {
+            if (!stack.isEmpty() && stack.getItem() instanceof CharmUndyingItem) {
                 return stack;
             }
         }
         ItemStack offhand = player.getOffhandItem();
-        if (!offhand.isEmpty() && offhand.getItem() instanceof ItemCharmUndying) {
+        if (!offhand.isEmpty() && offhand.getItem() instanceof CharmUndyingItem) {
             return offhand;
         }
         return null;

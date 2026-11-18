@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.baubles;
+package arcaneresearch.common.items.curios;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -21,9 +21,9 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ItemCloudRing extends Item implements ICurioItem {
+public class CloudRingItem extends Item implements ICurioItem {
     private static final HashMap<String, Boolean> jumpList = new HashMap<>();
-    public ItemCloudRing() {
+    public CloudRingItem() {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));

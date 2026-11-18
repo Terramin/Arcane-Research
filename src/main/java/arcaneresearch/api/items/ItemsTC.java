@@ -94,7 +94,7 @@ public class ItemsTC {
     public static Item crimsonPraetorHelm;
     public static Item crimsonPraetorChest;
     public static Item crimsonPraetorLegs;
-    public static Item baubles;
+    public static Item curios;
     public static Item amuletVis;
     public static Item charmVerdant;
     public static Item charmVoidseer;
@@ -205,7 +205,7 @@ public class ItemsTC {
         crimsonPraetorHelm = ModItems.CRIMSON_PRAETOR_HELM.get();
         crimsonPraetorChest = ModItems.CRIMSON_PRAETOR_CHEST.get();
         crimsonPraetorLegs = ModItems.CRIMSON_PRAETOR_LEGS.get();
-        baubles = ModItems.BAUBLE_RING_MUNDANE.get();
+        curios = ModItems.CURIOS_RING_MUNDANE.get();
         amuletVis = ModItems.AMULET_VIS_FOUND.get();
         charmVerdant = ModItems.VERDANT_CHARM.get();
         charmVoidseer = ModItems.VOIDSEER_CHARM.get();

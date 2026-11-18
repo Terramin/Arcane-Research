@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.baubles;
+package arcaneresearch.common.items.curios;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -6,8 +6,8 @@ import net.minecraft.world.item.Rarity;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-public class ItemCuriosityBand extends Item implements ICurioItem {
-    public ItemCuriosityBand() {
+public class CuriosityBandItem extends Item implements ICurioItem {
+    public CuriosityBandItem() {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));
@@ -19,7 +19,7 @@ public class ItemCuriosityBand extends Item implements ICurioItem {
             return true;
         }
         for (ItemStack stack : player.getInventory().items) {
-            if (!stack.isEmpty() && stack.getItem() instanceof ItemCuriosityBand) {
+            if (!stack.isEmpty() && stack.getItem() instanceof CuriosityBandItem) {
                 return true;
             }
         }

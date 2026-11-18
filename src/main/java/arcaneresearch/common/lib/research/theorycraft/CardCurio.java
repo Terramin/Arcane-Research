@@ -1,5 +1,6 @@
 package arcaneresearch.common.lib.research.theorycraft;
 
+import arcaneresearch.common.items.curios.KnowledgeCurioItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -58,7 +59,7 @@ public class CardCurio extends TheorycraftCard {
         Random r = new Random(getSeed());
         List<ItemStack> curios = new ArrayList<>();
         for (ItemStack stack : player.getInventory().items) {
-            if (!stack.isEmpty() && stack.getItem() instanceof arcaneresearch.common.items.curios.ItemCurio) {
+            if (!stack.isEmpty() && stack.getItem() instanceof KnowledgeCurioItem) {
                 ItemStack c = stack.copy();
                 c.setCount(1);
                 curios.add(c);
@@ -77,7 +78,7 @@ public class CardCurio extends TheorycraftCard {
         if (categories.length > 0) {
             data.addTotal(categories[player.getRandom().nextInt(categories.length)], 5);
         }
-        String type = curio.getItem() instanceof arcaneresearch.common.items.curios.ItemCurio itemCurio
+        String type = curio.getItem() instanceof KnowledgeCurioItem itemCurio
                 ? itemCurio.getVariant() : "";
         switch (type) {
             case "arcane" -> data.addTotal("AUROMANCY", Mth.nextInt(player.getRandom(), 25, 35));

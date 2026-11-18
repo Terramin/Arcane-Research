@@ -11,7 +11,6 @@ import arcaneresearch.common.golems.ItemGolemBell;
 import arcaneresearch.common.golems.ItemGolemPlacer;
 import arcaneresearch.common.golems.seals.ItemSealPlacer;
 import arcaneresearch.common.items.armor.*;
-import arcaneresearch.common.items.baubles.*;
 import arcaneresearch.common.items.casters.ItemCaster;
 import arcaneresearch.common.items.casters.ItemFocus;
 import arcaneresearch.common.items.casters.ItemFocusPouch;
@@ -138,19 +137,19 @@ public class ModItems {
     public static final RegistryObject<Item> CURIOSITY = ITEMS.register("curiosity",
             ItemMaterial::basic);
     public static final RegistryObject<Item> CURIO_ARCANE = ITEMS.register("curio_arcane",
-            () -> new arcaneresearch.common.items.curios.ItemCurio("arcane"));
+            () -> new KnowledgeCurioItem("arcane"));
     public static final RegistryObject<Item> CURIO_PRESERVED = ITEMS.register("curio_preserved",
-            () -> new arcaneresearch.common.items.curios.ItemCurio("preserved"));
+            () -> new KnowledgeCurioItem("preserved"));
     public static final RegistryObject<Item> CURIO_ANCIENT = ITEMS.register("curio_ancient",
-            () -> new arcaneresearch.common.items.curios.ItemCurio("ancient"));
+            () -> new KnowledgeCurioItem("ancient"));
     public static final RegistryObject<Item> CURIO_ELDRITCH = ITEMS.register("curio_eldritch",
-            () -> new arcaneresearch.common.items.curios.ItemCurio("eldritch"));
+            () -> new KnowledgeCurioItem("eldritch"));
     public static final RegistryObject<Item> CURIO_KNOWLEDGE = ITEMS.register("curio_knowledge",
-            () -> new arcaneresearch.common.items.curios.ItemCurio("knowledge"));
+            () -> new KnowledgeCurioItem("knowledge"));
     public static final RegistryObject<Item> CURIO_TWISTED = ITEMS.register("curio_twisted",
-            () -> new arcaneresearch.common.items.curios.ItemCurio("twisted"));
+            () -> new KnowledgeCurioItem("twisted"));
     public static final RegistryObject<Item> CURIO_RITES = ITEMS.register("curio_rites",
-            () -> new arcaneresearch.common.items.curios.ItemCurio("rites"));
+            () -> new KnowledgeCurioItem("rites"));
     public static final RegistryObject<Item> PRIMORDIAL_PEARL = ITEMS.register("primordial_pearl",
             ItemPrimordialPearl::new);
     public static final RegistryObject<Item> ELDRITCH_EYE = ITEMS.register("eldritch_eye",
@@ -269,53 +268,53 @@ public class ModItems {
     public static final RegistryObject<Item> CRIMSON_PRAETOR_LEGS = ITEMS.register("crimson_praetor_legs",
             ItemCultistLeaderArmor::createLeggings);
     public static final RegistryObject<Item> AMULET_VIS_FOUND = ITEMS.register("amulet_vis_found",
-            ItemAmuletVis::createFound);
+            AmuletVisItem::createFound);
     public static final RegistryObject<Item> AMULET_VIS_CRAFTED = ITEMS.register("amulet_vis_crafted",
-            ItemAmuletVis::createCrafted);
+            AmuletVisItem::createCrafted);
     public static final RegistryObject<Item> CLOUD_RING = ITEMS.register("cloud_ring",
-            ItemCloudRing::new);
+            CloudRingItem::new);
     public static final RegistryObject<Item> CURIOSITY_BAND = ITEMS.register("curiosity_band",
-            ItemCuriosityBand::new);
+            CuriosityBandItem::new);
     public static final RegistryObject<Item> CHARM_UNDYING = ITEMS.register("charm_undying",
-            ItemCharmUndying::new);
+            CharmUndyingItem::new);
     public static final RegistryObject<Item> VERDANT_CHARM = ITEMS.register("verdant_charm",
-            ItemVerdantCharm::createBasic);
+            VerdantCharmItem::createBasic);
     public static final RegistryObject<Item> VERDANT_CHARM_LIFE = ITEMS.register("verdant_charm_life",
-            ItemVerdantCharm::createLife);
+            VerdantCharmItem::createLife);
     public static final RegistryObject<Item> VERDANT_CHARM_SUSTAIN = ITEMS.register("verdant_charm_sustain",
-            ItemVerdantCharm::createSustain);
+            VerdantCharmItem::createSustain);
     public static final RegistryObject<Item> VOIDSEER_CHARM = ITEMS.register("voidseer_charm",
-            ItemVoidseerCharm::new);
-    public static final RegistryObject<Item> BAUBLE_AMULET_MUNDANE = ITEMS.register("bauble_amulet_mundane",
-            ItemBauble::amuletMundane);
-    public static final RegistryObject<Item> BAUBLE_RING_MUNDANE = ITEMS.register("bauble_ring_mundane",
-            ItemBauble::ringMundane);
-    public static final RegistryObject<Item> BAUBLE_GIRDLE_MUNDANE = ITEMS.register("bauble_girdle_mundane",
-            ItemBauble::girdleMundane);
-    public static final RegistryObject<Item> BAUBLE_RING_APPRENTICE = ITEMS.register("bauble_ring_apprentice",
-            ItemBauble::ringApprentice);
-    public static final RegistryObject<Item> BAUBLE_AMULET_FANCY = ITEMS.register("bauble_amulet_fancy",
-            ItemBauble::amuletFancy);
-    public static final RegistryObject<Item> BAUBLE_RING_FANCY = ITEMS.register("bauble_ring_fancy",
-            ItemBauble::ringFancy);
-    public static final RegistryObject<Item> BAUBLE_GIRDLE_FANCY = ITEMS.register("bauble_girdle_fancy",
-            ItemBauble::girdleFancy);
+            VoidseerCharmItem::new);
+    public static final RegistryObject<Item> CURIOS_AMULET_MUNDANE = ITEMS.register("bauble_amulet_mundane",
+            CurioItem::amuletMundane);
+    public static final RegistryObject<Item> CURIOS_RING_MUNDANE = ITEMS.register("bauble_ring_mundane",
+            CurioItem::ringMundane);
+    public static final RegistryObject<Item> CURIOS_GIRDLE_MUNDANE = ITEMS.register("bauble_girdle_mundane",
+            CurioItem::girdleMundane);
+    public static final RegistryObject<Item> CURIOS_RING_APPRENTICE = ITEMS.register("bauble_ring_apprentice",
+            CurioItem::ringApprentice);
+    public static final RegistryObject<Item> CURIOS_AMULET_FANCY = ITEMS.register("bauble_amulet_fancy",
+            CurioItem::amuletFancy);
+    public static final RegistryObject<Item> CURIOS_RING_FANCY = ITEMS.register("bauble_ring_fancy",
+            CurioItem::ringFancy);
+    public static final RegistryObject<Item> CURIOS_GIRDLE_FANCY = ITEMS.register("bauble_girdle_fancy",
+            CurioItem::girdleFancy);
     public static final RegistryObject<Item> RUNIC_AMULET = ITEMS.register("runic_amulet",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::amulet);
+            RunicCurioItem::amulet);
     public static final RegistryObject<Item> RUNIC_AMULET_EMERGENCY = ITEMS.register("runic_amulet_emergency",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::amuletEmergency);
+            RunicCurioItem::amuletEmergency);
     public static final RegistryObject<Item> RUNIC_RING_LESSER = ITEMS.register("runic_ring_lesser",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ringLesser);
+            RunicCurioItem::ringLesser);
     public static final RegistryObject<Item> RUNIC_RING = ITEMS.register("runic_ring",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ring);
+            RunicCurioItem::ring);
     public static final RegistryObject<Item> RUNIC_RING_CHARGED = ITEMS.register("runic_ring_charged",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ringCharged);
+            RunicCurioItem::ringCharged);
     public static final RegistryObject<Item> RUNIC_RING_REGEN = ITEMS.register("runic_ring_regen",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ringRegen);
+            RunicCurioItem::ringRegen);
     public static final RegistryObject<Item> RUNIC_GIRDLE = ITEMS.register("runic_girdle",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::girdle);
+            RunicCurioItem::girdle);
     public static final RegistryObject<Item> RUNIC_GIRDLE_KINETIC = ITEMS.register("runic_girdle_kinetic",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::girdleKinetic);
+            RunicCurioItem::girdleKinetic);
     public static final RegistryObject<Item> ENCHANTED_PLACEHOLDER = ITEMS.register("enchanted_placeholder",
             arcaneresearch.common.items.curios.ItemEnchantmentPlaceholder::new);
     public static final RegistryObject<Item> ELEMENTAL_PICK = ITEMS.register("elemental_pick",

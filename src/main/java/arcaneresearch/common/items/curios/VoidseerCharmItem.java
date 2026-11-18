@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.baubles;
+package arcaneresearch.common.items.curios;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -19,8 +19,8 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemVoidseerCharm extends Item implements ICurioItem, IVisDiscountGear, IWarpingGear {
-    public ItemVoidseerCharm() {
+public class VoidseerCharmItem extends Item implements ICurioItem, IVisDiscountGear, IWarpingGear {
+    public VoidseerCharmItem() {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));

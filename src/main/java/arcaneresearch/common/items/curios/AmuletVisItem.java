@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.baubles;
+package arcaneresearch.common.items.curios;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -21,22 +21,22 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class ItemAmuletVis extends Item implements ICurioItem, IRunicArmor {
+public class AmuletVisItem extends Item implements ICurioItem, IRunicArmor {
     private final boolean isCrafted;
 
-    public ItemAmuletVis(boolean crafted) {
+    public AmuletVisItem(boolean crafted) {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(crafted ? Rarity.RARE : Rarity.UNCOMMON));
         this.isCrafted = crafted;
     }
 
-    public static ItemAmuletVis createFound() {
-        return new ItemAmuletVis(false);
+    public static AmuletVisItem createFound() {
+        return new AmuletVisItem(false);
     }
 
-    public static ItemAmuletVis createCrafted() {
-        return new ItemAmuletVis(true);
+    public static AmuletVisItem createCrafted() {
+        return new AmuletVisItem(true);
     }
 
     @Override

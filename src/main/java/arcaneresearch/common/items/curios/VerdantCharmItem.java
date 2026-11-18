@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.baubles;
+package arcaneresearch.common.items.curios;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -20,26 +20,26 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemVerdantCharm extends Item implements ICurioItem, IRechargable {
+public class VerdantCharmItem extends Item implements ICurioItem, IRechargable {
     private final CharmType type;
 
-    public ItemVerdantCharm(CharmType type) {
+    public VerdantCharmItem(CharmType type) {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));
         this.type = type;
     }
 
-    public static ItemVerdantCharm createBasic() {
-        return new ItemVerdantCharm(CharmType.BASIC);
+    public static VerdantCharmItem createBasic() {
+        return new VerdantCharmItem(CharmType.BASIC);
     }
 
-    public static ItemVerdantCharm createLife() {
-        return new ItemVerdantCharm(CharmType.LIFE);
+    public static VerdantCharmItem createLife() {
+        return new VerdantCharmItem(CharmType.LIFE);
     }
 
-    public static ItemVerdantCharm createSustain() {
-        return new ItemVerdantCharm(CharmType.SUSTAIN);
+    public static VerdantCharmItem createSustain() {
+        return new VerdantCharmItem(CharmType.SUSTAIN);
     }
 
     @Override

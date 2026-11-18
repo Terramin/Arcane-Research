@@ -14,7 +14,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.casters.ICaster;
 import arcaneresearch.api.wands.IWand;
 import arcaneresearch.common.golems.ItemGolemBell;
-import arcaneresearch.common.items.baubles.ItemCloudRing;
+import arcaneresearch.common.items.curios.CloudRingItem;
 import arcaneresearch.common.lib.compat.CuriosCompat;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketFocusChangeToServer;
@@ -170,7 +170,7 @@ public class KeyHandler {
         if (!CuriosCompat.isEquipped(player, ModItems.CLOUD_RING.get())) {
             return;
         }
-        ItemCloudRing.tickClient(player, mc.options.keyJump.isDown());
+        CloudRingItem.tickClient(player, mc.options.keyJump.isDown());
     }
     public static boolean isRadialMenuActive() {
         return radialActive && !radialLock;

@@ -153,14 +153,14 @@ public class ModConfig {
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.GOLD_INGOT), 100, 0, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.ENDER_PEARL), 100, 0, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.AMULET_VIS_FOUND.get()), 6, 1, 2);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_AMULET_MUNDANE.get()), 10, 0);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), 10, 0);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get()), 10, 0);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), 5, 2);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_AMULET_MUNDANE.get()), 10, 0);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_RING_MUNDANE.get()), 10, 0);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_GIRDLE_MUNDANE.get()), 10, 0);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_RING_APPRENTICE.get()), 5, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.RUNIC_RING_LESSER.get()), 5, 1, 2);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), 5, 1);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), 5, 1);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), 5, 1);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_AMULET_FANCY.get()), 5, 1);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_RING_FANCY.get()), 5, 1);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_GIRDLE_FANCY.get()), 5, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.EXPERIENCE_BOTTLE), 5, 0);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.EXPERIENCE_BOTTLE), 10, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.EXPERIENCE_BOTTLE), 20, 2);
@@ -177,8 +177,8 @@ public class ModConfig {
             ArcaneresearchApi.addLootBagItem(PotionUtils.setPotion(new ItemStack(Items.LINGERING_POTION), potion), 2, 1, 2);
         }
         ItemStack[] commonLoot = {new ItemStack(ModItems.LOOT_BAG_COMMON.get()), new ItemStack(ModItems.THAUMIUM_INGOT.get()), new ItemStack(ModItems.AMBER.get())};
-        ItemStack[] uncommonLoot = {new ItemStack(ModItems.LOOT_BAG_UNCOMMON.get()), new ItemStack(ModItems.BAUBLE_AMULET_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get())};
-        ItemStack[] rareLoot = {new ItemStack(ModItems.LOOT_BAG_RARE.get()), new ItemStack(ModItems.THAUMONOMICON.get()), new ItemStack(ModItems.THAUMIUM_SWORD.get()), new ItemStack(ModItems.THAUMIUM_AXE.get()), new ItemStack(ModItems.THAUMIUM_HOE.get()), new ItemStack(ModItems.THAUMIUM_PICK.get()), new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), new ItemStack(ModItems.AMULET_VIS_FOUND.get()),
+        ItemStack[] uncommonLoot = {new ItemStack(ModItems.LOOT_BAG_UNCOMMON.get()), new ItemStack(ModItems.CURIOS_AMULET_MUNDANE.get()), new ItemStack(ModItems.CURIOS_RING_MUNDANE.get()), new ItemStack(ModItems.CURIOS_GIRDLE_MUNDANE.get())};
+        ItemStack[] rareLoot = {new ItemStack(ModItems.LOOT_BAG_RARE.get()), new ItemStack(ModItems.THAUMONOMICON.get()), new ItemStack(ModItems.THAUMIUM_SWORD.get()), new ItemStack(ModItems.THAUMIUM_AXE.get()), new ItemStack(ModItems.THAUMIUM_HOE.get()), new ItemStack(ModItems.THAUMIUM_PICK.get()), new ItemStack(ModItems.CURIOS_RING_APPRENTICE.get()), new ItemStack(ModItems.CURIOS_AMULET_FANCY.get()), new ItemStack(ModItems.CURIOS_RING_FANCY.get()), new ItemStack(ModItems.CURIOS_GIRDLE_FANCY.get()), new ItemStack(ModItems.AMULET_VIS_FOUND.get()),
                 new ItemStack(ModItems.RUNIC_RING_LESSER.get())};
     }
     public static void modCompatibility() {

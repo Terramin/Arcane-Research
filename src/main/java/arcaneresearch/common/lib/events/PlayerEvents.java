@@ -1,5 +1,7 @@
 package arcaneresearch.common.lib.events;
 
+import arcaneresearch.common.items.curios.CuriosityBandItem;
+import arcaneresearch.common.items.curios.RunicCurioItem;
 import arcaneresearch.message.api.StoryTellingAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -352,7 +354,7 @@ public class PlayerEvents {
         if (orb == null || orb.getValue() <= 1) {
             return;
         }
-        if (!arcaneresearch.common.items.baubles.ItemCuriosityBand.isWearingBand(player)) {
+        if (!CuriosityBandItem.isWearingBand(player)) {
             return;
         }
         int d = orb.getValue() / 2;
@@ -411,8 +413,8 @@ public class PlayerEvents {
         try {
             arcaneresearch.common.lib.compat.CuriosCompat.forEachCuriosItem(player, stack -> {
                 if (!stack.isEmpty()
-                        && stack.getItem() instanceof arcaneresearch.common.items.baubles.ItemRunicBauble bauble) {
-                    switch (bauble.getProc(stack)) {
+                        && stack.getItem() instanceof RunicCurioItem curio) {
+                    switch (curio.getProc(stack)) {
                         case CHARGED -> out[0]++;
                         case KINETIC -> out[1]++;
                         case HEALING -> out[2]++;

@@ -46,7 +46,7 @@ import arcaneresearch.common.entities.monster.mods.ChampionModTainted;
 import arcaneresearch.common.entities.monster.mods.ChampionModifier;
 import arcaneresearch.common.items.armor.ItemBootsTraveller;
 import arcaneresearch.common.items.armor.ItemFortressArmor;
-import arcaneresearch.common.items.baubles.ItemCharmUndying;
+import arcaneresearch.common.items.curios.CharmUndyingItem;
 import arcaneresearch.common.lib.compat.CuriosCompat;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.message.api.StoryTellingAPI;
@@ -421,9 +421,9 @@ public class EntityEvents {
     public static void onLivingDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.level().isClientSide) return;
-        ItemStack charm = ItemCharmUndying.findCharm(player);
+        ItemStack charm = CharmUndyingItem.findCharm(player);
         if (charm == null || charm.isEmpty()) return;
-        ItemCharmUndying.applyUndyingEffect(player, charm);
+        CharmUndyingItem.applyUndyingEffect(player, charm);
         player.level().broadcastEntityEvent(player, (byte) 35);
         event.setCanceled(true);
     }

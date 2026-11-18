@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.baubles;
+package arcaneresearch.common.items.curios;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-public class ItemBauble extends Item implements ICurioItem, IVisDiscountGear, IRunicArmor {
+public class CurioItem extends Item implements ICurioItem, IVisDiscountGear, IRunicArmor {
     private final String variant;
-    private final BaubleSlot slot;
+    private final CurioSlot slot;
     private final int visDiscount;
 
-    public ItemBauble(String variant, BaubleSlot slot, Rarity rarity, int visDiscount) {
+    public CurioItem(String variant, CurioSlot slot, Rarity rarity, int visDiscount) {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(rarity));
@@ -24,40 +24,40 @@ public class ItemBauble extends Item implements ICurioItem, IVisDiscountGear, IR
         this.visDiscount = visDiscount;
     }
 
-    public static ItemBauble amuletMundane() {
-        return new ItemBauble("amulet_mundane", BaubleSlot.AMULET, Rarity.COMMON, 0);
+    public static CurioItem amuletMundane() {
+        return new CurioItem("amulet_mundane", CurioSlot.AMULET, Rarity.COMMON, 0);
     }
 
-    public static ItemBauble ringMundane() {
-        return new ItemBauble("ring_mundane", BaubleSlot.RING, Rarity.COMMON, 0);
+    public static CurioItem ringMundane() {
+        return new CurioItem("ring_mundane", CurioSlot.RING, Rarity.COMMON, 0);
     }
 
-    public static ItemBauble girdleMundane() {
-        return new ItemBauble("girdle_mundane", BaubleSlot.BELT, Rarity.COMMON, 0);
+    public static CurioItem girdleMundane() {
+        return new CurioItem("girdle_mundane", CurioSlot.BELT, Rarity.COMMON, 0);
     }
 
-    public static ItemBauble ringApprentice() {
-        return new ItemBauble("ring_apprentice", BaubleSlot.RING, Rarity.UNCOMMON, 5);
+    public static CurioItem ringApprentice() {
+        return new CurioItem("ring_apprentice", CurioSlot.RING, Rarity.UNCOMMON, 5);
     }
 
-    public static ItemBauble amuletFancy() {
-        return new ItemBauble("amulet_fancy", BaubleSlot.AMULET, Rarity.UNCOMMON, 0);
+    public static CurioItem amuletFancy() {
+        return new CurioItem("amulet_fancy", CurioSlot.AMULET, Rarity.UNCOMMON, 0);
     }
 
-    public static ItemBauble ringFancy() {
-        return new ItemBauble("ring_fancy", BaubleSlot.RING, Rarity.UNCOMMON, 0);
+    public static CurioItem ringFancy() {
+        return new CurioItem("ring_fancy", CurioSlot.RING, Rarity.UNCOMMON, 0);
     }
 
-    public static ItemBauble girdleFancy() {
-        return new ItemBauble("girdle_fancy", BaubleSlot.BELT, Rarity.UNCOMMON, 0);
+    public static CurioItem girdleFancy() {
+        return new CurioItem("girdle_fancy", CurioSlot.BELT, Rarity.UNCOMMON, 0);
     }
 
     @Override
     protected @NotNull String getOrCreateDescriptionId() {
-        return "item.arcaneresearch.baubles." + variant;
+        return "item.arcaneresearch.curios." + variant;
     }
 
-    public BaubleSlot getSlot() {
+    public CurioSlot getSlot() {
         return slot;
     }
 
@@ -85,7 +85,7 @@ public class ItemBauble extends Item implements ICurioItem, IVisDiscountGear, IR
         return 0;
     }
 
-    public enum BaubleSlot {
+    public enum CurioSlot {
         AMULET,
         RING,
         BELT

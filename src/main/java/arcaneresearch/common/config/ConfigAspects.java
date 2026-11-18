@@ -829,7 +829,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.FOCUS_1.get()), new AspectList().add(Aspect.MAGIC, 15).add(Aspect.AURA, 5).add(Aspect.AVERSION, 3));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.AMULET_VIS_FOUND.get()), new AspectList().add(Aspect.AURA, 20).add(Aspect.METAL, 5).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.AMULET_VIS_CRAFTED.get()), new AspectList().add(Aspect.AURA, 20).add(Aspect.METAL, 5).add(Aspect.MAGIC, 5));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), new AspectList().add(Aspect.AURA, 5).add(Aspect.METAL, 5).add(Aspect.MAGIC, 20));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOS_RING_APPRENTICE.get()), new AspectList().add(Aspect.AURA, 5).add(Aspect.METAL, 5).add(Aspect.MAGIC, 20));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CLOUD_RING.get()), new AspectList().add(Aspect.FLIGHT, 15).add(Aspect.AIR, 15).add(Aspect.METAL, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.JAR_NORMAL.get()), new AspectList().add(Aspect.VOID, 10).add(Aspect.CRYSTAL, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.JAR_VOID.get()), new AspectList().add(Aspect.VOID, 20).add(Aspect.CRYSTAL, 5).add(Aspect.DARKNESS, 5));
@@ -960,7 +960,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VERDANT_CHARM.get()), new AspectList().add(Aspect.LIFE, 15).add(Aspect.PLANT, 10).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VERDANT_CHARM_LIFE.get()), new AspectList().add(Aspect.LIFE, 20).add(Aspect.PLANT, 10).add(Aspect.MAGIC, 5).add(Aspect.AURA, 3));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VERDANT_CHARM_SUSTAIN.get()), new AspectList().add(Aspect.LIFE, 10).add(Aspect.PLANT, 5).add(Aspect.DESIRE, 5).add(Aspect.MAGIC, 5));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), new AspectList().add(Aspect.AURA, 5).add(Aspect.METAL, 5).add(Aspect.DESIRE, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOS_RING_FANCY.get()), new AspectList().add(Aspect.AURA, 5).add(Aspect.METAL, 5).add(Aspect.DESIRE, 15));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOSITY_BAND.get()), new AspectList().add(Aspect.MIND, 20).add(Aspect.SENSES, 10).add(Aspect.DESIRE, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VOIDSEER_CHARM.get()), new AspectList().add(Aspect.VOID, 10).add(Aspect.SENSES, 15).add(Aspect.ELDRITCH, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CHARM_UNDYING.get()), new AspectList().add(Aspect.LIFE, 20).add(Aspect.SOUL, 15).add(Aspect.PROTECT, 10).add(Aspect.UNDEAD, 5));

@@ -1,6 +1,6 @@
 package arcaneresearch.common.items.wands;
 
-import arcaneresearch.common.items.baubles.ItemAmuletVis;
+import arcaneresearch.common.items.curios.AmuletVisItem;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
@@ -104,7 +104,7 @@ public class WandManager {
                         for (int i = 0; i < slotHandler.getStacks().getSlots(); i++) {
                             ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
                             if (!worn.isEmpty()
-                                    && worn.getItem() instanceof ItemAmuletVis amulet
+                                    && worn.getItem() instanceof AmuletVisItem amulet
                                     && amulet.consumeAllVis(worn, player, cost, false, true)) {
                                 done[0] = true;
                                 break;
