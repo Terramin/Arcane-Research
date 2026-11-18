@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.curios;
+package arcaneresearch.common.items.misc;
 
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
@@ -31,20 +31,20 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemThaumonomicon extends ItemTC {
+public class ThaumonomiconItem extends ItemTC {
 
     protected final boolean cheat;
     protected final boolean creative;
 
-    public ItemThaumonomicon() {
+    public ThaumonomiconItem() {
         this(false);
     }
 
-    public ItemThaumonomicon(boolean cheat) {
+    public ThaumonomiconItem(boolean cheat) {
         this(cheat, false);
     }
 
-    public ItemThaumonomicon(boolean cheat, boolean creative) {
+    public ThaumonomiconItem(boolean cheat, boolean creative) {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(cheat || creative ? Rarity.EPIC : Rarity.UNCOMMON));

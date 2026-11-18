@@ -16,6 +16,8 @@ import arcaneresearch.common.items.casters.ItemFocus;
 import arcaneresearch.common.items.casters.ItemFocusPouch;
 import arcaneresearch.common.items.consumables.*;
 import arcaneresearch.common.items.curios.*;
+import arcaneresearch.common.items.misc.*;
+import arcaneresearch.common.items.resources.*;
 import arcaneresearch.common.items.misc.ItemCreativeFluxSponge;
 import arcaneresearch.common.items.misc.ItemCrimsonRites;
 import arcaneresearch.common.items.misc.ItemPortalScroll;
@@ -33,13 +35,13 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, Arcaneresearch.MODID);
     public static final RegistryObject<Item> THAUMONOMICON = ITEMS.register("thaumonomicon",
-            ItemThaumonomicon::new);
+            ThaumonomiconItem::new);
     public static final RegistryObject<Item> THAUMONOMICON_CHEAT = ITEMS.register("thaumonomicon_cheat",
-            () -> new ItemThaumonomicon(true));
+            () -> new ThaumonomiconItem(true));
     public static final RegistryObject<Item> THAUMONOMICON_CREATIVE = ITEMS.register("thaumonomicon_creative",
-            () -> new ItemThaumonomicon(false, true));
+            () -> new ThaumonomiconItem(false, true));
     public static final RegistryObject<Item> THAUMONOMICON_WRITTEN = ITEMS.register("thaumonomicon_written",
-            ItemThaumonomiconWritten::new);
+            ThaumonomiconWrittenItem::new);
     public static final RegistryObject<Item> CRIMSON_RITES = ITEMS.register("crimson_rites",
             ItemCrimsonRites::new);
     public static final RegistryObject<Item> ELDRITCH_OBELISK_PLACER = ITEMS.register("eldritch_obelisk_placer",
@@ -151,7 +153,7 @@ public class ModItems {
     public static final RegistryObject<Item> CURIO_RITES = ITEMS.register("curio_rites",
             () -> new KnowledgeCurioItem("rites"));
     public static final RegistryObject<Item> PRIMORDIAL_PEARL = ITEMS.register("primordial_pearl",
-            ItemPrimordialPearl::new);
+            arcaneresearch.common.items.resources.PrimordialPearlItem::new);
     public static final RegistryObject<Item> ELDRITCH_EYE = ITEMS.register("eldritch_eye",
             arcaneresearch.common.items.resources.EldritchEyeItem::new);
     public static final RegistryObject<Item> TAINT_SLIME = ITEMS.register("taint_slime",
@@ -316,7 +318,7 @@ public class ModItems {
     public static final RegistryObject<Item> RUNIC_GIRDLE_KINETIC = ITEMS.register("runic_girdle_kinetic",
             RunicCurioItem::girdleKinetic);
     public static final RegistryObject<Item> ENCHANTED_PLACEHOLDER = ITEMS.register("enchanted_placeholder",
-            arcaneresearch.common.items.curios.ItemEnchantmentPlaceholder::new);
+            EnchantmentPlaceholderItem::new);
     public static final RegistryObject<Item> ELEMENTAL_PICK = ITEMS.register("elemental_pick",
             ElementalPickaxeItem::new);
     public static final RegistryObject<Item> ELEMENTAL_AXE = ITEMS.register("elemental_axe",
@@ -372,39 +374,39 @@ public class ModItems {
     public static final RegistryObject<Item> LABEL_FILLED = ITEMS.register("label_filled",
             ItemLabel::createFilled);
     public static final RegistryObject<Item> LOOT_BAG_COMMON = ITEMS.register("loot_bag_common",
-            ItemLootBag::createCommon);
+            LootBagItem::createCommon);
     public static final RegistryObject<Item> LOOT_BAG_UNCOMMON = ITEMS.register("loot_bag_uncommon",
-            ItemLootBag::createUncommon);
+            LootBagItem::createUncommon);
     public static final RegistryObject<Item> LOOT_BAG_RARE = ITEMS.register("loot_bag_rare",
-            ItemLootBag::createRare);
+            LootBagItem::createRare);
     public static final RegistryObject<Item> PECH_WAND = ITEMS.register("pech_wand",
-            ItemPechWand::new);
+            arcaneresearch.common.items.wands.PechWandItem::new);
     public static final RegistryObject<Item> CELESTIAL_NOTES_SUN = ITEMS.register("celestial_notes_sun",
-            ItemCelestialNotes::createSun);
+            CelestialNotesItem::createSun);
     public static final RegistryObject<Item> CELESTIAL_NOTES_STARS_1 = ITEMS.register("celestial_notes_stars_1",
-            ItemCelestialNotes::createStars1);
+            CelestialNotesItem::createStars1);
     public static final RegistryObject<Item> CELESTIAL_NOTES_STARS_2 = ITEMS.register("celestial_notes_stars_2",
-            ItemCelestialNotes::createStars2);
+            CelestialNotesItem::createStars2);
     public static final RegistryObject<Item> CELESTIAL_NOTES_STARS_3 = ITEMS.register("celestial_notes_stars_3",
-            ItemCelestialNotes::createStars3);
+            CelestialNotesItem::createStars3);
     public static final RegistryObject<Item> CELESTIAL_NOTES_STARS_4 = ITEMS.register("celestial_notes_stars_4",
-            ItemCelestialNotes::createStars4);
+            CelestialNotesItem::createStars4);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_1 = ITEMS.register("celestial_notes_moon_1",
-            ItemCelestialNotes::createMoon1);
+            CelestialNotesItem::createMoon1);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_2 = ITEMS.register("celestial_notes_moon_2",
-            ItemCelestialNotes::createMoon2);
+            CelestialNotesItem::createMoon2);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_3 = ITEMS.register("celestial_notes_moon_3",
-            ItemCelestialNotes::createMoon3);
+            CelestialNotesItem::createMoon3);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_4 = ITEMS.register("celestial_notes_moon_4",
-            ItemCelestialNotes::createMoon4);
+            CelestialNotesItem::createMoon4);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_5 = ITEMS.register("celestial_notes_moon_5",
-            ItemCelestialNotes::createMoon5);
+            CelestialNotesItem::createMoon5);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_6 = ITEMS.register("celestial_notes_moon_6",
-            ItemCelestialNotes::createMoon6);
+            CelestialNotesItem::createMoon6);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_7 = ITEMS.register("celestial_notes_moon_7",
-            ItemCelestialNotes::createMoon7);
+            CelestialNotesItem::createMoon7);
     public static final RegistryObject<Item> CELESTIAL_NOTES_MOON_8 = ITEMS.register("celestial_notes_moon_8",
-            ItemCelestialNotes::createMoon8);
+            CelestialNotesItem::createMoon8);
     public static final RegistryObject<Item> FOCUS_POUCH = ITEMS.register("focus_pouch",
             ItemFocusPouch::new);
     public static final RegistryObject<Item> GOLEM_PLACER = ITEMS.register("golem_placer",

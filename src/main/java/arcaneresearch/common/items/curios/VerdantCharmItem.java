@@ -15,18 +15,15 @@ import arcaneresearch.api.items.RechargeHelper;
 import arcaneresearch.init.ModEffects;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
-
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class VerdantCharmItem extends Item implements ICurioItem, IRechargable {
+public class VerdantCharmItem extends EquippableCurioItem implements IRechargable {
     private final CharmType type;
 
     public VerdantCharmItem(CharmType type) {
         super(new Item.Properties()
-                .stacksTo(1)
-                .rarity(Rarity.RARE));
+                .rarity(Rarity.RARE), CurioSlot.CHARM);
         this.type = type;
     }
 
@@ -48,16 +45,6 @@ public class VerdantCharmItem extends Item implements ICurioItem, IRechargable {
         if (entity instanceof Player player && !player.level().isClientSide()) {
             tickWorn(player, stack);
         }
-    }
-
-    @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return slotContext.identifier().equals("charm");
-    }
-
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return true;
     }
 
     public void tickWorn(Player player, ItemStack stack) {

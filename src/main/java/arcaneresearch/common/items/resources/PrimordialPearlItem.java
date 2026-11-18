@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.curios;
+package arcaneresearch.common.items.resources;
 
 import arcaneresearch.common.items.ItemTCBase;
 import net.minecraft.network.chat.Component;
@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemPrimordialPearl extends ItemTCBase {
+public class PrimordialPearlItem extends ItemTCBase {
 
     public static final int MAX_DAMAGE = 8;
     private static final int MAX_USE_DAMAGE = MAX_DAMAGE - 1;
 
-    public ItemPrimordialPearl() {
+    public PrimordialPearlItem() {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(Rarity.EPIC)
@@ -47,11 +47,6 @@ public class ItemPrimordialPearl extends ItemTCBase {
             default -> "pearl";
         };
         return Component.translatable(this.getDescriptionId(stack) + "." + suffix);
-    }
-
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
     }
 
     @Override

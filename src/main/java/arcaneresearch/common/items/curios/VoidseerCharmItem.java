@@ -19,21 +19,10 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class VoidseerCharmItem extends Item implements ICurioItem, IVisDiscountGear, IWarpingGear {
+public class VoidseerCharmItem extends EquippableCurioItem implements IVisDiscountGear, IWarpingGear {
     public VoidseerCharmItem() {
         super(new Item.Properties()
-                .stacksTo(1)
-                .rarity(Rarity.RARE));
-    }
-
-    @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return slotContext.identifier().equals("charm");
-    }
-
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return true;
+                .rarity(Rarity.RARE), CurioSlot.CHARM);
     }
 
     @Override

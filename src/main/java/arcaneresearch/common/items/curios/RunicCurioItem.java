@@ -2,11 +2,9 @@ package arcaneresearch.common.items.curios;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import arcaneresearch.api.items.IRunicArmor;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.SlotContext;
 
-public class RunicCurioItem extends CurioItem implements IRunicArmor {
+public class RunicCurioItem extends CurioItem {
     public enum Proc {
         NONE,
         CHARGED,
@@ -72,11 +70,6 @@ public class RunicCurioItem extends CurioItem implements IRunicArmor {
     public static RunicCurioItem girdleKinetic() {
         return new RunicCurioItem("runic_girdle_kinetic", CurioSlot.BELT, Rarity.RARE, 9,
                 Proc.KINETIC);
-    }
-
-    @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return super.canEquip(slotContext, stack);
     }
 
     public static boolean isRunicCurio(ItemStack stack) {

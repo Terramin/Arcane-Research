@@ -1,22 +1,22 @@
 package arcaneresearch.common.items.curios;
 
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import arcaneresearch.common.lib.compat.CuriosCompat;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import java.util.List;
 
-public class CharmUndyingItem extends Item implements ICurioItem {
+public class CharmUndyingItem extends EquippableCurioItem {
     public CharmUndyingItem() {
         super(new Item.Properties()
-                .stacksTo(1)
-                .rarity(Rarity.RARE));
+                .rarity(Rarity.RARE), CurioSlot.CHARM);
     }
 
-    public static ItemStack findCharm(net.minecraft.world.entity.player.Player player) {
+    public static ItemStack findCharm(Player player) {
         List<ItemStack> curiosCharms = CuriosCompat.findCuriosItems(player,
                 s -> !s.isEmpty() && s.getItem() instanceof CharmUndyingItem);
         if (!curiosCharms.isEmpty()) {
@@ -34,23 +34,14 @@ public class CharmUndyingItem extends Item implements ICurioItem {
         return null;
     }
 
-    public static void applyUndyingEffect(net.minecraft.world.entity.player.Player player, ItemStack charm) {
+    public static void applyUndyingEffect(Player player, ItemStack charm) {
         player.setHealth(1.0f);
         player.removeAllEffects();
-        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                net.minecraft.world.effect.MobEffects.REGENERATION, 900, 1));
-        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                net.minecraft.world.effect.MobEffects.ABSORPTION, 100, 1));
+        player.addEffect(new MobEffectInstance(
+                MobEffects.REGENERATION, 900, 1));
+        player.addEffect(new MobEffectInstance(
+                MobEffects.ABSORPTION, 100, 1));
         charm.shrink(1);
     }
 
-    @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return slotContext.identifier().equals("charm");
-    }
-
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return true;
-    }
 }

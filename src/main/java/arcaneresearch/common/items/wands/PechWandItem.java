@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.curios;
+package arcaneresearch.common.items.wands;
 
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
@@ -29,9 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemPechWand extends Item {
+public class PechWandItem extends Item {
 
-    public ItemPechWand() {
+    public PechWandItem() {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));

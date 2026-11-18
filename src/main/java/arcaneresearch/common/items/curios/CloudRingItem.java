@@ -1,4 +1,5 @@
 package arcaneresearch.common.items.curios;
+
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -16,17 +17,14 @@ import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.playerdata.PacketPlayerFlagToServer;
 import arcaneresearch.init.ModSounds;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class CloudRingItem extends Item implements ICurioItem {
+public class CloudRingItem extends EquippableCurioItem {
     private static final HashMap<String, Boolean> jumpList = new HashMap<>();
     public CloudRingItem() {
         super(new Item.Properties()
-                .stacksTo(1)
-                .rarity(Rarity.RARE));
+                .rarity(Rarity.RARE), CurioSlot.RING);
     }
     @OnlyIn(Dist.CLIENT)
     public static void tickClient(Player player, boolean spacePressed) {
@@ -63,13 +61,5 @@ public class CloudRingItem extends Item implements ICurioItem {
         if (player.onGround()) {
             jumpList.remove(name);
         }
-    }
-    @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return slotContext.identifier().equals("ring");
-    }
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return true;
     }
 }

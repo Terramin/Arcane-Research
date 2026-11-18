@@ -1,8 +1,9 @@
-package arcaneresearch.common.items.curios;
+package arcaneresearch.common.items.misc;
 
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.common.items.ItemTC;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -23,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemThaumonomiconWritten extends ItemTC {
+public class ThaumonomiconWrittenItem extends ItemTC {
 
     private static final String TAG_STORED = "StoredKnowledge";
     private static final String TAG_OWNER = "Owner";
 
-    public ItemThaumonomiconWritten() {
+    public ThaumonomiconWrittenItem() {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(Rarity.EPIC));
@@ -43,7 +44,7 @@ public class ItemThaumonomiconWritten extends ItemTC {
         ItemStack stack = player.getItemInHand(hand);
 
         if (level.isClientSide) {
-            SoundEvent page = arcaneresearch.init.ModSounds.PAGE.get();
+            SoundEvent page = ModSounds.PAGE.get();
             level.playLocalSound(
                     player.getX(),
                     player.getY(),

@@ -32,7 +32,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.common.items.curios.ItemPechWand;
+import arcaneresearch.common.items.wands.PechWandItem;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.init.ModEntities;
 import arcaneresearch.init.ModItems;
@@ -106,7 +106,7 @@ public class EntityPech extends Monster implements RangedAttackMob {
     }
     public static boolean isPechWand(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return false;
-        if (stack.getItem() instanceof ItemPechWand) return true;
+        if (stack.getItem() instanceof PechWandItem) return true;
         return ModItems.PECH_WAND != null && stack.is(ModItems.PECH_WAND.get());
     }
     public static void addValuedItem(net.minecraft.world.item.Item item, int value) {

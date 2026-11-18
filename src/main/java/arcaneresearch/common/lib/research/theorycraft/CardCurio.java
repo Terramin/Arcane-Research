@@ -1,6 +1,6 @@
 package arcaneresearch.common.lib.research.theorycraft;
 
-import arcaneresearch.common.items.curios.KnowledgeCurioItem;
+import arcaneresearch.common.items.consumables.KnowledgeCurioItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;

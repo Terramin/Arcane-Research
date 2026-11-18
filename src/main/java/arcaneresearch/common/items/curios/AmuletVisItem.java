@@ -15,19 +15,16 @@ import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.wands.IWand;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
-
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class AmuletVisItem extends Item implements ICurioItem, IRunicArmor {
+public class AmuletVisItem extends EquippableCurioItem implements IRunicArmor {
     private final boolean isCrafted;
 
     public AmuletVisItem(boolean crafted) {
         super(new Item.Properties()
-                .stacksTo(1)
-                .rarity(crafted ? Rarity.RARE : Rarity.UNCOMMON));
+                .rarity(crafted ? Rarity.RARE : Rarity.UNCOMMON), CurioSlot.AMULET);
         this.isCrafted = crafted;
     }
 
@@ -50,16 +47,6 @@ public class AmuletVisItem extends Item implements ICurioItem, IRunicArmor {
         if (entity instanceof Player player && !player.level().isClientSide()) {
             tickWorn(player, stack);
         }
-    }
-
-    @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return slotContext.identifier().equals("necklace");
-    }
-
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return true;
     }
 
     public void tickWorn(Player player, ItemStack stack) {

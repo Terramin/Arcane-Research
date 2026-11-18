@@ -7,18 +7,14 @@ import net.minecraft.world.item.Rarity;
 import arcaneresearch.api.items.IRunicArmor;
 import arcaneresearch.api.items.IVisDiscountGear;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-public class CurioItem extends Item implements ICurioItem, IVisDiscountGear, IRunicArmor {
+public class CurioItem extends EquippableCurioItem implements IVisDiscountGear, IRunicArmor {
     private final String variant;
     private final CurioSlot slot;
     private final int visDiscount;
 
     public CurioItem(String variant, CurioSlot slot, Rarity rarity, int visDiscount) {
-        super(new Properties()
-                .stacksTo(1)
-                .rarity(rarity));
+        super(new Item.Properties().rarity(rarity), slot);
         this.variant = variant;
         this.slot = slot;
         this.visDiscount = visDiscount;
@@ -62,20 +58,6 @@ public class CurioItem extends Item implements ICurioItem, IVisDiscountGear, IRu
     }
 
     @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return switch (slot) {
-            case AMULET -> slotContext.identifier().equals("necklace");
-            case RING -> slotContext.identifier().equals("ring");
-            case BELT -> slotContext.identifier().equals("belt");
-        };
-    }
-
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return true;
-    }
-
-    @Override
     public int getVisDiscount(ItemStack stack, Player player) {
         return visDiscount;
     }
@@ -85,9 +67,4 @@ public class CurioItem extends Item implements ICurioItem, IVisDiscountGear, IRu
         return 0;
     }
 
-    public enum CurioSlot {
-        AMULET,
-        RING,
-        BELT
-    }
 }

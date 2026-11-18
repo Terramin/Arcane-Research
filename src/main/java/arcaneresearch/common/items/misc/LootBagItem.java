@@ -1,6 +1,7 @@
-package arcaneresearch.common.items.curios;
+package arcaneresearch.common.items.misc;
 
 import arcaneresearch.init.ModSounds;
+import arcaneresearch.common.lib.utils.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
@@ -21,27 +22,27 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class ItemLootBag extends Item {
+public class LootBagItem extends Item {
 
     private final LootTier tier;
 
-    public ItemLootBag(LootTier tier) {
+    public LootBagItem(LootTier tier) {
         super(new Item.Properties()
                 .stacksTo(16)
                 .rarity(Objects.requireNonNull(tier, "tier").getRarity()));
         this.tier = tier;
     }
 
-    public static ItemLootBag createCommon() {
-        return new ItemLootBag(LootTier.COMMON);
+    public static LootBagItem createCommon() {
+        return new LootBagItem(LootTier.COMMON);
     }
 
-    public static ItemLootBag createUncommon() {
-        return new ItemLootBag(LootTier.UNCOMMON);
+    public static LootBagItem createUncommon() {
+        return new LootBagItem(LootTier.UNCOMMON);
     }
 
-    public static ItemLootBag createRare() {
-        return new ItemLootBag(LootTier.RARE);
+    public static LootBagItem createRare() {
+        return new LootBagItem(LootTier.RARE);
     }
 
     public LootTier getTier() {
@@ -80,7 +81,7 @@ public class ItemLootBag extends Item {
     }
 
     private ItemStack generateLoot(Level level, LootTier tier) {
-        return arcaneresearch.common.lib.utils.Utils.generateLoot(tier.ordinal(), level.random);
+        return Utils.generateLoot(tier.ordinal(), level.random);
     }
 
     @Override

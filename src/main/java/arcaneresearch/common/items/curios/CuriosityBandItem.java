@@ -1,21 +1,21 @@
 package arcaneresearch.common.items.curios;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.capability.ICurioItem;
+import arcaneresearch.common.lib.compat.CuriosCompat;
+import arcaneresearch.init.ModItems;
 
-public class CuriosityBandItem extends Item implements ICurioItem {
+public class CuriosityBandItem extends EquippableCurioItem {
     public CuriosityBandItem() {
         super(new Item.Properties()
-                .stacksTo(1)
-                .rarity(Rarity.RARE));
+                .rarity(Rarity.RARE), CurioSlot.HEAD);
     }
 
-    public static boolean isWearingBand(net.minecraft.world.entity.player.Player player) {
-        if (arcaneresearch.common.lib.compat.CuriosCompat.isCuriosLoaded() && !arcaneresearch.common.lib.compat.CuriosCompat.findCuriosItems(player,
-                s -> !s.isEmpty() && s.getItem() == arcaneresearch.init.ModItems.CURIOSITY_BAND.get()).isEmpty()) {
+    public static boolean isWearingBand(Player player) {
+        if (CuriosCompat.isCuriosLoaded() && !CuriosCompat.findCuriosItems(player,
+                s -> !s.isEmpty() && s.getItem() == ModItems.CURIOSITY_BAND.get()).isEmpty()) {
             return true;
         }
         for (ItemStack stack : player.getInventory().items) {
@@ -26,13 +26,4 @@ public class CuriosityBandItem extends Item implements ICurioItem {
         return false;
     }
 
-    @Override
-    public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-        return slotContext.identifier().equals("head");
-    }
-
-    @Override
-    public boolean canEquipFromUse(SlotContext slotContext, ItemStack stack) {
-        return true;
-    }
 }

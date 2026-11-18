@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.curios;
+package arcaneresearch.common.items.misc;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -14,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemEnchantmentPlaceholder extends Item {
+public class EnchantmentPlaceholderItem extends Item {
 
     private static final Style TOOLTIP_STYLE = Style.EMPTY
             .withItalic(true)
             .withColor(ChatFormatting.DARK_AQUA);
 
-    public ItemEnchantmentPlaceholder() {
+    public EnchantmentPlaceholderItem() {
         super(new Properties()
                 .stacksTo(1)
                 .rarity(Rarity.RARE));

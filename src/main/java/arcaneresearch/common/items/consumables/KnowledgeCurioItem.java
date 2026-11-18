@@ -1,4 +1,4 @@
-package arcaneresearch.common.items.curios;
+package arcaneresearch.common.items.consumables;
 
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
