@@ -8,20 +8,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import arcaneresearch.common.items.tools.ItemElementalSword;
+import arcaneresearch.common.items.tools.elemental.ElementalSwordItem;
 @OnlyIn(Dist.CLIENT)
 public final class SwordBlockAnimation {
     public static final IClientItemExtensions HAND_EXTENSION = new IClientItemExtensions() {
         @Override
         public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm,
                                                ItemStack stack, float partialTick, float equipProgress, float swingProgress) {
-            if (stack.isEmpty() || !(stack.getItem() instanceof ItemElementalSword)) {
+            if (stack.isEmpty() || !(stack.getItem() instanceof ElementalSwordItem)) {
                 return false;
             }
             InteractionHand hand = arm == player.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
             ItemStack useStack = player.getUseItem();
             boolean using = player.isUsingItem() && !useStack.isEmpty()
-                    && useStack.getItem() instanceof ItemElementalSword
+                    && useStack.getItem() instanceof ElementalSwordItem
                     && player.getUsedItemHand() == hand && player.getUseItemRemainingTicks() > 0;
             if (!using) {
                 return false;

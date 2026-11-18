@@ -1,13 +1,13 @@
-package arcaneresearch.common.items.tools;
+package arcaneresearch.common.items.tools.elemental;
 
 import arcaneresearch.api.ArcaneresearchMaterials;
 import arcaneresearch.api.items.IArchitect;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.common.lib.utils.Utils;
-import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
@@ -26,20 +26,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class ItemElementalShovel extends ShovelItem implements IArchitect {
-    public ItemElementalShovel() {
+public class ElementalShovelItem extends ShovelItem implements IArchitect, ElementalTool {
+    public ElementalShovelItem() {
         super(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 1.5F, -3.0F,
-                new Item.Properties().rarity(Rarity.RARE));
+                ElementalTool.createProperties());
     }
 
     public static byte getOrientation(ItemStack stack) {
-        if (stack.hasTag()) {
-            assert stack.getTag() != null;
-            if (stack.getTag().contains("or")) {
-                return stack.getTag().getByte("or");
-            }
-        }
-        return 0;
+        CompoundTag tag = stack.getTag();
+        return tag != null && tag.contains("or") ? tag.getByte("or") : 0;
     }
 
     public static void setOrientation(ItemStack stack, byte orientation) {
@@ -124,7 +119,7 @@ public class ItemElementalShovel extends ShovelItem implements IArchitect {
 
     @Override
     public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
-        return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
+        return ElementalTool.canRepair(repair) || super.isValidRepairItem(toRepair, repair);
     }
 
     @Override

@@ -1,9 +1,9 @@
-package arcaneresearch.common.items.tools;
+package arcaneresearch.common.items.tools.elemental;
 
 import arcaneresearch.api.ArcaneresearchMaterials;
 import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.client.renderers.item.SwordBlockAnimation;
 import arcaneresearch.common.lib.utils.EntityUtils;
-import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,19 +19,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-public class ItemElementalSword extends SwordItem {
-    public ItemElementalSword() {
+public class ElementalSwordItem extends SwordItem implements ElementalTool {
+    public ElementalSwordItem() {
         super(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 3, -2.4F,
-                new Item.Properties().rarity(Rarity.RARE));
+                ElementalTool.createProperties());
     }
 
     @Override
     public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
-        return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
+        return ElementalTool.canRepair(repair) || super.isValidRepairItem(toRepair, repair);
     }
 
     @Override
@@ -41,8 +43,8 @@ public class ItemElementalSword extends SwordItem {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
-        consumer.accept(arcaneresearch.client.renderers.item.SwordBlockAnimation.HAND_EXTENSION);
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(SwordBlockAnimation.HAND_EXTENSION);
     }
 
     @Override
@@ -82,11 +84,10 @@ public class ItemElementalSword extends SwordItem {
         List<Entity> targets = level.getEntities(user, user.getBoundingBox().inflate(2.5D));
         if (!targets.isEmpty()) {
             for (Entity entity : targets) {
-                if (!(entity instanceof Player) && entity instanceof LivingEntity
-                        && !entity.isRemoved()
-                        && (user.getVehicle() == null || user.getVehicle() != entity)) {
+                if (entity instanceof LivingEntity living && !(entity instanceof Player)
+                        && !living.isRemoved() && user.getVehicle() != entity) {
                     Vec3 p = user.position();
-                    Vec3 t = entity.position();
+                    Vec3 t = living.position();
                     double distance = p.distanceTo(t) + 0.1D;
                     Vec3 r = t.subtract(p);
                     entity.setDeltaMovement(entity.getDeltaMovement().add(

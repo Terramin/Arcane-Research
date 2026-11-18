@@ -1,5 +1,4 @@
 package arcaneresearch.init;
-import arcaneresearch.common.items.resources.EldritchEyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -28,6 +27,7 @@ import arcaneresearch.common.items.resources.ItemTallow;
 import arcaneresearch.common.items.resources.ItemVisneriteIngot;
 import arcaneresearch.common.items.resources.ItemVisneriteScrap;
 import arcaneresearch.common.items.tools.*;
+import arcaneresearch.common.items.tools.elemental.*;
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, Arcaneresearch.MODID);
@@ -317,19 +317,19 @@ public class ModItems {
     public static final RegistryObject<Item> ENCHANTED_PLACEHOLDER = ITEMS.register("enchanted_placeholder",
             arcaneresearch.common.items.curios.ItemEnchantmentPlaceholder::new);
     public static final RegistryObject<Item> ELEMENTAL_PICK = ITEMS.register("elemental_pick",
-            ItemElementalPickaxe::new);
+            ElementalPickaxeItem::new);
     public static final RegistryObject<Item> ELEMENTAL_AXE = ITEMS.register("elemental_axe",
-            ItemElementalAxe::new);
+            ElementalAxeItem::new);
     public static final RegistryObject<Item> ELEMENTAL_SWORD = ITEMS.register("elemental_sword",
-            ItemElementalSword::new);
+            ElementalSwordItem::new);
     public static final RegistryObject<Item> ELEMENTAL_SHOVEL = ITEMS.register("elemental_shovel",
-            ItemElementalShovel::new);
+            ElementalShovelItem::new);
     public static final RegistryObject<Item> PRIMAL_CRUSHER = ITEMS.register("primal_crusher",
             ItemPrimalCrusher::new);
     public static final RegistryObject<Item> CRIMSON_BLADE = ITEMS.register("crimson_blade",
             ItemCrimsonBlade::new);
     public static final RegistryObject<Item> ELEMENTAL_HOE = ITEMS.register("elemental_hoe",
-            ItemElementalHoe::new);
+            ElementalHoeItem::new);
     public static final RegistryObject<Item> RESONATOR = ITEMS.register("resonator",
             ItemResonator::new);
     public static final RegistryObject<Item> SANITY_CHECKER = ITEMS.register("sanity_checker",

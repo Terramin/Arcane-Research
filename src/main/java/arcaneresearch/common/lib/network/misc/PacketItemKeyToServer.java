@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.casters.ICaster;
 import arcaneresearch.common.items.casters.CasterManager;
-import arcaneresearch.common.items.tools.ItemElementalShovel;
+import arcaneresearch.common.items.tools.elemental.ElementalShovelItem;
 
 import java.util.function.Supplier;
 
@@ -53,9 +53,9 @@ public class PacketItemKeyToServer {
                     toggleMisc(mainHand, player, packet.modifier);
                     handled = true;
                 }
-                if (packet.key == 1 && mainHand.getItem() instanceof ItemElementalShovel) {
-                    byte orientation = ItemElementalShovel.getOrientation(mainHand);
-                    ItemElementalShovel.setOrientation(mainHand, (byte) (orientation + 1));
+                if (packet.key == 1 && mainHand.getItem() instanceof ElementalShovelItem) {
+                    byte orientation = ElementalShovelItem.getOrientation(mainHand);
+                    ElementalShovelItem.setOrientation(mainHand, (byte) (orientation + 1));
                     handled = true;
                 }
             }

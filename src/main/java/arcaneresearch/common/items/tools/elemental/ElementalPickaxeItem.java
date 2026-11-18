@@ -1,25 +1,22 @@
-package arcaneresearch.common.items.tools;
+package arcaneresearch.common.items.tools.elemental;
 
 import arcaneresearch.api.ArcaneresearchMaterials;
-import arcaneresearch.init.ModItems;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemElementalPickaxe extends PickaxeItem {
-    public ItemElementalPickaxe() {
+public class ElementalPickaxeItem extends PickaxeItem implements ElementalTool {
+    public ElementalPickaxeItem() {
         super(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 1, -2.8F,
-                new Item.Properties().rarity(Rarity.RARE));
+                ElementalTool.createProperties());
     }
 
     @Override
     public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
-        return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
+        return ElementalTool.canRepair(repair) || super.isValidRepairItem(toRepair, repair);
     }
 
     @Override
@@ -32,9 +29,6 @@ public class ItemElementalPickaxe extends PickaxeItem {
     }
 
     private boolean isPvPEnabled(Level level) {
-        if (level.getServer() != null) {
-            return level.getServer().isPvpAllowed();
-        }
-        return true;
+        return level.getServer() == null || level.getServer().isPvpAllowed();
     }
 }

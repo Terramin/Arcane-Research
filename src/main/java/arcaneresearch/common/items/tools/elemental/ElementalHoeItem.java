@@ -1,17 +1,14 @@
-package arcaneresearch.common.items.tools;
+package arcaneresearch.common.items.tools.elemental;
 
 import arcaneresearch.api.ArcaneresearchMaterials;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.lib.utils.Utils;
-import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -19,15 +16,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemElementalHoe extends HoeItem {
-    public ItemElementalHoe() {
+public class ElementalHoeItem extends HoeItem implements ElementalTool {
+    public ElementalHoeItem() {
         super(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, -3, 0.0F,
-                new Item.Properties().rarity(Rarity.RARE).stacksTo(5));
+                ElementalTool.createProperties().stacksTo(5));
     }
 
     @Override
     public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
-        return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
+        return ElementalTool.canRepair(repair) || super.isValidRepairItem(toRepair, repair);
     }
 
     @Override
