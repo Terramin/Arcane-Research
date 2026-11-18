@@ -1,14 +1,17 @@
 package arcaneresearch.api.aspects;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.text.WordUtils;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.api.research.ScanAspect;
+
 public class Aspect {
     private String tag;
     private Aspect[] components;
@@ -18,6 +21,7 @@ public class Aspect {
     private int blend;
     public static HashMap<Integer, Aspect> mixList = new HashMap<>();
     public static LinkedHashMap<String, Aspect> aspects = new LinkedHashMap<>();
+
     public Aspect(String tag, int color, Aspect[] components, ResourceLocation image, int blend) {
         if (aspects.containsKey(tag)) {
             throw new IllegalArgumentException(tag + " already registered!");
@@ -34,55 +38,72 @@ public class Aspect {
             mixList.put(h, this);
         }
     }
+
     public Aspect(String tag, int color, Aspect[] components) {
         this(tag, color, components,
                 ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/" + tag.toLowerCase() + ".png"), 1);
     }
+
     public Aspect(String tag, int color, Aspect[] components, int blend) {
         this(tag, color, components,
                 ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/aspects/" + tag.toLowerCase() + ".png"), blend);
     }
+
     public Aspect(String tag, int color, String chatcolor, int blend) {
         this(tag, color, (Aspect[]) null, blend);
         setChatcolor(chatcolor);
     }
+
     public int getColor() {
         return color;
     }
+
     public String getName() {
         return WordUtils.capitalizeFully(tag);
     }
+
     public String getLocalizedDescription() {
         return Component.translatable("tc.aspect." + tag).getString();
     }
+
     public String getTag() {
         return tag;
     }
+
     public void setTag(String tag) {
         this.tag = tag;
     }
+
     public Aspect[] getComponents() {
         return components;
     }
+
     public void setComponents(Aspect[] components) {
         this.components = components;
     }
+
     public ResourceLocation getImage() {
         return image;
     }
+
     public static Aspect getAspect(String tag) {
         return aspects.get(tag);
     }
+
     public int getBlend() {
         return blend;
     }
+
     public void setBlend(int blend) {
         this.blend = blend;
     }
+
     public boolean isPrimal() {
         return getComponents() == null || getComponents().length != 2;
     }
+
     private static ArrayList<Aspect> primals = new ArrayList<>();
+
     public static ArrayList<Aspect> getPrimalAspects() {
         if (primals.isEmpty()) {
             Collection<Aspect> pa = aspects.values();
@@ -94,7 +115,9 @@ public class Aspect {
         }
         return primals;
     }
+
     private static ArrayList<Aspect> compounds = new ArrayList<>();
+
     public static ArrayList<Aspect> getCompoundAspects() {
         if (compounds.isEmpty()) {
             Collection<Aspect> pa = aspects.values();
@@ -106,12 +129,15 @@ public class Aspect {
         }
         return compounds;
     }
+
     public String getChatcolor() {
         return chatcolor;
     }
+
     public void setChatcolor(String chatcolor) {
         this.chatcolor = chatcolor;
     }
+
     public static final Aspect AIR = new Aspect("aer", 0xffff7e, "e", 1);
     public static final Aspect EARTH = new Aspect("terra", 0x56c000, "2", 1);
     public static final Aspect FIRE = new Aspect("ignis", 0xff5a01, "c", 1);

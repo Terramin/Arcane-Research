@@ -1,13 +1,17 @@
 package arcaneresearch.api.aspects;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
+
 public class AspectList implements Serializable {
     private static final long serialVersionUID = 1L;
     public LinkedHashMap<Aspect, Integer> aspects = new LinkedHashMap<>();
+
     public AspectList(ItemStack stack) {
         try {
             AspectList temp = AspectHelper.getObjectAspects(stack);
@@ -19,8 +23,10 @@ public class AspectList implements Serializable {
         } catch (Exception e) {
         }
     }
+
     public AspectList() {
     }
+
     public AspectList copy() {
         AspectList out = new AspectList();
         for (Aspect a : getAspects()) {
@@ -28,9 +34,11 @@ public class AspectList implements Serializable {
         }
         return out;
     }
+
     public int size() {
         return aspects.size();
     }
+
     public int visSize() {
         int q = 0;
         for (Aspect as : aspects.keySet()) {
@@ -38,9 +46,11 @@ public class AspectList implements Serializable {
         }
         return q;
     }
+
     public Aspect[] getAspects() {
         return aspects.keySet().toArray(new Aspect[0]);
     }
+
     public Aspect[] getAspectsSortedByName() {
         try {
             Aspect[] out = aspects.keySet().toArray(new Aspect[0]);
@@ -63,6 +73,7 @@ public class AspectList implements Serializable {
             return getAspects();
         }
     }
+
     public Aspect[] getAspectsSortedByAmount() {
         try {
             Aspect[] out = aspects.keySet().toArray(new Aspect[0]);
@@ -87,9 +98,11 @@ public class AspectList implements Serializable {
             return getAspects();
         }
     }
+
     public int getAmount(Aspect key) {
         return aspects.get(key) == null ? 0 : aspects.get(key);
     }
+
     public boolean reduce(Aspect key, int amount) {
         if (getAmount(key) >= amount) {
             int am = getAmount(key) - amount;
@@ -98,6 +111,7 @@ public class AspectList implements Serializable {
         }
         return false;
     }
+
     public AspectList remove(Aspect key, int amount) {
         int am = getAmount(key) - amount;
         if (am <= 0) {
@@ -107,10 +121,12 @@ public class AspectList implements Serializable {
         }
         return this;
     }
+
     public AspectList remove(Aspect key) {
         aspects.remove(key);
         return this;
     }
+
     public AspectList add(Aspect aspect, int amount) {
         if (aspect == null) return this;
         if (aspects.containsKey(aspect)) {
@@ -120,6 +136,7 @@ public class AspectList implements Serializable {
         aspects.put(aspect, amount);
         return this;
     }
+
     public AspectList merge(Aspect aspect, int amount) {
         if (aspects.containsKey(aspect)) {
             int oldamount = aspects.get(aspect);
@@ -130,24 +147,28 @@ public class AspectList implements Serializable {
         aspects.put(aspect, amount);
         return this;
     }
+
     public AspectList add(AspectList in) {
         for (Aspect a : in.getAspects()) {
             add(a, in.getAmount(a));
         }
         return this;
     }
+
     public AspectList remove(AspectList in) {
         for (Aspect a : in.getAspects()) {
             remove(a, in.getAmount(a));
         }
         return this;
     }
+
     public AspectList merge(AspectList in) {
         for (Aspect a : in.getAspects()) {
             merge(a, in.getAmount(a));
         }
         return this;
     }
+
     public boolean contains(AspectList required) {
         for (Aspect a : required.getAspects()) {
             if (getAmount(a) < required.getAmount(a)) {
@@ -156,9 +177,11 @@ public class AspectList implements Serializable {
         }
         return true;
     }
+
     public boolean contains(Aspect aspect) {
         return aspects.containsKey(aspect) && aspects.get(aspect) > 0;
     }
+
     public void readFromNBT(CompoundTag nbt) {
         aspects.clear();
         ListTag tlist = nbt.getList("Aspects", Tag.TAG_COMPOUND);
@@ -172,6 +195,7 @@ public class AspectList implements Serializable {
             }
         }
     }
+
     public void readFromNBT(CompoundTag nbt, String label) {
         aspects.clear();
         ListTag tlist = nbt.getList(label, Tag.TAG_COMPOUND);
@@ -185,6 +209,7 @@ public class AspectList implements Serializable {
             }
         }
     }
+
     public void writeToNBT(CompoundTag nbt) {
         ListTag tlist = new ListTag();
         nbt.put("Aspects", tlist);
@@ -197,6 +222,7 @@ public class AspectList implements Serializable {
             }
         }
     }
+
     public void writeToNBT(CompoundTag nbt, String label) {
         ListTag tlist = new ListTag();
         nbt.put(label, tlist);
@@ -209,6 +235,7 @@ public class AspectList implements Serializable {
             }
         }
     }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("AspectList[");

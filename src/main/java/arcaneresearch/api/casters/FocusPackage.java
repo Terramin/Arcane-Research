@@ -1,4 +1,5 @@
 package arcaneresearch.api.casters;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -6,23 +7,28 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
 public class FocusPackage implements IFocusElement {
     @Override
     public String getResearch() {
         return null;
     }
+
     @Override
     public String getKey() {
         return "arcaneresearch.PACKAGE";
     }
+
     @Override
     public EnumUnitType getType() {
         return EnumUnitType.PACKAGE;
     }
+
     public List<IFocusElement> nodes = Collections.synchronizedList(new ArrayList<>());
     public Level world;
     private LivingEntity caster;
@@ -31,45 +37,58 @@ public class FocusPackage implements IFocusElement {
     UUID uid;
     private int complexity = 0;
     private float power = 1.0f;
+
     public FocusPackage() {
     }
+
     public FocusPackage(LivingEntity caster) {
         super();
         world = caster.level();
         this.caster = caster;
         casterUUID = caster.getUUID();
     }
+
     public int getComplexity() {
         return complexity;
     }
+
     public void setComplexity(int complexity) {
         this.complexity = complexity;
     }
+
     public UUID getUniqueID() {
         return uid;
     }
+
     public void setUniqueID(UUID id) {
         uid = id;
     }
+
     public int getExecutionIndex() {
         return index;
     }
+
     public void setExecutionIndex(int idx) {
         index = idx;
     }
+
     public void addNode(IFocusElement e) {
         nodes.add(e);
     }
+
     public void addNode(FocusNode node) {
         nodes.add(node);
     }
+
     public UUID getCasterUUID() {
         if (caster != null) casterUUID = caster.getUUID();
         return casterUUID;
     }
+
     public void setCasterUUID(UUID casterUUID) {
         this.casterUUID = casterUUID;
     }
+
     public LivingEntity getCaster() {
         try {
             if (caster == null && world != null) {
@@ -94,15 +113,18 @@ public class FocusPackage implements IFocusElement {
         }
         return caster;
     }
+
     public void setCaster(LivingEntity caster) {
         this.caster = caster;
         if (caster != null) {
             this.casterUUID = caster.getUUID();
         }
     }
+
     public FocusEffect[] getFocusEffects() {
         return getFocusEffectsPackage(this);
     }
+
     public List<IFocusElement> getEffects() {
         List<IFocusElement> effects = new ArrayList<>();
         for (FocusEffect e : getFocusEffects()) {
@@ -110,6 +132,7 @@ public class FocusPackage implements IFocusElement {
         }
         return effects;
     }
+
     private FocusEffect[] getFocusEffectsPackage(FocusPackage fp) {
         ArrayList<FocusEffect> out = new ArrayList<>();
         for (IFocusElement el : fp.nodes) {
@@ -125,6 +148,7 @@ public class FocusPackage implements IFocusElement {
         }
         return out.toArray(new FocusEffect[]{});
     }
+
     public int getSortingHelper() {
         String s = "";
         for (IFocusElement k : nodes) {
@@ -136,6 +160,7 @@ public class FocusPackage implements IFocusElement {
         }
         return s.hashCode();
     }
+
     public void deserialize(CompoundTag nbt) {
         if (nbt.contains("uidMost") && nbt.contains("uidLeast")) {
             uid = new UUID(nbt.getLong("uidMost"), nbt.getLong("uidLeast"));
@@ -185,6 +210,7 @@ public class FocusPackage implements IFocusElement {
             }
         }
     }
+
     public CompoundTag serialize() {
         CompoundTag nbt = new CompoundTag();
         if (uid != null) {
@@ -227,6 +253,7 @@ public class FocusPackage implements IFocusElement {
         nbt.put("nodes", nodelist);
         return nbt;
     }
+
     public static FocusPackage createSimple(String effectKey) {
         FocusPackage pack = new FocusPackage();
         IFocusElement el = FocusEngine.getElement(effectKey);
@@ -242,20 +269,25 @@ public class FocusPackage implements IFocusElement {
         }
         return pack;
     }
+
     public float getPower() {
         return power;
     }
+
     public void setPower(float power) {
         this.power = power;
     }
+
     public void multiplyPower(float pow) {
         power *= pow;
     }
+
     public FocusPackage copy(LivingEntity caster) {
         FocusPackage fp = new FocusPackage(caster);
         fp.deserialize(serialize());
         return fp;
     }
+
     public void initialize(LivingEntity caster) {
         world = caster.level();
         if (nodes.isEmpty()) return;

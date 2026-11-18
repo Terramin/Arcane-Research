@@ -1,4 +1,5 @@
 package arcaneresearch.api.research.theorycraft;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -11,8 +12,10 @@ import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.ResearchCategory;
 import arcaneresearch.api.research.ResearchEntry;
 import arcaneresearch.api.research.ResearchEntry.EnumResearchMeta;
+
 import javax.annotation.Nullable;
 import java.util.*;
+
 public class ResearchTableData {
     public BlockEntity table;
     public String player;
@@ -28,17 +31,20 @@ public class ResearchTableData {
     public List<String> categoriesBlocked = new ArrayList<>();
     public List<CardChoice> cardChoices = new ArrayList<>();
     public CardChoice lastDraw;
+
     public static class CardChoice {
         public TheorycraftCard card;
         public String key;
         public boolean fromAid;
         public boolean selected;
+
         public CardChoice(String key, TheorycraftCard card, boolean aid, boolean selected) {
             this.key = key;
             this.card = card;
             this.fromAid = aid;
             this.selected = selected;
         }
+
         @Override
         public String toString() {
             return "key:" + key +
@@ -47,22 +53,28 @@ public class ResearchTableData {
                     " selected:" + selected;
         }
     }
+
     public ResearchTableData(BlockEntity tileResearchTable) {
         table = tileResearchTable;
     }
+
     public ResearchTableData(Player player, BlockEntity tileResearchTable) {
         this.player = player.getName().getString();
         table = tileResearchTable;
     }
+
     public boolean isComplete() {
         return inspiration <= 0;
     }
+
     public boolean hasTotal(String cat) {
         return categoryTotals.containsKey(cat);
     }
+
     public int getTotal(String cat) {
         return categoryTotals.getOrDefault(cat, 0);
     }
+
     public void addTotal(String cat, int amt) {
         int current = categoryTotals.getOrDefault(cat, 0);
         current += amt;
@@ -72,10 +84,12 @@ public class ResearchTableData {
             categoryTotals.put(cat, current);
         }
     }
+
     public void addInspiration(int amt) {
         inspiration += amt;
         if (inspiration > inspirationStart) inspiration = inspirationStart;
     }
+
     public CompoundTag serialize() {
         CompoundTag nbt = new CompoundTag();
         nbt.putString("player", player != null ? player : "");
@@ -125,6 +139,7 @@ public class ResearchTableData {
         }
         return nbt;
     }
+
     public CompoundTag serializeCardChoice(CardChoice mc) {
         CompoundTag nbt = new CompoundTag();
         nbt.putString("cardChoice", mc.key);
@@ -136,6 +151,7 @@ public class ResearchTableData {
         }
         return nbt;
     }
+
     public void deserialize(CompoundTag nbt) {
         if (nbt == null) return;
         inspiration = nbt.getInt("inspiration");
@@ -178,6 +194,7 @@ public class ResearchTableData {
         }
         lastDraw = deserializeCardChoice(nbt.getCompound("lastDraw"));
     }
+
     @Nullable
     public CardChoice deserializeCardChoice(CompoundTag nbt) {
         if (nbt == null || nbt.isEmpty()) return null;
@@ -187,9 +204,11 @@ public class ResearchTableData {
         if (tc == null) return null;
         return new CardChoice(key, tc, nbt.getBoolean("aid"), nbt.getBoolean("select"));
     }
+
     private boolean isCategoryBlocked(String cat) {
         return categoriesBlocked.contains(cat);
     }
+
     public void drawCards(int draw, Player pe) {
         if (draw == 3) {
             if (bonusDraws > 0) {
@@ -211,7 +230,7 @@ public class ResearchTableData {
                 String key = aidCards.get(idx);
                 TheorycraftCard card = generateCard(key, -1, pe);
                 if (card == null || card.getInspirationCost() > inspiration ||
-                    isCategoryBlocked(card.getResearchCategory())) continue;
+                        isCategoryBlocked(card.getResearchCategory())) continue;
                 if (drawnCards.contains(key)) continue;
                 drawnCards.add(key);
                 cardChoices.add(new CardChoice(key, card, true, false));
@@ -243,6 +262,7 @@ public class ResearchTableData {
             draw--;
         }
     }
+
     @Nullable
     private TheorycraftCard generateCard(String key, long seed, Player pe) {
         if (key == null) return null;
@@ -265,6 +285,7 @@ public class ResearchTableData {
         }
         return tc;
     }
+
     @Nullable
     private TheorycraftCard generateCardWithNBT(String key, CompoundTag nbt) {
         if (key == null) return null;
@@ -278,6 +299,7 @@ public class ResearchTableData {
         }
         return tc;
     }
+
     public void initialize(Player player, Set<String> aids) {
         inspirationStart = getAvailableInspiration(player);
         inspiration = inspirationStart - aids.size();
@@ -290,6 +312,7 @@ public class ResearchTableData {
             }
         }
     }
+
     public List<String> getAvailableCategories(Player player) {
         List<String> cats = new ArrayList<>();
         for (String rck : ResearchCategories.researchCategories.keySet()) {
@@ -301,6 +324,7 @@ public class ResearchTableData {
         }
         return cats;
     }
+
     public static int getAvailableInspiration(Player player) {
         float tot = 5;
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
@@ -319,6 +343,7 @@ public class ResearchTableData {
         }
         return Math.min(15, Math.round(tot));
     }
+
     @Nullable
     public Level getLevel() {
         return table != null ? table.getLevel() : null;

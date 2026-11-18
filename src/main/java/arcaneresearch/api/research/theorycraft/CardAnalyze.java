@@ -1,4 +1,5 @@
 package arcaneresearch.api.research.theorycraft;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -8,25 +9,31 @@ import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.ResearchCategory;
+
 import java.util.ArrayList;
 import java.util.Random;
+
 public class CardAnalyze extends TheorycraftCard {
     String cat = null;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
         nbt.putString("cat", cat);
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         cat = nbt.getString("cat");
     }
+
     @Override
     public String getResearchCategory() {
         return cat;
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         Random r = new Random(getSeed());
@@ -44,23 +51,27 @@ public class CardAnalyze extends TheorycraftCard {
         }
         return cat != null;
     }
+
     @Override
     public int getInspirationCost() {
         return 2;
     }
+
     @Override
     public String getLocalizedName() {
         return Component.translatable("card.analyze.name", ChatFormatting.DARK_BLUE + "" + ChatFormatting.BOLD
                 + Component.translatable("tc.research_category." + cat).getString()
                 + ChatFormatting.RESET).getString();
     }
+
     @Override
     public String getLocalizedText() {
         return Component.translatable("card.analyze.text", ChatFormatting.BOLD
-                + Component.translatable("tc.research_category." + cat).getString() + ChatFormatting.RESET,
+                        + Component.translatable("tc.research_category." + cat).getString() + ChatFormatting.RESET,
                 ChatFormatting.BOLD + Component.translatable("tc.research_category.BASICS").getString()
                         + ChatFormatting.RESET).getString();
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         if (cat == null) return false;

@@ -1,4 +1,5 @@
 package arcaneresearch.api;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -24,38 +25,49 @@ import arcaneresearch.api.aspects.IEssentiaContainerItem;
 import arcaneresearch.api.aspects.IEssentiaTransport;
 import arcaneresearch.api.crafting.IngredientNBTTC;
 import net.minecraftforge.items.IItemHandler;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+
 public class ArcaneresearchApiHelper {
     public static final Attribute CHAMPION_MOD =
-            (Attribute) new RangedAttribute("tc.mobmod", -2.0D, -2.0D, 100.0D).setSyncable(true);
+            new RangedAttribute("tc.mobmod", -2.0D, -2.0D, 100.0D).setSyncable(true);
+
     public static boolean areItemsEqual(ItemStack s1, ItemStack s2) {
         return ArcaneresearchInvHelper.areItemsEqual(s1, s2);
     }
+
     public static boolean containsMatch(boolean strict, ItemStack[] inputs, List<ItemStack> targets) {
         return ArcaneresearchInvHelper.containsMatch(strict, inputs, targets);
     }
+
     public static boolean areItemStacksEqualForCrafting(ItemStack stack0, Object in) {
         return ArcaneresearchInvHelper.areItemStacksEqualForCrafting(stack0, in);
     }
+
     public static boolean areItemStackTagsEqualForCrafting(ItemStack slotItem, ItemStack recipeItem) {
         return ArcaneresearchInvHelper.areItemStackTagsEqualForCrafting(slotItem, recipeItem);
     }
+
     public static IItemHandler getItemHandlerAt(Level level, BlockPos pos, Direction side) {
         return ArcaneresearchInvHelper.getItemHandlerAt(level, pos, side);
     }
+
     public static IItemHandler wrapInventory(net.minecraft.world.Container inventory, Direction side) {
         return ArcaneresearchInvHelper.wrapInventory(inventory, side);
     }
+
     public static boolean areItemStackTagsEqualRelaxed(ItemStack prime, ItemStack other) {
         return ArcaneresearchInvHelper.areItemStackTagsEqualRelaxed(prime, other);
     }
+
     public static boolean compareTagsRelaxed(net.minecraft.nbt.CompoundTag prime, net.minecraft.nbt.CompoundTag other) {
         return ArcaneresearchInvHelper.compareTagsRelaxed(prime, other);
     }
+
     public static BlockEntity getConnectableTile(Level level, BlockPos pos, Direction direction) {
         BlockEntity te = level.getBlockEntity(pos.relative(direction));
         if (te instanceof IEssentiaTransport transport && transport.isConnectable(direction.getOpposite())) {
@@ -63,6 +75,7 @@ public class ArcaneresearchApiHelper {
         }
         return null;
     }
+
     public static BlockEntity getConnectableTile(BlockGetter level, BlockPos pos, Direction direction) {
         if (level instanceof Level actual) {
             return getConnectableTile(actual, pos, direction);
@@ -73,6 +86,7 @@ public class ArcaneresearchApiHelper {
         }
         return null;
     }
+
     public static Ingredient getIngredient(Object obj) {
         if (obj instanceof Ingredient ingredient) {
             return ingredient;
@@ -112,6 +126,7 @@ public class ArcaneresearchApiHelper {
         }
         return null;
     }
+
     private static ResourceLocation resolveTagId(String name) {
         if (name.isEmpty()) {
             return null;
@@ -129,6 +144,7 @@ public class ArcaneresearchApiHelper {
             return null;
         }
     }
+
     public static List<ItemStack> getOresWithWildCards(String oreDict) {
         List<ItemStack> out = new ArrayList<>();
         String s = oreDict.trim();
@@ -155,6 +171,7 @@ public class ArcaneresearchApiHelper {
         }
         return out;
     }
+
     public static BlockHitResult rayTraceIgnoringSource(Level level, Vec3 v1, Vec3 v2,
                                                         boolean stopOnLiquid, boolean ignoreNoCollision, boolean returnLast) {
         if (Double.isNaN(v1.x) || Double.isNaN(v1.y) || Double.isNaN(v1.z)
@@ -258,35 +275,42 @@ public class ArcaneresearchApiHelper {
         }
         return returnLast ? lastMiss : null;
     }
+
     public static int setByteInInt(int data, byte b, int index) {
         ByteBuffer bb = ByteBuffer.allocate(4);
         bb.putInt(0, data);
         bb.put(index, b);
         return bb.getInt(0);
     }
+
     public static byte getByteInInt(int data, int index) {
         ByteBuffer bb = ByteBuffer.allocate(4);
         bb.putInt(0, data);
         return bb.get(index);
     }
+
     public static long setByteInLong(long data, byte b, int index) {
         ByteBuffer bb = ByteBuffer.allocate(8);
         bb.putLong(0, data);
         bb.put(index, b);
         return bb.getLong(0);
     }
+
     public static byte getByteInLong(long data, int index) {
         ByteBuffer bb = ByteBuffer.allocate(8);
         bb.putLong(0, data);
         return bb.get(index);
     }
+
     public static int setNibbleInInt(int data, int nibble, int nibbleIndex) {
         int shift = nibbleIndex * 4;
         return (data & ~(0xf << shift)) | (nibble << shift);
     }
+
     public static int getNibbleInInt(int data, int nibbleIndex) {
         return (data >> (nibbleIndex << 2)) & 0xF;
     }
+
     public static ItemStack makeCrystal(Aspect aspect, int stackSize) {
         if (aspect == null) return ItemStack.EMPTY;
         Item crystalItem = ForgeRegistries.ITEMS.getValue(
@@ -298,9 +322,11 @@ public class ArcaneresearchApiHelper {
         }
         return stack;
     }
+
     public static ItemStack makeCrystal(Aspect aspect) {
         return makeCrystal(aspect, 1);
     }
+
     public static Object getNBTDataFromId(net.minecraft.nbt.CompoundTag nbt, byte id, String key) {
         return switch (id) {
             case 1 -> nbt.getByte(key);

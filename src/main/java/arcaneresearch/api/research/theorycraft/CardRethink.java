@@ -1,7 +1,9 @@
 package arcaneresearch.api.research.theorycraft;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+
 public class CardRethink extends TheorycraftCard {
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
@@ -11,18 +13,22 @@ public class CardRethink extends TheorycraftCard {
         }
         return a >= 10;
     }
+
     @Override
     public int getInspirationCost() {
         return -1;
     }
+
     @Override
     public String getLocalizedName() {
         return Component.translatable("card.rethink.name").getString();
     }
+
     @Override
     public String getLocalizedText() {
         return Component.translatable("card.rethink.text").getString();
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         if (!initialize(player, data)) return false;

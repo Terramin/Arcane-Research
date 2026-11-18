@@ -1,4 +1,5 @@
 package arcaneresearch.api.crafting;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -14,8 +15,10 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.ItemsTC;
 import arcaneresearch.init.ModRecipeTypes;
+
 import java.util.HashMap;
 import java.util.Map;
+
 public class ShapedArcaneRecipe implements IArcaneRecipe {
     private String research;
     private int vis;
@@ -26,12 +29,15 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
     private int height;
     private String group = "";
     private ResourceLocation id;
+
     public ShapedArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, Block result, Object... recipe) {
         this(group, res, vis, crystals, new ItemStack(result), recipe);
     }
+
     public ShapedArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, Item result, Object... recipe) {
         this(group, res, vis, crystals, new ItemStack(result), recipe);
     }
+
     public ShapedArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, ItemStack result, Object... recipe) {
         this.research = res;
         this.vis = vis;
@@ -44,6 +50,7 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         this.group = group != null ? group.toString() : "";
         this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shaped");
     }
+
     public ShapedArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, ItemStack result,
                               int width, int height, NonNullList<Ingredient> ingredients) {
         this.research = res;
@@ -56,16 +63,19 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         this.group = group != null ? group.toString() : "";
         this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shaped");
     }
+
     private static final class ParsedShaped {
         final int width;
         final int height;
         final NonNullList<Ingredient> ingredients;
+
         ParsedShaped(int width, int height, NonNullList<Ingredient> ingredients) {
             this.width = width;
             this.height = height;
             this.ingredients = ingredients;
         }
     }
+
     private static ParsedShaped parseShaped(Object... recipe) {
         StringBuilder pattern = new StringBuilder();
         int width = 0;
@@ -103,10 +113,12 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         }
         return new ParsedShaped(width, height, ingredients);
     }
+
     public ItemStack getCraftingResult(IArcaneWorkbench inv) {
         if (!(inv instanceof IArcaneWorkbench)) return ItemStack.EMPTY;
         return result.copy();
     }
+
     @Override
     public boolean matches(IArcaneWorkbench inv, Level level) {
         if (inv.getContainerSize() < 15) return false;
@@ -135,6 +147,7 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         }
         return false;
     }
+
     private boolean matchesAt(IArcaneWorkbench inv, int offsetX, int offsetY, boolean mirrored) {
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
@@ -155,60 +168,75 @@ public class ShapedArcaneRecipe implements IArcaneRecipe {
         }
         return true;
     }
+
     @Override
     public int getVis() {
         return vis;
     }
+
     @Override
     public String getResearch() {
         return research;
     }
+
     @Override
     public AspectList getCrystals() {
         return crystals;
     }
+
     public int getWidth() {
         return width;
     }
+
     public int getHeight() {
         return height;
     }
+
     @Override
     public NonNullList<Ingredient> getIngredients() {
         return ingredients;
     }
+
     @Override
     public String getGroup() {
         return group;
     }
+
     public ShapedArcaneRecipe setGroup(ResourceLocation location) {
         this.group = location != null ? location.toString() : "";
         return this;
     }
+
     public ShapedArcaneRecipe setGroup(String group) {
         this.group = group != null ? group : "";
         return this;
     }
+
     @Override
     public ItemStack assemble(IArcaneWorkbench container, RegistryAccess registryAccess) {
         return result.copy();
     }
+
     @Override
     public boolean canCraftInDimensions(int w, int h) {
         return w >= width && h >= height;
     }
+
     @Override
     public ItemStack getResultItem(RegistryAccess registryAccess) {
         return result;
     }
+
     @Override
     public ResourceLocation getId() {
         return id;
     }
+
     @Override
     public RecipeSerializer<?> getSerializer() {
         return arcaneresearch.common.lib.crafting.ShapedArcaneRecipe.Serializer.INSTANCE;
     }
+
     @Override
     public RecipeType<?> getType() {
         return ModRecipeTypes.ARCANE_WORKBENCH.get();

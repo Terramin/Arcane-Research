@@ -1,23 +1,28 @@
 package arcaneresearch.api.casters;
+
 import net.minecraft.resources.ResourceLocation;
 import arcaneresearch.api.aspects.Aspect;
+
 import javax.annotation.Nullable;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+
 public class FocusEngine {
     private static final Map<String, Supplier<? extends FocusNode>> FOCUS_REGISTRY = new HashMap<>();
     public static final Map<String, Class<? extends FocusNode>> elements = new HashMap<>();
     private static final Map<String, Integer> ELEMENT_COLORS = new HashMap<>();
     private static final Map<String, ResourceLocation> ELEMENT_ICONS = new HashMap<>();
     private static final Map<Aspect, Integer> ASPECT_COLORS = new HashMap<>();
+
     static {
         initAspectColors();
     }
+
     public static void registerFocusNode(String key, Supplier<? extends FocusNode> factory) {
         FOCUS_REGISTRY.put(key, factory);
         FocusNode sample = factory.get();
@@ -25,6 +30,7 @@ public class FocusEngine {
             elements.put(key, sample.getClass());
         }
     }
+
     public static void registerFocusNode(String key, Supplier<? extends FocusNode> factory, int color) {
         FOCUS_REGISTRY.put(key, factory);
         ELEMENT_COLORS.put(key, color);
@@ -33,6 +39,7 @@ public class FocusEngine {
             elements.put(key, sample.getClass());
         }
     }
+
     public static void registerFocusNode(String key, Class<? extends FocusNode> nodeClass) {
         elements.put(key, nodeClass);
         FOCUS_REGISTRY.put(key, () -> {
@@ -43,6 +50,7 @@ public class FocusEngine {
             }
         });
     }
+
     @Nullable
     public static FocusNode createFocusNode(String key) {
         Supplier<? extends FocusNode> factory = FOCUS_REGISTRY.get(key);
@@ -51,12 +59,15 @@ public class FocusEngine {
         }
         return null;
     }
+
     public static boolean isRegistered(String key) {
         return FOCUS_REGISTRY.containsKey(key);
     }
+
     public static Iterable<String> getRegisteredKeys() {
         return FOCUS_REGISTRY.keySet();
     }
+
     public static int getElementColor(String key) {
         if (ELEMENT_COLORS.containsKey(key)) {
             return ELEMENT_COLORS.get(key);
@@ -70,12 +81,15 @@ public class FocusEngine {
         }
         return 0xFFFFFF;
     }
+
     public static void setElementColor(String key, int color) {
         ELEMENT_COLORS.put(key, color);
     }
+
     public static int getAspectColor(Aspect aspect) {
         return ASPECT_COLORS.getOrDefault(aspect, 0xFFFFFF);
     }
+
     private static void initAspectColors() {
         ASPECT_COLORS.put(Aspect.AIR, 0xFFFF7E);
         ASPECT_COLORS.put(Aspect.EARTH, 0x56C000);
@@ -96,6 +110,7 @@ public class FocusEngine {
         ASPECT_COLORS.put(Aspect.EXCHANGE, 0x87CEEB);
         ASPECT_COLORS.put(Aspect.ELDRITCH, 0xAA00AA);
     }
+
     public static int combineColors(int... colors) {
         if (colors.length == 0) return 0xFFFFFF;
         if (colors.length == 1) return colors[0];
@@ -111,12 +126,14 @@ public class FocusEngine {
         b /= colors.length;
         return new Color(r, g, b).getRGB();
     }
+
     public static void clearRegistry() {
         FOCUS_REGISTRY.clear();
         ELEMENT_COLORS.clear();
         ELEMENT_ICONS.clear();
         elements.clear();
     }
+
     public static void registerElement(Class<? extends IFocusElement> element, ResourceLocation icon, int color) {
         try {
             IFocusElement fe = element.getDeclaredConstructor().newInstance();
@@ -129,6 +146,7 @@ public class FocusEngine {
         } catch (Exception ignored) {
         }
     }
+
     public static ResourceLocation getElementIcon(String key) {
         ResourceLocation custom = ELEMENT_ICONS.get(key);
         if (custom != null) {
@@ -142,10 +160,12 @@ public class FocusEngine {
         }
         return ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/unknown.png");
     }
+
     @Nullable
     public static IFocusElement getElement(String key) {
         return createFocusNode(key);
     }
+
     public static boolean doesPackageContainElement(FocusPackage pack, String elementKey) {
         if (pack == null || elementKey == null || pack.nodes == null) {
             return false;
@@ -157,6 +177,7 @@ public class FocusEngine {
         }
         return false;
     }
+
     public static void castFocusPackage(LivingEntity caster, FocusPackage focusPackage, boolean nocopy) {
         FocusPackage focusPackageCopy;
         if (nocopy)
@@ -170,14 +191,17 @@ public class FocusEngine {
         }
         runFocusPackage(focusPackageCopy, null, null);
     }
+
     public static void castFocusPackage(LivingEntity caster, FocusPackage focusPackage) {
         castFocusPackage(caster, focusPackage, false);
     }
+
     public static boolean castFocusPackageSimple(LivingEntity caster, FocusPackage pack) {
         if (pack == null || caster == null) return false;
         castFocusPackage(caster, pack);
         return true;
     }
+
     public static void runFocusPackage(FocusPackage focusPackage, Trajectory[] trajectories, HitResult[] targets) {
         Trajectory[] prevTrajectories = trajectories;
         HitResult[] prevTargets = targets;
@@ -251,5 +275,6 @@ public class FocusEngine {
             }
         }
     }
+
     private static java.util.ArrayList<String> damageResistList = new java.util.ArrayList<>();
 }

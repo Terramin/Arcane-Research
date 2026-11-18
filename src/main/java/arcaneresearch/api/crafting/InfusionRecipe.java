@@ -1,4 +1,5 @@
 package arcaneresearch.api.crafting;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -9,7 +10,9 @@ import net.minecraftforge.common.util.RecipeMatcher;
 import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
+
 import java.util.List;
+
 public class InfusionRecipe implements IArcaneresearchRecipe {
     public AspectList aspects;
     public String research;
@@ -18,6 +21,7 @@ public class InfusionRecipe implements IArcaneresearchRecipe {
     public Object recipeOutput;
     public int instability;
     private String group = "";
+
     public InfusionRecipe(String research, Object outputResult, int instability,
                           AspectList aspects, Object centralItem, Object... recipe) {
         this.research = research;
@@ -42,49 +46,61 @@ public class InfusionRecipe implements IArcaneresearchRecipe {
             }
         }
     }
+
     public boolean matches(List<ItemStack> pedestalItems, ItemStack centralItem,
-                          Level level, Player player) {
+                           Level level, Player player) {
         if (getRecipeInput() == null) return false;
         if (!ArcaneresearchCapabilities.isResearchKnown(player, research)) {
             return false;
         }
         boolean centralMatches = getRecipeInput() == Ingredient.EMPTY ||
-                                 getRecipeInput().test(centralItem);
+                getRecipeInput().test(centralItem);
         boolean componentsMatch = RecipeMatcher.findMatches(pedestalItems, getComponents()) != null;
         return centralMatches && componentsMatch;
     }
+
     @Override
     public String getResearch() {
         return research;
     }
+
     public Ingredient getRecipeInput() {
         return sourceInput;
     }
+
     public NonNullList<Ingredient> getComponents() {
         return components;
     }
+
     public Object getRecipeOutput() {
         return recipeOutput;
     }
+
     public AspectList getAspects() {
         return aspects;
     }
+
     public Object getRecipeOutput(Player player, ItemStack input, List<ItemStack> components) {
         return recipeOutput;
     }
+
     public AspectList getAspects(Player player, ItemStack input, List<ItemStack> components) {
         return aspects;
     }
+
     public int getInstability(Player player, ItemStack input, List<ItemStack> components) {
         return instability;
     }
+
     public String getGroup() {
         return group;
     }
+
     public InfusionRecipe setGroup(ResourceLocation location) {
         this.group = location.toString();
         return this;
     }
+
     public InfusionRecipe setGroup(String group) {
         this.group = group;
         return this;

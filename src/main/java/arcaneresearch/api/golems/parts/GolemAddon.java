@@ -1,7 +1,9 @@
 package arcaneresearch.api.golems.parts;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import arcaneresearch.api.golems.EnumGolemTrait;
+
 public class GolemAddon {
     protected static GolemAddon[] addons = new GolemAddon[1];
     private static byte lastID = 0;
@@ -13,6 +15,7 @@ public class GolemAddon {
     public EnumGolemTrait[] traits;
     public IAddonFunction function;
     public PartModel model;
+
     public GolemAddon(String key, String[] research, ResourceLocation icon, PartModel model,
                       Object[] components, EnumGolemTrait[] traits) {
         this.key = key;
@@ -23,11 +26,13 @@ public class GolemAddon {
         this.model = model;
         this.function = null;
     }
+
     public GolemAddon(String key, String[] research, ResourceLocation icon, PartModel model,
                       Object[] components, IAddonFunction function, EnumGolemTrait[] traits) {
         this(key, research, icon, model, components, traits);
         this.function = function;
     }
+
     public static void register(GolemAddon addon) {
         addon.id = lastID;
         lastID++;
@@ -38,21 +43,26 @@ public class GolemAddon {
         }
         addons[addon.id] = addon;
     }
+
     public Component getLocalizedName() {
         return Component.translatable("golem.addon." + key.toLowerCase());
     }
+
     public Component getLocalizedDescription() {
         return Component.translatable("golem.addon.text." + key.toLowerCase());
     }
+
     public static GolemAddon[] getAddons() {
         return addons;
     }
+
     public static GolemAddon getById(int id) {
         if (id >= 0 && id < addons.length) {
             return addons[id];
         }
         return addons[0];
     }
+
     public interface IAddonFunction extends IGenericFunction {
     }
 }

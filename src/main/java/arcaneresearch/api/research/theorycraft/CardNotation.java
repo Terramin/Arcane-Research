@@ -1,11 +1,14 @@
 package arcaneresearch.api.research.theorycraft;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+
 public class CardNotation extends TheorycraftCard {
     private String cat1, cat2;
+
     @Override
     public CompoundTag serialize() {
         CompoundTag nbt = super.serialize();
@@ -13,31 +16,37 @@ public class CardNotation extends TheorycraftCard {
         nbt.putString("cat2", cat2);
         return nbt;
     }
+
     @Override
     public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         cat1 = nbt.getString("cat1");
         cat2 = nbt.getString("cat2");
     }
+
     @Override
     public boolean isAidOnly() {
         return true;
     }
+
     @Override
     public int getInspirationCost() {
         return 1;
     }
+
     @Override
     public String getLocalizedName() {
         return Component.translatable("card.notation.name").getString();
     }
+
     @Override
     public String getLocalizedText() {
         return Component.translatable("card.notation.text", ChatFormatting.BOLD
-                + Component.translatable("tc.research_category." + cat1).getString() + ChatFormatting.RESET,
+                        + Component.translatable("tc.research_category." + cat1).getString() + ChatFormatting.RESET,
                 ChatFormatting.BOLD + Component.translatable("tc.research_category." + cat2).getString()
                         + ChatFormatting.RESET).getString();
     }
+
     @Override
     public boolean initialize(Player player, ResearchTableData data) {
         if (data.categoryTotals.size() < 2) return false;
@@ -61,6 +70,7 @@ public class CardNotation extends TheorycraftCard {
         cat2 = hKey;
         return true;
     }
+
     @Override
     public boolean activate(Player player, ResearchTableData data) {
         if (cat1 == null || cat2 == null) return false;

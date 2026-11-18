@@ -1,11 +1,14 @@
 package arcaneresearch.api.research;
+
 import net.minecraft.world.entity.Entity;
+
 public class ScanResult {
     public byte type = 0;
     public int id;
     public int meta;
     public Entity entity;
     public String phenomena;
+
     public ScanResult(byte type, int blockId, int blockMeta, Entity entity, String phenomena) {
         this.type = type;
         this.id = blockId;
@@ -13,6 +16,7 @@ public class ScanResult {
         this.entity = entity;
         this.phenomena = phenomena;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ScanResult sr) {

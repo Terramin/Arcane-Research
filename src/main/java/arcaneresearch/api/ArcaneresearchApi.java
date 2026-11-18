@@ -1,9 +1,10 @@
 package arcaneresearch.api;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -23,91 +24,111 @@ import arcaneresearch.api.internal.IInternalMethodHandler;
 import arcaneresearch.api.internal.WeightedRandomLoot;
 import arcaneresearch.api.research.IScanEventHandler;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
 
 public class ArcaneresearchApi {
     public static IInternalMethodHandler internalMethods = new DummyInternalMethodHandler();
+
     public static void registerResearchLocation(ResourceLocation loc) {
         if (!CommonInternals.jsonLocs.containsKey(loc.toString())) {
             CommonInternals.jsonLocs.put(loc.toString(), loc);
         }
     }
+
     public static class SmeltBonus {
         public Object in;
         public ItemStack out;
         public float chance;
+
         public SmeltBonus(Object in, ItemStack out, float chance) {
             this.in = in;
             this.out = out;
             this.chance = chance;
         }
     }
+
     public static void addSmeltingBonus(Object in, ItemStack out, float chance) {
         if (in instanceof ItemStack || in instanceof String) {
             CommonInternals.smeltingBonus.add(new SmeltBonus(in, out, chance));
         }
     }
+
     public static void addSmeltingBonus(Object in, ItemStack out) {
         if (in instanceof ItemStack || in instanceof String) {
             CommonInternals.smeltingBonus.add(new SmeltBonus(in, out, 0.33f));
         }
     }
+
     public static Map<ResourceLocation, IArcaneresearchRecipe> getCraftingRecipes() {
         return CommonInternals.craftingRecipeCatalog;
     }
+
     public static Map<ResourceLocation, Object> getCraftingRecipesFake() {
         return CommonInternals.craftingRecipeCatalogFake;
     }
+
     public static void addFakeCraftingRecipe(ResourceLocation registry, Object recipe) {
         getCraftingRecipesFake().put(registry, recipe);
     }
+
     public static void addMultiblockRecipeToCatalog(ResourceLocation registry, BluePrint recipe) {
         getCraftingRecipes().put(registry, recipe);
     }
+
     public static class BluePrint implements IArcaneresearchRecipe {
         Part[][][] parts;
         String research;
         ItemStack displayStack;
         ItemStack[] ingredientList;
         private String group;
+
         public BluePrint(String research, Part[][][] parts, ItemStack... ingredientList) {
             this.parts = parts;
             this.research = research;
             this.ingredientList = ingredientList;
         }
+
         public BluePrint(String research, ItemStack display, Part[][][] parts, ItemStack... ingredientList) {
             this.parts = parts;
             this.research = research;
             this.displayStack = display;
             this.ingredientList = ingredientList;
         }
+
         public Part[][][] getParts() {
             return parts;
         }
+
         @Override
         public String getResearch() {
             return research;
         }
+
         public ItemStack[] getIngredientList() {
             return ingredientList;
         }
+
         public ItemStack getDisplayStack() {
             return displayStack;
         }
+
         public String getGroup() {
             return group;
         }
+
         public BluePrint setGroup(ResourceLocation loc) {
             group = loc.toString();
             return this;
         }
     }
+
     public static void addArcaneCraftingRecipe(ResourceLocation registry, IArcaneRecipe recipe) {
         getCraftingRecipes().put(registry, recipe);
     }
+
     public static void addInfusionCraftingRecipe(ResourceLocation registry, InfusionRecipe recipe) {
         getCraftingRecipes().put(registry, recipe);
     }
+
     public static InfusionRecipe getInfusionRecipe(ItemStack res) {
         for (Object r : getCraftingRecipes().values()) {
             if (r instanceof InfusionRecipe infusionRecipe) {
@@ -120,9 +141,11 @@ public class ArcaneresearchApi {
         }
         return null;
     }
+
     public static void addCrucibleRecipe(ResourceLocation registry, CrucibleRecipe recipe) {
         getCraftingRecipes().put(registry, recipe);
     }
+
     public static CrucibleRecipe getCrucibleRecipe(ItemStack stack) {
         for (Object r : getCraftingRecipes().values()) {
             if (r instanceof CrucibleRecipe crucibleRecipe) {
@@ -133,6 +156,7 @@ public class ArcaneresearchApi {
         }
         return null;
     }
+
     public static CrucibleRecipe getCrucibleRecipeFromHash(int hash) {
         for (Object recipe : getCraftingRecipes().values()) {
             if (recipe instanceof CrucibleRecipe crucibleRecipe && crucibleRecipe.hash == hash) {
@@ -141,15 +165,18 @@ public class ArcaneresearchApi {
         }
         return null;
     }
+
     public static boolean exists(ItemStack item) {
         if (item == null || item.isEmpty()) return false;
         return AspectHelper.getObjectAspects(item) != null;
     }
+
     public static void registerObjectTag(ItemStack item, AspectList aspects) {
         if (item == null || item.isEmpty()) return;
         if (aspects == null) aspects = new AspectList();
         AspectHelper.registerObjectTag(item, aspects);
     }
+
     public static void registerObjectTag(String tagName, AspectList aspects) {
         try {
             ResourceLocation tagLoc = ResourceLocation.tryParse(tagName);
@@ -160,8 +187,10 @@ public class ArcaneresearchApi {
                     registerObjectTag(new ItemStack(item), aspects.copy());
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {
+        }
     }
+
     public static void registerComplexObjectTag(ItemStack item, AspectList aspects) {
         if (item == null || item.isEmpty()) return;
         if (aspects == null) aspects = new AspectList();
@@ -182,6 +211,7 @@ public class ArcaneresearchApi {
             registerObjectTag(item, tmp);
         }
     }
+
     public static void registerComplexObjectTag(String tagName, AspectList aspects) {
         try {
             ResourceLocation tagLoc = ResourceLocation.parse(tagName);
@@ -192,54 +222,66 @@ public class ArcaneresearchApi {
                     registerComplexObjectTag(new ItemStack(item), aspects.copy());
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {
+        }
     }
+
     public static class EntityTagsNBT {
         public String name;
         public Object value;
+
         public EntityTagsNBT(String name, Object value) {
             this.name = name;
             this.value = value;
         }
     }
+
     public static class EntityTags {
         public String entityName;
         public EntityTagsNBT[] nbts;
         public AspectList aspects;
+
         public EntityTags(String entityName, AspectList aspects, EntityTagsNBT... nbts) {
             this.entityName = entityName;
             this.nbts = nbts;
             this.aspects = aspects;
         }
     }
+
     public static void registerEntityTag(String entityName, AspectList aspects, EntityTagsNBT... nbt) {
         CommonInternals.scanEntities.add(new EntityTags(entityName, aspects, nbt));
         if (nbt == null || nbt.length == 0) {
             try {
                 AspectHelper.registerEntityTag(ResourceLocation.parse(entityName), aspects);
-            } catch (Exception e) {}
+            } catch (Exception ignored) {
+            }
         }
     }
+
     public static final List<IScanEventHandler> scanEventhandlers = new ArrayList<>();
+
     public static void registerScanEventHandler(IScanEventHandler handler) {
         if (handler != null && !scanEventhandlers.contains(handler)) {
             scanEventhandlers.add(handler);
         }
     }
+
     public static void addWarpToItem(ItemStack craftresult, int amount) {
         if (craftresult == null || craftresult.isEmpty()) return;
         CommonInternals.warpMap.put(
-            Arrays.asList(craftresult.getItem(), craftresult.getDamageValue()),
-            amount
+                Arrays.asList(craftresult.getItem(), craftresult.getDamageValue()),
+                amount
         );
     }
+
     public static int getWarp(ItemStack in) {
         if (in == null || in.isEmpty()) return 0;
         Integer warp = CommonInternals.warpMap.get(
-            Arrays.asList(in.getItem(), in.getDamageValue())
+                Arrays.asList(in.getItem(), in.getDamageValue())
         );
         return warp != null ? warp : 0;
     }
+
     public static void addLootBagItem(ItemStack item, int weight, int... bagTypes) {
         if (bagTypes == null || bagTypes.length == 0) {
             WeightedRandomLoot.lootBagCommon.add(new WeightedRandomLoot(item, weight));
@@ -253,9 +295,11 @@ public class ArcaneresearchApi {
             }
         }
     }
+
     public static void registerSeed(Block block, ItemStack seed) {
         CommonInternals.seedList.put(block.getDescriptionId(), seed);
     }
+
     public static ItemStack getSeed(Block block) {
         return CommonInternals.seedList.get(block.getDescriptionId());
     }

@@ -1,4 +1,5 @@
 package arcaneresearch.api.crafting;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -15,8 +16,10 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.ItemsTC;
 import arcaneresearch.init.ModRecipeTypes;
+
 import java.util.ArrayList;
 import java.util.List;
+
 public class ShapelessArcaneRecipe implements IArcaneRecipe {
     private String research;
     private int vis;
@@ -25,12 +28,15 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
     private NonNullList<Ingredient> ingredients;
     private String group = "";
     private ResourceLocation id;
+
     public ShapelessArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, Block result, Object... recipe) {
         this(group, res, vis, crystals, new ItemStack(result), recipe);
     }
+
     public ShapelessArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, Item result, Object... recipe) {
         this(group, res, vis, crystals, new ItemStack(result), recipe);
     }
+
     public ShapelessArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, NonNullList<Ingredient> input, ItemStack result) {
         this.research = res;
         this.vis = vis;
@@ -40,6 +46,7 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
         this.group = group != null ? group.toString() : "";
         this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shapeless");
     }
+
     public ShapelessArcaneRecipe(ResourceLocation group, String res, int vis, AspectList crystals, ItemStack result, Object[] recipe) {
         this.research = res;
         this.vis = vis;
@@ -49,6 +56,7 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
         this.group = group != null ? group.toString() : "";
         this.id = group != null ? group : ResourceLocation.fromNamespaceAndPath("arcaneresearch", "legacy_arcane_shapeless");
     }
+
     private static NonNullList<Ingredient> parseShapeless(Object[] recipe) {
         NonNullList<Ingredient> ingredients = NonNullList.create();
         for (Object in : recipe) {
@@ -71,10 +79,12 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
         }
         return ingredients;
     }
+
     public ItemStack getCraftingResult(IArcaneWorkbench inv) {
         if (!(inv instanceof IArcaneWorkbench)) return ItemStack.EMPTY;
         return result.copy();
     }
+
     @Override
     public boolean matches(IArcaneWorkbench inv, Level level) {
         if (inv.getContainerSize() < 9) return false;
@@ -103,54 +113,67 @@ public class ShapelessArcaneRecipe implements IArcaneRecipe {
         }
         return inputs.size() == ingredients.size() && RecipeMatcher.findMatches(inputs, ingredients) != null;
     }
+
     @Override
     public int getVis() {
         return vis;
     }
+
     @Override
     public String getResearch() {
         return research;
     }
+
     @Override
     public AspectList getCrystals() {
         return crystals;
     }
+
     @Override
     public NonNullList<Ingredient> getIngredients() {
         return ingredients;
     }
+
     @Override
     public String getGroup() {
         return group;
     }
+
     public ShapelessArcaneRecipe setGroup(ResourceLocation location) {
         this.group = location != null ? location.toString() : "";
         return this;
     }
+
     public ShapelessArcaneRecipe setGroup(String group) {
         this.group = group != null ? group : "";
         return this;
     }
+
     @Override
     public ItemStack assemble(IArcaneWorkbench container, RegistryAccess registryAccess) {
         return result.copy();
     }
+
     @Override
     public boolean canCraftInDimensions(int width, int height) {
         return width * height >= ingredients.size();
     }
+
     @Override
     public ItemStack getResultItem(RegistryAccess registryAccess) {
         return result;
     }
+
     @Override
     public ResourceLocation getId() {
         return id;
     }
+
     @Override
     public RecipeSerializer<?> getSerializer() {
         return arcaneresearch.common.lib.crafting.ShapelessArcaneRecipe.Serializer.INSTANCE;
     }
+
     @Override
     public RecipeType<?> getType() {
         return ModRecipeTypes.ARCANE_WORKBENCH.get();

@@ -1,4 +1,5 @@
 package arcaneresearch.api.items;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -6,9 +7,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import arcaneresearch.api.aura.AuraHelper;
+
 public class RechargeHelper {
     public static final String NBT_TAG = "tc.charge";
     private static final String CHARGE_KEY = NBT_TAG;
+
     public static int getCharge(ItemStack stack) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable)) {
             return -1;
@@ -16,6 +19,7 @@ public class RechargeHelper {
         CompoundTag tag = stack.getTag();
         return tag != null ? tag.getInt(CHARGE_KEY) : 0;
     }
+
     public static float getChargePercentage(ItemStack stack, LivingEntity entity) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
             return -1.0f;
@@ -24,6 +28,7 @@ public class RechargeHelper {
         float m = rechargable.getMaxCharge(stack, entity);
         return c / m;
     }
+
     public static float getChargeRatio(ItemStack stack, LivingEntity entity) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
             return 0.0f;
@@ -32,6 +37,7 @@ public class RechargeHelper {
         if (max <= 0) return 0.0f;
         return (float) getCharge(stack) / max;
     }
+
     public static void setCharge(ItemStack stack, int charge, LivingEntity entity) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
             return;
@@ -40,6 +46,7 @@ public class RechargeHelper {
         charge = Math.max(0, Math.min(charge, max));
         stack.getOrCreateTag().putInt(CHARGE_KEY, charge);
     }
+
     public static int addCharge(ItemStack stack, int amount, LivingEntity entity) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
             return 0;
@@ -53,6 +60,7 @@ public class RechargeHelper {
         }
         return added;
     }
+
     public static boolean consumeCharge(ItemStack stack, LivingEntity entity, int amount) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable)) {
             return false;
@@ -67,15 +75,18 @@ public class RechargeHelper {
         setCharge(stack, current - amount, entity);
         return true;
     }
+
     public static boolean hasCharge(ItemStack stack, int amount) {
         return getCharge(stack) >= amount;
     }
+
     public static void fullRecharge(ItemStack stack, LivingEntity entity) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
             return;
         }
         setCharge(stack, rechargable.getMaxCharge(stack, entity), entity);
     }
+
     public static float rechargeItem(Level level, ItemStack stack, BlockPos pos, LivingEntity entity, int maxAmount) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
             return 0.0f;
@@ -91,6 +102,7 @@ public class RechargeHelper {
         }
         return 0.0f;
     }
+
     public static float rechargeItemBlindly(ItemStack stack, LivingEntity entity, int maxAmount) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
             return 0.0f;

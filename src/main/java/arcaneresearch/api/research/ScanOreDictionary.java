@@ -1,4 +1,5 @@
 package arcaneresearch.api.research;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -6,15 +7,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
+
 import java.util.concurrent.ConcurrentHashMap;
+
 public class ScanOreDictionary implements IScanThing {
     private final String research;
     private final String[] entries;
     private final ConcurrentHashMap<Integer, Boolean> cache = new ConcurrentHashMap<>();
+
     public ScanOreDictionary(String research, String... entries) {
         this.research = research;
         this.entries = entries;
     }
+
     @Override
     public boolean checkThing(Player player, Object obj) {
         ItemStack stack = null;
@@ -46,14 +51,15 @@ public class ScanOreDictionary implements IScanThing {
         }
         return false;
     }
+
     static String translateEntry(String entry) {
         if (entry.contains(":") || entry.contains("/")) {
             return entry;
         }
         String[][] prefixes = {
-            { "ore", "ores" }, { "ingot", "ingots" }, { "block", "storage_blocks" },
-            { "plate", "plates" }, { "gem", "gems" }, { "dust", "dusts" },
-            { "nugget", "nuggets" }
+                {"ore", "ores"}, {"ingot", "ingots"}, {"block", "storage_blocks"},
+                {"plate", "plates"}, {"gem", "gems"}, {"dust", "dusts"},
+                {"nugget", "nuggets"}
         };
         for (String[] prefix : prefixes) {
             if (entry.startsWith(prefix[0]) && entry.length() > prefix[0].length()) {
@@ -63,6 +69,7 @@ public class ScanOreDictionary implements IScanThing {
         }
         return "forge:" + entry;
     }
+
     @Override
     public String getResearchKey(Player player, Object object) {
         return research;

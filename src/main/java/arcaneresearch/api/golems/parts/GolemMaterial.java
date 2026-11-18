@@ -1,8 +1,10 @@
 package arcaneresearch.api.golems.parts;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import arcaneresearch.api.golems.EnumGolemTrait;
+
 public class GolemMaterial {
     protected static GolemMaterial[] materials = new GolemMaterial[1];
     private static byte lastID = 0;
@@ -17,6 +19,7 @@ public class GolemMaterial {
     public ItemStack componentBase;
     public ItemStack componentMechanism;
     public EnumGolemTrait[] traits;
+
     public GolemMaterial(String key, String[] research, ResourceLocation texture, int itemColor,
                          int hp, int armor, int damage, ItemStack compBase, ItemStack compMech,
                          EnumGolemTrait[] traits) {
@@ -31,6 +34,7 @@ public class GolemMaterial {
         this.traits = traits;
         this.damage = damage;
     }
+
     public static void register(GolemMaterial material) {
         material.id = lastID;
         lastID++;
@@ -41,15 +45,19 @@ public class GolemMaterial {
         }
         materials[material.id] = material;
     }
+
     public Component getLocalizedName() {
         return Component.translatable("golem.material." + key.toLowerCase());
     }
+
     public Component getLocalizedDescription() {
         return Component.translatable("golem.material.text." + key.toLowerCase());
     }
+
     public static GolemMaterial[] getMaterials() {
         return materials;
     }
+
     public static GolemMaterial getById(int id) {
         if (id >= 0 && id < materials.length) {
             return materials[id];

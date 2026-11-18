@@ -1,6 +1,7 @@
 package arcaneresearch.api.lore.mixin;
 
 import java.util.List;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import arcaneresearch.api.lore.LoreAPI;
+
 import javax.annotation.Nullable;
 
 /**

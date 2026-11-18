@@ -1,6 +1,8 @@
 package arcaneresearch.api.golems;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+
 public enum EnumGolemTrait {
     SMART(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/golem/tag_smart.png")),
     DEFT(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/golem/tag_deft.png")),
@@ -21,6 +23,7 @@ public enum EnumGolemTrait {
     HAULER(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/golem/tag_hauler.png")),
     RANGED(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/golem/tag_ranged.png")),
     BLASTPROOF(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/golem/tag_blastproof.png"));
+
     static {
         CLUMSY.opposite = DEFT;
         DEFT.opposite = CLUMSY;
@@ -29,14 +32,18 @@ public enum EnumGolemTrait {
         FRAGILE.opposite = ARMORED;
         ARMORED.opposite = FRAGILE;
     }
+
     public ResourceLocation icon;
     public EnumGolemTrait opposite;
+
     EnumGolemTrait(ResourceLocation icon) {
         this.icon = icon;
     }
+
     public Component getLocalizedName() {
         return Component.translatable("golem.trait." + name().toLowerCase());
     }
+
     public Component getLocalizedDescription() {
         return Component.translatable("golem.trait.text." + name().toLowerCase());
     }

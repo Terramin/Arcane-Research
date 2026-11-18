@@ -1,10 +1,14 @@
 package arcaneresearch.api;
+
 import net.minecraft.resources.ResourceLocation;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 public class OreDictionaryEntries {
     public static final Map<String, ResourceLocation> ORE_TAGS;
+
     static {
         Map<String, ResourceLocation> tags = new LinkedHashMap<>();
         tags.put("oreAmber", ResourceLocation.fromNamespaceAndPath("forge", "ores/amber"));
@@ -57,6 +61,7 @@ public class OreDictionaryEntries {
         tags.put("trapdoorWood", ResourceLocation.fromNamespaceAndPath("minecraft", "wooden_trapdoors"));
         ORE_TAGS = Collections.unmodifiableMap(tags);
     }
+
     public static void initializeOreDictionary() {
     }
 }

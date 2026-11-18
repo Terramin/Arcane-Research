@@ -1,9 +1,12 @@
 package arcaneresearch.api.blocks;
+
 import java.util.HashMap;
+
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.RegistryObject;
 import arcaneresearch.init.ModBlocks;
+
 public class BlocksTC {
     public static final RegistryObject<Block> stoneArcane = ModBlocks.ARCANE_STONE;
     public static final RegistryObject<Block> stoneArcaneBrick = ModBlocks.ARCANE_STONE_BRICK;
@@ -156,6 +159,7 @@ public class BlocksTC {
     public static final HashMap<DyeColor, RegistryObject<Block>> candles = new HashMap<>();
     public static final HashMap<DyeColor, RegistryObject<Block>> banners = new HashMap<>();
     public static final HashMap<DyeColor, RegistryObject<Block>> nitor = new HashMap<>();
+
     static {
         candles.put(DyeColor.WHITE, ModBlocks.CANDLE_WHITE);
         candles.put(DyeColor.ORANGE, ModBlocks.CANDLE_ORANGE);
@@ -206,6 +210,7 @@ public class BlocksTC {
         nitor.put(DyeColor.RED, ModBlocks.NITOR_RED);
         nitor.put(DyeColor.BLACK, ModBlocks.NITOR_BLACK);
     }
+
     public static RegistryObject<Block> empty = null;
     public static RegistryObject<Block> eldritch = null;
     public static RegistryObject<Block> bloom = null;

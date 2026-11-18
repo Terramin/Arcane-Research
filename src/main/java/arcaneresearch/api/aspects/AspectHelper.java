@@ -1,14 +1,17 @@
 package arcaneresearch.api.aspects;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
+
 public class AspectHelper {
     private static Map<String, AspectList> objectTags = new HashMap<>();
     private static Map<String, AspectList> entityTags = new HashMap<>();
+
     public static AspectList getObjectAspects(ItemStack stack) {
         if (stack == null || stack.isEmpty()) {
             return null;
@@ -26,6 +29,7 @@ public class AspectHelper {
         String key = itemId.toString();
         return objectTags.get(key);
     }
+
     public static void registerObjectTag(ItemStack stack, AspectList aspects) {
         if (stack == null || stack.isEmpty() || aspects == null) {
             return;
@@ -39,22 +43,26 @@ public class AspectHelper {
             }
         }
     }
+
     public static void registerObjectTag(ResourceLocation itemId, AspectList aspects) {
         if (itemId != null && aspects != null) {
             objectTags.put(itemId.toString(), aspects);
         }
     }
+
     public static void registerEntityTag(ResourceLocation entityId, AspectList aspects) {
         if (entityId != null && aspects != null) {
             entityTags.put(entityId.toString(), aspects);
         }
     }
+
     public static AspectList getEntityAspects(ResourceLocation entityId) {
         if (entityId == null) {
             return null;
         }
         return entityTags.get(entityId.toString());
     }
+
     public static AspectList getEntityAspects(Entity entity) {
         if (entity == null) {
             return null;
@@ -62,6 +70,7 @@ public class AspectHelper {
         ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
         return getEntityAspects(entityId);
     }
+
     public static Aspect getCombinationResult(Aspect aspect1, Aspect aspect2) {
         if (aspect1 == null || aspect2 == null) {
             return null;
@@ -74,16 +83,20 @@ public class AspectHelper {
         }
         return result;
     }
+
     public static boolean canCombine(Aspect aspect1, Aspect aspect2) {
         return getCombinationResult(aspect1, aspect2) != null;
     }
+
     public static void clearTags() {
         objectTags.clear();
         entityTags.clear();
     }
+
     public static AspectList cullTags(AspectList temp) {
         return cullTags(temp, 7);
     }
+
     public static AspectList cullTags(AspectList temp, int cap) {
         AspectList temp2 = new AspectList();
         for (Aspect tag : temp.getAspects()) {
@@ -129,9 +142,11 @@ public class AspectHelper {
         }
         return temp2;
     }
+
     public static int getObjectTagCount() {
         return objectTags.size();
     }
+
     public static int getEntityTagCount() {
         return entityTags.size();
     }

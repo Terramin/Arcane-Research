@@ -1,6 +1,8 @@
 package arcaneresearch.api.items;
+
 import net.minecraft.world.item.Item;
 import arcaneresearch.init.ModItems;
+
 public class ItemsTC {
     public static Item thaumonomicon;
     public static Item curio;
@@ -113,6 +115,7 @@ public class ItemsTC {
     public static Item golemBell;
     public static Item golemPlacer;
     public static Item seals;
+
     public static void init() {
         thaumonomicon = ModItems.THAUMONOMICON.get();
         curio = ModItems.CURIO_ARCANE.get();

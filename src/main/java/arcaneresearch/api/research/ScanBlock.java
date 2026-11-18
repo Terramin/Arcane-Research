@@ -1,14 +1,18 @@
 package arcaneresearch.api.research;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+
 public class ScanBlock implements IScanThing {
     private final String research;
     private final Block[] blocks;
+
     public ScanBlock(Block block) {
         this("!" + block.builtInRegistryHolder().key().location().toString(), block);
     }
+
     public ScanBlock(String research, Block... blocks) {
         this.research = research;
         this.blocks = blocks;
@@ -19,6 +23,7 @@ public class ScanBlock implements IScanThing {
             }
         }
     }
+
     @Override
     public boolean checkThing(Player player, Object obj) {
         if (obj instanceof BlockPos pos) {
@@ -31,6 +36,7 @@ public class ScanBlock implements IScanThing {
         }
         return false;
     }
+
     @Override
     public String getResearchKey(Player player, Object object) {
         return research;

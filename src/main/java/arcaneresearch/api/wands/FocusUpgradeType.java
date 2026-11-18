@@ -1,8 +1,10 @@
 package arcaneresearch.api.wands;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
+
 public class FocusUpgradeType {
     public static FocusUpgradeType[] types = new FocusUpgradeType[20];
     public short id;
@@ -11,6 +13,7 @@ public class FocusUpgradeType {
     public String text;
     public AspectList aspects;
     private static int lastID = 0;
+
     public FocusUpgradeType(ResourceLocation icon, String name, String text, AspectList aspects) {
         this.id = (short) lastID;
         lastID++;
@@ -25,12 +28,15 @@ public class FocusUpgradeType {
         }
         types[this.id] = this;
     }
+
     public String getLocalizedName() {
         return Component.translatable(this.name).getString();
     }
+
     public String getLocalizedText() {
         return Component.translatable(this.text).getString();
     }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof FocusUpgradeType) {
@@ -38,10 +44,12 @@ public class FocusUpgradeType {
         }
         return false;
     }
+
     @Override
     public int hashCode() {
         return this.id;
     }
+
     public static FocusUpgradeType potency = new FocusUpgradeType(
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/potency.png"),
             "focus.upgrade.potency.name", "focus.upgrade.potency.text",
