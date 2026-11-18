@@ -1,4 +1,11 @@
 package arcaneresearch.common.items.tools;
+
+import arcaneresearch.api.ArcaneresearchMaterials;
+import arcaneresearch.api.items.IArchitect;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.lib.utils.InventoryUtils;
+import arcaneresearch.common.lib.utils.Utils;
+import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -7,35 +14,38 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import arcaneresearch.api.ArcaneresearchMaterials;
-import arcaneresearch.api.items.IArchitect;
-import arcaneresearch.client.fx.FXDispatcher;
-import arcaneresearch.common.lib.utils.InventoryUtils;
-import arcaneresearch.common.lib.utils.Utils;
-import arcaneresearch.init.ModItems;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+
 public class ItemElementalShovel extends ShovelItem implements IArchitect {
     public ItemElementalShovel() {
         super(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 1.5F, -3.0F,
                 new Item.Properties().rarity(Rarity.RARE));
     }
+
     public static byte getOrientation(ItemStack stack) {
-        if (stack.hasTag() && stack.getTag().contains("or")) {
-            return stack.getTag().getByte("or");
+        if (stack.hasTag()) {
+            assert stack.getTag() != null;
+            if (stack.getTag().contains("or")) {
+                return stack.getTag().getByte("or");
+            }
         }
         return 0;
     }
+
     public static void setOrientation(ItemStack stack, byte orientation) {
         stack.getOrCreateTag().putByte("or", (byte) (orientation % 3));
     }
+
     private static int[] planeOffsets(ItemStack stack, Direction side, Player player, int aa, int bb) {
         int xx = 0;
         int yy = 0;
@@ -80,10 +90,12 @@ public class ItemElementalShovel extends ShovelItem implements IArchitect {
         }
         return new int[]{xx, yy, zz};
     }
+
     private static boolean canPlaceAt(BlockState state, Level level, BlockPos pos) {
         BlockState target = level.getBlockState(pos);
         return target.isAir() || target.canBeReplaced();
     }
+
     private static boolean placeCopy(Level level, Player player, UseOnContext ctx,
                                      ItemStack stack, BlockPos p2, BlockState toPlace, Direction side) {
         BlockState oldState = level.getBlockState(p2);
@@ -97,6 +109,7 @@ public class ItemElementalShovel extends ShovelItem implements IArchitect {
         player.swing(ctx.getHand());
         return true;
     }
+
     @OnlyIn(Dist.CLIENT)
     private static void placeFX(Level level, UseOnContext ctx,
                                 BlockPos p2, BlockState state, Direction side) {
@@ -108,22 +121,27 @@ public class ItemElementalShovel extends ShovelItem implements IArchitect {
             player.swing(ctx.getHand());
         }
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Override
     public BlockHitResult getArchitectMOP(ItemStack stack, Level level, LivingEntity player) {
         return Utils.rayTrace(level, player, false);
     }
+
     @Override
     public boolean useBlockHighlight(ItemStack stack) {
         return true;
     }
+
     @Override
     public boolean showAxis(ItemStack stack, Level level, Player player, Direction side, EnumAxis axis) {
         return false;
     }
+
     @Override
     public ArrayList<BlockPos> getArchitectBlocks(ItemStack stack, Level level,
                                                   BlockPos pos, Direction side, Player player) {
@@ -143,8 +161,9 @@ public class ItemElementalShovel extends ShovelItem implements IArchitect {
         }
         return out;
     }
+
     @Override
-    public InteractionResult useOn(UseOnContext ctx) {
+    public @NotNull InteractionResult useOn(UseOnContext ctx) {
         Player player = ctx.getPlayer();
         Level level = ctx.getLevel();
         BlockPos pos = ctx.getClickedPos();

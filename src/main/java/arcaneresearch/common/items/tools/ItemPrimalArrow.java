@@ -1,6 +1,8 @@
 package arcaneresearch.common.items.tools;
-import net.minecraft.world.item.Item;
+
 import arcaneresearch.api.aspects.Aspect;
+import net.minecraft.world.item.Item;
+
 public class ItemPrimalArrow extends Item {
     public static final int AIR = 0;
     public static final int FIRE = 1;
@@ -9,13 +11,12 @@ public class ItemPrimalArrow extends Item {
     public static final int ORDER = 4;
     public static final int ENTROPY = 5;
     private final int type;
+
     public ItemPrimalArrow(int type) {
         super(new Item.Properties());
         this.type = type;
     }
-    public int getType() {
-        return this.type;
-    }
+
     public static Aspect aspectFor(int type) {
         return switch (type) {
             case FIRE -> Aspect.FIRE;
@@ -25,5 +26,9 @@ public class ItemPrimalArrow extends Item {
             case ENTROPY -> Aspect.ENTROPY;
             default -> Aspect.AIR;
         };
+    }
+
+    public int getType() {
+        return this.type;
     }
 }

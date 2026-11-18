@@ -1,4 +1,9 @@
 package arcaneresearch.common.items.tools;
+
+import arcaneresearch.common.menu.HandMirrorMenu;
+import arcaneresearch.common.tiles.devices.TileMirror;
+import arcaneresearch.init.ModBlocks;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,18 +29,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
-import arcaneresearch.common.menu.HandMirrorMenu;
-import arcaneresearch.common.tiles.devices.TileMirror;
-import arcaneresearch.init.ModBlocks;
-import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.List;
+
 public class ItemHandMirror extends Item {
     public ItemHandMirror() {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.UNCOMMON));
     }
+
     public static boolean transport(ItemStack mirror, ItemStack items, Player player, Level level) {
         if (!mirror.hasTag()) {
             return false;
@@ -62,7 +67,7 @@ public class ItemHandMirror extends Item {
         }
         BlockPos targetPos = new BlockPos(lx, ly, lz);
         BlockEntity te = targetLevel.getBlockEntity(targetPos);
-        if (te == null || !(te instanceof TileMirror tileMirror)) {
+        if (!(te instanceof TileMirror tileMirror)) {
             mirror.setTag(null);
             player.playSound(ModSounds.ZAP.get(), 1.0f, 0.8f);
             player.sendSystemMessage(Component.translatable("tc.handmirrorerror"));
@@ -75,6 +80,7 @@ public class ItemHandMirror extends Item {
         }
         return false;
     }
+
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level level = context.getLevel();
@@ -100,8 +106,9 @@ public class ItemHandMirror extends Item {
         }
         return InteractionResult.SUCCESS;
     }
+
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide() && stack.hasTag()) {
             CompoundTag tag = stack.getTag();
@@ -134,34 +141,36 @@ public class ItemHandMirror extends Item {
                     final InteractionHand usedHand = hand;
                     NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
                         @Override
-                        public Component getDisplayName() {
+                        public @NotNull Component getDisplayName() {
                             return Component.translatable("container.arcaneresearch.hand_mirror");
                         }
+
                         @Override
-                        public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player menuPlayer) {
+                        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player menuPlayer) {
                             return new HandMirrorMenu(containerId, playerInventory, usedHand);
                         }
-                    }, (FriendlyByteBuf buf) -> {
-                        buf.writeEnum(usedHand);
-                    });
+                    }, (FriendlyByteBuf buf) -> buf.writeEnum(usedHand));
                     return InteractionResultHolder.success(stack);
                 }
             }
         }
         return InteractionResultHolder.pass(stack);
     }
+
     @Override
     public boolean isFoil(ItemStack stack) {
         return stack.hasTag();
     }
+
     @Override
     @Nullable
     public CompoundTag getShareTag(ItemStack stack) {
         return stack.getTag();
     }
+
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         if (stack.hasTag()) {
             CompoundTag tag = stack.getTag();
             if (tag != null && tag.contains("linkX")) {

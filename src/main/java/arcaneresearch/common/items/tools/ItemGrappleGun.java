@@ -1,4 +1,9 @@
 package arcaneresearch.common.items.tools;
+
+import arcaneresearch.api.items.IRechargable;
+import arcaneresearch.api.items.RechargeHelper;
+import arcaneresearch.common.entities.projectile.EntityGrapple;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -11,42 +16,52 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import arcaneresearch.api.items.IRechargable;
-import arcaneresearch.api.items.RechargeHelper;
-import arcaneresearch.common.entities.projectile.EntityGrapple;
-import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 public class ItemGrappleGun extends Item implements IRechargable {
     public ItemGrappleGun() {
         super(new Item.Properties()
                 .stacksTo(1)
                 .rarity(Rarity.UNCOMMON));
     }
+
     @Override
     public int getMaxCharge(ItemStack stack, LivingEntity entity) {
         return 100;
     }
+
     @Override
     public EnumChargeDisplay showInHud(ItemStack stack, LivingEntity entity) {
         return EnumChargeDisplay.NORMAL;
     }
+
     public boolean isLoaded(ItemStack stack) {
         if (stack.hasTag()) {
+            assert stack.getTag() != null;
             return stack.getTag().getByte("loaded") == 1;
         }
         return false;
     }
+
     public void setLoaded(ItemStack stack, boolean loaded) {
         stack.getOrCreateTag().putByte("loaded", (byte) (loaded ? 1 : 0));
     }
+
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, Entity entity, int slot, boolean selected) {
         if (!EntityGrapple.grapples.containsKey(entity.getId())
-                && stack.hasTag() && stack.getTag().getByte("loaded") == 1) {
-            stack.getTag().putByte("loaded", (byte) 0);
+                && stack.hasTag()) {
+            assert stack.getTag() != null;
+            if (stack.getTag().getByte("loaded") == 1) {
+                stack.getTag().putByte("loaded", (byte) 0);
+            }
         }
     }
+
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         level.playSound(player, player.getX(), player.getY(), player.getZ(),
                 ModSounds.ICE.get(), SoundSource.PLAYERS, 3.0f, 0.8f + level.random.nextFloat() * 0.1f);
@@ -65,12 +80,13 @@ public class ItemGrappleGun extends Item implements IRechargable {
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
+
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         if (oldStack.getItem() == this && newStack.getItem() == this
                 && !ItemStack.isSameItemSameTags(oldStack, newStack)) {
-            boolean wasLoaded = !oldStack.hasTag() || oldStack.getTag().getByte("loaded") == 0;
-            boolean isLoaded = !newStack.hasTag() || newStack.getTag().getByte("loaded") == 0;
+            boolean wasLoaded = !oldStack.hasTag() || Objects.requireNonNull(oldStack.getTag()).getByte("loaded") == 0;
+            boolean isLoaded = !newStack.hasTag() || Objects.requireNonNull(newStack.getTag()).getByte("loaded") == 0;
             return wasLoaded != isLoaded;
         }
         return oldStack.getItem() != newStack.getItem();

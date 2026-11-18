@@ -1,4 +1,8 @@
 package arcaneresearch.common.items.tools;
+
+import arcaneresearch.api.ArcaneresearchMaterials;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.init.ModItems;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -7,40 +11,45 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.world.phys.Vec3;
-import arcaneresearch.api.ArcaneresearchMaterials;
-import arcaneresearch.client.fx.FXDispatcher;
-import arcaneresearch.init.ModItems;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
+
 public class ItemElementalAxe extends AxeItem {
     public ItemElementalAxe() {
         super(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, 5.0F, -3.0F,
                 new Item.Properties().rarity(Rarity.RARE));
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
         return UseAnim.BOW;
     }
+
     @Override
-    public int getUseDuration(ItemStack stack) {
+    public int getUseDuration(@NotNull ItemStack stack) {
         return 72000;
     }
+
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         player.startUsingItem(hand);
         return InteractionResultHolder.success(player.getItemInHand(hand));
     }
+
     @Override
-    public void onUseTick(Level level, LivingEntity user, ItemStack stack, int remainingUseDuration) {
+    public void onUseTick(Level level, LivingEntity user, @NotNull ItemStack stack, int remainingUseDuration) {
         List<ItemEntity> stuff = level.getEntitiesOfClass(ItemEntity.class,
                 user.getBoundingBox().inflate(10.0D), e -> !e.isRemoved());
-        if (stuff != null && !stuff.isEmpty()) {
+        if (!stuff.isEmpty()) {
             for (ItemEntity e : stuff) {
                 if (!e.isRemoved()) {
                     Vec3 ep = e.position();
@@ -62,6 +71,7 @@ public class ItemElementalAxe extends AxeItem {
             }
         }
     }
+
     @OnlyIn(Dist.CLIENT)
     private void doBubbleFX(Level level, ItemEntity e, Vec3 ep) {
         FXDispatcher.INSTANCE.crucibleBubble(

@@ -1,4 +1,9 @@
 package arcaneresearch.common.items.tools;
+
+import arcaneresearch.api.ArcaneresearchMaterials;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.lib.utils.Utils;
+import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -7,26 +12,26 @@ import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import arcaneresearch.api.ArcaneresearchMaterials;
-import arcaneresearch.client.fx.FXDispatcher;
-import arcaneresearch.common.lib.utils.Utils;
-import arcaneresearch.init.ModItems;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+
 public class ItemElementalHoe extends HoeItem {
     public ItemElementalHoe() {
         super(ArcaneresearchMaterials.TOOLMAT_ELEMENTAL, -3, 0.0F,
                 new Item.Properties().rarity(Rarity.RARE).stacksTo(5));
     }
+
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
         return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
     }
+
     @Override
-    public InteractionResult useOn(UseOnContext ctx) {
+    public @NotNull InteractionResult useOn(UseOnContext ctx) {
         Player player = ctx.getPlayer();
         Level level = ctx.getLevel();
         BlockPos pos = ctx.getClickedPos();
@@ -64,11 +69,13 @@ public class ItemElementalHoe extends HoeItem {
         }
         return InteractionResult.SUCCESS;
     }
+
     @OnlyIn(Dist.CLIENT)
     private void doBamfFX(BlockPos pp, boolean center) {
         FXDispatcher.INSTANCE.drawBamf(pp.getX() + 0.5D, pp.getY() + 1.01D, pp.getZ() + 0.5D,
                 0.3F, 0.12F, 0.1F, center, false, Direction.UP);
     }
+
     @OnlyIn(Dist.CLIENT)
     private void doMistFX(BlockPos pos) {
         FXDispatcher.INSTANCE.drawBlockMistParticles(pos, 4259648);

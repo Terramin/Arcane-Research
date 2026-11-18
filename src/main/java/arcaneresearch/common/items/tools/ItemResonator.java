@@ -1,4 +1,8 @@
 package arcaneresearch.common.items.tools;
+
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.IEssentiaTransport;
+import arcaneresearch.common.tiles.devices.TileCondenser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -13,21 +17,23 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.api.aspects.IEssentiaTransport;
-import arcaneresearch.common.tiles.devices.TileCondenser;
+import org.jetbrains.annotations.NotNull;
+
 public class ItemResonator extends Item {
     public ItemResonator() {
         super(new Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
     }
+
     @Override
-    public Rarity getRarity(ItemStack stack) {
+    public @NotNull Rarity getRarity(@NotNull ItemStack stack) {
         return Rarity.UNCOMMON;
     }
+
     @Override
     public boolean isFoil(ItemStack stack) {
         return stack.hasTag();
     }
+
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level level = context.getLevel();
@@ -36,7 +42,7 @@ public class ItemResonator extends Item {
         Player player = context.getPlayer();
         InteractionHand hand = context.getHand();
         BlockEntity tile = level.getBlockEntity(pos);
-        if (tile == null || !(tile instanceof IEssentiaTransport)) {
+        if (!(tile instanceof IEssentiaTransport et)) {
             return InteractionResult.FAIL;
         }
         if (level.isClientSide) {
@@ -48,7 +54,6 @@ public class ItemResonator extends Item {
         if (player == null) {
             return InteractionResult.FAIL;
         }
-        IEssentiaTransport et = (IEssentiaTransport) tile;
         if (!(tile instanceof arcaneresearch.common.tiles.essentia.TileTubeBuffer) && et.getEssentiaType(side) != null) {
             player.displayClientMessage(Component.translatable("tc.resonator1",
                     String.valueOf(et.getEssentiaAmount(side)), et.getEssentiaType(side).getName()), false);
