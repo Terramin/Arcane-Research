@@ -1,18 +1,21 @@
-package arcaneresearch.discovered.note;
+package arcaneresearch.api.research.notes;
 
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.helper.StackNbtHelper;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
-import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.api.aspects.AspectList;
 
-public class DiscoveredNoteData {
+public class NoteData implements INoteData {
     public static final String NBT_ROOT = "DiscoveredNote";
 
     public String key;
@@ -24,6 +27,49 @@ public class DiscoveredNoteData {
     public boolean stage2;
     public boolean revealed;
 
+    public NoteData() {
+    }
+
+    @Override
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    public Aspect[] getTags() {
+        return tags;
+    }
+
+    @Override
+    public int[] getNeed() {
+        return need;
+    }
+
+    @Override
+    public int[] getHave() {
+        return have;
+    }
+
+    @Override
+    public Map<String, Byte> getFailed() {
+        return failed;
+    }
+
+    @Override
+    public boolean isStage1() {
+        return stage1;
+    }
+
+    @Override
+    public boolean isStage2() {
+        return stage2;
+    }
+
+    @Override
+    public boolean isRevealed() {
+        return revealed;
+    }
+
     public static boolean hasNote(ItemStack stack) {
         if (stack == null) {
             return false;
@@ -31,8 +77,8 @@ public class DiscoveredNoteData {
         return StackNbtHelper.hasCompound(stack, NBT_ROOT);
     }
 
-    public static DiscoveredNoteData read(ItemStack stack) {
-        DiscoveredNoteData data = new DiscoveredNoteData();
+    public static NoteData read(ItemStack stack) {
+        NoteData data = new NoteData();
         if (!hasNote(stack)) {
             return data;
         }
@@ -68,9 +114,9 @@ public class DiscoveredNoteData {
             data.need = rawNeeds;
             data.have = rawHaves;
         } else {
-            data.tags = java.util.Arrays.copyOf(rawTags, valid);
-            data.need = java.util.Arrays.copyOf(rawNeeds, valid);
-            data.have = java.util.Arrays.copyOf(rawHaves, valid);
+            data.tags = Arrays.copyOf(rawTags, valid);
+            data.need = Arrays.copyOf(rawNeeds, valid);
+            data.have = Arrays.copyOf(rawHaves, valid);
         }
         if (root.contains("fail", Tag.TAG_COMPOUND)) {
             CompoundTag fail = root.getCompound("fail");
@@ -86,7 +132,7 @@ public class DiscoveredNoteData {
         return data;
     }
 
-    public static void write(ItemStack stack, DiscoveredNoteData data) {
+    public static void write(ItemStack stack, NoteData data) {
         if (stack == null || data == null) {
             return;
         }
@@ -138,8 +184,8 @@ public class DiscoveredNoteData {
         StackNbtHelper.putCompound(stack, NBT_ROOT, root);
     }
 
-    public static DiscoveredNoteData create(String key, AspectList required) {
-        DiscoveredNoteData data = new DiscoveredNoteData();
+    public static NoteData create(String key, AspectList required) {
+        NoteData data = new NoteData();
         data.key = key;
         if (required == null || required.aspects.isEmpty()) {
             return data;
@@ -177,6 +223,7 @@ public class DiscoveredNoteData {
         return data;
     }
 
+    @Override
     public float getTotalProgress() {
         Aspect[] tags = this.tags;
         if (tags == null) {
@@ -197,6 +244,7 @@ public class DiscoveredNoteData {
         return total <= 0.0F ? 0.0F : done / total;
     }
 
+    @Override
     public boolean isComplete() {
         Aspect[] tags = this.tags;
         if (tags == null || tags.length <= 0 || getTotalProgress() < 1.0F) {
@@ -259,6 +307,12 @@ public class DiscoveredNoteData {
         return null;
     }
 
+    @Override
+    public boolean requiresHex() {
+        return requiresHex(key);
+    }
+
+    @Override
     public float getTagProgress(Aspect tag) {
         if (tag == null || tags == null) {
             return 0.0F;
@@ -285,6 +339,7 @@ public class DiscoveredNoteData {
         return 0.0F;
     }
 
+    @Override
     public byte getFailed(String aspectTag) {
         if (aspectTag == null || failed == null) {
             return 0;
@@ -293,6 +348,7 @@ public class DiscoveredNoteData {
         return b == null ? 0 : b;
     }
 
+    @Override
     public void addFailed(String aspectTag, byte amount) {
         if (aspectTag == null) {
             return;

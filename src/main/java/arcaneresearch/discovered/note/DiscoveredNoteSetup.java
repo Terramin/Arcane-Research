@@ -23,7 +23,7 @@ import java.util.List;
 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 import arcaneresearch.discovered.table.DiscoveredTableResearch;
 
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -89,9 +89,9 @@ public class DiscoveredNoteSetup {
         if (stack == null || stack.isEmpty()) {
             return stack;
         }
-        DiscoveredNoteData data = DiscoveredNoteData.read(stack);
+        NoteData data = NoteData.read(stack);
         data.revealed = true;
-        DiscoveredNoteData.write(stack, data);
+        NoteData.write(stack, data);
         return stack;
     }
 
@@ -111,7 +111,7 @@ public class DiscoveredNoteSetup {
     private static int noteColor(ItemStack stack, int tintIndex) {
         try {
             return arcaneresearch.helper.TintHelper.researchNoteColor(
-                    stack, tintIndex, DiscoveredNoteData.read(stack));
+                    stack, tintIndex, NoteData.read(stack));
         } catch (Exception e) {
             return 0xFFFFFF;
         }
@@ -129,7 +129,7 @@ public class DiscoveredNoteSetup {
                 ItemProperties.register(noteItem,
                         IDsHelper.mod("complete"),
                         (stack, level, entity, seed) ->
-                                DiscoveredNoteData.read(stack).isComplete() ? 1.0F : 0.0F);
+                                NoteData.read(stack).isComplete() ? 1.0F : 0.0F);
             });
         }
     }

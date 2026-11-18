@@ -98,11 +98,11 @@ public class MsgPlaceAspect {
                 damageInk(player, menu);
                 if (HexResearchGame.checkCompletion(note, a -> HexResearchGame.isKnown(player, a))) {
                     try {
-                        arcaneresearch.discovered.note.DiscoveredNoteData discovered;
-                        discovered = arcaneresearch.discovered.note.DiscoveredNoteData.read(source);
+                        arcaneresearch.api.research.notes.NoteData discovered;
+                        discovered = arcaneresearch.api.research.notes.NoteData.read(source);
                         if (discovered.key != null && discovered.key.equals(note.key)) {
                             discovered.stage2 = true;
-                            arcaneresearch.discovered.note.DiscoveredNoteData.write(source, discovered);
+                            arcaneresearch.api.research.notes.NoteData.write(source, discovered);
                         }
                     } catch (Exception ignored) {
                     }
@@ -121,8 +121,8 @@ public class MsgPlaceAspect {
 
     static boolean stageOneComplete(ItemStack stack) {
         try {
-            arcaneresearch.discovered.note.DiscoveredNoteData data =
-                    arcaneresearch.discovered.note.DiscoveredNoteData.read(stack);
+            arcaneresearch.api.research.notes.NoteData data =
+                    arcaneresearch.api.research.notes.NoteData.read(stack);
             if (data.key == null || data.key.isEmpty()) {
                 return true;
             }
@@ -134,7 +134,7 @@ public class MsgPlaceAspect {
 
     private static int stageOnePercent(ItemStack stack) {
         try {
-            return (int) (arcaneresearch.discovered.note.DiscoveredNoteData.read(stack)
+            return (int) (arcaneresearch.api.research.notes.NoteData.read(stack)
                     .getTotalProgress() * 100.0F);
         } catch (Exception e) {
             return 0;

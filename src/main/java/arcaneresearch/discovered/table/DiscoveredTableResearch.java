@@ -16,7 +16,7 @@ import arcaneresearch.api.research.ResearchEntry;
 import arcaneresearch.api.research.ResearchStage;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.research.ResearchManager;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 
 public final class DiscoveredTableResearch {
     private static final Aspect[] EMPTY_ASPECTS = new Aspect[0];
@@ -263,15 +263,15 @@ public final class DiscoveredTableResearch {
             baseLoss = 1;
         }
         var rng = level.getRandom();
-        DiscoveredNoteData data = DiscoveredNoteData.read(note);
+        NoteData data = NoteData.read(note);
         if (data.key == null) {
             String key = findLostResearch(researcher);
             AspectList required = key == null ? null : requiredAspects(key);
             if (key == null || required == null) {
                 return false;
             }
-            DiscoveredNoteData.write(note, DiscoveredNoteData.create(key, required));
-            data = DiscoveredNoteData.read(note);
+            NoteData.write(note, NoteData.create(key, required));
+            data = NoteData.read(note);
         } else if (ArcaneresearchCapabilities.isResearchComplete(researcher, data.key)
                 || isDiscoverySpent(researcher, data.key)) {
             return false;
@@ -316,7 +316,7 @@ public final class DiscoveredTableResearch {
         if (data.getTotalProgress() >= 1.0F) {
             data.stage1 = true;
         }
-        DiscoveredNoteData.write(note, data);
+        NoteData.write(note, data);
         return progressed;
     }
 

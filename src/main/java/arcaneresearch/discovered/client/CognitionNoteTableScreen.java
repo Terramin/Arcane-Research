@@ -17,7 +17,7 @@ import net.minecraft.util.Mth;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 import arcaneresearch.discovered.table.CognitionNoteTableMenu;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
@@ -37,7 +37,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
     private final List<Aspect> diagramTags = new ArrayList<>();
     private final List<Float> diagramProgress = new ArrayList<>();
     private ItemStack cachedNoteSource = ItemStack.EMPTY;
-    private DiscoveredNoteData cachedNoteData;
+    private NoteData cachedNoteData;
 
     public CognitionNoteTableScreen(CognitionNoteTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -68,7 +68,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             graphics.drawString(font, mode, -font.width(mode) / 2, 0, 0xAEAE5E, false);
             graphics.pose().popPose();
         }
-        DiscoveredNoteData note = noteData();
+        NoteData note = noteData();
         for (int a = 0; a < CognitionNoteTableTile.INPUT_COUNT; a++) {
             Aspect aspect = menu.getTagAspect(a);
             if (aspect == null) {
@@ -83,7 +83,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         drawPopup(graphics, mouseX, mouseY);
     }
 
-    private DiscoveredNoteData noteData() {
+    private NoteData noteData() {
         ItemStack note = menu.getNoteStack();
         if (note == null || note.isEmpty() || !(note.getItem() instanceof ItemDiscoveredResearchNote)) {
             cachedNoteSource = ItemStack.EMPTY;
@@ -92,12 +92,12 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         }
         if (!ItemStack.matches(note, cachedNoteSource)) {
             cachedNoteSource = note.copy();
-            cachedNoteData = DiscoveredNoteData.read(note);
+            cachedNoteData = NoteData.read(note);
         }
         return cachedNoteData;
     }
 
-    private void drawResearchData(GuiGraphics graphics, DiscoveredNoteData note, int x, int y) {
+    private void drawResearchData(GuiGraphics graphics, NoteData note, int x, int y) {
         coords.clear();
         diagramTags.clear();
         diagramProgress.clear();
@@ -187,7 +187,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         if (popupScale <= 0.05F) {
             return;
         }
-        DiscoveredNoteData data = noteData();
+        NoteData data = noteData();
         if (data == null || data.key == null) {
             return;
         }
@@ -224,7 +224,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
         if (note == null || note.isEmpty()) {
             return menu.getSlot(CognitionNoteTableTile.PAPER_SLOT).hasItem();
         }
-        DiscoveredNoteData data = noteData();
+        NoteData data = noteData();
         return data != null && !data.isComplete();
     }
 
@@ -280,7 +280,7 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
                 graphics.renderTooltip(font, lines, java.util.Optional.empty(), mouseX, mouseY);
             }
         }
-        DiscoveredNoteData note = noteData();
+        NoteData note = noteData();
         if (note == null || note.key == null) {
             return;
         }

@@ -26,7 +26,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 import org.jetbrains.annotations.NotNull;
 
@@ -295,7 +295,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         try {
             ItemStack note = items.get(NOTE_SLOT);
             if (!note.isEmpty() && note.getItem() instanceof ItemDiscoveredResearchNote) {
-                DiscoveredNoteData data = DiscoveredNoteData.read(note);
+                NoteData data = NoteData.read(note);
                 if (data.tags != null) {
                     for (Aspect aspect : data.tags) {
                         if (aspect != null) {
@@ -420,7 +420,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
                         baseChance, baseLoss, tags.clone(), amounts);
             }
         } else if (note.getItem() instanceof ItemDiscoveredResearchNote) {
-            DiscoveredNoteData data = DiscoveredNoteData.read(note);
+            NoteData data = NoteData.read(note);
             if (!data.isComplete()) {
                 progressed = DiscoveredTableResearch.progressTableResearch(level, player, note,
                         baseChance, baseLoss, tags.clone(), amounts);
@@ -431,7 +431,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         }
         note = items.get(NOTE_SLOT);
         if (note.getItem() instanceof ItemDiscoveredResearchNote) {
-            DiscoveredNoteData data = DiscoveredNoteData.read(note);
+            NoteData data = NoteData.read(note);
             if (data.isComplete()) {
                 items.set(NOTE_SLOT, DiscoveredNotes.toDiscovery(note));
                 progressed = true;
@@ -457,7 +457,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
         }
         boolean filled = false;
         try {
-            DiscoveredNoteData data = DiscoveredNoteData.read(note);
+            NoteData data = NoteData.read(note);
             if (data.key == null || data.tags == null) {
                 return false;
             }
@@ -498,7 +498,7 @@ public class CognitionNoteTableTile extends BlockEntity implements Container, Me
                 if (data.getTotalProgress() >= 1.0F) {
                     data.stage1 = true;
                 }
-                DiscoveredNoteData.write(note, data);
+                NoteData.write(note, data);
                 setChanged();
             }
         } catch (Exception ignored) {

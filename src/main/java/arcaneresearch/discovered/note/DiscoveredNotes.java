@@ -1,5 +1,7 @@
 package arcaneresearch.discovered.note;
 
+import arcaneresearch.api.research.notes.NoteData;
+import arcaneresearch.api.research.notes.Notes;
 import arcaneresearch.helper.StackNbtHelper;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public final class DiscoveredNotes {
             return ItemStack.EMPTY;
         }
         ItemStack stack = new ItemStack(DiscoveredNoteSetup.getNoteItem());
-        DiscoveredNoteData.write(stack, DiscoveredNoteData.create(key, required));
+        NoteData.write(stack, NoteData.create(key, required));
         return stack;
     }
 
@@ -40,7 +42,7 @@ public final class DiscoveredNotes {
         if (!(stack.getItem() instanceof ItemDiscoveredResearchNote)) {
             return false;
         }
-        return key.equals(DiscoveredNoteData.read(stack).key);
+        return key.equals(NoteData.read(stack).key);
     }
 
     @Deprecated
@@ -62,7 +64,7 @@ public final class DiscoveredNotes {
         if (level == null || player == null || stack == null) {
             return InteractionResultHolder.pass(stack == null ? ItemStack.EMPTY : stack);
         }
-        DiscoveredNoteData data = DiscoveredNoteData.read(stack);
+        NoteData data = NoteData.read(stack);
         if (data.key == null || !data.isComplete()
                 || ArcaneresearchCapabilities.isResearchComplete(player, data.key)) {
             return InteractionResultHolder.pass(stack);
@@ -87,52 +89,15 @@ public final class DiscoveredNotes {
     }
 
     public static Component researchName(String key) {
-        if (key == null) {
-            return null;
-        }
-        ResearchEntry entry = ResearchCategories.getResearch(key);
-        if (entry != null) {
-            return entry.getLocalizedName();
-        }
-        return Component.translatable("tempnote." + key + ".name");
+        return Notes.researchName(key);
     }
 
     public static Component researchText(String key) {
-        if (key == null) {
-            return null;
-        }
-        ResearchEntry entry = ResearchCategories.getResearch(key);
-        if (entry != null && entry.getStages() != null) {
-            List<Component> parts = new ArrayList<>();
-            for (arcaneresearch.api.research.ResearchStage stage : entry.getStages()) {
-                if (stage != null && stage.getText() != null && !stage.getText().isEmpty()) {
-                    parts.add(Component.translatable(stage.getText()));
-                }
-            }
-            if (!parts.isEmpty()) {
-                net.minecraft.network.chat.MutableComponent out = Component.empty();
-                for (int i = 0; i < parts.size(); i++) {
-                    if (i > 0) {
-                        out.append(" ");
-                    }
-                    out.append(parts.get(i));
-                }
-                return out;
-            }
-        }
-        return Component.translatable("tempnote." + key + ".text");
+        return Notes.researchText(key);
     }
 
     public static Component researchPopup(String key) {
-        if (key == null) {
-            return null;
-        }
-        String langKey = "tempnote." + key + ".popup";
-        String resolved = Component.translatable(langKey).getString();
-        if (resolved.isEmpty() || resolved.equals(langKey)) {
-            return null;
-        }
-        return Component.translatable(langKey);
+        return Notes.researchPopup(key);
     }
 
     public static ItemStack toDiscovery(ItemStack note) {
@@ -152,7 +117,7 @@ public final class DiscoveredNotes {
         if (stack.getItem() != DiscoveredNoteSetup.getDiscoveryItem()) {
             return false;
         }
-        return key.equals(DiscoveredNoteData.read(stack).key);
+        return key.equals(NoteData.read(stack).key);
     }
 
     public static boolean hasDiscovery(Player player, String key) {
@@ -199,7 +164,7 @@ public final class DiscoveredNotes {
         if (stack.getItem() != DiscoveredNoteSetup.getNoteItem()) {
             return false;
         }
-        DiscoveredNoteData data = DiscoveredNoteData.read(stack);
+        NoteData data = NoteData.read(stack);
         return key.equals(data.key) && data.isComplete();
     }
 
@@ -216,7 +181,7 @@ public final class DiscoveredNotes {
             return ItemStack.EMPTY;
         }
         ItemStack stack = new ItemStack(DiscoveredNoteSetup.getDiscoveryItem());
-        DiscoveredNoteData.write(stack, DiscoveredNoteData.create(key, new AspectList()));
+        NoteData.write(stack, NoteData.create(key, new AspectList()));
         return stack;
     }
 

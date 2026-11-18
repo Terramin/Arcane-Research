@@ -28,7 +28,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 import arcaneresearch.discovered.note.DiscoveredNotes;
 
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -161,7 +161,7 @@ public class DiscoveredNoteHandRenderer {
         quad(pose, buffer, RenderType.text(PARCHMENT),
                 -7.0F, -7.0F, 135.0F, 135.0F,
                 255, 255, 255, 255, light);
-        DiscoveredNoteData data = DiscoveredNoteData.read(stack);
+        NoteData data = NoteData.read(stack);
         if (data.key == null) {
             return;
         }

@@ -2,7 +2,7 @@ package arcaneresearch.discovered.table;
 
 import java.util.function.Supplier;
 
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,9 +35,9 @@ public class MsgEnsureHex {
                     || HexResearchNoteData.getData(stack) != null) {
                 return;
             }
-            DiscoveredNoteData data;
+            NoteData data;
             try {
-                data = DiscoveredNoteData.read(stack);
+                data = NoteData.read(stack);
             } catch (Exception e) {
                 return;
             }

@@ -3,7 +3,7 @@ package arcaneresearch.discovered.table;
 import java.util.Map;
 
 import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 import arcaneresearch.helper.StackNbtHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -115,9 +115,9 @@ public class HexResearchNoteData {
     private static CompoundTag layer(ItemStack stack, boolean create) {
         try {
             if (create) {
-                return StackNbtHelper.getOrCreateCompound(stack, DiscoveredNoteData.NBT_ROOT);
+                return StackNbtHelper.getOrCreateCompound(stack, NoteData.NBT_ROOT);
             }
-            return StackNbtHelper.getCompound(stack, DiscoveredNoteData.NBT_ROOT);
+            return StackNbtHelper.getCompound(stack, NoteData.NBT_ROOT);
         } catch (Exception e) {
             return null;
         }
@@ -130,7 +130,7 @@ public class HexResearchNoteData {
                 return;
             }
             data.writeToNBT(layer);
-            StackNbtHelper.putCompound(stack, DiscoveredNoteData.NBT_ROOT, layer);
+            StackNbtHelper.putCompound(stack, NoteData.NBT_ROOT, layer);
             StackNbtHelper.removeStackKey(stack, "hexgrid");
             StackNbtHelper.removeStackKey(stack, "pool");
             StackNbtHelper.removeStackKey(stack, "color");
@@ -150,6 +150,6 @@ public class HexResearchNoteData {
             return;
         }
         data.writeToNBT(layer);
-        StackNbtHelper.putCompound(stack, DiscoveredNoteData.NBT_ROOT, layer);
+        StackNbtHelper.putCompound(stack, NoteData.NBT_ROOT, layer);
     }
 }

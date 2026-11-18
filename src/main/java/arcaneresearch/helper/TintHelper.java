@@ -214,7 +214,7 @@ public final class TintHelper {
         return WHITE;
     }
     public static int researchNoteColor(ItemStack stack, int tintIndex,
-            arcaneresearch.discovered.note.DiscoveredNoteData data) {
+            arcaneresearch.api.research.notes.NoteData data) {
         if (tintIndex != 1 || stack == null
                 || !(stack.getItem() instanceof arcaneresearch.discovered.note.ItemDiscoveredResearchNote)) {
             return WHITE;

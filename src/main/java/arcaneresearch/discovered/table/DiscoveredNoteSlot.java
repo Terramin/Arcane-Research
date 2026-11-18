@@ -6,7 +6,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 
 public class DiscoveredNoteSlot extends Slot {
     private final Player player;
@@ -19,10 +19,10 @@ public class DiscoveredNoteSlot extends Slot {
     @Override
     public boolean mayPlace(ItemStack stack) {
         if (!(stack.getItem() instanceof ItemDiscoveredResearchNote)
-                || DiscoveredNoteData.read(stack).isComplete()) {
+                || NoteData.read(stack).isComplete()) {
             return false;
         }
-        String key = DiscoveredNoteData.read(stack).key;
+        String key = NoteData.read(stack).key;
         if (key == null || player == null) {
             return true;
         }

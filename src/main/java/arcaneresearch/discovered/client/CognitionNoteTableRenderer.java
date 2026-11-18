@@ -18,7 +18,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.models.block.ResearchTableModel;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.NoteData;
 import arcaneresearch.discovered.note.ItemDiscoveredResearchNote;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
 import arcaneresearch.helper.TintHelper;
@@ -122,7 +122,7 @@ public class CognitionNoteTableRenderer implements BlockEntityRenderer<Cognition
                     && scrollModel != null) {
                 int color = 0xFFFFFF;
                 try {
-                    DiscoveredNoteData data = DiscoveredNoteData.read(note);
+                    NoteData data = NoteData.read(note);
                     color = TintHelper.researchNoteColor(note, 1, data);
                 } catch (Exception ignored) {
                 }
