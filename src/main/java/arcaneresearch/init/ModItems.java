@@ -28,6 +28,8 @@ import arcaneresearch.common.items.resources.ItemVisneriteIngot;
 import arcaneresearch.common.items.resources.ItemVisneriteScrap;
 import arcaneresearch.common.items.tools.*;
 import arcaneresearch.common.items.tools.elemental.*;
+import arcaneresearch.common.items.tools.thaumium.*;
+import arcaneresearch.common.items.tools.voidmetal.*;
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, Arcaneresearch.MODID);
@@ -189,25 +191,25 @@ public class ModItems {
     public static final RegistryObject<Item> CLOTH_BOOTS = ITEMS.register("cloth_boots",
             ItemRobeArmor::createBoots);
     public static final RegistryObject<Item> THAUMIUM_SWORD = ITEMS.register("thaumium_sword",
-            ItemThaumiumSword::new);
+            ThaumiumSwordItem::new);
     public static final RegistryObject<Item> THAUMIUM_PICK = ITEMS.register("thaumium_pick",
-            ItemThaumiumPickaxe::new);
+            ThaumiumPickaxeItem::new);
     public static final RegistryObject<Item> THAUMIUM_AXE = ITEMS.register("thaumium_axe",
-            ItemThaumiumAxe::new);
+            ThaumiumAxeItem::new);
     public static final RegistryObject<Item> THAUMIUM_SHOVEL = ITEMS.register("thaumium_shovel",
-            ItemThaumiumShovel::new);
+            ThaumiumShovelItem::new);
     public static final RegistryObject<Item> THAUMIUM_HOE = ITEMS.register("thaumium_hoe",
-            ItemThaumiumHoe::new);
+            ThaumiumHoeItem::new);
     public static final RegistryObject<Item> VOID_SWORD = ITEMS.register("void_sword",
-            ItemVoidSword::new);
+            VoidSwordItem::new);
     public static final RegistryObject<Item> VOID_PICK = ITEMS.register("void_pick",
-            ItemVoidPickaxe::new);
+            VoidPickaxeItem::new);
     public static final RegistryObject<Item> VOID_AXE = ITEMS.register("void_axe",
-            ItemVoidAxe::new);
+            VoidAxeItem::new);
     public static final RegistryObject<Item> VOID_SHOVEL = ITEMS.register("void_shovel",
-            ItemVoidShovel::new);
+            VoidShovelItem::new);
     public static final RegistryObject<Item> VOID_HOE = ITEMS.register("void_hoe",
-            ItemVoidHoe::new);
+            VoidHoeItem::new);
     public static final RegistryObject<Item> THAUMIUM_HELM = ITEMS.register("thaumium_helm",
             ItemThaumiumArmor::createHelmet);
     public static final RegistryObject<Item> THAUMIUM_CHEST = ITEMS.register("thaumium_chest",

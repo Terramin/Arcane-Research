@@ -1,8 +1,7 @@
-package arcaneresearch.common.items.tools;
+package arcaneresearch.common.items.tools.voidmetal;
 
 import arcaneresearch.api.ArcaneresearchMaterials;
 import arcaneresearch.api.items.IWarpingGear;
-import arcaneresearch.init.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -10,7 +9,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
@@ -19,42 +17,33 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ItemVoidSword extends SwordItem implements IWarpingGear {
-    public ItemVoidSword() {
+public class VoidSwordItem extends SwordItem implements IWarpingGear, VoidTool {
+    public VoidSwordItem() {
         super(ArcaneresearchMaterials.TOOLMAT_VOID, 3, -2.4F,
-                new Item.Properties());
+                VoidTool.createProperties());
     }
 
     @Override
     public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
-        return repair.is(ModItems.VOID_METAL_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
+        return VoidTool.canRepair(repair) || super.isValidRepairItem(toRepair, repair);
     }
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (stack.isDamaged() && entity.tickCount % 20 == 0 && entity instanceof LivingEntity) {
-            stack.setDamageValue(stack.getDamageValue() - 1);
-        }
+        VoidTool.repairOverTime(stack, entity);
     }
 
     @Override
     public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, LivingEntity attacker) {
         if (!attacker.level().isClientSide()
-                && (!(target instanceof Player) || !(attacker instanceof Player) || isPvPEnabled(attacker.level()))) {
+                && (!(target instanceof Player) || !(attacker instanceof Player) || VoidTool.isPvPEnabled(attacker.level()))) {
             try {
                 target.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0));
             } catch (Exception ignored) {
             }
         }
         return super.hurtEnemy(stack, target, attacker);
-    }
-
-    private boolean isPvPEnabled(Level level) {
-        if (level.getServer() != null) {
-            return level.getServer().isPvpAllowed();
-        }
-        return true;
     }
 
     @Override

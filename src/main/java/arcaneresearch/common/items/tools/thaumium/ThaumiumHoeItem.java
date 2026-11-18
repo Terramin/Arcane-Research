@@ -1,20 +1,18 @@
-package arcaneresearch.common.items.tools;
+package arcaneresearch.common.items.tools.thaumium;
 
 import arcaneresearch.api.ArcaneresearchMaterials;
-import arcaneresearch.init.ModItems;
 import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemThaumiumHoe extends HoeItem {
-    public ItemThaumiumHoe() {
+public class ThaumiumHoeItem extends HoeItem implements ThaumiumTool {
+    public ThaumiumHoeItem() {
         super(ArcaneresearchMaterials.TOOLMAT_THAUMIUM, -2, -1.0F,
-                new Item.Properties());
+                ThaumiumTool.createProperties());
     }
 
     @Override
     public boolean isValidRepairItem(@NotNull ItemStack toRepair, ItemStack repair) {
-        return repair.is(ModItems.THAUMIUM_INGOT.get()) || super.isValidRepairItem(toRepair, repair);
+        return ThaumiumTool.canRepair(repair) || super.isValidRepairItem(toRepair, repair);
     }
 }
