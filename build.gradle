@@ -28,6 +28,7 @@ minecraft {
             args "-mixin.config=${mod_id}.mixins.json"
             args "-mixin.config=${mod_id}.lore.mixins.json"
             args "-mixin.config=${mod_id}.helper.mixins.json"
+            args "-mixin.config=${mod_id}.crit.mixins.json"
 
             property 'forge.logging.markers', 'REGISTRIES'
 
@@ -69,6 +70,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
     config "${mod_id}.mixins.json"
+    config "${mod_id}.crit.mixins.json"
 }
 
 
@@ -141,7 +143,7 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : mod_authors,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'MixinConfigs'            : "${mod_id}.mixins.json,${mod_id}.lore.mixins.json,${mod_id}.helper.mixins.json"
+                'MixinConfigs'            : "${mod_id}.mixins.json,${mod_id}.lore.mixins.json,${mod_id}.helper.mixins.json,${mod_id}.crit.mixins.json"
         ])
     }
 

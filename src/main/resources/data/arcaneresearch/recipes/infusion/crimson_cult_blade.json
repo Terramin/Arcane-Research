@@ -1,0 +1,26 @@
+{
+  "type": "arcaneresearch:infusion",
+  "group": "arcaneresearch:crimson_stuff",
+  "instability": 4,
+  "central": {
+    "item": "arcaneresearch:crimson_blade"
+  },
+  "ingredients": [
+    { "item": "arcaneresearch:crimson_cult_amulet" },
+    { "item": "arcaneresearch:crimson_cult_amulet" },
+    { "item": "arcaneresearch:crimson_cult_amulet" },
+    { "item": "arcaneresearch:crimson_cult_amulet" },
+    { "item": "arcaneresearch:visnerite_ingot" },
+    { "item": "arcaneresearch:visnerite_ingot" },
+    { "item": "arcaneresearch:visnerite_ingot" },
+    { "item": "arcaneresearch:visnerite_ingot" }
+  ],
+  "aspects": {
+    "tenebrae": 30,
+    "victus": 25,
+    "metallum": 20
+  },
+  "result": {
+    "item": "arcaneresearch:crimson_cult_blade"
+  }
+}

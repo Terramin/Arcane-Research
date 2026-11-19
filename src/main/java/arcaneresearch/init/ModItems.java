@@ -331,6 +331,10 @@ public class ModItems {
             ItemPrimalCrusher::new);
     public static final RegistryObject<Item> CRIMSON_BLADE = ITEMS.register("crimson_blade",
             ItemCrimsonBlade::new);
+    public static final RegistryObject<Item> CRIMSON_CULT_BLADE = ITEMS.register("crimson_cult_blade",
+            ItemCrimsonCultBlade::new);
+    public static final RegistryObject<Item> CRIMSON_CULT_AMULET = ITEMS.register("crimson_cult_amulet",
+            ItemMaterial::epic);
     public static final RegistryObject<Item> ELEMENTAL_HOE = ITEMS.register("elemental_hoe",
             ElementalHoeItem::new);
     public static final RegistryObject<Item> RESONATOR = ITEMS.register("resonator",

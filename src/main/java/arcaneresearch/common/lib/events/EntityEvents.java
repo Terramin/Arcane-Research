@@ -388,6 +388,18 @@ public class EntityEvents {
                         new ItemStack(ModItems.CURIO_RITES.get())));
             }
         }
+        // EN: 0.1% chance for the Crimson Cult Amulet from cultists killed by a player.
+        // RU: 0.1% шанс выпадения амулета кровавого культа с культистов, убитых игроком.
+        if (ModItems.CRIMSON_CULT_AMULET != null
+                && !fakePlayer
+                && source.getEntity() instanceof Player
+                && (entity instanceof arcaneresearch.common.entities.monster.cult.EntityCultist
+                || entity instanceof arcaneresearch.common.entities.monster.boss.EntityCultistLeader)
+                && entity.level().random.nextFloat() < 0.001F) {
+            event.getDrops().add(new ItemEntity(entity.level(),
+                    entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ(),
+                    new ItemStack(ModItems.CRIMSON_CULT_AMULET.get())));
+        }
         int champId = ChampionModifier.getChampionId(entity);
         if (champId >= 0 && champId != 13 && event.isRecentlyHit()
                 && !(entity instanceof arcaneresearch.common.entities.monster.boss.EntityArcaneresearchBoss)

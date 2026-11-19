@@ -335,6 +335,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.SALIS_MUNDUS.get());
                         output.accept(ModItems.MIRRORED_GLASS.get());
                         output.accept(ModItems.VOID_SEED.get());
+                        output.accept(ModItems.CRIMSON_CULT_AMULET.get());
                         output.accept(ModItems.BRAIN_CLOCKWORK.get());
                         output.accept(ModItems.BRAIN_CURIOUS.get());
                         output.accept(ModItems.GOLEM_MODULE_AGGRESSION.get());
@@ -426,6 +427,7 @@ public class ModCreativeTabs {
                                 EnumInfusionEnchantment.DESTRUCTIVE, 1,
                                 EnumInfusionEnchantment.REFINING, 1));
                         output.accept(ModItems.CRIMSON_BLADE.get());
+                        output.accept(ModItems.CRIMSON_CULT_BLADE.get());
                         output.accept(ModItems.GRAPPLE_GUN.get());
                         output.accept(ModItems.GRAPPLE_GUN_TIP.get());
                         output.accept(ModItems.GRAPPLE_GUN_SPOOL.get());
