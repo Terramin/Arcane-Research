@@ -971,6 +971,7 @@
   "tc.forbidden.level.5": "Запретные",
   "tc.unknownobject": "Из этого нельзя узнать ничего нового.",
   "tc.knownobject": "Вы узнали что-то новое.",
+  "message.arcaneresearch.discovery": "Вы сделали новое открытие",
   "tc.hud.scan_new": "§b✦ Новое для изучения",
   "tc.hud.scan_known": "§7Изучено",
   "tc.invtoolarge": "Инвентарь слишком большой. Будет просканировано только первые 100 предметов.",

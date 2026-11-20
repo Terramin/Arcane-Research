@@ -2002,6 +2002,7 @@
   "tc.knowledge.gained": "You have gained some knowledge",
   "tc.knowledge.name": "Knowledge Totals",
   "tc.knownobject": "You have learned something new.",
+  "message.arcaneresearch.discovery": "You made a new discovery.",
   "tc.levitator": "Range set to %s blocks. (%d vis/minute)",
   "tc.logistics.request": "Request",
   "tc.logistics.search": "Search",

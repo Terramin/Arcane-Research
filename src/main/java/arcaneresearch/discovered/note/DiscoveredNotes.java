@@ -19,8 +19,9 @@ import arcaneresearch.api.items.IScribeTools;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.ResearchEntry;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
-import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.init.ModSounds;
+import arcaneresearch.message.api.StoryMessage;
+import arcaneresearch.message.api.StoryTellingAPI;
 
 public final class DiscoveredNotes {
     private DiscoveredNotes() {
@@ -71,19 +72,25 @@ public final class DiscoveredNotes {
         }
         boolean client = level.isClientSide;
         if (!client) {
-            presentDiscovery(player, data.key);
-            boolean ok = player instanceof net.minecraft.server.level.ServerPlayer serverPlayer
-                    && ResearchManager.doesPlayerHaveRequisites(player, data.key)
-                    && arcaneresearch.common.lib.network.playerdata.PacketSyncProgressToServer
-                    .checkRequisites(serverPlayer, data.key)
-                    && ResearchManager.progressResearch(player, data.key);
-            if (ok) {
-                stack.shrink(1);
-                level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                        ModSounds.LEARN.get(), SoundSource.PLAYERS, 0.75F, 1.0F);
-            } else {
-                player.sendSystemMessage(Component.translatable("tc.discoveryerror", data.key));
-            }
+            // The note only confirms the discovery in the thaumonomicon.
+            // Store it without the DISCOVERY flag so the old toast is not
+            // shown, then report it through the story message API instead.
+            ArcaneresearchCapabilities.getKnowledge(player).ifPresent(knowledge -> {
+                knowledge.addPresentedDiscovery(data.key);
+                if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                    knowledge.sync(serverPlayer);
+                    Component title = researchName(data.key);
+                    StoryTellingAPI.send(new StoryMessage(
+                            title != null ? title : Component.literal(data.key),
+                            Component.translatable("message.arcaneresearch.discovery"),
+                            StoryMessage.NONE,
+                            0xFFFFD700, 0xFFFFFFFF,
+                            180, 900, false, true), serverPlayer);
+                }
+            });
+            stack.shrink(1);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    ModSounds.LEARN.get(), SoundSource.PLAYERS, 0.75F, 1.0F);
         }
         return InteractionResultHolder.sidedSuccess(stack, client);
     }
