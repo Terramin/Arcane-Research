@@ -59,9 +59,6 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
         return true;
     }
 
-    private static final ThreadLocal<DecimalFormat> VIS_FORMAT =
-            ThreadLocal.withInitial(() -> new DecimalFormat("#######.#"));
-
     private final DecimalFormat formatter = new DecimalFormat("#######.#");
     private final int auraArea;
 
@@ -244,7 +241,6 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
     }
 
     @Override
-    @Nullable
     public ItemStack getFocusStack(ItemStack stack) {
         if (stack == null || !stack.hasTag()) {
             return ItemStack.EMPTY;
@@ -501,7 +497,7 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
             return null;
         }
         FocusPackage fp = ItemFocus.getPackage(focusStack);
-        if (fp == null || !arcaneresearch.api.casters.FocusEngine.doesPackageContainElement(fp, "arcaneresearch.PLAN")) {
+        if (!arcaneresearch.api.casters.FocusEngine.doesPackageContainElement(fp, "arcaneresearch.PLAN")) {
             return null;
         }
         var plan = arcaneresearch.api.casters.FocusEngine.getElement("arcaneresearch.PLAN");
@@ -566,13 +562,13 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
 
         if (state.getBlock() instanceof arcaneresearch.api.casters.IInteractWithCaster casterBlock) {
             if (casterBlock.onCasterRightClick(level, stack, player, pos, side, hand)) {
-                return InteractionResult.PASS;
+                return InteractionResult.SUCCESS;
             }
         }
         BlockEntity tile = level.getBlockEntity(pos);
         if (tile instanceof arcaneresearch.api.casters.IInteractWithCaster casterTile) {
             if (casterTile.onCasterRightClick(level, stack, player, pos, side, hand)) {
-                return InteractionResult.PASS;
+                return InteractionResult.SUCCESS;
             }
         }
         if (arcaneresearch.api.casters.CasterTriggerRegistry.hasTrigger(state)) {
@@ -774,6 +770,7 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
                                 @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         ItemStack focusStack = getFocusStack(stack);
         FocusItem focus = getFocus(stack);
+        AspectList focusCost = focus != null ? focus.getVisCost(focusStack) : null;
 
         CompoundTag tag = stack.getTag();
         if (tag != null) {
@@ -786,8 +783,8 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
                 int amount = getVis(stack, aspect);
                 float mod = getConsumptionModifier(stack, null, aspect, false);
                 String extra = "";
-                if (focus != null) {
-                    float cost = focus.getVisCost(focusStack).getAmount(aspect) * mod;
+                if (focus != null && focusCost != null) {
+                    float cost = focusCost.getAmount(aspect) * mod;
                     if (cost > 0.0F) {
                         extra = ", " + formatter.format(cost) + " "
                                 + Component.translatable(focus.isVisCostPerTick(focusStack)
