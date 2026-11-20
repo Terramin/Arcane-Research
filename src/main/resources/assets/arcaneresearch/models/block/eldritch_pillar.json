@@ -2,6 +2,7 @@
     "loader": "forge:obj",
     "model": "arcaneresearch:models/block/pillar.obj",
     "flip_v": false,
+    "emissive_ambient": false,
     "textures": {
         "texture": "arcaneresearch:block/pillar_eldritch",
         "particle": "arcaneresearch:block/pillar_eldritch"
