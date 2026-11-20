@@ -26,8 +26,8 @@ import net.minecraftforge.common.ForgeHooks;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.client.fx.WandFX;
 import arcaneresearch.common.lib.utils.BlockUtils;
 import arcaneresearch.common.lib.wands.WandSounds;
@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class ItemFocusExcavation extends ItemFocusBasic {
+public class ItemFocusExcavation extends FocusItem {
     public static final FocusUpgradeType dowsing = new FocusUpgradeType(
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "foci/dowsing.png"),
             "focus.upgrade.dowsing.name",
@@ -94,7 +94,7 @@ public class ItemFocusExcavation extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack stack, Level level, LivingEntity caster, HitResult hit, int count) {
-        if (!(stack.getItem() instanceof IWand wand) || !(caster instanceof Player player)) {
+        if (!(stack.getItem() instanceof IFocusHost wand) || !(caster instanceof Player player)) {
             return false;
         }
         String name = player.getGameProfile().getName();
@@ -179,7 +179,7 @@ public class ItemFocusExcavation extends ItemFocusBasic {
 
     private boolean excavate(Level level, ItemStack stack, Player player, BlockState bs, BlockPos pos) {
         if (level.isClientSide || !(player instanceof ServerPlayer serverPlayer)
-                || !(stack.getItem() instanceof IWand wand)) {
+                || !(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         ServerLevel server = serverPlayer.serverLevel();

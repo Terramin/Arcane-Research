@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.api.wands.WandCap;
 import arcaneresearch.api.wands.WandRod;
 import arcaneresearch.client.lib.obj.MeshLoader;
@@ -53,7 +53,7 @@ public class WandMeshModel implements BakedModel {
         this.sourceMesh.parts.remove(0);
         variants.put(variant, this);
     }
-    public WandMeshModel(String variant, ItemFocusBasic focus) {
+    public WandMeshModel(String variant, FocusItem focus) {
         setup(variant, false);
         this.sourceMesh.parts.remove(4);
         this.sourceMesh.parts.get(3).material.DiffuseTextureMap = focus.getFocusTexture().toString();
@@ -164,7 +164,7 @@ public class WandMeshModel implements BakedModel {
     }
     public BakedModel resolveStack(ItemStack stack) {
         ensureBaked();
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return this;
         }
         WandRod rod = wand.getRod(stack);
@@ -172,7 +172,7 @@ public class WandMeshModel implements BakedModel {
         if (rod == null || cap == null) {
             return this;
         }
-        ItemFocusBasic focus = wand.getFocus(stack);
+        FocusItem focus = wand.getFocus(stack);
         String cacheKey = (rod.isStaff() ? "staff" : (wand.isSceptre(stack) ? "sceptre" : "wand")) + rod.getTag()
                 + cap.getTag();
         if (focus != null) {
@@ -271,7 +271,7 @@ public class WandMeshModel implements BakedModel {
         public BakedModel resolve(BakedModel original, ItemStack stack,
                                   @Nullable net.minecraft.client.multiplayer.ClientLevel level,
                                   @Nullable net.minecraft.world.entity.LivingEntity entity, int seed) {
-            if (stack.getItem() instanceof IWand && original instanceof WandMeshModel wandModel) {
+            if (stack.getItem() instanceof IFocusHost && original instanceof WandMeshModel wandModel) {
                 return wandModel.resolveStack(stack);
             }
             return original;

@@ -11,13 +11,11 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.casters.ICaster;
-import arcaneresearch.api.wands.IWand;
+
 import arcaneresearch.common.golems.ItemGolemBell;
 import arcaneresearch.common.items.curios.CloudRingItem;
 import arcaneresearch.common.lib.compat.CuriosCompat;
 import arcaneresearch.common.lib.network.PacketHandler;
-import arcaneresearch.common.lib.network.misc.PacketFocusChangeToServer;
 import arcaneresearch.common.lib.network.misc.PacketItemKeyToServer;
 import arcaneresearch.common.lib.network.wand.PacketWandFocusChangeToServer;
 import arcaneresearch.init.ModItems;
@@ -96,18 +94,11 @@ public class KeyHandler {
                 radialLock = false;
             }
             ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-            ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
-            boolean hasCaster = (!mainHand.isEmpty() && mainHand.getItem() instanceof ICaster) ||
-                    (!offHand.isEmpty() && offHand.getItem() instanceof ICaster);
             boolean hasWand = !WandRenderingHandler.heldWand(player).isEmpty();
-            if (!radialLock && (hasCaster || hasWand)) {
+            if (!radialLock && hasWand) {
                 if (player.isShiftKeyDown()) {
                     if (!keyPressedF) {
-                        if (hasCaster) {
-                            PacketHandler.sendToServer(new PacketFocusChangeToServer("REMOVE"));
-                        } else {
-                            PacketHandler.sendToServer(new PacketWandFocusChangeToServer(player, "REMOVE"));
-                        }
+                        PacketHandler.sendToServer(new PacketWandFocusChangeToServer(player, "REMOVE"));
                     }
                 } else {
                     radialActive = true;
@@ -149,15 +140,7 @@ public class KeyHandler {
         if (keyRemoveFocus == null) return;
         if (keyRemoveFocus.isDown()) {
             if (!keyPressedRemove) {
-                ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-                ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
-                boolean handsHoldCaster = (!mainHand.isEmpty() && mainHand.getItem() instanceof ICaster)
-                        || (!offHand.isEmpty() && offHand.getItem() instanceof ICaster);
-                boolean handsHoldWand = (!mainHand.isEmpty() && mainHand.getItem() instanceof IWand)
-                        || (!offHand.isEmpty() && offHand.getItem() instanceof IWand);
-                if (handsHoldCaster) {
-                    PacketHandler.sendToServer(new PacketFocusChangeToServer("REMOVE"));
-                } else if (handsHoldWand) {
+                if (!WandRenderingHandler.heldWand(player).isEmpty()) {
                     PacketHandler.sendToServer(new PacketWandFocusChangeToServer(player, "REMOVE"));
                 }
             }

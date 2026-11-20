@@ -11,10 +11,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.IFocusPicker;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.config.ModConfig;
-import arcaneresearch.common.items.wands.WandManager;
+import arcaneresearch.common.items.wands.FocusManager;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 @OnlyIn(Dist.CLIENT)
@@ -30,7 +30,7 @@ public class WandHudHandler {
     @OnlyIn(Dist.CLIENT)
     public void renderCastingWandHud(Minecraft mc, GuiGraphics graphics, float partialTicks,
                                      Player player, long time, ItemStack wandstack) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return;
         }
         int selected = player.getInventory().selected;
@@ -54,7 +54,7 @@ public class WandHudHandler {
         graphics.pose().popPose();
         graphics.pose().translate(16.0F, 16.0F, 0.0F);
         int max = wand.getMaxVis(wandstack);
-        ItemFocusBasic focus = wand.getFocus(wandstack);
+        FocusItem focus = wand.getFocus(wandstack);
         ItemStack focusStack = wand.getFocusStack(wandstack);
         int count = 0;
         AspectList aspects = wand.getAllVis(wandstack);
@@ -120,7 +120,7 @@ public class WandHudHandler {
                 graphics.pose().translate(-24.0F, -24.0F, 90.0F);
                 graphics.renderItem(wand.getFocusStack(wandstack), 16, 16);
                 graphics.pose().popPose();
-                float cooldown = WandManager.getCooldown(player);
+                float cooldown = FocusManager.getCooldown(player);
                 if (cooldown > 0.0F) {
                     String secs = this.secondsFormatter.format(cooldown) + "s";
                     int w = mc.font.width(secs) / 2;

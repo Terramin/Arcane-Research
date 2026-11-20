@@ -2,6 +2,7 @@ package arcaneresearch.common.lib.events;
 
 import arcaneresearch.common.items.curios.CuriosityBandItem;
 import arcaneresearch.common.items.curios.RunicCurioItem;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.message.api.StoryTellingAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -217,7 +218,7 @@ public class PlayerEvents {
             if (charge > runicInfo.get(id)[0]) {
                 charge = runicInfo.get(id)[0];
             } else if (charge < runicInfo.get(id)[0] && nextCycle.get(id) < time
-                    && arcaneresearch.common.items.wands.WandManager.consumeVisFromInventory(player,
+                    && FocusManager.consumeVisFromInventory(player,
                     new arcaneresearch.api.aspects.AspectList()
                             .add(arcaneresearch.api.aspects.Aspect.AIR,
                                     arcaneresearch.common.config.ModConfig.shieldCost)

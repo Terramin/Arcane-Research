@@ -5,8 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
-import arcaneresearch.api.casters.ICaster;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.common.items.wands.FocusManager;
 
 import java.util.function.Supplier;
 
@@ -32,12 +32,12 @@ public class PacketFocusChangeToServer {
                 return;
             }
             ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (!mainHand.isEmpty() && mainHand.getItem() instanceof ICaster) {
+            if (!mainHand.isEmpty() && mainHand.getItem() instanceof IFocusHost) {
                 changeFocus(mainHand, player, packet.focus);
                 return;
             }
             ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (!offHand.isEmpty() && offHand.getItem() instanceof ICaster) {
+            if (!offHand.isEmpty() && offHand.getItem() instanceof IFocusHost) {
                 changeFocus(offHand, player, packet.focus);
             }
         });
@@ -46,9 +46,9 @@ public class PacketFocusChangeToServer {
 
     private static void changeFocus(ItemStack casterStack, ServerPlayer player, String focusKey) {
         if ("REMOVE".equals(focusKey)) {
-            CasterManager.removeFocus(casterStack, player);
+            FocusManager.removeFocus(casterStack, player);
         } else {
-            CasterManager.changeFocus(casterStack, player.level(), player, focusKey);
+            FocusManager.changeFocus(casterStack, player.level(), player, focusKey);
         }
     }
 }

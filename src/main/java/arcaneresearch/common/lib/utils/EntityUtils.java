@@ -66,6 +66,16 @@ public class EntityUtils {
         Vec3 lookVec = entity.getLookAngle();
         Vec3 endVec = eyePos.add(lookVec.scale(range));
 
+        if (arcaneresearch.common.items.casters.CasterAim.isCasterHeld(entity)) {
+            Vec3 origin = arcaneresearch.common.items.casters.CasterAim.origin(entity);
+            HitResult cross = level.clip(new ClipContext(eyePos, endVec,
+                    ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, entity));
+            Vec3 aim = cross.getType() == HitResult.Type.MISS ? endVec : cross.getLocation();
+            lookVec = aim.subtract(origin).normalize();
+            endVec = aim.add(lookVec.scale(0.5D));
+            eyePos = origin;
+        }
+
         AABB box = new AABB(eyePos.x, eyePos.y, eyePos.z, eyePos.x, eyePos.y, eyePos.z)
                 .expandTowards(lookVec.scale(range)).inflate(padding);
 

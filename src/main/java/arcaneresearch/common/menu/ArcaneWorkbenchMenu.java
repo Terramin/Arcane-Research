@@ -5,7 +5,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.crafting.IArcaneRecipe;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.common.lib.crafting.ArcaneWorkbenchCraftingContainer;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.menu.slot.ArcaneWorkbenchResultSlot;
@@ -164,7 +164,7 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
     public static int getDiscountedVisCost(IArcaneRecipe recipe, Player player) {
         int base = recipe.getVis();
         if (base <= 0) return 0;
-        float discount = CasterManager.getTotalVisDiscount(player);
+        float discount = FocusManager.getTotalVisDiscount(player);
         if (discount < 0f) discount = 0f;
         if (discount > 1f) discount = 1f;
         return (int) (base * (1.0f - discount));

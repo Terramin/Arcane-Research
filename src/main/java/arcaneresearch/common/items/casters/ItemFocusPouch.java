@@ -1,5 +1,6 @@
 package arcaneresearch.common.items.casters;
 
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.menu.FocusPouchMenu;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -88,7 +89,7 @@ public class ItemFocusPouch extends Item implements ICurioItem {
         NonNullList<ItemStack> inv = getInventory(item);
         int count = 0;
         for (ItemStack stack : inv) {
-            if (stack != null && !stack.isEmpty() && stack.getItem() instanceof ItemFocus) {
+            if (stack != null && !stack.isEmpty() && stack.getItem() instanceof FocusItem) {
                 count++;
             }
         }

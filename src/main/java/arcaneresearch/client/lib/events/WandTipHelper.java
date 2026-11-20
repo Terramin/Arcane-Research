@@ -1,4 +1,5 @@
 package arcaneresearch.client.lib.events;
+import arcaneresearch.api.wands.IFocusHost;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -18,9 +19,9 @@ public final class WandTipHelper {
     public static boolean isRightHand(Player player) {
         try {
             boolean mainHolds =
-                    player.getMainHandItem().getItem() instanceof arcaneresearch.api.wands.IWand;
+                    player.getMainHandItem().getItem() instanceof IFocusHost;
             boolean offHolds =
-                    player.getOffhandItem().getItem() instanceof arcaneresearch.api.wands.IWand;
+                    player.getOffhandItem().getItem() instanceof IFocusHost;
             InteractionHand hand = mainHolds ? InteractionHand.MAIN_HAND
                     : (offHolds ? InteractionHand.OFF_HAND : player.getUsedItemHand());
             return (hand == InteractionHand.MAIN_HAND)
@@ -35,7 +36,7 @@ public final class WandTipHelper {
                 return 0.0F;
             }
             ItemStack use = player.getUseItem();
-            if (!(use.getItem() instanceof arcaneresearch.api.wands.IWand)) {
+            if (!(use.getItem() instanceof IFocusHost)) {
                 return 0.0F;
             }
             float f = (float) use.getUseDuration() - (float) player.getUseItemRemainingTicks();
@@ -49,8 +50,16 @@ public final class WandTipHelper {
     public static Vec3 tipWorld(Player player, float partialTicks) {
         return tipWorld(player, partialTicks, 0.0F, 0.0F, 0.0F);
     }
+    private static boolean holdsCaster(Player player) {
+        return (player.getMainHandItem().getItem() instanceof IFocusHost host && host.isCaster())
+                || (player.getOffhandItem().getItem() instanceof IFocusHost host2 && host2.isCaster());
+    }
+
     public static Vec3 tipWorld(Player player, float partialTicks,
                                 float modelDx, float modelDy, float modelDz) {
+        if (holdsCaster(player)) {
+            return arcaneresearch.common.items.casters.CasterAim.origin(player);
+        }
         try {
             Minecraft mc = Minecraft.getInstance();
             Camera camera = mc.gameRenderer.getMainCamera();
@@ -110,10 +119,10 @@ public final class WandTipHelper {
         return viewToWorld(player, other, modelDx, modelDy, modelDz);
     }
     private static InteractionHand heldWandHand(Player player) {
-        if (player.getMainHandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
+        if (player.getMainHandItem().getItem() instanceof IFocusHost) {
             return InteractionHand.MAIN_HAND;
         }
-        if (player.getOffhandItem().getItem() instanceof arcaneresearch.api.wands.IWand) {
+        if (player.getOffhandItem().getItem() instanceof IFocusHost) {
             return InteractionHand.OFF_HAND;
         }
         return null;
@@ -127,8 +136,6 @@ public final class WandTipHelper {
         }
         Minecraft mc = Minecraft.getInstance();
         Camera camera = mc.gameRenderer.getMainCamera();
-        // 1.20.1 camera.rotation() maps the (x/z flipped) view frame used by the hand pose
-        // into world space, hence the inversions; 26.3 does not need them.
         org.joml.Vector3f v = new org.joml.Vector3f(-view.x, view.y, -view.z);
         v.rotate(camera.rotation());
         Vec3 pos = camera.getPosition();
@@ -142,8 +149,8 @@ public final class WandTipHelper {
             }
             ItemStack main = player.getMainHandItem();
             ItemStack off = player.getOffhandItem();
-            boolean mainWand = main.getItem() instanceof arcaneresearch.api.wands.IWand;
-            boolean offWand = off.getItem() instanceof arcaneresearch.api.wands.IWand;
+            boolean mainWand = main.getItem() instanceof IFocusHost;
+            boolean offWand = off.getItem() instanceof IFocusHost;
             if (!mainWand && !offWand) {
                 return null;
             }
@@ -176,8 +183,8 @@ public final class WandTipHelper {
                 arcaneresearch.client.renderers.item.WandUseAnimation.applyWaveBlock(
                         ps, st.focusStack(), st.u(), st.tilt());
             }
-            arcaneresearch.api.wands.IWand wand =
-                    (arcaneresearch.api.wands.IWand) handStack.getItem();
+            IFocusHost wand =
+                    (IFocusHost) handStack.getItem();
             boolean right = arm == HumanoidArm.RIGHT;
             float dtx = (right ? 1.13F : -1.13F) * 0.0625F;
             float dty = 3.2F * 0.0625F;
@@ -194,11 +201,6 @@ public final class WandTipHelper {
             m.transform(p);
             Minecraft mc = Minecraft.getInstance();
             Camera camera = mc.gameRenderer.getMainCamera();
-            // Инверсия x/z ОСТАЁТСЯ (в отличие от 26.3): в 1.20.1
-            // camera.rotation() маппит другую локальную рамку — 26.3-комментарий
-            // это фиксирует («в 1.20.1 инверсия компенсировала, без неё луч
-            // уходил левее жезла»); в 26.3 rotation() маппит стандартное
-            // GL view-пространство, поэтому там без инверсии.
             org.joml.Vector3f v = new org.joml.Vector3f(-p.x, p.y, -p.z);
             v.rotate(camera.rotation());
             Vec3 pos = camera.getPosition();

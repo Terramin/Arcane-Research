@@ -1,6 +1,6 @@
 package arcaneresearch.common.menu;
 
-import arcaneresearch.common.items.casters.ItemFocus;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.items.casters.ItemFocusPouch;
 import arcaneresearch.common.menu.slot.FocusSlot;
 import arcaneresearch.init.ModMenuTypes;
@@ -49,7 +49,7 @@ public class FocusPouchMenu extends AbstractContainerMenu implements ContainerLi
 
             @Override
             public boolean canPlaceItem(int slot, @NotNull ItemStack stack) {
-                return !stack.isEmpty() && stack.getItem() instanceof ItemFocus;
+                return !stack.isEmpty() && stack.getItem() instanceof FocusItem;
             }
         };
 
@@ -110,7 +110,7 @@ public class FocusPouchMenu extends AbstractContainerMenu implements ContainerLi
         if (index < POUCH_SIZE) {
             if (!moveItemStackTo(stackInSlot, POUCH_SIZE, total, true)) return ItemStack.EMPTY;
         } else {
-            if (!(stackInSlot.getItem() instanceof ItemFocus)) return ItemStack.EMPTY;
+            if (!(stackInSlot.getItem() instanceof FocusItem)) return ItemStack.EMPTY;
             if (!moveItemStackTo(stackInSlot, 0, POUCH_SIZE, false)) return ItemStack.EMPTY;
         }
 

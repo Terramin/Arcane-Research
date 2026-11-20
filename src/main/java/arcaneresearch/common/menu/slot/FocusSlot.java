@@ -3,7 +3,7 @@ package arcaneresearch.common.menu.slot;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import arcaneresearch.common.items.casters.ItemFocus;
+import arcaneresearch.api.wands.FocusItem;
 import org.jetbrains.annotations.NotNull;
 
 public class FocusSlot extends Slot {
@@ -19,7 +19,7 @@ public class FocusSlot extends Slot {
     }
 
     public static boolean isValidFocus(ItemStack stack) {
-        return stack != null && !stack.isEmpty() && stack.getItem() instanceof ItemFocus;
+        return stack != null && !stack.isEmpty() && stack.getItem() instanceof FocusItem;
     }
 
     @Override

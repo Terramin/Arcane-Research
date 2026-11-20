@@ -23,13 +23,13 @@ import net.minecraft.world.phys.HitResult;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 
-public class ItemFocusBasic extends Item {
-    public static LinkedHashMap<String, ItemFocusBasic> foci = new LinkedHashMap<>();
+public class FocusItem extends Item {
+    public static LinkedHashMap<String, FocusItem> foci = new LinkedHashMap<>();
     private final String id;
     private final ResourceLocation texture;
     private final int focusColor;
 
-    public ItemFocusBasic(String id, ResourceLocation texture, int renderColor, Properties properties) {
+    public FocusItem(String id, ResourceLocation texture, int renderColor, Properties properties) {
         super(properties.stacksTo(1));
         this.id = id;
         this.texture = texture;
@@ -37,11 +37,11 @@ public class ItemFocusBasic extends Item {
         foci.put(id, this);
     }
 
-    public ItemFocusBasic(String id, ResourceLocation texture, int renderColor) {
+    public FocusItem(String id, ResourceLocation texture, int renderColor) {
         this(id, texture, renderColor, new Properties());
     }
 
-    public ItemFocusBasic(String id, int renderColor) {
+    public FocusItem(String id, int renderColor) {
         this(id, ResourceLocation.fromNamespaceAndPath("arcaneresearch", "item/wand/focus"), renderColor, new Properties());
     }
 

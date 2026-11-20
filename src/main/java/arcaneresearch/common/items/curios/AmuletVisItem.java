@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.IRunicArmor;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
 import javax.annotation.Nullable;
@@ -55,7 +55,7 @@ public class AmuletVisItem extends EquippableCurioItem implements IRunicArmor {
         }
         try {
             ItemStack held = player.getMainHandItem();
-            if (!held.isEmpty() && held.getItem() instanceof IWand wand) {
+            if (!held.isEmpty() && held.getItem() instanceof IFocusHost wand) {
                 AspectList room = wand.getAspectsWithRoom(held);
                 if (room != null) {
                     for (Aspect aspect : room.getAspects()) {

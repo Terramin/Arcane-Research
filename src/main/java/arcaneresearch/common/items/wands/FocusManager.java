@@ -1,6 +1,7 @@
 package arcaneresearch.common.items.wands;
 
 import arcaneresearch.common.items.curios.AmuletVisItem;
+import arcaneresearch.common.items.casters.ItemFocusPouch;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
@@ -14,8 +15,8 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.IArchitect;
 import arcaneresearch.api.items.IVisDiscountGear;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.items.wands.foci.ItemFocusTrade;
 import arcaneresearch.common.lib.wands.WandResearchHelper;
 import arcaneresearch.common.lib.wands.WandSounds;
@@ -28,7 +29,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WandManager {
+public class FocusManager {
     private static final Logger LOGGER = LogManager.getLogger("Arcaneresearch/WandManager");
 
     static HashMap<Integer, Long> cooldownServer = new HashMap<>();
@@ -49,6 +50,10 @@ public class WandManager {
             }
         }
         return currentItem ? 1 : 0;
+    }
+
+    public static float getTotalVisDiscount(Player player) {
+        return getTotalVisDiscount(player, null);
     }
 
     public static float getTotalVisDiscount(Player player, Aspect aspect) {
@@ -95,6 +100,10 @@ public class WandManager {
     }
 
     public static boolean consumeVisFromInventory(Player player, AspectList cost) {
+        return consumeVisFromInventory(player, cost, false);
+    }
+
+    public static boolean consumeVisFromInventory(Player player, AspectList cost, boolean simulate) {
         if (ModList.get().isLoaded("curios")) {
             try {
                 final boolean[] done = {false};
@@ -105,7 +114,7 @@ public class WandManager {
                             ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
                             if (!worn.isEmpty()
                                     && worn.getItem() instanceof AmuletVisItem amulet
-                                    && amulet.consumeAllVis(worn, player, cost, false, true)) {
+                                    && amulet.consumeAllVis(worn, player, cost, !simulate, true)) {
                                 done[0] = true;
                                 break;
                             }
@@ -124,16 +133,46 @@ public class WandManager {
         NonNullList<ItemStack> inv = player.getInventory().items;
         for (int a = inv.size() - 1; a >= 0; a--) {
             ItemStack stack = inv.get(a);
-            if (!stack.isEmpty() && stack.getItem() instanceof IWand wand
-                    && wand.consumeAllVis(stack, player, cost, false, true)) {
+            if (!stack.isEmpty() && stack.getItem() instanceof IFocusHost wand
+                    && wand.consumeAllVis(stack, player, cost, simulate, true)) {
                 return true;
             }
         }
         return false;
     }
 
+    private static boolean isValidFocus(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof FocusItem)) {
+            return false;
+        }
+        return !(stack.getItem() instanceof arcaneresearch.common.items.casters.ItemFocus)
+                || arcaneresearch.common.items.casters.ItemFocus.getPackage(stack) != null;
+    }
+
+    private static void stowFocus(Player player, ItemStack focus,
+                                  HashMap<Integer, Integer> pouches, List<CurioPouchRef> curioPouches) {
+        if (focus == null || focus.isEmpty()) {
+            return;
+        }
+        if (!addFocusToPouch(player, focus.copy(), pouches, curioPouches)
+                && !player.getInventory().add(focus.copy())) {
+            player.drop(focus.copy(), false);
+        }
+    }
+
+    public static boolean removeFocus(ItemStack wandStack, Player player) {
+        if (!(wandStack.getItem() instanceof IFocusHost host)) {
+            return false;
+        }
+        if (host.getFocusStack(wandStack).isEmpty()) {
+            return false;
+        }
+        changeFocus(wandStack, player.level(), player, "REMOVE");
+        return host.getFocus(wandStack) == null;
+    }
+
     public static void changeFocus(ItemStack wandStack, Level level, Player player, String focus) {
-        if (!(wandStack.getItem() instanceof IWand wand)) {
+        if (!(wandStack.getItem() instanceof IFocusHost wand)) {
             return;
         }
 
@@ -153,7 +192,8 @@ public class WandManager {
                         NonNullList<ItemStack> pinv = pouch.getInventory(worn);
                         for (int q = 0; q < pinv.size(); q++) {
                             ItemStack f = pinv.get(q);
-                            if (!f.isEmpty() && f.getItem() instanceof ItemFocusBasic basic) {
+                            if (isValidFocus(f)) {
+                                FocusItem basic = (FocusItem) f.getItem();
                                 foci.put(basic.getSortingHelper(f), q + pouchId * 1000);
                             }
                         }
@@ -172,7 +212,8 @@ public class WandManager {
         NonNullList<ItemStack> inv = player.getInventory().items;
         for (int a = 0; a < inv.size(); a++) {
             item = inv.get(a);
-            if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
+            if (isValidFocus(item)) {
+                FocusItem basic = (FocusItem) item.getItem();
                 foci.put(basic.getSortingHelper(item), a);
             }
             if (!item.isEmpty() && item.getItem() instanceof ItemFocusPouch pouch) {
@@ -181,7 +222,8 @@ public class WandManager {
                 NonNullList<ItemStack> pinv = pouch.getInventory(item);
                 for (int q = 0; q < pinv.size(); q++) {
                     ItemStack f = pinv.get(q);
-                    if (!f.isEmpty() && f.getItem() instanceof ItemFocusBasic basic) {
+                    if (isValidFocus(f)) {
+                        FocusItem basic = (FocusItem) f.getItem();
                         foci.put(basic.getSortingHelper(f), q + pouchcount * 1000);
                     }
                 }
@@ -189,9 +231,8 @@ public class WandManager {
         }
 
         if ("REMOVE".equals(focus) || foci.isEmpty()) {
-            if (wand.getFocus(wandStack) != null
-                    && (addFocusToPouch(player, wand.getFocusStack(wandStack).copy(), pouches, curioPouches)
-                    || player.getInventory().add(wand.getFocusStack(wandStack).copy()))) {
+            if (wand.getFocus(wandStack) != null) {
+                stowFocus(player, wand.getFocusStack(wandStack), pouches, curioPouches);
                 wand.setFocus(wandStack, null);
                 level.playSound(null, player.blockPosition(), WandSounds.cameraticls(),
                         SoundSource.PLAYERS, 0.3F, 0.9F);
@@ -239,9 +280,8 @@ public class WandManager {
             level.playSound(null, player.blockPosition(), WandSounds.cameraticls(),
                     SoundSource.PLAYERS, 0.3F, 1.0F);
 
-            if (wand.getFocus(wandStack) != null
-                    && (addFocusToPouch(player, wand.getFocusStack(wandStack).copy(), pouches, curioPouches)
-                    || player.getInventory().add(wand.getFocusStack(wandStack).copy()))) {
+            if (wand.getFocus(wandStack) != null) {
+                stowFocus(player, wand.getFocusStack(wandStack), pouches, curioPouches);
                 wand.setFocus(wandStack, null);
             }
 
@@ -263,7 +303,7 @@ public class WandManager {
             return focus;
         }
         ItemStack contents = pinv.get(focusid);
-        if (!contents.isEmpty() && contents.getItem() instanceof ItemFocusBasic) {
+        if (!contents.isEmpty() && contents.getItem() instanceof FocusItem) {
             focus = contents.copy();
             pinv.set(focusid, ItemStack.EMPTY);
             pouchItem.setInventory(pouch, pinv);
@@ -286,7 +326,7 @@ public class WandManager {
             return focus;
         }
         ItemStack contents = pinv.get(focusid);
-        if (!contents.isEmpty() && contents.getItem() instanceof ItemFocusBasic) {
+        if (!contents.isEmpty() && contents.getItem() instanceof FocusItem) {
             focus = contents.copy();
             pinv.set(focusid, ItemStack.EMPTY);
             pouchItem.setInventory(pouch, pinv);
@@ -334,8 +374,12 @@ public class WandManager {
         return false;
     }
 
+    public static void toggleMisc(ItemStack stack, Level level, Player player, int modifier) {
+        toggleMisc(stack, level, player);
+    }
+
     public static void toggleMisc(ItemStack stack, Level level, Player player) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return;
         }
         if (wand.getFocus(stack) != null && wand.getFocus(stack) instanceof IArchitect
@@ -387,10 +431,10 @@ public class WandManager {
     }
 
     public static int getAreaX(ItemStack stack) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return 1;
         }
-        ItemFocusBasic focus = wand.getFocus(stack);
+        FocusItem focus = wand.getFocus(stack);
         if (focus == null) {
             return 1;
         }
@@ -410,10 +454,10 @@ public class WandManager {
     }
 
     public static int getAreaY(ItemStack stack) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return 1;
         }
-        ItemFocusBasic focus = wand.getFocus(stack);
+        FocusItem focus = wand.getFocus(stack);
         if (focus == null) {
             return 1;
         }
@@ -433,10 +477,10 @@ public class WandManager {
     }
 
     public static int getAreaZ(ItemStack stack) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return 1;
         }
-        ItemFocusBasic focus = wand.getFocus(stack);
+        FocusItem focus = wand.getFocus(stack);
         if (focus == null) {
             return 1;
         }
@@ -475,7 +519,7 @@ public class WandManager {
         return cd * 50L;
     }
 
-    static boolean isOnCooldown(LivingEntity entity) {
+    public static boolean isOnCooldown(LivingEntity entity) {
         Map<Integer, Long> map = isClientSide(entity) ? cooldownClient : cooldownServer;
         Long end = map.get(entity.getId());
         return end != null && end > System.currentTimeMillis();

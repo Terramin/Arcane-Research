@@ -19,9 +19,9 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.IArchitect;
 import arcaneresearch.api.wands.FocusUpgradeType;
 import arcaneresearch.api.wands.IFocusPicker;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
-import arcaneresearch.common.items.wands.WandManager;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.common.lib.events.ServerEvents;
 import arcaneresearch.common.lib.utils.BlockUtils;
 
@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocusPicker {
+public class ItemFocusTrade extends FocusItem implements IArchitect, IFocusPicker {
 
     private static final AspectList COST = new AspectList()
             .add(Aspect.ENTROPY, 1).add(Aspect.EARTH, 1).add(Aspect.ORDER, 1);
@@ -87,7 +87,7 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand) || !(entity instanceof Player player)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand) || !(entity instanceof Player player)) {
             return false;
         }
         if (!(hit instanceof BlockHitResult mop) || mop.getType() != HitResult.Type.BLOCK) {
@@ -191,16 +191,16 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
     public ArrayList<BlockPos> getArchitectBlocks(ItemStack stack, Level level, BlockPos pos, Direction side,
                                                   Player player) {
         ArrayList<BlockPos> out = new ArrayList<>();
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return out;
         }
         if (!isUpgradedWith(wand.getFocusStack(stack), FocusUpgradeType.architect)) {
             return out;
         }
         BlockState state = level.getBlockState(pos);
-        int areaX = WandManager.getAreaX(stack);
-        int areaY = WandManager.getAreaY(stack);
-        int areaZ = WandManager.getAreaZ(stack);
+        int areaX = FocusManager.getAreaX(stack);
+        int areaY = FocusManager.getAreaY(stack);
+        int areaZ = FocusManager.getAreaZ(stack);
         Set<BlockPos> checked = new HashSet<>();
         checkNeighbours(level, pos, state, pos, side, areaX, areaY, areaZ, out, checked, player);
         return out;
@@ -250,7 +250,7 @@ public class ItemFocusTrade extends ItemFocusBasic implements IArchitect, IFocus
 
     @Override
     public boolean showAxis(ItemStack stack, Level level, Player player, Direction side, IArchitect.EnumAxis axis) {
-        int dim = WandManager.getAreaDim(stack);
+        int dim = FocusManager.getAreaDim(stack);
         switch (side.getAxis()) {
             case Y:
                 if ((axis == IArchitect.EnumAxis.X && (dim == 0 || dim == 1))

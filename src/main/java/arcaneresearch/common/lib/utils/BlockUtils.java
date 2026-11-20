@@ -39,7 +39,6 @@ public class BlockUtils {
 
     private static final Direction[] DIRECTIONS = Direction.values();
 
-    /** @deprecated используйте {@link #getPortableHoleBlackList()} — поле публичное только для обратной совместимости. */
     @Deprecated
     public static final ArrayList<String> portableHoleBlackList = new ArrayList<>();
 
@@ -470,12 +469,22 @@ public class BlockUtils {
 
         Vec3 eyePos = entity.getEyePosition();
         Vec3 lookVec = entity.getViewVector(1.0f);
-        Vec3 endPos = eyePos.add(lookVec.scale(range));
         ClipContext.Fluid fluidMode = stopOnLiquid ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE;
         ClipContext.Block blockMode = ignoreBlockWithoutBoundingBox
                 ? ClipContext.Block.COLLIDER
                 : ClipContext.Block.OUTLINE;
-        return level.clip(new ClipContext(eyePos, endPos, blockMode, fluidMode, entity));
+
+        if (arcaneresearch.common.items.casters.CasterAim.isCasterHeld(entity)) {
+            Vec3 origin = arcaneresearch.common.items.casters.CasterAim.origin(entity);
+            Vec3 crossEnd = eyePos.add(lookVec.scale(range));
+            HitResult cross = level.clip(new ClipContext(eyePos, crossEnd, blockMode, fluidMode, entity));
+            Vec3 aim = cross.getType() == HitResult.Type.MISS ? crossEnd : cross.getLocation();
+            Vec3 dir = aim.subtract(origin).normalize();
+            return level.clip(new ClipContext(origin, aim.add(dir.scale(0.5D)), blockMode, fluidMode, entity));
+        }
+
+        return level.clip(new ClipContext(eyePos, eyePos.add(lookVec.scale(range)),
+                blockMode, fluidMode, entity));
     }
 
     public static boolean placeBlock(Level level, BlockPos pos, BlockState state) {

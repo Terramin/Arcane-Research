@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.blocks.BlocksTC;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.wands.IWandTriggerManager;
 import arcaneresearch.api.wands.WandTriggerRegistry;
 import arcaneresearch.common.blocks.IBlockEnabled;
@@ -89,7 +89,7 @@ public class WandTriggers implements IWandTriggerManager {
         if (level.isClientSide) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
 
@@ -174,7 +174,7 @@ public class WandTriggers implements IWandTriggerManager {
         if (level.isClientSide) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand) || wand.getFocus(stack) != null) {
+        if (!(stack.getItem() instanceof IFocusHost wand) || wand.getFocus(stack) != null) {
             return false;
         }
         if (!ModItems.THAUMONOMICON.isPresent()) {
@@ -196,7 +196,7 @@ public class WandTriggers implements IWandTriggerManager {
         if (level.isClientSide) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (!BlocksTC.crucible.isPresent()) {
@@ -215,7 +215,7 @@ public class WandTriggers implements IWandTriggerManager {
         if (level.isClientSide) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (!fitInfusionAltar(level, pos)) {
@@ -293,7 +293,6 @@ public class WandTriggers implements IWandTriggerManager {
         Block pillar = BlocksTC.pillarArcane.get();
         BlockState pillarBase = pillar.defaultBlockState();
 
-        // Захват старого состояния pos (для sendBlockUpdated ниже, если понадобится)
         BlockState oldMatrixState = level.getBlockState(pos);
 
         setBlockSparkle(level, pos.offset(-1, -1, -1), Blocks.BEDROCK.defaultBlockState());
@@ -332,7 +331,7 @@ public class WandTriggers implements IWandTriggerManager {
         if (level.isClientSide) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (!BlocksTC.metalAlchemical.isPresent()
@@ -392,7 +391,7 @@ public class WandTriggers implements IWandTriggerManager {
         if (level.isClientSide) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
 

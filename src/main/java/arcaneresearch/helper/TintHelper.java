@@ -1,4 +1,6 @@
 package arcaneresearch.helper;
+import arcaneresearch.api.wands.FocusItem;
+import arcaneresearch.api.wands.IFocusHost;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -156,9 +158,9 @@ public final class TintHelper {
     }
     public static int wandFocusColor(ItemStack stack, int tintIndex) {
         if (tintIndex == 1 && stack != null && !stack.isEmpty()
-                && stack.getItem() instanceof arcaneresearch.api.wands.IWand wand) {
+                && stack.getItem() instanceof IFocusHost wand) {
             try {
-                arcaneresearch.api.wands.ItemFocusBasic focus = wand.getFocus(stack);
+                FocusItem focus = wand.getFocus(stack);
                 if (focus != null) {
                     return focus.getFocusColor(wand.getFocusStack(stack));
                 }

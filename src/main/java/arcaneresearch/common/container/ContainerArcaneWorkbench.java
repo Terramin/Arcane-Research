@@ -16,7 +16,7 @@ import arcaneresearch.api.crafting.IArcaneRecipe;
 import arcaneresearch.common.blocks.world.ore.ShardType;
 import arcaneresearch.common.container.slot.SlotCraftingArcaneWorkbench;
 import arcaneresearch.common.container.slot.SlotCrystal;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.common.lib.crafting.ArcaneWorkbenchCraftingContainer;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.tiles.crafting.TileArcaneWorkbench;
@@ -124,7 +124,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu {
         if (base <= 0) {
             return 0;
         }
-        float discount = CasterManager.getTotalVisDiscount(player);
+        float discount = FocusManager.getTotalVisDiscount(player);
         return (int) (base * (1.0f - discount));
     }
     public static boolean hasRequiredCrystals(ArcaneWorkbenchCraftingContainer craftMatrix, AspectList crystals) {

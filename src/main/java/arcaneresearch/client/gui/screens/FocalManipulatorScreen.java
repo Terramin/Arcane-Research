@@ -29,7 +29,6 @@ import arcaneresearch.common.menu.FocalManipulatorMenu;
 import arcaneresearch.common.tiles.crafting.FocusElementNode;
 import arcaneresearch.common.tiles.crafting.TileFocalManipulator;
 import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 @OnlyIn(Dist.CLIENT)
@@ -49,7 +48,6 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
     private final List<SpinnerWidget> settingSpinners = new ArrayList<>();
     private final List<HoverButton> crystalButtons = new ArrayList<>();
     private final List<String> shownParts = new ArrayList<>();
-    private final DecimalFormat formatter = new DecimalFormat("#######.##");
     private EditBox nameField;
     private ImageButton confirmButton;
     private SliderWidget partsScrollbar;
@@ -57,7 +55,6 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
     private SliderWidget mainScrollbarY;
     private HoverButton infoComplexityButton;
     private HoverButton infoXpButton;
-    private HoverButton infoVisButton;
     private int partsStart = 0;
     private int selectedNode = -1;
     private int lastNodeHover = -1;
@@ -72,9 +69,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
     private boolean suppressNameSync = false;
     private int totalComplexity = 0;
     private int maxComplexity = 0;
-    private float costCast = 0;
     private int costXp = 0;
-    private int costVis = 0;
     private ItemStack[] components = null;
     private boolean valid = false;
     public FocalManipulatorScreen(FocalManipulatorMenu menu, Inventory playerInventory, Component title) {
@@ -145,12 +140,8 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         infoXpButton = new HoverButton(leftPos + 241, topPos + 53, 32, 16,
                 Component.translatable("wandtable.text2").getString(), null,
                 ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/costxp.png"));
-        infoVisButton = new HoverButton(leftPos + 241, topPos + 67, 32, 16,
-                Component.translatable("wandtable.text1").getString(), null,
-                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/costvis.png"));
         addRenderableWidget(infoComplexityButton);
         addRenderableWidget(infoXpButton);
-        addRenderableWidget(infoVisButton);
         gatherInfo(false);
     }
     private void onNameChanged(String newName) {
@@ -185,7 +176,6 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         drawNodeTooltips(graphics, mouseX, mouseY);
         if (infoComplexityButton != null) infoComplexityButton.renderTooltip(graphics, mouseX, mouseY);
         if (infoXpButton != null) infoXpButton.renderTooltip(graphics, mouseX, mouseY);
-        if (infoVisButton != null) infoVisButton.renderTooltip(graphics, mouseX, mouseY);
         if (confirmButton != null && confirmButton.isMouseOver(mouseX, mouseY)
                 && confirmButton.getDescription() != null && !confirmButton.getDescription().isEmpty()) {
             graphics.renderComponentTooltip(font,
@@ -197,7 +187,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
             button.renderTooltip(graphics, mouseX, mouseY);
         }
         assert confirmButton != null;
-        confirmButton.setButtonActive(getTile().vis <= 0.0f && valid);
+        confirmButton.setButtonActive(!getTile().hasVisRemaining() && valid);
         this.renderTooltip(graphics, mouseX, mouseY);
     }
     @Override
@@ -238,16 +228,23 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         assert minecraft.player != null;
         int xpColor = costXp > minecraft.player.experienceLevel ? 16151160 : 10092429;
         graphics.drawString(font, String.valueOf(costXp), x + 242, y + 50, xpColor, true);
-        int visCost = getTile().vis > 0 ? (int) getTile().vis : costVis;
-        graphics.drawString(font, ChatFormatting.AQUA + String.valueOf(visCost), x + 242, y + 64, 10092429, true);
-        if (costCast > 0) {
-            String cost = formatter.format(costCast);
-            graphics.drawString(font, ChatFormatting.AQUA + Component.translatable("item.Focus.cost1").getString() + ": " + cost,
-                    x + 230, y + 80, 10092429, true);
+        graphics.drawString(font, Component.translatable("wandtable.text1").getString(),
+                x + 234, y + 68, 10092429, true);
+        AspectList creationCost = getTile().getPreviewCost();
+        int aspectY = y + 80;
+        for (Aspect aspect : creationCost.getAspectsSortedByName()) {
+            int amount = creationCost.getAmount(aspect);
+            if (amount <= 0) {
+                continue;
+            }
+            graphics.drawString(font, "§" + aspect.getChatcolor() + aspect.getName()
+                            + "§r " + amount,
+                    x + 234, aspectY, 0xFFFFFF, true);
+            aspectY += 9;
         }
         if (components != null && components.length > 0) {
             graphics.drawString(font, ChatFormatting.GOLD + Component.translatable("wandtable.text4").getString(),
-                    x + 230, y + 92, 10092429, true);
+                    x + 230, y + 132, 10092429, true);
         }
         if (!tile.data.isEmpty() && tile.focusName != null) {
             graphics.blit(TEX_BASE, leftPos + 24, topPos + 8, 192, 224, 8, 14);
@@ -658,9 +655,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
                 }
             }
         }
-        costCast = totalComplexity / 5.0f;
-        costVis = totalComplexity * 10 + maxComplexity / 5;
-        costXp = (int) Math.min(1L, Math.round(Math.sqrt(totalComplexity)));
+        costXp = (int) Math.max(1L, Math.round(Math.sqrt(totalComplexity)));
         boolean validCrystals = false;
         if (crystals.getAspects().length > 0) {
             validCrystals = true;
@@ -771,7 +766,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         }
         int i = 0, q = 0;
         for (ItemStack stack : components) {
-            HoverButton button = new HoverButton(leftPos + 234 + i * 16, topPos + 110 + 16 * q,
+            HoverButton button = new HoverButton(leftPos + 234 + i * 16, topPos + 148 + 16 * q,
                     16, 16, stack.getHoverName().getString(), null, stack);
             crystalButtons.add(button);
             addRenderableWidget(button);
@@ -856,7 +851,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         TileFocalManipulator tile = getTile();
-        if (tile.vis <= 0.0f && tile.data != null && !tile.data.isEmpty()) {
+        if (!tile.hasVisRemaining() && tile.data != null && !tile.data.isEmpty()) {
             if (nameField != null && nameField.mouseClicked(mouseX, mouseY, button)) {
                 return true;
             }

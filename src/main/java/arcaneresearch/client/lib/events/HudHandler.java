@@ -1,4 +1,5 @@
 package arcaneresearch.client.lib.events;
+import arcaneresearch.api.wands.FocusItem;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,14 +19,12 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
-import arcaneresearch.api.casters.ICaster;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.research.ResearchCategory;
 import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.client.renderers.ScanPopupRenderer;
-import arcaneresearch.common.config.ModConfig;
-import arcaneresearch.common.items.casters.ItemFocus;
 import arcaneresearch.common.items.tools.ItemSanityChecker;
 import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.common.world.aura.AuraChunk;
@@ -102,16 +101,7 @@ public class HudHandler {
         for (int hand = 0; hand < 2; hand++) {
             ItemStack stack = hand == 0 ? player.getMainHandItem() : player.getOffhandItem();
             if (stack.isEmpty()) continue;
-            if (stack.getItem() instanceof ICaster) {
-                if (ModConfig.CONFIG_GRAPHICS.dialBottom) {
-                    renderCasterHud(graphics, mc, player, stack,
-                            screenHeight - 36 - bottomOffset, partialTick);
-                    bottomOffset += 36;
-                } else {
-                    renderCasterHud(graphics, mc, player, stack, yOffset, partialTick);
-                    yOffset += 36;
-                }
-            } else if (stack.getItem() instanceof ItemThaumometer) {
+            if (stack.getItem() instanceof ItemThaumometer) {
                 renderThaumometerHud(graphics, mc, player, yOffset, partialTick);
                 yOffset += 80;
                 holdingThaumometer = true;
@@ -410,100 +400,6 @@ public class HudHandler {
         }
         graphics.pose().popPose();
         RenderSystem.disableBlend();
-    }
-    private static void renderCasterHud(GuiGraphics graphics, Minecraft mc, Player player,
-                                        ItemStack casterStack, int yOffset, float partialTicks) {
-        ICaster caster = (ICaster) casterStack.getItem();
-        float maxVis = currentAura != null ? currentAura.getBase() : 100;
-        float currentVis = currentAura != null ? currentAura.getVis() : 50;
-        RenderSystem.setShaderTexture(0, HUD_TEXTURE);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, yOffset, 0);
-        graphics.pose().pushPose();
-        graphics.pose().scale(0.5f, 0.5f, 1f);
-        graphics.blit(HUD_TEXTURE, 0, 0, 0, 0, 64, 64, 256, 256);
-        graphics.pose().popPose();
-        graphics.pose().translate(16, 16, 0);
-        int amt = (int) currentVis;
-        int loc = maxVis > 0 ? (int) (30f * amt / maxVis) : 0;
-        Color ac = new Color(Aspect.ENERGY.getColor());
-        RenderSystem.setShaderColor(ac.getRed() / 255f, ac.getGreen() / 255f, ac.getBlue() / 255f, 0.8f);
-        graphics.pose().pushPose();
-        graphics.pose().translate(16, -10, 0);
-        graphics.pose().scale(0.5f, 0.5f, 1f);
-        graphics.blit(HUD_TEXTURE, -4, 35 - loc, 104, 0, 8, loc, 256, 256);
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        graphics.pose().popPose();
-        graphics.pose().pushPose();
-        graphics.pose().translate(16, -10, 0);
-        graphics.pose().scale(0.5f, 0.5f, 1f);
-        graphics.blit(HUD_TEXTURE, -8, -3, 72, 0, 16, 42, 256, 256);
-        graphics.pose().popPose();
-        ItemStack focusStack = caster.getFocusStack(casterStack);
-        ItemFocus focus = focusStack != null && !focusStack.isEmpty()
-                && focusStack.getItem() instanceof ItemFocus f ? f : null;
-        if (player.isShiftKeyDown()) {
-            graphics.pose().pushPose();
-            graphics.pose().translate(16, -10, 0);
-            graphics.pose().scale(0.5f, 0.5f, 1f);
-            graphics.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-90f));
-            graphics.drawString(mc.font, DECIMAL_FORMAT.format(amt), -32, -4, 0xFFFFFF, false);
-            if (focus != null && focus.getVisCost(focusStack) > 0f) {
-                float mod = caster.getConsumptionModifier(casterStack, player, false);
-                String msg = DECIMAL_FORMAT.format(focus.getVisCost(focusStack) * mod);
-                graphics.drawString(mc.font, msg,
-                        -32 - mc.font.width(msg) / 2, 32, 0xFFFFFF, false);
-            }
-            graphics.pose().popPose();
-            RenderSystem.setShaderTexture(0, HUD_TEXTURE);
-        }
-        graphics.pose().popPose();
-        if (focus != null) {
-            ItemStack picked = caster.getPickedBlock(player.getMainHandItem());
-            if (picked != null && !picked.isEmpty()) {
-                renderPickedBlockHud(graphics, mc, player, picked, yOffset);
-            } else {
-                graphics.pose().pushPose();
-                graphics.pose().translate(0, yOffset, 90);
-                arcaneresearch.client.gui.GuiRenderHelper.renderItem(graphics, focusStack, 8, 8);
-                graphics.pose().popPose();
-            }
-        }
-        RenderSystem.disableBlend();
-    }
-    private static void renderPickedBlockHud(GuiGraphics graphics, Minecraft mc, Player player,
-                                             ItemStack picked, int yOffset) {
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, yOffset, 90);
-        arcaneresearch.client.gui.GuiRenderHelper.renderItem(graphics, picked, 8, 8);
-        long gameTime = player.level().getGameTime();
-        if (lastPickedItem.isEmpty() || !ItemStack.isSameItemSameTags(picked, lastPickedItem)
-                || gameTime - lastPickedRecountTick > 20) {
-            int amount = 0;
-            for (ItemStack stack : player.getInventory().items) {
-                if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, picked)) {
-                    amount += stack.getCount();
-                }
-            }
-            lastPickedItem = picked.copy();
-            lastPickedCount = amount;
-            lastPickedRecountTick = gameTime;
-        }
-        String count = String.valueOf(lastPickedCount);
-        int width = mc.font.width(count);
-        graphics.pose().translate(16, 16, 110);
-        graphics.pose().scale(0.5f, 0.5f, 1f);
-        int tx = 16 - width;
-        int ty = 24 - mc.font.lineHeight;
-        graphics.drawString(mc.font, count, tx - 1, ty, 0x000000, false);
-        graphics.drawString(mc.font, count, tx + 1, ty, 0x000000, false);
-        graphics.drawString(mc.font, count, tx, ty - 1, 0x000000, false);
-        graphics.drawString(mc.font, count, tx, ty + 1, 0x000000, false);
-        graphics.drawString(mc.font, count, tx, ty, 0xFFFFFF, false);
-        graphics.pose().popPose();
     }
     private static void drawColoredRect(GuiGraphics graphics, int x, int y, int width, int height, int color) {
         graphics.fill(x, y, x + width, y + height, color);

@@ -1,4 +1,5 @@
 package arcaneresearch.init;
+import arcaneresearch.api.wands.IFocusHost;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -545,7 +546,6 @@ public class ModCreativeTabs {
                         output.accept(createSceptreStack("wood", "iron"));
                         output.accept(createSceptreStack("greatwood", "gold"));
                         output.accept(createSceptreStack("silverwood", "thaumium"));
-                        output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_POUCH.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FIRE.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FROST.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_SHOCK.get());
@@ -600,7 +600,7 @@ public class ModCreativeTabs {
     private static ItemStack createWandStack(arcaneresearch.api.wands.WandRod rod,
                                              arcaneresearch.api.wands.WandCap cap) {
         ItemStack stack = new ItemStack(arcaneresearch.common.items.wands.WandItems.WAND.get());
-        if (stack.getItem() instanceof arcaneresearch.api.wands.IWand wand) {
+        if (stack.getItem() instanceof IFocusHost wand) {
             wand.setRod(stack, rod);
             wand.setCap(stack, cap);
         }
@@ -620,7 +620,7 @@ public class ModCreativeTabs {
     }
     private static ItemStack createSceptreStack(String rodTag, String capTag) {
         ItemStack stack = new ItemStack(arcaneresearch.common.items.wands.WandItems.WAND.get());
-        if (stack.getItem() instanceof arcaneresearch.api.wands.IWand wand) {
+        if (stack.getItem() instanceof IFocusHost wand) {
             arcaneresearch.api.wands.WandRod rod =
                     arcaneresearch.api.wands.WandRod.rods.get(rodTag);
             arcaneresearch.api.wands.WandCap cap =

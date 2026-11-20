@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ItemWand extends Item implements IWand, IArchitect, IArchitectExtended {
+public class ItemWand extends Item implements IFocusHost, IArchitect, IArchitectExtended {
     private final DecimalFormat formatter = new DecimalFormat("#######.#");
 
     public ItemWand() {
@@ -217,7 +217,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         }
 
         if (player != null) {
-            modifier -= WandManager.getTotalVisDiscount(player, aspect);
+            modifier -= FocusManager.getTotalVisDiscount(player, aspect);
         }
 
         if (getFocus(stack) != null && !crafting) {
@@ -240,17 +240,11 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         return Math.max(modifier, 0.1F);
     }
 
-    /**
-     * Returns all aspects currently stored in the wand.
-     * Возвращает все аспекты, в данный момент хранящиеся в жезле.
-     */
-    //TODO Что-то нужно с этим сделать
     @SuppressWarnings("unused")
     public AspectList getAspectsInChargeable(ItemStack stack) {
         return getAllVis(stack);
     }
 
-    //TODO Допилить потом исправление поведения и обработку выхода
     public Aspect handleRecharge(Level level, ItemStack stack, BlockPos pos, Player player, int amount) {
         WandCap cap = getCap(stack);
         if (cap != null) {
@@ -287,13 +281,13 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
     }
 
     @Override
-    public ItemFocusBasic getFocus(ItemStack stack) {
+    public FocusItem getFocus(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag == null || !tag.contains("focus")) {
             return null;
         }
         ItemStack focusStack = ItemStack.of(tag.getCompound("focus"));
-        if (!focusStack.isEmpty() && focusStack.getItem() instanceof ItemFocusBasic basic) {
+        if (!focusStack.isEmpty() && focusStack.getItem() instanceof FocusItem basic) {
             return basic;
         }
         return null;
@@ -385,7 +379,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
                 rod.getOnUpdate().onUpdate(stack, player);
             }
             if (player.tickCount % 5 == 0) {
-                int rate = WandManager.getBaseChargeRate(player, selected, slot);
+                int rate = FocusManager.getBaseChargeRate(player, selected, slot);
                 if (rate > 0) {
                     handleRecharge(level, stack, player.blockPosition(), player, rate);
                 }
@@ -514,17 +508,17 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
             }
         }
 
-        ItemFocusBasic focus = getFocus(stack);
+        FocusItem focus = getFocus(stack);
         if (focus == null) {
             return super.use(level, player, hand);
         }
 
         ItemStack focusStack = getFocusStack(stack);
 
-        if (!focus.isVisCostPerTick(focusStack) && !WandManager.isOnCooldown(player)) {
+        if (!focus.isVisCostPerTick(focusStack) && !FocusManager.isOnCooldown(player)) {
             AspectList cost = focus.getVisCost(stack);
             if (consumeAllVis(stack, player, cost, true, false)) {
-                WandManager.setCooldown(player, focus.getActivationCooldown(focusStack));
+                FocusManager.setCooldown(player, focus.getActivationCooldown(focusStack));
                 if (focus.onFocusActivation(stack, level, player, hit, 0)) {
                     consumeAllVis(stack, player, cost, level.isClientSide, false);
                     arcaneresearch.helper.ClientRunHelper.runOnClient(
@@ -534,9 +528,9 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
             }
         }
 
-        if (focus.isVisCostPerTick(focusStack) && !WandManager.isOnCooldown(player)) {
+        if (focus.isVisCostPerTick(focusStack) && !FocusManager.isOnCooldown(player)) {
             player.startUsingItem(hand);
-            WandManager.setCooldown(player, -1);
+            FocusManager.setCooldown(player, -1);
             return InteractionResultHolder.consume(stack);
         }
 
@@ -555,8 +549,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
             return;
         }
 
-        ItemFocusBasic focus = getFocus(stack);
-        if (focus == null || WandManager.isOnCooldown(player)) {
+        FocusItem focus = getFocus(stack);
+        if (focus == null || FocusManager.isOnCooldown(player)) {
             return;
         }
 
@@ -567,7 +561,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         }
 
         BlockHitResult hit = Item.getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        WandManager.setCooldown(player, focus.getActivationCooldown(getFocusStack(stack)));
+        FocusManager.setCooldown(player, focus.getActivationCooldown(getFocusStack(stack)));
         if (focus.onFocusActivation(stack, level, player, hit, remainingTicks)) {
             consumeAllVis(stack, player, cost, level.isClientSide, false);
         }
@@ -612,7 +606,6 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         clearObjectInUse(stack);
     }
 
-    //Нужен для некоторых взаимодействий без кастомной анимации
     @Override
     public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
         return UseAnim.BOW;
@@ -631,8 +624,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         ItemStack focusStack = getFocusStack(stack);
-        if (!focusStack.isEmpty() && !WandManager.isOnCooldown(entity)) {
-            WandManager.setCooldown(entity, getFocus(stack).getActivationCooldown(focusStack));
+        if (!focusStack.isEmpty() && !FocusManager.isOnCooldown(entity)) {
+            FocusManager.setCooldown(entity, getFocus(stack).getActivationCooldown(focusStack));
             return focusStack.getItem().onEntitySwing(stack, entity);
         }
         return super.onEntitySwing(stack, entity);
@@ -640,9 +633,9 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
-        ItemFocusBasic focus = getFocus(stack);
-        if (focus != null && !WandManager.isOnCooldown(player)) {
-            WandManager.setCooldown(player, focus.getActivationCooldown(getFocusStack(stack)));
+        FocusItem focus = getFocus(stack);
+        if (focus != null && !FocusManager.isOnCooldown(player)) {
+            FocusManager.setCooldown(player, focus.getActivationCooldown(getFocusStack(stack)));
             return focus.onFocusBlockStartBreak(stack, pos, player);
         }
         return false;
@@ -650,7 +643,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public float getDestroySpeed(@NotNull ItemStack stack, @NotNull BlockState state) {
-        ItemFocusBasic focus = getFocus(stack);
+        FocusItem focus = getFocus(stack);
         if (focus != null) {
             ItemStack focusStack = getFocusStack(stack);
             if (!focusStack.isEmpty()) {
@@ -662,18 +655,17 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-        ItemFocusBasic focus = getFocus(stack);
+        FocusItem focus = getFocus(stack);
         if (focus != null) {
             return getFocusStack(stack).isCorrectToolForDrops(state);
         }
         return false;
     }
 
-    //TODO Потенциальные проблемы с постоянной аллокацией памяти. Нужна практическая оценка
     @Override
     public ArrayList<BlockPos> getArchitectBlocks(ItemStack stack, Level level, BlockPos pos, Direction side,
                                                   Player player) {
-        ItemFocusBasic focus = getFocus(stack);
+        FocusItem focus = getFocus(stack);
         if (focus instanceof IArchitect architect) {
             return architect.getArchitectBlocks(stack, level, pos, side, player);
         }
@@ -682,7 +674,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public BlockHitResult getArchitectMOP(ItemStack stack, Level level, LivingEntity entity) {
-        ItemFocusBasic focus = getFocus(stack);
+        FocusItem focus = getFocus(stack);
         if (focus instanceof IArchitectExtended extended) {
             HitResult result = extended.getArchitectMOP(stack, level, entity);
             return result instanceof BlockHitResult block ? block : null;
@@ -695,7 +687,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public boolean useBlockHighlight(ItemStack stack) {
-        ItemFocusBasic focus = getFocus(stack);
+        FocusItem focus = getFocus(stack);
         if (focus instanceof IArchitectExtended extended) {
             return extended.useBlockHighlight(stack);
         }
@@ -707,7 +699,7 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
 
     @Override
     public boolean showAxis(ItemStack stack, Level level, Player player, Direction side, IArchitect.EnumAxis axis) {
-        ItemFocusBasic focus = getFocus(stack);
+        FocusItem focus = getFocus(stack);
         if (focus instanceof IArchitect architect
                 && focus.isUpgradedWith(getFocusStack(stack), FocusUpgradeType.architect)) {
             return architect.showAxis(stack, level, player, side, axis);
@@ -725,9 +717,8 @@ public class ItemWand extends Item implements IWand, IArchitect, IArchitectExten
         } catch (Exception ignored) {
         }
 
-        // getFocusStack — дорогая NBT-операция, кешируем один раз на весь метод
         ItemStack focusStack = getFocusStack(stack);
-        ItemFocusBasic focus = focusStack.getItem() instanceof ItemFocusBasic b ? b : null;
+        FocusItem focus = focusStack.getItem() instanceof FocusItem b ? b : null;
 
         CompoundTag tag = stack.getTag();
         if (tag != null) {

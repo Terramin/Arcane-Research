@@ -89,14 +89,11 @@ public class Arcaneresearch {
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModEffects.MOB_EFFECTS.register(modEventBus);
-        // EN: Register the critical hit API attributes.
-        // RU: Регистрируем атрибуты API критического удара.
         CritApi.init(context);
         ModSounds.SOUND_EVENTS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
         arcaneresearch.common.items.wands.WandItems.ITEMS.register(modEventBus);
-        arcaneresearch.common.menu.WandMenuTypes.TYPES.register(modEventBus);
         arcaneresearch.common.entities.WandEntities.ENTITY_TYPES.register(modEventBus);
         arcaneresearch.common.blocks.aura.AuraBlocks.BLOCKS.register(modEventBus);
         arcaneresearch.common.blocks.aura.AuraBlocks.BLOCK_ITEMS.register(modEventBus);
@@ -125,8 +122,6 @@ public class Arcaneresearch {
             event.add(net.minecraft.world.entity.EntityType.PLAYER,
                     net.minecraftforge.common.ForgeMod.STEP_HEIGHT_ADDITION.get());
         }
-        // EN: Add crit chance/damage attributes to the player.
-        // RU: Добавляем игроку атрибуты шанса и силы крита.
         CritApi.addPlayerAttributes(event);
     }
     private void processIMC(final InterModProcessEvent event) {

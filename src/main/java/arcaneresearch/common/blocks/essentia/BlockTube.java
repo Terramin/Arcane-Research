@@ -32,8 +32,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.IEssentiaContainerItem;
 import arcaneresearch.api.aspects.IEssentiaTransport;
 import arcaneresearch.api.aura.AuraHelper;
-import arcaneresearch.api.casters.ICaster;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.items.tools.ItemResonator;
 import arcaneresearch.common.tiles.essentia.*;
@@ -182,7 +181,7 @@ public class BlockTube extends Block implements EntityBlock {
         BlockEntity te = level.getBlockEntity(pos);
         if (tubeType == TubeType.VALVE) {
             ItemStack held = player.getItemInHand(hand);
-            if (held.getItem() instanceof ICaster || held.getItem() instanceof IWand
+            if (held.getItem() instanceof IFocusHost || held.getItem() instanceof arcaneresearch.api.wands.IFocusHost
                     || held.getItem() instanceof ItemResonator
                     || held.getItem() == this.asItem()) {
                 return InteractionResult.PASS;

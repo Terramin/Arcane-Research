@@ -11,10 +11,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import org.lwjgl.glfw.GLFW;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.client.renderers.ArchitectOverlayRenderer;
-import arcaneresearch.common.items.wands.ItemFocusPouch;
+import arcaneresearch.common.items.casters.ItemFocusPouch;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.wand.PacketWandFocusChangeToServer;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -25,11 +25,11 @@ public class WandRenderingHandler {
     static float radialHudScale = 0.0F;
     public static ItemStack heldWand(Player player) {
         ItemStack main = player.getMainHandItem();
-        if (main != null && !main.isEmpty() && main.getItem() instanceof IWand) {
+        if (main != null && !main.isEmpty() && main.getItem() instanceof IFocusHost) {
             return main;
         }
         ItemStack off = player.getOffhandItem();
-        if (off != null && !off.isEmpty() && off.getItem() instanceof IWand) {
+        if (off != null && !off.isEmpty() && off.getItem() instanceof IFocusHost) {
             return off;
         }
         return ItemStack.EMPTY;
@@ -57,8 +57,16 @@ public class WandRenderingHandler {
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.pose().popPose();
     }
+    private static boolean isValidFocus(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof FocusItem)) {
+            return false;
+        }
+        return !(stack.getItem() instanceof arcaneresearch.common.items.casters.ItemFocus)
+                || arcaneresearch.common.items.casters.ItemFocus.getPackage(stack) != null;
+    }
+
     @OnlyIn(Dist.CLIENT)
-    public void handleFociRadial(Minecraft mc, long time, RenderGuiEvent.Pre event) {
+    public void handleFociRadial(Minecraft mc, long time, RenderGuiEvent event) {
         if (mc.player == null || heldWand(mc.player).isEmpty()) {
             if (!KeyHandler.radialActive && radialHudScale <= 0.0F) {
                 return;
@@ -99,7 +107,8 @@ public class WandRenderingHandler {
                         pouchcount++;
                         int q = 0;
                         for (ItemStack item : ((ItemFocusPouch) pouchStack.getItem()).getInventory(pouchStack)) {
-                            if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
+                            if (isValidFocus(item)) {
+                                FocusItem basic = (FocusItem) item.getItem();
                                 putFocus(basic.getSortingHelper(item), item, q + pouchcount * 1000);
                             }
                             q++;
@@ -107,14 +116,16 @@ public class WandRenderingHandler {
                     }
                     for (int a = 0; a < player.getInventory().items.size(); a++) {
                         ItemStack item = player.getInventory().items.get(a);
-                        if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
+                        if (isValidFocus(item)) {
+                            FocusItem basic = (FocusItem) item.getItem();
                             putFocus(basic.getSortingHelper(item), item, a);
                         }
                         if (!item.isEmpty() && item.getItem() instanceof ItemFocusPouch) {
                             pouchcount++;
                             int q = 0;
                             for (ItemStack in : ((ItemFocusPouch) item.getItem()).getInventory(item)) {
-                                if (!in.isEmpty() && in.getItem() instanceof ItemFocusBasic basic) {
+                                if (isValidFocus(in)) {
+                                    FocusItem basic = (FocusItem) in.getItem();
                                     putFocus(basic.getSortingHelper(in), in, q + pouchcount * 1000);
                                 }
                                 q++;
@@ -179,6 +190,9 @@ public class WandRenderingHandler {
         }
     }
     private void putFocus(String key, ItemStack item, int slot) {
+        if (key == null || key.isEmpty()) {
+            key = item.isEmpty() ? String.valueOf(slot) : item.getHoverName().getString() + "#" + slot;
+        }
         this.foci.put(key, slot);
         this.fociItem.put(key, item.copy());
         this.fociScale.put(key, 1.0F);
@@ -188,10 +202,10 @@ public class WandRenderingHandler {
     private void renderFocusRadialHUD(Minecraft mc, GuiGraphics graphics, int sw, int sh,
                                       long time, float partialTicks) {
         ItemStack wandStack = mc.player == null ? ItemStack.EMPTY : heldWand(mc.player);
-        if (mc.player == null || !(wandStack.getItem() instanceof IWand wand)) {
+        if (mc.player == null || !(wandStack.getItem() instanceof IFocusHost wand)) {
             return;
         }
-        ItemFocusBasic focus = wand.getFocus(wandStack);
+        FocusItem focus = wand.getFocus(wandStack);
         double mouseX = mc.mouseHandler.xpos() * sw / mc.getWindow().getWidth();
         double mouseY = mc.mouseHandler.ypos() * sh / mc.getWindow().getHeight();
         boolean clicked = GLFW.glfwGetMouseButton(mc.getWindow().getWindow(),
@@ -201,6 +215,8 @@ public class WandRenderingHandler {
         }
         com.mojang.blaze3d.systems.RenderSystem.enableBlend();
         com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
+        graphics.pose().pushPose();
+        graphics.pose().translate(0.0F, 0.0F, 300.0F);
         int cx = sw / 2;
         int cy = sh / 2;
         float width = 16.0F + this.fociItem.size() * 2.5F;
@@ -268,6 +284,7 @@ public class WandRenderingHandler {
         if (tooltipStack != null) {
             graphics.renderTooltip(mc.font, tooltipStack, (int) mouseX, (int) mouseY);
         }
+        graphics.pose().popPose();
     }
     @OnlyIn(Dist.CLIENT)
     public boolean handleArchitectOverlay(com.mojang.blaze3d.vertex.PoseStack poseStack,

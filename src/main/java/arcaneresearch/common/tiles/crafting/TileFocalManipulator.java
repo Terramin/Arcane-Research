@@ -20,34 +20,43 @@ import arcaneresearch.client.fx.FXDispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.common.items.casters.ItemFocus;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
-import arcaneresearch.common.world.aura.AuraHandler;
 import arcaneresearch.init.ModBlockEntities;
-import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModSounds;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class TileFocalManipulator extends TileArcaneresearchInventory {
-    public float vis = 0.0f;
+    public AspectList vis = new AspectList();
     public HashMap<Integer, FocusElementNode> data = new HashMap<>();
     public String focusName = "";
     public boolean doGather = false;
-    public float visCost = 0.0f;
+    public AspectList visCost = new AspectList();
     public int xpCost = 0;
     public AspectList crystalsSync = new AspectList();
     public boolean doGuiReset = false;
 
+    private UUID crafter;
     private int ticks = 0;
     private AspectList crystals = new AspectList();
     private AABB renderBox;
 
-    private final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
-
     public TileFocalManipulator(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FOCAL_MANIPULATOR.get(), pos, state, 1);
         syncedSlots = new int[]{0};
+    }
+
+    public boolean hasVisRemaining() {
+        return vis != null && vis.visSize() > 0;
+    }
+
+    public void clearVis() {
+        vis = new AspectList();
+        visCost = new AspectList();
+        crafter = null;
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileFocalManipulator tile) {
@@ -59,27 +68,35 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
         if (tile.ticks % 20 == 0) {
             ItemStack focus = tile.getItem(0);
 
-            if (tile.vis > 0.0f) {
+            if (tile.hasVisRemaining()) {
                 if (focus.isEmpty() || !(focus.getItem() instanceof ItemFocus)) {
                     complete = true;
-                    tile.vis = 0.0f;
+                    tile.clearVis();
                     level.playSound(null, pos, ModSounds.WAND_FAIL.get(), SoundSource.BLOCKS, 0.33f, 1.0f);
                 }
             }
 
-            if (!complete && tile.vis > 0.0f) {
-                float amt = tile.spendAura(Math.min(20.0f, tile.vis));
-
-                if (amt > 0.0f) {
-                    level.blockEvent(pos, state.getBlock(), 5, 1);
-                    tile.vis -= amt;
+            if (!complete && tile.hasVisRemaining()) {
+                Player player = tile.crafter != null ? level.getPlayerByUUID(tile.crafter) : null;
+                if (player != null) {
+                    for (Aspect aspect : tile.vis.getAspects()) {
+                        int remaining = tile.vis.getAmount(aspect);
+                        if (aspect == null || remaining <= 0) {
+                            continue;
+                        }
+                        int portion = Math.min(remaining, 5);
+                        AspectList payment = new AspectList().add(aspect, portion);
+                        if (FocusManager.consumeVisFromInventory(player, payment, false)) {
+                            tile.vis.reduce(aspect, portion);
+                            level.blockEvent(pos, state.getBlock(), 5, 1);
+                        }
+                    }
                     tile.syncTile(false);
                     tile.setChanged();
                 }
 
-                if (tile.vis <= 0.0f) {
+                if (!tile.hasVisRemaining()) {
                     focus = tile.getItem(0);
-
                     if (!focus.isEmpty() && focus.getItem() instanceof ItemFocus) {
                         complete = true;
                         tile.endCraft();
@@ -89,7 +106,7 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
         }
 
         if (complete) {
-            tile.vis = 0.0f;
+            tile.clearVis();
             tile.syncTile(false);
             tile.setChanged();
         }
@@ -101,7 +118,7 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
 
         tile.ticks++;
 
-        if (tile.vis > 0.0f) {
+        if (tile.hasVisRemaining()) {
             FXDispatcher.INSTANCE.drawGenericParticles(
                     pos.getX() + 0.5 + (level.random.nextFloat() - level.random.nextFloat()) * 0.3f,
                     pos.getY() + 1.4 + (level.random.nextFloat() - level.random.nextFloat()) * 0.3f,
@@ -116,7 +133,11 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
-        tag.putFloat("vis", vis);
+        vis.writeToNBT(tag, "vis");
+        visCost.writeToNBT(tag, "visCost");
+        if (crafter != null) {
+            tag.putUUID("crafter", crafter);
+        }
         tag.putString("focusName", focusName);
         crystalsSync.writeToNBT(tag, "crystals");
 
@@ -133,7 +154,11 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
 
-        vis = tag.getFloat("vis");
+        vis = new AspectList();
+        vis.readFromNBT(tag, "vis");
+        visCost = new AspectList();
+        visCost.readFromNBT(tag, "visCost");
+        crafter = tag.hasUUID("crafter") ? tag.getUUID("crafter") : null;
         focusName = tag.getString("focusName");
 
         crystalsSync = new AspectList();
@@ -161,7 +186,7 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
             data.clear();
             doGuiReset = true;
         } else {
-            vis = 0.0f;
+            clearVis();
             crystalsSync = new AspectList();
             setChanged();
             syncTile(false);
@@ -171,36 +196,6 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return stack.getItem() instanceof ItemFocus;
-    }
-
-    public float spendAura(float amount) {
-        if (level == null) return 0.0f;
-
-        if (level.getBlockState(worldPosition.above()).is(ModBlocks.ARCANE_WORKBENCH_CHARGER.get())) {
-            float remaining = amount;
-            float perChunk = amount / 9.0f;
-
-            outer:
-            for (int xx = -1; xx <= 1; ++xx) {
-                for (int zz = -1; zz <= 1; ++zz) {
-                    float toDrain = Math.min(perChunk, remaining);
-
-                    mutablePos.set(
-                            worldPosition.getX() + xx * 16,
-                            worldPosition.getY(),
-                            worldPosition.getZ() + zz * 16
-                    );
-
-                    remaining -= AuraHandler.drainVis(level, mutablePos, toDrain, false);
-
-                    if (remaining <= 0.0f) break outer;
-                }
-            }
-
-            return amount - remaining;
-        }
-
-        return AuraHandler.drainVis(level, worldPosition, amount, false);
     }
 
     private FocusPackage generateFocus() {
@@ -256,7 +251,7 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
     public void endCraft() {
         if (level == null) return;
 
-        vis = 0.0f;
+        vis = new AspectList();
 
         ItemStack focus = getItem(0);
 
@@ -286,9 +281,32 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
         setChanged();
     }
 
+    public AspectList getPreviewCastCost() {
+        ItemStack focus = getItem(0);
+        if (focus.isEmpty() || !(focus.getItem() instanceof ItemFocus focusItem)) {
+            return new AspectList();
+        }
+        FocusPackage core = generateFocus();
+        if (core == null) {
+            return new AspectList();
+        }
+        ItemStack preview = focus.copy();
+        ItemFocus.setPackage(preview, core);
+        return focusItem.getVisCost(preview);
+    }
+
+    public AspectList getPreviewCost() {
+        AspectList cast = getPreviewCastCost();
+        AspectList cost = new AspectList();
+        for (Aspect aspect : cast.getAspects()) {
+            cost.add(aspect, Math.max(5, cast.getAmount(aspect) * 10));
+        }
+        return cost;
+    }
+
     public boolean startCraft(int id, Player player) {
         if (level == null || level.isClientSide || player == null) return false;
-        if (data == null || data.isEmpty() || vis > 0.0f) return false;
+        if (data == null || data.isEmpty() || hasVisRemaining()) return false;
 
         ItemStack focus = getItem(0);
 
@@ -316,13 +334,25 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
             }
         }
 
-        vis = (float) (totalComplexity * 10 + maxComplexity / 5);
-        xpCost = (int) Math.max(1, Math.round(Math.sqrt(totalComplexity)));
-
+        AspectList cost = getPreviewCost();
+        if (cost.size() == 0) {
+            clearVis();
+            return false;
+        }
         boolean creative = player.getAbilities().instabuild;
 
+        if (!creative && !FocusManager.consumeVisFromInventory(player, cost, true)) {
+            clearVis();
+            return false;
+        }
+        vis = cost.copy();
+        visCost = cost.copy();
+        crafter = player.getUUID();
+
+        xpCost = (int) Math.max(1, Math.round(Math.sqrt(totalComplexity)));
+
         if (!creative && player.experienceLevel < xpCost) {
-            vis = 0.0f;
+            clearVis();
             return false;
         }
 
@@ -333,7 +363,7 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
         Aspect[] crystalAspects = crystals.getAspects();
 
         if (crystalAspects.length == 0) {
-            vis = 0.0f;
+            clearVis();
             return false;
         }
 
@@ -347,7 +377,7 @@ public class TileFocalManipulator extends TileArcaneresearchInventory {
         if (!creative) {
             for (ItemStack component : components) {
                 if (!arcaneresearch.common.lib.utils.InventoryUtils.isPlayerCarryingAmount(player, component, false)) {
-                    vis = 0.0f;
+                    clearVis();
                     return false;
                 }
             }

@@ -10,7 +10,7 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.api.wands.WandCap;
 import arcaneresearch.api.wands.WandRod;
 import arcaneresearch.common.items.wands.WandItems;
@@ -37,10 +37,6 @@ public class WandModelEvents {
                                          String itemName, boolean staff) {
         ModelResourceLocation key = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", itemName), "inventory");
         ResourceLocation icon = ResourceLocation.fromNamespaceAndPath("arcaneresearch", staff ? "item/wand/rod_greatwood_mat" : "item/wand/rod_wood_mat");
-        // 26.3-паритет: display-трансформы живут в JSON (models/item/wand.json
-        // / staff.json — дословный порт display-блока 26.3). Забираем их у
-        // запечённого плейсхолдера ДО подмены на мешь-модель; WandTransforms
-        // остаётся fallback-константами (числа совпадают с JSON).
         ItemTransforms jsonTransforms = null;
         BakedModel placeholder = models.get(key);
         if (placeholder != null) {
@@ -75,7 +71,7 @@ public class WandModelEvents {
             WandMeshModel rodModel = new WandMeshModel(rodKey, rod);
             rodModel.initialize(wandModel.getTransforms(), icon);
         }
-        for (ItemFocusBasic focus : ItemFocusBasic.foci.values()) {
+        for (FocusItem focus : FocusItem.foci.values()) {
             String focusKey = "focus" + focus.getFocusId();
             WandMeshModel focusModel = new WandMeshModel(focusKey, focus);
             focusModel.initialize(wandModel.getTransforms(), icon);

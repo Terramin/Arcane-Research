@@ -12,7 +12,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.crafting.IArcaneRecipe;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.menu.ArcaneWorkbenchMenu;
 import arcaneresearch.common.tiles.crafting.TileArcaneWorkbench;
@@ -99,7 +99,7 @@ public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkben
         int visCost = 0;
         int discount = 0;
         if (recipe != null) {
-            float discountPct = CasterManager.getTotalVisDiscount(this.minecraft.player);
+            float discountPct = FocusManager.getTotalVisDiscount(this.minecraft.player);
             discount = (int) (discountPct * 100);
             visCost = ArcaneWorkbenchMenu.getDiscountedVisCost(recipe, this.minecraft.player);
         }

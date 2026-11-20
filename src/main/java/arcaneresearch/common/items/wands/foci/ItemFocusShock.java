@@ -17,8 +17,8 @@ import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.client.fx.WandFX;
 import arcaneresearch.common.entities.WandEntities;
 import arcaneresearch.common.entities.projectile.EntityShockOrb;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class ItemFocusShock extends ItemFocusBasic {
+public class ItemFocusShock extends FocusItem {
 
     private static final AspectList COST_BASE = new AspectList().add(Aspect.AIR, 8);
     private static final AspectList COST_CHAIN = new AspectList().add(Aspect.AIR, 8).add(Aspect.WATER, 8);
@@ -79,7 +79,6 @@ public class ItemFocusShock extends ItemFocusBasic {
                 py = tip.y;
                 pz = tip.z;
             } catch (Exception ignored) {
-                //TODO 1
             }
         }
         WandFX.arcBolt(level, px, py, pz, xx, yy, zz);
@@ -113,7 +112,6 @@ public class ItemFocusShock extends ItemFocusBasic {
 
     @Override
     public int getActivationCooldown(ItemStack focusstack) {
-        // ВНИМАНИЕ: 500/1000/250 тиков = 25/50/12.5 сек. Проверьте контракт getActivationCooldown.
         return 20;
     }
 
@@ -124,7 +122,7 @@ public class ItemFocusShock extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         ItemStack focusStack = wand.getFocusStack(wandstack);
@@ -157,7 +155,7 @@ public class ItemFocusShock extends ItemFocusBasic {
         } else {
             right = right.normalize();
         }
-        boolean mainWand = caster.getMainHandItem().getItem() instanceof IWand;
+        boolean mainWand = caster.getMainHandItem().getItem() instanceof IFocusHost;
         boolean rightArm = mainWand == (caster.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT);
         double side = rightArm ? 0.30D : -0.30D;
         return new Vec3(caster.getX(), caster.getEyeY() - 0.1D, caster.getZ())
@@ -166,7 +164,7 @@ public class ItemFocusShock extends ItemFocusBasic {
     }
 
     public void doLightningBolt(ItemStack stack, LivingEntity caster, int count) {
-        if (caster == null || !(stack.getItem() instanceof IWand wand)) {
+        if (caster == null || !(stack.getItem() instanceof IFocusHost wand)) {
             return;
         }
         Level level = caster.level();

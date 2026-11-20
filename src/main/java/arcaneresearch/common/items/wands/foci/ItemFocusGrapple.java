@@ -10,12 +10,12 @@ import net.minecraft.world.phys.HitResult;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.entities.projectile.EntityGrapple;
 import arcaneresearch.common.lib.wands.WandSounds;
 
-public class ItemFocusGrapple extends ItemFocusBasic {
+public class ItemFocusGrapple extends FocusItem {
 
     private static final AspectList COST = new AspectList().add(Aspect.WATER, 10).add(Aspect.AIR, 10);
 
@@ -52,11 +52,11 @@ public class ItemFocusGrapple extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (!level.isClientSide) {
-            InteractionHand hand = entity.getMainHandItem().getItem() instanceof IWand
+            InteractionHand hand = entity.getMainHandItem().getItem() instanceof IFocusHost
                     ? InteractionHand.MAIN_HAND
                     : InteractionHand.OFF_HAND;
             EntityGrapple grapple = new EntityGrapple(level, entity, hand);

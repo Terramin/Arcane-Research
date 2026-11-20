@@ -5,8 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
-import arcaneresearch.api.casters.ICaster;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.common.items.tools.elemental.ElementalShovelItem;
 
 import java.util.function.Supplier;
@@ -49,7 +49,7 @@ public class PacketItemKeyToServer {
             ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
             boolean handled = false;
             if (!mainHand.isEmpty()) {
-                if (packet.key == 1 && mainHand.getItem() instanceof ICaster) {
+                if (packet.key == 1 && mainHand.getItem() instanceof IFocusHost) {
                     toggleMisc(mainHand, player, packet.modifier);
                     handled = true;
                 }
@@ -60,7 +60,7 @@ public class PacketItemKeyToServer {
                 }
             }
             if (!handled && !offHand.isEmpty()) {
-                if (packet.key == 1 && offHand.getItem() instanceof ICaster) {
+                if (packet.key == 1 && offHand.getItem() instanceof IFocusHost) {
                     toggleMisc(offHand, player, packet.modifier);
                 }
             }
@@ -69,6 +69,6 @@ public class PacketItemKeyToServer {
     }
 
     private static void toggleMisc(ItemStack casterStack, ServerPlayer player, int modifier) {
-        CasterManager.toggleMisc(casterStack, player.level(), player, modifier);
+        FocusManager.toggleMisc(casterStack, player.level(), player, modifier);
     }
 }

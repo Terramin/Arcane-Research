@@ -13,11 +13,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.casters.FocusMedium;
-import arcaneresearch.api.casters.ICaster;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.casters.NodeSetting;
 import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.api.items.IArchitect;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.common.items.wands.FocusManager;
 
 import java.util.*;
 
@@ -122,9 +122,9 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         if (casterStack.isEmpty()) {
             return result;
         }
-        int sizeX = CasterManager.getAreaX(casterStack);
-        int sizeY = CasterManager.getAreaY(casterStack);
-        int sizeZ = CasterManager.getAreaZ(casterStack);
+        int sizeX = FocusManager.getAreaX(casterStack);
+        int sizeY = FocusManager.getAreaY(casterStack);
+        int sizeZ = FocusManager.getAreaZ(casterStack);
         if (getSettingValue("method") == METHOD_FULL) {
             checkNeighboursFull(world, hitPos, hitPos, side, sizeX, sizeY, sizeZ, result);
         } else {
@@ -202,11 +202,11 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
             return ItemStack.EMPTY;
         }
         ItemStack mainhand = player.getMainHandItem();
-        if (!mainhand.isEmpty() && mainhand.getItem() instanceof ICaster) {
+        if (!mainhand.isEmpty() && mainhand.getItem() instanceof IFocusHost) {
             return mainhand;
         }
         ItemStack offhand = player.getOffhandItem();
-        if (!offhand.isEmpty() && offhand.getItem() instanceof ICaster) {
+        if (!offhand.isEmpty() && offhand.getItem() instanceof IFocusHost) {
             return offhand;
         }
         return ItemStack.EMPTY;
@@ -245,7 +245,7 @@ public class FocusMediumPlan extends FocusMedium implements IArchitect {
         if (stack == null || stack.isEmpty()) {
             return false;
         }
-        int dim = CasterManager.getAreaDim(stack);
+        int dim = FocusManager.getAreaDim(stack);
         if (getSettingValue("method") == METHOD_FULL) {
             return switch (axis) {
                 case Y -> dim == 0 || dim == 3;

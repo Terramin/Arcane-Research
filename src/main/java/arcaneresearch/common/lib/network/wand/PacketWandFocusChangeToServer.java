@@ -5,8 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.common.items.wands.WandManager;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.common.items.wands.FocusManager;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -42,7 +42,6 @@ public class PacketWandFocusChangeToServer {
         return msg;
     }
 
-    //TODO Проверить на NPE
     public static void handle(PacketWandFocusChangeToServer msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
@@ -55,16 +54,16 @@ public class PacketWandFocusChangeToServer {
             }
             if (player != null) {
                 ItemStack held = player.getMainHandItem();
-                if (held.isEmpty() || !(held.getItem() instanceof IWand) || ((IWand) held.getItem()).isSceptre(held)) {
+                if (held.isEmpty() || !(held.getItem() instanceof IFocusHost) || ((IFocusHost) held.getItem()).isSceptre(held)) {
                     ItemStack off = player.getOffhandItem();
-                    if (!off.isEmpty() && off.getItem() instanceof IWand && !((IWand) off.getItem()).isSceptre(off)) {
+                    if (!off.isEmpty() && off.getItem() instanceof IFocusHost && !((IFocusHost) off.getItem()).isSceptre(off)) {
                         held = off;
                     } else {
                         held = ItemStack.EMPTY;
                     }
                 }
-                if (!held.isEmpty() && held.getItem() instanceof IWand) {
-                    WandManager.changeFocus(held, player.level(), player, msg.focus);
+                if (!held.isEmpty() && held.getItem() instanceof IFocusHost) {
+                    FocusManager.changeFocus(held, player.level(), player, msg.focus);
                 }
             }
         });

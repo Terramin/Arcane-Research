@@ -726,7 +726,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_7.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_8.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_CAP.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.CRAFT, 5));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_POUCH.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.FOCUS_POUCH.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_FIRE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.FIRE, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_FROST.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.COLD, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_SHOCK.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.ENERGY, 10));

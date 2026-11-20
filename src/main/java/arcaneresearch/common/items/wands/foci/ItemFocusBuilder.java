@@ -20,7 +20,7 @@ import arcaneresearch.common.lib.utils.BlockUtils;
 
 import java.util.ArrayList;
 
-public class ItemFocusBuilder extends ItemFocusBasic implements IArchitectExtended, IFocusPicker {
+public class ItemFocusBuilder extends FocusItem implements IArchitectExtended, IFocusPicker {
     private static final AspectList COST = new AspectList().add(Aspect.AIR, 1).add(Aspect.EARTH, 1)
             .add(Aspect.ORDER, 1);
     private static final FocusUpgradeType[] RANK_UPGRADES =
@@ -45,7 +45,7 @@ public class ItemFocusBuilder extends ItemFocusBasic implements IArchitectExtend
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand) || !(entity instanceof Player player)) {
+        if (!(wandstack.getItem() instanceof IFocusHost) || !(entity instanceof Player player)) {
             return false;
         }
 
@@ -132,7 +132,7 @@ public class ItemFocusBuilder extends ItemFocusBasic implements IArchitectExtend
     public ArrayList<BlockPos> getArchitectBlocks(ItemStack stack, Level level, BlockPos pos, Direction side,
                                                   Player player) {
         ArrayList<BlockPos> out = new ArrayList<>();
-        if (player == null || !(stack.getItem() instanceof IWand wand)) {
+        if (player == null || !(stack.getItem() instanceof IFocusHost wand)) {
             return out;
         }
         ItemStack focusStack = wand.getFocusStack(stack);

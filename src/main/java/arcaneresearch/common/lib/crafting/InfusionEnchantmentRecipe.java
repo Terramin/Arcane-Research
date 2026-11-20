@@ -1,4 +1,5 @@
 package arcaneresearch.common.lib.crafting;
+import arcaneresearch.api.wands.IFocusHost;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.ByteTag;
@@ -84,7 +85,7 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
             if (!cool && central.getItem() instanceof IRechargable && enchantment.toolClasses.contains("chargable")) {
                 cool = true;
             }
-            if (!cool && central.getItem() instanceof arcaneresearch.api.wands.IWand
+            if (!cool && central.getItem() instanceof IFocusHost
                     && enchantment.toolClasses.contains("wand")) {
                 cool = true;
             }

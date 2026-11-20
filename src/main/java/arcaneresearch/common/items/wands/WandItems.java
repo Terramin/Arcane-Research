@@ -14,7 +14,6 @@ public class WandItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, Arcaneresearch.MODID);
     public static final RegistryObject<Item> WAND = ITEMS.register("wand", ItemWand::new);
     public static final RegistryObject<Item> WAND_CAP = ITEMS.register("wand_cap", ItemWandCap::new);
-    public static final RegistryObject<Item> WAND_FOCUS_POUCH = ITEMS.register("wand_focus_pouch", ItemFocusPouch::new);
     public static final RegistryObject<Item> WAND_FOCUS_FIRE = ITEMS.register("wand_focus_fire", ItemFocusFire::new);
     public static final RegistryObject<Item> WAND_FOCUS_FROST = ITEMS.register("wand_focus_frost", ItemFocusFrost::new);
     public static final RegistryObject<Item> WAND_FOCUS_SHOCK = ITEMS.register("wand_focus_shock", ItemFocusShock::new);

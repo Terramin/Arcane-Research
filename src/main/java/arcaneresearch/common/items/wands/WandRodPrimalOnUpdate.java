@@ -3,7 +3,7 @@ package arcaneresearch.common.items.wands;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.wands.IWandRodOnUpdate;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class WandRodPrimalOnUpdate implements IWandRodOnUpdate {
 
     @Override
     public void onUpdate(ItemStack stack, Player player) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return;
         }
         if (player.tickCount % 5 != 0) {

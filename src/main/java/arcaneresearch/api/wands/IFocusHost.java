@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 
-public interface IWand {
+public interface IFocusHost {
     int getMaxVis(ItemStack stack);
 
     int getVis(ItemStack stack, Aspect aspect);
@@ -22,11 +22,19 @@ public interface IWand {
 
     int addVis(ItemStack stack, Aspect aspect, int amount, boolean simulate);
 
-    ItemFocusBasic getFocus(ItemStack stack);
+    FocusItem getFocus(ItemStack stack);
 
     ItemStack getFocusStack(ItemStack stack);
 
     void setFocus(ItemStack wand, ItemStack focus);
+
+    default ItemStack getPickedBlock(ItemStack stack) {
+        return ItemStack.EMPTY;
+    }
+
+    default boolean isCaster() {
+        return false;
+    }
 
     WandRod getRod(ItemStack stack);
 

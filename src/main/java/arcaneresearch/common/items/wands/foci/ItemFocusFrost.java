@@ -9,13 +9,13 @@ import net.minecraft.world.phys.HitResult;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.entities.WandEntities;
 import arcaneresearch.common.entities.projectile.EntityFrostShard;
 import arcaneresearch.common.lib.wands.WandSounds;
 
-public class ItemFocusFrost extends ItemFocusBasic {
+public class ItemFocusFrost extends FocusItem {
 
     private static final AspectList COST_BASE = new AspectList().add(Aspect.WATER, 2).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 2);
     private static final AspectList COST_SCATTER = new AspectList().add(Aspect.WATER, 2).add(Aspect.FIRE, 1).add(Aspect.ENTROPY, 1).add(Aspect.AIR, 2);
@@ -67,7 +67,7 @@ public class ItemFocusFrost extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (level.isClientSide) {

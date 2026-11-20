@@ -1,14 +1,11 @@
 package arcaneresearch.client;
 
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.client.gui.screens.WandFocusPouchScreen;
-import arcaneresearch.common.menu.WandMenuTypes;
 
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -16,8 +13,6 @@ public class WandClientSetup {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MenuScreens.register(
-                    WandMenuTypes.WAND_FOCUS_POUCH.get(), WandFocusPouchScreen::new);
             net.minecraft.client.renderer.entity.EntityRenderers.register(
                     arcaneresearch.common.entities.WandEntities.EMBER.get(),
                     arcaneresearch.client.renderers.entity.NoProjectileRenderer::new);
