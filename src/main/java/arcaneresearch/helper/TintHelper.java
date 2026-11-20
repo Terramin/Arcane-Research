@@ -134,12 +134,11 @@ public final class TintHelper {
     }
     public static int casterFocusColor(ItemStack stack, int tintIndex) {
         if (tintIndex > 0 && stack != null && !stack.isEmpty()
-                && stack.getItem() instanceof arcaneresearch.common.items.casters.ItemCaster caster) {
+                && stack.getItem() instanceof IFocusHost host) {
             try {
-                ItemStack focusStack = caster.getFocusStack(stack);
-                if (caster.getFocus(stack) instanceof arcaneresearch.common.items.casters.ItemFocus focus
-                        && focusStack != null) {
-                    return focus.getFocusColor(focusStack);
+                FocusItem focus = host.getFocus(stack);
+                if (focus != null) {
+                    return focus.getFocusColor(host.getFocusStack(stack));
                 }
             } catch (Exception ignored) {
             }
