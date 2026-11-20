@@ -1,5 +1,6 @@
 {
   "type": "arcaneresearch:infusion",
+  "research": "CRIMSONBLADE",
   "group": "arcaneresearch:crimson_stuff",
   "instability": 4,
   "central": {

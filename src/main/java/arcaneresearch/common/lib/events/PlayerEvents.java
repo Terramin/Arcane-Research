@@ -340,6 +340,17 @@ public class PlayerEvents {
                         player.getName().getString());
             }
         }
+        if (item == ModItems.CRIMSON_CULT_AMULET.get()) {
+            IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+            if (knowledge != null && !knowledge.isResearchKnown("!gotcrimsonamulet")) {
+                knowledge.addResearch("!gotcrimsonamulet");
+                if (player instanceof ServerPlayer serverPlayer) {
+                    knowledge.sync(serverPlayer);
+                }
+                Arcaneresearch.LOGGER.info("Player {} picked up first Crimson Cult Amulet.",
+                        player.getName().getString());
+            }
+        }
     }
 
     @SubscribeEvent

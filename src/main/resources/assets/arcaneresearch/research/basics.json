@@ -280,6 +280,43 @@
             ]
         },
         {
+            "key": "CRIMSONAMULET",
+            "name": "research.CRIMSONAMULET.title",
+            "icons": [ "arcaneresearch:crimson_cult_amulet" ],
+            "category": "BASICS", "location": [ -6,6 ],
+            "parents": [ "!gotcrimsonamulet" ],
+            "meta": [ "HIDDEN" ],
+            "stages": [
+                {
+                    "text": "research.CRIMSONAMULET.stage.1",
+                    "required_knowledge": ["OBSERVATION;ELDRITCH;1"]
+                },
+                {
+                    "text": "research.CRIMSONAMULET.stage.2"
+                }
+            ]
+        },
+        {
+            "key": "CRIMSONBLADE",
+            "name": "research.CRIMSONBLADE.title",
+            "icons": [ "arcaneresearch:crimson_cult_blade" ],
+            "category": "BASICS", "location": [ -6,8 ],
+            "parents": [ "CRIMSONAMULET" ],
+            "meta": [ "HIDDEN" ],
+            "stages": [
+                {
+                    "text": "research.CRIMSONBLADE.stage.1",
+                    "required_knowledge": ["THEORY;INFUSION;1"],
+                    "required_item": ["arcaneresearch:crimson_cult_amulet"]
+                },
+                {
+                    "text": "research.CRIMSONBLADE.stage.2",
+                    "required_craft": ["arcaneresearch:crimson_cult_blade"],
+                    "recipes": ["arcaneresearch:infusion/crimson_cult_blade"]
+                }
+            ]
+        },
+        {
             "key": "UNLOCKELDRITCH",
             "name": "research.UNLOCKELDRITCH.title",
             "icons": [ "arcaneresearch:textures/research/cat_eldritch.png" ],
