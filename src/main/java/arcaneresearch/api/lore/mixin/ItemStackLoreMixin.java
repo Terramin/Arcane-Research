@@ -41,11 +41,11 @@ public abstract class ItemStackLoreMixin {
         if (loreKey == null) {
             return;
         }
-        if (Screen.hasShiftDown()) {
+        if (Screen.hasControlDown()) {
             tooltip.add(1, Component.translatable(loreKey).withStyle(ChatFormatting.GRAY));
         } else {
-            tooltip.add(1, Component.translatable(LoreAPI.HOLD_SHIFT_KEY)
-                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+            tooltip.add(1, Component.translatable(LoreAPI.HOLD_CTRL_KEY)
+                    .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
     }
 }

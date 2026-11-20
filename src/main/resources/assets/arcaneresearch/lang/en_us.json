@@ -2362,7 +2362,7 @@
   "workbench.available": "available",
   "workbench.cost": "vis",
   "workbench.discount": "discount",
-  "lore.arcaneresearch.hold_shift": "--Hold Shift--",
+  "lore.arcaneresearch.hold_ctrl": "Hold Ctrl for details",
   "lore.arcaneresearch.salis_mundus": "A shimmering alchemical dust, the spark of thaumaturgy,\ngathered from crystals overflowing with energy.\nSprinkled upon a mundane block, it reshapes its\nmagical nature, allowing the crafting of items infused\nwith the mysterious energy of Vis.",
   "lore.arcaneresearch.elemental_axe": "A common thaumium axe is merely sturdy and receptive\nto enchantment, but saturated with the primal essence\nof water it gains the will of the flow. The Axe of Flow\ndoes not fell a tree piece by piece — it feels the whole\nof the wood and brings it down in a single motion,\nwhile the felled logs drift to their master as a river\nbears its tribute. Even idle objects lying nearby\nare swept up by its current.",
   "lore.arcaneresearch.elemental_pick": "A common thaumium pick is merely sturdy and receptive\nto enchantment, but saturated with the primal essence\nof fire it holds the heat of the forge. The Pick of\nEssence does not merely crush stone — it tears the\npurest native clusters from the ore, which smelt down\nto twice the metal, as if the fire had already labored\nover them. Its strike rings out with a sound that finds\nprecious ores in the depths.",

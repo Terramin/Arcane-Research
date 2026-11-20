@@ -10,7 +10,7 @@ import net.minecraft.world.level.ItemLike;
 
 public final class LoreAPI {
 
-    public static final String HOLD_SHIFT_KEY = "lore.arcaneresearch.hold_shift";
+    public static final String HOLD_CTRL_KEY = "lore.arcaneresearch.hold_ctrl";
 
     private static final Map<Item, String> LORE_KEYS = new ConcurrentHashMap<>();
 
