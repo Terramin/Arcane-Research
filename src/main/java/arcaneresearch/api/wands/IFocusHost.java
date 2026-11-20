@@ -36,18 +36,6 @@ public interface IFocusHost {
         return false;
     }
 
-    WandRod getRod(ItemStack stack);
-
-    boolean isStaff(ItemStack stack);
-
-    boolean isSceptre(ItemStack stack);
-
-    void setRod(ItemStack stack, WandRod rod);
-
-    WandCap getCap(ItemStack stack);
-
-    void setCap(ItemStack stack, WandCap cap);
-
     int getFocusPotency(ItemStack stack);
 
     int getFocusTreasure(ItemStack stack);

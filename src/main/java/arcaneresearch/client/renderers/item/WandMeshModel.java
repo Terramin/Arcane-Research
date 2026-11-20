@@ -17,6 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.IFocusHostWand;
 import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.api.wands.WandCap;
 import arcaneresearch.api.wands.WandRod;
@@ -164,7 +165,7 @@ public class WandMeshModel implements BakedModel {
     }
     public BakedModel resolveStack(ItemStack stack) {
         ensureBaked();
-        if (!(stack.getItem() instanceof IFocusHost wand)) {
+        if (!(stack.getItem() instanceof IFocusHostWand wand)) {
             return this;
         }
         WandRod rod = wand.getRod(stack);

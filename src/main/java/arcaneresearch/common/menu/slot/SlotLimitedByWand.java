@@ -4,7 +4,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.IFocusHostWand;
 import org.jetbrains.annotations.NotNull;
 
 public class SlotLimitedByWand extends Slot {
@@ -16,7 +16,8 @@ public class SlotLimitedByWand extends Slot {
 
     @Override
     public boolean mayPlace(ItemStack stack) {
-        return !stack.isEmpty() && stack.getItem() instanceof IFocusHost wand && !wand.isStaff(stack);
+        return !stack.isEmpty()
+                && (!(stack.getItem() instanceof IFocusHostWand wand) || !wand.isStaff(stack));
     }
 
     @Override

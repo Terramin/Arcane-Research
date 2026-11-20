@@ -1,5 +1,5 @@
 package arcaneresearch.init;
-import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.IFocusHostWand;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -600,7 +600,7 @@ public class ModCreativeTabs {
     private static ItemStack createWandStack(arcaneresearch.api.wands.WandRod rod,
                                              arcaneresearch.api.wands.WandCap cap) {
         ItemStack stack = new ItemStack(arcaneresearch.common.items.wands.WandItems.WAND.get());
-        if (stack.getItem() instanceof IFocusHost wand) {
+        if (stack.getItem() instanceof IFocusHostWand wand) {
             wand.setRod(stack, rod);
             wand.setCap(stack, cap);
         }
@@ -620,7 +620,7 @@ public class ModCreativeTabs {
     }
     private static ItemStack createSceptreStack(String rodTag, String capTag) {
         ItemStack stack = new ItemStack(arcaneresearch.common.items.wands.WandItems.WAND.get());
-        if (stack.getItem() instanceof IFocusHost wand) {
+        if (stack.getItem() instanceof IFocusHostWand wand) {
             arcaneresearch.api.wands.WandRod rod =
                     arcaneresearch.api.wands.WandRod.rods.get(rodTag);
             arcaneresearch.api.wands.WandCap cap =

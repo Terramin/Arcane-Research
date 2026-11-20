@@ -31,8 +31,9 @@ public class NodeTapHelper {
             }
             boolean preserve = !player.isCrouching()
                     && AuraResearch.isResearchComplete(player, "NODEPRESERVE")
-                    && !"wood".equals(wand.getRod(wandstack).getTag())
-                    && !"iron".equals(wand.getCap(wandstack).getTag());
+                    && (!(wandstack.getItem() instanceof arcaneresearch.api.wands.IFocusHostWand w)
+                    || (!"wood".equals(w.getRod(wandstack).getTag())
+                    && !"iron".equals(w.getCap(wandstack).getTag())));
             Aspect aspect = chooseRandomFiltered(source,
                     wand.getAspectsWithRoom(wandstack), level, preserve);
             if (aspect != null) {

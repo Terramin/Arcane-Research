@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.IFocusHostWand;
 import arcaneresearch.common.items.wands.FocusManager;
 
 import java.util.Objects;
@@ -42,6 +43,10 @@ public class PacketWandFocusChangeToServer {
         return msg;
     }
 
+    private static boolean isSceptre(ItemStack stack) {
+        return stack.getItem() instanceof IFocusHostWand wand && wand.isSceptre(stack);
+    }
+
     public static void handle(PacketWandFocusChangeToServer msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
@@ -54,9 +59,9 @@ public class PacketWandFocusChangeToServer {
             }
             if (player != null) {
                 ItemStack held = player.getMainHandItem();
-                if (held.isEmpty() || !(held.getItem() instanceof IFocusHost) || ((IFocusHost) held.getItem()).isSceptre(held)) {
+                if (held.isEmpty() || !(held.getItem() instanceof IFocusHost) || isSceptre(held)) {
                     ItemStack off = player.getOffhandItem();
-                    if (!off.isEmpty() && off.getItem() instanceof IFocusHost && !((IFocusHost) off.getItem()).isSceptre(off)) {
+                    if (!off.isEmpty() && off.getItem() instanceof IFocusHost && !isSceptre(off)) {
                         held = off;
                     } else {
                         held = ItemStack.EMPTY;

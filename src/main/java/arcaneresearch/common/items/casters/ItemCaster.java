@@ -8,15 +8,12 @@ import arcaneresearch.api.casters.FocusPackage;
 import arcaneresearch.api.items.IArchitect;
 import arcaneresearch.api.wands.FocusUpgradeType;
 import arcaneresearch.api.wands.FocusItem;
-import arcaneresearch.api.wands.WandCap;
-import arcaneresearch.api.wands.WandRod;
 import arcaneresearch.client.renderers.item.CasterItemRenderer;
 import arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketAuraToClient;
 import arcaneresearch.common.lib.utils.BlockUtils;
 import arcaneresearch.common.lib.wands.WandAuraHelper;
-import arcaneresearch.common.lib.wands.WandRegistry;
 import arcaneresearch.common.world.aura.AuraHandler;
 import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.proxies.Proxies;
@@ -200,26 +197,11 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
     public float getConsumptionModifier(ItemStack stack, Player player,
                                         Aspect aspect, boolean crafting) {
         float modifier = 1.0F;
-        WandCap cap = getCap(stack);
-        if (cap != null) {
-            List<Aspect> special = cap.getSpecialCostModifierAspects();
-            if (special != null && special.contains(aspect)) {
-                modifier = cap.getSpecialCostModifier();
-            } else {
-                modifier = cap.getBaseCostModifier();
-            }
-        }
         if (player != null) {
             modifier -= arcaneresearch.common.items.wands.FocusManager.getTotalVisDiscount(player, aspect);
         }
         if (getFocus(stack) != null && !crafting) {
             modifier -= getFocusFrugal(stack) / 10.0F;
-            if (isStaff(stack)) {
-                modifier -= 0.1F;
-            }
-        }
-        if (isSceptre(stack)) {
-            modifier -= 0.1F;
         }
         int efficiency = EnumInfusionEnchantment.getInfusionEnchantmentLevel(
                 stack, EnumInfusionEnchantment.MAGIC_EFFICIENCY);
@@ -263,62 +245,11 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
 
 
     @Override
-    public WandRod getRod(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        if (tag != null && tag.contains("rod")) {
-            WandRod rod = WandRod.getRod(tag.getString("rod"));
-            if (rod != null) {
-                return rod;
-            }
-        }
-        return WandRegistry.WAND_ROD_WOOD;
-    }
-
-    @Override
-    public void setRod(ItemStack stack, WandRod rod) {
-        if (!stack.isEmpty() && rod != null) {
-            stack.getOrCreateTag().putString("rod", rod.getTag());
-        }
-    }
-
-    @Override
-    public WandCap getCap(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        if (tag != null && tag.contains("cap")) {
-            WandCap cap = WandCap.caps.get(tag.getString("cap"));
-            if (cap != null) {
-                return cap;
-            }
-        }
-        return WandRegistry.WAND_CAP_COPPER;
-    }
-
-    @Override
-    public void setCap(ItemStack stack, WandCap cap) {
-        if (!stack.isEmpty() && cap != null) {
-            stack.getOrCreateTag().putString("cap", cap.getTag());
-        }
-    }
-
-    @Override
-    public boolean isStaff(ItemStack stack) {
-        WandRod rod = getRod(stack);
-        return rod != null && rod.isStaff();
-    }
-
-    @Override
-    public boolean isSceptre(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.contains("sceptre");
-    }
-
-    @Override
     public int getFocusPotency(ItemStack stack) {
         if (getFocus(stack) == null) {
             return 0;
         }
-        return getFocus(stack).getUpgradeLevel(getFocusStack(stack), FocusUpgradeType.potency)
-                + (getRod(stack) != null && getRod(stack).hasPotencyBonus() ? 1 : 0);
+        return getFocus(stack).getUpgradeLevel(getFocusStack(stack), FocusUpgradeType.potency);
     }
 
     @Override
@@ -348,13 +279,6 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
 
     public Aspect handleRecharge(Level level, ItemStack stack, BlockPos pos,
                                  Player player, int amount) {
-        WandCap cap = getCap(stack);
-        if (cap != null) {
-            amount += cap.getChargeBonus();
-            if (cap.getRechargeMultiplier() != 1.0F) {
-                amount = Math.max(1, Math.round(amount * cap.getRechargeMultiplier()));
-            }
-        }
         AspectList room = getAspectsWithRoom(stack);
         if (room == null) {
             return null;
@@ -387,10 +311,6 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
 
         if (!level.isClientSide && held && entity.tickCount % 5 == 0) {
             if (entity instanceof Player player) {
-                WandRod rod = getRod(stack);
-                if (rod != null && rod.getOnUpdate() != null) {
-                    rod.getOnUpdate().onUpdate(stack, player);
-                }
                 int rate = arcaneresearch.common.items.wands.FocusManager.getBaseChargeRate(player, isSelected, slotId);
                 if (rate > 0) {
                     handleRecharge(level, stack, player.blockPosition(), player, rate);
@@ -814,12 +734,9 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
             }
         }
 
-        WandCap cap = getCap(stack);
-        if (cap != null) {
-            tooltip.add(Component.literal(ChatFormatting.GOLD
-                    + Component.translatable("item.capacity.text").getString()
-                    + " " + getMaxVis(stack) + "§r"));
-        }
+        tooltip.add(Component.literal(ChatFormatting.GOLD
+                + Component.translatable("item.capacity.text").getString()
+                + " " + getMaxVis(stack) + "§r"));
 
         if (focus != null) {
             tooltip.add(Component.empty());

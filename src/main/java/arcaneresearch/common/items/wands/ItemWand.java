@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ItemWand extends Item implements IFocusHost, IArchitect, IArchitectExtended {
+public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchitectExtended {
     private final DecimalFormat formatter = new DecimalFormat("#######.#");
 
     public ItemWand() {
