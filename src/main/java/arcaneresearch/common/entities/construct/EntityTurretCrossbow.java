@@ -227,7 +227,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
                 setYHeadRot(getYRot());
             }
             setYRot(yHeadRot);
-            if (tickCount % 80 == 0) {
+            if (getHealth() < getMaxHealth() && tickCount % 80 == 0) {
                 heal(1.0f);
             }
             int rk = net.minecraft.util.Mth.floor(getX());

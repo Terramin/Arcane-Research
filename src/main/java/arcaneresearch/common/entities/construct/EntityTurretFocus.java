@@ -60,7 +60,7 @@ public class EntityTurretFocus extends EntityOwnedConstruct {
             if (this.tickCount % 4 == 0) {
                 rechargeVis();
             }
-            if (this.tickCount % 40 == 0) {
+            if (this.getHealth() < this.getMaxHealth() && this.tickCount % 40 == 0) {
                 this.heal(1.0F);
             }
             if (this.attackTimer > 0) {

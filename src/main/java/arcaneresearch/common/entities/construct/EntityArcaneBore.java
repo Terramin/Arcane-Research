@@ -97,7 +97,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     public void tick() {
         super.tick();
         if (!level().isClientSide) {
-            if (tickCount % 50 == 0) {
+            if (getHealth() < getMaxHealth() && tickCount % 50 == 0) {
                 heal(1.0f);
             }
             if (tickCount % 10 == 0 && charge < 10.0f) {
