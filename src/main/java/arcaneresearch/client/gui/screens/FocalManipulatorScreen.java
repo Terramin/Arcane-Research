@@ -228,19 +228,24 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         assert minecraft.player != null;
         int xpColor = costXp > minecraft.player.experienceLevel ? 16151160 : 10092429;
         graphics.drawString(font, String.valueOf(costXp), x + 242, y + 50, xpColor, true);
-        graphics.drawString(font, Component.translatable("wandtable.text1").getString(),
-                x + 234, y + 68, 10092429, true);
         AspectList creationCost = getTile().getPreviewCost();
-        int aspectY = y + 80;
+        List<Aspect> costAspects = new ArrayList<>();
         for (Aspect aspect : creationCost.getAspectsSortedByName()) {
-            int amount = creationCost.getAmount(aspect);
-            if (amount <= 0) {
-                continue;
+            if (creationCost.getAmount(aspect) > 0) {
+                costAspects.add(aspect);
             }
-            graphics.drawString(font, "§" + aspect.getChatcolor() + aspect.getName()
-                            + "§r " + amount,
-                    x + 234, aspectY, 0xFFFFFF, true);
-            aspectY += 9;
+        }
+        if (!costAspects.isEmpty()) {
+            graphics.drawString(font, Component.translatable("wandtable.text1").getString(),
+                    x + 234, y + 68, 10092429, true);
+            int aspectY = y + 80;
+            for (Aspect aspect : costAspects) {
+                int amount = creationCost.getAmount(aspect);
+                graphics.drawString(font, "§" + aspect.getChatcolor() + aspect.getName()
+                                + "§r " + amount,
+                        x + 234, aspectY, 0xFFFFFF, true);
+                aspectY += 9;
+            }
         }
         if (components != null && components.length > 0) {
             graphics.drawString(font, ChatFormatting.GOLD + Component.translatable("wandtable.text4").getString(),
