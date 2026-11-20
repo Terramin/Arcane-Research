@@ -25,6 +25,13 @@ public final class ModLore {
         LoreAPI.register(ModItems.THAUMOMETER.get(), "lore.arcaneresearch.thaumometer");
         LoreAPI.register(ModItems.GOGGLES.get(), "lore.arcaneresearch.goggles");
 
+        LoreAPI.register(ModItems.PORTAL_SCROLL.get(), "lore.arcaneresearch.portal_scroll");
+        LoreAPI.register(ModItems.TRAVELLER_BOOTS.get(), "lore.arcaneresearch.traveller_boots");
+        LoreAPI.register(ModItems.RUNIC_RING.get(), "lore.arcaneresearch.runic_ring");
+        LoreAPI.register(ModItems.CRIMSON_CULT_BLADE.get(), "lore.arcaneresearch.crimson_cult_blade");
+        LoreAPI.register(ModBlocks.DIOPTRA.get(), "lore.arcaneresearch.dioptra");
+        LoreAPI.register(ModBlocks.CRUCIBLE.get(), "lore.arcaneresearch.crucible");
+
         registerNitor();
     }
 
