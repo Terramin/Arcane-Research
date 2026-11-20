@@ -126,6 +126,12 @@ public final class DiscoveredResearchAspects {
                 .add(Aspect.METAL, 16)
                 .add(Aspect.FIRE, 8)
                 .add(Aspect.ORDER, 8));
+        register("PORTALSCROLL", new AspectList()
+                .add(Aspect.MAGIC, 16)
+                .add(Aspect.MOTION, 12)
+                .add(Aspect.VOID, 12)
+                .add(Aspect.SENSES, 8)
+                .add(Aspect.EXCHANGE, 8));
         register("POTIONSPRAYER", new AspectList()
                 .add(Aspect.WATER, 12)
                 .add(Aspect.ALCHEMY, 8)
