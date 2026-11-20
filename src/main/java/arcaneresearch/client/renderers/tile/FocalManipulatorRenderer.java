@@ -1,11 +1,18 @@
 package arcaneresearch.client.renderers.tile;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -37,7 +44,31 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
     private static final ResourceLocation PARTICLE_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
     private static final RenderType PARTICLE_TYPE = RenderType.entityTranslucentEmissive(PARTICLE_TEXTURE);
-    private static final RenderType LIGHTNING_TYPE = RenderType.lightning();
+    // Vanilla lightning writes depth, so overlapping rays clip each other and the item.
+    // Use the same additive shader/state but write colour only.
+    private static final RenderType RAY_TYPE = RenderType.create(
+            "arcaneresearch_focus_ray",
+            DefaultVertexFormat.POSITION_COLOR,
+            VertexFormat.Mode.QUADS,
+            256,
+            false,
+            true,
+            RenderType.CompositeState.builder()
+                    .setShaderState(new RenderStateShard.ShaderStateShard(
+                            GameRenderer::getRendertypeLightningShader))
+                    .setWriteMaskState(new RenderStateShard.WriteMaskStateShard(true, false))
+                    .setTransparencyState(new RenderStateShard.TransparencyStateShard(
+                            "lightning_transparency",
+                            () -> {
+                                RenderSystem.enableBlend();
+                                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
+                                        GlStateManager.DestFactor.ONE);
+                            },
+                            () -> {
+                                RenderSystem.disableBlend();
+                                RenderSystem.defaultBlendFunc();
+                            }))
+                    .createCompositeState(false));
 
     private static final Quaternionf ROT_YP_180 = Axis.YP.rotationDegrees(180.0f);
     private static final Quaternionf ROT_XN_90 = Axis.XN.rotationDegrees(90.0f);
@@ -99,13 +130,29 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
             float g = ((colorInt >> 8) & 0xFF) / 255.0f;
             float b = (colorInt & 0xFF) / 255.0f;
             float angle = (ticks % 720.0f / 2.0f) + angleStep * a;
-            float bob = Mth.sin((ticks + a * 10) / 12.0f) * 0.02f + 0.02f;
+            // One vertical offset shared by the orb, the rays and the crystal item.
+            float lift = Mth.sin((ticks + a * 10) / 12.0f) * 0.1f + 0.1f;
+
+            ItemStack crystalStack = CRYSTAL_CACHE.computeIfAbsent(aspect, ArcaneresearchApiHelper::makeCrystal);
+            // Offsets in the parent's (pre-0.5-scale) space: the model's own pose offset
+            // and the anchor at its visual centre (GROUND transform also lifts the model).
+            float crystalOffset = 0.0f;
+            float crystalCenterY = 0.0f;
+            if (crystalStack != null && !crystalStack.isEmpty()) {
+                BakedModel crystalModel = itemRenderer.getModel(
+                        crystalStack, level, null,
+                        Item.getId(crystalStack.getItem()) + crystalStack.getDamageValue());
+                ItemTransform ground = crystalModel.getTransforms()
+                        .getTransform(ItemDisplayContext.GROUND);
+                crystalOffset = 0.25f * ground.scale.y;
+                crystalCenterY = crystalOffset + ground.translation.y / 16.0f;
+            }
 
             poseStack.pushPose();
             try {
-                poseStack.translate(0.5, 1.425, 0.5);
+                poseStack.translate(0.5, 1.175 + 0.5f * crystalCenterY, 0.5);
                 poseStack.mulPose(Axis.YP.rotationDegrees(angle));
-                poseStack.translate(0, bob, 0.4);
+                poseStack.translate(0, lift, 0.4);
                 poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
                 renderGlowingOrb(poseStack, buffer, r, g, b, ticks, cameraRot);
             } finally {
@@ -116,20 +163,13 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
             try {
                 poseStack.translate(0.5, 1.175, 0.5);
                 poseStack.mulPose(Axis.YP.rotationDegrees(angle));
-                poseStack.translate(0, bob, 0.4);
+                poseStack.translate(0, lift, 0.4);
                 poseStack.scale(0.5f, 0.5f, 0.5f);
-                renderRay(poseStack, buffer, angle, a, bob, r, g, b, ticks);
-                renderRay(poseStack, buffer, angle, (a + 1) * 5, bob, r, g, b, ticks);
+                renderRay(poseStack, buffer, angle, a, crystalCenterY, r, g, b, ticks);
+                renderRay(poseStack, buffer, angle, (a + 1) * 5, crystalCenterY, r, g, b, ticks);
 
-                ItemStack crystalStack = CRYSTAL_CACHE.computeIfAbsent(aspect, ArcaneresearchApiHelper::makeCrystal);
                 if (crystalStack != null && !crystalStack.isEmpty()) {
-                    BakedModel crystalModel = itemRenderer.getModel(
-                            crystalStack, level, null,
-                            Item.getId(crystalStack.getItem()) + crystalStack.getDamageValue());
-                    float crystalGroundY = crystalModel.getTransforms()
-                            .getTransform(ItemDisplayContext.GROUND).scale.y();
-                    float crystalBob = Mth.sin(ticks / 10.0f) * 0.1f + 0.1f;
-                    poseStack.translate(0.0f, crystalBob + 0.25f * crystalGroundY, 0.0f);
+                    poseStack.translate(0.0f, crystalOffset, 0.0f);
                     poseStack.mulPose(Axis.YP.rotation(ticks / 20.0f));
                     itemRenderer.renderStatic(crystalStack, ItemDisplayContext.GROUND, packedLight,
                             packedOverlay, poseStack, buffer, level, 0);
@@ -171,19 +211,21 @@ public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalMa
     }
 
     private static void renderRay(PoseStack poseStack, MultiBufferSource buffer,
-                                  float angle, int num, float lift, float r, float g, float b, float ticks) {
+                                  float angle, int num, float crystalCenterY,
+                                  float r, float g, float b, float ticks) {
         poseStack.pushPose();
         try {
             float pan = Mth.sin((ticks + num * 10) / 15.0f) * 15.0f;
             float aperture = Mth.sin((ticks + num * 10) / 14.0f) * 2.0f;
-            poseStack.translate(0, 0.475f + lift, 0);
+            // Ray starts at the visual centre of the crystal model.
+            poseStack.translate(0, crystalCenterY, 0);
             poseStack.mulPose(ROT_XN_90);
             poseStack.mulPose(Axis.YP.rotationDegrees(angle));
             Random random = RAY_RANDOM.get();
             random.setSeed(187L + (long) num * num);
             poseStack.mulPose(Axis.YP.rotationDegrees(random.nextFloat() * 360.0f));
             poseStack.mulPose(Axis.XP.rotationDegrees(pan));
-            VertexConsumer vertexConsumer = buffer.getBuffer(LIGHTNING_TYPE);
+            VertexConsumer vertexConsumer = buffer.getBuffer(RAY_TYPE);
             Matrix4f matrix = poseStack.last().pose();
             float fa = random.nextFloat() * 20.0f + 10.0f;
             float f4 = random.nextFloat() * 4.0f + 6.0f + aperture;
