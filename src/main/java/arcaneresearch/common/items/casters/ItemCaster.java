@@ -19,6 +19,7 @@ import arcaneresearch.common.lib.wands.WandAuraHelper;
 import arcaneresearch.common.lib.wands.WandRegistry;
 import arcaneresearch.common.world.aura.AuraHandler;
 import arcaneresearch.common.items.wands.FocusManager;
+import arcaneresearch.proxies.Proxies;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
@@ -76,11 +77,7 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
 
     @Override
     public int getMaxVis(ItemStack stack) {
-        WandRod rod = getRod(stack);
-        if (rod == null) {
-            return 0;
-        }
-        return (int) (rod.getCapacity() * (isSceptre(stack) ? 1.5F : 1.0F));
+        return 300;
     }
 
     private int getMaxVisInternal(ItemStack stack) {
@@ -293,7 +290,7 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
                 return cap;
             }
         }
-        return WandRegistry.WAND_CAP_IRON;
+        return WandRegistry.WAND_CAP_COPPER;
     }
 
     @Override
@@ -768,6 +765,12 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level,
                                 @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        boolean shift = false;
+        try {
+            shift = Proxies.get().isShiftKeyDown();
+        } catch (Exception ignored) {
+        }
+
         ItemStack focusStack = getFocusStack(stack);
         FocusItem focus = getFocus(stack);
         AspectList focusCost = focus != null ? focus.getVisCost(focusStack) : null;
@@ -776,12 +779,14 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
         if (tag != null) {
             StringBuilder line = new StringBuilder();
             int count = 0;
+            int total = 0;
             for (Aspect aspect : Aspect.getPrimalAspects()) {
                 if (!tag.contains(aspect.getTag())) {
                     continue;
                 }
                 int amount = getVis(stack, aspect);
                 float mod = getConsumptionModifier(stack, null, aspect, false);
+                total += (int) (mod * 100.0F);
                 String extra = "";
                 if (focus != null && focusCost != null) {
                     float cost = focusCost.getAmount(aspect) * mod;
@@ -791,7 +796,7 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
                                 ? "item.Focus.cost2" : "item.Focus.cost1").getString();
                     }
                 }
-                if (flag.isAdvanced()) {
+                if (shift) {
                     tooltip.add(Component.literal(" §" + aspect.getChatcolor() + aspect.getName()
                             + " x " + amount + ", (" + formatter.format(mod * 100.0F) + "% "
                             + Component.translatable("tc.vis.cost").getString() + ")" + extra));
@@ -801,8 +806,11 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
                 }
                 count++;
             }
-            if (!flag.isAdvanced() && count > 0) {
+            if (!shift && count > 0) {
                 tooltip.add(Component.literal(line.toString()));
+                total /= count;
+                tooltip.add(Component.literal(" (" + total + "% "
+                        + Component.translatable("tc.vis.costavg").getString() + ")"));
             }
         }
 
