@@ -114,10 +114,14 @@ public class PlayerEvents {
                 if (player.tickCount % 200 == 0) {
                     ConfigResearch.checkPeriodicResearch(player);
                 }
-                if (player.tickCount % 2000 == 0
-                        && !arcaneresearch.common.config.ModConfig.wussMode
-                        && !player.hasEffect(arcaneresearch.init.ModEffects.WARP_WARD.get())) {
-                    WarpEvents.checkWarpEvent(player);
+                if (player.tickCount % 2000 == 0) {
+                    // Lore unlocks are deterministic and must not be skipped by
+                    // wuss mode, a warp ward or an unlucky warp-event roll.
+                    WarpEvents.checkWarpResearch(player);
+                    if (!arcaneresearch.common.config.ModConfig.wussMode
+                            && !player.hasEffect(arcaneresearch.init.ModEffects.WARP_WARD.get())) {
+                        WarpEvents.checkWarpEvent(player);
+                    }
                 }
                 if (player.tickCount % 20 == 0) {
                     WarpEvents.checkDeathGaze(player);
