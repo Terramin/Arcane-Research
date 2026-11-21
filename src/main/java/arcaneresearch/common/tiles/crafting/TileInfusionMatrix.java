@@ -41,6 +41,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.common.blocks.basic.BlockPillarTC;
 import arcaneresearch.common.blocks.devices.BlockPedestal;
 import arcaneresearch.common.lib.crafting.InfusionRecipeType;
+import arcaneresearch.common.lib.crafting.InfusionStabilityRules;
+import arcaneresearch.common.lib.crafting.InfusionStabilizationRules;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.lib.events.EssentiaHandler;
 import arcaneresearch.common.lib.network.PacketHandler;
@@ -176,24 +178,12 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         return true;
     }
 
-    private EnumStability getStability() {
-        if (stability > (float) stabilityCap / 2) return EnumStability.VERY_STABLE;
-        if (stability >= 0.0f) return EnumStability.STABLE;
-        if (stability > -25.0f) return EnumStability.UNSTABLE;
-        return EnumStability.VERY_UNSTABLE;
-    }
-
-    private float getModFromCurrentStability() {
-        return switch (getStability()) {
-            case VERY_STABLE -> 5.0f;
-            case STABLE -> 6.0f;
-            case UNSTABLE -> 7.0f;
-            case VERY_UNSTABLE -> 8.0f;
-        };
+    private InfusionStabilityRules.Tier getStability() {
+        return InfusionStabilityRules.tier(stability, stabilityCap);
     }
 
     private float getLossPerCycle() {
-        return recipeInstability / getModFromCurrentStability();
+        return InfusionStabilityRules.lossPerCycle(recipeInstability, stability, stabilityCap);
     }
 
     @Override
@@ -691,9 +681,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         boolean valid = false;
         float ff = level.random.nextFloat() * getLossPerCycle();
 
-        stability -= ff;
-        stability += stabilityReplenish;
-        stability = Math.max(-100, Math.min(stabilityCap, stability));
+        stability = InfusionStabilityRules.nextStability(stability, ff, stabilityReplenish, stabilityCap);
 
         BlockEntity centerTE = level.getBlockEntity(worldPosition.below(2));
 
@@ -709,7 +697,10 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             }
         }
 
-        if (!valid || (stability < 0.0f && level.random.nextInt(1500) <= Math.abs(stability))) {
+        // Keep the short-circuit: the RNG is only rolled while stability is negative.
+        boolean unstable = stability < 0.0f
+                && InfusionStabilityRules.shouldDestabilize(stability, level.random.nextInt(1500));
+        if (!valid || unstable) {
             LOGGER.debug("Matrix {} instability event (stability={}, itemValid={})", worldPosition, stability, valid);
             triggerInstabilityEvent();
             stability += 5.0f + level.random.nextFloat() * 5.0f;
@@ -927,19 +918,19 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         int event = level.random.nextInt(24);
         LOGGER.debug("Matrix {} rolled instability event {}", worldPosition, event);
 
-        switch (event) {
-            case 0, 1, 2, 3 -> instabilityEjectItem(0);
-            case 4, 5, 6 -> instabilityWarp();
-            case 7, 8, 9 -> instabilityZap(false);
-            case 10, 11 -> instabilityZap(true);
-            case 12, 13 -> instabilityEjectItem(1);
-            case 14, 15 -> instabilityEjectItem(2);
-            case 16 -> instabilityEjectItem(3);
-            case 17 -> instabilityEjectItem(4);
-            case 18, 19 -> instabilityHarm(false);
-            case 20, 21 -> instabilityEjectItem(5);
-            case 22 -> instabilityHarm(true);
-            case 23 -> level.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
+        switch (InfusionStabilityRules.outcome(event)) {
+            case EJECT_0 -> instabilityEjectItem(0);
+            case WARP -> instabilityWarp();
+            case ZAP -> instabilityZap(false);
+            case ZAP_ALL -> instabilityZap(true);
+            case EJECT_1 -> instabilityEjectItem(1);
+            case EJECT_2 -> instabilityEjectItem(2);
+            case EJECT_3 -> instabilityEjectItem(3);
+            case EJECT_4 -> instabilityEjectItem(4);
+            case HARM -> instabilityHarm(false);
+            case EJECT_5 -> instabilityEjectItem(5);
+            case HARM_ALL -> instabilityHarm(true);
+            case EXPLODE -> level.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
                     worldPosition.getZ() + 0.5, 1.5f + level.random.nextFloat(), false, Level.ExplosionInteraction.BLOCK);
         }
     }
@@ -1170,13 +1161,13 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                         }
                     }
 
-                    if (sb1 == sb2 && amt1 == amt2 && !hasCustomPenalty) {
-                        stabilityReplenish += calcDiminishingReturns(sb1, amt1);
-                    } else if (hasCustomPenalty) {
-                        stabilityReplenish -= customPenalty;
-                        problemBlocks.add(c1);
-                    } else {
-                        stabilityReplenish -= Math.max(amt1, amt2);
+                    boolean symmetric = sb1 == sb2 && amt1 == amt2 && !hasCustomPenalty;
+                    // Diminishing returns are only consumed by a matched pair, as before.
+                    float first = symmetric ? calcDiminishingReturns(sb1, amt1) : amt1;
+                    InfusionStabilizationRules.PairResult result =
+                            InfusionStabilizationRules.pair(first, amt2, symmetric, hasCustomPenalty, customPenalty);
+                    stabilityReplenish += result.delta();
+                    if (result.problem()) {
                         problemBlocks.add(c1);
                     }
                 } catch (Exception ignored) {
@@ -1257,15 +1248,9 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
     }
 
     private float calcDiminishingReturns(Block b, float base) {
-        float bb = base;
-        int c = tempBlockCount.getOrDefault(b, 0);
-
-        if (c > 0) {
-            bb *= (float) Math.pow(0.75, c);
-        }
-
-        tempBlockCount.put(b, c + 1);
-        return bb;
+        int count = tempBlockCount.getOrDefault(b, 0);
+        tempBlockCount.put(b, count + 1);
+        return InfusionStabilizationRules.diminishingReturns(base, count);
     }
 
     @Override
@@ -1374,10 +1359,6 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         }
 
         return renderBox;
-    }
-
-    private enum EnumStability {
-        VERY_STABLE, STABLE, UNSTABLE, VERY_UNSTABLE
     }
 
     private static class PendingEssentia {

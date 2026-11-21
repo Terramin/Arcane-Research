@@ -3,6 +3,7 @@ package arcaneresearch.common.items.misc;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.common.items.ItemTC;
+import arcaneresearch.common.lib.research.WrittenBookRules;
 import arcaneresearch.init.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -97,18 +98,8 @@ public class ThaumonomiconWrittenItem extends ItemTC {
                 knowledge.setResearchStage(key, stage);
             }
 
-            String fs = entry.getString("flags");
-            if (!fs.isEmpty()) {
-                for (String s : fs.split(",")) {
-                    try {
-                        IPlayerKnowledge.EnumResearchFlag flag =
-                                IPlayerKnowledge.EnumResearchFlag.valueOf(s);
-                        if (flag == IPlayerKnowledge.EnumResearchFlag.PAGE) {
-                            knowledge.setResearchFlag(key, flag);
-                        }
-                    } catch (IllegalArgumentException ignored) {
-                    }
-                }
+            if (WrittenBookRules.grantsPageFlag(entry.getString("flags"))) {
+                knowledge.setResearchFlag(key, IPlayerKnowledge.EnumResearchFlag.PAGE);
             }
         }
 
@@ -117,25 +108,15 @@ public class ThaumonomiconWrittenItem extends ItemTC {
             CompoundTag entry = knowledgeList.getCompound(i);
             String key = entry.getString("key");
             int amount = entry.getInt("amount");
-            if (key.length() < 3) {
+            WrittenBookRules.KnowledgeKey parsed = WrittenBookRules.parseKnowledgeKey(key);
+            if (parsed == null) {
                 continue;
             }
-            int split = key.indexOf('_');
-            if (split <= 0) {
-                continue;
-            }
-            IPlayerKnowledge.EnumKnowledgeType type = null;
-            String abbr = key.substring(0, split);
-            if (abbr.equals("T")) {
-                type = IPlayerKnowledge.EnumKnowledgeType.THEORY;
-            } else if (abbr.equals("O")) {
-                type = IPlayerKnowledge.EnumKnowledgeType.OBSERVATION;
-            }
-            if (type == null) {
-                continue;
-            }
-            String category = key.substring(split + 1);
-            int delta = amount - knowledge.getKnowledgeRaw(type, category);
+            IPlayerKnowledge.EnumKnowledgeType type = parsed.type() == WrittenBookRules.KnowledgeType.THEORY
+                    ? IPlayerKnowledge.EnumKnowledgeType.THEORY
+                    : IPlayerKnowledge.EnumKnowledgeType.OBSERVATION;
+            String category = parsed.category();
+            int delta = WrittenBookRules.positiveDelta(amount, knowledge.getKnowledgeRaw(type, category));
             if (delta > 0) {
                 knowledge.addKnowledge(type, category, delta);
             }
