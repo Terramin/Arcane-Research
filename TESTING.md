@@ -131,6 +131,19 @@
 * рецепты плавки/тигля с составными ключами research (`A&&B`) и факультативным
   `research` теперь корректно распознаются правилами проверки.
 
+## Следующий пакет
+
+* `ArcaneLoggerTest` — фильтрация по сессии, формат захваченной строки, `once`
+  с разными категориями, тайминги и приложение stack trace. Исправлено
+  дублирование тега категории в захваченных TRACE/DEBUG-строках.
+* `CriticalStatsTest`, `LifestealStatsTest` — неизменяемые статы, таблицы по
+  уровням, ограничения и реестры модификаторов/источников (порядок, дедупликация).
+* `WorldgenResourcesTest` — связи `placed_feature → configured_feature`,
+  `structure → configured_feature`, `structure_set → structure`,
+  `template_pool → structure .nbt`.
+* `TheorycraftRegistryTest` — все зарегистрированные карты и aid имеют исходники,
+  нет дублирующихся регистраций.
+
 ## Найденные и исправленные регрессии
 
 * `MathHelper.SIN_TABLE[49152]` содержал `+1` вместо `-1` (синус 3π/2).

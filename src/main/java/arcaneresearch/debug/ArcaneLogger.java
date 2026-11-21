@@ -199,7 +199,9 @@ public final class ArcaneLogger {
         }
         session.recordLog(level);
         if (session.isActive()) {
-            session.captureLine(formatCapturedLine(level, message, finalArguments));
+            // The captured line adds its own category tag; do not duplicate the
+            // TRACE/DEBUG prefix that is only meant for the SLF4J message.
+            session.captureLine(formatCapturedLine(level, format, finalArguments));
         }
     }
 
