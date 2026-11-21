@@ -1,6 +1,8 @@
 package arcaneresearch.common.items.wands;
 
 import arcaneresearch.common.blocks.aura.AuraBlocks;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.common.lib.aura.EldritchOculusRitual;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,9 +37,8 @@ import arcaneresearch.init.ModEntities;
 import arcaneresearch.init.ModItems;
 import net.minecraftforge.network.PacketDistributor;
 
-import static com.mojang.text2speech.Narrator.LOGGER;
-
 public class WandTriggers implements IWandTriggerManager {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
     private static boolean triggersRegistered = false;
 
     private static final DirectionProperty FACING_HORIZONTAL =

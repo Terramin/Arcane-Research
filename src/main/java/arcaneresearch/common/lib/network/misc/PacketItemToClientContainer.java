@@ -1,5 +1,7 @@
 package arcaneresearch.common.lib.network.misc;
 
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +12,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class PacketItemToClientContainer {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.NETWORK);
     private int windowId;
     private int slot;
     private ItemStack item;
@@ -50,7 +53,7 @@ public class PacketItemToClientContainer {
                 mc.player.containerMenu.setItem(message.slot, 0, message.item);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to apply container slot update for window {}", message.windowId, e);
         }
     }
 }

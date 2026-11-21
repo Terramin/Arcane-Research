@@ -3,11 +3,11 @@ import java.lang.reflect.Field;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 
 public final class ScreenAccess {
-    private static final Logger LOGGER = LoggerFactory.getLogger("arcaneresearch.invscan");
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.NETWORK);
     private static final Field HOVERED_SLOT;
     private static final Field LEFT_POS;
     private static final Field TOP_POS;

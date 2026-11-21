@@ -32,6 +32,8 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
 
+            // Appenders allow DEBUG, but ArcaneLogger suppresses TRACE/DEBUG
+            // unless a debug session is explicitly started by the command.
             property 'forge.logging.console.level', 'debug'
 
             property 'mixin.env.remapRefMap', 'true'

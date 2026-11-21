@@ -2,7 +2,8 @@ package arcaneresearch.client.lib.events;
 
 import arcaneresearch.Arcaneresearch;
 import com.mojang.blaze3d.shaders.AbstractUniform;
-import com.mojang.logging.LogUtils;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EffectInstance;
@@ -13,14 +14,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.invscan.mixin.GameRendererAccessor;
 import arcaneresearch.invscan.mixin.PostChainAccessor;
 
 @OnlyIn(Dist.CLIENT)
 public final class PortalWarpFx {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation SHADER = ResourceLocation.fromNamespaceAndPath(
             Arcaneresearch.MODID, "shaders/post/teleport_warp.json");
     private static final long RAMP_IN_MS = 150L;

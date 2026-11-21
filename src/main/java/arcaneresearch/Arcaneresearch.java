@@ -1,7 +1,8 @@
 package arcaneresearch;
 import arcaneresearch.api.crit.CritApi;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.helper.TintHelper;
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -31,7 +32,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.ModList;
-import org.slf4j.Logger;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModCreativeTabs;
@@ -72,7 +72,7 @@ public class Arcaneresearch {
     public static final String MODID = "arcaneresearch";
     public static final String MODNAME = "Arcaneresearch";
     public static final String VERSION = "6.2.0";
-    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.CORE);
     private static Arcaneresearch instance;
     public Arcaneresearch(FMLJavaModLoadingContext context) {
         instance = this;
@@ -128,6 +128,11 @@ public class Arcaneresearch {
         arcaneresearch.proxies.Proxies.get().checkInterModComs(event);
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
+        LOGGER.info("Arcaneresearch v{} | Java {} ({}) | {} {} | {} MiB max heap",
+                VERSION,
+                System.getProperty("java.version"), System.getProperty("java.vendor"),
+                System.getProperty("os.name"), System.getProperty("os.arch"),
+                Runtime.getRuntime().maxMemory() / (1024L * 1024L));
         LOGGER.info("Arcaneresearch common setup");
         ArcaneresearchApi.internalMethods = new InternalMethodHandler();
         LOGGER.info("Initialized ArcaneresearchApi internal methods");

@@ -9,8 +9,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 
@@ -48,7 +48,7 @@ public class BiomeHandler {
             TagKey.create(Registries.BIOME,
                     ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "dimension_blacklist"));
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BiomeHandler.class);
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.WORLD);
 
     private static final Map<TagKey<Biome>, BiomeInfo>      BIOME_TAG_INFO      = new HashMap<>();
     private static final Map<ResourceKey<Biome>, BiomeInfo> BIOME_SPECIFIC_INFO = new HashMap<>();

@@ -19,8 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SealHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SealHandler.class);
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ENTITIES);
     private static final int SEAL_RECHECK_PERIOD = 20;
 
     public static LinkedHashMap<String, ISeal> types = new LinkedHashMap<>();

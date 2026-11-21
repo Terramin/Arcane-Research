@@ -1,17 +1,17 @@
 package arcaneresearch.common.world.maze;
 
-import com.mojang.logging.LogUtils;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import org.slf4j.Logger;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.world.structures.StructureHelper;
 
 public final class MazeArrival {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.WORLD);
 
     private MazeArrival() {
     }
@@ -29,13 +29,17 @@ public final class MazeArrival {
             return BlockPos.ZERO;
         }
         long t0 = System.nanoTime();
-        MazeFeature.ensureMaze(level);
+        try (ArcaneLogger.Timing ignored = LOGGER.timer("maze.ensure")) {
+            MazeFeature.ensureMaze(level);
+        }
         var labyrinth = MazeHandler.labyrinth;
         LOGGER.info("[Arcaneresearch] ensureMaze done in {}ms, cells={}",
                 (System.nanoTime() - t0) / 1_000_000L, labyrinth == null ? 0 : labyrinth.size());
         t0 = System.nanoTime();
-        forceLoad(level, arrivalChunkX(), arrivalChunkZ(), 1);
-        buildNeighborhood(level);
+        try (ArcaneLogger.Timing ignored = LOGGER.timer("maze.arrival.neighborhood")) {
+            forceLoad(level, arrivalChunkX(), arrivalChunkZ(), 1);
+            buildNeighborhood(level);
+        }
         LOGGER.info("[Arcaneresearch] arrival neighborhood built in {}ms",
                 (System.nanoTime() - t0) / 1_000_000L);
 

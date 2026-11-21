@@ -7,15 +7,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 public class AuraThread implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuraThread.class);
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     private static final long INTERVAL = 1000L;
     private static final float[] PHASE_VIS_TABLE = {0.25f, 0.15f, 0.1f, 0.05f, 0.0f, 0.05f, 0.1f, 0.15f};
     private static final float[] PHASE_MAX_TABLE = {0.15f, 0.05f, 0.0f, -0.05f, -0.15f, -0.05f, 0.0f, 0.05f};
@@ -39,7 +39,7 @@ public class AuraThread implements Runnable {
                 break;
             }
             long startTime = System.currentTimeMillis();
-            try {
+            try (ArcaneLogger.Timing ignored = LOGGER.timer("aura.process")) {
                 processAuras();
             } catch (Exception e) {
                 LOGGER.error("Error processing auras in dimension {}", dimension.location(), e);

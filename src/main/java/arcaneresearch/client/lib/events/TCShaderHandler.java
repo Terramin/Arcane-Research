@@ -1,13 +1,13 @@
 package arcaneresearch.client.lib.events;
 
-import com.mojang.logging.LogUtils;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.init.ModEffects;
 import arcaneresearch.invscan.mixin.GameRendererAccessor;
@@ -18,7 +18,7 @@ public final class TCShaderHandler {
     public static final int SHADER_BLUR = 1;
     public static final int SHADER_HUNGER = 2;
     public static final int SHADER_SUNSCORNED = 3;
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation[] SHADERS = {
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/desaturatetc.json"),
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "shaders/post/blurtc.json"),

@@ -22,15 +22,15 @@ import arcaneresearch.common.lib.wands.WandResearchHelper;
 import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.init.ModEffects;
 import net.minecraftforge.fml.ModList;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import top.theillusivec4.curios.api.CuriosApi;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FocusManager {
-    private static final Logger LOGGER = LogManager.getLogger("Arcaneresearch/WandManager");
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
 
     static HashMap<Integer, Long> cooldownServer = new HashMap<>();
     static HashMap<Integer, Long> cooldownClient = new HashMap<>();

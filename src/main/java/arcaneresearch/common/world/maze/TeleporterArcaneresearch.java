@@ -1,6 +1,7 @@
 package arcaneresearch.common.world.maze;
 
-import com.mojang.logging.LogUtils;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -9,13 +10,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ITeleporter;
-import org.slf4j.Logger;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 
 import java.util.function.Function;
 
 public class TeleporterArcaneresearch implements ITeleporter {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.WORLD);
 
     public static final int ARRIVAL_CHUNK_X = 6;
     public static final int ARRIVAL_CHUNK_Z = 6;

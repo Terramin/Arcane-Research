@@ -1,5 +1,7 @@
 package arcaneresearch.client.renderers;
 
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import arcaneresearch.api.items.IGoggles;
@@ -29,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class DamageHealthTextRenderer {
 
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final Minecraft minecraft = Minecraft.getInstance();
     private static final List<TextDisplay> textDisplays = new CopyOnWriteArrayList<>();
     private static final Random random = new Random();
@@ -134,7 +137,7 @@ public class DamageHealthTextRenderer {
                 poseStack.popPose();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to render damage/health text", e);
         }
     }
 

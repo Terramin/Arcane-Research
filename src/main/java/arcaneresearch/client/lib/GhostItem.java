@@ -14,8 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 @OnlyIn(Dist.CLIENT)
 public final class GhostItem {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final String COMPOSITE_CLASS_NAME = "net.minecraft.client.renderer.RenderType$CompositeRenderType";
     private static final String COMPOSITE_STATE_CLASS_NAME = "net.minecraft.client.renderer.RenderType$CompositeState";
     private GhostItem() {

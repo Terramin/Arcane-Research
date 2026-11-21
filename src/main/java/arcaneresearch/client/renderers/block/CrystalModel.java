@@ -18,6 +18,8 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import org.joml.Vector3f;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.lib.obj.MeshLoader;
 import arcaneresearch.client.lib.obj.MeshModel;
 import arcaneresearch.client.lib.obj.MeshPart;
@@ -30,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class CrystalModel implements BakedModel {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     public static final ModelProperty<Boolean> UP = new ModelProperty<>();
     public static final ModelProperty<Boolean> DOWN = new ModelProperty<>();
     public static final ModelProperty<Boolean> NORTH = new ModelProperty<>();
@@ -52,7 +55,7 @@ public class CrystalModel implements BakedModel {
                 mp.tintIndex = 0;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to load crystal model {}", model, e);
         }
     }
     public static CrystalModel create() {

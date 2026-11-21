@@ -185,6 +185,9 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("  /arcaneresearch reload"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to add aura vis/flux to your chunk."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch spawnaura <vis> [flux]"), false);
+        source.sendSuccess(() -> Component.literal("§3Use this to control client-side debug logging (works on any server)."), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch debug <levels> [type]   (type defaults to ALL)"), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch debug status | reset | stop | help"), false);
         return 1;
     }
 

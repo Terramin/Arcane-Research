@@ -10,13 +10,13 @@ import net.minecraftforge.event.level.ChunkDataEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.config.ModConfig;
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class AuraChunkHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuraChunkHandler.class);
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     private static final String TAG_ARCANERESEARCH = "arcaneresearch";
     private static final String TAG_AURA = "aura";
     private static final String TAG_BASE = "base";

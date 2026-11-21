@@ -21,12 +21,15 @@ import arcaneresearch.api.wands.IFocusHostWand;
 import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.api.wands.WandCap;
 import arcaneresearch.api.wands.WandRod;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.lib.obj.MeshLoader;
 import arcaneresearch.client.lib.obj.MeshModel;
 import arcaneresearch.client.lib.obj.MeshPart;
 import java.util.*;
 @OnlyIn(Dist.CLIENT)
 public class WandMeshModel implements BakedModel {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final Map<Direction, List<BakedQuad>> EMPTY_FACE_QUADS = new EnumMap<>(Direction.class);
     public static Map<String, BakedModel> cache = new java.util.concurrent.ConcurrentHashMap<>();
     public static volatile ItemTransforms staffTransforms = null;
@@ -139,7 +142,7 @@ public class WandMeshModel implements BakedModel {
             this.generalQuads.clear();
             this.sourceMesh = new MeshLoader().loadFromResource(this.model);
         } catch (java.io.IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to load wand model {}", this.model, e);
         }
     }
     public void initialize(ItemTransforms cameraTransforms, ResourceLocation icon) {

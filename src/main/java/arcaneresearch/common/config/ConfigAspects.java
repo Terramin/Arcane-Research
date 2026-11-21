@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.registries.ForgeRegistries;
 import arcaneresearch.api.ArcaneresearchApi;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.AspectRegistryEvent;
@@ -26,6 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 public class ConfigAspects {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RESEARCH);
+
     public static void init() {
         registerItemAspects();
         registerEntityAspects();
@@ -211,7 +215,7 @@ public class ConfigAspects {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to resolve potion reagents for aspect registration", e);
         }
     }
     private static Object unwrapHolder(Object o) {
