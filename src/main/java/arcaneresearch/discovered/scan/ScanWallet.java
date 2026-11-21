@@ -51,7 +51,7 @@ public final class ScanWallet {
             return;
         }
         CompoundTag tags = aspectsTag(player);
-        tags.putInt(key, tags.getInt(key) + amount);
+        tags.putInt(key, WalletMath.add(tags.getInt(key), amount));
     }
 
     public static int remove(Player player, Aspect aspect, int amount) {
@@ -64,9 +64,9 @@ public final class ScanWallet {
         }
         CompoundTag tags = aspectsTag(player);
         int have = tags.getInt(key);
-        int take = Math.min(have, amount);
+        int take = WalletMath.take(have, amount);
         if (take > 0) {
-            int left = have - take;
+            int left = WalletMath.remaining(have, take);
             if (left > 0) {
                 tags.putInt(key, left);
             } else {
