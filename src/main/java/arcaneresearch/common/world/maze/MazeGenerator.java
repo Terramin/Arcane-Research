@@ -53,6 +53,9 @@ public class MazeGenerator {
     }
 
     public MazeGenerator(int width, int height, long seed) {
+        if (width < 0 || height < 0) {
+            throw new IllegalArgumentException("Maze dimensions must not be negative");
+        }
         this.width = width;
         this.height = height;
         this.seed = seed;
