@@ -42,6 +42,16 @@ public class CommandArcaneresearch {
         for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
             for (ResearchEntry ri : cat.research.values()) {
                 keys.add(ri.getKey());
+            }
+        }
+        return SharedSuggestionProvider.suggest(keys, builder);
+    };
+
+    /** All known {@code !flags}, offered by the dedicated trigger command. */
+    private static List<String> collectTriggerKeys() {
+        List<String> keys = new ArrayList<>();
+        for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
+            for (ResearchEntry ri : cat.research.values()) {
                 addFlagKeys(keys, ri.getParents());
                 addFlagKeys(keys, ri.getSiblings());
                 if (ri.getStages() != null) {
@@ -56,20 +66,14 @@ public class CommandArcaneresearch {
                 }
             }
         }
-        ServerLevel level = context.getSource().getLevel();
-        if (level != null) {
-            for (ServerPlayer player : level.players()) {
-                IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
-                if (knowledge == null) continue;
-                for (String key : knowledge.getResearchList()) {
-                    if (isFlagKey(key) && !keys.contains(key)) {
-                        keys.add(key);
-                    }
-                }
-            }
-        }
-        return SharedSuggestionProvider.suggest(keys, builder);
-    };
+        return keys;
+    }
+
+    private static final SuggestionProvider<CommandSourceStack> TRIGGER_SUGGESTIONS = (context, builder) ->
+            SharedSuggestionProvider.suggest(collectTriggerKeys().stream()
+                    .map(key -> key.startsWith("!") ? key.substring(1) : key)
+                    .distinct()
+                    .toList(), builder);
 
     private static void addFlagKeys(List<String> keys, String[] candidates) {
         if (candidates == null) return;
@@ -80,10 +84,6 @@ public class CommandArcaneresearch {
                 keys.add(key);
             }
         }
-    }
-
-    private static boolean isFlagKey(String research) {
-        return research != null && research.startsWith("!");
     }
 
     private static final SuggestionProvider<CommandSourceStack> ASPECT_SUGGESTIONS = (context, builder) -> {
@@ -130,6 +130,17 @@ public class CommandArcaneresearch {
                         )
                 )
         );
+        builder.then(Commands.literal("trigger")
+                .then(Commands.argument("player", EntityArgument.player())
+                        .then(Commands.argument("trigger", StringArgumentType.string())
+                                .suggests(TRIGGER_SUGGESTIONS)
+                                .executes(context -> changeTrigger(context.getSource(),
+                                        EntityArgument.getPlayer(context, "player"),
+                                        StringArgumentType.getString(context, "trigger"), false))
+                                .then(Commands.literal("revoke")
+                                        .executes(context -> changeTrigger(context.getSource(),
+                                                EntityArgument.getPlayer(context, "player"),
+                                                StringArgumentType.getString(context, "trigger"), true))))));
         builder.then(Commands.literal("aspect")
                 .then(Commands.argument("player", EntityArgument.player())
                         .then(Commands.argument("aspect", StringArgumentType.string())
@@ -170,10 +181,11 @@ public class CommandArcaneresearch {
     private static int help(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal("§3Use this to give research to a player."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch research <list|player> <list|all|reset|<research>>"), false);
-        source.sendSuccess(() -> Component.literal("§3Flags like !gotthaumonomicon can be given by key too."), false);
-        source.sendSuccess(() -> Component.literal("  /arcaneresearch research <player> !gotthaumonomicon"), false);
-        source.sendSuccess(() -> Component.literal("§3Use this to remove research (or a !flag) from a player."), false);
-        source.sendSuccess(() -> Component.literal("  /arcaneresearch research <player> <research|!flag> revoke"), false);
+        source.sendSuccess(() -> Component.literal("§3Use this to give or remove a trigger flag (!key)."), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch trigger <player> <trigger> [revoke]"), false);
+        source.sendSuccess(() -> Component.literal("  (trigger without ! is accepted, or quote it: \"!flag\")"), false);
+        source.sendSuccess(() -> Component.literal("§3Use this to remove research from a player."), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch research <player> <research> revoke"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to give hex-table aspects to a player."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch aspect <player> <tag|all> [amount]"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to set a player's warp level."), false);
@@ -185,7 +197,7 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("  /arcaneresearch spawnaura <vis> [flux]"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to control client-side debug logging (works on any server)."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch debug <levels> [type]   (type defaults to ALL)"), false);
-        source.sendSuccess(() -> Component.literal("  /arcaneresearch debug status | reset | stop | help"), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch debug status | reset | writefile | stop | help"), false);
         return 1;
     }
 
@@ -274,8 +286,30 @@ public class CommandArcaneresearch {
         return 1;
     }
 
+    /** Grants or revokes a research trigger flag (!key) for a player. */
+    private static int changeTrigger(CommandSourceStack source, ServerPlayer player, String trigger, boolean revoke) {
+        String key = trigger.startsWith("!") ? trigger : "!" + trigger;
+        IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+        if (knowledge == null) {
+            source.sendFailure(Component.literal("§cPlayer has no research capability."));
+            return 0;
+        }
+        if (revoke) {
+            knowledge.removeResearch(key);
+            knowledge.clearPresentedDiscoveries();
+            source.sendSuccess(() -> Component.literal("§5Removed trigger " + key + " from "
+                    + player.getName().getString()), true);
+        } else {
+            ResearchManager.completeResearch(player, key);
+            source.sendSuccess(() -> Component.literal("§5Gave trigger " + key + " to "
+                    + player.getName().getString()), true);
+        }
+        knowledge.sync(player);
+        return 1;
+    }
+
     private static int giveResearch(CommandSourceStack source, ServerPlayer player, String research) {
-        if (ResearchCategories.getResearch(research) != null || isFlagKey(research)) {
+        if (ResearchCategories.getResearch(research) != null) {
             giveRecursiveResearch(player, research);
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {
@@ -283,7 +317,7 @@ public class CommandArcaneresearch {
             }
             source.sendSuccess(() -> Component.literal("§5Gave research " + research + " to " + player.getName().getString()), true);
         } else {
-            source.sendFailure(Component.literal("§cResearch does not exist."));
+            source.sendFailure(Component.literal("§cResearch does not exist. Use /arcaneresearch trigger for !flags."));
         }
         return 1;
     }
@@ -332,7 +366,7 @@ public class CommandArcaneresearch {
     }
 
     private static int revokeResearch(CommandSourceStack source, ServerPlayer player, String research) {
-        if (ResearchCategories.getResearch(research) != null || isFlagKey(research)) {
+        if (ResearchCategories.getResearch(research) != null) {
             revokeRecursiveResearch(player, research);
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {
@@ -341,7 +375,7 @@ public class CommandArcaneresearch {
             }
             source.sendSuccess(() -> Component.literal("§5Revoked research " + research + " from " + player.getName().getString()), true);
         } else {
-            source.sendFailure(Component.literal("§cResearch does not exist."));
+            source.sendFailure(Component.literal("§cResearch does not exist. Use /arcaneresearch trigger for !flags."));
         }
         return 1;
     }
