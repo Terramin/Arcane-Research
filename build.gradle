@@ -117,6 +117,9 @@ dependencies {
 // no network or rendering. See TESTING.md for the conventions.
 tasks.named('test', Test) {
     useJUnitPlatform()
+    // Resource tests read the source tree directly instead of the compiled
+    // classpath, so they never depend on processResources having run.
+    systemProperty 'arcaneresearch.resources.dir', file('src/main/resources').absolutePath
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
