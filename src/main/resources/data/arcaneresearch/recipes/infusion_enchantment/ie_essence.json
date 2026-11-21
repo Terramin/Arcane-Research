@@ -7,6 +7,6 @@
   },
   "components": [
     { "item": "minecraft:enchanted_book" },
-    { "item": "arcaneresearch:crystal_essence" }
+    { "type": "arcaneresearch:crystal" }
   ]
 }

@@ -16,7 +16,7 @@
       "item": "minecraft:paper"
     },
     "C": {
-      "item": "arcaneresearch:crystal_essence"
+      "type": "arcaneresearch:crystal"
     }
   },
   "result": {
