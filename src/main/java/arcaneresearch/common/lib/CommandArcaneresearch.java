@@ -21,6 +21,7 @@ import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.api.capabilities.IPlayerWarp;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.ArcaneresearchApi;
+import arcaneresearch.api.research.ResearchAddendum;
 import arcaneresearch.api.research.ResearchCategories;
 import arcaneresearch.api.research.ResearchCategory;
 import arcaneresearch.api.research.ResearchEntry;
@@ -41,10 +42,50 @@ public class CommandArcaneresearch {
         for (ResearchCategory cat : ResearchCategories.researchCategories.values()) {
             for (ResearchEntry ri : cat.research.values()) {
                 keys.add(ri.getKey());
+                addFlagKeys(keys, ri.getParents());
+                addFlagKeys(keys, ri.getSiblings());
+                if (ri.getStages() != null) {
+                    for (ResearchStage stage : ri.getStages()) {
+                        addFlagKeys(keys, stage.getResearch());
+                    }
+                }
+                if (ri.getAddenda() != null) {
+                    for (ResearchAddendum addendum : ri.getAddenda()) {
+                        addFlagKeys(keys, addendum.getResearch());
+                    }
+                }
+            }
+        }
+        ServerLevel level = context.getSource().getLevel();
+        if (level != null) {
+            for (ServerPlayer player : level.players()) {
+                IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+                if (knowledge == null) continue;
+                for (String key : knowledge.getResearchList()) {
+                    if (isFlagKey(key) && !keys.contains(key)) {
+                        keys.add(key);
+                    }
+                }
             }
         }
         return SharedSuggestionProvider.suggest(keys, builder);
     };
+
+    private static void addFlagKeys(List<String> keys, String[] candidates) {
+        if (candidates == null) return;
+        for (String candidate : candidates) {
+            if (candidate == null) continue;
+            String key = candidate.contains("@") ? candidate.substring(0, candidate.indexOf('@')) : candidate;
+            if (key.startsWith("!") && !keys.contains(key)) {
+                keys.add(key);
+            }
+        }
+    }
+
+    private static boolean isFlagKey(String research) {
+        return research != null && research.startsWith("!");
+    }
+
     private static final SuggestionProvider<CommandSourceStack> ASPECT_SUGGESTIONS = (context, builder) -> {
         List<String> tags = new ArrayList<>();
         tags.add("all");
@@ -131,8 +172,10 @@ public class CommandArcaneresearch {
         source.sendSuccess(() -> Component.literal("§3You can also use /arcres instead of /arcaneresearch."), false);
         source.sendSuccess(() -> Component.literal("§3Use this to give research to a player."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch research <list|player> <list|all|reset|<research>>"), false);
-        source.sendSuccess(() -> Component.literal("§3Use this to remove research from a player."), false);
-        source.sendSuccess(() -> Component.literal("  /arcaneresearch research <player> <research> revoke"), false);
+        source.sendSuccess(() -> Component.literal("§3Flags like !gotthaumonomicon can be given by key too."), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch research <player> !gotthaumonomicon"), false);
+        source.sendSuccess(() -> Component.literal("§3Use this to remove research (or a !flag) from a player."), false);
+        source.sendSuccess(() -> Component.literal("  /arcaneresearch research <player> <research|!flag> revoke"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to give hex-table aspects to a player."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch aspect <player> <tag|all> [amount]"), false);
         source.sendSuccess(() -> Component.literal("§3Use this to set a player's warp level."), false);
@@ -231,7 +274,7 @@ public class CommandArcaneresearch {
     }
 
     private static int giveResearch(CommandSourceStack source, ServerPlayer player, String research) {
-        if (ResearchCategories.getResearch(research) != null) {
+        if (ResearchCategories.getResearch(research) != null || isFlagKey(research)) {
             giveRecursiveResearch(player, research);
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {
@@ -288,7 +331,7 @@ public class CommandArcaneresearch {
     }
 
     private static int revokeResearch(CommandSourceStack source, ServerPlayer player, String research) {
-        if (ResearchCategories.getResearch(research) != null) {
+        if (ResearchCategories.getResearch(research) != null || isFlagKey(research)) {
             revokeRecursiveResearch(player, research);
             IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
             if (knowledge != null) {
