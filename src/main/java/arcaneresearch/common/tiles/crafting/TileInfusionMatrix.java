@@ -58,11 +58,16 @@ import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModEffects;
 import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.text.DecimalFormat;
 import java.util.*;
 
 public class TileInfusionMatrix extends TileArcaneresearch implements IAspectContainer, IGogglesDisplayExtended, arcaneresearch.api.casters.IInteractWithCaster {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
+    private static final ArcaneLogger AURA_LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     private static final DecimalFormat FORMATTER = new DecimalFormat("#######.##");
     private static final Vec3 GOGGLES_OFFSET = new Vec3(0, 1.5, 0);
 
@@ -124,6 +129,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         }
 
         if (tile.count % (tile.crafting ? 20 : 100) == 0 && !tile.validLocation()) {
+            LOGGER.once("matrix.invalid", LogLevel.DEBUG,
+                    "Matrix {} deactivated: multiblock no longer valid", pos);
             tile.active = false;
             tile.setChanged();
             tile.syncTile(false);
@@ -137,6 +144,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                 tile.stability = tile.stabilityCap;
             }
 
+            LOGGER.once("matrix.stability.replenish", LogLevel.DEBUG,
+                    "Matrix {} regenerating stability: {} / {}", pos, tile.stability, tile.stabilityCap);
             tile.setChanged();
             tile.syncTile(false);
         }
@@ -421,6 +430,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         BlockState below2 = level.getBlockState(worldPosition.below(2));
 
         if (!(below2.getBlock() instanceof BlockPedestal)) {
+            LOGGER.once("matrix.missing.pedestal", LogLevel.DEBUG,
+                    "Matrix {} invalid: no central pedestal at {}", worldPosition, worldPosition.below(2));
             return false;
         }
 
@@ -435,6 +446,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             BlockState pillarState = level.getBlockState(pillarPos);
 
             if (!(pillarState.getBlock() instanceof BlockPillarTC)) {
+                LOGGER.once("matrix.missing.pillar", LogLevel.DEBUG,
+                        "Matrix {} invalid: missing pillar at {}", worldPosition, pillarPos);
                 return false;
             }
         }
@@ -446,6 +459,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         if (level == null || player == null) return;
 
         if (!validLocation()) {
+            LOGGER.once("matrix.start.invalid", LogLevel.DEBUG,
+                    "Matrix {} cannot start: invalid multiblock", worldPosition);
             active = false;
             syncTile(false);
             return;
@@ -465,7 +480,11 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             }
         }
 
-        if (recipeInput.isEmpty()) return;
+        if (recipeInput.isEmpty()) {
+            LOGGER.once("matrix.no.input", LogLevel.DEBUG,
+                    "Matrix {} has no central item to infuse", worldPosition);
+            return;
+        }
 
         List<ItemStack> components = new ArrayList<>();
 
@@ -481,10 +500,18 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             }
         }
 
-        if (components.isEmpty()) return;
+        if (components.isEmpty()) {
+            LOGGER.once("matrix.no.components", LogLevel.DEBUG,
+                    "Matrix {} has no ingredient pedestals", worldPosition);
+            return;
+        }
 
         InfusionRecipeType recipe = ArcaneresearchCraftingManager.findMatchingInfusionRecipe(
                 components, recipeInput, player, level);
+        if (recipe == null) {
+            LOGGER.once("matrix.no.recipe", LogLevel.DEBUG,
+                    "Matrix {} found no infusion recipe for {}", worldPosition, recipeInput);
+        }
 
         if (costMult < 0.5f) costMult = 0.5f;
 
@@ -523,6 +550,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             recipeEssentia = al2;
             recipePlayer = player.getStringUUID();
             crafting = true;
+            LOGGER.debug("Matrix {} started recipe {}: instability={}, essentia={}, costMult={}",
+                    worldPosition, recipe, recipeInstability, recipeEssentia.visSize(), costMult);
 
             level.playSound(null, worldPosition, arcaneresearch.init.ModSounds.CRAFT_START.get(),
                     SoundSource.BLOCKS, 0.5f, 1.0f);
@@ -681,6 +710,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         }
 
         if (!valid || (stability < 0.0f && level.random.nextInt(1500) <= Math.abs(stability))) {
+            LOGGER.debug("Matrix {} instability event (stability={}, itemValid={})", worldPosition, stability, valid);
             triggerInstabilityEvent();
             stability += 5.0f + level.random.nextFloat() * 5.0f;
             grantInstabilityResearch();
@@ -689,6 +719,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         }
 
         if (!valid) {
+            LOGGER.once("matrix.input.changed", LogLevel.DEBUG,
+                    "Matrix {} cancelled: central item changed or vanished", worldPosition);
             cancelCrafting();
             return;
         }
@@ -717,10 +749,14 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                             nextStreamId++, level.getGameTime(), path, pathLen, travel);
 
                     pendingEssentia.add(pending);
+                    AURA_LOGGER.debug("Matrix {} stream {} for {} from {} (travel={}t)",
+                            worldPosition, pending.streamId, aspect, srcPos, travel);
                     sendStreamPacket(pending);
                     return;
                 }
 
+                AURA_LOGGER.once("matrix.no.source", LogLevel.DEBUG,
+                        "Matrix {} found no source jar for {} within 12 blocks", worldPosition, aspect);
                 stability -= 0.25f;
                 syncTile(false);
                 setChanged();
@@ -767,6 +803,9 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
 
                 if (ingEss != null && ingEss.length > 0 && level.random.nextInt(1 + a) == 0) {
                     Aspect as = ingEss[level.random.nextInt(ingEss.length)];
+                    AURA_LOGGER.once("matrix.ingredient.penalty", LogLevel.DEBUG,
+                            "Matrix {} ingredient {} caused +1 {} essentia cost (stability penalty)",
+                            worldPosition, a, as);
                     recipeEssentia.add(as, 1);
                     stability -= 0.25f;
                     syncTile(false);
@@ -777,6 +816,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             return;
         }
 
+        LOGGER.debug("Matrix {} finished all essentia and ingredients, finalizing output", worldPosition);
         crafting = false;
         craftingFinish();
         recipeOutput = null;
@@ -785,6 +825,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
     }
 
     private void cancelCrafting() {
+        LOGGER.debug("Matrix {} cancelled crafting (stability={}, streams={})",
+                worldPosition, stability, pendingEssentia.size());
         crafting = false;
         recipeEssentia = new AspectList();
         recipeInstability = 0;
@@ -811,6 +853,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         if (te instanceof TilePedestal pedestal) {
             float dmg;
 
+            LOGGER.debug("Matrix {} produced output {} (stability={})", worldPosition, recipeOutput, stability);
             if (recipeOutput instanceof ItemStack outStack) {
                 ItemStack qs = outStack.copy();
                 ItemStack inputStack = pedestal.getItem(0);
@@ -882,6 +925,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         if (level == null) return;
 
         int event = level.random.nextInt(24);
+        LOGGER.debug("Matrix {} rolled instability event {}", worldPosition, event);
 
         switch (event) {
             case 0, 1, 2, 3 -> instabilityEjectItem(0);
@@ -1195,6 +1239,9 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                 if (bb.equals(ModBlocks.PEDESTAL_ANCIENT.get())) costMult -= 0.01f;
             }
 
+            LOGGER.once("matrix.area.scan", LogLevel.DEBUG,
+                    "Matrix {} scanned area: pedestals={}, stabilityRegen={}, costMult={}, cycle={}t",
+                    worldPosition, pedestals.size(), stabilityReplenish, costMult, cycleTime);
             countDelay = cycleTime / 2;
         } catch (Exception e) {
             throw new RuntimeException(e);

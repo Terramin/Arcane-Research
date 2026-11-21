@@ -1,5 +1,12 @@
 package arcaneresearch.debug;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -25,6 +32,8 @@ public final class DebugSession {
     /** Warnings and errors are never filtered by category. */
     private static final int ALWAYS_LOG_SEVERITY = LogLevel.WARN.severity();
     private static final int DEFAULT_LOG_SEVERITY = LogLevel.INFO.severity();
+    private static final int MAX_CAPTURED_LINES = 2_000;
+    private static final DateTimeFormatter FILE_STAMP = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS");
 
     private volatile boolean active;
     private volatile EnumSet<LogLevel> levels = EnumSet.noneOf(LogLevel.class);
@@ -34,6 +43,9 @@ public final class DebugSession {
     private final Map<LogLevel, LongAdder> logCounts = new ConcurrentHashMap<>();
     private final Map<String, TimingStats> timings = new ConcurrentHashMap<>();
     private final Set<String> onceKeys = ConcurrentHashMap.newKeySet();
+    private final String[] capturedLines = new String[MAX_CAPTURED_LINES];
+    private int capturedCursor;
+    private long capturedTotal;
 
     private DebugSession() {
         // Off by default. Optional JVM flags allow enabling debug before the
@@ -75,6 +87,9 @@ public final class DebugSession {
         logCounts.clear();
         timings.clear();
         onceKeys.clear();
+        java.util.Arrays.fill(capturedLines, null);
+        capturedCursor = 0;
+        capturedTotal = 0;
     }
 
     public boolean isActive() {
@@ -127,6 +142,52 @@ public final class DebugSession {
         timings.computeIfAbsent(name, ignored -> new TimingStats()).record(nanos);
     }
 
+    /** Stores one formatted log line in a bounded ring buffer (latest lines win). */
+    public synchronized void captureLine(String line) {
+        capturedLines[capturedCursor] = line;
+        capturedCursor = (capturedCursor + 1) % MAX_CAPTURED_LINES;
+        capturedTotal++;
+    }
+
+    public long capturedLineCount() {
+        return capturedTotal;
+    }
+
+    /** Returns the captured lines in chronological order. */
+    public synchronized List<String> capturedLines() {
+        List<String> result = new ArrayList<>();
+        int available = (int) Math.min(capturedTotal, MAX_CAPTURED_LINES);
+        for (int i = 0; i < available; i++) {
+            int index = (capturedCursor - available + i + MAX_CAPTURED_LINES) % MAX_CAPTURED_LINES;
+            String line = capturedLines[index];
+            if (line != null) {
+                result.add(line);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Writes the current session (status, timings and captured log lines) to
+     * {@code logs/arcaneresearch-debug-<timestamp>.log}.
+     *
+     * @return the path of the created file
+     */
+    public Path writeLogFile() throws IOException {
+        Path directory = Paths.get("logs");
+        Files.createDirectories(directory);
+        Path file = directory.resolve("arcaneresearch-debug-" + LocalDateTime.now().format(FILE_STAMP) + ".log");
+
+        List<String> output = new ArrayList<>();
+        output.add("=== Arcaneresearch debug session export ===");
+        output.addAll(statusLines());
+        output.add("=== Captured log lines (showing up to " + MAX_CAPTURED_LINES
+                + " of " + capturedLineCount() + ") ===");
+        output.addAll(capturedLines());
+        Files.write(file, output, StandardCharsets.UTF_8);
+        return file;
+    }
+
     /** Human readable status used by the {@code debug status} subcommand. */
     public List<String> statusLines() {
         List<String> lines = new ArrayList<>();
@@ -145,6 +206,7 @@ public final class DebugSession {
                 })
                 .collect(Collectors.joining(" "));
         lines.add("Log lines    : " + counts);
+        lines.add("Captured     : " + capturedLineCount() + " (max " + MAX_CAPTURED_LINES + ")");
         if (timings.isEmpty()) {
             lines.add("Timings      : none");
         } else {

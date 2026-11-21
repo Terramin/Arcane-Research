@@ -2,7 +2,13 @@ package arcaneresearch.debug;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.FormattingTuple;
+import org.slf4j.helpers.MessageFormatter;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 /**
@@ -20,6 +26,7 @@ import java.util.Arrays;
 public final class ArcaneLogger {
     private static final Logger ROOT = LoggerFactory.getLogger("arcaneresearch");
     private static final Object[] NO_ARGS = new Object[0];
+    private static final DateTimeFormatter CAPTURE_TIME = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     private final ProfileCategory category;
 
@@ -191,6 +198,26 @@ public final class ArcaneLogger {
             }
         }
         session.recordLog(level);
+        if (session.isActive()) {
+            session.captureLine(formatCapturedLine(level, message, finalArguments));
+        }
+    }
+
+    private String formatCapturedLine(LogLevel level, String message, Object[] arguments) {
+        FormattingTuple tuple = MessageFormatter.arrayFormat(message, arguments);
+        StringBuilder line = new StringBuilder()
+                .append('[').append(LocalTime.now().format(CAPTURE_TIME)).append("] ")
+                .append('[').append(Thread.currentThread().getName()).append("] ")
+                .append('[').append(level.name()).append("] ")
+                .append('[').append(category.name()).append("] ")
+                .append(tuple.getMessage());
+        Throwable throwable = tuple.getThrowable();
+        if (throwable != null) {
+            StringWriter writer = new StringWriter();
+            throwable.printStackTrace(new PrintWriter(writer));
+            line.append(System.lineSeparator()).append(writer);
+        }
+        return line.toString();
     }
 
     /** Auto-closable timing handle. Never throws from {@link #close()}. */

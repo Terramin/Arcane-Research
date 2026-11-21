@@ -21,9 +21,13 @@ import org.joml.Matrix4f;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.tiles.crafting.TileCrucible;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 @OnlyIn(Dist.CLIENT)
 public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible> {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final float MIN_X = 0.0f;
     private static final float MAX_X = 1.0f;
     private static final float MIN_Z = 0.0f;
@@ -59,6 +63,9 @@ public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible> {
 
         AspectList aspects = tile.getAspects();
         int total = aspects.visSize();
+        LOGGER.once("render.crucible", LogLevel.DEBUG,
+                "Rendering crucible {} (heat={}, water={}, aspects={}, height={})",
+                tile.getBlockPos(), tile.heat, tile.getTank().getFluidAmount(), total, fluidHeight);
 
         float r, g, b;
 

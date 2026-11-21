@@ -18,10 +18,14 @@ import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModBlocks;
 import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import javax.annotation.Nullable;
 
 public class TileArcaneWorkbench extends TileArcaneresearch implements MenuProvider {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
     public static final int GRID_SIZE = 9;
     public static final int CRYSTAL_SLOTS = 6;
     public static final int TOTAL_SLOTS = GRID_SIZE + CRYSTAL_SLOTS;
@@ -115,6 +119,11 @@ public class TileArcaneWorkbench extends TileArcaneresearch implements MenuProvi
             totalVis = (int) AuraHelper.getVis(level, worldPosition);
         }
 
+        if (totalVis != auraVisServer) {
+            LOGGER.once("workbench.aura", LogLevel.DEBUG,
+                    "Workbench {} aura vis={} (charger={})", worldPosition, totalVis,
+                    level.getBlockState(worldPosition.above()).is(ModBlocks.ARCANE_WORKBENCH_CHARGER.get()));
+        }
         auraVisServer = totalVis;
     }
 
@@ -126,6 +135,7 @@ public class TileArcaneWorkbench extends TileArcaneresearch implements MenuProvi
 
         if (!hasCharger) {
             AuraHelper.drainVis(level, worldPosition, visCost, false);
+            LOGGER.debug("Workbench {} drained {} vis from own chunk", worldPosition, visCost);
             return;
         }
 
@@ -151,6 +161,8 @@ public class TileArcaneWorkbench extends TileArcaneresearch implements MenuProvi
 
             if (remaining == before) break;
         }
+        LOGGER.debug("Workbench {} spent {} vis across 9 chunks (remaining={})",
+                worldPosition, visCost - remaining, remaining);
     }
 
     public void dropContents() {
@@ -166,6 +178,7 @@ public class TileArcaneWorkbench extends TileArcaneresearch implements MenuProvi
             }
         }
 
+        LOGGER.once("workbench.drop", LogLevel.DEBUG, "Workbench {} dropped its contents", worldPosition);
         setChanged();
     }
 

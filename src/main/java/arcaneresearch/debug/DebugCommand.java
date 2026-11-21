@@ -12,8 +12,9 @@ import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * Client-side debug command.
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * <pre>
  * /arcaneresearch debug &lt;levels&gt; [type]
- * /arcaneresearch debug stop | status | reset | help
+ * /arcaneresearch debug stop | status | reset | writefile | help
  * </pre>
  */
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
@@ -43,6 +44,7 @@ public final class DebugCommand {
                         .then(Commands.literal("help").executes(DebugCommand::help))
                         .then(Commands.literal("status").executes(DebugCommand::status))
                         .then(Commands.literal("reset").executes(DebugCommand::reset))
+                        .then(Commands.literal("writefile").executes(DebugCommand::writeFile))
                         .then(Commands.literal("stop").executes(DebugCommand::stop))
                         .then(Commands.argument("levels", LogLevelArgument.levels())
                                 // No type given: profile everything.
@@ -90,13 +92,26 @@ public final class DebugCommand {
         return Command.SINGLE_SUCCESS;
     }
 
+    private static int writeFile(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        try {
+            Path file = DebugSession.get().writeLogFile();
+            ArcaneLogger.forCategory(ProfileCategory.CORE).info("Debug session exported to {}", file);
+            send(source, "Debug log written to " + file.toAbsolutePath(), ChatFormatting.GREEN);
+        } catch (IOException e) {
+            ArcaneLogger.forCategory(ProfileCategory.CORE).error("Failed to write debug log", e);
+            send(source, "Failed to write debug log: " + e.getMessage(), ChatFormatting.RED);
+        }
+        return Command.SINGLE_SUCCESS;
+    }
+
     private static int help(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         send(source, "Debug logging (client-side, works on any server):", ChatFormatting.GOLD);
         send(source, "  /arcaneresearch debug <levels> [type]", ChatFormatting.AQUA);
         send(source, "    levels: " + LogLevel.names() + " or comma separated (e.g. DEBUG,INFO)", ChatFormatting.GRAY);
         send(source, "    type:   " + ProfileCategory.names() + " (default: ALL)", ChatFormatting.GRAY);
-        send(source, "  /arcaneresearch debug status | reset | stop | help", ChatFormatting.AQUA);
+        send(source, "  /arcaneresearch debug status | reset | writefile | stop | help", ChatFormatting.AQUA);
         send(source, "Examples:", ChatFormatting.GOLD);
         send(source, "  /arcaneresearch debug DEBUG AURA", ChatFormatting.GRAY);
         send(source, "  /arcaneresearch debug TRACE", ChatFormatting.GRAY);

@@ -34,10 +34,14 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.List;
 
 public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
 
     public static final int OUTPUT_SLOT = 0;
     public static final int GRID_START = 1;
@@ -108,6 +112,7 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
             addSlot(new Slot(playerInventory, col, 16 + col * 18, 209));
         }
         slotsChanged(craftMatrix);
+        LOGGER.debug("Arcane workbench menu opened at {}", blockEntity.getBlockPos());
     }
 
     private static TileArcaneWorkbench getBlockEntity(Inventory playerInventory, FriendlyByteBuf extraData) {
@@ -125,6 +130,10 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
 
         ItemStack result = ItemStack.EMPTY;
         IArcaneRecipe arcaneRecipe = ArcaneresearchCraftingManager.findMatchingArcaneRecipe(craftMatrix, player);
+        if (arcaneRecipe != null && !ArcaneresearchCapabilities.isResearchKnown(player, arcaneRecipe.getResearch())) {
+            LOGGER.once("workbench.research.locked", LogLevel.DEBUG,
+                    "Workbench recipe {} is locked: research {} unknown", arcaneRecipe, arcaneRecipe.getResearch());
+        }
 
         if (arcaneRecipe != null
                 && ArcaneresearchCapabilities.isResearchKnown(player, arcaneRecipe.getResearch())) {
@@ -134,6 +143,16 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
                 int visCost = getDiscountedVisCost(arcaneRecipe, player);
                 boolean hasVis = tile.auraVisServer >= visCost;
                 boolean hasCrystals = hasRequiredCrystals(craftMatrix, arcaneRecipe.getCrystals());
+                LOGGER.debug("Workbench {} recipe {}: vis={}/{}, crystals={}",
+                        tile.getBlockPos(), arcaneRecipe, tile.auraVisServer, visCost, hasCrystals);
+                if (!hasVis) {
+                    LOGGER.once("workbench.missing.vis", LogLevel.DEBUG,
+                            "Workbench {} lacks vis: have {}, need {}", tile.getBlockPos(), tile.auraVisServer, visCost);
+                }
+                if (!hasCrystals) {
+                    LOGGER.once("workbench.missing.crystals", LogLevel.DEBUG,
+                            "Workbench {} lacks required crystals for {}", tile.getBlockPos(), arcaneRecipe);
+                }
                 if ((hasVis && hasCrystals) || player.getAbilities().instabuild) {
                     craftResult.setRecipeUsed(arcaneRecipe);
                     result = arcaneRecipe.assemble(craftMatrix, level.registryAccess());
@@ -143,6 +162,8 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
             var vanillaRecipe = level.getRecipeManager()
                     .getRecipeFor(RecipeType.CRAFTING, gridOnlyCopy(menu, craftMatrix), level);
             if (vanillaRecipe.isPresent()) {
+                LOGGER.once("workbench.vanilla.recipe", LogLevel.DEBUG,
+                        "Workbench fell back to vanilla recipe {}", vanillaRecipe.get());
                 boolean limited = level.getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING);
                 if (!limited || serverPlayer.getRecipeBook().contains(vanillaRecipe.get())) {
                     craftResult.setRecipeUsed(vanillaRecipe.get());
@@ -189,7 +210,11 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
                     if (found >= required) break;
                 }
             }
-            if (found < required) return false;
+            if (found < required) {
+                LOGGER.once("workbench.crystal.missing", LogLevel.DEBUG,
+                        "Workbench crystals: need {} of {}, found {}", required, aspect, found);
+                return false;
+            }
         }
         return true;
     }

@@ -14,7 +14,7 @@ the server.
 
 ```
 /arcaneresearch debug <levels> [type]
-/arcaneresearch debug status | reset | stop | help
+/arcaneresearch debug status | reset | writefile | stop | help
 ```
 
 * `<levels>` (required) — comma separated verbosity levels:
@@ -48,6 +48,12 @@ startup problems there is an opt-in JVM flag (still off unless explicitly provid
 
 `WARN` and `ERROR` are always written, regardless of the active filters:
 critical diagnostics are never silently dropped.
+
+`/arcaneresearch debug writefile` exports the active session to
+`logs/arcaneresearch-debug-<timestamp>.log`: status, counters, timings and the
+last 2 000 formatted log lines captured during the session (with thread,
+level, category and stack traces). The buffer is kept in memory only while a
+session is active and is cleared on `reset` or when a new session starts.
 
 ## Using the facade
 
@@ -107,6 +113,21 @@ advanced-turret target flags, PvP restrictions and target-loss reasons; bore
 activation, vis recharge, dig target selection, block destruction and drops,
 pickaxe break, spiral/radius steps, client digging state; menu openings and
 OBJ model group/triangle counts. A `render.bore.beam` timing probe is included.
+
+### Arcane Workbench, Crucible, Infusion Matrix
+
+```
+/arcaneresearch debug DEBUG BLOCKS   # crafting lifecycle, heat, multiblock
+/arcaneresearch debug DEBUG AURA     # vis, aspects, essentia streams, spills
+/arcaneresearch debug DEBUG RENDER   # tile entity renderers
+```
+
+Tracked: workbench aura sampling/draining, recipe matches, research locks,
+missing vis/crystals and vanilla fallback; crucible heat transitions, water,
+recipe crafting, dissolved aspects and aura pollution; infusion matrix
+multiblock validity, stability regeneration, recipe start/finish/cancel,
+instability events, essentia streams and area scans (pedestals, cost, cycle
+time). Their tile renderers log state once per session.
 
 Statistics are cleared when a new session starts and can be cleared manually
 with `/arcaneresearch debug reset`.

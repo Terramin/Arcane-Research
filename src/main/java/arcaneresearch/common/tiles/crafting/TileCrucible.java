@@ -32,11 +32,16 @@ import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModSounds;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileCrucible extends TileArcaneresearch implements IAspectContainer {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
+    private static final ArcaneLogger AURA_LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     public static final int MAX_ASPECTS = 500;
     public static final int TANK_CAPACITY = 1000;
 
@@ -78,6 +83,7 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
                     tile.heat++;
 
                     if (prevHeat < 151 && tile.heat >= 151) {
+                        LOGGER.debug("Crucible {} reached boiling heat ({})", pos, tile.heat);
                         tile.markDirtyAndSync();
                     }
                 }
@@ -85,6 +91,7 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
                 tile.heat--;
 
                 if (tile.heat == 149) {
+                    LOGGER.debug("Crucible {} cooled below boiling point", pos);
                     tile.markDirtyAndSync();
                 }
             }
@@ -93,6 +100,8 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         }
 
         if (tile.aspects.visSize() > MAX_ASPECTS) {
+            AURA_LOGGER.once("crucible.overflow", LogLevel.DEBUG,
+                    "Crucible {} overflowing: {} vis stored (limit {})", pos, tile.aspects.visSize(), MAX_ASPECTS);
             tile.spillRandom();
         }
 
@@ -226,6 +235,8 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
                             player, out, new net.minecraft.world.SimpleContainer(item.copy()));
                 }
 
+                LOGGER.debug("Crucible {} crafted {} from {} (water={})",
+                        worldPosition, out, item, tank.getFluidAmount());
                 aspects = recipe.removeMatchingAspects(aspects);
                 tank.drain(50, IFluidHandler.FluidAction.EXECUTE);
                 ejectItem(out);
@@ -237,6 +248,8 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
                 AspectList itemAspects = getItemAspects(item);
 
                 if (itemAspects.size() != 0) {
+                    AURA_LOGGER.once("crucible.absorb", LogLevel.DEBUG,
+                            "Crucible {} dissolved {} into {} aspect(s)", worldPosition, item, itemAspects.size());
                     for (Aspect tag : itemAspects.getAspects()) {
                         aspects.add(tag, itemAspects.getAmount(tag));
                     }
@@ -312,6 +325,9 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
             aspects.remove(toSpill, 1);
 
             float pollution = (toSpill == Aspect.FLUX) ? 1.0f : 0.25f;
+            AURA_LOGGER.once("crucible.spill", LogLevel.DEBUG,
+                    "Crucible {} spilled {} (pollution={}, vis left={})",
+                    worldPosition, toSpill, pollution, aspects.visSize());
             AuraHelper.polluteAura(level, worldPosition, pollution, true);
         }
 
@@ -325,6 +341,7 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
 
         if (tank.getFluidAmount() > 0 || total > 0) {
             tank.drain(TANK_CAPACITY, IFluidHandler.FluidAction.EXECUTE);
+            AURA_LOGGER.debug("Crucible {} fully spilled {} vis", worldPosition, total);
             AuraHelper.polluteAura(level, worldPosition, total * 0.25f, true);
 
             int flux = aspects.getAmount(Aspect.FLUX);

@@ -29,12 +29,16 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.tiles.crafting.TileInfusionMatrix;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.init.ModBlocks;
 
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class InfusionMatrixRenderer implements BlockEntityRenderer<TileInfusionMatrix> {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation TEXTURE_NORMAL =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/infuser_normal.png");
     private static final ResourceLocation TEXTURE_ANCIENT =
@@ -72,6 +76,9 @@ public class InfusionMatrixRenderer implements BlockEntityRenderer<TileInfusionM
         float startUp = tile.startUp;
         boolean active = tile.active;
         int craftCount = tile.craftCount;
+        LOGGER.once("render.matrix", LogLevel.DEBUG,
+                "Rendering matrix {} (active={}, crafting={}, stability={}, craftCount={})",
+                tile.getBlockPos(), active, tile.crafting, tile.stability, craftCount);
 
         poseStack.pushPose();
         try {
