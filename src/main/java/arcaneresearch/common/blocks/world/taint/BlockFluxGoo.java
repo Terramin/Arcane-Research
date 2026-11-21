@@ -163,7 +163,7 @@ public class BlockFluxGoo extends Block implements ITaintBlock {
                 level.removeBlock(pos, false);
             } else {
                 level.setBlock(below, belowState.setValue(LEVEL, 7), 3);
-                int remaining = totalLevel - 8;
+                int remaining = Math.min(7, totalLevel - 8);
                 if (remaining > 0) {
                     level.setBlock(pos, state.setValue(LEVEL, remaining), 3);
                 } else {
