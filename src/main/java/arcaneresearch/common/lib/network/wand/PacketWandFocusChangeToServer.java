@@ -8,11 +8,15 @@ import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.wands.IFocusHostWand;
 import arcaneresearch.common.items.wands.FocusManager;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class PacketWandFocusChangeToServer {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.NETWORK);
     private int playerId;
     private String focus;
 
@@ -68,7 +72,12 @@ public class PacketWandFocusChangeToServer {
                     }
                 }
                 if (!held.isEmpty() && held.getItem() instanceof IFocusHost) {
+                    LOGGER.debug("Focus change packet from {}: requested {}", player.getName().getString(), msg.focus);
                     FocusManager.changeFocus(held, player.level(), player, msg.focus);
+                } else {
+                    LOGGER.once("wand.focus.no.host", LogLevel.DEBUG,
+                            "Focus change packet from {} ignored: no wand/caster in hand",
+                            player.getName().getString());
                 }
             }
         });

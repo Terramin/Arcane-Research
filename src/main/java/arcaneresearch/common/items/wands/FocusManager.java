@@ -23,6 +23,7 @@ import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.init.ModEffects;
 import net.minecraftforge.fml.ModList;
 import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
 import arcaneresearch.debug.ProfileCategory;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -175,6 +176,7 @@ public class FocusManager {
         if (!(wandStack.getItem() instanceof IFocusHost wand)) {
             return;
         }
+        LOGGER.debug("Focus change requested by {}: {}", player.getName().getString(), focus);
 
         TreeMap<String, Integer> foci = new TreeMap<>();
         HashMap<Integer, Integer> pouches = new HashMap<>();
@@ -230,7 +232,9 @@ public class FocusManager {
             }
         }
 
+        LOGGER.debug("Focus change {}: {} available foci found", player.getName().getString(), foci.size());
         if ("REMOVE".equals(focus) || foci.isEmpty()) {
+            LOGGER.debug("Focus change {}: removing focus", player.getName().getString());
             if (wand.getFocus(wandStack) != null) {
                 stowFocus(player, wand.getFocusStack(wandStack), pouches, curioPouches);
                 wand.setFocus(wandStack, null);
@@ -249,6 +253,7 @@ public class FocusManager {
                 newkey = foci.firstKey();
             }
             int loc = foci.get(newkey);
+            LOGGER.debug("Focus change {}: selected {} at location {}", player.getName().getString(), newkey, loc);
 
             if (loc < 1000 && loc >= 0) {
                 item = inv.get(loc).copy();
@@ -544,6 +549,8 @@ public class FocusManager {
         }
 
         long endTime = System.currentTimeMillis() + cdToMillis(cd);
+        LOGGER.once("focus.cooldown", LogLevel.DEBUG,
+                "Focus cooldown set to {} for {}", cd, entity.getName().getString());
         if (isClientSide(entity)) {
             cooldownClient.put(entity.getId(), endTime);
         } else {

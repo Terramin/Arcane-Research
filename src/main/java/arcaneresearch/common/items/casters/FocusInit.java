@@ -3,9 +3,14 @@ package arcaneresearch.common.items.casters;
 import net.minecraft.resources.ResourceLocation;
 import arcaneresearch.api.casters.FocusEngine;
 import arcaneresearch.api.casters.FocusMediumRoot;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.common.items.casters.foci.*;
 
 public class FocusInit {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
+
     public static void registerFoci() {
         FocusEngine.registerElement(FocusMediumRoot.class,
                 ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/root.png"), 0x999999);
@@ -33,6 +38,7 @@ public class FocusInit {
                 ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/split_trajectory.png"), 0x999999);
         FocusEngine.registerElement(FocusModSplitTarget.class,
                 ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/foci/split_target.png"), 0x999999);
+        LOGGER.debug("Registered {} focus node types", FocusEngine.elements.size());
     }
 
     public static String[] getAllFocusKeys() {

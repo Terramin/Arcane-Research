@@ -43,6 +43,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
@@ -51,6 +54,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ItemCaster extends Item implements IFocusHost, IArchitect {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
+    private static final ArcaneLogger AURA_LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
 
     @Override
     public boolean isCaster() {
@@ -148,8 +153,11 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
             if (!simulate && !player.level().isClientSide) {
                 storeVisInternal(stack, aspect, current - amount);
             }
+            AURA_LOGGER.debug("Caster consumed {} {} vis ({} left)", amount, aspect.getTag(), current - amount);
             return true;
         }
+        AURA_LOGGER.once("caster.vis.shortage", LogLevel.DEBUG,
+                "Caster lacks {}: have {}, need {}", aspect.getTag(), current, amount);
         return false;
     }
 
@@ -167,6 +175,8 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
                 continue;
             }
             if (getVisInternal(stack, aspect) < amount) {
+                AURA_LOGGER.once("caster.cost.shortage", LogLevel.DEBUG,
+                        "Caster cannot pay {}: have {}, need {}", aspect.getTag(), getVisInternal(stack, aspect), amount);
                 return false;
             }
             needed.add(aspect, amount);
@@ -489,9 +499,11 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
             }
         }
         if (arcaneresearch.api.casters.CasterTriggerRegistry.hasTrigger(state)) {
-            return arcaneresearch.api.casters.CasterTriggerRegistry.performTrigger(
-                    level, stack, player, pos, side, state)
-                    ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+            boolean fired = arcaneresearch.api.casters.CasterTriggerRegistry.performTrigger(
+                    level, stack, player, pos, side, state);
+            LOGGER.once("caster.trigger", LogLevel.DEBUG,
+                    "Caster trigger {} on block {} at {}", fired ? "fired" : "rejected", state.getBlock(), pos);
+            return fired ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
 
         ItemStack fb = getFocusStack(stack);
@@ -514,6 +526,7 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
                         } catch (Exception ignored) {
                         }
                         storePickedBlock(stack, picked);
+                        LOGGER.debug("Caster stored picked block {} at {}", picked, pos);
                         return InteractionResult.SUCCESS;
                     }
                     player.swing(hand);
@@ -532,13 +545,17 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
         FocusItem focus = getFocus(stack);
 
         if (focus == null || focusStack.isEmpty()) {
+            LOGGER.once("caster.no.focus", LogLevel.DEBUG, "Caster used without a focus");
             return InteractionResultHolder.pass(stack);
         }
         if (FocusManager.isOnCooldown(player)) {
+            LOGGER.once("caster.cooldown", LogLevel.DEBUG, "Caster cast skipped: cooldown active");
             return InteractionResultHolder.pass(stack);
         }
 
         if (focus.isVisCostPerTick(focusStack)) {
+            LOGGER.once("caster.channel", LogLevel.DEBUG,
+                    "Caster channeling per-tick focus {}", focus.getClass().getSimpleName());
             player.startUsingItem(hand);
             FocusManager.setCooldown(player, -1);
             return InteractionResultHolder.consume(stack);
@@ -546,9 +563,12 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
 
         AspectList cost = focus.getVisCost(focusStack);
         if (!consumeAllVis(stack, player, cost, true, false)) {
+            AURA_LOGGER.once("caster.cast.shortage", LogLevel.DEBUG,
+                    "Caster cannot activate {}: insufficient vis", focus.getClass().getSimpleName());
             return InteractionResultHolder.fail(stack);
         }
 
+        LOGGER.debug("Caster activating focus {} (cost={})", focus.getClass().getSimpleName(), cost.visSize());
         FocusManager.setCooldown(player, focus.getActivationCooldown(focusStack));
 
         if (player.isCrouching()) {

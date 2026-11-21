@@ -129,5 +129,18 @@ multiblock validity, stability regeneration, recipe start/finish/cancel,
 instability events, essentia streams and area scans (pedestals, cost, cycle
 time). Their tile renderers log state once per session.
 
+### Wands and Casters
+
+```
+/arcaneresearch debug DEBUG ITEMS    # focus changes, casts, cooldowns, registration
+/arcaneresearch debug DEBUG AURA     # vis consumption and shortages
+/arcaneresearch debug DEBUG NETWORK  # focus change packets
+```
+
+Tracked: wand/caster vis spending (with shortages and overflow), focus
+selection and swapping (including pouches/Curios), wand triggers and block
+interactions, focus/caster activation (including per-tick channeling),
+cooldowns, unknown focus nodes and focus-change packets.
+
 Statistics are cleared when a new session starts and can be cleared manually
 with `/arcaneresearch debug reset`.
