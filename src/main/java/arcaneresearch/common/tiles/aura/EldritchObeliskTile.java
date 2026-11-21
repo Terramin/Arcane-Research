@@ -14,14 +14,6 @@ import arcaneresearch.common.tiles.TileArcaneresearch;
 
 import java.util.List;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
- 
-
-
-
-
- 
 public class EldritchObeliskTile extends TileArcaneresearch {
     private int counter = 0;
 
@@ -65,8 +57,6 @@ public class EldritchObeliskTile extends TileArcaneresearch {
         } catch (Exception ignored) {
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     protected void clientTick() {
         Level level = getLevel();
         if (level == null || !level.isClientSide()) {

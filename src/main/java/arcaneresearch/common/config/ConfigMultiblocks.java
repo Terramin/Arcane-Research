@@ -22,6 +22,8 @@ import arcaneresearch.common.lib.crafting.DustTriggerSimple;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 
+import java.util.Objects;
+
 public class ConfigMultiblocks {
 
     public static void init() {
@@ -65,6 +67,7 @@ public class ConfigMultiblocks {
                 TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
                         Identifier.fromNamespaceAndPath("c", "bookshelves")),
                 new ItemStack(ModItems.THAUMONOMICON.get())));
+
         IDustTrigger.registerDustTrigger(new DustTriggerOre(
                 "FIRSTSTEPS@1",
                 TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
@@ -117,15 +120,18 @@ public class ConfigMultiblocks {
 
         Part IM = new Part(ModBlocks.INFUSION_MATRIX.get(), null);
         Part SNT = new Part(ModBlocks.ARCANE_STONE.get(), ItemStack.EMPTY);
+
         net.minecraft.world.level.block.Block arcanePillar = ModBlocks.ARCANE_PILLAR.get();
+
         Part SNB1 = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
-                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.EAST));
+                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.WEST));
         Part SNB2 = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.NORTH));
         Part SNB3 = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.SOUTH));
         Part SNB4 = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
-                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.WEST));
+                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.EAST));
+
         Part PN = new Part(ModBlocks.PEDESTAL_ARCANE.get(), null);
 
         Part[][][] normalBlueprint = {
@@ -150,6 +156,34 @@ public class ConfigMultiblocks {
         };
 
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("INFUSION", normalBlueprint));
+
+        Part SNB1D = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
+                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.EAST));
+        Part SNB2D = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
+                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.SOUTH));
+        Part SNB3D = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
+                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.NORTH));
+        Part SNB4D = new Part(ModBlocks.ARCANE_STONE.get(), arcanePillar.defaultBlockState()
+                .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.WEST));
+
+        Part[][][] normalBlueprintDisplay = {
+                {
+                        {null, null, null},
+                        {null, IM, null},
+                        {null, null, null}
+                },
+                {
+                        {SNT, null, SNT},
+                        {null, null, null},
+                        {SNT, null, SNT}
+                },
+                {
+                        {SNB1D, null, SNB3D},
+                        {null, PN, null},
+                        {SNB2D, null, SNB4D}
+                }
+        };
+
         ArcaneresearchApi.addMultiblockRecipeToCatalog(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "infusionaltar"),
                 new ArcaneresearchApi.BluePrint("INFUSION", normalBlueprint,
@@ -160,7 +194,9 @@ public class ConfigMultiblocks {
         );
 
         Part SAT = new Part(ModBlocks.ANCIENT_STONE.get(), ItemStack.EMPTY);
+
         net.minecraft.world.level.block.Block ancientPillar = ModBlocks.ANCIENT_PILLAR.get();
+
         Part SAB1 = new Part(ModBlocks.ANCIENT_STONE.get(), ancientPillar.defaultBlockState()
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.EAST));
         Part SAB2 = new Part(ModBlocks.ANCIENT_STONE.get(), ancientPillar.defaultBlockState()
@@ -169,6 +205,7 @@ public class ConfigMultiblocks {
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.SOUTH));
         Part SAB4 = new Part(ModBlocks.ANCIENT_STONE.get(), ancientPillar.defaultBlockState()
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.WEST));
+
         Part PA = new Part(ModBlocks.PEDESTAL_ANCIENT.get(), null);
 
         Part[][][] ancientBlueprint = {
@@ -178,6 +215,7 @@ public class ConfigMultiblocks {
         };
 
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("INFUSIONANCIENT", ancientBlueprint));
+
         ArcaneresearchApi.addMultiblockRecipeToCatalog(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "infusionaltarancient"),
                 new ArcaneresearchApi.BluePrint("INFUSIONANCIENT", ancientBlueprint,
@@ -188,7 +226,9 @@ public class ConfigMultiblocks {
         );
 
         Part SET = new Part(ModBlocks.ELDRITCH_STONE_TILE.get(), ItemStack.EMPTY);
+
         net.minecraft.world.level.block.Block eldritchPillar = ModBlocks.ELDRITCH_PILLAR.get();
+
         Part SEB1 = new Part(ModBlocks.ELDRITCH_STONE_TILE.get(), eldritchPillar.defaultBlockState()
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.EAST));
         Part SEB2 = new Part(ModBlocks.ELDRITCH_STONE_TILE.get(), eldritchPillar.defaultBlockState()
@@ -197,6 +237,7 @@ public class ConfigMultiblocks {
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.SOUTH));
         Part SEB4 = new Part(ModBlocks.ELDRITCH_STONE_TILE.get(), eldritchPillar.defaultBlockState()
                 .setValue(arcaneresearch.common.blocks.basic.BlockPillarTC.FACING, Direction.WEST));
+
         Part PE = new Part(ModBlocks.PEDESTAL_ELDRITCH.get(), null);
 
         Part[][][] eldritchBlueprint = {
@@ -206,6 +247,7 @@ public class ConfigMultiblocks {
         };
 
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("INFUSIONELDRITCH", eldritchBlueprint));
+
         ArcaneresearchApi.addMultiblockRecipeToCatalog(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "infusionaltareldritch"),
                 new ArcaneresearchApi.BluePrint("INFUSIONELDRITCH", eldritchBlueprint,
@@ -228,6 +270,7 @@ public class ConfigMultiblocks {
         };
 
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("THAUMATORIUM", blueprint));
+
         ArcaneresearchApi.addMultiblockRecipeToCatalog(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "thaumatorium"),
                 new ArcaneresearchApi.BluePrint("THAUMATORIUM", blueprint,
@@ -259,8 +302,7 @@ public class ConfigMultiblocks {
         ArcaneresearchApi.addMultiblockRecipeToCatalog(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "nodejar"),
                 new ArcaneresearchApi.BluePrint("LEGACYJARNODE",
-                        new ItemStack(
-                                AuraBlocks.JAR_NODE.get()),
+                        new ItemStack(AuraBlocks.JAR_NODE.get()),
                         blueprint,
                         new ItemStack(Blocks.GLASS, 26),
                         new ItemStack(Blocks.OAK_SLAB, 9),
@@ -315,12 +357,10 @@ public class ConfigMultiblocks {
         ArcaneresearchApi.addMultiblockRecipeToCatalog(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "eldritchportal"),
                 new ArcaneresearchApi.BluePrint("LEGACYELDRITCHALTAR",
-                        new ItemStack(
-                                AuraBlocks.ELDRITCH_PORTAL.get()),
+                        new ItemStack(AuraBlocks.ELDRITCH_PORTAL.get()),
                         blueprint,
                         new ItemStack(ModBlocks.ELDRITCH_STONE_TILE.get(), 25),
-                        new ItemStack(
-                                AuraBlocks.ELDRITCH_ALTAR.get()),
+                        new ItemStack(AuraBlocks.ELDRITCH_ALTAR.get()),
                         new ItemStack(ModItems.ELDRITCH_EYE.get(), 4),
                         ItemAuraNode.createStack(NodeType.DARK, null, primalDisplayAspects())
                 )
@@ -364,6 +404,7 @@ public class ConfigMultiblocks {
         };
 
         IDustTrigger.registerDustTrigger(new DustTriggerMultiblock("MINDCLOCKWORK", blueprint));
+
         ArcaneresearchApi.addMultiblockRecipeToCatalog(
                 Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "golempress"),
                 new ArcaneresearchApi.BluePrint("MINDCLOCKWORK",

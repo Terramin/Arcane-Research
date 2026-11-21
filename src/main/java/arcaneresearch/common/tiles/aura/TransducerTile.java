@@ -8,12 +8,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.sounds.SoundSource;
+import net.neoforged.neoforge.network.PacketDistributor;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
+import arcaneresearch.common.blocks.aura.BlockEnergizedNode;
 import arcaneresearch.common.lib.aura.AuraFX;
 import arcaneresearch.common.lib.aura.NodeModifier;
 import arcaneresearch.common.lib.aura.NodeType;
+import arcaneresearch.common.lib.network.PacketHandler;
+import arcaneresearch.common.lib.network.fx.PacketFXNodeBolt;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -55,6 +60,7 @@ public class TransducerTile extends TileArcaneresearch {
                 }
                 tile.checkStatus(level);
                 tile.setChanged();
+                level.blockEvent(pos, state.getBlock(), 10, 10);
                 level.sendBlockUpdated(pos, state, state, 3);
                 AuraFX.nodeSparkle(level, below, 0xFFFFFF);
             }
@@ -85,14 +91,24 @@ public class TransducerTile extends TileArcaneresearch {
                 }
                 tile.status = 0;
                 tile.setChanged();
+                level.blockEvent(pos, state.getBlock(), 10, 10);
                 level.sendBlockUpdated(pos, state, state, 3);
             }
         }
         boolean powered = level.hasNeighborSignal(pos);
+
+        if (tile.status == 1 && !powered) {
+            tile.status = 0;
+            tile.setChanged();
+        }
+
         if (tile.status == 0 || !powered) {
             if (tile.count > 0) {
                 tile.count--;
                 tile.setChanged();
+            }
+            if (tile.count > 50) {
+                spawnNodeBolts(level, pos, tile.hasStabilizer(level));
             }
         } else if (tile.count < 1000) {
             tile.count++;
@@ -111,6 +127,10 @@ public class TransducerTile extends TileArcaneresearch {
                         }
                     }
                 }
+            }
+
+            if (tile.count > 50) {
+                spawnNodeBolts(level, pos, tile.hasStabilizer(level));
             }
         }
         if (tile.count > 1000) {
@@ -159,7 +179,40 @@ public class TransducerTile extends TileArcaneresearch {
         }
     }
 
-     
+    static void spawnNodeBolts(Level level, BlockPos pos, boolean withStabilizer) {
+        if (level == null || level.isClientSide()) return;
+        if (level.getRandom().nextInt(4) == 0) {
+            nodeBoltFx(level,
+                    pos.getX() + 0.25D + level.getRandom().nextFloat() * 0.5D,
+                    pos.getY() + 0.5D,
+                    pos.getZ() + 0.25D + level.getRandom().nextFloat() * 0.5D,
+                    pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D);
+        }
+        if (withStabilizer && level.getRandom().nextInt(4) == 0) {
+            nodeBoltFx(level,
+                    pos.getX() + 0.25D + level.getRandom().nextFloat() * 0.5D,
+                    pos.getY() - 1.5D,
+                    pos.getZ() + 0.25D + level.getRandom().nextFloat() * 0.5D,
+                    pos.getX() + 0.5D, pos.getY() - 0.5D, pos.getZ() + 0.5D);
+        }
+    }
+
+    @Override
+    public boolean triggerEvent(int id, int param) {
+        if (id == 10 && param == 10 && level != null && level.isClientSide()) {
+            arcaneresearch.client.fx.FXDispatcher.INSTANCE.burst(
+                    worldPosition.getX() + 0.5D, worldPosition.getY() - 0.5D,
+                    worldPosition.getZ() + 0.5D, 1.0F);
+            level.playLocalSound(
+                    worldPosition.getX() + 0.5D, worldPosition.getY() - 0.5D,
+                    worldPosition.getZ() + 0.5D,
+                    arcaneresearch.init.ModSounds.CRAFT_FAIL.get(),
+                    SoundSource.BLOCKS, 0.5F, 1.0F, false);
+            return true;
+        }
+        return super.triggerEvent(id, param);
+    }
+
 
 
  

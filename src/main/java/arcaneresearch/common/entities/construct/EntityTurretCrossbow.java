@@ -40,6 +40,10 @@ import arcaneresearch.common.menu.TurretMenu;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -49,7 +53,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityTurretCrossbow extends EntityOwnedConstruct implements RangedAttackMob {
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ENTITIES);
     public float loadProgressForRender = 0.0f;
     protected int loadProgressInt = 0;
     protected boolean isLoadInProgress = false;
@@ -61,6 +65,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     
     protected boolean swinging;
     protected int swingTime;
+    private float baseYaw = 0.0f;
 
     public EntityTurretCrossbow(EntityType<? extends EntityTurretCrossbow> type, Level level) {
         super(type, level);
@@ -79,8 +84,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     public static AttributeSupplier.Builder createAttributes() {
         return EntityOwnedConstruct.createAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0)
-                .add(Attributes.FOLLOW_RANGE, 24.0)
-                .add(Attributes.ARMOR, 2.0);
+                .add(Attributes.FOLLOW_RANGE, 24.0);
     }
 
     @Override
@@ -96,13 +100,34 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
     }
-
+    public void setBaseYaw(float yaw) {
+        baseYaw = yaw;
+        setYRot(yaw);
+        setXRot(0.0f);
+        yBodyRot = yaw;
+        setYHeadRot(yaw);
+    }
+    private void lookTowards(Vec3 target, float yawSpeed, float pitchSpeed) {
+        double dx = target.x - getX();
+        double dy = target.y - getEyeY();
+        double dz = target.z - getZ();
+        double horiz = Math.sqrt(dx * dx + dz * dz);
+        float targetYaw = getYRot();
+        float targetPitch = getXRot();
+        if (horiz > 1.0E-4) {
+            targetYaw = (float) (Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
+            targetPitch = (float) (-(Math.atan2(dy, horiz) * (180.0 / Math.PI)));
+        }
+        setYRot(getYRot() + net.minecraft.util.Mth.clamp(net.minecraft.util.Mth.wrapDegrees(targetYaw - getYRot()), -yawSpeed, yawSpeed));
+        setXRot(getXRot() + net.minecraft.util.Mth.clamp(net.minecraft.util.Mth.wrapDegrees(targetPitch - getXRot()), -pitchSpeed, pitchSpeed));
+    }
     @Override
-    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+    public void performRangedAttack(@NotNull LivingEntity target, float distanceFactor) {
         ItemStack ammo = getMainHandItem();
         if (!ammo.isEmpty() && ammo.getCount() > 0) {
             Arrow arrow = new Arrow(level(), this, new ItemStack(net.minecraft.world.item.Items.ARROW), null);
-            arrow.setBaseDamage(2.25 + distanceFactor * 2.0 + random.nextGaussian() * 0.25);
+            double damage = 2.25 + distanceFactor * 2.0 + random.nextGaussian() * 0.25;
+            arrow.setBaseDamage(damage);
 
             if (ammo.getItem() == Items.TIPPED_ARROW) {
                 
@@ -138,12 +163,15 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             level().addFreshEntity(arrow);
 
             level().broadcastEntityEvent(this, (byte) 16);
+            LOGGER.debug("Turret {} fired at {} (damage={}, ammo left={})", getId(), target, damage, ammo.getCount());
             playSound(SoundEvents.ARROW_SHOOT, 1.0f, 1.0f / (getRandom().nextFloat() * 0.4f + 0.8f));
 
             ammo.shrink(1);
             if (ammo.isEmpty()) {
                 setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
             }
+        } else {
+            LOGGER.once("turret.no.ammo", LogLevel.DEBUG, "Turret {} has no ammo, skipping attack", getId());
         }
     }
 
@@ -218,7 +246,9 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
                         for (int i = 0; i < dispenser.getContainerSize(); i++) {
                             ItemStack stack = dispenser.getItem(i);
                             if (!stack.isEmpty() && stack.getItem() instanceof ArrowItem) {
-                                setItemInHand(InteractionHand.MAIN_HAND, dispenser.removeItem(i, stack.getCount()));
+                                ItemStack picked = dispenser.removeItem(i, stack.getCount());
+                                setItemInHand(InteractionHand.MAIN_HAND, picked);
+                                LOGGER.debug("Turret {} reloaded {} from dispenser at {}", getId(), picked, below);
                                 playSound(ModSounds.TICKS.get(), 1.0f, 1.0f);
                                 level().broadcastEntityEvent(this, (byte) 17);
                                 break;
@@ -237,13 +267,17 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         super.tick();
 
         if (getTarget() != null && (getTarget().isDeadOrDying() || isAlliedTo(getTarget()))) {
+            LOGGER.once("turret.target.dropped", LogLevel.DEBUG,
+                    "Turret {} dropped target {} (dead={}, allied={})",
+                    getId(), getTarget(), getTarget().isDeadOrDying(), isAlliedTo(getTarget()));
             setTarget(null);
         }
 
         if (!level().isClientSide()) {
             setYRot(yHeadRot);
-
-            if (tickCount % 80 == 0) {
+            if (getHealth() < getMaxHealth() && tickCount % 80 == 0) {
+                LOGGER.once("turret.heal", LogLevel.DEBUG,
+                        "Turret {} self-healed at {}/{} HP", getId(), getHealth(), getMaxHealth());
                 heal(1.0f);
             }
 
@@ -256,18 +290,19 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             BlockState railState = level().getBlockState(new BlockPos(rk, rl, ri));
             if (net.minecraft.world.level.block.BaseRailBlock.isRail(railState)
                     && railState.is(arcaneresearch.init.ModBlocks.ACTIVATOR_RAIL.get())) {
-                setNoAi(railState.getValue(net.minecraft.world.level.block.PoweredRailBlock.POWERED));
+                boolean powered = railState.getValue(net.minecraft.world.level.block.PoweredRailBlock.POWERED);
+                if (isNoAi() != powered) {
+                    LOGGER.debug("Turret {} activator rail at {} powered={}", getId(), new BlockPos(rk, rl, ri), powered);
+                }
+                setNoAi(powered);
             }
         } else {
             updateSwingProgress();
         }
     }
-    
-
     @Override
     public boolean isPushable() {
-
-        return false;
+        return true;
     }
 
     @Override
@@ -303,8 +338,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     }
 
     @Override
-    public void move(MoverType type, Vec3 motion) {
-
+    public void move(@NotNull MoverType type, Vec3 motion) {
         super.move(type, new Vec3(motion.x / 20.0, motion.y, motion.z / 20.0));
     }
 
@@ -312,7 +346,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide() && isOwner(player) && !isRemoved()) {
             if (player.isShiftKeyDown()) {
-
+                LOGGER.debug("Player {} dismantled turret {}", player, getId());
                 playSound(ModSounds.ZAP.get(), 1.0f, 1.0f);
                 dropAmmo();
 
@@ -325,12 +359,12 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
                 if (player instanceof ServerPlayer serverPlayer) {
                     serverPlayer.openMenu( new MenuProvider() {
                         @Override
-                        public Component getDisplayName() {
+                        public @NotNull Component getDisplayName() {
                             return Component.translatable("item.arcaneresearch.turret_placer_basic");
                         }
 
                         @Override
-                        public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player p) {
+                        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player p) {
                             return new TurretMenu(containerId, playerInventory, EntityTurretCrossbow.this);
                         }
                     }, buf -> buf.writeInt(getId()));
@@ -379,11 +413,16 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     @Override
     public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
+        tag.putFloat("baseYaw", baseYaw);
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
+        baseYaw = tag.getFloatOr("baseYaw", 0.0f);
+        setYRot(baseYaw);
+        yBodyRot = baseYaw;
+        setYHeadRot(baseYaw);
     }
 
     protected static class NearestValidTargetGoal<T extends LivingEntity> extends TargetGoal {
@@ -428,14 +467,14 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             if (targets.isEmpty()) {
                 return false;
             }
-
-            targets.sort(Comparator.comparingDouble(e -> mob.distanceToSqr(e)));
+            targets.sort(Comparator.comparingDouble(mob::distanceToSqr));
             target = targets.get(0);
             return true;
         }
 
         @Override
         public void start() {
+            LOGGER.debug("Turret {} acquired target {}", mob.getId(), target);
             mob.setTarget(target);
             super.start();
         }
@@ -476,6 +515,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
 
         @Override
         public void start() {
+            LOGGER.once("turret.watch", LogLevel.DEBUG, "Turret {} started watching {}", watcher.getId(), target);
             lookTime = 40 + watcher.getRandom().nextInt(40);
         }
 

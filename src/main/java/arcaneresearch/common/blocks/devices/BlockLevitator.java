@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty; 
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
@@ -28,12 +29,19 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import arcaneresearch.common.tiles.devices.TileLevitator;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModSounds;
-
+import arcaneresearch.lib.raytracer.ExtendedMOP;
+import arcaneresearch.lib.raytracer.IndexedCuboid6;
+import arcaneresearch.lib.raytracer.RayTracer;
+import arcaneresearch.lib.vec.BlockCoord;
+import arcaneresearch.lib.vec.Cuboid6;
+import arcaneresearch.lib.vec.Vector3;
 import javax.annotation.Nullable;
-
+import java.util.ArrayList;
+import java.util.List;
 public class BlockLevitator extends Block implements EntityBlock {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+    public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
 
     private static final float INDENT = 0.125f;
 
@@ -51,23 +59,37 @@ public class BlockLevitator extends Block implements EntityBlock {
                 .sound(SoundType.WOOD)
                 .noOcclusion());
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.UP));
+                .setValue(FACING, Direction.UP)
+                .setValue(ENABLED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, ENABLED);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
 
         return this.defaultBlockState()
-                .setValue(FACING, context.getClickedFace());
+                .setValue(FACING, context.getClickedFace())
+                .setValue(ENABLED, context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return switch (state.getValue(FACING)) {
+            case DOWN -> SHAPE_DOWN;
+            case UP -> SHAPE_UP;
+            case NORTH -> SHAPE_NORTH;
+            case SOUTH -> SHAPE_SOUTH;
+            case WEST -> SHAPE_WEST;
+            case EAST -> SHAPE_EAST;
+        };
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
             case DOWN -> SHAPE_DOWN;
             case UP -> SHAPE_UP;
@@ -90,21 +112,53 @@ public class BlockLevitator extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof TileLevitator levitator) {
-
-            levitator.increaseRange(player);
-            level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    ModSounds.KEY.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-            return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
+        if (!(be instanceof TileLevitator levitator)) {
+            return InteractionResult.PASS;
         }
-        return InteractionResult.PASS;
+        Direction facing = state.getValue(FACING);
+        Cuboid6 buttonCuboid = switch (facing) {
+            case DOWN -> new Cuboid6(0.375, 0.875, 0.375, 0.625, 0.9375, 0.625);
+            case UP -> new Cuboid6(0.375, 0.0625, 0.375, 0.625, 0.125, 0.625);
+            case NORTH -> new Cuboid6(0.375, 0.375, 0.875, 0.625, 0.625, 0.9375);
+            case SOUTH -> new Cuboid6(0.375, 0.375, 0.0625, 0.625, 0.625, 0.125);
+            case WEST -> new Cuboid6(0.875, 0.375, 0.375, 0.9375, 0.625, 0.625);
+            case EAST -> new Cuboid6(0.0625, 0.375, 0.375, 0.125, 0.625, 0.625);
+        };
+        buttonCuboid.add(new Vector3(pos.getX(), pos.getY(), pos.getZ()));
+        List<IndexedCuboid6> cuboids = new ArrayList<>();
+        cuboids.add(new IndexedCuboid6(0, buttonCuboid));
+        List<ExtendedMOP> hits = new ArrayList<>();
+        RayTracer.instance().rayTraceCuboids(
+                new Vector3(RayTracer.getStartVec(player)),
+                new Vector3(RayTracer.getEndVec(player)),
+                cuboids, new BlockCoord(pos), this, hits);
+        if (hits.isEmpty()) {
+            return InteractionResult.PASS;
+        }
+        levitator.increaseRange(player);
+        level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                ModSounds.KEY.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
+        return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
+    }
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+        updateEnabled(level, pos, state);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block,
                                 net.minecraft.world.level.redstone.Orientation orientation, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, orientation, isMoving);
+        updateEnabled(level, pos, state);
+    }
 
+    private void updateEnabled(Level level, BlockPos pos, BlockState state) {
+        if (level.isClientSide()) return;
+        boolean enabled = level.hasNeighborSignal(pos);
+        if (state.hasProperty(ENABLED) && state.getValue(ENABLED) != enabled) {
+            level.setBlock(pos, state.setValue(ENABLED, enabled), 3);
+        }
     }
 
     @Nullable

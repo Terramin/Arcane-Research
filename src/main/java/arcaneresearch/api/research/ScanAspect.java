@@ -34,8 +34,8 @@ public class ScanAspect implements IScanThing {
             if (obj instanceof ItemStack) {
                 is = (ItemStack) obj;
             }
-            if (obj instanceof ItemEntity && ((ItemEntity)obj).getItem() != null) {
-                is = ((ItemEntity)obj).getItem();
+            if (obj instanceof ItemEntity && ((ItemEntity) obj).getItem() != null) {
+                is = ((ItemEntity) obj).getItem();
             }
             if (obj instanceof BlockPos) {
                 Block b = player.level().getBlockState((BlockPos) obj).getBlock();
@@ -54,14 +54,14 @@ public class ScanAspect implements IScanThing {
     @Override
     public void onSuccess(Player player, Object obj) {
         ArcaneresearchApi.internalMethods.addKnowledge(player,
-            arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType.OBSERVATION,
-            arcaneresearch.api.research.ResearchCategories.getResearchCategory("AUROMANCY"), 1);
+                arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType.OBSERVATION,
+                arcaneresearch.api.research.ResearchCategories.getResearchCategory("AUROMANCY"), 1);
         ArcaneresearchApi.internalMethods.addKnowledge(player,
-            arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType.OBSERVATION,
-            arcaneresearch.api.research.ResearchCategories.getResearchCategory("BASICS"), 1);
+                arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType.OBSERVATION,
+                arcaneresearch.api.research.ResearchCategories.getResearchCategory("BASICS"), 1);
         ArcaneresearchApi.internalMethods.addKnowledge(player,
-            arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType.OBSERVATION,
-            arcaneresearch.api.research.ResearchCategories.getResearchCategory("ALCHEMY"), 1);
+                arcaneresearch.api.capabilities.IPlayerKnowledge.EnumKnowledgeType.OBSERVATION,
+                arcaneresearch.api.research.ResearchCategories.getResearchCategory("ALCHEMY"), 1);
     }
 
     @Override

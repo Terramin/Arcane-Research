@@ -9,10 +9,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.client.renderers.ArchitectOverlayRenderer;
-import arcaneresearch.common.items.wands.ItemFocusPouch;
+import arcaneresearch.common.items.casters.ItemFocusPouch;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.wand.PacketWandFocusChangeToServer;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -26,14 +26,21 @@ public class WandRenderingHandler {
       
     public static ItemStack heldWand(Player player) {
         ItemStack main = player.getMainHandItem();
-        if (main != null && !main.isEmpty() && main.getItem() instanceof IWand) {
+        if (main != null && !main.isEmpty() && main.getItem() instanceof IFocusHost) {
             return main;
         }
         ItemStack off = player.getOffhandItem();
-        if (off != null && !off.isEmpty() && off.getItem() instanceof IWand) {
+        if (off != null && !off.isEmpty() && off.getItem() instanceof IFocusHost) {
             return off;
         }
         return ItemStack.EMPTY;
+    }
+    private static boolean isValidFocus(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof FocusItem)) {
+            return false;
+        }
+        return !(stack.getItem() instanceof arcaneresearch.common.items.casters.ItemFocus)
+                || arcaneresearch.common.items.casters.ItemFocus.getPackage(stack) != null;
     }
     final Identifier radialTex = Identifier.parse("arcaneresearch:textures/misc/radial.png");
     final Identifier radial2Tex = Identifier.parse("arcaneresearch:textures/misc/radial2.png");
@@ -109,7 +116,8 @@ public class WandRenderingHandler {
                         pouchcount++;
                         int q = 0;
                         for (ItemStack item : ((ItemFocusPouch) pouchStack.getItem()).getInventory(pouchStack)) {
-                            if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
+                            if (isValidFocus(item)) {
+                                FocusItem basic = (FocusItem) item.getItem();
                                 putFocus(basic.getSortingHelper(item), item, q + pouchcount * 1000);
                             }
                             q++;
@@ -121,14 +129,16 @@ public class WandRenderingHandler {
                     
                     for (int a = 0; a < inv.getNonEquipmentItems().size(); a++) {
                         ItemStack item = inv.getItem(a);
-                        if (!item.isEmpty() && item.getItem() instanceof ItemFocusBasic basic) {
+                        if (isValidFocus(item)) {
+                            FocusItem basic = (FocusItem) item.getItem();
                             putFocus(basic.getSortingHelper(item), item, a);
                         }
                         if (!item.isEmpty() && item.getItem() instanceof ItemFocusPouch) {
                             pouchcount++;
                             int q = 0;
                             for (ItemStack in : ((ItemFocusPouch) item.getItem()).getInventory(item)) {
-                                if (!in.isEmpty() && in.getItem() instanceof ItemFocusBasic basic) {
+                                if (isValidFocus(in)) {
+                                    FocusItem basic = (FocusItem) in.getItem();
                                     putFocus(basic.getSortingHelper(in), in, q + pouchcount * 1000);
                                 }
                                 q++;
@@ -199,6 +209,9 @@ public class WandRenderingHandler {
     }
 
     private void putFocus(String key, ItemStack item, int slot) {
+        if (key == null || key.isEmpty()) {
+            key = item.isEmpty() ? String.valueOf(slot) : item.getHoverName().getString() + "#" + slot;
+        }
         this.foci.put(key, slot);
         this.fociItem.put(key, item.copy());
         this.fociScale.put(key, 1.0F);
@@ -208,11 +221,10 @@ public class WandRenderingHandler {
     private void renderFocusRadialHUD(Minecraft mc, GuiGraphicsExtractor graphics, int sw, int sh,
                                       long time, float partialTicks) {
         ItemStack wandStack = mc.player == null ? ItemStack.EMPTY : heldWand(mc.player);
-        if (mc.player == null || !(wandStack.getItem() instanceof IWand wand)) {
+        if (mc.player == null || !(wandStack.getItem() instanceof IFocusHost wand)) {
             return;
         }
-        ItemFocusBasic focus = wand.getFocus(wandStack);
-
+        FocusItem focus = wand.getFocus(wandStack);
         double mouseX = mc.mouseHandler.xpos() * sw / mc.getWindow().getWidth();
         double mouseY = mc.mouseHandler.ypos() * sh / mc.getWindow().getHeight();
         
@@ -222,9 +234,7 @@ public class WandRenderingHandler {
         if (this.fociItem.isEmpty() && focus == null) {
             return;
         }
-
-        
-
+        graphics.pose().pushMatrix();
         int cx = sw / 2;
         int cy = sh / 2;
         float width = 16.0F + this.fociItem.size() * 2.5F;
@@ -308,6 +318,7 @@ public class WandRenderingHandler {
             
             graphics.extractDeferredElements((int) mouseX, (int) mouseY, partialTicks);
         }
+        graphics.pose().popMatrix();
     }
 
     public boolean handleArchitectOverlay(com.mojang.blaze3d.vertex.PoseStack poseStack,

@@ -188,6 +188,10 @@ public class FXGeneric extends SingleQuadParticle {
         if (loop) {
             index = startParticle + (this.age / particleInc) % numParticles;
         } else {
+            if (numParticles <= 0) {
+                setParticleTextureIndex(startParticle);
+                return;
+            }
             float fs = this.age / (float) this.lifetime;
             index = (int) (startParticle + Math.min(numParticles * fs, numParticles - 1));
         }
@@ -315,6 +319,9 @@ public class FXGeneric extends SingleQuadParticle {
     }
 
     public void setAlphaKeyframes(float... alphaKeyframes) {
+        if (alphaKeyframes == null || alphaKeyframes.length == 0) {
+            alphaKeyframes = new float[]{1.0f};
+        }
         this.alpha = alphaKeyframes[0];
         this.alphaKeys = alphaKeyframes;
     }
@@ -325,6 +332,9 @@ public class FXGeneric extends SingleQuadParticle {
     }
 
     public void setScaleKeyframes(float... scaleKeyframes) {
+        if (scaleKeyframes == null || scaleKeyframes.length == 0) {
+            scaleKeyframes = new float[]{1.0f};
+        }
         this.quadSize = scaleKeyframes[0];
         this.scaleKeys = scaleKeyframes;
     }
@@ -347,8 +357,8 @@ public class FXGeneric extends SingleQuadParticle {
 
     public void setParticles(int startParticle, int numParticles, int particleInc) {
         this.startParticle = startParticle;
-        this.numParticles = numParticles;
-        this.particleInc = particleInc;
+        this.numParticles = Math.max(1, numParticles);
+        this.particleInc = Math.max(1, particleInc);
         setParticleTextureIndex(startParticle);
     }
 

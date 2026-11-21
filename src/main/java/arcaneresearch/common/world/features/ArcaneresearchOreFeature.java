@@ -60,6 +60,7 @@ public class ArcaneresearchOreFeature implements Feature {
             case CINNABAR -> Math.round(18.0f * density);
             case QUARTZ -> Math.round(18.0f * density);
             case AMBER -> Math.round(20.0f * density);
+            case VISNERITE -> Math.round(12.0f * density);
         };
         for (int i = 0; i < attempts; i++) {
 
@@ -71,6 +72,7 @@ public class ArcaneresearchOreFeature implements Feature {
                 case QUARTZ -> DEEP_MIN_Y + random.nextInt(64 - DEEP_MIN_Y);
                 case AMBER -> level.getHeight(Heightmap.Types.WORLD_SURFACE, randPosX, randPosZ)
                         - random.nextInt(25);
+                case VISNERITE -> DEEP_MIN_Y + random.nextInt(64 - DEEP_MIN_Y);
             };
             randPosY = Math.max(level.getMinY(),
                     
@@ -98,6 +100,7 @@ public class ArcaneresearchOreFeature implements Feature {
             case CINNABAR -> ModConfig.generateCinnabar;
             case QUARTZ -> ModConfig.generateQuartz;
             case AMBER -> ModConfig.generateAmber;
+            case VISNERITE -> true;
         };
     }
 
@@ -106,6 +109,7 @@ public class ArcaneresearchOreFeature implements Feature {
             case CINNABAR -> ModBlocks.CINNABAR_ORE.get();
             case QUARTZ -> ModBlocks.QUARTZ_ORE.get();
             case AMBER -> ModBlocks.AMBER_ORE.get();
+            case VISNERITE -> ModBlocks.VISNERITEORE.get();
         };
     }
 
@@ -114,6 +118,7 @@ public class ArcaneresearchOreFeature implements Feature {
             case CINNABAR -> ModBlocks.DEEPSLATE_CINNABAR_ORE.get();
             case QUARTZ -> ModBlocks.DEEPSLATE_QUARTZ_ORE.get();
             case AMBER -> ModBlocks.DEEPSLATE_AMBER_ORE.get();
+            case VISNERITE -> ModBlocks.VISNERITEORE.get();
         };
     }
 
@@ -123,6 +128,8 @@ public class ArcaneresearchOreFeature implements Feature {
 
         QUARTZ,
 
-        AMBER
+        AMBER,
+
+        VISNERITE
     }
 }

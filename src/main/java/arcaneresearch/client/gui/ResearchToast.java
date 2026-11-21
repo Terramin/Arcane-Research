@@ -11,14 +11,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.research.ResearchEntry;
 import arcaneresearch.client.gui.screens.ResearchBrowserScreen;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.init.ModSounds;
-
-@OnlyIn(Dist.CLIENT)
 public class ResearchToast implements Toast {
 
     private static final Identifier TEXTURE =
@@ -99,7 +96,7 @@ public class ResearchToast implements Toast {
             var fp = arcaneresearch.api.casters.FocusEngine.getElement(str.replace("focus:", "").trim());
             if (fp instanceof arcaneresearch.api.casters.FocusNode node) {
                 arcaneresearch.client.gui.screens.FocalManipulatorScreen.drawPart(
-                        graphics, node, iconX + 8, iconY + 8, 24.0f, true);
+                        graphics, node, iconX + 8, iconY + 8, 24.0f, false);
             }
         }
     }

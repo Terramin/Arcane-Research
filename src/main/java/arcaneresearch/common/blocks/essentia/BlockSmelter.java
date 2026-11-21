@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.tiles.essentia.TileSmelter;
 import arcaneresearch.init.ModBlockEntities;
 
@@ -124,10 +123,6 @@ public class BlockSmelter extends Block implements EntityBlock {
         }
         return super.triggerEvent(state, level, pos, id, param);
     }
-
-    
-    
-    @OnlyIn(Dist.CLIENT)
     private boolean clientTriggerEvent(Level level, BlockPos pos, int param) {
         net.minecraft.core.Direction dir =
                 net.minecraft.core.Direction.from3DDataValue(param);

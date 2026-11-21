@@ -9,13 +9,12 @@ public abstract class FocusMedium extends FocusNode {
 
     @Override
     public EnumSupplyType[] mustBeSupplied() {
-
-        return this instanceof FocusMediumRoot ? null : new EnumSupplyType[] { EnumSupplyType.TRAJECTORY };
+        return this instanceof FocusMediumRoot ? null : new EnumSupplyType[]{EnumSupplyType.TRAJECTORY};
     }
 
     @Override
     public EnumSupplyType[] willSupply() {
-        return new EnumSupplyType[] { EnumSupplyType.TARGET };
+        return new EnumSupplyType[]{EnumSupplyType.TARGET};
     }
 
     public boolean hasIntermediary() {

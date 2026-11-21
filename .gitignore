@@ -8,6 +8,7 @@ build/
 # Dev run directories (ModDevGradle)
 run/
 runs/
+logs/
 
 # IDE
 .idea/

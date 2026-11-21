@@ -16,8 +16,8 @@ import net.minecraft.world.phys.Vec3;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.client.fx.WandFX;
 import arcaneresearch.common.entities.WandEntities;
 import arcaneresearch.common.entities.projectile.EntityShockOrb;
@@ -31,7 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ItemFocusShock extends ItemFocusBasic {
+public class ItemFocusShock extends FocusItem {
+
     private static final AspectList COST_BASE = new AspectList().add(Aspect.AIR, 8);
     private static final AspectList COST_CHAIN = new AspectList().add(Aspect.AIR, 8).add(Aspect.WATER, 8);
     private static final AspectList COST_GROUND = new AspectList().add(Aspect.AIR, 8).add(Aspect.EARTH, 8);
@@ -63,22 +64,14 @@ public class ItemFocusShock extends ItemFocusBasic {
         
         
         
-        if (level.isClientSide() && caster instanceof Player) {
-            try {
-                float partial = 1.0F;
-                try {
-                    
-                    partial = net.minecraft.client.Minecraft.getInstance().getDeltaTracker()
-                            .getGameTimeDeltaPartialTick(false);
-                } catch (Exception ignored) {
-                }
-                Vec3 tip = arcaneresearch.client.lib.events.WandTipHelper.tipWorld(
-                        (Player) caster, partial);
-                px = tip.x;
-                py = tip.y;
-                pz = tip.z;
-            } catch (Throwable ignored) {
-            }
+        // Client-side tip offset, computed without referencing client-only classes so
+        // this item class can be loaded on a dedicated server.
+        if (level.isClientSide() && caster instanceof Player player) {
+            Vec3 eye = player.getEyePosition();
+            Vec3 viewDir = player.getViewVector(1.0F);
+            px = eye.x + viewDir.x * 0.6D;
+            py = eye.y + viewDir.y * 0.6D;
+            pz = eye.z + viewDir.z * 0.6D;
         }
         WandFX.arcBolt(level, px, py, pz, xx, yy, zz);
     }
@@ -121,7 +114,7 @@ public class ItemFocusShock extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         ItemStack focusStack = wand.getFocusStack(wandstack);
@@ -156,7 +149,7 @@ public class ItemFocusShock extends ItemFocusBasic {
         } else {
             right = right.normalize();
         }
-        boolean mainWand = caster.getMainHandItem().getItem() instanceof IWand;
+        boolean mainWand = caster.getMainHandItem().getItem() instanceof IFocusHost;
         boolean rightArm = mainWand == (caster.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT);
         double side = rightArm ? 0.30D : -0.30D;
         return new Vec3(caster.getX(), caster.getEyeY() - 0.1D, caster.getZ())
@@ -165,7 +158,7 @@ public class ItemFocusShock extends ItemFocusBasic {
     }
 
     public void doLightningBolt(ItemStack stack, LivingEntity caster, int count) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return;
         }
         Level level = caster.level();

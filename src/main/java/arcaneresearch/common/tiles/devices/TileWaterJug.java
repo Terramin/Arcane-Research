@@ -19,7 +19,6 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import arcaneresearch.api.aura.AuraHelper;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.lib.fluid.ArcaneresearchFluidTank;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
@@ -179,8 +178,6 @@ public class TileWaterJug extends TileArcaneresearch {
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileWaterJug tile) {
         tile.counter++;
 

@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "arcaneresearch:deepslate_amber_ore",
+    "arcaneresearch:deepslate_cinnabar_ore",
+    "arcaneresearch:deepslate_quartz_ore"
+  ]
+}

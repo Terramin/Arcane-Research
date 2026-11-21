@@ -9,15 +9,16 @@ import net.minecraft.world.phys.HitResult;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.entities.WandEntities;
 import arcaneresearch.common.entities.projectile.EntityPrimalOrb;
 import arcaneresearch.common.lib.wands.WandSounds;
 
 import java.util.Random;
 
-public class ItemFocusPrimal extends ItemFocusBasic {
+public class ItemFocusPrimal extends FocusItem {
+
     public static final FocusUpgradeType seeker = new FocusUpgradeType(
             Identifier.fromNamespaceAndPath("arcaneresearch", "foci/seeker.png"),
             "focus.upgrade.seeker.name", "focus.upgrade.seeker.text",
@@ -64,7 +65,7 @@ public class ItemFocusPrimal extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (level.isClientSide()) {

@@ -12,28 +12,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.common.menu.DeconstructMenu;
 import arcaneresearch.init.ModSounds;
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
 public class DeconstructScreen extends AbstractContainerScreen<DeconstructMenu> {
 
     private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(

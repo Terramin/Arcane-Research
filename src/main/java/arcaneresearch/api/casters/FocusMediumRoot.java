@@ -48,7 +48,7 @@ public class FocusMediumRoot extends FocusMedium {
 
     @Override
     public EnumSupplyType[] willSupply() {
-        return new EnumSupplyType[] { EnumSupplyType.TARGET, EnumSupplyType.TRAJECTORY };
+        return new EnumSupplyType[]{EnumSupplyType.TARGET, EnumSupplyType.TRAJECTORY};
     }
 
     @Override

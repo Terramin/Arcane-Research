@@ -14,7 +14,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector3f;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
@@ -25,8 +24,6 @@ import arcaneresearch.common.lib.aura.NodeType;
 import arcaneresearch.common.lib.crafting.Matrix;
 
 import javax.annotation.Nullable;
-
-@OnlyIn(Dist.CLIENT)
 public class BlueprintBlockAccess implements BlockAndTintGetter {
 
     private final BlockState[][][] structure;

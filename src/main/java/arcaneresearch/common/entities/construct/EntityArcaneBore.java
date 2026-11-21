@@ -36,6 +36,11 @@ import arcaneresearch.common.lib.network.fx.PacketFXBoreDig;
 import arcaneresearch.common.world.aura.AuraHandler;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
+import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +49,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityArcaneBore extends EntityOwnedConstruct {
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ENTITIES);
     private static final EntityDataAccessor<Direction> FACING =
             SynchedEntityData.defineId(EntityArcaneBore.class, EntityDataSerializers.DIRECTION);
     private static final EntityDataAccessor<Boolean> ACTIVE =
@@ -63,7 +68,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     private float radInc = 1.0f;
     private float charge = 0.0f;
     private long soundDelay = 0L;
-
+    private boolean lastLoggedActive = false;
     public EntityArcaneBore(EntityType<? extends EntityArcaneBore> type, Level level) {
         super(type, level);
     }
@@ -123,13 +128,12 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             }
             net.minecraft.core.BlockPos railPos = new BlockPos(k, l, i1);
             net.minecraft.world.level.block.state.BlockState railState = level().getBlockState(railPos);
-            if (net.minecraft.world.level.block.BaseRailBlock.isRail(railState)) {
-                if (railState.is(arcaneresearch.init.ModBlocks.ACTIVATOR_RAIL.get())) {
-                    setActive(!railState.getValue(
-                            net.minecraft.world.level.block.PoweredRailBlock.POWERED));
-                }
+            if (railState.is(arcaneresearch.init.ModBlocks.ACTIVATOR_RAIL.get())) {
+                setActive(!railState.getValue(
+                        net.minecraft.world.level.block.PoweredRailBlock.POWERED));
             } else if (!isPassenger()) {
-                setActive(level().hasNeighborSignal(blockPosition().below()));
+                setActive(level().hasNeighborSignal(blockPosition())
+                        || level().hasNeighborSignal(blockPosition().below()));
             }
 
             if (validInventory()) {
@@ -167,6 +171,25 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                 level().broadcastEntityEvent(this, (byte) 17);
             }
         }
+        alignRotation();
+    }
+    private void lookTowards(Vec3 target, float yawSpeed, float pitchSpeed) {
+        double dx = target.x - getX();
+        double dy = target.y - getEyeY();
+        double dz = target.z - getZ();
+        double horiz = Math.sqrt(dx * dx + dz * dz);
+        float targetYaw = getYRot();
+        float targetPitch = getXRot();
+        if (horiz > 1.0E-4) {
+            targetYaw = (float) (Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
+            targetPitch = (float) (-(Math.atan2(dy, horiz) * (180.0 / Math.PI)));
+        }
+        setYRot(getYRot() + Mth.clamp(Mth.wrapDegrees(targetYaw - getYRot()), -yawSpeed, yawSpeed));
+        setXRot(getXRot() + Mth.clamp(Mth.wrapDegrees(targetPitch - getXRot()), -pitchSpeed, pitchSpeed));
+    }
+    private void alignRotation() {
+        yBodyRot = getYRot();
+        setYHeadRot(getYRot());
     }
 
     public boolean validInventory() {
@@ -300,6 +323,8 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                     net.minecraft.world.level.block.Block.getId(digBs));
 
             serverLevel.destroyBlock(digTarget, false);
+            LOGGER.debug("Bore {} destroyed {} at {} (drops={}, fortune={}, silk={})",
+                    getId(), digBs.getBlock(), digTarget, items.size(), fortune, silktouch);
             if (exp > 0) {
                 digBs.getBlock().popExperience(serverLevel, digTarget, exp);
             }
@@ -437,18 +462,23 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             z = net.minecraft.util.Mth.floor(vres.z);
         }
         digTargetPrev = new BlockPos(x, y, z);
+        LOGGER.once("bore.spiral", LogLevel.DEBUG,
+                "Bore {} spiral step: angle={}, radius={}, target={}", getId(), spiral, currentRadius, digTargetPrev);
     }
 
     private void rechargeVis() {
         float drained = AuraHandler.drainVis(level(), blockPosition(), 10.0f, false);
         charge += drained;
+        if (drained > 0.0f && tickCount % 100 == 0) {
+            LOGGER.debug("Bore {} drained {} vis from aura at {} (charge={})", getId(), drained, blockPosition(), charge);
+        }
     }
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide() && isOwner(player) && isAlive()) {
             if (player.isShiftKeyDown()) {
-
+                LOGGER.debug("Player {} dismantled bore {}", player, getId());
                 if (ModSounds.ZAP != null) {
                     playSound(ModSounds.ZAP.get(), 1.0f, 1.0f);
                 }
@@ -467,15 +497,15 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                     serverPlayer.openMenu(
                             new net.minecraft.world.MenuProvider() {
                                 @Override
-                                public net.minecraft.network.chat.Component getDisplayName() {
+                                public net.minecraft.network.chat.@NotNull Component getDisplayName() {
                                     return EntityArcaneBore.this.getDisplayName();
                                 }
 
                                 @Override
                                 public net.minecraft.world.inventory.AbstractContainerMenu createMenu(
                                         int containerId,
-                                        net.minecraft.world.entity.player.Inventory inventory,
-                                        Player p) {
+                                        net.minecraft.world.entity.player.@NotNull Inventory inventory,
+                                        @NotNull Player p) {
                                     return new arcaneresearch.common.menu.ArcaneBoreMenu(
                                             containerId, inventory, EntityArcaneBore.this);
                                 }
@@ -493,6 +523,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         if (source.getEntity() instanceof LivingEntity living && isOwner(living)) {
             Direction dir = Direction.orderedByNearest(this)[0];
             if (dir != Direction.DOWN) {
+                LOGGER.debug("Bore {} facing changed by owner to {}", getId(), dir);
                 setFacing(dir);
             }
             return false;
@@ -511,8 +542,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     }
 
     @Override
-    public void move(MoverType type, Vec3 motion) {
-
+    public void move(@NotNull MoverType type, Vec3 motion) {
         super.move(type, new Vec3(motion.x / 5.0, motion.y, motion.z / 5.0));
     }
 
@@ -566,8 +596,10 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 16) {
+            LOGGER.once("bore.client.digging", LogLevel.DEBUG, "Bore {} started digging (client)", getId());
             clientDigging = true;
         } else if (id == 17) {
+            LOGGER.once("bore.client.idle", LogLevel.DEBUG, "Bore {} stopped digging (client)", getId());
             clientDigging = false;
         } else {
             super.handleEntityEvent(id);
@@ -584,5 +616,4 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         }
         return super.getTeam();
     }
-    
 }

@@ -16,13 +16,13 @@ import net.minecraft.world.phys.HitResult;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.blocks.misc.BlockHole;
 import arcaneresearch.common.lib.utils.BlockUtils;
 import arcaneresearch.init.ModBlocks;
 
-public class ItemFocusPortableHole extends ItemFocusBasic {
+public class ItemFocusPortableHole extends FocusItem {
 
     private static final AspectList COST = new AspectList().add(Aspect.ENTROPY, 25).add(Aspect.AIR, 25)
             .add(Aspect.EARTH, 25);
@@ -57,7 +57,7 @@ public class ItemFocusPortableHole extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)
+        if (!(wandstack.getItem() instanceof IFocusHost wand)
                 || !(hit instanceof BlockHitResult mop)
                 || !(entity instanceof Player)) {
             return false;

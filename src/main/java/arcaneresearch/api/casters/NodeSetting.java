@@ -72,8 +72,11 @@ public class NodeSetting {
 
     public interface INodeSettingType {
         int getDefault();
+
         int clamp(int i);
+
         int getValue(int value);
+
         String getValueText(int value);
     }
 

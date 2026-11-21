@@ -115,6 +115,9 @@ public class MsgStudyComplete implements CustomPacketPayload {
             if (ScanWallet.hasScanned(player, key)) {
                 return;
             }
+            if (ScanWallet.hasScanned(player, key)) {
+                return;
+            }
             AspectList aspects = ScanTargets.aspectsFor(level, target, player);
             ScanRewards.grant(player, key, aspects, false);
         });

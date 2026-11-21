@@ -20,20 +20,26 @@ public interface IGolemProperties {
     ItemStack[] generateComponents();
 
     void setMaterial(GolemMaterial mat);
+
     GolemMaterial getMaterial();
 
     void setHead(GolemHead head);
+
     GolemHead getHead();
 
     void setArms(GolemArm arms);
+
     GolemArm getArms();
 
     void setLegs(GolemLeg legs);
+
     GolemLeg getLegs();
 
     void setAddon(GolemAddon addon);
+
     GolemAddon getAddon();
 
     void setRank(int rank);
+
     int getRank();
 }

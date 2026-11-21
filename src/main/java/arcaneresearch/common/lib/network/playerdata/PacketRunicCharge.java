@@ -5,7 +5,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import arcaneresearch.Arcaneresearch;
 
@@ -51,8 +50,6 @@ public class PacketRunicCharge implements CustomPacketPayload {
     public static void handle(PacketRunicCharge msg, IPayloadContext ctx) {
         ctx.enqueueWork(() -> handleOnClient(msg));
     }
-
-    @OnlyIn(Dist.CLIENT)
     private static void handleOnClient(PacketRunicCharge msg) {
         arcaneresearch.client.lib.events.RunicShieldHud.applySync(
                 msg.playerId, msg.charge, msg.max);

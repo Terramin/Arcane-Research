@@ -22,7 +22,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import arcaneresearch.api.ArcaneresearchApi;
@@ -153,8 +152,6 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
             return false;
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnWispTrail() {
         float x = (float) (getX() + (random.nextFloat() - random.nextFloat()) * 0.2f);
         float z = (float) (getZ() + (random.nextFloat() - random.nextFloat()) * 0.2f);

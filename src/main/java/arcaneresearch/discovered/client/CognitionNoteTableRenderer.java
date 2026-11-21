@@ -18,15 +18,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.discovered.table.CognitionNoteTableTile;
 import arcaneresearch.helper.IDsHelper;
 import org.jspecify.annotations.NonNull;
-
-@OnlyIn(Dist.CLIENT)
 public class CognitionNoteTableRenderer implements BlockEntityRenderer<CognitionNoteTableTile, CognitionNoteTableRenderer.State> {
 
     private static final Identifier QUILL_TEXTURE =

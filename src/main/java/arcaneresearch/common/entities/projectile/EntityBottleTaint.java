@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.entities.ITaintedMob;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.init.ModBlocks;
@@ -47,8 +46,6 @@ public class EntityBottleTaint extends ThrowableProjectile {
         }
         super.handleEntityEvent(id);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnBreakFX() {
         for (int a = 0; a < 100; ++a) {
             FXDispatcher.INSTANCE.taintsplosionFX(this);

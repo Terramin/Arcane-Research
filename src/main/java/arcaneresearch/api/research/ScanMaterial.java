@@ -12,7 +12,7 @@ public class ScanMaterial implements IScanThing {
 
     public ScanMaterial(Fluid fluid) {
         this.research = "!" + fluid.getClass().getTypeName();
-        this.fluids = new Fluid[] { fluid };
+        this.fluids = new Fluid[]{fluid};
     }
 
     public ScanMaterial(String research, Fluid... fluids) {

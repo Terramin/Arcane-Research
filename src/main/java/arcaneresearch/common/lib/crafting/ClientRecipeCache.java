@@ -88,19 +88,8 @@ public final class ClientRecipeCache {
             }
         } catch (Exception ignored) {
         }
-        try {
-            var level = net.minecraft.client.Minecraft.getInstance().level;
-            if (level != null) {
-                var ctx = net.minecraft.world.item.crafting.display.SlotDisplayContext.fromLevel(level);
-                for (var display : recipe.display()) {
-                    var resolved = display.result().resolveForFirstStack(ctx);
-                    if (resolved != null && !resolved.isEmpty()) {
-                        return resolved;
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-        }
+        // Level-based slot display resolution is only available on the client;
+        // common callers must rely on the display data above (no MC client classes here).
         return null;
     }
 }

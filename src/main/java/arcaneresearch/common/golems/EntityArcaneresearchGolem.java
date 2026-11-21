@@ -1,16 +1,32 @@
 package arcaneresearch.common.golems;
 
+import arcaneresearch.api.golems.EnumGolemTrait;
+import arcaneresearch.api.golems.IGolemAPI;
+import arcaneresearch.api.golems.IGolemProperties;
+import arcaneresearch.api.golems.tasks.Task;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.config.ModConfig;
+import arcaneresearch.common.entities.construct.EntityOwnedConstruct;
+import arcaneresearch.common.golems.ai.*;
+import arcaneresearch.common.golems.tasks.TaskHandler;
+import arcaneresearch.init.ModItems;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -25,7 +41,9 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import arcaneresearch.api.golems.EnumGolemTrait;
 import arcaneresearch.api.golems.IGolemAPI;
@@ -39,14 +57,16 @@ import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements IGolemAPI, RangedAttackMob {
 
     public static final int XP_MULTIPLIER = 1000;
+
     private static final EntityDataAccessor<Integer> DATA_PROPS1 =
             SynchedEntityData.defineId(EntityArcaneresearchGolem.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_PROPS2 =
@@ -55,13 +75,18 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
             SynchedEntityData.defineId(EntityArcaneresearchGolem.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Byte> DATA_CLIMBING =
             SynchedEntityData.defineId(EntityArcaneresearchGolem.class, EntityDataSerializers.BYTE);
+
     private static final byte FLAG_FOLLOWING = 0x02;
     private static final byte FLAG_COMBAT = 0x08;
+
+    private static final EquipmentSlot[] STORAGE_SLOTS = { EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND };
+
     public boolean redrawParts = false;
     protected Task task = null;
     protected int taskID = Integer.MAX_VALUE;
     private int rankXp = 0;
     private boolean firstRun = true;
+
     public EntityArcaneresearchGolem(EntityType<? extends EntityArcaneresearchGolem> type, Level level) {
         super(type, level);
         this.xpReward = 5;
@@ -100,40 +125,35 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
     @Override
     public void setProperties(IGolemProperties prop) {
-        ByteBuffer bb = ByteBuffer.allocate(8);
-        bb.putLong(prop.toLong());
-        bb.rewind();
-        this.entityData.set(DATA_PROPS1, bb.getInt());
-        this.entityData.set(DATA_PROPS2, bb.getInt());
+        if (prop == null) return;
+        long bits = prop.toLong();
+        this.entityData.set(DATA_PROPS1, (int) (bits >>> 32));
+        this.entityData.set(DATA_PROPS2, (int) bits);
     }
 
     @Override
     public byte getGolemColor() {
-        int props3 = this.entityData.get(DATA_PROPS3);
-        return (byte) (props3 & 0xFF);
+        return (byte) (this.entityData.get(DATA_PROPS3) & 0xFF);
     }
 
     public void setGolemColor(byte color) {
         int props3 = this.entityData.get(DATA_PROPS3);
-        props3 = (props3 & 0xFFFFFF00) | (color & 0xFF);
-        this.entityData.set(DATA_PROPS3, props3);
+        this.entityData.set(DATA_PROPS3, (props3 & 0xFFFFFF00) | (color & 0xFF));
     }
 
     public byte getFlags() {
-        int props3 = this.entityData.get(DATA_PROPS3);
-        return (byte) ((props3 >> 8) & 0xFF);
+        return (byte) ((this.entityData.get(DATA_PROPS3) >> 8) & 0xFF);
     }
 
     public void setFlags(byte flags) {
         int props3 = this.entityData.get(DATA_PROPS3);
-        props3 = (props3 & 0xFFFF00FF) | ((flags & 0xFF) << 8);
-        this.entityData.set(DATA_PROPS3, props3);
+        this.entityData.set(DATA_PROPS3, (props3 & 0xFFFF00FF) | ((flags & 0xFF) << 8));
     }
 
     private void updateEntityAttributes() {
         IGolemProperties props = getProperties();
-
-        int maxHealth = 10 + props.getMaterial().healthMod;
+        var material = props.getMaterial();
+        int maxHealth = 10 + (material != null ? material.healthMod : 0);
         if (props.hasTrait(EnumGolemTrait.FRAGILE)) {
             maxHealth = (int) (maxHealth * 0.75);
         }
@@ -155,19 +175,31 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
         this.navigation = createGolemNavigation();
 
+        boolean needsNewNav = false;
         if (props.hasTrait(EnumGolemTrait.FLYER)) {
+            needsNewNav = !(this.navigation instanceof PathNavigateGolemAir);
+        } else if (props.hasTrait(EnumGolemTrait.CLIMBER)) {
+            needsNewNav = !(this.navigation instanceof WallClimberNavigation);
+        } else {
+            needsNewNav = !(this.navigation instanceof PathNavigateGolemGround);
+        }
+        if (needsNewNav) {
+            this.navigation = createGolemNavigation();
+        }
+
+        if (props.hasTrait(EnumGolemTrait.FLYER) && !(this.moveControl instanceof FlightMoveHelper)) {
             this.moveControl = new FlightMoveHelper(this);
         }
 
         if (props.hasTrait(EnumGolemTrait.FIGHTER)) {
-            double damage = props.getMaterial().damage;
+            double damage = material != null ? material.damage : 0.0;
             if (props.hasTrait(EnumGolemTrait.BRUTAL)) {
                 damage = Math.max(damage * 1.5, damage + 1.0);
             }
             damage += props.getRank() * 0.25;
-            getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(damage);
+            Objects.requireNonNull(getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(damage);
         } else {
-            getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(0.0);
+            Objects.requireNonNull(getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(0.0);
         }
 
         rebuildAI();
@@ -194,10 +226,13 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
             if (this.navigation instanceof GroundPathNavigation) {
                 this.goalSelector.addGoal(0, new FloatGoal(this));
             }
-            if (props.hasTrait(EnumGolemTrait.RANGED) && props.getArms().function != null) {
-                Goal rangedAI = props.getArms().function.getRangedAttackAI(this);
-                if (rangedAI != null) {
-                    this.goalSelector.addGoal(1, rangedAI);
+            if (props.hasTrait(EnumGolemTrait.RANGED)) {
+                var arms = props.getArms();
+                if (arms != null && arms.function != null) {
+                    Goal rangedAI = arms.function.getRangedAttackAI(this);
+                    if (rangedAI != null) {
+                        this.goalSelector.addGoal(1, rangedAI);
+                    }
                 }
             }
 
@@ -218,9 +253,8 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
             return new PathNavigateGolemAir(this, level());
         } else if (props.hasTrait(EnumGolemTrait.CLIMBER)) {
             return new WallClimberNavigation(this, level());
-        } else {
-            return new PathNavigateGolemGround(this, level());
         }
+        return new PathNavigateGolemGround(this, level());
     }
 
     @Override
@@ -255,14 +289,14 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
             if (getTarget() != null && getProperties().hasTrait(EnumGolemTrait.RANGED) && distanceToSqr(getTarget()) > 1024.0) {
                 setTarget(null);
             }
-
             int healInterval = getProperties().hasTrait(EnumGolemTrait.REPAIR) ? 40 : 100;
-            if (tickCount % healInterval == 0) {
+            if (tickCount % healInterval == 0 && getHealth() < getMaxHealth()) {
                 heal(1.0f);
             }
-
             if (getProperties().hasTrait(EnumGolemTrait.CLIMBER)) {
                 setBesideClimbableBlock(horizontalCollision);
+            } else if (isBesideClimbableBlock()) {
+                setBesideClimbableBlock(false);
             }
         } else {
             if (tickCount < 20 || tickCount % 20 == 0) {
@@ -271,18 +305,14 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         }
 
         IGolemProperties props = getProperties();
-        if (props.getHead().function != null) {
-            props.getHead().function.onUpdateTick(this);
-        }
-        if (props.getArms().function != null) {
-            props.getArms().function.onUpdateTick(this);
-        }
-        if (props.getLegs().function != null) {
-            props.getLegs().function.onUpdateTick(this);
-        }
-        if (props.getAddon().function != null) {
-            props.getAddon().function.onUpdateTick(this);
-        }
+        var head = props.getHead();
+        if (head != null && head.function != null) head.function.onUpdateTick(this);
+        var arms = props.getArms();
+        if (arms != null && arms.function != null) arms.function.onUpdateTick(this);
+        var legs = props.getLegs();
+        if (legs != null && legs.function != null) legs.function.onUpdateTick(this);
+        var addon = props.getAddon();
+        if (addon != null && addon.function != null) addon.function.onUpdateTick(this);
     }
 
     @Override
@@ -311,17 +341,15 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
     public void setBesideClimbableBlock(boolean climbing) {
         byte b = this.entityData.get(DATA_CLIMBING);
-        if (climbing) {
-            b |= 0x01;
-        } else {
-            b &= 0xFE;
-        }
+        if (climbing) b |= 0x01;
+        else b = (byte) (b & 0xFE);
         this.entityData.set(DATA_CLIMBING, b);
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
-        if (getProperties().hasTrait(EnumGolemTrait.HEAVY) && !getProperties().hasTrait(EnumGolemTrait.FLYER)) {
+    protected void playStepSound(@NotNull BlockPos pos, net.minecraft.world.level.block.state.@NotNull BlockState state) {
+        IGolemProperties props = getProperties();
+        if (props.hasTrait(EnumGolemTrait.HEAVY) && !props.hasTrait(EnumGolemTrait.FLYER)) {
             super.playStepSound(pos, state);
         }
     }
@@ -384,12 +412,10 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         if (source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE) && getProperties().hasTrait(EnumGolemTrait.FIREPROOF)) {
             return false;
         }
-        if (source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION) && getProperties().hasTrait(EnumGolemTrait.BLASTPROOF)) {
+        if (source.is(DamageTypeTags.IS_EXPLOSION) && getProperties().hasTrait(EnumGolemTrait.BLASTPROOF)) {
             amount = Math.min(getMaxHealth() / 2.0f, amount * 0.3f);
         }
-        
-        
-        if (source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)) {
+        if (source.is(DamageTypes.CACTUS)) {
             return false;
         }
         if (hasHome() && (source.is(net.minecraft.world.damagesource.DamageTypes.IN_WALL) || source.is(net.minecraft.world.damagesource.DamageTypes.FELL_OUT_OF_WORLD))) {
@@ -400,11 +426,13 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
     @Override
     public int getArmorValue() {
-        int armor = getProperties().getMaterial().armor;
-        if (getProperties().hasTrait(EnumGolemTrait.ARMORED)) {
+        IGolemProperties props = getProperties();
+        var material = props.getMaterial();
+        int armor = material != null ? material.armor : 0;
+        if (props.hasTrait(EnumGolemTrait.ARMORED)) {
             armor = (int) Math.max(armor * 1.5, armor + 1);
         }
-        if (getProperties().hasTrait(EnumGolemTrait.FRAGILE)) {
+        if (props.hasTrait(EnumGolemTrait.FRAGILE)) {
             armor = (int) (armor * 0.75);
         }
         return armor;
@@ -423,11 +451,8 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
     public void setInCombat(boolean combat) {
         byte flags = getFlags();
-        if (combat) {
-            flags |= FLAG_COMBAT;
-        } else {
-            flags &= ~FLAG_COMBAT;
-        }
+        if (combat) flags |= FLAG_COMBAT;
+        else flags &= ~FLAG_COMBAT;
         setFlags(flags);
     }
 
@@ -469,13 +494,14 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
                 addRankXp(8);
             }
         }
-        return hit;
+        return true;
     }
 
     @Override
-    public void performRangedAttack(LivingEntity target, float distanceFactor) {
-        if (getProperties().getArms().function != null) {
-            getProperties().getArms().function.onRangedAttack(this, target, distanceFactor);
+    public void performRangedAttack(@NotNull LivingEntity target, float distanceFactor) {
+        var arms = getProperties().getArms();
+        if (arms != null && arms.function != null) {
+            arms.function.onRangedAttack(this, target, distanceFactor);
         }
     }
 
@@ -486,11 +512,8 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
     public void setFollowingOwner(boolean following) {
         byte flags = getFlags();
         boolean wasFollowing = (flags & FLAG_FOLLOWING) != 0;
-        if (following) {
-            flags |= FLAG_FOLLOWING;
-        } else {
-            flags &= ~FLAG_FOLLOWING;
-        }
+        if (following) flags |= FLAG_FOLLOWING;
+        else flags &= ~FLAG_FOLLOWING;
         setFlags(flags);
 
         if (!level().isClientSide() && wasFollowing != following) {
@@ -551,7 +574,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
         int slots = getProperties().hasTrait(EnumGolemTrait.HAULER) ? 2 : 1;
         for (int i = 0; i < slots; i++) {
-            EquipmentSlot slot = EquipmentSlot.values()[i];
+            EquipmentSlot slot = STORAGE_SLOTS[i];
             ItemStack current = getItemBySlot(slot);
 
             if (current.isEmpty()) {
@@ -564,47 +587,44 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
                 int toAdd = Math.min(stack.getCount(), space);
                 current.grow(toAdd);
                 stack.shrink(toAdd);
-                if (stack.isEmpty()) {
-                    return ItemStack.EMPTY;
-                }
+                if (stack.isEmpty()) return ItemStack.EMPTY;
             }
         }
         return stack;
     }
 
     @Override
-    public ItemStack dropItem(ItemStack stack) {
+    public ItemStack dropItem(@Nullable ItemStack stack) {
         int slots = getProperties().hasTrait(EnumGolemTrait.HAULER) ? 2 : 1;
         ItemStack result = ItemStack.EMPTY;
 
         for (int i = 0; i < slots; i++) {
-            EquipmentSlot slot = EquipmentSlot.values()[i];
+            EquipmentSlot slot = STORAGE_SLOTS[i];
             ItemStack current = getItemBySlot(slot);
-
-            if (!current.isEmpty()) {
-                if (stack == null || stack.isEmpty()) {
-                    result = current.copy();
+            if (current.isEmpty()) continue;
+            if (stack == null || stack.isEmpty()) {
+                result = current.copy();
+                setItemSlot(slot, ItemStack.EMPTY);
+                break;
+            }
+            if (ItemStack.isSameItemSameComponents(current, stack)) {
+                int toDrop = Math.min(stack.getCount(), current.getCount());
+                result = current.copy();
+                result.setCount(toDrop);
+                current.shrink(toDrop);
+                if (current.isEmpty()) {
                     setItemSlot(slot, ItemStack.EMPTY);
-                    break;
-                } else if (ItemStack.isSameItemSameComponents(current, stack)) {
-                    int toDrop = Math.min(stack.getCount(), current.getCount());
-                    result = current.copy();
-                    result.setCount(toDrop);
-                    current.shrink(toDrop);
-                    if (current.isEmpty()) {
-                        setItemSlot(slot, ItemStack.EMPTY);
-                    }
-                    break;
                 }
+                break;
             }
         }
 
         if (getProperties().hasTrait(EnumGolemTrait.HAULER)) {
-            ItemStack first = getItemBySlot(EquipmentSlot.values()[0]);
-            ItemStack second = getItemBySlot(EquipmentSlot.values()[1]);
+            ItemStack first = getItemBySlot(EquipmentSlot.MAINHAND);
+            ItemStack second = getItemBySlot(EquipmentSlot.OFFHAND);
             if (first.isEmpty() && !second.isEmpty()) {
-                setItemSlot(EquipmentSlot.values()[0], second.copy());
-                setItemSlot(EquipmentSlot.values()[1], ItemStack.EMPTY);
+                setItemSlot(EquipmentSlot.MAINHAND, second.copy());
+                setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
             }
         }
 
@@ -617,7 +637,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         int slots = getProperties().hasTrait(EnumGolemTrait.HAULER) ? 2 : 1;
 
         for (int i = 0; i < slots; i++) {
-            ItemStack current = getItemBySlot(EquipmentSlot.values()[i]);
+            ItemStack current = getItemBySlot(STORAGE_SLOTS[i]);
             if (current.isEmpty()) {
                 total += stack.getMaxStackSize();
             } else if (ItemStack.isSameItemSameComponents(current, stack)) {
@@ -655,7 +675,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         int slots = getProperties().hasTrait(EnumGolemTrait.HAULER) ? 2 : 1;
         NonNullList<ItemStack> list = NonNullList.withSize(slots, ItemStack.EMPTY);
         for (int i = 0; i < slots; i++) {
-            list.set(i, getItemBySlot(EquipmentSlot.values()[i]));
+            list.set(i, getItemBySlot(STORAGE_SLOTS[i]));
         }
         return list;
     }
@@ -688,7 +708,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
     }
 
     @Override
-    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+    protected @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (isRemoved()) return InteractionResult.PASS;
         if (player.getItemInHand(hand).getItem() == Items.NAME_TAG) return InteractionResult.PASS;
 
@@ -697,9 +717,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
             if (player.isShiftKeyDown()) {
                 playSound(ModSounds.ZAP.get(), 1.0f, 1.0f);
-                if (task != null) {
-                    task.setReserved(false);
-                }
+                if (task != null) task.setReserved(false);
                 dropCarried();
 
                 ItemStack placer = new ItemStack(ModItems.GOLEM_PLACER.get());
@@ -733,12 +751,11 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
             if (heldItem.getItem() == ModItems.GOLEM_BELL.get()
                     && arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities
                     .isResearchKnown(player, "GOLEMDIRECT")) {
-                if (task != null) {
-                    task.setReserved(false);
-                }
+                if (task != null) task.setReserved(false);
                 playSound(ModSounds.SCAN.get(), 1.0f, 1.0f);
                 boolean following = !isFollowingOwner();
                 setFollowingOwner(following);
+                IGolemProperties props = getProperties();
                 if (following) {
                     player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("golem.follow"));
                     if (arcaneresearch.common.config.ModConfig.CONFIG_GRAPHICS.showGolemEmotes) {
@@ -771,7 +788,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
         }
         int slots = getProperties().hasTrait(EnumGolemTrait.HAULER) ? 2 : 1;
         for (int i = 0; i < slots; i++) {
-            setItemSlot(EquipmentSlot.values()[i], ItemStack.EMPTY);
+            setItemSlot(STORAGE_SLOTS[i], ItemStack.EMPTY);
         }
     }
 
@@ -783,25 +800,26 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
             super.handleEntityEvent(id);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnGolemFX(byte id) {
+        double x = getX();
+        double y = getY() + getBbHeight() + 0.1;
+        double z = getZ();
         if (id == 5) {
-            FXDispatcher.INSTANCE.drawGenericParticles(getX(), getY() + getBbHeight() + 0.1, getZ(),
+            FXDispatcher.INSTANCE.drawGenericParticles(x, y, z,
                     0.0, 0.0, 0.0, 1.0f, 1.0f, 1.0f, 0.5f, false,
                     704 + (random.nextBoolean() ? 0 : 3), 3, 1, 6, 0, 2.0f, 0.0f, 1);
         } else if (id == 6) {
-            FXDispatcher.INSTANCE.drawGenericParticles(getX(), getY() + getBbHeight() + 0.1, getZ(),
+            FXDispatcher.INSTANCE.drawGenericParticles(x, y, z,
                     0.0, 0.025, 0.0, 0.1f, 1.0f, 1.0f, 0.5f, false, 15, 1, 1, 10, 0, 2.0f, 0.0f, 1);
         } else if (id == 7) {
-            FXDispatcher.INSTANCE.drawGenericParticles(getX(), getY() + getBbHeight() + 0.1, getZ(),
+            FXDispatcher.INSTANCE.drawGenericParticles(x, y, z,
                     0.0, 0.05, 0.0, 1.0f, 1.0f, 1.0f, 0.5f, false, 640, 10, 1, 10, 0, 2.0f, 0.0f, 1);
         } else if (id == 8) {
-            FXDispatcher.INSTANCE.drawGenericParticles(getX(), getY() + getBbHeight() + 0.1, getZ(),
+            FXDispatcher.INSTANCE.drawGenericParticles(x, y, z,
                     0.0, 0.01, 0.0, 1.0f, 1.0f, 0.1f, 0.5f, false, 14, 1, 1, 20, 0, 2.0f, 0.0f, 1);
         } else {
             for (int a = 0; a < 5; ++a) {
-                FXDispatcher.INSTANCE.drawGenericParticles(getX(), getY() + getBbHeight(), getZ(),
+                FXDispatcher.INSTANCE.drawGenericParticles(x, y, z,
                         random.nextGaussian() * 0.01, random.nextFloat() * 0.02, random.nextGaussian() * 0.01,
                         1.0f, 1.0f, 1.0f, 0.5f, false, 13, 1, 1, 20 + random.nextInt(20), 0,
                         0.3f + random.nextFloat() * 0.4f, 0.0f, 1);
@@ -811,9 +829,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
 
     @Override
     public void die(DamageSource source) {
-        if (task != null) {
-            task.setReserved(false);
-        }
+        if (task != null) task.setReserved(false);
         super.die(source);
         if (!level().isClientSide()) {
             dropCarried();

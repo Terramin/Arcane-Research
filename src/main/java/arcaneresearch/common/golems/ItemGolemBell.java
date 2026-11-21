@@ -31,6 +31,7 @@ import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.menu.LogisticsMenu;
 import arcaneresearch.common.menu.SealMenu;
 import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemGolemBell extends Item implements ISealDisplayer {
 
@@ -41,19 +42,23 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
     }
 
     public static void openSealGui(Player player, ISealEntity sealEntity) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
+        if (!(player instanceof ServerPlayer serverPlayer) || sealEntity == null) {
+            return;
+        }
+        SealPos sealPos = sealEntity.getSealPos();
+        if (sealPos == null) {
             return;
         }
         BlockPos sealBlockPos = sealEntity.getSealPos().pos;
         Direction sealFace = sealEntity.getSealPos().face;
         serverPlayer.openMenu( new MenuProvider() {
             @Override
-            public Component getDisplayName() {
+            public @NotNull Component getDisplayName() {
                 return Component.translatable("item.arcaneresearch.seal.blank");
             }
 
             @Override
-            public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player p) {
+            public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player p) {
                 return new SealMenu(containerId, inventory, sealEntity);
             }
         }, buf -> {
@@ -72,12 +77,12 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         }
         serverPlayer.openMenu( new MenuProvider() {
             @Override
-            public Component getDisplayName() {
+            public @NotNull Component getDisplayName() {
                 return Component.translatable("gui.arcaneresearch.logistics");
             }
 
             @Override
-            public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player p) {
+            public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player p) {
                 return new LogisticsMenu(containerId, inventory, pos, side, deliverToPlayer);
             }
         }, buf -> {
@@ -98,8 +103,7 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         if (seal != null) {
             if (player.isShiftKeyDown()) {
                 SealHandler.removeSealEntity(level, seal.getSealPos(), false);
-                level.playSound(null, pos, ModSounds.ZAP.get(),
-                        SoundSource.BLOCKS, 0.5f, 1.0f);
+                level.playSound(null, pos, ModSounds.ZAP.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
             } else {
                 openSealGui(player, seal);
             }
@@ -116,7 +120,9 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
     private static ISealEntity findLoneSealOnBlock(Level level, BlockPos pos, Direction clickedFace) {
         ISealEntity found = null;
         for (Direction d : Direction.values()) {
-            if (d == clickedFace) continue;
+            if (d == clickedFace) {
+                continue;
+            }
             ISealEntity s = SealHandler.getSealEntity(level.dimension(), new SealPos(pos, d));
             if (s != null) {
                 if (found != null) {
@@ -132,15 +138,15 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 
         Player player = context.getPlayer();
-        Level level = context.getLevel();
         if (player == null) {
             return InteractionResult.PASS;
         }
+        Level level = context.getLevel();
         player.swing(context.getHand(), net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
         if (!level.isClientSide()) {
             return handleSealClick(player, level, context.getClickedPos(), context.getClickedFace());
         }
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -186,14 +192,13 @@ public class ItemGolemBell extends Item implements ISealDisplayer {
         } else {
             player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.6f, 1.0f + level.getRandom().nextFloat() * 0.1f);
         }
-
         return super.use(level, player, hand);
     }
 
     private ISealEntity getSealFromRaytrace(Player player) {
+        Level level = player.level();
         float pitch = player.getXRot();
         float yaw = player.getYRot();
-
         Vec3 eyePos = player.getEyePosition();
 
         float cosYaw = Mth.cos(-yaw * Mth.DEG_TO_RAD - Mth.PI);

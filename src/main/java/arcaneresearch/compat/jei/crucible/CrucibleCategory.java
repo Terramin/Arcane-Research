@@ -43,7 +43,6 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     private static final int OX = 70;
     private static final int OY = 60;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
 
@@ -51,7 +50,6 @@ public class CrucibleCategory implements IRecipeCategory<CrucibleRecipeType> {
     private List<AspectSpot> cachedSpots = List.of();
 
     public CrucibleCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModBlocks.CRUCIBLE.get()));
         this.title = Component.translatable("gui.arcaneresearch.crucible");
     }

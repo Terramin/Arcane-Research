@@ -26,8 +26,6 @@ import java.util.UUID;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityFocusCloud extends Entity {
     
     @Override
@@ -136,8 +134,6 @@ public class EntityFocusCloud extends Entity {
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void renderCloudParticles(float radius) {
         if (focusPackage == null) {
             return;

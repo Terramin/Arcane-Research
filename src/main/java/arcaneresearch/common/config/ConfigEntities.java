@@ -111,8 +111,7 @@ public class ConfigEntities {
         forArc.add(entry(4, new ItemStack(Items.ENDER_EYE)));
         forArc.add(entry(4, new ItemStack(Items.ENCHANTED_GOLDEN_APPLE)));
         forInv.add(entry(4, new ItemStack(Items.SPECTRAL_ARROW)));
-        forArc.add(entry(5, new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get())));
-        
+        forArc.add(entry(5, new ItemStack(ModItems.CURIOS_RING_APPRENTICE.get())));
         forArc.add(entry(5, new ItemStack(ModItems.RUNIC_RING_LESSER.get())));
         forArc.add(entry(5, new ItemStack(ModItems.CURIO_KNOWLEDGE.get())));
         tradeInventory.put(2, forArc);

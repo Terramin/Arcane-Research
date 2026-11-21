@@ -12,6 +12,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.entities.EntityFallingTaint;
 import arcaneresearch.common.entities.EntityFluxRift;
 import arcaneresearch.common.entities.EntityFollowingItem;
+import arcaneresearch.common.entities.EntityPortal;
 import arcaneresearch.common.entities.EntitySpecialItem;
 import arcaneresearch.common.entities.construct.EntityArcaneBore;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
@@ -486,4 +487,14 @@ public class ModEntities {
                             .clientTrackingRange(10)
                             .updateInterval(20)
                             .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "falling_taint"))));
+
+    // NEOFORGE_PORT: portal entity used by the portals API (upstream 1.20.1 registration).
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityPortal>> PORTAL =
+            ENTITY_TYPES.register("portal", () ->
+                    EntityType.Builder.<EntityPortal>of(EntityPortal::new, MobCategory.MISC)
+                            .sized(1.5f, 3.0f)
+                            .clientTrackingRange(10)
+                            .updateInterval(3)
+                            .fireImmune()
+                            .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "portal"))));
 }

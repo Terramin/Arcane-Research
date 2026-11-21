@@ -12,6 +12,7 @@ import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.level.Level;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.capabilities.IPlayerWarp;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemZombieBrain extends Item {
 

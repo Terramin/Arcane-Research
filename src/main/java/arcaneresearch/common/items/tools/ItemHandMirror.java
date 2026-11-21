@@ -1,5 +1,11 @@
 package arcaneresearch.common.items.tools;
 
+import org.jetbrains.annotations.NotNull;
+
+import arcaneresearch.common.menu.HandMirrorMenu;
+import arcaneresearch.common.tiles.devices.TileMirror;
+import arcaneresearch.init.ModBlocks;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -169,12 +175,12 @@ public class ItemHandMirror extends Item {
                     
                     serverPlayer.openMenu(new MenuProvider() {
                         @Override
-                        public Component getDisplayName() {
+                        public @NotNull Component getDisplayName() {
                             return Component.translatable("container.arcaneresearch.hand_mirror");
                         }
 
                         @Override
-                        public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player menuPlayer) {
+                        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player menuPlayer) {
                             return new HandMirrorMenu(containerId, playerInventory, usedHand);
                         }
                     }, buf -> {

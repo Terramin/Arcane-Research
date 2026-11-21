@@ -27,7 +27,7 @@ public abstract class FocusModSplit extends FocusMod {
 
     @Override
     public EnumSupplyType[] willSupply() {
-        return new EnumSupplyType[] { EnumSupplyType.TRAJECTORY };
+        return new EnumSupplyType[]{EnumSupplyType.TRAJECTORY};
     }
 
     @Override

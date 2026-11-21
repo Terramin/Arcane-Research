@@ -15,6 +15,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbowAdvanced;
 
@@ -23,6 +26,8 @@ import arcaneresearch.common.entities.construct.EntityTurretCrossbowAdvanced;
 
 
 public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretCrossbowAdvanced, TurretCrossbowAdvancedRenderer.State> {
+
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
 
     public static class State extends LivingEntityRenderState {
         public float loadProgress;
@@ -74,6 +79,8 @@ public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretC
         super.submit(state, poseStack, collector, camera);
         TurretObjModel model = TurretObjModel.load(MODEL);
         if (model == null) {
+            LOGGER.once("render.turret.advanced.model", LogLevel.DEBUG,
+                    "Advanced turret model {} is unavailable", MODEL);
             return;
         }
         float loadProgress = state.loadProgress;

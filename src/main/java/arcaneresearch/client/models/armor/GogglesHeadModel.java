@@ -41,7 +41,19 @@ public class GogglesHeadModel extends EntityModel<AvatarRenderState> {
                 PartPose.ZERO);
         return LayerDefinition.create(mesh, 64, 32);
     }
-
+    
+    public static LayerDefinition createEmptyArmorLayer() {
+        MeshDefinition mesh = new MeshDefinition();
+        PartDefinition root = mesh.getRoot();
+        root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("right_arm", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("left_arm", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.ZERO);
+        root.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.ZERO);
+        return LayerDefinition.create(mesh, 64, 32);
+    }
     public void copyHeadPose(ModelPart playerHead) {
         
         this.head.loadPose(playerHead.storePose());

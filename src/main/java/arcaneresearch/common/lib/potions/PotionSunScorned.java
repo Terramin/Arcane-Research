@@ -18,13 +18,12 @@ public class PotionSunScorned extends MobEffect {
         
 
         Level level = target.level();
-        float brightness = target.getLightLevelDependentMagicValue();
         BlockPos pos = BlockPos.containing(
                 Mth.floor(target.getX()),
-                Mth.floor(target.getY()),
+                Mth.floor(target.getEyeY()),
                 Mth.floor(target.getZ())
         );
-
+        float brightness = level.getLightLevelDependentMagicValue(pos);
         if (brightness > 0.5f
                 && level.getRandom().nextFloat() * 30.0f < (brightness - 0.4f) * 2.0f
                 && level.canSeeSky(pos)) {

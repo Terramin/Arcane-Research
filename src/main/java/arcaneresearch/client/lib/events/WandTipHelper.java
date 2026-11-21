@@ -1,5 +1,5 @@
 package arcaneresearch.client.lib.events;
-
+import arcaneresearch.api.wands.IFocusHost;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -9,9 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public final class WandTipHelper {
 
     public static final float TIP_DZ_SIDE = -0.12F;
@@ -24,9 +21,9 @@ public final class WandTipHelper {
     public static boolean isRightHand(Player player) {
         try {
             boolean mainHolds =
-                    player.getMainHandItem().getItem() instanceof arcaneresearch.api.wands.IWand;
+                    player.getMainHandItem().getItem() instanceof IFocusHost;
             boolean offHolds =
-                    player.getOffhandItem().getItem() instanceof arcaneresearch.api.wands.IWand;
+                    player.getOffhandItem().getItem() instanceof IFocusHost;
             InteractionHand hand = mainHolds ? InteractionHand.MAIN_HAND
                     : (offHolds ? InteractionHand.OFF_HAND : player.getUsedItemHand());
             return (hand == InteractionHand.MAIN_HAND)
@@ -42,7 +39,7 @@ public final class WandTipHelper {
                 return 0.0F;
             }
             ItemStack use = player.getUseItem();
-            if (!(use.getItem() instanceof arcaneresearch.api.wands.IWand)) {
+            if (!(use.getItem() instanceof IFocusHost)) {
                 return 0.0F;
             }
 
@@ -58,9 +55,16 @@ public final class WandTipHelper {
     public static Vec3 tipWorld(Player player, float partialTicks) {
         return tipWorld(player, partialTicks, 0.0F, 0.0F, 0.0F);
     }
+    private static boolean holdsCaster(Player player) {
+        return (player.getMainHandItem().getItem() instanceof IFocusHost host && host.isCaster())
+                || (player.getOffhandItem().getItem() instanceof IFocusHost host2 && host2.isCaster());
+    }
 
     public static Vec3 tipWorld(Player player, float partialTicks,
                                 float modelDx, float modelDy, float modelDz) {
+        if (holdsCaster(player)) {
+            return arcaneresearch.common.items.casters.CasterAim.origin(player);
+        }
         try {
             Minecraft mc = Minecraft.getInstance();
             Camera camera = mc.gameRenderer.mainCamera();
@@ -89,6 +93,54 @@ public final class WandTipHelper {
             }
         }
     }
+    private static Vec3 thirdPersonTip(Player player, float partialTicks) {
+        Vec3 look = player.getViewVector(partialTicks);
+        Vec3 right = new Vec3(-look.z, 0.0D, look.x);
+        if (right.lengthSqr() < 1.0E-6D) {
+            right = new Vec3(1.0D, 0.0D, 0.0D);
+        } else {
+            right = right.normalize();
+        }
+        double side = isRightHand(player) ? 0.32D : -0.32D;
+        Vec3 base = new Vec3(player.getX(), player.getY() + player.getEyeHeight() * 0.8D, player.getZ());
+        return base.add(look.scale(0.55D)).add(right.scale(side)).add(0.0D, 0.1D, 0.0D);
+    }
+    private static Vec3 liveTip(Player player, float modelDx, float modelDy, float modelDz) {
+        InteractionHand hand = heldWandHand(player);
+        if (hand == null) {
+            return null;
+        }
+        Vec3 world = viewToWorld(player, hand, modelDx, modelDy, modelDz);
+        if (world != null) {
+            return world;
+        }
+        InteractionHand other = hand == InteractionHand.MAIN_HAND
+                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        return viewToWorld(player, other, modelDx, modelDy, modelDz);
+    }
+    private static InteractionHand heldWandHand(Player player) {
+        if (player.getMainHandItem().getItem() instanceof IFocusHost) {
+            return InteractionHand.MAIN_HAND;
+        }
+        if (player.getOffhandItem().getItem() instanceof IFocusHost) {
+            return InteractionHand.OFF_HAND;
+        }
+        return null;
+    }
+    private static Vec3 viewToWorld(Player player, InteractionHand hand,
+                                    float modelDx, float modelDy, float modelDz) {
+        org.joml.Vector3f view = new org.joml.Vector3f();
+        if (!arcaneresearch.client.renderers.item.WandUseAnimation.projectTip(hand,
+                modelDx, modelDy, modelDz, view)) {
+            return null;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        Camera camera = mc.gameRenderer.mainCamera();
+        org.joml.Vector3f v = new org.joml.Vector3f(-view.x, view.y, -view.z);
+        v.rotate(camera.rotation());
+        Vec3 pos = camera.position();
+        return new Vec3(pos.x + v.x, pos.y + v.y, pos.z + v.z);
+    }
     private static Vec3 solveTip(Player player, float partialTicks,
                                  float modelDx, float modelDy, float modelDz) {
         try {
@@ -97,8 +149,8 @@ public final class WandTipHelper {
             }
             ItemStack main = player.getMainHandItem();
             ItemStack off = player.getOffhandItem();
-            boolean mainWand = main.getItem() instanceof arcaneresearch.api.wands.IWand;
-            boolean offWand = off.getItem() instanceof arcaneresearch.api.wands.IWand;
+            boolean mainWand = main.getItem() instanceof IFocusHost;
+            boolean offWand = off.getItem() instanceof IFocusHost;
             if (!mainWand && !offWand) {
                 return null;
             }
@@ -140,8 +192,7 @@ public final class WandTipHelper {
             }
             org.joml.Matrix4f preM = new org.joml.Matrix4f(ps.last().pose());
             float[] preT = new float[]{preM.m30(), preM.m31(), preM.m32()};
-            arcaneresearch.api.wands.IWand wand =
-                    (arcaneresearch.api.wands.IWand) handStack.getItem();
+            IFocusHost wand = (IFocusHost) handStack.getItem();
             boolean right = arm == HumanoidArm.RIGHT;
             float dtx = (right ? 1.13F : -1.13F) * 0.0625F;
             float dty = 3.2F * 0.0625F;

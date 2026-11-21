@@ -25,7 +25,7 @@ public class ScanBlockState implements IScanThing {
         this.blockState = blockState;
         if (item) {
             ScanningManager.addScannableThing(new ScanItem(research,
-                new ItemStack(blockState.getBlock())));
+                    new ItemStack(blockState.getBlock())));
         }
     }
 

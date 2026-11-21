@@ -57,7 +57,7 @@ public class InfusionRecipe implements IArcaneresearchRecipe {
     }
 
     public boolean matches(List<ItemStack> pedestalItems, ItemStack centralItem,
-                          Level level, Player player) {
+                           Level level, Player player) {
         if (getRecipeInput() == null) return false;
 
         if (!ArcaneresearchCapabilities.isResearchKnown(player, research)) {

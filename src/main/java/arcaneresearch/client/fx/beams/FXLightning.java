@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.client.fx.BeamEngine;
 import arcaneresearch.client.fx.particles.TCSprites;
 
@@ -20,25 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
 public class FXLightning extends SingleQuadParticle implements BeamEngine.BeamEffect {
 
     private static final Identifier LARGE =

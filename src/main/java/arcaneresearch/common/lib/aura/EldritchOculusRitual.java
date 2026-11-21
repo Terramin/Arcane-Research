@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.lib.aura.INode;
 import arcaneresearch.common.lib.aura.NodeType;
@@ -56,10 +56,7 @@ public final class EldritchOculusRitual {
             if (!altar.checkForMaze()) {
                 return false;
             }
-            
-            
-            
-            if (stack.isEmpty() || !(stack.getItem() instanceof IWand wand)) {
+            if (stack.isEmpty() || !(stack.getItem() instanceof IFocusHost wand)) {
                 return false;
             }
             if (wand.getFocus(stack) != null) {

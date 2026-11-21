@@ -2,6 +2,9 @@ package arcaneresearch.api.casters;
 
 import net.minecraft.resources.Identifier;
 import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import javax.annotation.Nullable;
 import java.awt.Color;
@@ -14,7 +17,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class FocusEngine {
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
     private static final Map<String, Supplier<? extends FocusNode>> FOCUS_REGISTRY = new HashMap<>();
 
     public static final Map<String, Class<? extends FocusNode>> elements = new HashMap<>();
@@ -66,6 +69,7 @@ public class FocusEngine {
         if (factory != null) {
             return factory.get();
         }
+        LOGGER.once("focus.unknown", LogLevel.DEBUG, "Unknown focus node requested: {}", key);
         return null;
     }
 

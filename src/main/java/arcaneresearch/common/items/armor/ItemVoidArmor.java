@@ -32,7 +32,7 @@ public class ItemVoidArmor extends Item implements IWarpingGear, IRunicArmor {
 
     public ItemVoidArmor(Item.Properties props, ArmorType type) {
         
-        super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_VOID, type)
+        super(props.stacksTo(1).humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_VOID, type)
                 
                 
                 .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(

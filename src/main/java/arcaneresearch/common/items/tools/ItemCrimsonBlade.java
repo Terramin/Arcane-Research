@@ -1,5 +1,7 @@
 package arcaneresearch.common.items.tools;
 
+import arcaneresearch.api.items.IWarpingGear;
+import arcaneresearch.init.ModItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;

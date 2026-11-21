@@ -49,8 +49,6 @@ import javax.annotation.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityEldritchWarden extends EntityArcaneresearchBoss implements RangedAttackMob, IEldritchMob {
 
     private static final EntityDataAccessor<Byte> DATA_TITLE =
@@ -236,8 +234,6 @@ public class EntityEldritchWarden extends EntityArcaneresearchBoss implements Ra
             clientTick();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void clientTick() {
         if (armLiftL > 0.0f) {
             armLiftL -= 0.05f;

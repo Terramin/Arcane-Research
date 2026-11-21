@@ -1,5 +1,9 @@
 package arcaneresearch.common.items.resources;
 
+import arcaneresearch.client.fx.FXDispatcher;
+
+import net.minecraft.util.Mth;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -11,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.SwingAnimation;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -20,8 +23,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.crafting.IDustTrigger;
-import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.items.ItemTCBase;
+import arcaneresearch.common.lib.network.PacketHandler;
+import arcaneresearch.common.lib.network.fx.PacketFXMagicDustSparkles;
 import arcaneresearch.init.ModSounds;
 
 import java.util.List;
@@ -100,8 +104,6 @@ public class ItemMagicDust extends ItemTCBase {
 
         return super.useOn(context);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void doSparkles(Player player, Level level, BlockPos pos, Vec3 hitVec, InteractionHand hand, IDustTrigger trigger, IDustTrigger.Placement place) {
         float handOffset = (hand == InteractionHand.MAIN_HAND) ? 0.0f : 180.0f;
         double px = player.getX();

@@ -21,7 +21,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.api.aura.AuraHelper;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 
@@ -431,8 +430,6 @@ public class TileMirror extends TileArcaneresearch implements Container {
         }
         return super.triggerEvent(id, data);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnWispyMotes() {
         Direction face = getFacing();
         double xx = worldPosition.getX() + 0.33 + level.getRandom().nextFloat() * 0.33f - face.getStepX() / 2.0;

@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXBlockBamf;
@@ -27,7 +27,7 @@ public class NodeJarRitual {
     }
 
     public static boolean createNodeJar(ItemStack stack, Player player, Level level, BlockPos pos) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         for (int xx = -2; xx <= 0; xx++) {

@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.lib.utils.BlockUtils;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModBlocks;
@@ -136,8 +135,6 @@ public class TileHole extends TileMemory {
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnParticles(Level level) {
         for (Direction d1 : Direction.values()) {
             BlockState b1 = level.getBlockState(worldPosition.relative(d1));

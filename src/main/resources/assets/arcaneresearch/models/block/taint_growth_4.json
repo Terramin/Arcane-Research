@@ -1,6 +1,7 @@
 {
     "textures": {
-        "cross": "arcaneresearch:block/taint_growth_4"
+        "cross": "arcaneresearch:block/taint_growth_4",
+        "particle": "arcaneresearch:block/taint_growth_4"
     },
     "elements": [
         {   "from": [ 0.8, 0, 8 ],

@@ -26,7 +26,6 @@ import arcaneresearch.api.aura.AuraHelper;
 import arcaneresearch.api.internal.CommonInternals;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
 import arcaneresearch.init.ModBlockEntities;
@@ -350,8 +349,6 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         }
         return super.triggerEvent(id, param);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnLavaFX() {
         for (int a = 0; a < 5; ++a) {
             FXDispatcher.INSTANCE.furnaceLavaFx(worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), facingX, facingZ);

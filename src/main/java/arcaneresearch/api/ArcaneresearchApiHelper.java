@@ -36,7 +36,7 @@ import java.util.Locale;
 public class ArcaneresearchApiHelper {
 
     public static final Attribute CHAMPION_MOD =
-            (Attribute) new RangedAttribute("tc.mobmod", -2.0D, -2.0D, 100.0D).setSyncable(true);
+            new RangedAttribute("tc.mobmod", -2.0D, -2.0D, 100.0D).setSyncable(true);
 
     public static boolean areItemsEqual(ItemStack s1, ItemStack s2) {
         return ArcaneresearchInvHelper.areItemsEqual(s1, s2);

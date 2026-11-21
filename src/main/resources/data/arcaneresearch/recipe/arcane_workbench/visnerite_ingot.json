@@ -1,0 +1,13 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shapeless",
+  "research": "METALLURGY@2",
+  "vis": 100,
+  "crystals": {},
+  "ingredients": [
+    "minecraft:netherite_ingot",
+    "arcaneresearch:visnerite_scrap"
+  ],
+  "result": {
+    "id": "arcaneresearch:visnerite_ingot"
+  }
+}

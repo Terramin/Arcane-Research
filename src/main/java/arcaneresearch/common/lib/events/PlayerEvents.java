@@ -1,5 +1,9 @@
 package arcaneresearch.common.lib.events;
 
+import arcaneresearch.common.items.curios.CuriosityBandItem;
+import arcaneresearch.common.items.curios.RunicCurioItem;
+import arcaneresearch.common.items.wands.FocusManager;
+import arcaneresearch.message.api.StoryTellingAPI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -248,7 +252,7 @@ public class PlayerEvents {
             if (charge > runicInfo.get(id)[0]) {
                 charge = runicInfo.get(id)[0];
             } else if (charge < runicInfo.get(id)[0] && nextCycle.get(id) < time
-                    && arcaneresearch.common.items.wands.WandManager.consumeVisFromInventory(player,
+                    && FocusManager.consumeVisFromInventory(player,
                     new arcaneresearch.api.aspects.AspectList()
                             .add(arcaneresearch.api.aspects.Aspect.AIR,
                                     arcaneresearch.common.config.ModConfig.shieldCost)
@@ -286,6 +290,12 @@ public class PlayerEvents {
         if (hasPickedCrystal && !hasDream) {
             giveDreamJournal(serverPlayer);
             Arcaneresearch.LOGGER.info("Player {} received the Arcaneresearch dream", player.getName().getString());
+        }
+    }
+
+    private static void sendStoryMessage(Player player, Component text) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            StoryTellingAPI.sendStandartMsg(serverPlayer, text);
         }
     }
 
@@ -396,6 +406,17 @@ public class PlayerEvents {
                         player.getName().getString());
             }
         }
+        if (item == ModItems.CRIMSON_CULT_AMULET.get()) {
+            IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
+            if (knowledge != null && !knowledge.isResearchKnown("!gotcrimsonamulet")) {
+                knowledge.addResearch("!gotcrimsonamulet");
+                if (player instanceof ServerPlayer serverPlayer) {
+                    knowledge.sync(serverPlayer);
+                }
+                Arcaneresearch.LOGGER.info("Player {} picked up first Crimson Cult Amulet.",
+                        player.getName().getString());
+            }
+        }
     }
 
     @SubscribeEvent
@@ -415,7 +436,7 @@ public class PlayerEvents {
         if (orb == null || orb.getValue() <= 1) {
             return;
         }
-        if (!arcaneresearch.common.items.baubles.ItemCuriosityBand.isWearingBand(player)) {
+        if (!CuriosityBandItem.isWearingBand(player)) {
             return;
         }
         int d = orb.getValue() / 2;
@@ -455,8 +476,7 @@ public class PlayerEvents {
         boolean isRemedy = eaten.is(net.minecraft.world.item.Items.ROTTEN_FLESH)
                 || (ModItems.ZOMBIE_BRAIN != null && eaten.is(ModItems.ZOMBIE_BRAIN.get()));
         if (!isRemedy) {
-
-            player.sendSystemMessage(Component.translatable("warp.text.hunger.1"));
+            sendStoryMessage(player, Component.translatable("warp.text.hunger.1"));
             return;
         }
         var active = player.getEffect(effectHolder);
@@ -470,7 +490,7 @@ public class PlayerEvents {
             player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
                     effectHolder, duration, amp, true, false));
         }
-        player.sendSystemMessage(Component.translatable("warp.text.hunger.2"));
+        sendStoryMessage(player, Component.translatable("warp.text.hunger.2"));
     }
 
      
@@ -482,8 +502,8 @@ public class PlayerEvents {
         try {
             arcaneresearch.common.lib.compat.CuriosCompat.forEachCuriosItem(player, stack -> {
                 if (!stack.isEmpty()
-                        && stack.getItem() instanceof arcaneresearch.common.items.baubles.ItemRunicBauble bauble) {
-                    switch (bauble.getProc(stack)) {
+                        && stack.getItem() instanceof RunicCurioItem curio) {
+                    switch (curio.getProc(stack)) {
                         case CHARGED -> out[0]++;
                         case KINETIC -> out[1]++;
                         case HEALING -> out[2]++;

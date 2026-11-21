@@ -6,7 +6,6 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.entities.EntityFluxRift;
 import arcaneresearch.init.ModEntities;
@@ -48,8 +47,6 @@ public class EntityCausalityCollapser extends ThrowableProjectile {
             spawnCollapserFX();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnCollapserFX() {
         for (double i = 0.0; i < 3.0; ++i) {
             double coeff = i / 3.0;

@@ -23,6 +23,8 @@ import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 
@@ -91,10 +93,13 @@ public class CrystalAspectIngredient implements ICustomIngredient {
         if (stack == null || stack.isEmpty()) {
             return false;
         }
-        if (!(stack.getItem() instanceof ItemCrystalEssence crystal)) {
+        if (!(stack.getItem() instanceof ItemCrystalEssence)) {
             return false;
         }
-        AspectList contained = crystal.getAspects(stack);
+        if (aspect == null) {
+            return true;
+        }
+        AspectList contained = ((ItemCrystalEssence) stack.getItem()).getAspects(stack);
         if (contained == null || contained.size() == 0) {
             return false;
         }

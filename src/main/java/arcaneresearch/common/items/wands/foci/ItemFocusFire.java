@@ -15,8 +15,8 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.casters.FocusPackage;
 import arcaneresearch.api.casters.Trajectory;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.entities.WandEntities;
 import arcaneresearch.common.entities.projectile.EntityEmber;
 import arcaneresearch.common.entities.projectile.EntityFocusProjectile;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ItemFocusFire extends ItemFocusBasic {
+public class ItemFocusFire extends FocusItem {
 
     private static final AspectList COST_BASE = new AspectList().add(Aspect.FIRE, 2);
     private static final AspectList COST_BEAM = new AspectList().add(Aspect.FIRE, 2).add(Aspect.ORDER, 2);
@@ -42,7 +42,6 @@ public class ItemFocusFire extends ItemFocusBasic {
             "focus.upgrade.firebeam.name", "focus.upgrade.firebeam.text",
             new AspectList().add(Aspect.ENERGY, 1).add(Aspect.AIR, 1));
 
-    // Per-player таймер звука: общий экземпляр предмета не должен шарить таймер между игроками
     private static final Map<UUID, Long> SOUND_DELAY = new HashMap<>();
 
     public ItemFocusFire(net.minecraft.world.item.Item.Properties props) {
@@ -93,7 +92,7 @@ public class ItemFocusFire extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         ItemStack focusStack = wand.getFocusStack(wandstack);

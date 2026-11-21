@@ -4,8 +4,6 @@ import arcaneresearch.api.golems.IGolemAPI;
 import arcaneresearch.api.golems.parts.GolemLeg;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class GolemLegLevitator implements GolemLeg.ILegFunction {
 
     @Override
@@ -14,8 +12,6 @@ public class GolemLegLevitator implements GolemLeg.ILegFunction {
             doFlyFX(golem);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void doFlyFX(IGolemAPI golem) {
         if (!golem.getGolemEntity().onGround() || golem.getGolemEntity().tickCount % 5 == 0) {
             FXDispatcher.INSTANCE.drawGolemFlyParticles(

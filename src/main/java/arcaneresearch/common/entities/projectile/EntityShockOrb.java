@@ -12,7 +12,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.client.fx.FXDispatcher;
 
 import java.util.ArrayList;
@@ -77,8 +76,6 @@ public class EntityShockOrb extends ThrowableItemProjectile {
                 1.0F, 1.0F);
         this.discard();
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnBurstFX() {
         FXDispatcher.INSTANCE.burst(this.getX(), this.getY(), this.getZ(), 3.0F);
     }

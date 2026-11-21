@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.items.wands.ItemWand;
 import arcaneresearch.common.items.wands.WandItems;
 import arcaneresearch.common.lib.wands.WandAuraHelper;
@@ -72,7 +72,7 @@ public class EntityTurretFocus extends EntityOwnedConstruct {
             if (this.tickCount % 4 == 0) {
                 rechargeVis();
             }
-            if (this.tickCount % 40 == 0) {
+            if (this.getHealth() < this.getMaxHealth() && this.tickCount % 40 == 0) {
                 this.heal(1.0F);
             }
             if (this.attackTimer > 0) {
@@ -176,7 +176,7 @@ public class EntityTurretFocus extends EntityOwnedConstruct {
             ItemStack held = this.getMainHandItem();
             if (!held.isEmpty()) {
                 ws.setFocus(wand, held);
-                if (held.getItem() instanceof ItemFocusBasic focus
+                if (held.getItem() instanceof FocusItem focus
                         && this.getAttribute(Attributes.FOLLOW_RANGE) != null) {
                     this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(focus.getTurretRange(held));
                 }

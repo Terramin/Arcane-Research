@@ -9,6 +9,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import arcaneresearch.common.entities.projectile.EntityAlumentum;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public class ItemAlumentum extends Item {
 

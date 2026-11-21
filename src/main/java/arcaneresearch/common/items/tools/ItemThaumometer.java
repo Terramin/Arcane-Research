@@ -1,5 +1,19 @@
 package arcaneresearch.common.items.tools;
 
+import org.jetbrains.annotations.NotNull;
+
+import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
+import arcaneresearch.api.research.ScanningManager;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.client.renderers.ScanPopupRenderer;
+import arcaneresearch.common.items.ItemTC;
+import arcaneresearch.common.lib.network.PacketHandler;
+import arcaneresearch.common.lib.network.misc.PacketAuraToClient;
+import arcaneresearch.common.lib.research.ResearchManager;
+import arcaneresearch.common.lib.utils.EntityUtils;
+import arcaneresearch.common.world.aura.AuraChunk;
+import arcaneresearch.common.world.aura.AuraHandler;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -17,7 +31,6 @@ import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.ClipContext;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -97,7 +110,7 @@ public class ItemThaumometer extends ItemTC {
 
  
     @Override
-    public void onUseTick(Level tickLevel, LivingEntity entity, ItemStack stack, int count) {
+    public void onUseTick(@NotNull Level tickLevel, @NotNull LivingEntity entity, @NotNull ItemStack stack, int count) {
         if (!(entity instanceof Player player)) {
             return;
         }
@@ -156,6 +169,13 @@ public class ItemThaumometer extends ItemTC {
             BlockPos pos = hit.getBlockPos();
             return "B:" + pos.getX() + "," + pos.getY() + "," + pos.getZ();
         }
+
+        if (player.getXRot() <= 0.0f
+                && level.canSeeSky(player.blockPosition().above())
+                && level.dimension().equals(Level.OVERWORLD)) {
+            return "SKY";
+        }
+
         return "";
     }
 
@@ -213,15 +233,14 @@ public class ItemThaumometer extends ItemTC {
             ScanningManager.scanTheThing(player, blockHit.getBlockPos());
             return;
         }
-
-        ScanningManager.scanTheThing(player, (BlockPos) null);
+        ScanningManager.scanTheThing(player, null);
     }
 
     private void updateAura(ItemStack stack, Level level, ServerPlayer player) {
         AuraChunk ac = AuraHandler.getAuraChunk(level.dimension(),
                 player.blockPosition().getX() >> 4, player.blockPosition().getZ() >> 4);
         if (ac != null) {
-            if ((ac.getFlux() > ac.getVis() || ac.getFlux() > ac.getBase() / 3)
+            if ((ac.getFlux() > ac.getVis() || ac.getFlux() > (float) ac.getBase() / 3)
                     && !ArcaneresearchCapabilities.knowsResearch(player, "FLUX")) {
                 ResearchManager.startResearchWithPopup(player, "FLUX");
                 
@@ -232,8 +251,6 @@ public class ItemThaumometer extends ItemTC {
             PacketHandler.sendToPlayer(new PacketAuraToClient(ac), player);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void drawFX(Level level, Player player) {
         Entity target = getTargetEntity(level, player, SCAN_RANGE, 0.0f);
         if (target != null) {
@@ -254,10 +271,6 @@ public class ItemThaumometer extends ItemTC {
             }
         }
     }
-
-    
-    
-    @OnlyIn(Dist.CLIENT)
     public static void highlightScannables(Level level, Player player) {
         Entity target = getTargetEntity(level, player, HIGHLIGHT_RANGE, 5.0f);
         if (target != null && ScanningManager.isThingStillScannable(player, target)) {

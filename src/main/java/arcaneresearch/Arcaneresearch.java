@@ -59,6 +59,10 @@ import arcaneresearch.common.config.ConfigResearch;
 import arcaneresearch.common.config.ConfigAspects;
 import arcaneresearch.common.config.ConfigMultiblocks;
 import arcaneresearch.api.ArcaneresearchApi;
+import arcaneresearch.api.crit.CritApi;
+import arcaneresearch.api.crit.CritConfig;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.lib.events.KeyHandler;
 import arcaneresearch.client.models.armor.CultistPlateArmorModel;
 import arcaneresearch.client.models.armor.CultistRobeArmorModel;
@@ -69,17 +73,7 @@ import arcaneresearch.client.models.armor.ThaumiumArmorModel;
 import arcaneresearch.client.models.armor.VoidArmorModel;
 import arcaneresearch.client.models.armor.VoidRobeArmorModel;
 
-
-
-
-
-
-
-
-
-
-
-
+import java.util.Objects;
 
 @Mod(Arcaneresearch.MODID)
 public class Arcaneresearch {
@@ -87,9 +81,7 @@ public class Arcaneresearch {
     public static final String MODID = "arcaneresearch";
     public static final String MODNAME = "Arcaneresearch";
     public static final String VERSION = "6.2.0";
-
-    public static final Logger LOGGER = LogUtils.getLogger();
-
+    public static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.CORE);
     private static Arcaneresearch instance;
 
     public Arcaneresearch(IEventBus modEventBus, ModContainer modContainer) {
@@ -113,12 +105,16 @@ public class Arcaneresearch {
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModEntities.ENTITY_TYPES.register(modEventBus);
         ModEffects.MOB_EFFECTS.register(modEventBus);
+        // NEOFORGE_PORT: original Forge API took FMLJavaModLoadingContext; on NeoForge
+        // the mod event bus is passed directly.
+        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.LOCAL,
+                CritConfig.SPEC, "arcaneresearch-crit.toml");
+        CritApi.init(modEventBus);
         ModSounds.SOUND_EVENTS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
 
         arcaneresearch.common.items.wands.WandItems.ITEMS.register(modEventBus);
-        arcaneresearch.common.menu.WandMenuTypes.TYPES.register(modEventBus);
         arcaneresearch.common.entities.WandEntities.ENTITY_TYPES.register(modEventBus);
 
         arcaneresearch.common.blocks.aura.AuraBlocks.BLOCKS.register(modEventBus);
@@ -156,6 +152,7 @@ public class Arcaneresearch {
         if (!event.has(net.minecraft.world.entity.EntityTypes.PLAYER, Attributes.STEP_HEIGHT)) {
             event.add(net.minecraft.world.entity.EntityTypes.PLAYER, Attributes.STEP_HEIGHT);
         }
+        CritApi.addPlayerAttributes(event);
     }
 
     private void processIMC(final InterModProcessEvent event) {
@@ -163,19 +160,17 @@ public class Arcaneresearch {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-
+        LOGGER.info("Arcaneresearch v{} | Java {} ({}) | {} {} | {} MiB max heap",
+                VERSION,
+                System.getProperty("java.version"), System.getProperty("java.vendor"),
+                System.getProperty("os.name"), System.getProperty("os.arch"),
+                Runtime.getRuntime().maxMemory() / (1024L * 1024L));
         LOGGER.info("Arcaneresearch common setup");
 
         ArcaneresearchApi.internalMethods = new InternalMethodHandler();
         LOGGER.info("Initialized ArcaneresearchApi internal methods");
-
-        
-        
-        
-        
-        
-        
-        
+        // Content setup is deferred to DefaultDataComponentsBoundEvent / onServerStarting:
+        // ItemStack creation during commonSetup would run before data components are bound.
     }
 
     @SubscribeEvent
@@ -356,7 +351,8 @@ public class Arcaneresearch {
 
             event.put(ModEntities.ARCANERESEARCH_GOLEM.get(),
                     arcaneresearch.common.golems.EntityArcaneresearchGolem.createAttributes().build());
-
+            event.put(ModEntities.PORTAL.get(),
+                    arcaneresearch.common.entities.EntityPortal.createAttributes().build());
             LOGGER.info("Registered Arcaneresearch entity attributes");
         }
     }
@@ -418,14 +414,204 @@ public class Arcaneresearch {
 
             LOGGER.info("Arcaneresearch client setup");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-
-            
-            
-            
-            
-            
-            
-
+            event.enqueueWork(() -> {
+                // NEOFORGE_PORT: 1.20.1 ItemProperties / ItemBlockRenderTypes registration
+                // is data-driven in 26.x (item model definitions + item model properties).
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ARCANERESEARCH_GOLEM.get(),
+                    arcaneresearch.client.renderers.entity.GolemRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TURRET_CROSSBOW.get(),
+                    arcaneresearch.client.renderers.entity.TurretCrossbowRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TURRET_CROSSBOW_ADVANCED.get(),
+                    arcaneresearch.client.renderers.entity.TurretCrossbowAdvancedRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ARCANE_BORE.get(),
+                    arcaneresearch.client.renderers.entity.ArcaneBoreRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.PORTAL.get(),
+                    arcaneresearch.client.renderers.entity.PortalRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.PECH.get(),
+                    arcaneresearch.client.renderers.entity.PechRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.WISP.get(),
+                    arcaneresearch.client.renderers.entity.WispRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.FLUX_RIFT.get(),
+                    arcaneresearch.client.renderers.entity.FluxRiftRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.BRAINY_ZOMBIE.get(),
+                    arcaneresearch.client.renderers.entity.BrainyZombieRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.GIANT_BRAINY_ZOMBIE.get(),
+                    arcaneresearch.client.renderers.entity.BrainyZombieRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.THAUMIC_SLIME.get(),
+                    arcaneresearch.client.renderers.entity.ThaumicSlimeRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.MIND_SPIDER.get(),
+                    arcaneresearch.client.renderers.entity.MindSpiderRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.FIRE_BAT.get(),
+                    arcaneresearch.client.renderers.entity.FireBatRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.CULTIST.get(),
+                    arcaneresearch.client.renderers.entity.CultistRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.CULTIST_KNIGHT.get(),
+                    arcaneresearch.client.renderers.entity.CultistRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.CULTIST_CLERIC.get(),
+                    arcaneresearch.client.renderers.entity.CultistRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TAINT_CRAWLER.get(),
+                    arcaneresearch.client.renderers.entity.TaintCrawlerRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TAINT_SWARM.get(),
+                    arcaneresearch.client.renderers.entity.TaintSwarmRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TAINTACLE.get(),
+                    arcaneresearch.client.renderers.entity.TaintacleRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TAINTACLE_SMALL.get(),
+                    arcaneresearch.client.renderers.entity.TaintacleRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TAINTACLE_GIANT.get(),
+                    arcaneresearch.client.renderers.entity.TaintacleRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TAINT_SEED.get(),
+                    arcaneresearch.client.renderers.entity.TaintSeedRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.TAINT_SEED_PRIME.get(),
+                    arcaneresearch.client.renderers.entity.TaintSeedRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ELDRITCH_CRAB.get(),
+                    arcaneresearch.client.renderers.entity.EldritchCrabRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ELDRITCH_GUARDIAN.get(),
+                    arcaneresearch.client.renderers.entity.EldritchGuardianRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ELDRITCH_GOLEM.get(),
+                    arcaneresearch.client.renderers.entity.EldritchGolemRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.SPELL_BAT.get(),
+                    arcaneresearch.client.renderers.entity.SpellBatRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.INHABITED_ZOMBIE.get(),
+                    arcaneresearch.client.renderers.entity.InhabitedZombieRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.CULTIST_LEADER.get(),
+                    arcaneresearch.client.renderers.entity.CultistLeaderRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.CULTIST_PORTAL_LESSER.get(),
+                    arcaneresearch.client.renderers.entity.CultistPortalRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.CULTIST_PORTAL_GREATER.get(),
+                    arcaneresearch.client.renderers.entity.CultistPortalGreaterRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.GOLEM_ORB.get(),
+                    arcaneresearch.client.renderers.entity.GolemOrbRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.GOLEM_DART.get(),
+                    arcaneresearch.client.renderers.entity.GolemDartRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.PRIMAL_ARROW.get(),
+                    arcaneresearch.client.renderers.entity.PrimalArrowRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ELDRITCH_ORB.get(),
+                    arcaneresearch.client.renderers.entity.EldritchOrbRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.HOMING_SHARD.get(),
+                    arcaneresearch.client.renderers.entity.HomingShardRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.FOCUS_MINE.get(),
+                    arcaneresearch.client.renderers.entity.FocusMineRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.FOCUS_CLOUD.get(),
+                    arcaneresearch.client.renderers.entity.FocusCloudRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.GRAPPLE.get(),
+                    arcaneresearch.client.renderers.entity.GrappleRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.RIFT_BLAST.get(),
+                    arcaneresearch.client.renderers.entity.RiftBlastRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.FALLING_TAINT.get(),
+                    arcaneresearch.client.renderers.entity.FallingTaintRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.SPECIAL_ITEM.get(),
+                    arcaneresearch.client.renderers.entity.SpecialItemRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.FOLLOWING_ITEM.get(),
+                    arcaneresearch.client.renderers.entity.SpecialItemRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.FOCUS_PROJECTILE.get(),
+                    arcaneresearch.client.renderers.entity.NoProjectileRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ALUMENTUM.get(),
+                    arcaneresearch.client.renderers.entity.NoProjectileRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.CAUSALITY_COLLAPSER.get(),
+                    arcaneresearch.client.renderers.entity.NoProjectileRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.BOTTLE_TAINT.get(),
+                    arcaneresearch.client.renderers.entity.BottleTaintRenderer::new
+                );
+                net.minecraft.client.renderer.entity.EntityRenderers.register(
+                    ModEntities.ELDRITCH_WARDEN.get(),
+                    arcaneresearch.client.renderers.entity.EldritchWardenRenderer::new
+                );
+                LOGGER.info("Registered Arcaneresearch entity renderers");
+                // NEOFORGE_PORT: menu screens are registered through RegisterMenuScreensEvent below.
+            });
         }
 
         @SubscribeEvent
@@ -503,6 +689,7 @@ public class Arcaneresearch {
                 arcaneresearch.client.models.armor.GogglesHeadModel.LAYER_LOCATION,
                 arcaneresearch.client.models.armor.GogglesHeadModel::createBodyLayer
             );
+            // NEOFORGE_PORT: EMPTY_ARMOR_LAYER_LOCATION no longer exists in GogglesHeadModel.
             event.registerLayerDefinition(
                 arcaneresearch.client.models.entity.GolemModel.LAYER_LOCATION,
                 arcaneresearch.client.models.entity.GolemModel::createBodyLayer
@@ -628,6 +815,10 @@ public class Arcaneresearch {
             event.registerLayerDefinition(
                 arcaneresearch.client.models.block.ResearchTableModel.LAYER_LOCATION,
                 arcaneresearch.client.models.block.ResearchTableModel::createBodyLayer
+            );
+            event.registerLayerDefinition(
+                arcaneresearch.client.models.entity.PortalModel.LAYER_LOCATION,
+                arcaneresearch.client.models.entity.PortalModel::createBodyLayer
             );
             LOGGER.info("Registered Arcaneresearch model layers");
         }

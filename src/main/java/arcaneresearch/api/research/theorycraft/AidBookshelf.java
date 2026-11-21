@@ -11,13 +11,13 @@ public class AidBookshelf implements ITheorycraftAid {
 
     @Override
     public Class<? extends TheorycraftCard>[] getCards() {
-        return new Class[] {
-            CardBalance.class,
-            CardNotation.class,
-            CardNotation.class,
-            CardStudy.class,
-            CardStudy.class,
-            CardStudy.class
+        return new Class[]{
+                CardBalance.class,
+                CardNotation.class,
+                CardNotation.class,
+                CardStudy.class,
+                CardStudy.class,
+                CardStudy.class
         };
     }
 }

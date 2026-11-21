@@ -1,5 +1,6 @@
 package arcaneresearch.common.items.misc;
 
+import arcaneresearch.common.blocks.aura.AuraBlocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -40,9 +42,7 @@ public class ItemEldritchObeliskPlacer extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         if (player == null || context.getClickedFace() != Direction.UP) {
             return InteractionResult.PASS;
@@ -51,6 +51,8 @@ public class ItemEldritchObeliskPlacer extends Item {
         
         player.swing(InteractionHand.MAIN_HAND,
                 net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
         
         
         for (int a = 1; a <= 6; a++) {

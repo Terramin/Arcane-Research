@@ -23,6 +23,7 @@ import arcaneresearch.common.menu.slot.GhostSlot;
 import arcaneresearch.init.ModMenuTypes;
 
 import java.util.TreeMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LogisticsMenu extends AbstractContainerMenu {

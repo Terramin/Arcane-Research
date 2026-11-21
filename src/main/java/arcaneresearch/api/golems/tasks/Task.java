@@ -30,7 +30,8 @@ public class Task {
     private short lifespan;
     private byte priority = 0;
 
-    private Task() {}
+    private Task() {
+    }
 
     public Task(SealPos sealPos, BlockPos pos) {
         this.sealPos = sealPos;
@@ -39,7 +40,7 @@ public class Task {
             id = (System.currentTimeMillis() + "/BNPOS/" + pos.toString()).hashCode();
         } else {
             id = (System.currentTimeMillis() + "/B/" + sealPos.face.toString() + "/" +
-                  sealPos.pos.toString() + "/" + pos.toString()).hashCode();
+                    sealPos.pos.toString() + "/" + pos.toString()).hashCode();
         }
         type = TYPE_BLOCK;
         lifespan = 300;
@@ -52,7 +53,7 @@ public class Task {
             id = (System.currentTimeMillis() + "/ENPOS/" + entity.getId()).hashCode();
         } else {
             id = (System.currentTimeMillis() + "/E/" + sealPos.face.toString() + "/" +
-                  sealPos.pos.toString() + "/" + entity.getId()).hashCode();
+                    sealPos.pos.toString() + "/" + entity.getId()).hashCode();
         }
         type = TYPE_ENTITY;
         lifespan = 300;

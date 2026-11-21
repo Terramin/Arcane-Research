@@ -3,6 +3,7 @@ package arcaneresearch.common.golems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -21,9 +22,11 @@ import arcaneresearch.api.golems.EnumGolemTrait;
 import arcaneresearch.api.golems.IGolemProperties;
 import arcaneresearch.api.golems.ISealDisplayer;
 import arcaneresearch.init.ModEntities;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 public class ItemGolemPlacer extends Item implements ISealDisplayer {
 
@@ -34,6 +37,7 @@ public class ItemGolemPlacer extends Item implements ISealDisplayer {
     }
 
     public static ItemStack createGolemStack(Item item, IGolemProperties props, int xp) {
+        Objects.requireNonNull(props, "props");
         ItemStack stack = new ItemStack(item);
         
         
@@ -51,7 +55,7 @@ public class ItemGolemPlacer extends Item implements ISealDisplayer {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Direction side = context.getClickedFace();
@@ -112,6 +116,7 @@ public class ItemGolemPlacer extends Item implements ISealDisplayer {
                 }
                 return InteractionResult.CONSUME;
             }
+            return InteractionResult.CONSUME;
         }
 
         return InteractionResult.FAIL;

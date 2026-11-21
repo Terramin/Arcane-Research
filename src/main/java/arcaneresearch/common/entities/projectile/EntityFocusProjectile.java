@@ -25,8 +25,6 @@ import java.util.function.Predicate;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityFocusProjectile extends ThrowableProjectile {
     
 
@@ -213,8 +211,6 @@ public class EntityFocusProjectile extends ThrowableProjectile {
             renderParticleTrail();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void renderParticleTrail() {
         List<IFocusElement> elements = focusPackage.getEffects();
         if (elements == null || elements.isEmpty()) {

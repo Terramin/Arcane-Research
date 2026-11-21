@@ -45,7 +45,7 @@ public class CardNotation extends TheorycraftCard {
     public String getLocalizedText() {
 
         return Component.translatable("card.notation.text", ChatFormatting.BOLD
-                + Component.translatable("tc.research_category." + cat1).getString() + ChatFormatting.RESET,
+                        + Component.translatable("tc.research_category." + cat1).getString() + ChatFormatting.RESET,
                 ChatFormatting.BOLD + Component.translatable("tc.research_category." + cat2).getString()
                         + ChatFormatting.RESET).getString();
     }

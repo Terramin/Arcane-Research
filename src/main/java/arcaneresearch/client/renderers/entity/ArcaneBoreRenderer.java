@@ -14,6 +14,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
+import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.models.entity.ArcaneBoreModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.construct.EntityArcaneBore;
@@ -56,8 +60,8 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
     private static Vec3 rotateAroundZ(Vec3 vec, float angle) {
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
-        double x = vec.x * cos - vec.y * sin;
-        double y = vec.x * sin + vec.y * cos;
+        double x = vec.x * cos + vec.y * sin;
+        double y = vec.y * cos - vec.x * sin;
         return new Vec3(x, y, vec.z);
     }
 
@@ -95,13 +99,15 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
         if (!state.digging) {
             return;
         }
+        renderMiningBeam(state, poseStack, collector, camera);
+    }
+    private void renderMiningBeam(State state, PoseStack poseStack,
+                                  SubmitNodeCollector collector, CameraRenderState camera) {
+        poseStack.pushPose();
         Vec3 offset = new Vec3(0.5, 0.075, 0.0);
         offset = rotateAroundZ(offset, state.pitch * Mth.DEG_TO_RAD);
         offset = rotateAroundY(offset, -((state.yaw + 90.0F) * Mth.DEG_TO_RAD));
 
-        
-        
-        poseStack.pushPose();
         poseStack.translate(offset.x, state.eyeHeight + offset.y, offset.z);
         poseStack.rotate(camera.orientation);
 
@@ -109,10 +115,6 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
         RenderType glowType = TCRenderTypes.additiveTextured(NODE_TEXTURE);
         collector.submitCustomGeometry(poseStack, glowType,
                 (pose, consumer) -> renderGlowQuad(pose, consumer, 0.5F, 32, 32, frame));
-        poseStack.popPose();
-
-        poseStack.pushPose();
-        poseStack.translate(offset.x, state.eyeHeight + offset.y, offset.z);
         renderBeam(poseStack, collector, state);
         poseStack.popPose();
     }

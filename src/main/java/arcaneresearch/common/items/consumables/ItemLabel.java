@@ -1,17 +1,23 @@
 package arcaneresearch.common.items.consumables;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.blocks.ILabelable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ItemLabel extends Item {
 
@@ -48,7 +54,30 @@ public class ItemLabel extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public void appendHoverText(@NotNull ItemStack stack, Item.TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay display,
+                                java.util.function.Consumer<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, tooltip, flag);
+
+        if (!isFilled) {
+            return;
+        }
+
+        Aspect aspect = getAspect(stack);
+        if (aspect != null) {
+            tooltip.accept(Component.translatable("key.arcaneresearch.label.marked").withStyle(ChatFormatting.GOLD)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GOLD))
+                    .append(Component.translatable("tc.aspect." + aspect.getTag())
+                            .withStyle(style -> style.withColor(aspect.getColor()))));
+        } else {
+            tooltip.accept(Component.translatable("key.arcaneresearch.label.marked").withStyle(ChatFormatting.GOLD)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GOLD))
+                    .append(Component.translatable("key.arcaneresearch.label.not_set").withStyle(ChatFormatting.GRAY)));
+        }
+    }
+
+    @Override
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Direction side = context.getClickedFace();

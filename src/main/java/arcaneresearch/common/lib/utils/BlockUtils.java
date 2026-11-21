@@ -1,5 +1,6 @@
 package arcaneresearch.common.lib.utils;
 
+import arcaneresearch.Arcaneresearch;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +24,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -370,7 +373,9 @@ public class BlockUtils {
                 state.is(BlockItemTags.REDSTONE_ORES.block()) ||
                 state.is(BlockItemTags.LAPIS_ORES.block()) ||
                 state.is(BlockItemTags.DIAMOND_ORES.block()) ||
-                state.is(BlockItemTags.EMERALD_ORES.block());
+                state.is(BlockItemTags.EMERALD_ORES.block()) ||
+                // Ванильная и модовые руды (кварц, амбер, циннабар, визнерит и др.)
+                state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES);
     }
 
     public static Direction.Axis getBlockAxis(Level level, BlockPos pos) {

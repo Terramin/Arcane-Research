@@ -44,12 +44,10 @@ public class ArcaneWorkbenchCategory implements IRecipeCategory<IArcaneRecipe> {
     private static final int OX = 60;
     private static final int OY = 100;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
 
     public ArcaneWorkbenchCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModBlocks.ARCANE_WORKBENCH.get()));
         this.title = Component.translatable("gui.arcaneresearch.arcane_workbench");
     }

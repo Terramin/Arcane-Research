@@ -100,10 +100,20 @@ public class ItemTurretPlacer extends Item {
 
     private EntityOwnedConstruct createTurret(Level level, BlockPos pos, UseOnContext context) {
         return switch (turretType) {
-            case BASIC_CROSSBOW -> new EntityTurretCrossbow(
-                    ModEntities.TURRET_CROSSBOW.get(), level, pos);
-            case ADVANCED_CROSSBOW -> new EntityTurretCrossbowAdvanced(
-                    ModEntities.TURRET_CROSSBOW_ADVANCED.get(), level, pos);
+            case BASIC_CROSSBOW -> {
+                EntityTurretCrossbow turret = new EntityTurretCrossbow(
+                        ModEntities.TURRET_CROSSBOW.get(), level, pos);
+                turret.setBaseYaw(context.getPlayer() != null ?
+                        context.getPlayer().getYRot() : 0.0f);
+                yield turret;
+            }
+            case ADVANCED_CROSSBOW -> {
+                EntityTurretCrossbowAdvanced turret = new EntityTurretCrossbowAdvanced(
+                        ModEntities.TURRET_CROSSBOW_ADVANCED.get(), level, pos);
+                turret.setBaseYaw(context.getPlayer() != null ?
+                        context.getPlayer().getYRot() : 0.0f);
+                yield turret;
+            }
             case ARCANE_BORE -> {
 
                 Direction facing = context.getPlayer() != null ?

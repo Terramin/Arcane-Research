@@ -19,38 +19,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.crafting.DeconstructTile;
 import arcaneresearch.init.ModItems;
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
 public class DeconstructTileRenderer implements BlockEntityRenderer<DeconstructTile, DeconstructTileRenderer.State> {
 
     private static final float TAG_SCALE = 0.024F;

@@ -76,7 +76,7 @@ public class matrix
     }
 
     public static double[][] uroty_cs_d(double cosine, double sine) {
-        return ROTX_CS(cosine, sine);
+        return ROTY_CS(cosine, sine);
     }
 
     public static void roty_cs_d(double cosine, double sine) {
@@ -84,7 +84,7 @@ public class matrix
     }
 
     public static double[][] urotz_cs_d(double cosine, double sine) {
-        return ROTX_CS(cosine, sine);
+        return ROTZ_CS(cosine, sine);
     }
 
     public static void rotz_cs_d(double cosine, double sine) {
@@ -232,14 +232,19 @@ public class matrix
     }
 
     public static double[][] urot_omega_d(double[] axis) {
-        double[][] m = null;
+        if (axis.length != 3) {
+            throw new GLEException("Length of axis parameter != 3. This is not a valid vector!");
+        }
+        double magnitude = Math.sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
+        if (magnitude == 0.0) {
+            throw new GLEException("Zero-length omega vector. This is not a valid rotation!");
+        }
         double[] ax = new double[3];
-        double len = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2];
-        len = 1.0 / Math.sqrt(len);
-        ax[0] = axis[0] * len;
-        ax[1] = axis[1] * len;
-        ax[2] = axis[2] * len;
-        return urot_axis_d(len, ax);
+        ax[0] = axis[0] / magnitude;
+        ax[1] = axis[1] / magnitude;
+        ax[2] = axis[2] / magnitude;
+        // |omega| is the rotation angle; the vector itself defines the axis.
+        return urot_axis_d(magnitude, ax);
     }
 
     public static double[] VEC_ZERO() {

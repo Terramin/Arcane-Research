@@ -27,8 +27,7 @@ import arcaneresearch.common.lib.network.misc.PacketItemToClientContainer;
 import arcaneresearch.init.ModMenuTypes;
 
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import java.util.List;
 @Deprecated
 public class ContainerLogistics extends AbstractContainerMenu {
     private final ContainerData data;
@@ -75,7 +74,7 @@ public class ContainerLogistics extends AbstractContainerMenu {
         TreeMap<String, ItemStack> ti = new TreeMap<String, ItemStack>();
         if (full) {
             newTotal = 0;
-            CopyOnWriteArrayList<SealEntity> seals = SealHandler.getSealsInRange(worldObj, player.blockPosition(), 32);
+            List<SealEntity> seals = SealHandler.getSealsInRange(worldObj, player.blockPosition(), 32);
             for (SealEntity seal : seals) {
                 if (seal.getSeal() instanceof SealProvide sealProvide && seal.getOwner().equals(player.getUUID().toString())) {
                     ResourceHandler<ItemResource> handler = ArcaneresearchInvHelper.getItemHandlerAt(worldObj, seal.getSealPos().pos, seal.getSealPos().face);
@@ -226,7 +225,7 @@ public class ContainerLogistics extends AbstractContainerMenu {
         if (stack.isEmpty() || amount <= 0) {
             return;
         }
-        CopyOnWriteArrayList<SealEntity> seals = SealHandler.getSealsInRange(worldObj, player.blockPosition(), 32);
+        List<SealEntity> seals = SealHandler.getSealsInRange(worldObj, player.blockPosition(), 32);
         for (SealEntity seal : seals) {
             if (seal.getSeal() instanceof SealProvide && seal.getOwner().equals(player.getUUID().toString())) {
                 ResourceHandler<ItemResource> handler = ArcaneresearchInvHelper.getItemHandlerAt(worldObj, seal.getSealPos().pos, seal.getSealPos().face);

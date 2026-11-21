@@ -1,8 +1,10 @@
 package arcaneresearch.common.lib.network.misc;
 
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.casters.ICaster;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.common.items.wands.FocusManager;
+
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -53,13 +55,13 @@ public class PacketFocusChangeToServer implements CustomPacketPayload {
             }
 
             ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (!mainHand.isEmpty() && mainHand.getItem() instanceof ICaster) {
+            if (!mainHand.isEmpty() && mainHand.getItem() instanceof IFocusHost) {
                 changeFocus(mainHand, player, packet.focus);
                 return;
             }
 
             ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (!offHand.isEmpty() && offHand.getItem() instanceof ICaster) {
+            if (!offHand.isEmpty() && offHand.getItem() instanceof IFocusHost) {
                 changeFocus(offHand, player, packet.focus);
             }
         });
@@ -67,10 +69,9 @@ public class PacketFocusChangeToServer implements CustomPacketPayload {
 
     private static void changeFocus(ItemStack casterStack, ServerPlayer player, String focusKey) {
         if ("REMOVE".equals(focusKey)) {
-
-            CasterManager.removeFocus(casterStack, player);
+            FocusManager.removeFocus(casterStack, player);
         } else {
-            CasterManager.changeFocus(casterStack, player.level(), player, focusKey);
+            FocusManager.changeFocus(casterStack, player.level(), player, focusKey);
         }
     }
 }

@@ -1,5 +1,7 @@
 package arcaneresearch.common.items.tools;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
@@ -30,7 +32,7 @@ public class ItemPrimalCrusher extends Item implements IWarpingGear {
     }
 
     @Override
-    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
+    public boolean isCorrectToolForDrops(@NotNull ItemStack stack, BlockState state) {
         if (state.is(BlockTags.MINEABLE_WITH_AXE) || state.is(BlockTags.LEAVES)
                 || state.is(BlockTags.FLOWERS) || state.is(BlockTags.SAPLINGS)
                 
@@ -45,8 +47,7 @@ public class ItemPrimalCrusher extends Item implements IWarpingGear {
     }
 
     @Override
-    public float getDestroySpeed(ItemStack stack, BlockState state) {
-
+    public float getDestroySpeed(@NotNull ItemStack stack, BlockState state) {
         if (state.is(BlockTags.MINEABLE_WITH_PICKAXE) || state.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
             return PRIMAL_VOID_TIER.speed();
         }

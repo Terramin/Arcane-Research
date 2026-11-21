@@ -1,0 +1,586 @@
+package arcaneresearch.common.items.wands;
+
+import arcaneresearch.api.ArcaneresearchInvHelper;
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.api.items.IArchitect;
+import arcaneresearch.api.items.IVisDiscountGear;
+import arcaneresearch.api.wands.FocusItem;
+import arcaneresearch.api.wands.FocusUpgradeType;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.common.items.curios.AmuletVisItem;
+import arcaneresearch.common.items.casters.ItemFocusPouch;
+import arcaneresearch.common.items.wands.foci.ItemFocusTrade;
+import arcaneresearch.common.lib.wands.WandResearchHelper;
+import arcaneresearch.common.lib.wands.WandSounds;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
+import arcaneresearch.init.ModEffects;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.neoforged.fml.ModList;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class FocusManager {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
+
+    static HashMap<Integer, Long> cooldownServer = new HashMap<>();
+    static HashMap<Integer, Long> cooldownClient = new HashMap<>();
+
+    @SuppressWarnings("resource")
+    private static boolean isClientSide(LivingEntity entity) {
+        return entity.level().isClientSide();
+    }
+
+    public static int getBaseChargeRate(Player player, boolean currentItem, int slot) {
+        if (slot < 9) {
+            if (WandResearchHelper.isResearchComplete(player, "NODETAPPER2")) {
+                return 3;
+            }
+            if (WandResearchHelper.isResearchComplete(player, "NODETAPPER1")) {
+                return 2;
+            }
+        }
+        return currentItem ? 1 : 0;
+    }
+
+    public static float getTotalVisDiscount(Player player) {
+        return getTotalVisDiscount(player, null);
+    }
+
+    public static float getTotalVisDiscount(Player player, Aspect aspect) {
+        if (player == null) {
+            return 0.0F;
+        }
+
+        int total = 0;
+
+        if (ModList.get().isLoaded("curios")) {
+            final int[] curiosTotal = {0};
+            try {
+                CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach((slotId, slotHandler) -> {
+                    for (int i = 0; i < slotHandler.getSlots(); i++) {
+                        ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
+                        if (!worn.isEmpty() && worn.getItem() instanceof IVisDiscountGear gear) {
+                            curiosTotal[0] += gear.getVisDiscount(worn, player);
+                        }
+                    }
+                }));
+            } catch (Exception e) {
+                LOGGER.warn("Failed to scan Curios for {}", player.getName().getString(), e);
+            }
+            total += curiosTotal[0];
+        }
+
+        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+            ItemStack armor = player.getItemBySlot(slot);
+            if (!armor.isEmpty() && armor.getItem() instanceof IVisDiscountGear gear) {
+                total += gear.getVisDiscount(armor, player);
+            }
+        }
+
+        if (ModEffects.VIS_EXHAUST.isBound() && ModEffects.INFECTIOUS_VIS_EXHAUST.isBound()) {
+            MobEffectInstance visExhaust = player.getEffect(ModEffects.VIS_EXHAUST);
+            MobEffectInstance infectious = player.getEffect(ModEffects.INFECTIOUS_VIS_EXHAUST);
+            if (visExhaust != null || infectious != null) {
+                int level1 = visExhaust != null ? visExhaust.getAmplifier() : -1;
+                int level2 = infectious != null ? infectious.getAmplifier() : -1;
+                total -= (Math.max(level1, level2) + 1) * 10;
+            }
+        }
+
+        return total / 100.0F;
+    }
+
+    public static boolean consumeVisFromInventory(Player player, AspectList cost) {
+        return consumeVisFromInventory(player, cost, false);
+    }
+
+    public static boolean consumeVisFromInventory(Player player, AspectList cost, boolean simulate) {
+        if (ModList.get().isLoaded("curios")) {
+            try {
+                final boolean[] done = {false};
+                CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
+                    if (done[0]) return;
+                    for (var slotHandler : handler.getCurios().values()) {
+                        for (int i = 0; i < slotHandler.getSlots(); i++) {
+                            ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
+                            if (!worn.isEmpty()
+                                    && worn.getItem() instanceof AmuletVisItem amulet
+                                    && amulet.consumeAllVis(worn, player, cost, !simulate, true)) {
+                                done[0] = true;
+                                break;
+                            }
+                        }
+                        if (done[0]) break;
+                    }
+                });
+                if (done[0]) {
+                    return true;
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Failed to consume vis from Curios for {}", player.getName().getString(), e);
+            }
+        }
+
+        net.minecraft.world.entity.player.Inventory inv = player.getInventory();
+        List<ItemStack> items = inv.getNonEquipmentItems();
+        for (int a = items.size() - 1; a >= 0; a--) {
+            ItemStack stack = items.get(a);
+            if (!stack.isEmpty() && stack.getItem() instanceof IFocusHost wand
+                    && wand.consumeAllVis(stack, player, cost, simulate, true)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isValidFocus(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof FocusItem)) {
+            return false;
+        }
+        return !(stack.getItem() instanceof arcaneresearch.common.items.casters.ItemFocus)
+                || arcaneresearch.common.items.casters.ItemFocus.getPackage(stack) != null;
+    }
+
+    private static void stowFocus(Player player, ItemStack focus,
+                                  HashMap<Integer, Integer> pouches, List<CurioPouchRef> curioPouches) {
+        if (focus == null || focus.isEmpty()) {
+            return;
+        }
+        if (!addFocusToPouch(player, focus.copy(), pouches, curioPouches)
+                && !player.getInventory().add(focus.copy())) {
+            player.drop(focus.copy(), false, net.minecraft.util.Prediction.SERVER_ONLY);
+        }
+    }
+
+    public static boolean removeFocus(ItemStack wandStack, Player player) {
+        if (!(wandStack.getItem() instanceof IFocusHost host)) {
+            return false;
+        }
+        if (host.getFocusStack(wandStack).isEmpty()) {
+            return false;
+        }
+        changeFocus(wandStack, player.level(), player, "REMOVE");
+        return host.getFocus(wandStack) == null;
+    }
+
+    public static void changeFocus(ItemStack wandStack, Level level, Player player, String focus) {
+        if (!(wandStack.getItem() instanceof IFocusHost wand)) {
+            return;
+        }
+        LOGGER.debug("Focus change requested by {}: {}", player.getName().getString(), focus);
+
+        TreeMap<String, Integer> foci = new TreeMap<>();
+        HashMap<Integer, Integer> pouches = new HashMap<>();
+        ItemStack item = ItemStack.EMPTY;
+        List<CurioPouchRef> curioPouches = new ArrayList<>();
+        AtomicInteger pouchCounter = new AtomicInteger();
+
+        try {
+            CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach((slotId, slotHandler) -> {
+                for (int i = 0; i < slotHandler.getSlots(); i++) {
+                    ItemStack worn = slotHandler.getStacks().getStackInSlot(i);
+                    if (!worn.isEmpty() && worn.getItem() instanceof ItemFocusPouch pouch) {
+                        int pouchId = pouchCounter.incrementAndGet();
+                        curioPouches.add(new CurioPouchRef(slotHandler, i));
+                        NonNullList<ItemStack> pinv = pouch.getInventory(worn);
+                        for (int q = 0; q < pinv.size(); q++) {
+                            ItemStack f = pinv.get(q);
+                            if (isValidFocus(f)) {
+                                FocusItem basic = (FocusItem) f.getItem();
+                                foci.put(basic.getSortingHelper(f), q + pouchId * 1000);
+                            }
+                        }
+                    }
+                }
+            }));
+        } catch (Exception e) {
+            LOGGER.warn("Failed to scan Curios pouches for {}", player.getName().getString(), e);
+        }
+
+        int pouchcount = pouchCounter.get();
+        for (int ci = 0; ci < curioPouches.size(); ci++) {
+            pouches.put(ci + 1, -1000 - ci);
+        }
+
+        List<ItemStack> inv = player.getInventory().getNonEquipmentItems();
+        for (int a = 0; a < inv.size(); a++) {
+            item = inv.get(a);
+            if (isValidFocus(item)) {
+                FocusItem basic = (FocusItem) item.getItem();
+                foci.put(basic.getSortingHelper(item), a);
+            }
+            if (!item.isEmpty() && item.getItem() instanceof ItemFocusPouch pouch) {
+                pouchcount++;
+                pouches.put(pouchcount, a);
+                NonNullList<ItemStack> pinv = pouch.getInventory(item);
+                for (int q = 0; q < pinv.size(); q++) {
+                    ItemStack f = pinv.get(q);
+                    if (isValidFocus(f)) {
+                        FocusItem basic = (FocusItem) f.getItem();
+                        foci.put(basic.getSortingHelper(f), q + pouchcount * 1000);
+                    }
+                }
+            }
+        }
+
+        LOGGER.debug("Focus change {}: {} available foci found", player.getName().getString(), foci.size());
+        if ("REMOVE".equals(focus) || foci.isEmpty()) {
+            LOGGER.debug("Focus change {}: removing focus", player.getName().getString());
+            if (wand.getFocus(wandStack) != null) {
+                stowFocus(player, wand.getFocusStack(wandStack), pouches, curioPouches);
+                wand.setFocus(wandStack, ItemStack.EMPTY);
+                level.playSound(null, player.blockPosition(), WandSounds.cameraticls(),
+                        SoundSource.PLAYERS, 0.3F, 0.9F);
+            }
+            return;
+        }
+
+        if (focus != null) {
+            String newkey = focus;
+            if (!foci.containsKey(newkey)) {
+                newkey = foci.higherKey(newkey);
+            }
+            if (newkey == null || !foci.containsKey(newkey)) {
+                newkey = foci.firstKey();
+            }
+            int loc = foci.get(newkey);
+            LOGGER.debug("Focus change {}: selected {} at location {}", player.getName().getString(), newkey, loc);
+
+            if (loc < 1000 && loc >= 0) {
+                item = inv.get(loc).copy();
+            } else {
+                int pid = loc / 1000;
+                if (!pouches.containsKey(pid)) {
+                    return;
+                }
+                int pouchslot = pouches.get(pid);
+                int focusslot = loc - pid * 1000;
+                if (pouchslot <= -1000) {
+                    CurioPouchRef ref = curioPouches.get(-1000 - pouchslot);
+                    ItemStack pouch = ref.handler().getStacks().getStackInSlot(ref.slot()).copy();
+                    item = fetchFocusFromCurioPouch(player, focusslot, pouch, ref);
+                } else {
+                    ItemStack pouch = inv.get(pouchslot).copy();
+                    item = fetchFocusFromPouch(player, focusslot, pouch, pouchslot);
+                }
+            }
+
+            if (!item.isEmpty()) {
+                if (loc < 1000 && loc >= 0) {
+                    inv.set(loc, ItemStack.EMPTY);
+                }
+            } else {
+                return;
+            }
+
+            level.playSound(null, player.blockPosition(), WandSounds.cameraticls(),
+                    SoundSource.PLAYERS, 0.3F, 1.0F);
+
+            if (wand.getFocus(wandStack) != null) {
+                stowFocus(player, wand.getFocusStack(wandStack), pouches, curioPouches);
+                wand.setFocus(wandStack, ItemStack.EMPTY);
+            }
+
+            if (wand.getFocus(wandStack) == null) {
+                wand.setFocus(wandStack, item);
+            } else if (!addFocusToPouch(player, item, pouches, curioPouches)) {
+                player.getInventory().add(item);
+            }
+        }
+    }
+
+    private static ItemStack fetchFocusFromPouch(Player player, int focusid, ItemStack pouch, int pouchslot) {
+        ItemStack focus = ItemStack.EMPTY;
+        if (!(pouch.getItem() instanceof ItemFocusPouch pouchItem)) {
+            return focus;
+        }
+        NonNullList<ItemStack> pinv = pouchItem.getInventory(pouch);
+        if (focusid < 0 || focusid >= pinv.size()) {
+            return focus;
+        }
+        ItemStack contents = pinv.get(focusid);
+        if (!contents.isEmpty() && contents.getItem() instanceof FocusItem) {
+            focus = contents.copy();
+            pinv.set(focusid, ItemStack.EMPTY);
+            pouchItem.setInventory(pouch, pinv);
+            if (pouchslot >= 0) {
+                player.getInventory().setItem(pouchslot, pouch);
+                player.getInventory().setChanged();
+            }
+        }
+        return focus;
+    }
+
+    private static ItemStack fetchFocusFromCurioPouch(Player player, int focusid, ItemStack pouch,
+                                                      CurioPouchRef ref) {
+        ItemStack focus = ItemStack.EMPTY;
+        if (!(pouch.getItem() instanceof ItemFocusPouch pouchItem)) {
+            return focus;
+        }
+        NonNullList<ItemStack> pinv = pouchItem.getInventory(pouch);
+        if (focusid < 0 || focusid >= pinv.size()) {
+            return focus;
+        }
+        ItemStack contents = pinv.get(focusid);
+        if (!contents.isEmpty() && contents.getItem() instanceof FocusItem) {
+            focus = contents.copy();
+            pinv.set(focusid, ItemStack.EMPTY);
+            pouchItem.setInventory(pouch, pinv);
+            ref.handler().getStacks().setStackInSlot(ref.slot(), pouch);
+        }
+        return focus;
+    }
+
+    private static boolean addFocusToPouch(Player player, ItemStack focus, HashMap<Integer, Integer> pouches,
+                                           List<CurioPouchRef> curioPouches) {
+        for (int pouchslot : pouches.values()) {
+            if (pouchslot < 0) {
+                continue;
+            }
+            ItemStack pouch = player.getInventory().getItem(pouchslot);
+            if (pouch.isEmpty() || !(pouch.getItem() instanceof ItemFocusPouch pouchItem)) {
+                continue;
+            }
+            NonNullList<ItemStack> pinv = pouchItem.getInventory(pouch);
+            for (int q = 0; q < pinv.size(); q++) {
+                if (pinv.get(q).isEmpty()) {
+                    pinv.set(q, focus.copy());
+                    pouchItem.setInventory(pouch, pinv);
+                    player.getInventory().setItem(pouchslot, pouch);
+                    player.getInventory().setChanged();
+                    return true;
+                }
+            }
+        }
+        for (CurioPouchRef ref : curioPouches) {
+            ItemStack pouch = ref.handler().getStacks().getStackInSlot(ref.slot());
+            if (pouch.isEmpty() || !(pouch.getItem() instanceof ItemFocusPouch pouchItem)) {
+                continue;
+            }
+            NonNullList<ItemStack> pinv = pouchItem.getInventory(pouch);
+            for (int q = 0; q < pinv.size(); q++) {
+                if (pinv.get(q).isEmpty()) {
+                    pinv.set(q, focus.copy());
+                    pouchItem.setInventory(pouch, pinv);
+                    ref.handler().getStacks().setStackInSlot(ref.slot(), pouch);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static void toggleMisc(ItemStack stack, Level level, Player player, int modifier) {
+        toggleMisc(stack, level, player);
+    }
+
+    public static void toggleMisc(ItemStack stack, Level level, Player player) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
+            return;
+        }
+        if (wand.getFocus(stack) != null && wand.getFocus(stack) instanceof IArchitect
+                && wand.getFocus(stack).isUpgradedWith(wand.getFocusStack(stack), FocusUpgradeType.architect)) {
+            int dim = getAreaDim(stack);
+            if (player.isCrouching()) {
+                dim++;
+                if (dim > (wand.getFocusStack(stack).getItem() instanceof ItemFocusTrade ? 2 : 3)) {
+                    dim = 0;
+                }
+                setAreaDim(stack, dim);
+            } else {
+                int areax = getAreaX(stack);
+                int areay = getAreaY(stack);
+                int areaz = getAreaZ(stack);
+                if (dim == 0) {
+                    areax++;
+                    areaz++;
+                    areay++;
+                } else if (dim == 1) {
+                    areax++;
+                } else if (dim == 2) {
+                    areaz++;
+                } else if (dim == 3) {
+                    areay++;
+                }
+                if (areax > wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack))) {
+                    areax = 0;
+                }
+                if (areaz > wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack))) {
+                    areaz = 0;
+                }
+                if (areay > wand.getFocus(stack).getMaxAreaSize(wand.getFocusStack(stack))) {
+                    areay = 0;
+                }
+                setAreaX(stack, areax);
+                setAreaY(stack, areay);
+                setAreaZ(stack, areaz);
+            }
+        }
+    }
+
+    public static int getAreaDim(ItemStack stack) {
+        CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
+        if (tag != null && tag.contains("aread")) {
+            return tag.getIntOr("aread", 0);
+        }
+        return 0;
+    }
+
+    public static int getAreaX(ItemStack stack) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
+            return 1;
+        }
+        FocusItem focus = wand.getFocus(stack);
+        if (focus == null) {
+            return 1;
+        }
+
+        ItemStack focusStack = wand.getFocusStack(stack);
+        int maxArea = focus.getMaxAreaSize(focusStack);
+
+        CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
+        if (tag != null && tag.contains("areax")) {
+            int a = tag.getIntOr("areax", maxArea);
+            if (a > maxArea) {
+                a = maxArea;
+            }
+            return a;
+        }
+        return maxArea;
+    }
+
+    public static int getAreaY(ItemStack stack) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
+            return 1;
+        }
+        FocusItem focus = wand.getFocus(stack);
+        if (focus == null) {
+            return 1;
+        }
+
+        ItemStack focusStack = wand.getFocusStack(stack);
+        int maxArea = focus.getMaxAreaSize(focusStack);
+
+        CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
+        if (tag != null && tag.contains("areay")) {
+            int a = tag.getIntOr("areay", maxArea);
+            if (a > maxArea) {
+                a = maxArea;
+            }
+            return a;
+        }
+        return maxArea;
+    }
+
+    public static int getAreaZ(ItemStack stack) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
+            return 1;
+        }
+        FocusItem focus = wand.getFocus(stack);
+        if (focus == null) {
+            return 1;
+        }
+
+        ItemStack focusStack = wand.getFocusStack(stack);
+        int maxArea = focus.getMaxAreaSize(focusStack);
+
+        CompoundTag tag = ArcaneresearchInvHelper.getCustomTag(stack);
+        if (tag != null && tag.contains("areaz")) {
+            int a = tag.getIntOr("areaz", maxArea);
+            if (a > maxArea) {
+                a = maxArea;
+            }
+            return a;
+        }
+        return maxArea;
+    }
+
+    public static void setAreaX(ItemStack stack, int area) {
+        CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
+        tag.putInt("areax", area);
+        ArcaneresearchInvHelper.setCustomTag(stack, tag);
+    }
+
+    public static void setAreaY(ItemStack stack, int area) {
+        CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
+        tag.putInt("areay", area);
+        ArcaneresearchInvHelper.setCustomTag(stack, tag);
+    }
+
+    public static void setAreaZ(ItemStack stack, int area) {
+        CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
+        tag.putInt("areaz", area);
+        ArcaneresearchInvHelper.setCustomTag(stack, tag);
+    }
+
+    public static void setAreaDim(ItemStack stack, int dim) {
+        CompoundTag tag = ArcaneresearchInvHelper.getOrCreateCustomTag(stack);
+        tag.putInt("aread", dim);
+        ArcaneresearchInvHelper.setCustomTag(stack, tag);
+    }
+
+    private static long cdToMillis(int cd) {
+        return cd * 50L;
+    }
+
+    public static boolean isOnCooldown(LivingEntity entity) {
+        Map<Integer, Long> map = isClientSide(entity) ? cooldownClient : cooldownServer;
+        Long end = map.get(entity.getId());
+        return end != null && end > System.currentTimeMillis();
+    }
+
+    public static float getCooldown(LivingEntity entity) {
+        Map<Integer, Long> map = isClientSide(entity) ? cooldownClient : cooldownServer;
+        Long end = map.get(entity.getId());
+        if (end == null) {
+            return 0.0F;
+        }
+
+        long remaining = end - System.currentTimeMillis();
+        return remaining > 0 ? (float) remaining / 1000.0F : 0.0F;
+    }
+
+    public static void setCooldown(LivingEntity entity, int cd) {
+        if (cd <= 0) {
+            cooldownClient.remove(entity.getId());
+            cooldownServer.remove(entity.getId());
+            return;
+        }
+
+        long endTime = System.currentTimeMillis() + cdToMillis(cd);
+        LOGGER.once("focus.cooldown", LogLevel.DEBUG,
+                "Focus cooldown set to {} for {}", cd, entity.getName().getString());
+        if (isClientSide(entity)) {
+            cooldownClient.put(entity.getId(), endTime);
+        } else {
+            cooldownServer.put(entity.getId(), endTime);
+        }
+    }
+
+    public static void clearCooldown(LivingEntity entity) {
+        cooldownClient.remove(entity.getId());
+        cooldownServer.remove(entity.getId());
+    }
+
+    private record CurioPouchRef(ICurioStacksHandler handler, int slot) {
+    }
+}

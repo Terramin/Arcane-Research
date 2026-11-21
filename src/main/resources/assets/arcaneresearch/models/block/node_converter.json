@@ -1,9 +1,9 @@
 ﻿{
     "parent": "minecraft:block/block",
     "textures": {
-        "particle": "arcaneresearch:block/node_converter",
-        "metal": "arcaneresearch:block/node_converter",
-        "glow": "arcaneresearch:block/node_converter_over"
+        "metal": "arcaneresearch:models/node_converter",
+        "glow": "arcaneresearch:models/node_converter_over",
+        "particle": "arcaneresearch:models/node_converter"
     },
     "elements": [
         {

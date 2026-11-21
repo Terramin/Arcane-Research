@@ -14,7 +14,6 @@ import arcaneresearch.api.aspects.IEssentiaTransport;
 import arcaneresearch.api.aura.AuraHelper;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.blocks.devices.BlockCondenserLattice;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
@@ -85,8 +84,6 @@ public class TileCondenser extends TileArcaneresearch implements IEssentiaTransp
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileCondenser tile) {
 
         if (tile.latticeCount < 0) {

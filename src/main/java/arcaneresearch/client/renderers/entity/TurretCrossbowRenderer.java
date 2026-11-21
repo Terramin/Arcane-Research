@@ -8,6 +8,9 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.resources.Identifier; 
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.models.entity.CrossbowModel;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
 

@@ -1,6 +1,7 @@
 package arcaneresearch.api.research;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -62,9 +63,9 @@ public class ScanOreDictionary implements IScanThing {
             return entry;
         }
         String[][] prefixes = {
-            { "ore", "ores" }, { "ingot", "ingots" }, { "block", "storage_blocks" },
-            { "plate", "plates" }, { "gem", "gems" }, { "dust", "dusts" },
-            { "nugget", "nuggets" }
+                {"ore", "ores"}, {"ingot", "ingots"}, {"block", "storage_blocks"},
+                {"plate", "plates"}, {"gem", "gems"}, {"dust", "dusts"},
+                {"nugget", "nuggets"}
         };
         for (String[] prefix : prefixes) {
             if (entry.startsWith(prefix[0]) && entry.length() > prefix[0].length()) {

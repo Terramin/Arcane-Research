@@ -96,9 +96,6 @@ public class StabilizerRenderer implements BlockEntityRenderer<StabilizerTile, S
                 : new float[]{1.0F, 1.0F, 1.0F};
         int overlay = OverlayTexture.NO_OVERLAY;
 
-        
-        
-        
         poseStack.pushPose();
         poseStack.translate(0.5, 0.0, 0.5);
         poseStack.rotate(Axis.XP.rotationDegrees(-90.0F));

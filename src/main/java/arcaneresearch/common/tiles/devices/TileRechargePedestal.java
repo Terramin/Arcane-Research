@@ -15,7 +15,6 @@ import arcaneresearch.api.items.IRechargable;
 import arcaneresearch.api.items.RechargeHelper;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
 import arcaneresearch.init.ModBlockEntities;
 
@@ -147,8 +146,6 @@ public class TileRechargePedestal extends TileArcaneresearchInventory implements
         }
         return super.triggerEvent(id, param);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnVisSparkle(int param) {
         FXDispatcher.INSTANCE.visSparkle(
                 worldPosition.getX() + level.getRandom().nextInt(3) - level.getRandom().nextInt(3),

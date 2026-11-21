@@ -1,28 +1,54 @@
 {
   "variants": {
-    "facing=down": {
-      "model": "arcaneresearch:block/levitator",
+    "enabled=false,facing=down": {
+      "model": "arcaneresearch:block/levitator_off",
       "x": 180
     },
-    "facing=east": {
-      "model": "arcaneresearch:block/levitator",
+    "enabled=true,facing=down": {
+      "model": "arcaneresearch:block/levitator_on",
+      "x": 180
+    },
+    "enabled=false,facing=east": {
+      "model": "arcaneresearch:block/levitator_off",
       "x": 90,
       "y": 90
     },
-    "facing=north": {
-      "model": "arcaneresearch:block/levitator",
+    "enabled=true,facing=east": {
+      "model": "arcaneresearch:block/levitator_on",
+      "x": 90,
+      "y": 90
+    },
+    "enabled=false,facing=north": {
+      "model": "arcaneresearch:block/levitator_off",
       "x": 90
     },
-    "facing=south": {
-      "model": "arcaneresearch:block/levitator",
+    "enabled=true,facing=north": {
+      "model": "arcaneresearch:block/levitator_on",
+      "x": 90
+    },
+    "enabled=false,facing=south": {
+      "model": "arcaneresearch:block/levitator_off",
       "x": 90,
       "y": 180
     },
-    "facing=up": {
-      "model": "arcaneresearch:block/levitator"
+    "enabled=true,facing=south": {
+      "model": "arcaneresearch:block/levitator_on",
+      "x": 90,
+      "y": 180
     },
-    "facing=west": {
-      "model": "arcaneresearch:block/levitator",
+    "enabled=false,facing=up": {
+      "model": "arcaneresearch:block/levitator_off"
+    },
+    "enabled=true,facing=up": {
+      "model": "arcaneresearch:block/levitator_on"
+    },
+    "enabled=false,facing=west": {
+      "model": "arcaneresearch:block/levitator_off",
+      "x": 90,
+      "y": 270
+    },
+    "enabled=true,facing=west": {
+      "model": "arcaneresearch:block/levitator_on",
       "x": 90,
       "y": 270
     }

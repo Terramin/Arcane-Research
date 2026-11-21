@@ -3,16 +3,6 @@ package arcaneresearch.invscan;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
 
- 
-
-
-
-
-
-
-
-
- 
 public final class ScreenAccess {
 
     private ScreenAccess() {

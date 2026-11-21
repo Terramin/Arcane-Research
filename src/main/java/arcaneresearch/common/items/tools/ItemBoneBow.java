@@ -1,5 +1,7 @@
 package arcaneresearch.common.items.tools;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -35,15 +37,11 @@ public class ItemBoneBow extends BowItem {
         
         
         
-        super(props.durability(512).enchantable(3).repairable(net.minecraft.world.item.Items.BONE));
+        super(props.stacksTo(1).durability(512).enchantable(3).repairable(net.minecraft.world.item.Items.BONE));
     }
 
     @Override
-    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
-        
-        
-        
-        
+    public void onUseTick(@NotNull Level level, @NotNull LivingEntity entity, @NotNull ItemStack stack, int remainingUseDuration) {
         if (entity instanceof Player player
                 && getUseDuration(stack, entity) - remainingUseDuration > 18) {
             player.releaseUsingItem();
@@ -52,12 +50,7 @@ public class ItemBoneBow extends BowItem {
 
       
     private static int fireArrowLoose(ItemStack stack, Level level, Player player, int charge, boolean hasAmmo) {
-        ArrowLooseEvent event = new ArrowLooseEvent(player, stack, level, charge, hasAmmo);
-        NeoForge.EVENT_BUS.post(event);
-        if (event.isCanceled()) {
-            return -1;
-        }
-        return event.getCharge();
+        return net.neoforged.neoforge.event.EventHooks.onArrowLoose(stack, level, player, charge);
     }
 
     private static Holder<Enchantment> ench(Level level, ResourceKey<Enchantment> key) {

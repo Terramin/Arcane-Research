@@ -79,4 +79,12 @@ public final class TCShaderHandler {
     public static void onPlayerLoggedOut(UUID uuid) {
         APPLIED.remove(uuid);
     }
+
+    /**
+     * NeoForge 26.x no longer exposes the legacy shader instance used by the
+     * blurred-vision effect, so there is currently no active blur to mask.
+     */
+    public static boolean isBlurActive() {
+        return false;
+    }
 }

@@ -33,8 +33,6 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityCultistLeader extends EntityArcaneresearchBoss implements RangedAttackMob {
 
     private static final EntityDataAccessor<Byte> DATA_TITLE =
@@ -218,8 +216,6 @@ public class EntityCultistLeader extends EntityArcaneresearchBoss implements Ran
             level().broadcastEntityEvent(this, (byte) 20);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnSpawnFX() {
         for (int i = 0; i < 20; ++i) {
             double d0 = random.nextGaussian() * 0.05;

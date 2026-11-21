@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import org.joml.Vector3f;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.lib.obj.MeshLoader;
 import arcaneresearch.client.lib.obj.MeshModel;
 import arcaneresearch.client.lib.obj.MeshPart;

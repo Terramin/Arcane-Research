@@ -98,6 +98,7 @@
     "arcaneresearch:paving_stone_travel",
     "arcaneresearch:paving_stone_barrier",
     "arcaneresearch:matrix_speed",
-    "arcaneresearch:matrix_cost"
+    "arcaneresearch:matrix_cost",
+    "arcaneresearch:visnerite_ore"
   ]
 }

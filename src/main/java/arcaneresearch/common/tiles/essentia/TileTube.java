@@ -1,5 +1,15 @@
 package arcaneresearch.common.tiles.essentia;
 
+import arcaneresearch.api.ArcaneresearchApiHelper;
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.IEssentiaTransport;
+import arcaneresearch.api.casters.IInteractWithCaster;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.config.ModConfig;
+import arcaneresearch.common.blocks.essentia.BlockTube;
+import arcaneresearch.common.tiles.TileArcaneresearch;
+import arcaneresearch.init.ModBlockEntities;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -20,7 +30,6 @@ import arcaneresearch.api.aspects.IEssentiaTransport;
 import arcaneresearch.api.casters.IInteractWithCaster;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
@@ -33,6 +42,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class TileTube extends TileArcaneresearch implements IEssentiaTransport, IInteractWithCaster {
 
     public static final int TICK_FREQ = 5;
+    protected static final Direction[] DIRECTIONS = Direction.values();
 
     public Direction facing = Direction.NORTH;
 
@@ -79,8 +89,6 @@ public class TileTube extends TileArcaneresearch implements IEssentiaTransport, 
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileTube tile) {
         if (tile.venting > 0) {
             tile.venting--;
@@ -432,7 +440,23 @@ public class TileTube extends TileArcaneresearch implements IEssentiaTransport, 
     @Override
     public boolean onCasterRightClick(Level level, ItemStack casterStack, Player player,
                                       BlockPos pos, Direction side, InteractionHand hand) {
-
+        if (player == null) return false;
+        int subHit = BlockTube.getSubHit(level, pos, player);
+        if (subHit >= 0 && subHit < 6) {
+            Direction dir = DIRECTIONS[subHit];
+            level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
+                    0.9f + level.getRandom().nextFloat() * 0.2f);
+            player.swing(hand, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
+            toggleSide(dir);
+            return true;
+        }
+        if (subHit == 6) {
+            level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
+                    0.9f + level.getRandom().nextFloat() * 0.2f);
+            player.swing(hand, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
+            cycleFacing();
+            return true;
+        }
         if (player.isShiftKeyDown()) {
             level.playSound(player, worldPosition, ModSounds.TOOL.get(), SoundSource.BLOCKS, 0.5f,
                     0.9f + level.getRandom().nextFloat() * 0.2f);

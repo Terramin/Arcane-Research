@@ -1,6 +1,7 @@
 package arcaneresearch.common.lib.research;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -26,8 +27,8 @@ public class ScanSky implements IScanThing {
         if (!player.level().dimension().equals(Level.OVERWORLD)) return false;
 
         if (!ArcaneresearchCapabilities.knowsResearchStrict(player, "CELESTIALSCANNING")) return false;
-
-        return true;
+        SkyState sky = computeSkyState(player, player.level());
+        return sky.aligned() || sky.isNight();
     }
 
     @Override
@@ -37,11 +38,8 @@ public class ScanSky implements IScanThing {
         if (!ArcaneresearchCapabilities.knowsResearchStrict(player, "CELESTIALSCANNING")) return;
 
         Level level = player.level();
+        SkyState sky = computeSkyState(player, level);
 
-        
-        
-        
-        
         int yaw = (int) (player.getYRot() + 90.0f) % 360;
         int pitch = (int) Math.abs(player.getXRot());
         int celestialAngle = (int) ((level.getOverworldClockTime() / 24000.0 + 0.25) * 360.0) % 360;
@@ -84,9 +82,7 @@ public class ScanSky implements IScanThing {
                 player.sendOverlayMessage(Component.translatable("tc.celestial.fail.2"));
             }
             cleanResearch(player, dayPrefix);
-
-        } else if (isNight) {
-
+        } else if (sky.isNight()) {
             int starDirection = getStarDirection(player);
             String key = dayPrefix + "Star" + starDirection;
 
@@ -119,15 +115,35 @@ public class ScanSky implements IScanThing {
     }
 
     private int getStarDirection(Player player) {
-        float yaw = player.getYRot();
+        return switch (player.getDirection()) {
+            case NORTH -> 0;
+            case SOUTH -> 1;
+            case WEST -> 2;
+            default -> 3;
+        };
+    }
 
-        while (yaw < 0) yaw += 360;
-        while (yaw >= 360) yaw -= 360;
+    private record SkyState(boolean isNight, boolean aligned) {
+    }
 
-        if (yaw < 45 || yaw >= 315) return 0;
-        if (yaw < 135) return 1;
-        if (yaw < 225) return 2;
-        return 3;
+    private SkyState computeSkyState(Player player, Level level) {
+        int yaw = (int) Mth.wrapDegrees(player.getYRot() + 90.0f);
+        int pitch = (int) Math.abs(player.getXRot());
+
+        int celestialAngle = (int) ((level.getOverworldClockTime() % 24000L) * 360.0 / 24000.0) % 360;
+        boolean isNight = celestialAngle > 180;
+        int bodyAngle = isNight ? celestialAngle - 180 : celestialAngle;
+
+        boolean inRangeYaw;
+        boolean inRangePitch;
+        if (bodyAngle > 90) {
+            inRangeYaw = Math.abs(Math.abs(yaw) - 180) < 10;
+            inRangePitch = Math.abs(180 - bodyAngle - pitch) < 7;
+        } else {
+            inRangeYaw = Math.abs(yaw) < 10;
+            inRangePitch = Math.abs(bodyAngle - pitch) < 7;
+        }
+        return new SkyState(isNight, inRangeYaw && inRangePitch);
     }
 
     private void giveNote(Player player, int meta) {

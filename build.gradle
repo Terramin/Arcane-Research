@@ -131,6 +131,11 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version_neoforge}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version_neoforge}"
 
+    // Ported from Forge 1.20.1: JVM-only unit tests (no Minecraft bootstrap).
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
@@ -193,11 +198,21 @@ publishing {
     }
 }
 
+// ModDevGradle exposes Minecraft only on the main compile classpath; unit tests
+// that touch MC types need that classpath propagated explicitly.
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    // Resource tests read sources directly, independent of processResources.
+    systemProperty 'arcaneresearch.resources.dir', file('src/main/resources').absolutePath
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-    // NEOFORGE_PORT: cap errors at 600 for fast triage (auto-exit after 600).
-    // GREEN_BUILD: raised to 20000 so one compile shows all errors per iteration.
-    options.compilerArgs += ['-Xmaxerrs', '20000']
+    // Cap javac diagnostics so a failed port iteration cannot exhaust the Gradle daemon heap.
+    options.compilerArgs += ['-Xmaxerrs', '300']
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.

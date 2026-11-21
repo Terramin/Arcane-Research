@@ -1,5 +1,5 @@
 package arcaneresearch.init;
-
+import arcaneresearch.api.wands.IFocusHostWand;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -30,7 +30,7 @@ public class ModCreativeTabs {
                     .title(Component.translatable("itemGroup.arcaneresearch"))
                     .icon(() -> new ItemStack(ModItems.THAUMONOMICON.get()))
                     .displayItems((parameters, output) -> {
-
+                        acceptBlock(output, ModBlocks.VISNERITEORE.get());
                         acceptBlock(output, ModBlocks.AMBER_ORE.get());
                         acceptBlock(output, ModBlocks.CINNABAR_ORE.get());
                         acceptBlock(output, ModBlocks.QUARTZ_ORE.get());
@@ -113,6 +113,10 @@ public class ModCreativeTabs {
 
                         acceptBlock(output, ModBlocks.TABLE_WOOD.get());
                         acceptBlock(output, ModBlocks.TABLE_STONE.get());
+                        Item singleTableItem = arcaneresearch.discovered.table.DiscoveredTableSetup.getSingleTableItem();
+                        if (singleTableItem != null) {
+                            output.accept(singleTableItem);
+                        }
                         acceptBlock(output, ModBlocks.PEDESTAL_ARCANE.get());
                         acceptBlock(output, ModBlocks.PEDESTAL_ANCIENT.get());
                         acceptBlock(output, ModBlocks.PEDESTAL_ELDRITCH.get());
@@ -294,7 +298,9 @@ public class ModCreativeTabs {
                         acceptBlock(output, ModBlocks.FLUX_SCRUBBER.get());
 
                         output.accept(ModItems.THAUMONOMICON.get());
-
+                        output.accept(ModItems.THAUMONOMICON_CREATIVE.get());
+                        output.accept(ModItems.THAUMONOMICON_WRITTEN.get());
+                        output.accept(ModItems.PORTAL_SCROLL.get());
                         if (arcaneresearch.common.config.ModConfig.allowCheatSheet) {
                             output.accept(ModItems.THAUMONOMICON_CHEAT.get());
                         }
@@ -329,6 +335,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.QUICKSILVER.get());
                         output.accept(ModItems.THAUMIUM_INGOT.get());
                         output.accept(ModItems.VOID_METAL_INGOT.get());
+                        output.accept(ModItems.VISNERITEINGOT.get());
                         output.accept(ModItems.BRASS_INGOT.get());
 
                         output.accept(Items.IRON_NUGGET);
@@ -339,6 +346,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.QUICKSILVER_NUGGET.get());
                         output.accept(ModItems.THAUMIUM_NUGGET.get());
                         output.accept(ModItems.VOID_METAL_NUGGET.get());
+                        output.accept(ModItems.VISNERITESCRAP.get());
                         output.accept(ModItems.BRASS_NUGGET.get());
                         output.accept(ModItems.QUARTZ_NUGGET.get());
                         output.accept(ModItems.RAREEARTH_NUGGET.get());
@@ -365,6 +373,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.SALIS_MUNDUS.get());
                         output.accept(ModItems.MIRRORED_GLASS.get());
                         output.accept(ModItems.VOID_SEED.get());
+                        output.accept(ModItems.CRIMSON_CULT_AMULET.get());
                         output.accept(ModItems.BRAIN_CLOCKWORK.get());
                         output.accept(ModItems.BRAIN_CURIOUS.get());
                         output.accept(ModItems.GOLEM_MODULE_AGGRESSION.get());
@@ -470,6 +479,7 @@ public class ModCreativeTabs {
                                 EnumInfusionEnchantment.DESTRUCTIVE, 1,
                                 EnumInfusionEnchantment.REFINING, 1));
                         output.accept(ModItems.CRIMSON_BLADE.get());
+                        output.accept(ModItems.CRIMSON_CULT_BLADE.get());
                         output.accept(ModItems.GRAPPLE_GUN.get());
                         output.accept(ModItems.GRAPPLE_GUN_TIP.get());
                         output.accept(ModItems.GRAPPLE_GUN_SPOOL.get());
@@ -550,14 +560,13 @@ public class ModCreativeTabs {
                         output.accept(runicMaxed(ModItems.CRIMSON_PRAETOR_HELM.get()));
                         output.accept(runicMaxed(ModItems.CRIMSON_PRAETOR_CHEST.get()));
                         output.accept(runicMaxed(ModItems.CRIMSON_PRAETOR_LEGS.get()));
-
-                        output.accept(ModItems.BAUBLE_AMULET_MUNDANE.get());
-                        output.accept(ModItems.BAUBLE_RING_MUNDANE.get());
-                        output.accept(ModItems.BAUBLE_GIRDLE_MUNDANE.get());
-                        output.accept(ModItems.BAUBLE_RING_APPRENTICE.get());
-                        output.accept(ModItems.BAUBLE_AMULET_FANCY.get());
-                        output.accept(ModItems.BAUBLE_RING_FANCY.get());
-                        output.accept(ModItems.BAUBLE_GIRDLE_FANCY.get());
+                        output.accept(ModItems.CURIOS_AMULET_MUNDANE.get());
+                        output.accept(ModItems.CURIOS_RING_MUNDANE.get());
+                        output.accept(ModItems.CURIOS_GIRDLE_MUNDANE.get());
+                        output.accept(ModItems.CURIOS_RING_APPRENTICE.get());
+                        output.accept(ModItems.CURIOS_AMULET_FANCY.get());
+                        output.accept(ModItems.CURIOS_RING_FANCY.get());
+                        output.accept(ModItems.CURIOS_GIRDLE_FANCY.get());
                         output.accept(ModItems.RUNIC_AMULET.get());
                         output.accept(ModItems.RUNIC_AMULET_EMERGENCY.get());
                         output.accept(ModItems.RUNIC_RING_LESSER.get());
@@ -607,7 +616,6 @@ public class ModCreativeTabs {
                         output.accept(createSceptreStack("wood", "iron"));
                         output.accept(createSceptreStack("greatwood", "gold"));
                         output.accept(createSceptreStack("silverwood", "thaumium"));
-                        output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_POUCH.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FIRE.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FROST.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_SHOCK.get());
@@ -669,7 +677,7 @@ public class ModCreativeTabs {
     private static ItemStack createWandStack(arcaneresearch.api.wands.WandRod rod,
                                              arcaneresearch.api.wands.WandCap cap) {
         ItemStack stack = new ItemStack(arcaneresearch.common.items.wands.WandItems.WAND.get());
-        if (stack.getItem() instanceof arcaneresearch.api.wands.IWand wand) {
+        if (stack.getItem() instanceof IFocusHostWand wand) {
             wand.setRod(stack, rod);
             wand.setCap(stack, cap);
         }
@@ -696,7 +704,7 @@ public class ModCreativeTabs {
 
     private static ItemStack createSceptreStack(String rodTag, String capTag) {
         ItemStack stack = new ItemStack(arcaneresearch.common.items.wands.WandItems.WAND.get());
-        if (stack.getItem() instanceof arcaneresearch.api.wands.IWand wand) {
+        if (stack.getItem() instanceof IFocusHostWand wand) {
             arcaneresearch.api.wands.WandRod rod =
                     arcaneresearch.api.wands.WandRod.rods.get(rodTag);
             arcaneresearch.api.wands.WandCap cap =

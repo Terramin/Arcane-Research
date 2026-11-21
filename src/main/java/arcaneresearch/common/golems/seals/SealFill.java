@@ -1,5 +1,14 @@
 package arcaneresearch.common.golems.seals;
 
+import arcaneresearch.Arcaneresearch;
+import arcaneresearch.api.ArcaneresearchInvHelper;
+import arcaneresearch.api.golems.EnumGolemTrait;
+import arcaneresearch.api.golems.IGolemAPI;
+import arcaneresearch.api.golems.seals.ISealConfigToggles;
+import arcaneresearch.api.golems.seals.ISealEntity;
+import arcaneresearch.api.golems.tasks.Task;
+import arcaneresearch.common.golems.tasks.TaskHandler;
+import arcaneresearch.common.lib.utils.InventoryUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
@@ -25,6 +34,15 @@ import java.util.Random;
 
 public class SealFill extends SealFiltered implements ISealConfigToggles {
 
+    private static final int TOGGLE_EXIST = 4;
+    private static final int DELAY_RANGE = 50;
+    private static final int TICK_PERIOD = 20;
+    private static final Identifier ICON =
+            Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "item/seals/seal_fill");
+    private static final int[] GUI_CATEGORIES = {1, 0, 4};
+    private static final EnumGolemTrait[] REQUIRED_TAGS = new EnumGolemTrait[0];
+    private static final EnumGolemTrait[] FORBIDDEN_TAGS = {EnumGolemTrait.CLUMSY};
+
     protected SealToggle[] props;
     private int delay;
     private int watchedTask = Integer.MIN_VALUE;
@@ -49,7 +67,7 @@ public class SealFill extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public void tickSeal(Level level, ISealEntity seal) {
-        if (delay++ % 20 != 0) {
+        if (delay++ % TICK_PERIOD != 0) {
             return;
         }
         Task oldTask = TaskHandler.getTask(level.dimension(), watchedTask);
@@ -120,6 +138,7 @@ public class SealFill extends SealFiltered implements ISealConfigToggles {
                 golem.swingArm();
             }
         }
+
         task.setSuspended(true);
         return true;
     }
@@ -155,6 +174,7 @@ public class SealFill extends SealFiltered implements ISealConfigToggles {
                 }
                 return true;
             }
+            return false;
         }
         return false;
     }
@@ -171,17 +191,17 @@ public class SealFill extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[]{1, 0, 4};
+        return GUI_CATEGORIES;
     }
 
     @Override
     public EnumGolemTrait[] getRequiredTags() {
-        return null;
+        return REQUIRED_TAGS;
     }
 
     @Override
     public EnumGolemTrait[] getForbiddenTags() {
-        return new EnumGolemTrait[]{EnumGolemTrait.CLUMSY};
+        return FORBIDDEN_TAGS;
     }
 
     @Override

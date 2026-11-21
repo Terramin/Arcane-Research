@@ -1,5 +1,5 @@
 package arcaneresearch.client.renderers.entity;
-
+import arcaneresearch.api.wands.IFocusHost;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -101,7 +101,7 @@ public class GrappleRenderer extends EntityRenderer<EntityGrapple, GrappleRender
             if (thrower instanceof net.minecraft.world.entity.player.Player player
                     && Minecraft.getInstance().getCameraEntity() == thrower
                     && player.getItemInHand(grapple.getHand()).getItem()
-                            instanceof arcaneresearch.api.wands.IWand) {
+                            instanceof IFocusHost) {
                 try {
                     Vec3 tip = arcaneresearch.client.lib.events.WandTipHelper.tipWorld(player, partialTicks,
                             0.0F, 0.0F, arcaneresearch.client.lib.events.WandTipHelper.TIP_DZ_SIDE);

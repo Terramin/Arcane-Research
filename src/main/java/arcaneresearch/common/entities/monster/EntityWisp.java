@@ -22,7 +22,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.items.resources.ItemWispEssence;
@@ -181,8 +180,6 @@ public class EntityWisp extends Mob implements Enemy {
             spawnDeathBurst();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnDeathBurst() {
         FXDispatcher.INSTANCE.burst(getX(), getY() + 0.45, getZ(), 1.0f);
     }

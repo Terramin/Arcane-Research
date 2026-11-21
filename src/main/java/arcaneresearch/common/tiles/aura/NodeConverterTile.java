@@ -10,6 +10,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.blocks.aura.BlockAiry;
+import arcaneresearch.common.blocks.aura.BlockEnergizedNode;
 import arcaneresearch.common.lib.aura.NodeModifier;
 import arcaneresearch.common.lib.aura.NodeType;
 import arcaneresearch.common.tiles.TileArcaneresearch;
@@ -19,15 +20,6 @@ import arcaneresearch.common.tiles.aura.TileNodeEnergized;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
- 
-
-
-
-
-
- 
 public class NodeConverterTile extends TileArcaneresearch {
     public int count = -1;
     public int status = 0;
@@ -41,8 +33,6 @@ public class NodeConverterTile extends TileArcaneresearch {
     public static void serverTick(Level level, BlockPos pos, BlockState state, NodeConverterTile tile) {
         tile.serverTick();
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, NodeConverterTile tile) {
         if (tile.count > 50 && level.getRandom().nextBoolean()) {
             double x = pos.getX() + 0.25D + level.getRandom().nextFloat() * 0.5D;
@@ -104,6 +94,9 @@ public class NodeConverterTile extends TileArcaneresearch {
         } else if (this.count < 1000) {
             this.count++;
             drainBelow();
+            if (this.count > 50) {
+                TransducerTile.spawnNodeBolts(level, this.worldPosition, hasStabilizer());
+            }
         }
         if (this.count > 1000) {
             this.count = 1000;
@@ -146,6 +139,43 @@ public class NodeConverterTile extends TileArcaneresearch {
         }
     }
 
+    protected void revertEnergized(BlockPos belowPos) {
+        if (level == null || level.isClientSide()) return;
+
+        BlockEntity below = level.getBlockEntity(belowPos);
+        if (!(below instanceof TileNodeEnergized en)
+                || !level.getBlockState(belowPos).is(AuraBlocks.ENERGIZED_NODE.get())) return;
+
+        AspectList base = en.getAuraBase().copy();
+        NodeType type = en.getNodeType();
+        NodeModifier mod = en.getNodeModifier();
+        String nid = en.getId();
+
+        level.removeBlock(belowPos, false);
+        level.setBlockAndUpdate(belowPos, AuraBlocks.AURA_NODE.get().defaultBlockState());
+
+        BlockEntity fresh = level.getBlockEntity(belowPos);
+        if (fresh instanceof AuraNodeTile node) {
+            node.setNodeModifier(mod);
+            node.setNodeType(type);
+            node.setId(nid);
+            node.setAspects(base);
+
+            Aspect[] snapshot = node.getAspects().getAspects();
+            for (Aspect a : snapshot) {
+                if (a != null) {
+                    node.takeFromContainer(a, node.getAspects().getAmount(a));
+                }
+            }
+
+            node.setChanged();
+        }
+
+        this.status = 0;
+        setChanged();
+        level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
     public void checkStatus() {
         Level level = getLevel();
         if (level == null || level.isClientSide()) {
@@ -157,8 +187,10 @@ public class NodeConverterTile extends TileArcaneresearch {
         BlockPos belowPos = this.worldPosition.below();
         BlockState belowState = level.getBlockState(belowPos);
         BlockEntity below = level.getBlockEntity(belowPos);
+        boolean powered = level.hasNeighborSignal(this.worldPosition);
+
         if (isStagingAiry(belowPos)) {
-            if (hasStabilizer()) {
+            if (powered && hasStabilizer()) {
                 this.status = 1;
             } else {
                 restoreNode();
@@ -312,8 +344,6 @@ public class NodeConverterTile extends TileArcaneresearch {
         }
         return super.triggerEvent(id, param);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnBurstFX(Level level) {
         arcaneresearch.client.fx.FXDispatcher.INSTANCE.burst(
                 this.worldPosition.getX() + 0.5D, this.worldPosition.getY() - 0.5D,

@@ -332,6 +332,7 @@ public class EssentiaHandler {
                     }
                 }
             }
+            sourceList.add(new WorldCoordinates(tileLoc.pos, level));
         }
 
         if (!sourceList.isEmpty()) {

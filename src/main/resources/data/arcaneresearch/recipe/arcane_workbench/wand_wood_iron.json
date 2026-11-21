@@ -1,4 +1,4 @@
-﻿{
+{
   "type": "arcaneresearch:arcane_workbench_shaped",
   "research": "",
   "vis": 60,
@@ -16,16 +16,16 @@
     "C  "
   ],
   "key": {
-    "C": {
-      "neoforge:ingredient_type": "neoforge:components",
-      "items": "arcaneresearch:wand_cap",
-      "strict": false,
-      "components": { "minecraft:custom_data": {"cap":"iron"} }
-    },
+    "C": "arcaneresearch:wand_cap",
     "R": "minecraft:stick"
   },
   "result": {
     "id": "arcaneresearch:wand",
-    "components": { "minecraft:custom_data": {"rod":"wood","cap":"iron"} }
+    "components": {
+      "minecraft:custom_data": {
+        "rod": "wood",
+        "cap": "iron"
+      }
+    }
   }
 }

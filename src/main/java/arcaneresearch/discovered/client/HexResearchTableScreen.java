@@ -14,45 +14,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.discovered.table.HexResearchGame;
 import arcaneresearch.discovered.table.HexResearchNoteData;
 import arcaneresearch.discovered.table.HexResearchTableMenu;
 import arcaneresearch.discovered.table.HexUtils;
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
 public class HexResearchTableScreen extends AbstractContainerScreen<HexResearchTableMenu> {
 
     private static final int GUI_W = 255;

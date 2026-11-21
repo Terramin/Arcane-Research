@@ -21,8 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.models.block.ResearchTableModel;
@@ -32,8 +30,6 @@ import arcaneresearch.discovered.table.HexNoteTableTile;
 import arcaneresearch.helper.IDsHelper;
 import arcaneresearch.init.ModItems;
 import org.jspecify.annotations.NonNull;
-
-@OnlyIn(Dist.CLIENT)
 public class HexNoteTableRenderer implements BlockEntityRenderer<HexNoteTableTile, HexNoteTableRenderer.State> {
 
     private static final Identifier QUILL_TEXTURE =

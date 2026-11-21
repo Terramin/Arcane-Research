@@ -10,7 +10,7 @@
   ],
   "key": {
     "A": "minecraft:arrow",
-    "S": {"neoforge:ingredient_type": "arcaneresearch:crystal", "aspect": "aqua"}
+    "S": "#arcaneresearch:clusters"
   },
   "result": {
     "id": "arcaneresearch:primal_arrow_water",

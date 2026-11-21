@@ -20,8 +20,6 @@ import arcaneresearch.init.ModEntities;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityGolemOrb extends ThrowableProjectile {
 
     private static final EntityDataAccessor<Boolean> DATA_RED =
@@ -113,8 +111,6 @@ public class EntityGolemOrb extends ThrowableProjectile {
 
         discard();
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnHitFX() {
         FXDispatcher.INSTANCE.burst(getX(), getY(), getZ(), 1.0f);
     }

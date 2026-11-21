@@ -98,9 +98,9 @@ public class LayerTainted<S extends LivingEntityRenderState, M extends EntityMod
             }
         }
 
-        private static <S extends LivingEntityRenderState, M extends EntityModel<? super S>> void addTaintedLayer(
-                LivingEntityRenderer<?, S, M> renderer) {
-            renderer.addLayer(new LayerTainted<>(renderer));
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        private static void addTaintedLayer(LivingEntityRenderer<?, ?, ?> renderer) {
+            renderer.addLayer(new LayerTainted<>((LivingEntityRenderer) renderer));
         }
     }
 }

@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHostWand;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.api.wands.WandCap;
 import arcaneresearch.api.wands.WandRod;
 import arcaneresearch.client.renderers.TCRenderTypes;
@@ -154,7 +154,7 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
 
     @Override
     public @Nullable WandData extractArgument(ItemStack stack) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHostWand wand)) {
             return null;
         }
         WandRod rod = wand.getRod(stack);
@@ -165,7 +165,7 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
             
             return new WandData("wood", false, "iron", false, "", -1);
         }
-        ItemFocusBasic focus = null;
+        FocusItem focus = null;
         try {
             focus = wand.getFocus(stack);
         } catch (Exception ignored) {
@@ -216,10 +216,10 @@ public class WandSpecialRenderer implements SpecialModelRenderer<WandSpecialRend
         Identifier capTex = rawTexture(cap != null ? cap.getTexture() : null, FALLBACK_CAP);
         
         float fr = 1.0F, fg = 1.0F, fb = 1.0F;
-        ItemFocusBasic focus = null;
+        FocusItem focus = null;
         if (!arg.focusId().isEmpty()) {
             try {
-                focus = ItemFocusBasic.foci.get(arg.focusId());
+                focus = FocusItem.foci.get(arg.focusId());
             } catch (Exception ignored) {
             }
         }

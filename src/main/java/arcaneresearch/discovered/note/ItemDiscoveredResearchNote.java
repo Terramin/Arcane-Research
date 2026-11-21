@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +15,8 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
 import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.api.research.notes.Notes;
 import arcaneresearch.proxies.Proxies;
 import org.jspecify.annotations.NonNull;
 
@@ -52,7 +55,7 @@ public class ItemDiscoveredResearchNote extends Item {
             progress = 1.0F;
         }
         if (data.key != null && (progress >= 0.2F || data.revealed)) {
-            Component name = DiscoveredNotes.researchName(data.key);
+            Component name = Notes.researchName(data.key);
             if (name != null) {
                 return name;
             }
@@ -87,6 +90,8 @@ public class ItemDiscoveredResearchNote extends Item {
         }
 
 
+        boolean known = progress >= 0.2F || data.revealed;
+        boolean complete = data.isComplete();
         boolean showStudy = false;
         Item noteItem = getNoteItem();
         if (noteItem != null && stack.getItem() == noteItem) {
@@ -94,14 +99,17 @@ public class ItemDiscoveredResearchNote extends Item {
             tooltip.accept(Component.translatable("tooltip.arcaneresearch.stage1", pct1));
             showStudy = DiscoveredNoteData.requiresHex(data.key);
         }
+
         var proxy = Proxies.get();
-        if (proxy != null && proxy.isShiftKeyDown()) {
+        boolean shift = proxy != null && proxy.isShiftKeyDown();
+        if (shift && known && !complete) {
             Aspect[] tags = data.tags;
             int[] need = data.need;
             int[] have = data.have;
-            if (tags != null) {
-                int needLen = need == null ? 0 : need.length;
-                int haveLen = have == null ? 0 : have.length;
+            int needLen = need == null ? 0 : need.length;
+            int haveLen = have == null ? 0 : have.length;
+            if (tags != null && tags.length > 0) {
+                tooltip.accept(Component.translatable("tooltip.arcaneresearch.note.aspects_header").withStyle(ChatFormatting.GRAY));
                 for (int i = 0; i < tags.length; i++) {
                     Aspect aspect = tags[i];
                     if (aspect == null) {
@@ -113,8 +121,15 @@ public class ItemDiscoveredResearchNote extends Item {
                     }
                     int want = i < needLen ? need[i] : 0;
                     int got = i < haveLen ? Math.min(have[i], want) : 0;
-                    if (got <= 0) {
-                        continue;
+                    boolean done = want > 0 && got >= want;
+                    ChatFormatting color = done ? ChatFormatting.GREEN : ChatFormatting.GRAY;
+                    MutableComponent line = Component.literal("  ")
+                            .append(Component.literal(done ? "\u2713 " : "\u2717 ").withStyle(color))
+                            .append(Component.translatable("tc.aspect." + tag).withStyle(ChatFormatting.WHITE))
+                            .append(Component.literal(": " + got + "/" + want).withStyle(ChatFormatting.GRAY));
+                    byte failed = data.getFailed(tag);
+                    if (failed > 0) {
+                        line = line.append(Component.literal("  (\u00d7" + failed + ")").withStyle(ChatFormatting.RED));
                     }
                     tooltip.accept(Component.translatable("tc.aspect." + tag)
                             .append(Component.literal(": " + got + "/" + want))

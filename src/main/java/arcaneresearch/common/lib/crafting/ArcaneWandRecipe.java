@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHostWand;
 import arcaneresearch.api.wands.WandCap;
 import arcaneresearch.api.wands.WandRod;
 import arcaneresearch.common.items.wands.WandItems;
@@ -50,7 +50,7 @@ public class ArcaneWandRecipe {
             }
             if (bc != null && br != null) {
                 out = WandItems.createWandStack();
-                if (out.getItem() instanceof IWand w) {
+                if (out.getItem() instanceof IFocusHostWand w) {
                     w.setCap(out, WandCap.caps.get(bc));
                     w.setRod(out, WandRod.rods.get(br));
                 }
@@ -123,7 +123,7 @@ public class ArcaneWandRecipe {
             return ItemStack.EMPTY;
         }
         ItemStack out = WandItems.createWandStack();
-        if (out.getItem() instanceof IWand w) {
+        if (out.getItem() instanceof IFocusHostWand w) {
             w.setCap(out, WandCap.caps.get(parts.cap));
             w.setRod(out, WandRod.rods.get(parts.rod));
             arcaneresearch.common.items.wands.ItemWand.setSceptre(out);

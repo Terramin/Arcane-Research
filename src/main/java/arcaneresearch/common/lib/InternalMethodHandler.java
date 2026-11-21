@@ -30,6 +30,7 @@ import arcaneresearch.common.lib.network.fx.PacketFXPollute;
 import arcaneresearch.common.lib.network.playerdata.PacketWarpMessage;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.common.world.aura.AuraHandler;
+import arcaneresearch.message.api.StoryTellingAPI;
 
 public class InternalMethodHandler implements IInternalMethodHandler {
 

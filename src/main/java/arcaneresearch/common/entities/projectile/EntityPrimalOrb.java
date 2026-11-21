@@ -21,8 +21,6 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityPrimalOrb extends ThrowableItemProjectile {
     int count;
     boolean seeker;
@@ -53,8 +51,6 @@ public class EntityPrimalOrb extends ThrowableItemProjectile {
     protected double getDefaultGravity() {
         return 0.001D;
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void trailMote(double x, double y, double z, float r, float g, float b, float scale) {
         try {
             FXDispatcher.INSTANCE.drawGenericParticles(x, y, z, 0.0D, 0.0D, 0.0D,

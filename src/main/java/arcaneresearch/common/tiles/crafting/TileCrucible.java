@@ -25,14 +25,16 @@ import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModSounds;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class TileCrucible extends TileArcaneresearch implements IAspectContainer {
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
+    private static final ArcaneLogger AURA_LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     public static final int MAX_ASPECTS = 500;
     public static final int TANK_CAPACITY = 1000;
     
@@ -70,12 +72,14 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
                 if (tile.heat < 200) {
                     tile.heat++;
                     if (prevHeat < 151 && tile.heat >= 151) {
+                        LOGGER.debug("Crucible {} reached boiling heat ({})", pos, tile.heat);
                         tile.markDirtyAndSync();
                     }
                 }
             } else if (tile.heat > 0) {
                 tile.heat--;
                 if (tile.heat == 149) {
+                    LOGGER.debug("Crucible {} cooled below boiling point", pos);
                     tile.markDirtyAndSync();
                 }
             }
@@ -84,6 +88,8 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         }
 
         if (tile.aspects.visSize() > MAX_ASPECTS) {
+            AURA_LOGGER.once("crucible.overflow", LogLevel.DEBUG,
+                    "Crucible {} overflowing: {} vis stored (limit {})", pos, tile.aspects.visSize(), MAX_ASPECTS);
             tile.spillRandom();
         }
 
@@ -114,8 +120,6 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         tank.readFromNBT(tag);
         aspects.readFromNBT(tag);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void drawEffects() {
         if (level == null || !level.isClientSide()) return;
         if (heat > 150) {
@@ -213,6 +217,9 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
                     net.neoforged.neoforge.event.EventHooks.firePlayerCraftingEvent(player, out,
                             new net.minecraft.world.SimpleContainer(item.copy()));
                 }
+
+                LOGGER.debug("Crucible {} crafted {} from {} (water={})",
+                        worldPosition, out, item, tank.getFluidAmount());
                 aspects = recipe.removeMatchingAspects(aspects);
                 tank.drain(50, true);
                 ejectItem(out);
@@ -285,6 +292,9 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
             aspects.remove(toSpill, 1);
 
             float pollution = (toSpill == Aspect.FLUX) ? 1.0f : 0.25f;
+            AURA_LOGGER.once("crucible.spill", LogLevel.DEBUG,
+                    "Crucible {} spilled {} (pollution={}, vis left={})",
+                    worldPosition, toSpill, pollution, aspects.visSize());
             AuraHelper.polluteAura(level, worldPosition, pollution, true);
         }
         markDirtyAndSync();
@@ -330,8 +340,6 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         }
         return super.triggerEvent(id, param);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private boolean clientTriggerEvent(int id, int param) {
         if (id == 99) {
             FXDispatcher.INSTANCE.drawBamf(worldPosition.getX() + 0.5, worldPosition.getY() + 1.25f,

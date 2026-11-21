@@ -6,7 +6,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 
@@ -21,8 +20,6 @@ public class TileNitor extends TileArcaneresearch {
     public TileNitor(BlockPos pos, BlockState state) {
         this(ModBlockEntities.NITOR.get(), pos, state);
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileNitor tile) {
         int color = state.getMapColor(level, pos).col;
         FXDispatcher.INSTANCE.drawNitorFlames(

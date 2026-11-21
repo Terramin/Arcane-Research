@@ -15,7 +15,7 @@ public abstract class FocusEffect extends FocusNode {
 
     @Override
     public EnumSupplyType[] mustBeSupplied() {
-        return new EnumSupplyType[] { EnumSupplyType.TARGET };
+        return new EnumSupplyType[]{EnumSupplyType.TARGET};
     }
 
     @Override

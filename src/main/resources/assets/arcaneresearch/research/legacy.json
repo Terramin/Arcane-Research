@@ -348,7 +348,14 @@
             "icons": [ "arcaneresearch:jar_node;1;{Aspects:[{key:\"aer\",amount:30}],nodetype:0}" ],
             "category": "LEGACY", "location": [ 3,8 ],
             "meta": [ "REVERSE" ],
-            "parents": [ "LEGACYNODENORMAL||LEGACYNODEUNSTABLE||LEGACYNODEDARK||LEGACYNODETAINTED||LEGACYNODEHUNGRY||LEGACYNODEPURE" ],
+            "parents": [
+                "LEGACYNODENORMAL",
+                "LEGACYNODEUNSTABLE",
+                "LEGACYNODEDARK",
+                "LEGACYNODETAINTED",
+                "LEGACYNODEHUNGRY",
+                "LEGACYNODEPURE"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYJARNODE.stage.1",

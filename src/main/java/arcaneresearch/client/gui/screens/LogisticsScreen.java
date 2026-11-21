@@ -69,7 +69,7 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
         addRenderableWidget(increaseButton);
 
         scrollbar = new SliderWidget(leftPos + 196, topPos + 28, 8, 149,
-                0.0f, Math.max(0, menu.getEnd()), menu.getStart(), true, this::onScrollbarDragged);
+                0.0f, Math.max(0, menu.getEnd()), menu.getStart(), true, null);
         addRenderableWidget(scrollbar);
 
         countbar = new SliderWidget(leftPos + 24, topPos + 196, 32, 8,
@@ -110,8 +110,7 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
     }
 
     private void updateButtonVisibility() {
-
-        boolean hasSelection = selectedSlot >= 0 && !selectedStack.isEmpty();
+        boolean hasSelection = selectedSlot >= 0;
         decreaseButton.visible = hasSelection;
         increaseButton.visible = hasSelection;
         countbar.visible = hasSelection;
@@ -185,7 +184,13 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
 
         if (scrollbar.getMax() != menu.getEnd()) scrollbar.setMax(menu.getEnd());
         int serverStart = menu.getStart();
-        if (serverStart != lastServerStart) {
+        int scrollValue = Math.round(scrollbar.getSliderValue());
+        if (scrollValue != lastScrollPos) {
+            lastScrollPos = scrollValue;
+            if (minecraft != null && minecraft.gameMode != null) {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 100 + lastScrollPos);
+            }
+        } else if (serverStart != lastServerStart) {
             lastServerStart = serverStart;
             lastScrollPos = serverStart;
             scrollbar.setSliderValue(serverStart, false);
@@ -246,13 +251,10 @@ public class LogisticsScreen extends AbstractContainerScreen<LogisticsMenu> {
 
         if (slotId >= 0 && slotId < 81 && slot.hasItem()) {
             if (minecraft != null) {
-                minecraft.getSoundManager().play(SimpleSoundInstance.forUI(ModSounds.CLACK.get(), 0.66f));
+                minecraft.getSoundManager().play(SimpleSoundInstance.forUI(ModSounds.CLACK.get(), 1.0f, 0.66f));
             }
             selectedSlot = slotId;
             selectedStack = slot.getItem().copy();
-            stackSize = 1;
-            lastStackSize = 1;
-            stacksizeUpdated = false;
         }
     }
 

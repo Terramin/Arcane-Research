@@ -202,6 +202,26 @@
             ]
         },
         {
+        "key": "PORTALSCROLL",
+        "name": "research.PORTALSCROLL.title",
+        "icons": [ "arcaneresearch:portal_scroll" ],
+        "category": "ARTIFICE", "location": [ -8,0 ],
+        "parents": [ "MIRROR" ],
+        "stages": [
+                {
+                    "text": "research.PORTALSCROLL.stage.1",
+                    "required_knowledge":["THEORY;ARTIFICE;1"],
+                    "required_research":["f_TELEPORT"],
+                    "required_item":["minecraft:paper"],
+                    "required_discovery": ["#PORTALSCROLL", true]
+                },
+                {
+                    "text": "research.PORTALSCROLL.stage.2",
+                    "recipes": ["arcaneresearch:arcane_workbench/portal_scroll"]
+                }
+            ]
+        },
+        {
         "key": "ARCANELAMP",    
         "name": "research.ARCANELAMP.title",
         "icons": [ "arcaneresearch:lamp_arcane" ],

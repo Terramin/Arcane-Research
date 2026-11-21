@@ -3,8 +3,6 @@ package arcaneresearch.discovered.client;
 import java.util.List;
 
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.discovered.table.HexResearchNoteData.HexEntry;
@@ -13,17 +11,6 @@ import arcaneresearch.discovered.table.MsgCombine;
 import arcaneresearch.discovered.table.MsgDupe;
 import arcaneresearch.discovered.table.MsgPlaceAspect;
 import arcaneresearch.init.ModSounds;
-
- 
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
 public class HexTableInput {
 
     private final HexResearchTableScreen s;

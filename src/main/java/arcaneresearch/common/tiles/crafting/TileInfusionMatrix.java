@@ -37,10 +37,11 @@ import arcaneresearch.api.crafting.IInfusionStabiliserExt;
 import arcaneresearch.api.items.IGogglesDisplayExtended;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.blocks.basic.BlockPillarTC;
 import arcaneresearch.common.blocks.devices.BlockPedestal;
 import arcaneresearch.common.lib.crafting.InfusionRecipeType;
+import arcaneresearch.common.lib.crafting.InfusionStabilityRules;
+import arcaneresearch.common.lib.crafting.InfusionStabilizationRules;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.lib.events.EssentiaHandler;
 import arcaneresearch.common.lib.network.PacketHandler;
@@ -50,11 +51,17 @@ import arcaneresearch.common.lib.network.fx.PacketFXInfusionStream;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.common.lib.utils.StreamPathHelper;
+import arcaneresearch.message.api.StoryTellingAPI;
+import net.minecraft.server.level.ServerPlayer;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.common.tiles.devices.TileStabilizer;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModEffects;
+import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -62,8 +69,15 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 public class TileInfusionMatrix extends TileArcaneresearch implements IAspectContainer, IGogglesDisplayExtended, arcaneresearch.api.casters.IInteractWithCaster {
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
+    private static final ArcaneLogger AURA_LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     private static final DecimalFormat FORMATTER = new DecimalFormat("#######.##");
+    private static final Vec3 GOGGLES_OFFSET = new Vec3(0, 1.5, 0);
+
+    private enum EnumStability {
+        VERY_STABLE, STABLE, UNSTABLE, VERY_UNSTABLE
+    }
+
     private final List<PendingEssentia> pendingEssentia = new ArrayList<>();
     public boolean active = false;
     public boolean crafting = false;
@@ -114,6 +128,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         }
 
         if (tile.count % (tile.crafting ? 20 : 100) == 0 && !tile.validLocation()) {
+            LOGGER.once("matrix.invalid", LogLevel.DEBUG,
+                    "Matrix {} deactivated: multiblock no longer valid", pos);
             tile.active = false;
             tile.setChanged();
             tile.syncTile(false);
@@ -125,6 +141,9 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             if (tile.stability > tile.stabilityCap) {
                 tile.stability = tile.stabilityCap;
             }
+
+            LOGGER.once("matrix.stability.replenish", LogLevel.DEBUG,
+                    "Matrix {} regenerating stability: {} / {}", pos, tile.stability, tile.stabilityCap);
             tile.setChanged();
             tile.syncTile(false);
         }
@@ -169,7 +188,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
     }
 
     private float getLossPerCycle() {
-        return recipeInstability / getModFromCurrentStability();
+        return InfusionStabilityRules.lossPerCycle(recipeInstability, stability, stabilityCap);
     }
 
     @Override
@@ -260,8 +279,6 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         recipeType = tag.getIntOr("RecipeType", 0);
         recipeXP = tag.getIntOr("RecipeXP", 0);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void doEffects() {
 
         if (crafting) {
@@ -318,8 +335,6 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                     0.7f + level.getRandom().nextFloat() * 0.1f, 0.1f, 0.65f + level.getRandom().nextFloat() * 0.1f, 0.8f);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnSourceFX() {
         if (level == null) {
             return;
@@ -384,6 +399,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
 
         BlockState below2 = level.getBlockState(worldPosition.below(2));
         if (!(below2.getBlock() instanceof BlockPedestal)) {
+            LOGGER.once("matrix.missing.pedestal", LogLevel.DEBUG,
+                    "Matrix {} invalid: no central pedestal at {}", worldPosition, worldPosition.below(2));
             return false;
         }
 
@@ -397,6 +414,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         for (BlockPos pillarPos : pillarPositions) {
             BlockState pillarState = level.getBlockState(pillarPos);
             if (!(pillarState.getBlock() instanceof BlockPillarTC)) {
+                LOGGER.once("matrix.missing.pillar", LogLevel.DEBUG,
+                        "Matrix {} invalid: missing pillar at {}", worldPosition, pillarPos);
                 return false;
             }
         }
@@ -406,6 +425,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
 
     public void startCrafting(Player player) {
         if (!validLocation()) {
+            LOGGER.once("matrix.start.invalid", LogLevel.DEBUG,
+                    "Matrix {} cannot start: invalid multiblock", worldPosition);
             active = false;
             syncTile(false);
             return;
@@ -422,7 +443,11 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             }
         }
 
-        if (recipeInput.isEmpty()) return;
+        if (recipeInput.isEmpty()) {
+            LOGGER.once("matrix.no.input", LogLevel.DEBUG,
+                    "Matrix {} has no central item to infuse", worldPosition);
+            return;
+        }
 
         List<ItemStack> components = new ArrayList<>();
         for (BlockPos pedestalPos : pedestals) {
@@ -435,10 +460,18 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             }
         }
 
-        if (components.isEmpty()) return;
+        if (components.isEmpty()) {
+            LOGGER.once("matrix.no.components", LogLevel.DEBUG,
+                    "Matrix {} has no ingredient pedestals", worldPosition);
+            return;
+        }
 
         InfusionRecipeType recipe = ArcaneresearchCraftingManager.findMatchingInfusionRecipe(
                 components, recipeInput, player, level);
+        if (recipe == null) {
+            LOGGER.once("matrix.no.recipe", LogLevel.DEBUG,
+                    "Matrix {} found no infusion recipe for {}", worldPosition, recipeInput);
+        }
 
         if (costMult < 0.5f) costMult = 0.5f;
 
@@ -473,6 +506,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
 
             recipePlayer = player.getStringUUID();
             crafting = true;
+            LOGGER.debug("Matrix {} started recipe {}: instability={}, essentia={}, costMult={}",
+                    worldPosition, recipe, recipeInstability, recipeEssentia.visSize(), costMult);
 
             level.playSound(null, worldPosition, arcaneresearch.init.ModSounds.CRAFT_START.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
             syncTile(false);
@@ -615,6 +650,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         }
 
         if (!valid) {
+            LOGGER.once("matrix.input.changed", LogLevel.DEBUG,
+                    "Matrix {} cancelled: central item changed or vanished", worldPosition);
             cancelCrafting();
             return;
         }
@@ -639,10 +676,14 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                     PendingEssentia pending = new PendingEssentia(aspect, srcPos,
                             nextStreamId++, level.getLevelData().getGameTime(), path, pathLen, travel);
                     pendingEssentia.add(pending);
+                    AURA_LOGGER.debug("Matrix {} stream {} for {} from {} (travel={}t)",
+                            worldPosition, pending.streamId, aspect, srcPos, travel);
                     sendStreamPacket(pending);
                     return;
                 }
 
+                AURA_LOGGER.once("matrix.no.source", LogLevel.DEBUG,
+                        "Matrix {} found no source jar for {} within 12 blocks", worldPosition, aspect);
                 stability -= 0.25f;
                 syncTile(false);
                 setChanged();
@@ -696,6 +737,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
             return;
         }
 
+        LOGGER.debug("Matrix {} finished all essentia and ingredients, finalizing output", worldPosition);
         crafting = false;
         craftingFinish();
         recipeOutput = null;
@@ -704,6 +746,8 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
     }
 
     private void cancelCrafting() {
+        LOGGER.debug("Matrix {} cancelled crafting (stability={}, streams={})",
+                worldPosition, stability, pendingEssentia.size());
         crafting = false;
         recipeEssentia = new AspectList();
         recipeInstability = 0;
@@ -723,6 +767,7 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
         if (te instanceof TilePedestal pedestal) {
             float dmg = 1.0f;
 
+            LOGGER.debug("Matrix {} produced output {} (stability={})", worldPosition, recipeOutput, stability);
             if (recipeOutput instanceof ItemStack outStack) {
                 ItemStack qs = outStack.copy();
                 ItemStack inputStack = pedestal.getItem(0);
@@ -1076,6 +1121,9 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                 if (bb.equals(ModBlocks.PEDESTAL_ANCIENT.get())) costMult -= 0.01f;
             }
 
+            LOGGER.once("matrix.area.scan", LogLevel.DEBUG,
+                    "Matrix {} scanned area: pedestals={}, stabilityRegen={}, costMult={}, cycle={}t",
+                    worldPosition, pedestals.size(), stabilityReplenish, costMult, cycleTime);
             countDelay = cycleTime / 2;
         } catch (Exception e) {
 
@@ -1199,10 +1247,6 @@ public class TileInfusionMatrix extends TileArcaneresearch implements IAspectCon
                 worldPosition.getX() - 0.1, worldPosition.getY() - 0.1, worldPosition.getZ() - 0.1,
                 worldPosition.getX() + 1.1, worldPosition.getY() + 1.1, worldPosition.getZ() + 1.1
         );
-    }
-
-    private enum EnumStability {
-        VERY_STABLE, STABLE, UNSTABLE, VERY_UNSTABLE
     }
 
     private static class PendingEssentia {

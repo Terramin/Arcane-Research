@@ -1,6 +1,10 @@
 package arcaneresearch.common.items.consumables;
 
-import net.minecraft.ChatFormatting;
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.common.items.ItemEssentiaContainer;
+import arcaneresearch.common.tiles.essentia.TileJar;
+import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -22,6 +26,7 @@ import arcaneresearch.common.tiles.essentia.TileJar;
 import arcaneresearch.init.ModItems;
 
 import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ItemPhial extends ItemEssentiaContainer {
@@ -48,18 +53,41 @@ public class ItemPhial extends ItemEssentiaContainer {
     }
 
     public static ItemStack makePhial(Aspect aspect, int amount) {
-        ItemStack stack = new ItemStack(ModItems.PHIAL_FILLED.get());
-        ItemPhial phial = (ItemPhial) stack.getItem();
+        if (aspect == null) {
+            return ItemStack.EMPTY;
+        }
+
+        Item item = ModItems.PHIAL_FILLED.get();
+
+        ItemStack stack = new ItemStack(item);
+        if (!(stack.getItem() instanceof ItemPhial phial)) {
+            return ItemStack.EMPTY;
+        }
+
         phial.setAspects(stack, new AspectList().add(aspect, amount));
         return stack;
     }
 
-    @Override
-    public Component getName(ItemStack stack) {
+    private static Aspect firstAspect(AspectList aspects) {
+        if (aspects == null) {
+            return null;
+        }
+
+        Aspect[] array = aspects.getAspects();
+        if (array == null || array.length == 0) {
+            return null;
+        }
+
+        return array[0];
+    }
+
+    
+    
+    
+    private Component filledName(ItemStack stack) {
         if (filled) {
-            AspectList aspects = getAspects(stack);
-            if (aspects != null && aspects.size() > 0) {
-                Aspect aspect = aspects.getAspects()[0];
+            Aspect aspect = firstAspect(getAspects(stack));
+            if (aspect != null) {
                 return Component.translatable("item.arcaneresearch.phial_filled", aspect.getName());
             }
         }
@@ -68,40 +96,28 @@ public class ItemPhial extends ItemEssentiaContainer {
 
     
     
-    
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        if (filled) {
-            AspectList aspects = getAspects(stack);
-            if (aspects != null && aspects.size() > 0) {
-                Aspect aspect = aspects.getAspects()[0];
-                int amount = aspects.getAmount(aspect);
-                tooltip.add(Component.literal(aspect.getName() + ": " + amount)
-                        .withStyle(ChatFormatting.GRAY));
-            }
-        }
-    }
-
-    
-    
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display,
                                 java.util.function.Consumer<Component> tooltip, TooltipFlag flag) {
-        java.util.List<Component> lines = new java.util.ArrayList<>();
-        appendHoverText(stack, context.level(), lines, flag);
-        for (Component line : lines) {
-            tooltip.accept(line);
-        }
+        tooltip.accept(filledName(stack));
+        super.appendHoverText(stack, context, display, tooltip, flag);
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
+
+        if (player == null) {
+            return InteractionResult.PASS;
+        }
+
         InteractionHand hand = context.getHand();
 
         if (player == null) return InteractionResult.PASS;
         ItemStack heldStack = player.getItemInHand(hand);
+        boolean clientSide = level.isClientSide();
 
         if (!filled) {
             BlockEntity te = level.getBlockEntity(pos);
@@ -118,48 +134,69 @@ public class ItemPhial extends ItemEssentiaContainer {
                         level.addFreshEntity(new ItemEntity(level,
                                 player.getX(), player.getY(), player.getZ(), filledPhial));
                     }
-                    level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.25f, 1.0f);
-                    return InteractionResult.CONSUME;
                 }
             }
-            if (te instanceof arcaneresearch.common.tiles.essentia.TileJar jar
-                    && jar.getAmount() >= PHIAL_CAPACITY) {
-                if (level.isClientSide()) {
-                    return InteractionResult.SUCCESS;
-                }
-                Aspect asp = jar.getAspect();
-                ItemStack filledPhial = makeFilledPhial(asp);
-                if (jar.takeFromContainer(asp, PHIAL_CAPACITY)) {
-                    heldStack.shrink(1);
-                    if (!player.getInventory().add(filledPhial)) {
-                        level.addFreshEntity(new ItemEntity(level,
-                                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, filledPhial));
+
+            if (te instanceof TileJar jar) {
+                Aspect aspect = jar.getAspect();
+                if (aspect != null && jar.getAmount() >= PHIAL_CAPACITY) {
+                    if (clientSide) {
+                        return InteractionResult.SUCCESS;
                     }
-                    level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.25f, 1.0f);
-                    return InteractionResult.CONSUME;
+
+                    ItemStack filledPhial = makeFilledPhial(aspect);
+                    if (filledPhial.isEmpty()) {
+                        return InteractionResult.FAIL;
+                    }
+
+                    if (jar.takeFromContainer(aspect, PHIAL_CAPACITY)) {
+                        heldStack.shrink(1);
+
+                        if (!player.getInventory().add(filledPhial)) {
+                            level.addFreshEntity(new ItemEntity(
+                                    level,
+                                    pos.getX() + 0.5,
+                                    pos.getY() + 0.5,
+                                    pos.getZ() + 0.5,
+                                    filledPhial
+                            ));
+                        }
+
+                        level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.25f, 1.0f);
+                        return InteractionResult.CONSUME;
+                    }
                 }
             }
         } else {
             AspectList myAspects = getAspects(heldStack);
-            if (myAspects != null && myAspects.size() > 0) {
-                Aspect aspect = myAspects.getAspects()[0];
+            Aspect aspect = firstAspect(myAspects);
 
+            if (aspect != null) {
                 BlockEntity te = level.getBlockEntity(pos);
-                if (te instanceof arcaneresearch.common.tiles.essentia.TileJar jar
+
+                if (te instanceof TileJar jar
                         && jar.getAmount() <= TileJar.CAPACITY - PHIAL_CAPACITY
                         && jar.doesContainerAccept(aspect)) {
-                    if (level.isClientSide()) {
+                    if (clientSide) {
                         return InteractionResult.SUCCESS;
                     }
 
+                    Item emptyItem = ModItems.PHIAL_EMPTY.get();
+
                     int leftover = jar.addToContainer(aspect, PHIAL_CAPACITY);
+
                     if (leftover == 0) {
                         heldStack.shrink(1);
-                        ItemStack emptyPhial = new ItemStack(ModItems.PHIAL_EMPTY.get());
 
+                        ItemStack emptyPhial = new ItemStack(emptyItem);
                         if (!player.getInventory().add(emptyPhial)) {
-                            level.addFreshEntity(new ItemEntity(level,
-                                    pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, emptyPhial));
+                            level.addFreshEntity(new ItemEntity(
+                                    level,
+                                    pos.getX() + 0.5,
+                                    pos.getY() + 0.5,
+                                    pos.getZ() + 0.5,
+                                    emptyPhial
+                            ));
                         }
 
                         level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.25f, 1.0f);

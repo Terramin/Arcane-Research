@@ -16,7 +16,7 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.crafting.IArcaneRecipe;
-import arcaneresearch.common.items.casters.CasterManager;
+import arcaneresearch.common.items.wands.FocusManager;
 import arcaneresearch.common.lib.crafting.ArcaneWorkbenchCraftingContainer;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.menu.slot.ArcaneWorkbenchResultSlot;
@@ -24,8 +24,34 @@ import arcaneresearch.common.menu.slot.CrystalSlot;
 import arcaneresearch.common.tiles.crafting.TileArcaneWorkbench;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModMenuTypes;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
+
+import java.util.List;
 
 public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
 
     public static final int OUTPUT_SLOT = 0;
     public static final int GRID_START = 1;
@@ -98,6 +124,7 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
         }
 
         slotsChanged(craftMatrix);
+        LOGGER.debug("Arcane workbench menu opened at {}", blockEntity.getBlockPos());
     }
 
     private static TileArcaneWorkbench getBlockEntity(Inventory playerInventory, FriendlyByteBuf extraData) {
@@ -118,6 +145,10 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
         ItemStack result = ItemStack.EMPTY;
 
         IArcaneRecipe arcaneRecipe = ArcaneresearchCraftingManager.findMatchingArcaneRecipe(craftMatrix, player);
+        if (arcaneRecipe != null && !ArcaneresearchCapabilities.isResearchKnown(player, arcaneRecipe.getResearch())) {
+            LOGGER.once("workbench.research.locked", LogLevel.DEBUG,
+                    "Workbench recipe {} is locked: research {} unknown", arcaneRecipe, arcaneRecipe.getResearch());
+        }
 
         if (arcaneRecipe != null
                 && ArcaneresearchCapabilities.isResearchKnown(player, arcaneRecipe.getResearch())) {
@@ -184,7 +215,7 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
             return 0;
         }
 
-        float discount = CasterManager.getTotalVisDiscount(player);
+        float discount = FocusManager.getTotalVisDiscount(player);
         return (int) (base * (1.0f - discount));
     }
 

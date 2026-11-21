@@ -176,7 +176,7 @@ public class ItemModelProperties {
         @Override
         public String get(ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity owner,
                           int seed, ItemDisplayContext displayContext) {
-            if (itemStack.getItem() instanceof arcaneresearch.api.wands.IWand wand) {
+            if (itemStack.getItem() instanceof arcaneresearch.api.wands.IFocusHostWand wand) {
                 try {
                     arcaneresearch.api.wands.WandRod rod = wand.getRod(itemStack);
                     if (rod != null && rod.isStaff()) {

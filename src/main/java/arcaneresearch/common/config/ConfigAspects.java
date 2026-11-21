@@ -15,9 +15,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForge;
 import net.minecraft.core.registries.BuiltInRegistries; 
 import arcaneresearch.api.ArcaneresearchApi;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.AspectRegistryEvent;
+import arcaneresearch.common.blocks.aura.AuraBlocks;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModFluids;
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ConfigAspects {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RESEARCH);
 
     public static void init() {
         registerItemAspects();
@@ -261,7 +265,7 @@ public class ConfigAspects {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to resolve potion reagents for aspect registration", e);
         }
     }
 
@@ -369,6 +373,23 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.POPPY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 1).add(Aspect.SENSES, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.DANDELION), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 1).add(Aspect.SENSES, 5));
 
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BLUE_ORCHID), new AspectList().add(Aspect.PLANT, 5).add(Aspect.WATER, 5).add(Aspect.SENSES, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ALLIUM), new AspectList().add(Aspect.PLANT, 5).add(Aspect.MAGIC, 3).add(Aspect.LIFE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.AZURE_BLUET), new AspectList().add(Aspect.PLANT, 5).add(Aspect.AIR, 3).add(Aspect.SENSES, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RED_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.FIRE, 3).add(Aspect.SENSES, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ORANGE_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.FIRE, 2).add(Aspect.LIGHT, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.WHITE_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIGHT, 2).add(Aspect.ORDER, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PINK_TULIP), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 2).add(Aspect.SENSES, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.OXEYE_DAISY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.SENSES, 5).add(Aspect.LIFE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.CORNFLOWER), new AspectList().add(Aspect.PLANT, 5).add(Aspect.WATER, 2).add(Aspect.SENSES, 2).add(Aspect.ORDER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LILY_OF_THE_VALLEY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 3).add(Aspect.DEATH, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.WITHER_ROSE), new AspectList().add(Aspect.PLANT, 3).add(Aspect.DEATH, 10).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.TORCHFLOWER), new AspectList().add(Aspect.PLANT, 5).add(Aspect.FIRE, 5).add(Aspect.LIGHT, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.SUNFLOWER), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIGHT, 10).add(Aspect.LIFE, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LILAC), new AspectList().add(Aspect.PLANT, 5).add(Aspect.SENSES, 5).add(Aspect.MAGIC, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.ROSE_BUSH), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 3).add(Aspect.AVERSION, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PEONY), new AspectList().add(Aspect.PLANT, 5).add(Aspect.LIFE, 5).add(Aspect.SENSES, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.PITCHER_PLANT), new AspectList().add(Aspect.PLANT, 5).add(Aspect.WATER, 5).add(Aspect.TRAP, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BROWN_MUSHROOM), new AspectList().add(Aspect.PLANT, 5).add(Aspect.DARKNESS, 2).add(Aspect.EARTH, 2));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.RED_MUSHROOM), new AspectList().add(Aspect.PLANT, 5).add(Aspect.DARKNESS, 2).add(Aspect.FIRE, 2));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.BROWN_MUSHROOM_BLOCK), new AspectList().add(Aspect.PLANT, 5).add(Aspect.DARKNESS, 2).add(Aspect.EARTH, 2));
@@ -746,7 +767,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_7.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_MOON_8.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_CAP.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.CRAFT, 5));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_POUCH.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.FOCUS_POUCH.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_FIRE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.FIRE, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_FROST.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.COLD, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_SHOCK.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.ENERGY, 10));
@@ -869,10 +890,10 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CASTER_BASIC.get()), new AspectList().add(Aspect.MAGIC, 20).add(Aspect.AURA, 10).add(Aspect.TOOL, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.FOCUS_BLANK.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.AURA, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.FOCUS_ADVANCED.get()), new AspectList().add(Aspect.MAGIC, 20).add(Aspect.AURA, 10));
-
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.FOCUS_1.get()), new AspectList().add(Aspect.MAGIC, 15).add(Aspect.AURA, 5).add(Aspect.AVERSION, 3));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.AMULET_VIS_FOUND.get()), new AspectList().add(Aspect.AURA, 20).add(Aspect.METAL, 5).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.AMULET_VIS_CRAFTED.get()), new AspectList().add(Aspect.AURA, 20).add(Aspect.METAL, 5).add(Aspect.MAGIC, 5));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), new AspectList().add(Aspect.AURA, 5).add(Aspect.METAL, 5).add(Aspect.MAGIC, 20));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOS_RING_APPRENTICE.get()), new AspectList().add(Aspect.AURA, 5).add(Aspect.METAL, 5).add(Aspect.MAGIC, 20));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CLOUD_RING.get()), new AspectList().add(Aspect.FLIGHT, 15).add(Aspect.AIR, 15).add(Aspect.METAL, 5));
 
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.JAR_NORMAL.get()), new AspectList().add(Aspect.VOID, 10).add(Aspect.CRYSTAL, 5));
@@ -937,5 +958,106 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.BANNER_RED.get()), bannerAspects.copy().add(Aspect.FIRE, 1));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.BANNER_BLACK.get()), bannerAspects.copy().add(Aspect.DARKNESS, 2));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.BANNER_CRIMSON_CULT.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.SENSES, 5).add(Aspect.ELDRITCH, 10).add(Aspect.DARKNESS, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.VISNERITEORE.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.METAL, 10).add(Aspect.ELDRITCH, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VISNERITEINGOT.get()), new AspectList().add(Aspect.METAL, 10).add(Aspect.ELDRITCH, 5).add(Aspect.AURA, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VISNERITESCRAP.get()), new AspectList().add(Aspect.METAL, 3).add(Aspect.ENTROPY, 5).add(Aspect.ELDRITCH, 2));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.ELDRITCH_STONE.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.ELDRITCH_STONE_SLAB.get()), new AspectList().add(Aspect.EARTH, 3).add(Aspect.ELDRITCH, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.ELDRITCH_PILLAR.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ORDER, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(AuraBlocks.ELDRITCH_STAIRS_ITEM.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.ORDER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(AuraBlocks.ELDRITCH_ALTAR_ITEM.get()), new AspectList().add(Aspect.ELDRITCH, 10).add(Aspect.MAGIC, 5).add(Aspect.AURA, 5).add(Aspect.DARKNESS, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(AuraBlocks.ELDRITCH_CAP_ITEM.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.VOID, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(AuraBlocks.ELDRITCH_TRAP_ITEM.get()), new AspectList().add(Aspect.ELDRITCH, 5).add(Aspect.TRAP, 15).add(Aspect.DARKNESS, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(AuraBlocks.ELDRITCH_CRAB_ITEM.get()), new AspectList().add(Aspect.ELDRITCH, 5).add(Aspect.TRAP, 10).add(Aspect.BEAST, 10));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.AMBER_BRICK.get()), new AspectList().add(Aspect.TRAP, 5).add(Aspect.CRYSTAL, 10).add(Aspect.ORDER, 2));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.TAINT_SOIL.get()), new AspectList().add(Aspect.FLUX, 10).add(Aspect.PLANT, 5).add(Aspect.ENTROPY, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.TAINT_ROCK.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.FLUX, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.TAINT_CRUST.get()), new AspectList().add(Aspect.FLUX, 10).add(Aspect.ENTROPY, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.TAINT_GEYSER.get()), new AspectList().add(Aspect.FLUX, 15).add(Aspect.FIRE, 5).add(Aspect.ENTROPY, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.TAINT_LOG.get()), new AspectList().add(Aspect.PLANT, 10).add(Aspect.FLUX, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.TAINT_FEATURE.get()), new AspectList().add(Aspect.FLUX, 10).add(Aspect.PLANT, 5).add(Aspect.ELDRITCH, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.GRASS_AMBIENT.get()), new AspectList().add(Aspect.PLANT, 5).add(Aspect.EARTH, 3).add(Aspect.AURA, 3));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.PAVING_STONE.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ORDER, 3).add(Aspect.MAGIC, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.PAVING_STONE_TRAVEL.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.MOTION, 10).add(Aspect.MAGIC, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.PAVING_STONE_BARRIER.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.PROTECT, 10).add(Aspect.TRAP, 5).add(Aspect.MAGIC, 3));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.LAMP_ARCANE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.LIGHT, 5).add(Aspect.MOTION, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.LAMP_GROWTH.get()), new AspectList().add(Aspect.PLANT, 10).add(Aspect.LIFE, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.LAMP_FERTILITY.get()), new AspectList().add(Aspect.LIFE, 10).add(Aspect.PLANT, 5).add(Aspect.MAGIC, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(AuraBlocks.STABILIZER_ADVANCED_ITEM.get()), new AspectList().add(Aspect.AURA, 15).add(Aspect.MAGIC, 10).add(Aspect.ORDER, 5).add(Aspect.PROTECT, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(AuraBlocks.OBSIDIAN_TOTEM_ITEM.get()), new AspectList().add(Aspect.EARTH, 5).add(Aspect.ELDRITCH, 5).add(Aspect.PROTECT, 10).add(Aspect.DARKNESS, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.EVERFULL_URN.get()), new AspectList().add(Aspect.WATER, 15).add(Aspect.DESIRE, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.MIRROR_ITEM.get()), new AspectList().add(Aspect.CRYSTAL, 5).add(Aspect.MOTION, 5).add(Aspect.VOID, 5).add(Aspect.MAGIC, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.MIRROR_ESSENTIA.get()), new AspectList().add(Aspect.CRYSTAL, 5).add(Aspect.ALCHEMY, 5).add(Aspect.VOID, 5).add(Aspect.EXCHANGE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.CONDENSER_LATTICE.get()), new AspectList().add(Aspect.METAL, 10).add(Aspect.VOID, 5).add(Aspect.ORDER, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.CONDENSER_LATTICE_DIRTY.get()), new AspectList().add(Aspect.METAL, 10).add(Aspect.VOID, 5).add(Aspect.FLUX, 5).add(Aspect.ENTROPY, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.VOID_SIPHON.get()), new AspectList().add(Aspect.VOID, 15).add(Aspect.DARKNESS, 5).add(Aspect.MOTION, 5).add(Aspect.MAGIC, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.ESSENTIA_RESERVOIR.get()), new AspectList().add(Aspect.VOID, 15).add(Aspect.CRYSTAL, 5).add(Aspect.ORDER, 5).add(Aspect.ALCHEMY, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.FLUX_SCRUBBER.get()), new AspectList().add(Aspect.FLUX, 10).add(Aspect.ORDER, 10).add(Aspect.MECHANISM, 5).add(Aspect.MAGIC, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.COPPER_NUGGET.get()), new AspectList().add(Aspect.METAL, 1).add(Aspect.EXCHANGE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.TIN_NUGGET.get()), new AspectList().add(Aspect.METAL, 1).add(Aspect.ORDER, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SILVER_NUGGET.get()), new AspectList().add(Aspect.METAL, 1).add(Aspect.LIGHT, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.LEAD_NUGGET.get()), new AspectList().add(Aspect.METAL, 1).add(Aspect.DEATH, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RAREEARTH_NUGGET.get()), new AspectList().add(Aspect.METAL, 1).add(Aspect.ENERGY, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.QUICKSILVER_NUGGET.get()), new AspectList().add(Aspect.METAL, 1).add(Aspect.DEATH, 1).add(Aspect.ALCHEMY, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.QUARTZ_NUGGET.get()), new AspectList().add(Aspect.CRYSTAL, 1));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CLUSTER_TIN.get()), new AspectList().add(Aspect.ORDER, 5).add(Aspect.METAL, 15).add(Aspect.EARTH, 5).add(Aspect.EXCHANGE, 1));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CLUSTER_SILVER.get()), new AspectList().add(Aspect.ORDER, 5).add(Aspect.METAL, 15).add(Aspect.EARTH, 5).add(Aspect.LIGHT, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CLUSTER_LEAD.get()), new AspectList().add(Aspect.ORDER, 5).add(Aspect.METAL, 15).add(Aspect.EARTH, 5).add(Aspect.DEATH, 3));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.BOTTLE_TAINT.get()), new AspectList().add(Aspect.FLUX, 10).add(Aspect.VOID, 5).add(Aspect.ALCHEMY, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SANITY_SOAP.get()), new AspectList().add(Aspect.ORDER, 10).add(Aspect.ALCHEMY, 5).add(Aspect.LIFE, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.BATH_SALTS.get()), new AspectList().add(Aspect.WATER, 10).add(Aspect.LIFE, 10).add(Aspect.MAGIC, 5).add(Aspect.SENSES, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.TURRET_PLACER_BORE.get()), new AspectList().add(Aspect.MECHANISM, 10).add(Aspect.TOOL, 10).add(Aspect.MOTION, 5).add(Aspect.METAL, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CAUSALITY_COLLAPSER.get()), new AspectList().add(Aspect.ELDRITCH, 10).add(Aspect.ENTROPY, 10).add(Aspect.VOID, 5).add(Aspect.MOTION, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.HAND_MIRROR.get()), new AspectList().add(Aspect.SENSES, 10).add(Aspect.CRYSTAL, 5).add(Aspect.MOTION, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_AMULET.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.MAGIC, 20).add(Aspect.PROTECT, 20));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_AMULET_EMERGENCY.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.MAGIC, 20).add(Aspect.PROTECT, 25).add(Aspect.SOUL, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_RING_LESSER.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.MAGIC, 10).add(Aspect.PROTECT, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_RING.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.MAGIC, 20).add(Aspect.PROTECT, 20));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_RING_CHARGED.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.MAGIC, 20).add(Aspect.PROTECT, 25).add(Aspect.ENERGY, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_RING_REGEN.get()), new AspectList().add(Aspect.METAL, 5).add(Aspect.MAGIC, 20).add(Aspect.PROTECT, 20).add(Aspect.LIFE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_GIRDLE.get()), new AspectList().add(Aspect.METAL, 10).add(Aspect.MAGIC, 20).add(Aspect.PROTECT, 25));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.RUNIC_GIRDLE_KINETIC.get()), new AspectList().add(Aspect.METAL, 10).add(Aspect.MAGIC, 20).add(Aspect.PROTECT, 20).add(Aspect.MOTION, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VERDANT_CHARM.get()), new AspectList().add(Aspect.LIFE, 15).add(Aspect.PLANT, 10).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VERDANT_CHARM_LIFE.get()), new AspectList().add(Aspect.LIFE, 20).add(Aspect.PLANT, 10).add(Aspect.MAGIC, 5).add(Aspect.AURA, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VERDANT_CHARM_SUSTAIN.get()), new AspectList().add(Aspect.LIFE, 10).add(Aspect.PLANT, 5).add(Aspect.DESIRE, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOS_RING_FANCY.get()), new AspectList().add(Aspect.AURA, 5).add(Aspect.METAL, 5).add(Aspect.DESIRE, 15));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOSITY_BAND.get()), new AspectList().add(Aspect.MIND, 20).add(Aspect.SENSES, 10).add(Aspect.DESIRE, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.VOIDSEER_CHARM.get()), new AspectList().add(Aspect.VOID, 10).add(Aspect.SENSES, 15).add(Aspect.ELDRITCH, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CHARM_UNDYING.get()), new AspectList().add(Aspect.LIFE, 20).add(Aspect.SOUL, 15).add(Aspect.PROTECT, 10).add(Aspect.UNDEAD, 5));
+
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.GOLEM_PLACER.get()), new AspectList().add(Aspect.MECHANISM, 15).add(Aspect.METAL, 10).add(Aspect.SOUL, 5).add(Aspect.MOTION, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.BLANK_SEAL.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.ORDER, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_BLANK.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.ORDER, 3).add(Aspect.VOID, 2));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_PICKUP.get()), new AspectList().add(Aspect.EXCHANGE, 5).add(Aspect.MOTION, 5).add(Aspect.ORDER, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_PICKUP_ADVANCED.get()), new AspectList().add(Aspect.EXCHANGE, 10).add(Aspect.MOTION, 10).add(Aspect.VOID, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_EMPTY.get()), new AspectList().add(Aspect.EXCHANGE, 5).add(Aspect.ENTROPY, 5).add(Aspect.VOID, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_EMPTY_ADVANCED.get()), new AspectList().add(Aspect.EXCHANGE, 10).add(Aspect.ENTROPY, 10).add(Aspect.VOID, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_FILL.get()), new AspectList().add(Aspect.EXCHANGE, 5).add(Aspect.ALCHEMY, 5).add(Aspect.CRAFT, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_FILL_ADVANCED.get()), new AspectList().add(Aspect.EXCHANGE, 10).add(Aspect.ALCHEMY, 10).add(Aspect.VOID, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_GUARD.get()), new AspectList().add(Aspect.PROTECT, 10).add(Aspect.AVERSION, 5).add(Aspect.MECHANISM, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_GUARD_ADVANCED.get()), new AspectList().add(Aspect.PROTECT, 15).add(Aspect.AVERSION, 10).add(Aspect.VOID, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_BUTCHER.get()), new AspectList().add(Aspect.DEATH, 10).add(Aspect.BEAST, 5).add(Aspect.TOOL, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_HARVEST.get()), new AspectList().add(Aspect.PLANT, 10).add(Aspect.TOOL, 5).add(Aspect.LIFE, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_LUMBER.get()), new AspectList().add(Aspect.PLANT, 10).add(Aspect.TOOL, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_BREAKER.get()), new AspectList().add(Aspect.TOOL, 10).add(Aspect.EARTH, 5).add(Aspect.ENTROPY, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_BREAKER_ADVANCED.get()), new AspectList().add(Aspect.TOOL, 15).add(Aspect.EARTH, 10).add(Aspect.VOID, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_PROVIDE.get()), new AspectList().add(Aspect.EXCHANGE, 5).add(Aspect.DESIRE, 3).add(Aspect.ORDER, 3));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_STOCK.get()), new AspectList().add(Aspect.ORDER, 10).add(Aspect.MIND, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_USE.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 3));
     }
 }

@@ -2,13 +2,14 @@ package arcaneresearch.discovered.table;
 
 import java.util.HashMap;
 
+import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.discovered.note.DiscoveredNoteData;
+import arcaneresearch.helper.StackNbtHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
 
 import arcaneresearch.api.ArcaneresearchInvHelper;
-import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.discovered.note.DiscoveredNoteData;
 
  
 

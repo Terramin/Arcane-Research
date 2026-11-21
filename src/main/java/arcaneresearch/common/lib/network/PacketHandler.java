@@ -128,6 +128,22 @@ public class PacketHandler {
                 arcaneresearch.common.lib.network.fx.PacketFXScanSource.STREAM_CODEC,
                 arcaneresearch.common.lib.network.fx.PacketFXScanSource::handle);
         registrar.playToClient(
+                arcaneresearch.common.lib.network.fx.PacketFXMagicDustSparkles.TYPE,
+                arcaneresearch.common.lib.network.fx.PacketFXMagicDustSparkles.STREAM_CODEC,
+                arcaneresearch.common.lib.network.fx.PacketFXMagicDustSparkles::handle);
+        registrar.playToClient(
+                arcaneresearch.common.lib.network.fx.PacketFXTeleport.TYPE,
+                arcaneresearch.common.lib.network.fx.PacketFXTeleport.STREAM_CODEC,
+                arcaneresearch.common.lib.network.fx.PacketFXTeleport::handle);
+        registrar.playToClient(
+                arcaneresearch.message.api.PacketStoryMessage.TYPE,
+                arcaneresearch.message.api.PacketStoryMessage.STREAM_CODEC,
+                arcaneresearch.message.api.PacketStoryMessage::handle);
+        registrar.playToServer(
+                arcaneresearch.message.api.PacketStoryMessageAck.TYPE,
+                arcaneresearch.message.api.PacketStoryMessageAck.STREAM_CODEC,
+                arcaneresearch.message.api.PacketStoryMessageAck::handle);
+        registrar.playToClient(
                 arcaneresearch.common.lib.network.fx.PacketFXSonic.TYPE,
                 arcaneresearch.common.lib.network.fx.PacketFXSonic.STREAM_CODEC,
                 arcaneresearch.common.lib.network.fx.PacketFXSonic::handle);
@@ -246,6 +262,16 @@ public class PacketHandler {
     }
 
     @SuppressWarnings("unchecked")
+    public static <MSG> void sendToDimension(MSG packet, net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dimension) {
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        if (server == null || dimension == null) return;
+        net.minecraft.server.level.ServerLevel level = server.getLevel(dimension);
+        if (level != null) {
+            PacketDistributor.sendToPlayersInDimension(level,
+                    (net.minecraft.network.protocol.common.custom.CustomPacketPayload) packet);
+        }
+    }
+
     public static <MSG> void sendToAll(MSG packet) {
         PacketDistributor.sendToAllPlayers((net.minecraft.network.protocol.common.custom.CustomPacketPayload) packet);
     }

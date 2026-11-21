@@ -21,8 +21,6 @@ import arcaneresearch.init.ModEntities;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityRiftBlast extends ThrowableProjectile {
 
     private static final EntityDataAccessor<Boolean> DATA_RED =
@@ -110,8 +108,6 @@ public class EntityRiftBlast extends ThrowableProjectile {
             spawnTrailFX();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnTrailFX() {
         FXDispatcher.INSTANCE.drawCurlyWisp(
                 getX() + random.nextGaussian() * 0.05,
@@ -136,8 +132,6 @@ public class EntityRiftBlast extends ThrowableProjectile {
 
         discard();
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnBurstFX() {
         FXDispatcher.INSTANCE.burst(getX(), getY(), getZ(), 6.0f);
     }

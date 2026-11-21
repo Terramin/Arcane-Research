@@ -14,7 +14,7 @@ import arcaneresearch.api.crafting.IArcaneRecipe;
 import arcaneresearch.api.crafting.IArcaneWorkbench;
 import arcaneresearch.api.crafting.IngredientNBTTC;
 import arcaneresearch.api.research.ResearchCategories;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHostWand;
 import arcaneresearch.api.wands.WandCap;
 import arcaneresearch.api.wands.WandRod;
 import arcaneresearch.common.items.wands.ItemWandCap;
@@ -70,7 +70,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
                 return null;
             }
             ItemStack result = ArcaneWandRecipe.getCraftingResult(matrix);
-            if (result.isEmpty() || !(result.getItem() instanceof IWand wand)) {
+            if (result.isEmpty() || !(result.getItem() instanceof IFocusHostWand wand)) {
                 return null;
             }
             WandCap cap = wand.getCap(result);
@@ -103,7 +103,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
                 return null;
             }
             ItemStack result = ArcaneWandRecipe.getSceptreResult(matrix);
-            if (result.isEmpty() || !(result.getItem() instanceof IWand wand)) {
+            if (result.isEmpty() || !(result.getItem() instanceof IFocusHostWand wand)) {
                 return null;
             }
             WandCap cap = wand.getCap(result);
@@ -208,7 +208,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
 
     private ItemStack buildWand() {
         ItemStack out = WandItems.createWandStack();
-        if (out.getItem() instanceof IWand w) {
+        if (out.getItem() instanceof IFocusHostWand w) {
             w.setCap(out, WandCap.caps.get(capTag));
             w.setRod(out, WandRod.rods.get(rodTag));
             if (sceptre) {

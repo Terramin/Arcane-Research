@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityTaintSwarm extends Monster implements ITaintedMob {
 
     private static final EntityDataAccessor<Boolean> DATA_SUMMONED =
@@ -134,8 +132,6 @@ public class EntityTaintSwarm extends Monster implements ITaintedMob {
             clientTick();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void clientTick() {
         for (int a = 0; a < swarm.size(); ++a) {
             FXSwarm fx = swarm.get(a);

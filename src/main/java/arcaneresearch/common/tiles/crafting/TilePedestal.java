@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.blocks.devices.BlockInlay;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
 import arcaneresearch.init.ModBlockEntities;
@@ -89,8 +88,6 @@ public class TilePedestal extends TileArcaneresearchInventory {
         }
         return super.triggerEvent(id, data);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private boolean clientTriggerEvent(int id) {
         if (id == 11) {
             FXDispatcher.INSTANCE.drawBamf(worldPosition.above(), 0.75f, 0.0f, 0.5f, true, true, null);

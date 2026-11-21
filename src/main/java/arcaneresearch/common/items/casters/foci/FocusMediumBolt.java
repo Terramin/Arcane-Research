@@ -67,8 +67,7 @@ public class FocusMediumBolt extends FocusMediumTouch {
             if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
                 end = hit.getLocation();
             }
-        } else if (hit instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
-
+        } else if (hit instanceof EntityHitResult entityHit) {
             end = start.add(direction.scale(start.distanceTo(entityHit.getEntity().position())));
         }
 

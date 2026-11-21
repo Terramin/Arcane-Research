@@ -209,7 +209,7 @@ public class TaintHelper {
             if (material == MapColor.STONE ||
                     block == Blocks.NETHERRACK || block == Blocks.END_STONE ||
                     block == Blocks.OBSIDIAN || block == Blocks.CRYING_OBSIDIAN ||
-                    bs.is(net.neoforged.neoforge.common.Tags.Blocks.ORES)) {
+                    bs.is(net.minecraft.tags.BlockTags.ORES)) {
                 if (ModBlocks.TAINT_ROCK != null) {
                     level.setBlockAndUpdate(target, ModBlocks.TAINT_ROCK.get().defaultBlockState());
                     level.blockEvent(target, ModBlocks.TAINT_ROCK.get(), 1, 0);

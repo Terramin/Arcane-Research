@@ -1,6 +1,7 @@
 package arcaneresearch.common.world.maze;
 
-import com.mojang.logging.LogUtils;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -8,7 +9,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.LevelResource;
-import org.slf4j.Logger;
 
 import java.io.File;
 import net.minecraft.util.RandomSource;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
  
 public final class MazeHandler {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.WORLD);
 
     public static ConcurrentHashMap<CellLoc, Short> labyrinth = new ConcurrentHashMap<>();
 

@@ -1,5 +1,6 @@
 package arcaneresearch.client.lib.events;
-
+import arcaneresearch.common.entities.monster.mods.ChampionModifier;
+import arcaneresearch.common.tiles.crafting.TileInfusionMatrix;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -60,7 +61,7 @@ public class ClientEvents {
             }
             net.minecraft.core.BlockPos dest = fx.start;
             if (mc.level.getBlockEntity(dest)
-                    instanceof arcaneresearch.common.tiles.crafting.TileInfusionMatrix) {
+                    instanceof TileInfusionMatrix) {
                 dest = dest.below();
             }
             FXDispatcher.INSTANCE.essentiaTrailFx(fx.end, dest,

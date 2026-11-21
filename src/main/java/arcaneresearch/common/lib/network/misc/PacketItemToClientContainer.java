@@ -70,7 +70,7 @@ ctx.enqueueWork(() -> handleOnClient(msg, ctx.player()));
                 player.containerMenu.setItem(message.slot, 0, message.item);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Arcaneresearch.LOGGER.error("Failed to apply container slot update for window {}", message.windowId, e);
         }
     }
 }

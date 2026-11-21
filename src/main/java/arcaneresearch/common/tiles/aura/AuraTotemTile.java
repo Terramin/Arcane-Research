@@ -22,16 +22,6 @@ import java.util.Map;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
- 
-
-
-
-
-
-
- 
 public class AuraTotemTile extends TileArcaneresearchInventory implements MenuProvider {
     public static final String TOTEM_ID = "arcaneresearch:aura_totem";
 
@@ -90,8 +80,6 @@ public class AuraTotemTile extends TileArcaneresearchInventory implements MenuPr
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     protected void clientTick() {
         Level level = getLevel();
         if (level == null || !level.isClientSide()) {
@@ -108,8 +96,6 @@ public class AuraTotemTile extends TileArcaneresearchInventory implements MenuPr
 
     protected void performMagnet() {
     }
-
-    @OnlyIn(Dist.CLIENT)
     protected void drawEffect() {
         Level level = getLevel();
         if (level == null || !level.isClientSide()) {

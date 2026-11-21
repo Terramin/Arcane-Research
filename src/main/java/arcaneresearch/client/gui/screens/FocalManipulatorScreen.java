@@ -431,7 +431,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
         assert confirmButton != null;
 
-        confirmButton.setButtonActive(getTile().vis <= 0.0f && valid);
+        confirmButton.setButtonActive(!getTile().hasVisRemaining() && valid);
 
     }
 
@@ -521,7 +521,8 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
 
 
-        int visCost = getTile().vis > 0 ? (int) getTile().vis : costVis;
+        int remainingVis = getTile().vis.visSize();
+        int visCost = remainingVis > 0 ? remainingVis : costVis;
 
         graphics.text(font, ChatFormatting.AQUA + String.valueOf(visCost), x + 242, y + 64, 0xFF99FF8D, true);
 
@@ -1766,9 +1767,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         int i = 0, q = 0;
 
         for (ItemStack stack : components) {
-
-            HoverButton button = new HoverButton(leftPos + 234 + i * 16, topPos + 110 + 16 * q,
-
+            HoverButton button = new HoverButton(leftPos + 234 + i * 16, topPos + 148 + 16 * q,
                     16, 16, stack.getHoverName().getString(), null, stack);
 
             crystalButtons.add(button);
@@ -1989,7 +1988,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
 
 
 
-        if (tile.vis <= 0.0f && tile.data != null && !tile.data.isEmpty()) {
+        if (!tile.hasVisRemaining() && tile.data != null && !tile.data.isEmpty()) {
 
 
 

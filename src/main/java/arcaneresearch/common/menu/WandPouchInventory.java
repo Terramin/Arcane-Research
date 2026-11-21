@@ -1,11 +1,12 @@
 package arcaneresearch.common.menu;
 
+import arcaneresearch.api.wands.FocusItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import arcaneresearch.api.wands.ItemFocusBasic;
+
 
 import java.util.Arrays;
 
@@ -90,7 +91,7 @@ public class WandPouchInventory implements Container {
 
     @Override
     public boolean canPlaceItem(int index, ItemStack stack) {
-        return !stack.isEmpty() && stack.getItem() instanceof ItemFocusBasic;
+        return !stack.isEmpty() && stack.getItem() instanceof FocusItem;
     }
 
     

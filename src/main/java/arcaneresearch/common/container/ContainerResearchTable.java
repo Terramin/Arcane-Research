@@ -6,6 +6,8 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.items.IScribeTools;
 import arcaneresearch.api.research.theorycraft.ResearchTableData;
 import arcaneresearch.api.research.theorycraft.TheorycraftCard;
@@ -20,6 +22,7 @@ import java.util.HashMap;
 
 @Deprecated
 public class ContainerResearchTable extends AbstractContainerMenu {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RESEARCH);
     static HashMap<Integer, Long> antiSpam = new HashMap<Integer, Long>();
     private final ContainerLevelAccess access;
     private final ContainerData data;
@@ -131,7 +134,7 @@ public class ContainerResearchTable extends AbstractContainerMenu {
                         return true;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOGGER.error("Failed to activate theorycraft card for {}", player.getName().getString(), e);
                 }
             }
             case 7 -> {

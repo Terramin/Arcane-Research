@@ -2,6 +2,7 @@ package arcaneresearch.common.tiles.aura;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import arcaneresearch.common.blocks.aura.BlockStabilizer;
@@ -10,8 +11,6 @@ import arcaneresearch.client.fx.FXDispatcher;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class StabilizerTile extends TileArcaneresearch {
     public int count = 0;
     private int lock = 1;
@@ -25,8 +24,6 @@ public class StabilizerTile extends TileArcaneresearch {
         } catch (Exception ignored) {
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, StabilizerTile tile) {
         try {
             if (pos.getY() < level.getMaxY() - 1

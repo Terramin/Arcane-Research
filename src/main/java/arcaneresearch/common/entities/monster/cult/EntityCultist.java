@@ -18,8 +18,6 @@ import javax.annotation.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityCultist extends Monster {
 
     private BlockPos homePos;
@@ -125,8 +123,6 @@ public class EntityCultist extends Monster {
             level().broadcastEntityEvent(this, (byte) 20);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnSpawnFX() {
         for (int i = 0; i < 20; ++i) {
             double d0 = random.nextGaussian() * 0.05;

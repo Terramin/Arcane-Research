@@ -413,7 +413,6 @@ public class BlockInlay extends Block implements IInfusionStabiliserExt {
     }
 
     @Override
-    @net.neoforged.api.distmarker.OnlyIn(net.neoforged.api.distmarker.Dist.CLIENT)
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         
         int charge = state.getValue(CHARGE);

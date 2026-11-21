@@ -1,25 +1,10 @@
 package arcaneresearch.helper;
-
+import arcaneresearch.api.wands.FocusItem;
+import arcaneresearch.api.wands.IFocusHost;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-
- 
-
-
-
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
 public final class TintHelper {
 
       
@@ -182,12 +167,11 @@ public final class TintHelper {
       
     public static int casterFocusColor(ItemStack stack, int tintIndex) {
         if (tintIndex > 0 && stack != null && !stack.isEmpty()
-                && stack.getItem() instanceof arcaneresearch.common.items.casters.ItemCaster caster) {
+                && stack.getItem() instanceof IFocusHost host) {
             try {
-                ItemStack focusStack = caster.getFocusStack(stack);
-                if (caster.getFocus(stack) instanceof arcaneresearch.common.items.casters.ItemFocus focus
-                        && focusStack != null) {
-                    return focus.getFocusColor(focusStack);
+                FocusItem focus = host.getFocus(stack);
+                if (focus != null) {
+                    return focus.getFocusColor(host.getFocusStack(stack));
                 }
             } catch (Exception ignored) {
             }
@@ -210,9 +194,9 @@ public final class TintHelper {
       
     public static int wandFocusColor(ItemStack stack, int tintIndex) {
         if (tintIndex == 1 && stack != null && !stack.isEmpty()
-                && stack.getItem() instanceof arcaneresearch.api.wands.IWand wand) {
+                && stack.getItem() instanceof IFocusHost wand) {
             try {
-                arcaneresearch.api.wands.ItemFocusBasic focus = wand.getFocus(stack);
+                FocusItem focus = wand.getFocus(stack);
                 if (focus != null) {
                     return focus.getFocusColor(wand.getFocusStack(stack));
                 }

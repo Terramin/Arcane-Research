@@ -1,5 +1,5 @@
 package arcaneresearch.init;
-
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -25,6 +25,7 @@ import arcaneresearch.common.blocks.world.BlockGrassAmbient;
 import arcaneresearch.common.blocks.world.BlockLoot;
 import arcaneresearch.common.blocks.world.ore.BlockCrystalTC;
 import arcaneresearch.common.blocks.world.ore.BlockOreTC;
+import arcaneresearch.common.blocks.world.ore.VisneriteOreBlock;
 import arcaneresearch.common.blocks.world.plants.*;
 import arcaneresearch.common.blocks.world.taint.*;
 
@@ -235,6 +236,10 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> DEEPSLATE_QUARTZ_ORE = registerBlock("deepslate_quartz_ore",
             BlockOreTC::createDeepslateQuartzOre);
+
+    // NEOFORGE_PORT: user-added visnerite ore (upstream 1.20.1 VisneriteOreBlock).
+    public static final DeferredBlock<Block> VISNERITEORE = registerBlock("visnerite_ore",
+            arcaneresearch.common.blocks.world.ore.VisneriteOreBlock::createVisneriteOre);
 
     public static final DeferredBlock<Block> CRYSTAL_AIR = registerBlock("crystal_air",
             props -> new BlockCrystalTC(props, Aspect.AIR));
@@ -707,10 +712,8 @@ public class ModBlocks {
 
  
     public static void addFlowerPotPlants() {
-        
-        
-        
-        
+        // NEOFORGE_PORT: Forge's FlowerPotBlock#addPlant no longer exists in 26.x;
+        // potted variants are registered as ordinary blocks above.
     }
 
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {

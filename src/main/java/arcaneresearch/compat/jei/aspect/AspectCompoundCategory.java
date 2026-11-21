@@ -32,12 +32,10 @@ public class AspectCompoundCategory implements IRecipeCategory<Aspect> {
     private static final int WIDTH = 108;
     private static final int HEIGHT = 40;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
 
     public AspectCompoundCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.SALIS_MUNDUS.get()));
         this.title = Component.translatable("gui.arcaneresearch.aspect_compound");
     }

@@ -10,12 +10,20 @@ import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier; 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.ItemLike;
+import net.neoforged.api.distmarker.Dist;
+import net.minecraft.world.item.Item;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.crafting.IArcaneRecipe;
 import arcaneresearch.common.lib.crafting.CrucibleRecipeType;
 import arcaneresearch.common.lib.crafting.InfusionRecipeType;
+import arcaneresearch.common.menu.ArcaneWorkbenchMenu;
+import arcaneresearch.common.blocks.aura.AuraBlocks;
+import arcaneresearch.common.items.wands.WandItems;
 import arcaneresearch.compat.jei.arcane.ArcaneWorkbenchCategory;
 import arcaneresearch.compat.jei.aspect.AspectCompoundCategory;
 import arcaneresearch.compat.jei.aspect.AspectIngredient;
@@ -24,6 +32,7 @@ import arcaneresearch.compat.jei.aspect.AspectSourcesCategory;
 import arcaneresearch.compat.jei.crucible.CrucibleCategory;
 import arcaneresearch.compat.jei.infusion.InfusionCategory;
 import arcaneresearch.compat.jei.multiblock.MultiblockCategory;
+import arcaneresearch.discovered.note.DiscoveredNoteSetup;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModRecipeTypes;
@@ -90,6 +99,78 @@ public class ArcaneresearchJEIPlugin implements IModPlugin {
                     arcaneresearch.api.aspects.AspectList.CODEC);
         } catch (Exception e) {
             Arcaneresearch.LOGGER.error("JEI: failed to register aspects", e);
+        }
+    }
+
+
+    @Override
+    public void registerItemSubtypes(@NotNull ISubtypeRegistration registration) {
+        try {
+            // Research notes store their content in NBT; without a subtype
+            // interpreter JEI treats every note stack in the creative tab as a
+            // duplicate of the same item ("N duplicate items were found...").
+            Item[] nbtItems = new Item[]{
+                    DiscoveredNoteSetup.getNoteItem(),
+                    DiscoveredNoteSetup.getDiscoveryItem(),
+
+                    ModBlocks.JAR_NORMAL.get().asItem(),
+                    AuraBlocks.JAR_NODE_ITEM.get(),
+                    AuraBlocks.AURA_NODE_ITEM.get(),
+
+                    ModItems.CRYSTAL_ESSENCE.get(),
+                    ModItems.WISP_ESSENCE.get(),
+                    ModItems.LABEL_FILLED.get(),
+                    ModItems.PHIAL_EMPTY.get(),
+                    ModItems.PHIAL_FILLED.get(),
+
+                    ModItems.ELEMENTAL_PICK.get(),
+                    ModItems.ELEMENTAL_AXE.get(),
+                    ModItems.ELEMENTAL_SWORD.get(),
+                    ModItems.ELEMENTAL_SHOVEL.get(),
+                    ModItems.PRIMAL_CRUSHER.get(),
+
+                    WandItems.WAND.get(),
+                    WandItems.WAND_CAP.get(),
+
+                    ModItems.GOGGLES.get(),
+                    ModItems.CLOTH_CHEST.get(),
+                    ModItems.CLOTH_LEGS.get(),
+                    ModItems.CLOTH_BOOTS.get(),
+                    ModItems.THAUMIUM_HELM.get(),
+                    ModItems.THAUMIUM_CHEST.get(),
+                    ModItems.THAUMIUM_LEGS.get(),
+                    ModItems.THAUMIUM_BOOTS.get(),
+                    ModItems.TRAVELLER_BOOTS.get(),
+                    ModItems.FORTRESS_HELM.get(),
+                    ModItems.FORTRESS_CHEST.get(),
+                    ModItems.FORTRESS_LEGS.get(),
+                    ModItems.VOID_HELM.get(),
+                    ModItems.VOID_CHEST.get(),
+                    ModItems.VOID_LEGS.get(),
+                    ModItems.VOID_BOOTS.get(),
+                    ModItems.VOID_ROBE_HELM.get(),
+                    ModItems.VOID_ROBE_CHEST.get(),
+                    ModItems.VOID_ROBE_LEGS.get(),
+                    ModItems.CRIMSON_PLATE_HELM.get(),
+                    ModItems.CRIMSON_PLATE_CHEST.get(),
+                    ModItems.CRIMSON_PLATE_LEGS.get(),
+                    ModItems.CRIMSON_BOOTS.get(),
+                    ModItems.CRIMSON_ROBE_HELM.get(),
+                    ModItems.CRIMSON_ROBE_CHEST.get(),
+                    ModItems.CRIMSON_ROBE_LEGS.get(),
+                    ModItems.CRIMSON_PRAETOR_HELM.get(),
+                    ModItems.CRIMSON_PRAETOR_CHEST.get(),
+                    ModItems.CRIMSON_PRAETOR_LEGS.get(),
+
+                    ModItems.GOLEM_PLACER.get()
+            };
+            for (Item item : nbtItems) {
+                if (item != null && item != Items.AIR) {
+                    registration.registerFromDataComponentTypes(item, net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+                }
+            }
+        } catch (Exception e) {
+            Arcaneresearch.LOGGER.error("JEI: failed to register item subtypes", e);
         }
     }
 

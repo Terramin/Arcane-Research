@@ -45,6 +45,7 @@ public class ModConfig {
     public static boolean generateCinnabar = CONFIG_WORLD.generateCinnabar;
     public static boolean generateAmber = CONFIG_WORLD.generateAmber;
     public static boolean generateQuartz = CONFIG_WORLD.generateQuartz;
+    public static boolean generateVisnerite = CONFIG_WORLD.generateVisnerite;
     public static boolean generateMagicForest = CONFIG_WORLD.generateMagicForest;
     public static int biomeMagicalForestWeight = CONFIG_WORLD.biomeMagicalForestWeight;
     public static boolean allowSpawnAngryZombie = CONFIG_WORLD.allowSpawnAngryZombie;
@@ -90,6 +91,7 @@ public class ModConfig {
         generateCinnabar = CONFIG_WORLD.generateCinnabar;
         generateAmber = CONFIG_WORLD.generateAmber;
         generateQuartz = CONFIG_WORLD.generateQuartz;
+        generateVisnerite = CONFIG_WORLD.generateVisnerite;
         generateMagicForest = CONFIG_WORLD.generateMagicForest;
         biomeMagicalForestWeight = CONFIG_WORLD.biomeMagicalForestWeight;
         allowSpawnAngryZombie = CONFIG_WORLD.allowSpawnAngryZombie;
@@ -168,15 +170,14 @@ public class ModConfig {
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.GOLD_INGOT), 100, 0, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.ENDER_PEARL), 100, 0, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.AMULET_VIS_FOUND.get()), 6, 1, 2);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_AMULET_MUNDANE.get()), 10, 0);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), 10, 0);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get()), 10, 0);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), 5, 2);
-        
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_AMULET_MUNDANE.get()), 10, 0);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_RING_MUNDANE.get()), 10, 0);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_GIRDLE_MUNDANE.get()), 10, 0);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_RING_APPRENTICE.get()), 5, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.RUNIC_RING_LESSER.get()), 5, 1, 2);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), 5, 1);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), 5, 1);
-        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), 5, 1);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_AMULET_FANCY.get()), 5, 1);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_RING_FANCY.get()), 5, 1);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.CURIOS_GIRDLE_FANCY.get()), 5, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.EXPERIENCE_BOTTLE), 5, 0);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.EXPERIENCE_BOTTLE), 10, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.EXPERIENCE_BOTTLE), 20, 2);
@@ -198,9 +199,8 @@ public class ModConfig {
         }
 
         ItemStack[] commonLoot = {new ItemStack(ModItems.LOOT_BAG_COMMON.get()), new ItemStack(ModItems.THAUMIUM_INGOT.get()), new ItemStack(ModItems.AMBER.get())};
-        ItemStack[] uncommonLoot = {new ItemStack(ModItems.LOOT_BAG_UNCOMMON.get()), new ItemStack(ModItems.BAUBLE_AMULET_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_MUNDANE.get())};
-        ItemStack[] rareLoot = {new ItemStack(ModItems.LOOT_BAG_RARE.get()), new ItemStack(ModItems.THAUMONOMICON.get()), new ItemStack(ModItems.THAUMIUM_SWORD.get()), new ItemStack(ModItems.THAUMIUM_AXE.get()), new ItemStack(ModItems.THAUMIUM_HOE.get()), new ItemStack(ModItems.THAUMIUM_PICK.get()), new ItemStack(ModItems.BAUBLE_RING_APPRENTICE.get()), new ItemStack(ModItems.BAUBLE_AMULET_FANCY.get()), new ItemStack(ModItems.BAUBLE_RING_FANCY.get()), new ItemStack(ModItems.BAUBLE_GIRDLE_FANCY.get()), new ItemStack(ModItems.AMULET_VIS_FOUND.get()),
-                
+        ItemStack[] uncommonLoot = {new ItemStack(ModItems.LOOT_BAG_UNCOMMON.get()), new ItemStack(ModItems.CURIOS_AMULET_MUNDANE.get()), new ItemStack(ModItems.CURIOS_RING_MUNDANE.get()), new ItemStack(ModItems.CURIOS_GIRDLE_MUNDANE.get())};
+        ItemStack[] rareLoot = {new ItemStack(ModItems.LOOT_BAG_RARE.get()), new ItemStack(ModItems.THAUMONOMICON.get()), new ItemStack(ModItems.THAUMIUM_SWORD.get()), new ItemStack(ModItems.THAUMIUM_AXE.get()), new ItemStack(ModItems.THAUMIUM_HOE.get()), new ItemStack(ModItems.THAUMIUM_PICK.get()), new ItemStack(ModItems.CURIOS_RING_APPRENTICE.get()), new ItemStack(ModItems.CURIOS_AMULET_FANCY.get()), new ItemStack(ModItems.CURIOS_RING_FANCY.get()), new ItemStack(ModItems.CURIOS_GIRDLE_FANCY.get()), new ItemStack(ModItems.AMULET_VIS_FOUND.get()),
                 new ItemStack(ModItems.RUNIC_RING_LESSER.get())};
     }
 
@@ -216,7 +216,9 @@ public class ModConfig {
                 }
                 String path = id.getPath();
                 if (!id.getNamespace().equals("minecraft") && !id.getNamespace().equals("arcaneresearch")) {
-                    if (path.endsWith("_ore") || path.startsWith("ore_") || path.contains("ore_")) {
+                    boolean isOre = path.endsWith("_ore") || path.startsWith("ore_") || path.contains("ore_");
+                    boolean isRaw = path.contains("raw");
+                    if (isOre || isRaw) {
                         String lower = path.toLowerCase(java.util.Locale.ROOT);
                         if (lower.contains("iron") && !isVanillaIronOre(item)) {
                             Utils.addSpecialMiningResult(new ItemStack(item), new ItemStack(ModItems.CLUSTER_IRON.get()), 1.0f);
@@ -306,7 +308,7 @@ public class ModConfig {
             if (item instanceof net.minecraft.world.item.BlockItem blockItem) {
                 try {
                     net.minecraft.world.level.block.Block block = blockItem.getBlock();
-                    if (block instanceof net.minecraft.world.level.block.BushBlock
+                    if (block instanceof net.minecraft.world.level.block.VegetationBlock
                             || block instanceof net.minecraft.world.level.block.CropBlock
                             || block instanceof net.minecraft.world.level.block.StemBlock
                             || block instanceof net.minecraft.world.level.block.SaplingBlock) {
@@ -327,6 +329,11 @@ public class ModConfig {
         Utils.addSpecialMiningResult(new ItemStack(Blocks.GOLD_ORE), new ItemStack(ModItems.CLUSTER_GOLD.get()), 1.0f);
         Utils.addSpecialMiningResult(new ItemStack(ModBlocks.CINNABAR_ORE.get()), new ItemStack(ModItems.CLUSTER_CINNABAR.get()), 1.0f);
         Utils.addSpecialMiningResult(new ItemStack(Items.QUARTZ), new ItemStack(ModItems.CLUSTER_QUARTZ.get()), 1.0f);
+        // 1.17+: ores drop raw materials instead of ore blocks
+        Utils.addSpecialMiningResult(new ItemStack(Items.RAW_IRON), new ItemStack(ModItems.CLUSTER_IRON.get()), 1.0f);
+        Utils.addSpecialMiningResult(new ItemStack(Items.RAW_GOLD), new ItemStack(ModItems.CLUSTER_GOLD.get()), 1.0f);
+        Utils.addSpecialMiningResult(new ItemStack(Items.RAW_COPPER), new ItemStack(ModItems.CLUSTER_COPPER.get()), 1.0f);
+        Utils.addSpecialMiningResult(new ItemStack(ModItems.QUICKSILVER.get()), new ItemStack(ModItems.CLUSTER_CINNABAR.get()), 1.0f);
         initAspectOrder();
     }
 
@@ -361,6 +368,7 @@ public class ModConfig {
         public static boolean generateCinnabar = true;
         public static boolean generateAmber = true;
         public static boolean generateQuartz = true;
+        public static boolean generateVisnerite = true;
         public static boolean generateCrystals = true;
         public static boolean generateTrees = true;
         public static String regenKey = "DEFAULT";

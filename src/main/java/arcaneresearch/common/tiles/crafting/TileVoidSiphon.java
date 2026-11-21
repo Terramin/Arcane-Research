@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.entities.EntityFluxRift;
 import arcaneresearch.common.lib.utils.EntityUtils;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
@@ -135,8 +134,6 @@ public class TileVoidSiphon extends TileArcaneresearchInventory implements World
         }
         return super.triggerEvent(id, param);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnVoidStreaks(int param) {
         List<EntityFluxRift> rifts = getValidRifts();
         for (EntityFluxRift rift : rifts) {

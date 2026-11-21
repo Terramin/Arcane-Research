@@ -55,6 +55,9 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
 
     private final List<int[]> coords = new ArrayList<>();
     private final List<Aspect> diagramTags = new ArrayList<>();
+    private final List<Float> diagramProgress = new ArrayList<>();
+    private ItemStack cachedNoteSource = ItemStack.EMPTY;
+    private DiscoveredNoteData cachedNoteData;
 
     public CognitionNoteTableScreen(CognitionNoteTableMenu menu, Inventory inventory, Component title) {
         
@@ -91,7 +94,6 @@ public class CognitionNoteTableScreen extends AbstractContainerScreen<CognitionN
             graphics.text(font, mode, -font.width(mode) / 2, 0, 0xFFAEAE5E, false);
             pose.popMatrix();
         }
-
         DiscoveredNoteData note = noteData();
         for (int a = 0; a < CognitionNoteTableTile.INPUT_COUNT; a++) {
             Aspect aspect = menu.getTagAspect(a);

@@ -51,25 +51,15 @@ public class AINearestValidTarget<T extends LivingEntity> extends TargetGoal {
         Team team = attacker.getTeam();
         Team targetTeam = target.getTeam();
         boolean friendly = attacker instanceof ITargets targets && targets.getTargetFriendly();
-        if (team != null && targetTeam == team && !friendly) {
-            return false;
-        }
-        if (team != null && targetTeam != team && friendly) {
-            return false;
-        }
-        return true;
+        return TargetingRules.friendlyTargetingValid(team != null, team == targetTeam, friendly);
     }
 
     public static boolean isGoodTarget(Mob attacker, LivingEntity target, boolean excludeCreative, boolean checkSight) {
-        if (target == null || target == attacker || !target.isAlive()) {
+        if (target == null) {
             return false;
         }
-        if (!attacker.canAttack(target)) {
-            return false;
-        }
-        if (!friendlyTargetingValid(attacker, target)) {
-            return false;
-        }
+        Team team = attacker.getTeam();
+        Team targetTeam = target.getTeam();
         boolean friendly = attacker instanceof ITargets targets && targets.getTargetFriendly();
         
         java.util.UUID ownerId = attacker instanceof OwnableEntity ownable

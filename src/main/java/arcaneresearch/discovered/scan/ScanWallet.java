@@ -75,7 +75,7 @@ public final class ScanWallet {
         int have = tags.getIntOr(key, 0);
         int take = Math.min(have, amount);
         if (take > 0) {
-            int left = have - take;
+            int left = WalletMath.remaining(have, take);
             if (left > 0) {
                 tags.putInt(key, left);
             } else {

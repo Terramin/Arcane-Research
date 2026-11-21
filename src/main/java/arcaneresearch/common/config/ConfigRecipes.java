@@ -79,7 +79,7 @@ public class ConfigRecipes {
         
         
         for (int level = 0; level <= 4; level++) {
-            ItemStack ring = new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get());
+            ItemStack ring = new ItemStack(ModItems.CURIOS_RING_MUNDANE.get());
             if (level > 0) {
                 
                 final byte runic = (byte) level;
@@ -94,7 +94,7 @@ public class ConfigRecipes {
             ArcaneresearchApi.addFakeCraftingRecipe(
                     Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "runic_armor_fake_" + level),
                     new InfusionRecipe("RUNICSHIELDING", ring, 5 + level / 2, runicCost,
-                            new ItemStack(ModItems.BAUBLE_RING_MUNDANE.get()),
+                            new ItemStack(ModItems.CURIOS_RING_MUNDANE.get()),
                             runicComponents));
         }
         for (int level = 0; level <= 4; level++) {

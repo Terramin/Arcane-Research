@@ -49,8 +49,7 @@ public class FocusMediumCloud extends FocusMedium {
 
         float radius = getSettingValue("radius");
         int duration = getSettingValue("duration");
-
-        EntityFocusCloud cloud = new EntityFocusCloud(remainingPackage, trajectory, (float) radius, duration);
+        EntityFocusCloud cloud = new EntityFocusCloud(remainingPackage, trajectory, radius, duration);
         return getPackage().world.addFreshEntity(cloud);
     }
 

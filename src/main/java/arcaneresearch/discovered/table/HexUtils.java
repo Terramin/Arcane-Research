@@ -28,7 +28,8 @@ public class HexUtils {
         }
 
         public CubicHex toCubicHex() {
-            return new CubicHex(this.q, this.r, -this.q - this.r);
+            // Cube (x, y, z) = (q, -q-r, r); toHex() reads x and z back.
+            return new CubicHex(this.q, -this.q - this.r, this.r);
         }
 
         public Pixel toPixel(int size) {
@@ -164,11 +165,14 @@ public class HexUtils {
         if (size == 0) {
             return new ArrayList<>(0);
         }
-        random.nextInt(size);
-        int spacing = size / entries;
-        ArrayList<Hex> results = new ArrayList<>(Math.min(entries, size));
-        for (int i = 0; i < entries; i++) {
-            results.add(ring.get(i * spacing));
+        int count = Math.min(entries, size);
+        float spacing = size / (float) count;
+        float pos = random.nextInt(size);
+
+        ArrayList<Hex> results = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            results.add(ring.get((int) pos));
+            pos = (pos + spacing) % size;
         }
         return results;
     }

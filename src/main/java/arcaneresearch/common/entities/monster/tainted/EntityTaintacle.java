@@ -30,8 +30,6 @@ import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModEntities;
 import arcaneresearch.init.ModSounds;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityTaintacle extends Monster implements ITaintedMob {
 
     public float flailIntensity = 1.0f;
@@ -135,8 +133,6 @@ public class EntityTaintacle extends Monster implements ITaintedMob {
             clientTick();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void clientTick() {
         if (flailIntensity > 1.0f) {
             flailIntensity -= 0.01f;

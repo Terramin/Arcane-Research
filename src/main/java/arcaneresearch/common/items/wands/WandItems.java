@@ -16,7 +16,6 @@ public class WandItems {
 
     public static final DeferredItem<Item> WAND = ITEMS.registerItem("wand", ItemWand::new);
     public static final DeferredItem<Item> WAND_CAP = ITEMS.registerItem("wand_cap", ItemWandCap::new);
-    public static final DeferredItem<Item> WAND_FOCUS_POUCH = ITEMS.registerItem("wand_focus_pouch", ItemFocusPouch::new);
 
     public static final DeferredItem<Item> WAND_FOCUS_FIRE = ITEMS.registerItem("wand_focus_fire", ItemFocusFire::new);
     public static final DeferredItem<Item> WAND_FOCUS_FROST = ITEMS.registerItem("wand_focus_frost", ItemFocusFrost::new);

@@ -1,5 +1,8 @@
 package arcaneresearch.common.lib.utils;
 
+import arcaneresearch.Arcaneresearch;
+import arcaneresearch.api.internal.WeightedRandomLoot;
+import arcaneresearch.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +19,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.Tags;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -460,6 +465,8 @@ public class Utils {
                 state.is(BlockItemTags.REDSTONE_ORES.block()) ||
                 state.is(BlockItemTags.LAPIS_ORES.block()) ||
                 state.is(BlockItemTags.DIAMOND_ORES.block()) ||
-                state.is(BlockItemTags.EMERALD_ORES.block());
+                state.is(BlockItemTags.EMERALD_ORES.block()) ||
+                // Ванильная и модовые руды (кварц, амбер, циннабар, визнерит и др.)
+                state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES);
     }
 }

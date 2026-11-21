@@ -79,7 +79,7 @@ public class FocusEffectRift extends FocusEffect {
         float maxDist = getSettingValue("depth") * finalPower;
         int dur = 20 * getSettingValue("duration");
         Direction hitSide = blockHit.getDirection();
-        int distance = 0;
+        int distance;
         BlockPos pos = blockHit.getBlockPos();
 
         for (distance = 0; distance < maxDist; distance++) {
@@ -137,7 +137,7 @@ public class FocusEffectRift extends FocusEffect {
 
     @Override
     public void onCast(Entity caster) {
-        if (caster != null && caster.level() != null) {
+        if (caster != null) {
             caster.level().playSound(null, caster.blockPosition().above(),
                     SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS,
                     0.2f, 0.7f);

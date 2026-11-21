@@ -1,5 +1,11 @@
 package arcaneresearch.common.menu;
 
+import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
+import arcaneresearch.common.entities.construct.EntityTurretCrossbowAdvanced;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
+import arcaneresearch.common.menu.slot.ArrowSlot;
+import arcaneresearch.init.ModMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,6 +20,7 @@ import arcaneresearch.common.menu.slot.ArrowSlot;
 import arcaneresearch.init.ModMenuTypes;
 
 public class TurretMenu extends AbstractContainerMenu {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ENTITIES);
 
     private final EntityTurretCrossbow turret;
     private final boolean isAdvanced;
@@ -26,6 +33,7 @@ public class TurretMenu extends AbstractContainerMenu {
         super(getMenuType(turret), containerId);
         this.turret = turret;
         this.isAdvanced = turret instanceof EntityTurretCrossbowAdvanced;
+        LOGGER.debug("Turret menu opened: turret={}, advanced={}, pos={}", turret.getId(), isAdvanced, turret.blockPosition());
 
         int arrowX = isAdvanced ? 42 : 80;
         addSlot(new ArrowSlot(turret, 0, arrowX, 29));

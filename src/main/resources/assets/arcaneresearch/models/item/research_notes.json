@@ -1,7 +1,13 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "arcaneresearch:item/research_notes_tc3",
-    "layer1": "arcaneresearch:item/research_notes_tc3_overlay"
-  }
+    "layer0": "arcaneresearch:item/researchnotes",
+    "layer1": "arcaneresearch:item/researchnotesoverlay"
+  },
+  "overrides": [
+    {
+      "predicate": { "arcaneresearch:complete": 1 },
+      "model": "arcaneresearch:item/discovery"
+    }
+  ]
 }

@@ -6,7 +6,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.aura.AuraHelper;
 
  
@@ -56,7 +55,6 @@ public class AuraTotemPushTile extends AuraTotemTile {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     protected void drawEffect() {
         super.drawEffect();
         Level level = getLevel();

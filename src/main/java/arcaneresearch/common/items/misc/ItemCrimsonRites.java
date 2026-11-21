@@ -1,16 +1,19 @@
 package arcaneresearch.common.items.misc;
 
+import arcaneresearch.api.ArcaneresearchApi;
+import arcaneresearch.api.capabilities.IPlayerKnowledge;
+import arcaneresearch.api.capabilities.IPlayerWarp;
+import arcaneresearch.api.research.ResearchCategories;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
-import arcaneresearch.api.ArcaneresearchApi;
-import arcaneresearch.api.capabilities.IPlayerKnowledge;
-import arcaneresearch.api.capabilities.IPlayerWarp;
-import arcaneresearch.api.research.ResearchCategories;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemCrimsonRites extends Item {
 

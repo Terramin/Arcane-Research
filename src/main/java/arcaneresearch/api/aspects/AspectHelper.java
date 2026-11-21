@@ -2,6 +2,7 @@ package arcaneresearch.api.aspects;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;

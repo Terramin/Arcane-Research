@@ -1,9 +1,11 @@
 package arcaneresearch.common.lib.network.misc;
 
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.casters.ICaster;
-import arcaneresearch.common.items.casters.CasterManager;
-import arcaneresearch.common.items.tools.ItemElementalShovel;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.common.items.wands.FocusManager;
+
+
+import arcaneresearch.common.items.tools.elemental.ElementalShovelItem;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -71,22 +73,20 @@ public class PacketItemKeyToServer implements CustomPacketPayload {
             boolean handled = false;
 
             if (!mainHand.isEmpty()) {
-
-                if (packet.key == 1 && mainHand.getItem() instanceof ICaster) {
+                if (packet.key == 1 && mainHand.getItem() instanceof IFocusHost) {
                     toggleMisc(mainHand, player, packet.modifier);
                     handled = true;
                 }
-
-                if (packet.key == 1 && mainHand.getItem() instanceof ItemElementalShovel) {
-                    byte orientation = ItemElementalShovel.getOrientation(mainHand);
-                    ItemElementalShovel.setOrientation(mainHand, (byte) (orientation + 1));
+                if (packet.key == 1 && mainHand.getItem() instanceof ElementalShovelItem) {
+                    byte orientation = ElementalShovelItem.getOrientation(mainHand);
+                    ElementalShovelItem.setOrientation(mainHand, (byte) (orientation + 1));
                     handled = true;
                 }
 
             }
 
             if (!handled && !offHand.isEmpty()) {
-                if (packet.key == 1 && offHand.getItem() instanceof ICaster) {
+                if (packet.key == 1 && offHand.getItem() instanceof IFocusHost) {
                     toggleMisc(offHand, player, packet.modifier);
                 }
             }
@@ -94,6 +94,6 @@ public class PacketItemKeyToServer implements CustomPacketPayload {
     }
 
     private static void toggleMisc(ItemStack casterStack, ServerPlayer player, int modifier) {
-        CasterManager.toggleMisc(casterStack, player.level(), player, modifier);
+        FocusManager.toggleMisc(casterStack, player.level(), player, modifier);
     }
 }

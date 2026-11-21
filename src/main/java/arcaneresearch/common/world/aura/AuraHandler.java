@@ -11,8 +11,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.utils.PosXY;
 import arcaneresearch.common.world.biomes.BiomeHandler;
@@ -25,7 +25,7 @@ public class AuraHandler {
     public static final int AURA_CEILING = 500;
     public static final ConcurrentHashMap<ResourceKey<Level>, CopyOnWriteArrayList<ChunkPos>> dirtyChunks = new ConcurrentHashMap<>();
     public static final ConcurrentHashMap<ResourceKey<Level>, BlockPos> riftTrigger = new ConcurrentHashMap<>();
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuraHandler.class);
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     private static final ConcurrentHashMap<ResourceKey<Level>, AuraWorld> auras = new ConcurrentHashMap<>();
 
     public static AuraWorld getAuraWorld(ResourceKey<Level> dimension) {

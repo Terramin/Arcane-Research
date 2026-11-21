@@ -34,8 +34,6 @@ import javax.annotation.Nullable;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityEldritchGolem extends EntityArcaneresearchBoss implements IEldritchMob, RangedAttackMob {
 
     private static final EntityDataAccessor<Boolean> DATA_HEADLESS =
@@ -196,8 +194,6 @@ public class EntityEldritchGolem extends EntityArcaneresearchBoss implements IEl
             headlessClientTick();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void headlessClientTick() {
         setXRot(0.0f);
         float yawRad = -yBodyRot * Mth.DEG_TO_RAD - Mth.PI;

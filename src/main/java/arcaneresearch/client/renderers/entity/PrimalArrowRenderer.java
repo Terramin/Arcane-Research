@@ -12,23 +12,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.projectile.EntityPrimalArrow;
 import arcaneresearch.common.items.tools.ItemPrimalArrow;
-
- 
-
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
 public class PrimalArrowRenderer extends EntityRenderer<EntityPrimalArrow, PrimalArrowRenderer.State> {
 
     public static class State extends EntityRenderState {

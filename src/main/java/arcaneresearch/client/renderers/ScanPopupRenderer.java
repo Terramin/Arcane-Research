@@ -9,10 +9,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
+import org.jetbrains.annotations.NotNull;
 
 public class ScanPopupRenderer {
-
-      
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     public static volatile Entity thaumTarget = null;
 
     public static volatile BlockPos thaumBlockTarget = null;
@@ -43,6 +46,8 @@ public class ScanPopupRenderer {
 
                 AspectList tags = arcaneresearch.api.ArcaneresearchApi.internalMethods.getObjectAspects(stack);
                 if (tags != null && tags.size() > 0) {
+                    LOGGER.once("render.scan.block", LogLevel.DEBUG,
+                            "Scan popup resolved block {} at {} to {} aspects", state.getBlock(), thaumBlockTarget, tags.size());
                     return tags;
                 }
             }

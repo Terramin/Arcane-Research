@@ -1,8 +1,8 @@
 package arcaneresearch.common.lib.network.wand;
 
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.common.items.wands.WandManager;
+import arcaneresearch.api.wands.IFocusHostWand;
+import arcaneresearch.common.items.wands.FocusManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -67,18 +67,18 @@ public class PacketWandFocusChangeToServer implements CustomPacketPayload {
             }
             if (player != null) {
                 ItemStack held = player.getMainHandItem();
-                if (held == null || held.isEmpty() || !(held.getItem() instanceof IWand)
-                || ((IWand) held.getItem()).isSceptre(held)) {
+                if (held == null || held.isEmpty() || !(held.getItem() instanceof IFocusHostWand)
+                || ((IFocusHostWand) held.getItem()).isSceptre(held)) {
                     ItemStack off = player.getOffhandItem();
-                    if (off != null && !off.isEmpty() && off.getItem() instanceof IWand
-                    && !((IWand) off.getItem()).isSceptre(off)) {
+                    if (off != null && !off.isEmpty() && off.getItem() instanceof IFocusHostWand
+                    && !((IFocusHostWand) off.getItem()).isSceptre(off)) {
                         held = off;
                     } else {
                         held = ItemStack.EMPTY;
                     }
                 }
-                if (held != null && !held.isEmpty() && held.getItem() instanceof IWand) {
-                    WandManager.changeFocus(held, player.level(), player, msg.focus);
+                if (held != null && !held.isEmpty() && held.getItem() instanceof IFocusHostWand) {
+                    FocusManager.changeFocus(held, player.level(), player, msg.focus);
                 }
             }
         });

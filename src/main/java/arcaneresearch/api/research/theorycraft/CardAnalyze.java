@@ -71,7 +71,7 @@ public class CardAnalyze extends TheorycraftCard {
     public String getLocalizedText() {
 
         return Component.translatable("card.analyze.text", ChatFormatting.BOLD
-                + Component.translatable("tc.research_category." + cat).getString() + ChatFormatting.RESET,
+                        + Component.translatable("tc.research_category." + cat).getString() + ChatFormatting.RESET,
                 ChatFormatting.BOLD + Component.translatable("tc.research_category.BASICS").getString()
                         + ChatFormatting.RESET).getString();
     }

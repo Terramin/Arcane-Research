@@ -127,7 +127,7 @@ public class GolemHelper {
         BlockPos area = seal.getArea();
 
         return new AABB(pos.getX(), pos.getY(), pos.getZ(),
-                       pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
+                pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
                 .move(face.getStepX(), face.getStepY(), face.getStepZ())
                 .expandTowards(
                         face.getStepX() != 0 ? (area.getX() - 1) * face.getStepX() : 0,

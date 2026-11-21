@@ -9,39 +9,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 public final class WandUseAnimation {
 
       
@@ -135,7 +105,7 @@ public final class WandUseAnimation {
 
     private static void captureTip(PoseStack pose, HumanoidArm arm, ItemStack stack, InteractionHand hand) {
         try {
-            if (stack.isEmpty() || !(stack.getItem() instanceof IWand wand)) {
+            if (stack.isEmpty() || !(stack.getItem() instanceof IFocusHost wand)) {
                 return;
             }
             boolean right = arm == HumanoidArm.RIGHT;
@@ -192,7 +162,7 @@ public final class WandUseAnimation {
                                          float partialTick) {
         ItemStack useStack = player.getUseItem();
         boolean using = player.isUsingItem() && !useStack.isEmpty()
-                && useStack.getItem() instanceof IWand
+                && useStack.getItem() instanceof IFocusHost
                 && player.getUsedItemHand() == hand && player.getUseItemRemainingTicks() > 0;
         int dt = player.tickCount - lastCastTick;
         boolean pulse = !using && dt >= 0 && dt < CAST_TICKS && hand == lastCastHand;
@@ -220,7 +190,7 @@ public final class WandUseAnimation {
  
     public static boolean applyHandPose(PoseStack pose, LocalPlayer player, HumanoidArm arm, ItemStack handStack,
                                         InteractionHand hand, float partialTick, float equipProgress, float swingProgress) {
-        if (handStack.isEmpty() || !(handStack.getItem() instanceof IWand)) {
+        if (handStack.isEmpty() || !(handStack.getItem() instanceof IFocusHost)) {
             return false;
         }
         int i = arm == HumanoidArm.RIGHT ? 1 : -1;
@@ -291,21 +261,21 @@ public final class WandUseAnimation {
 
       
     public static void applyWaveBlock(PoseStack pose, ItemStack focusStack, float u, float tilt) {
-        IWand focusWand = focusStack.getItem() instanceof IWand w ? w : null;
-        ItemFocusBasic focus = focusWand != null ? focusWand.getFocus(focusStack) : null;
-        ItemFocusBasic.WandFocusAnimation anim = focus != null
+        IFocusHost focusWand = focusStack.getItem() instanceof IFocusHost w ? w : null;
+        FocusItem focus = focusWand != null ? focusWand.getFocus(focusStack) : null;
+        FocusItem.WandFocusAnimation anim = focus != null
                 ? focus.getAnimation(focusWand.getFocusStack(focusStack))
-                : ItemFocusBasic.WandFocusAnimation.WAVE;
+                : FocusItem.WandFocusAnimation.WAVE;
         pose.translate(0.0D, 0.5D, 0.0D);
         pose.rotate(Axis.XP.rotationDegrees(10.0F));
         pose.rotate(Axis.ZP.rotationDegrees(10.0F));
         pose.rotate(Axis.XN.rotationDegrees(tilt));
-        if (anim == ItemFocusBasic.WandFocusAnimation.WAVE) {
+        if (anim == FocusItem.WandFocusAnimation.WAVE) {
             float wave = Mth.sin(u / 10.0F) * 10.0F;
             pose.rotate(Axis.ZP.rotationDegrees(wave));
             wave = Mth.sin(u / 15.0F) * 10.0F;
             pose.rotate(Axis.XP.rotationDegrees(wave));
-        } else if (anim == ItemFocusBasic.WandFocusAnimation.CHARGE) {
+        } else if (anim == FocusItem.WandFocusAnimation.CHARGE) {
             float wave = Mth.sin(u / 0.8F) * 1.0F;
             pose.rotate(Axis.ZP.rotationDegrees(wave));
             wave = Mth.sin(u / 0.7F) * 1.0F;

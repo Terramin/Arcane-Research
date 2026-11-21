@@ -14,15 +14,15 @@ import net.minecraft.world.phys.Vec3;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.wands.FocusUpgradeType;
-import arcaneresearch.api.wands.IWand;
-import arcaneresearch.api.wands.ItemFocusBasic;
+import arcaneresearch.api.wands.IFocusHost;
+import arcaneresearch.api.wands.FocusItem;
 import arcaneresearch.common.entities.WandEntities;
 import arcaneresearch.common.entities.monster.EntityHellbat;
 import arcaneresearch.common.lib.wands.WandResearchHelper;
 import arcaneresearch.common.lib.wands.WandSounds;
 import arcaneresearch.common.lib.wands.WandTargets;
 
-public class ItemFocusHellbat extends ItemFocusBasic {
+public class ItemFocusHellbat extends FocusItem {
 
     private static final AspectList COST_BASE = new AspectList().add(Aspect.FIRE, 10).add(Aspect.ENTROPY, 5).add(Aspect.AIR, 5);
     private static final AspectList COST_BOMB = new AspectList().add(Aspect.FIRE, 5).add(Aspect.ENTROPY, 10).add(Aspect.AIR, 5);
@@ -68,7 +68,7 @@ public class ItemFocusHellbat extends ItemFocusBasic {
 
     @Override
     public boolean onFocusActivation(ItemStack wandstack, Level level, LivingEntity entity, HitResult hit, int useCount) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         Entity pointed = WandTargets.getPointedEntity(level, entity, 32.0D, LivingEntity.class);

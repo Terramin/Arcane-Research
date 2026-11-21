@@ -5,7 +5,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.api.crafting.IArcaneresearchRecipe;
 import arcaneresearch.api.internal.CommonInternals;
 import arcaneresearch.common.lib.crafting.ClientRecipeCache;
@@ -15,8 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-@OnlyIn(Dist.CLIENT)
 public class RecipeGroups {
 
     private static final Map<String, List<Identifier>> groups = new HashMap<>();

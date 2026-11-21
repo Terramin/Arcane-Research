@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "arcaneresearch.api.crit.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "arcaneresearch.refmap.json",
+  "mixins": [
+    "CriticalHitMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

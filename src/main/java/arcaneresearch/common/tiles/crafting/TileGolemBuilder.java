@@ -21,7 +21,6 @@ import arcaneresearch.api.aspects.IEssentiaTransport;
 import arcaneresearch.api.golems.IGolemProperties;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.golems.GolemProperties;
 import arcaneresearch.common.golems.ItemGolemPlacer;
 import arcaneresearch.common.lib.utils.InventoryUtils;
@@ -85,8 +84,6 @@ public class TileGolemBuilder extends TileArcaneresearchInventory implements Men
             tile.markDirtyAndSync();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileGolemBuilder tile) {
 
         if (tile.pressAnimation < 90 && tile.cost > 0 && tile.golemProps > 0L) {

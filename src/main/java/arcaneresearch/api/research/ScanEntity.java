@@ -16,7 +16,7 @@ public class ScanEntity implements IScanThing {
     }
 
     public ScanEntity(String research, Class<?> entityClass, boolean inheritedClasses,
-            ArcaneresearchApi.EntityTagsNBT... nbt) {
+                      ArcaneresearchApi.EntityTagsNBT... nbt) {
         this.research = research;
         this.entityClass = entityClass;
         this.inheritedClasses = inheritedClasses;

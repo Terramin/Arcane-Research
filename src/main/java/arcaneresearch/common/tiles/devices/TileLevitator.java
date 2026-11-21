@@ -16,7 +16,6 @@ import net.minecraft.world.phys.AABB;
 import arcaneresearch.api.aura.AuraHelper;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
 
@@ -152,8 +151,6 @@ public class TileLevitator extends TileArcaneresearch {
                 worldPosition.getZ() + 1 + (oz > 0 ? rangeActual : 0)
         );
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void drawFX(Direction facing, double chance) {
         if (level.isClientSide() && level.getRandom().nextFloat() < chance) {
             float x = worldPosition.getX() + 0.25f + level.getRandom().nextFloat() * 0.5f;
@@ -165,8 +162,6 @@ public class TileLevitator extends TileArcaneresearch {
                     facing.getStepZ() / 50.0);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void drawFXAt(Entity entity) {
         if (level.isClientSide() && level.getRandom().nextFloat() < 0.1f) {
             float x = (float) (entity.getX() + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * entity.getBbWidth());

@@ -21,6 +21,7 @@ import net.neoforged.neoforge.common.util.RecipeMatcher;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.items.IRechargable;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.common.lib.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.common.lib.compat.CuriosCompat;
 import arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment;
@@ -186,8 +187,7 @@ public class InfusionEnchantmentRecipe extends InfusionRecipeType {
             if (!cool && central.getItem() instanceof IRechargable && enchantment.toolClasses.contains("chargable")) {
                 cool = true;
             }
-
-            if (!cool && central.getItem() instanceof arcaneresearch.api.wands.IWand
+            if (!cool && central.getItem() instanceof IFocusHost
                     && enchantment.toolClasses.contains("wand")) {
                 cool = true;
             }

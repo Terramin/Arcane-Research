@@ -36,8 +36,8 @@
     "__createdwith": "opl's Model Creator",
     "ambientocclusion": false,
     "textures": {
-        "particle": "arcaneresearch:block/centrifuge",
-        "side": "arcaneresearch:block/centrifuge"
+        "side": "arcaneresearch:block/centrifuge",
+        "particle": "arcaneresearch:block/centrifuge"
     },
     "elements": [
         {

@@ -1,7 +1,11 @@
 package arcaneresearch.lib;
 
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
+
 public class CoreGLE implements GLE
 {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     public static String VERSION;
     private static String GLE_VERSION;
     private GLEContext context_;
@@ -476,8 +480,8 @@ public class CoreGLE implements GLE
         vtmp = matrix.VEC_PERP(up, diff);
         len = matrix.VEC_LENGTH(vtmp);
         if (len == 0.0) {
-            System.err.println("Extrusion: Warning: ");
-            System.err.println("contour up vector parallel to tubing direction");
+            LOGGER.warn("Extrusion: Warning: ");
+            LOGGER.warn("contour up vector parallel to tubing direction");
             vtmp = matrix.VEC_COPY(diff);
         }
         return vtmp;
@@ -627,7 +631,7 @@ public class CoreGLE implements GLE
 
     private void draw_raw_segment_plain(int ncp, double[][] contour, int inext, double len) {
         double[] point = new double[3];
-        System.err.println("draw_raw_segment_plain()");
+        LOGGER.warn("draw_raw_segment_plain()");
         emitter.glBegin(5);
         for (int j = 0; j < ncp; ++j) {
             point[0] = contour[j][0];
@@ -654,7 +658,7 @@ public class CoreGLE implements GLE
 
     private void draw_raw_segment_color(int ncp, double[][] contour, float[][] color_array, int inext, double len) {
         double[] point = new double[3];
-        System.out.println("draw_raw_segment_color");
+        LOGGER.debug("draw_raw_segment_color");
         emitter.glBegin(5);
         double tc = 0.0;
         for (int j = 0; j < ncp; ++j) {
@@ -697,7 +701,7 @@ public class CoreGLE implements GLE
     private void draw_raw_segment_edge_n(int ncp, double[][] contour, double[][] cont_normal, int inext, double len) {
         double[] point = new double[3];
         double[] norm = new double[3];
-        System.err.println("draw_raw_segment_edge_n");
+        LOGGER.warn("draw_raw_segment_edge_n");
         norm[2] = 0.0;
         emitter.glBegin(5);
         for (int j = 0; j < ncp; ++j) {
@@ -738,7 +742,7 @@ public class CoreGLE implements GLE
     private void draw_raw_segment_c_and_edge_n(int ncp, double[][] contour, float[][] color_array, double[][] cont_normal, int inext, double len) {
         double[] point = new double[3];
         double[] norm = new double[3];
-        System.out.println("draw_raw_segment_c_and_edge_n");
+        LOGGER.debug("draw_raw_segment_c_and_edge_n");
         norm[2] = 0.0;
         emitter.glBegin(5);
         for (int j = 0; j < ncp; ++j) {
@@ -788,7 +792,7 @@ public class CoreGLE implements GLE
     private void draw_raw_segment_facet_n(int ncp, double[][] contour, double[][] cont_normal, int inext, double len) {
         double[] point = new double[3];
         double[] norm = new double[3];
-        System.out.println("draw_raw_segment_facet_n");
+        LOGGER.debug("draw_raw_segment_facet_n");
         norm[2] = 0.0;
         emitter.glBegin(5);
         for (int j = 0; j < ncp - 1; ++j) {
@@ -838,7 +842,7 @@ public class CoreGLE implements GLE
     }
 
     private void draw_raw_segment_c_and_facet_n(int ncp, double[][] contour, float[][] color_array, double[][] cont_normal, int inext, double len) {
-        System.out.println("draw_raw_segment_c_and_facet_n");
+        LOGGER.debug("draw_raw_segment_c_and_facet_n");
         double[] point = new double[3];
         double[] norm = { 0.0, 0.0, 0.0 };
         emitter.glBegin(5);
@@ -907,7 +911,7 @@ public class CoreGLE implements GLE
     }
 
     private void draw_raw_style_end_cap(int ncp, double[][] contour, double zval, boolean frontwards) {
-        System.out.println("draw_raw_style_end_cap");
+        LOGGER.debug("draw_raw_style_end_cap");
         double[][] loop = new double[ncp][3];
         if (frontwards) {
             for (int j = 0; j < ncp; ++j) {
@@ -1151,7 +1155,7 @@ public class CoreGLE implements GLE
     }
 
     private void draw_segment_plain(int ncp, double[][] front_contour, double[][] back_contour, int inext, double len) {
-        System.out.println("draw_segment_plain");
+        LOGGER.debug("draw_segment_plain");
         emitter.glBegin(5);
         for (int j = 0; j < ncp; ++j) {
             double tc = j / (double)ncp;
@@ -1195,7 +1199,7 @@ public class CoreGLE implements GLE
     }
 
     private void draw_segment_edge_n(int ncp, double[][] front_contour, double[][] back_contour, double[][] norm_cont, int inext, double len) {
-        System.out.println("draw_segment_edge_n");
+        LOGGER.debug("draw_segment_edge_n");
         emitter.glBegin(5);
         for (int j = 0; j < ncp; ++j) {
             emitter.glNormal3d(norm_cont[j][0], norm_cont[j][1], norm_cont[j][2]);
@@ -1258,7 +1262,7 @@ public class CoreGLE implements GLE
     }
 
     private void draw_segment_c_and_facet_n(int ncp, double[][] front_contour, double[][] back_contour, double[][] norm_cont, float[] color_last, float[] color_next, int inext, double len) {
-        System.out.println("draw_segment_c_and_facet_n");
+        LOGGER.debug("draw_segment_c_and_facet_n");
         emitter.glBegin(5);
         for (int j = 0; j < ncp - 1; ++j) {
             emitter.glColor4f(color_last[0], color_last[1], color_last[2], color_last[3]);
@@ -1344,7 +1348,7 @@ public class CoreGLE implements GLE
     }
 
     private void draw_binorm_segment_facet_n(int ncp, double[][] front_contour, double[][] back_contour, double[][] front_norm, double[][] back_norm, int inext, double len) {
-        System.out.println("draw_binorm_segment_facet_n");
+        LOGGER.debug("draw_binorm_segment_facet_n");
         emitter.glBegin(5);
         for (int j = 0; j < ncp - 1; ++j) {
             emitter.glNormal3d(front_norm[j][0], front_norm[j][1], front_norm[j][2]);
@@ -1370,7 +1374,7 @@ public class CoreGLE implements GLE
     }
 
     private void draw_binorm_segment_c_and_facet_n(int ncp, double[][] front_contour, double[][] back_contour, double[][] front_norm, double[][] back_norm, float[] color_last, float[] color_next, int inext, double len) {
-        System.out.println("draw_binorm_segment_c_and_facet_n");
+        LOGGER.debug("draw_binorm_segment_c_and_facet_n");
         emitter.glBegin(5);
         for (int j = 0; j < ncp - 1; ++j) {
             emitter.glColor4f(color_last[0], color_last[1], color_last[2], color_last[3]);

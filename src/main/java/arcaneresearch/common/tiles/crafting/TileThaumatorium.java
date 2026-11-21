@@ -33,7 +33,6 @@ import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.crafting.CrucibleRecipe;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.blocks.devices.BlockBrainBox;
 import arcaneresearch.common.lib.utils.InventoryUtils;
 import arcaneresearch.common.menu.ThaumatoriumMenu;
@@ -115,8 +114,6 @@ public class TileThaumatorium extends TileArcaneresearchInventory implements IAs
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileThaumatorium tile) {
         if (tile.venting > 0) {
             tile.venting--;

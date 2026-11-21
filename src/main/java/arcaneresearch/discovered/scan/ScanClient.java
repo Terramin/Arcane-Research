@@ -13,7 +13,6 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -26,11 +25,10 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.client.fx.ScanRippleFx;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.init.ModSounds;
-
-@OnlyIn(Dist.CLIENT)
 public final class ScanClient {
 
 
@@ -115,6 +113,7 @@ public final class ScanClient {
             player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
                     SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.5F, 1.0F, false);
         }
+        ScanRippleFx.trigger();
     }
 
 

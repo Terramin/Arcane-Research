@@ -1,6 +1,7 @@
 package arcaneresearch.api.blocks;
 
 import java.util.HashMap;
+
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;

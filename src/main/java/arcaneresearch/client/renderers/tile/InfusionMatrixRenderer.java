@@ -19,6 +19,10 @@ import net.neoforged.api.distmarker.Dist;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.crafting.TileInfusionMatrix;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
+import arcaneresearch.init.ModBlocks;
 
 import java.util.Random;
 

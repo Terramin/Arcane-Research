@@ -41,6 +41,7 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.client.lib.UtilsFX;
+import arcaneresearch.client.fx.ScanRippleFx;
 import arcaneresearch.client.renderers.ScanPopupRenderer;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.client.renderers.entity.TurretObjModel;

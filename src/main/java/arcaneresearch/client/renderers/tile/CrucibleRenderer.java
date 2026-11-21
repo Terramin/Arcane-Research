@@ -16,14 +16,9 @@ import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn; 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.tiles.crafting.TileCrucible;
-
-
-
-@OnlyIn(Dist.CLIENT) 
 public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible, CrucibleRenderer.State> {
 
     private static final Identifier WATER_STILL =

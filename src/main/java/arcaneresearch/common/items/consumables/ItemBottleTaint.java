@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import arcaneresearch.common.entities.projectile.EntityBottleTaint;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemBottleTaint extends Item {
 

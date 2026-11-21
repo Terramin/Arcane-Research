@@ -1,5 +1,6 @@
 package arcaneresearch.client.lib.events;
-
+import arcaneresearch.api.wands.FocusItem;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -16,17 +17,18 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber; 
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
-import arcaneresearch.api.casters.ICaster;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.research.ResearchCategory;
 import arcaneresearch.api.research.ScanningManager;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.client.lib.AspectRenderer;
 import arcaneresearch.client.renderers.ScanPopupRenderer;
-import arcaneresearch.common.config.ModConfig;
-import arcaneresearch.common.items.casters.ItemFocus;
 import arcaneresearch.common.items.tools.ItemSanityChecker;
 import arcaneresearch.common.items.tools.ItemThaumometer;
 import arcaneresearch.common.world.aura.AuraChunk;
@@ -39,7 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @EventBusSubscriber(modid = Arcaneresearch.MODID, value = Dist.CLIENT)
 public class HudHandler {
-
+    private static final ArcaneLogger RENDER_LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     public static final Queue<KnowledgeGainTracker> knowledgeGainTrackers = new ConcurrentLinkedQueue<>();
     private static final Identifier HUD_TEXTURE =
             Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/hud.png");
@@ -101,17 +103,7 @@ public class HudHandler {
             ItemStack stack = hand == 0 ? player.getMainHandItem() : player.getOffhandItem();
 
             if (stack.isEmpty()) continue;
-
-            if (stack.getItem() instanceof ICaster) {
-                if (ModConfig.CONFIG_GRAPHICS.dialBottom) {
-                    renderCasterHud(graphics, mc, player, stack,
-                            screenHeight - 36 - bottomOffset, partialTick);
-                    bottomOffset += 36;
-                } else {
-                    renderCasterHud(graphics, mc, player, stack, yOffset, partialTick);
-                    yOffset += 36;
-                }
-            } else if (stack.getItem() instanceof ItemThaumometer) {
+            if (stack.getItem() instanceof ItemThaumometer) {
                 renderThaumometerHud(graphics, mc, player, yOffset, partialTick);
                 yOffset += 80;
                 holdingThaumometer = true;
@@ -120,10 +112,8 @@ public class HudHandler {
                 yOffset += 76;
             }
         }
-
-        
-        
-        
+        RENDER_LOGGER.once("render.hud", LogLevel.DEBUG,
+                "Arcane HUD overlay: thaumometer={}, knowledgeGains={}", holdingThaumometer, kgFade);
         if (false && holdingThaumometer) {
             renderScanTargetHud(graphics, mc, player, screenWidth, screenHeight);
         }
@@ -426,7 +416,7 @@ public class HudHandler {
     private static void renderCasterHud(GuiGraphicsExtractor graphics, Minecraft mc, Player player,
                                         ItemStack casterStack, int yOffset, float partialTicks) {
 
-        ICaster caster = (ICaster) casterStack.getItem();
+        IFocusHost caster = (IFocusHost) casterStack.getItem();
 
         float maxVis = currentAura != null ? currentAura.getBase() : 100;
         float currentVis = currentAura != null ? currentAura.getVis() : 50;
@@ -459,17 +449,17 @@ public class HudHandler {
         graphics.pose().popMatrix();
 
         ItemStack focusStack = caster.getFocusStack(casterStack);
-        ItemFocus focus = focusStack != null && !focusStack.isEmpty()
-                && focusStack.getItem() instanceof ItemFocus f ? f : null;
+        FocusItem focus = focusStack != null && !focusStack.isEmpty()
+                && focusStack.getItem() instanceof FocusItem f ? f : null;
         if (player.isShiftKeyDown()) {
             graphics.pose().pushMatrix();
             graphics.pose().translate(16,  -10);
             graphics.pose().scale(0.5f,  0.5f);
             graphics.pose().rotate((float) Math.toRadians(-90f));
             graphics.text(mc.font, DECIMAL_FORMAT.format(amt), -32, -4, 0xFFFFFFFF, false);
-            if (focus != null && focus.getVisCost(focusStack) > 0f) {
-                float mod = caster.getConsumptionModifier(casterStack, player, false);
-                String msg = DECIMAL_FORMAT.format(focus.getVisCost(focusStack) * mod);
+            if (focus != null && focus.getVisCost(focusStack).size() > 0) {
+                float mod = caster.getConsumptionModifier(casterStack, player, Aspect.ENERGY, false);
+                String msg = DECIMAL_FORMAT.format(focus.getVisCost(focusStack).visSize() * mod);
                 graphics.text(mc.font, msg,
                         -32 - mc.font.width(msg) / 2, 32, 0xFFFFFFFF, false);
             }

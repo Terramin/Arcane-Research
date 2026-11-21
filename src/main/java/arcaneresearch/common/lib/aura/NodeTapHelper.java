@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 
 import java.util.ArrayList;
 import java.util.function.ObjIntConsumer;
@@ -18,7 +18,7 @@ public class NodeTapHelper {
     public static Aspect tap(Level level, BlockPos pos, AspectList source,
                              ObjIntConsumer<Aspect> take, Runnable markDirty,
                              ItemStack wandstack, Player player, int count) {
-        if (!(wandstack.getItem() instanceof IWand wand)) {
+        if (!(wandstack.getItem() instanceof IFocusHost wand)) {
             return null;
         }
         if (count % 5 == 0) {
@@ -31,8 +31,9 @@ public class NodeTapHelper {
             }
             boolean preserve = !player.isCrouching()
                     && AuraResearch.isResearchComplete(player, "NODEPRESERVE")
-                    && !"wood".equals(wand.getRod(wandstack).getTag())
-                    && !"iron".equals(wand.getCap(wandstack).getTag());
+                    && (!(wandstack.getItem() instanceof arcaneresearch.api.wands.IFocusHostWand w)
+                    || (!"wood".equals(w.getRod(wandstack).getTag())
+                    && !"iron".equals(w.getCap(wandstack).getTag())));
             Aspect aspect = chooseRandomFiltered(source,
                     wand.getAspectsWithRoom(wandstack), level, preserve);
             if (aspect != null) {

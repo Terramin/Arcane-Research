@@ -17,13 +17,16 @@ import org.joml.Matrix4f;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 
 
 
 
 public class WorldAspectRenderer {
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final int ROW_SIZE = 5;
 
       
@@ -86,6 +89,11 @@ public class WorldAspectRenderer {
                                     net.minecraft.client.renderer.SubmitNodeCollector collector,
                                     Vec3 cameraPos, double x, double y, double z, AspectList tags) {
         Minecraft mc = Minecraft.getInstance();
+        LOGGER.once("render.aspect.tags", LogLevel.DEBUG,
+                "Drawing {} aspect tags at [{}, {}, {}], scale={}", tags.size(), x, y, z, tagscale);
+
+        Aspect[] allAspects = tags.getAspects();
+        if (allAspects == null || allAspects.length == 0) return;
 
         java.util.List<Aspect> valid = new java.util.ArrayList<>();
         for (Aspect tag : tags.getAspects()) {

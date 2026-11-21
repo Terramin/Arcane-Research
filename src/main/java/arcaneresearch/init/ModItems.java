@@ -12,12 +12,14 @@ import arcaneresearch.common.golems.ItemGolemBell;
 import arcaneresearch.common.golems.ItemGolemPlacer;
 import arcaneresearch.common.golems.seals.ItemSealPlacer;
 import arcaneresearch.common.items.armor.*;
-import arcaneresearch.common.items.baubles.*;
 import arcaneresearch.common.items.casters.ItemCaster;
 import arcaneresearch.common.items.casters.ItemFocus;
 import arcaneresearch.common.items.casters.ItemFocusPouch;
 import arcaneresearch.common.items.consumables.*;
 import arcaneresearch.common.items.curios.*;
+import arcaneresearch.common.items.misc.*;
+import arcaneresearch.common.items.resources.*;
+import arcaneresearch.common.items.wands.*;
 import arcaneresearch.common.items.misc.ItemCreativeFluxSponge;
 import arcaneresearch.common.items.misc.ItemCrimsonRites;
 import arcaneresearch.common.items.resources.EldritchEyeItem;
@@ -25,8 +27,12 @@ import arcaneresearch.common.items.resources.ItemCrystalEssence;
 import arcaneresearch.common.items.resources.ItemMagicDust;
 import arcaneresearch.common.items.resources.ItemMaterial;
 import arcaneresearch.common.items.resources.ItemTallow;
+import arcaneresearch.common.items.resources.ItemVisneriteIngot;
+import arcaneresearch.common.items.resources.ItemVisneriteScrap;
 import arcaneresearch.common.items.tools.*;
-
+import arcaneresearch.common.items.tools.elemental.*;
+import arcaneresearch.common.items.tools.thaumium.*;
+import arcaneresearch.common.items.tools.voidmetal.*;
 public class ModItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Arcaneresearch.MODID);
@@ -38,10 +44,16 @@ public class ModItems {
 
 
 public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaumonomicon",
-            props -> new ItemThaumonomicon(props));
+            props -> new ThaumonomiconItem(props));
 
     public static final DeferredItem<Item> THAUMONOMICON_CHEAT = ITEMS.registerItem("thaumonomicon_cheat",
-            props -> new ItemThaumonomicon(props, true));
+            props -> new ThaumonomiconItem(props, true));
+
+    public static final DeferredItem<Item> THAUMONOMICON_CREATIVE = ITEMS.registerItem("thaumonomicon_creative",
+            props -> new ThaumonomiconItem(props, false, true));
+
+    public static final DeferredItem<Item> THAUMONOMICON_WRITTEN = ITEMS.registerItem("thaumonomicon_written",
+            props -> new ThaumonomiconWrittenItem(props));
 
     public static final DeferredItem<Item> CRIMSON_RITES = ITEMS.registerItem("crimson_rites",
             ItemCrimsonRites::new);
@@ -189,22 +201,22 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
             ItemMaterial::basic);
 
     public static final DeferredItem<Item> CURIO_ARCANE = ITEMS.registerItem("curio_arcane",
-            props -> new arcaneresearch.common.items.curios.ItemCurio(props, "arcane"));
+            props -> new KnowledgeCurioItem(props, "arcane"));
     public static final DeferredItem<Item> CURIO_PRESERVED = ITEMS.registerItem("curio_preserved",
-            props -> new arcaneresearch.common.items.curios.ItemCurio(props, "preserved"));
+            props -> new KnowledgeCurioItem(props, "preserved"));
     public static final DeferredItem<Item> CURIO_ANCIENT = ITEMS.registerItem("curio_ancient",
-            props -> new arcaneresearch.common.items.curios.ItemCurio(props, "ancient"));
+            props -> new KnowledgeCurioItem(props, "ancient"));
     public static final DeferredItem<Item> CURIO_ELDRITCH = ITEMS.registerItem("curio_eldritch",
-            props -> new arcaneresearch.common.items.curios.ItemCurio(props, "eldritch"));
+            props -> new KnowledgeCurioItem(props, "eldritch"));
     public static final DeferredItem<Item> CURIO_KNOWLEDGE = ITEMS.registerItem("curio_knowledge",
-            props -> new arcaneresearch.common.items.curios.ItemCurio(props, "knowledge"));
+            props -> new KnowledgeCurioItem(props, "knowledge"));
     public static final DeferredItem<Item> CURIO_TWISTED = ITEMS.registerItem("curio_twisted",
-            props -> new arcaneresearch.common.items.curios.ItemCurio(props, "twisted"));
+            props -> new KnowledgeCurioItem(props, "twisted"));
     public static final DeferredItem<Item> CURIO_RITES = ITEMS.registerItem("curio_rites",
-            props -> new arcaneresearch.common.items.curios.ItemCurio(props, "rites"));
+            props -> new KnowledgeCurioItem(props, "rites"));
 
     public static final DeferredItem<Item> PRIMORDIAL_PEARL = ITEMS.registerItem("primordial_pearl",
-            ItemPrimordialPearl::new);
+            props -> new PrimordialPearlItem(props));
 
     public static final DeferredItem<Item> ELDRITCH_EYE = ITEMS.registerItem("eldritch_eye",
             arcaneresearch.common.items.resources.EldritchEyeItem::new);
@@ -262,34 +274,34 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
             ItemRobeArmor::createBoots);
 
     public static final DeferredItem<Item> THAUMIUM_SWORD = ITEMS.registerItem("thaumium_sword",
-            ItemThaumiumSword::new);
+            props -> new ThaumiumSwordItem(props));
 
     public static final DeferredItem<Item> THAUMIUM_PICK = ITEMS.registerItem("thaumium_pick",
-            ItemThaumiumPickaxe::new);
+            props -> new ThaumiumPickaxeItem(props));
 
     public static final DeferredItem<Item> THAUMIUM_AXE = ITEMS.registerItem("thaumium_axe",
-            ItemThaumiumAxe::new);
+            props -> new ThaumiumAxeItem(props));
 
     public static final DeferredItem<Item> THAUMIUM_SHOVEL = ITEMS.registerItem("thaumium_shovel",
-            ItemThaumiumShovel::new);
+            props -> new ThaumiumShovelItem(props));
 
     public static final DeferredItem<Item> THAUMIUM_HOE = ITEMS.registerItem("thaumium_hoe",
-            ItemThaumiumHoe::new);
+            props -> new ThaumiumHoeItem(props));
 
     public static final DeferredItem<Item> VOID_SWORD = ITEMS.registerItem("void_sword",
-            ItemVoidSword::new);
+            props -> new VoidSwordItem(props));
 
     public static final DeferredItem<Item> VOID_PICK = ITEMS.registerItem("void_pick",
-            ItemVoidPickaxe::new);
+            props -> new VoidPickaxeItem(props));
 
     public static final DeferredItem<Item> VOID_AXE = ITEMS.registerItem("void_axe",
-            ItemVoidAxe::new);
+            props -> new VoidAxeItem(props));
 
     public static final DeferredItem<Item> VOID_SHOVEL = ITEMS.registerItem("void_shovel",
-            ItemVoidShovel::new);
+            props -> new VoidShovelItem(props));
 
     public static final DeferredItem<Item> VOID_HOE = ITEMS.registerItem("void_hoe",
-            ItemVoidHoe::new);
+            props -> new VoidHoeItem(props));
 
     public static final DeferredItem<Item> THAUMIUM_HELM = ITEMS.registerItem("thaumium_helm",
             ItemThaumiumArmor::createHelmet);
@@ -379,92 +391,92 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
             ItemCultistLeaderArmor::createLeggings);
 
     public static final DeferredItem<Item> AMULET_VIS_FOUND = ITEMS.registerItem("amulet_vis_found",
-            ItemAmuletVis::createFound);
+            props -> AmuletVisItem.createFound(props));
 
     public static final DeferredItem<Item> AMULET_VIS_CRAFTED = ITEMS.registerItem("amulet_vis_crafted",
-            ItemAmuletVis::createCrafted);
+            props -> AmuletVisItem.createCrafted(props));
 
     public static final DeferredItem<Item> CLOUD_RING = ITEMS.registerItem("cloud_ring",
-            ItemCloudRing::new);
+            props -> new CloudRingItem(props));
 
     public static final DeferredItem<Item> CURIOSITY_BAND = ITEMS.registerItem("curiosity_band",
-            ItemCuriosityBand::new);
+            props -> new CuriosityBandItem(props));
 
     public static final DeferredItem<Item> CHARM_UNDYING = ITEMS.registerItem("charm_undying",
-            ItemCharmUndying::new);
+            props -> new CharmUndyingItem(props));
 
     public static final DeferredItem<Item> VERDANT_CHARM = ITEMS.registerItem("verdant_charm",
-            ItemVerdantCharm::createBasic);
+            props -> VerdantCharmItem.createBasic(props));
 
     public static final DeferredItem<Item> VERDANT_CHARM_LIFE = ITEMS.registerItem("verdant_charm_life",
-            ItemVerdantCharm::createLife);
+            props -> VerdantCharmItem.createLife(props));
 
     public static final DeferredItem<Item> VERDANT_CHARM_SUSTAIN = ITEMS.registerItem("verdant_charm_sustain",
-            ItemVerdantCharm::createSustain);
+            props -> VerdantCharmItem.createSustain(props));
 
     public static final DeferredItem<Item> VOIDSEER_CHARM = ITEMS.registerItem("voidseer_charm",
-            ItemVoidseerCharm::new);
+            props -> new VoidseerCharmItem(props));
 
-    public static final DeferredItem<Item> BAUBLE_AMULET_MUNDANE = ITEMS.registerItem("bauble_amulet_mundane",
-            ItemBauble::amuletMundane);
+    public static final DeferredItem<Item> CURIOS_AMULET_MUNDANE = ITEMS.registerItem("bauble_amulet_mundane",
+            props -> CurioItem.amuletMundane(props));
 
-    public static final DeferredItem<Item> BAUBLE_RING_MUNDANE = ITEMS.registerItem("bauble_ring_mundane",
-            ItemBauble::ringMundane);
+    public static final DeferredItem<Item> CURIOS_RING_MUNDANE = ITEMS.registerItem("bauble_ring_mundane",
+            props -> CurioItem.ringMundane(props));
 
-    public static final DeferredItem<Item> BAUBLE_GIRDLE_MUNDANE = ITEMS.registerItem("bauble_girdle_mundane",
-            ItemBauble::girdleMundane);
+    public static final DeferredItem<Item> CURIOS_GIRDLE_MUNDANE = ITEMS.registerItem("bauble_girdle_mundane",
+            props -> CurioItem.girdleMundane(props));
 
-    public static final DeferredItem<Item> BAUBLE_RING_APPRENTICE = ITEMS.registerItem("bauble_ring_apprentice",
-            ItemBauble::ringApprentice);
+    public static final DeferredItem<Item> CURIOS_RING_APPRENTICE = ITEMS.registerItem("bauble_ring_apprentice",
+            props -> CurioItem.ringApprentice(props));
 
-    public static final DeferredItem<Item> BAUBLE_AMULET_FANCY = ITEMS.registerItem("bauble_amulet_fancy",
-            ItemBauble::amuletFancy);
+    public static final DeferredItem<Item> CURIOS_AMULET_FANCY = ITEMS.registerItem("bauble_amulet_fancy",
+            props -> CurioItem.amuletFancy(props));
 
-    public static final DeferredItem<Item> BAUBLE_RING_FANCY = ITEMS.registerItem("bauble_ring_fancy",
-            ItemBauble::ringFancy);
+    public static final DeferredItem<Item> CURIOS_RING_FANCY = ITEMS.registerItem("bauble_ring_fancy",
+            props -> CurioItem.ringFancy(props));
 
-    public static final DeferredItem<Item> BAUBLE_GIRDLE_FANCY = ITEMS.registerItem("bauble_girdle_fancy",
-            ItemBauble::girdleFancy);
+    public static final DeferredItem<Item> CURIOS_GIRDLE_FANCY = ITEMS.registerItem("bauble_girdle_fancy",
+            props -> CurioItem.girdleFancy(props));
 
     
     public static final DeferredItem<Item> RUNIC_AMULET = ITEMS.registerItem("runic_amulet",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::amulet);
+            props -> RunicCurioItem.amulet(props));
 
     public static final DeferredItem<Item> RUNIC_AMULET_EMERGENCY = ITEMS.registerItem("runic_amulet_emergency",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::amuletEmergency);
+            props -> RunicCurioItem.amuletEmergency(props));
 
     public static final DeferredItem<Item> RUNIC_RING_LESSER = ITEMS.registerItem("runic_ring_lesser",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ringLesser);
+            props -> RunicCurioItem.ringLesser(props));
 
     public static final DeferredItem<Item> RUNIC_RING = ITEMS.registerItem("runic_ring",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ring);
+            props -> RunicCurioItem.ring(props));
 
     public static final DeferredItem<Item> RUNIC_RING_CHARGED = ITEMS.registerItem("runic_ring_charged",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ringCharged);
+            props -> RunicCurioItem.ringCharged(props));
 
     public static final DeferredItem<Item> RUNIC_RING_REGEN = ITEMS.registerItem("runic_ring_regen",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::ringRegen);
+            props -> RunicCurioItem.ringRegen(props));
 
     public static final DeferredItem<Item> RUNIC_GIRDLE = ITEMS.registerItem("runic_girdle",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::girdle);
+            props -> RunicCurioItem.girdle(props));
 
     public static final DeferredItem<Item> RUNIC_GIRDLE_KINETIC = ITEMS.registerItem("runic_girdle_kinetic",
-            arcaneresearch.common.items.baubles.ItemRunicBauble::girdleKinetic);
+            props -> RunicCurioItem.girdleKinetic(props));
 
     public static final DeferredItem<Item> ENCHANTED_PLACEHOLDER = ITEMS.registerItem("enchanted_placeholder",
-            arcaneresearch.common.items.curios.ItemEnchantmentPlaceholder::new);
+            props -> new EnchantmentPlaceholderItem(props));
 
     public static final DeferredItem<Item> ELEMENTAL_PICK = ITEMS.registerItem("elemental_pick",
-            ItemElementalPickaxe::new);
+            props -> new ElementalPickaxeItem(props));
 
     public static final DeferredItem<Item> ELEMENTAL_AXE = ITEMS.registerItem("elemental_axe",
-            ItemElementalAxe::new);
+            props -> new ElementalAxeItem(props));
 
     public static final DeferredItem<Item> ELEMENTAL_SWORD = ITEMS.registerItem("elemental_sword",
-            ItemElementalSword::new);
+            props -> new ElementalSwordItem(props));
 
     public static final DeferredItem<Item> ELEMENTAL_SHOVEL = ITEMS.registerItem("elemental_shovel",
-            ItemElementalShovel::new);
+            props -> new ElementalShovelItem(props));
 
     public static final DeferredItem<Item> PRIMAL_CRUSHER = ITEMS.registerItem("primal_crusher",
             ItemPrimalCrusher::new);
@@ -473,7 +485,7 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
             ItemCrimsonBlade::new);
 
     public static final DeferredItem<Item> ELEMENTAL_HOE = ITEMS.registerItem("elemental_hoe",
-            ItemElementalHoe::new);
+            props -> new ElementalHoeItem(props));
 
     public static final DeferredItem<Item> RESONATOR = ITEMS.registerItem("resonator",
             ItemResonator::new);
@@ -534,55 +546,55 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
             ItemLabel::createFilled);
 
     public static final DeferredItem<Item> LOOT_BAG_COMMON = ITEMS.registerItem("loot_bag_common",
-            ItemLootBag::createCommon);
+            props -> LootBagItem.createCommon(props));
 
     public static final DeferredItem<Item> LOOT_BAG_UNCOMMON = ITEMS.registerItem("loot_bag_uncommon",
-            ItemLootBag::createUncommon);
+            props -> LootBagItem.createUncommon(props));
 
     public static final DeferredItem<Item> LOOT_BAG_RARE = ITEMS.registerItem("loot_bag_rare",
-            ItemLootBag::createRare);
+            props -> LootBagItem.createRare(props));
 
     public static final DeferredItem<Item> PECH_WAND = ITEMS.registerItem("pech_wand",
-            ItemPechWand::new);
+            props -> new PechWandItem(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_SUN = ITEMS.registerItem("celestial_notes_sun",
-            ItemCelestialNotes::createSun);
+            props -> CelestialNotesItem.createSun(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_STARS_1 = ITEMS.registerItem("celestial_notes_stars_1",
-            ItemCelestialNotes::createStars1);
+            props -> CelestialNotesItem.createStars1(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_STARS_2 = ITEMS.registerItem("celestial_notes_stars_2",
-            ItemCelestialNotes::createStars2);
+            props -> CelestialNotesItem.createStars2(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_STARS_3 = ITEMS.registerItem("celestial_notes_stars_3",
-            ItemCelestialNotes::createStars3);
+            props -> CelestialNotesItem.createStars3(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_STARS_4 = ITEMS.registerItem("celestial_notes_stars_4",
-            ItemCelestialNotes::createStars4);
+            props -> CelestialNotesItem.createStars4(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_1 = ITEMS.registerItem("celestial_notes_moon_1",
-            ItemCelestialNotes::createMoon1);
+            props -> CelestialNotesItem.createMoon1(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_2 = ITEMS.registerItem("celestial_notes_moon_2",
-            ItemCelestialNotes::createMoon2);
+            props -> CelestialNotesItem.createMoon2(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_3 = ITEMS.registerItem("celestial_notes_moon_3",
-            ItemCelestialNotes::createMoon3);
+            props -> CelestialNotesItem.createMoon3(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_4 = ITEMS.registerItem("celestial_notes_moon_4",
-            ItemCelestialNotes::createMoon4);
+            props -> CelestialNotesItem.createMoon4(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_5 = ITEMS.registerItem("celestial_notes_moon_5",
-            ItemCelestialNotes::createMoon5);
+            props -> CelestialNotesItem.createMoon5(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_6 = ITEMS.registerItem("celestial_notes_moon_6",
-            ItemCelestialNotes::createMoon6);
+            props -> CelestialNotesItem.createMoon6(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_7 = ITEMS.registerItem("celestial_notes_moon_7",
-            ItemCelestialNotes::createMoon7);
+            props -> CelestialNotesItem.createMoon7(props));
 
     public static final DeferredItem<Item> CELESTIAL_NOTES_MOON_8 = ITEMS.registerItem("celestial_notes_moon_8",
-            ItemCelestialNotes::createMoon8);
+            props -> CelestialNotesItem.createMoon8(props));
 
     public static final DeferredItem<Item> FOCUS_POUCH = ITEMS.registerItem("focus_pouch",
             ItemFocusPouch::new);
@@ -733,6 +745,21 @@ public static final DeferredItem<Item> THAUMONOMICON = ITEMS.registerItem("thaum
 
     public static final DeferredItem<Item> CREATIVE_FLUX_SPONGE = ITEMS.registerItem("creative_flux_sponge",
             props -> new ItemCreativeFluxSponge(props));
+
+    public static final DeferredItem<Item> CRIMSON_CULT_AMULET = ITEMS.registerItem("crimson_cult_amulet",
+            ItemMaterial::epic);
+
+    public static final DeferredItem<Item> CRIMSON_CULT_BLADE = ITEMS.registerItem("crimson_cult_blade",
+            props -> new ItemCrimsonCultBlade(props));
+
+    public static final DeferredItem<Item> VISNERITEINGOT = ITEMS.registerItem("visnerite_ingot",
+            props -> new ItemVisneriteIngot(props));
+
+    public static final DeferredItem<Item> VISNERITESCRAP = ITEMS.registerItem("visnerite_scrap",
+            props -> new ItemVisneriteScrap(props));
+
+    public static final DeferredItem<Item> PORTAL_SCROLL = ITEMS.registerItem("portal_scroll",
+            props -> new ItemPortalScroll(props));
 
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);

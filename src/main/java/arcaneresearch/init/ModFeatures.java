@@ -58,6 +58,9 @@ public class ModFeatures {
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ArcaneresearchOreFeature>> ORE_AMBER =            FEATURES.register("ore_amber",                    () -> com.mojang.serialization.MapCodec.unit(() -> new ArcaneresearchOreFeature(ArcaneresearchOreFeature.OreType.AMBER)));
 
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<arcaneresearch.common.world.features.ArcaneresearchOreFeature>> ORE_VISNERITE =
+            FEATURES.register("ore_visnerite", () -> com.mojang.serialization.MapCodec.unit(() -> new arcaneresearch.common.world.features.ArcaneresearchOreFeature(arcaneresearch.common.world.features.ArcaneresearchOreFeature.OreType.VISNERITE)));
+
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<CultistPortalFeature>> CULTIST_PORTAL =            FEATURES.register("cultist_portal",                    () -> com.mojang.serialization.MapCodec.unit(CultistPortalFeature::new));
 
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<AuraNodeStructure>> AURA_NODE =            FEATURES.register("aura_node",                    () -> com.mojang.serialization.MapCodec.unit(AuraNodeStructure::new));

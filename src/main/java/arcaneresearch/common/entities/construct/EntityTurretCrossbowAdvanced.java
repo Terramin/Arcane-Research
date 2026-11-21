@@ -35,6 +35,10 @@ import arcaneresearch.common.menu.TurretMenu;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
+import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -44,7 +48,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 
 public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ENTITIES);
     private static final EntityDataAccessor<Byte> DATA_FLAGS =
             SynchedEntityData.defineId(EntityTurretCrossbowAdvanced.class, EntityDataSerializers.BYTE);
 
@@ -65,8 +69,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
 
     public static AttributeSupplier.Builder createAttributes() {
         return EntityTurretCrossbow.createAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.ARMOR, 8.0);
+                .add(Attributes.MAX_HEALTH, 40.0);
     }
 
     @Override
@@ -110,6 +113,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
         }
         setFlags(flags);
         setTarget(null);
+        LOGGER.debug("Advanced turret {} target flag 0x{} set to {} (target cleared)", getId(), Integer.toHexString(flag), value);
     }
 
     public boolean getTargetAnimal() {
@@ -183,8 +187,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     }
 
     @Override
-    public void move(MoverType type, Vec3 motion) {
-
+    public void move(@NotNull MoverType type, Vec3 motion) {
         super.move(type, new Vec3(motion.x / 15.0, motion.y, motion.z / 15.0));
     }
 
@@ -192,7 +195,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide() && isOwner(player) && !isRemoved()) {
             if (player.isShiftKeyDown()) {
-
+                LOGGER.debug("Player {} dismantled advanced turret {}", player, getId());
                 playSound(ModSounds.ZAP.get(), 1.0f, 1.0f);
                 dropAmmo();
 
@@ -205,12 +208,12 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
                 if (player instanceof ServerPlayer serverPlayer) {
                     serverPlayer.openMenu( new MenuProvider() {
                         @Override
-                        public Component getDisplayName() {
+                        public @NotNull Component getDisplayName() {
                             return Component.translatable("item.arcaneresearch.turret_placer_advanced");
                         }
 
                         @Override
-                        public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player p) {
+                        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player p) {
                             return new TurretMenu(containerId, playerInventory, EntityTurretCrossbowAdvanced.this);
                         }
                     }, buf -> buf.writeInt(getId()));
@@ -418,6 +421,8 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
 
             double range = getFollowDistance();
             if (mob.distanceToSqr(currentTarget) > range * range) {
+                LOGGER.once("turret.advanced.target.range", LogLevel.DEBUG,
+                        "Advanced turret {} dropped {} (out of {} block range)", getId(), currentTarget, range);
                 return false;
             }
 
@@ -425,6 +430,8 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
                 if (mob.getSensing().hasLineOfSight(currentTarget)) {
                     targetUnseenTicks = 0;
                 } else if (++targetUnseenTicks > 60) {
+                    LOGGER.once("turret.advanced.target.unseen", LogLevel.DEBUG,
+                            "Advanced turret {} dropped {} after 60 unseen ticks", getId(), currentTarget);
                     return false;
                 }
             }
@@ -434,6 +441,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
 
         @Override
         public void start() {
+            LOGGER.debug("Advanced turret {} acquired target {}", mob.getId(), target);
             mob.setTarget(target);
             targetUnseenTicks = 0;
             super.start();

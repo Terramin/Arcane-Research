@@ -24,6 +24,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.golems.seals.ISealConfigArea;
 import arcaneresearch.api.golems.seals.ISealEntity;
 import arcaneresearch.api.golems.seals.SealPos;

@@ -66,120 +66,140 @@ public class CrossbowModel extends EntityModel<TurretCrossbowRenderer.State> {
         partdefinition.addOrReplaceChild("tripod",
                 CubeListBuilder.create()
                         .texOffs(13, 0)
+                        .mirror()
                         .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 2.0F, 3.0F, CubeDeformation.NONE),
                 PartPose.offset(0.0F, 12.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("leg1",
                 CubeListBuilder.create()
                         .texOffs(20, 10)
+                        .mirror()
                         .addBox(-1.0F, 1.0F, -1.0F, 2.0F, 13.0F, 2.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, 0.5236F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("leg2",
                 CubeListBuilder.create()
                         .texOffs(20, 10)
+                        .mirror()
                         .addBox(-1.0F, 1.0F, -1.0F, 2.0F, 13.0F, 2.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, 0.5236F, 1.5708F, 0.0F));
 
         partdefinition.addOrReplaceChild("leg3",
                 CubeListBuilder.create()
                         .texOffs(20, 10)
+                        .mirror()
                         .addBox(-1.0F, 1.0F, -1.0F, 2.0F, 13.0F, 2.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, 0.5236F, 3.1416F, 0.0F));
 
         partdefinition.addOrReplaceChild("leg4",
                 CubeListBuilder.create()
                         .texOffs(20, 10)
+                        .mirror()
                         .addBox(-1.0F, 1.0F, -1.0F, 2.0F, 13.0F, 2.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, 0.5236F, 4.7124F, 0.0F));
 
         PartDefinition crossbowPart = partdefinition.addOrReplaceChild("crossbow",
                 CubeListBuilder.create()
                         .texOffs(28, 14)
+                        .mirror()
                         .addBox(-2.0F, 0.0F, -7.0F, 4.0F, 2.0F, 14.0F, CubeDeformation.NONE),
                 PartPose.offset(0.0F, 10.0F, 0.0F));
 
         crossbowPart.addOrReplaceChild("ammobox",
                 CubeListBuilder.create()
                         .texOffs(38, 0)
+                        .mirror()
                         .addBox(-2.0F, -5.0F, -6.0F, 4.0F, 5.0F, 9.0F, CubeDeformation.NONE),
                 PartPose.ZERO);
 
         crossbowPart.addOrReplaceChild("barrel",
                 CubeListBuilder.create()
                         .texOffs(20, 28)
+                        .mirror()
                         .addBox(-1.0F, -1.0F, -8.0F, 2.0F, 2.0F, 2.0F, CubeDeformation.NONE),
                 PartPose.ZERO);
 
         crossbowPart.addOrReplaceChild("basebarcross",
                 CubeListBuilder.create()
                         .texOffs(0, 13)
+                        .mirror()
                         .addBox(-2.0F, 0.5F, 10.0F, 4.0F, 1.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.ZERO);
 
         crossbowPart.addOrReplaceChild("basebarr",
                 CubeListBuilder.create()
                         .texOffs(40, 23)
+                        .mirror()
                         .addBox(-1.0F, 0.0F, 7.0F, 1.0F, 2.0F, 5.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.1396F, 0.0F));
 
         crossbowPart.addOrReplaceChild("basebarl",
                 CubeListBuilder.create()
                         .texOffs(40, 23)
+                        .mirror()
                         .addBox(0.0F, 0.0F, 7.0F, 1.0F, 2.0F, 5.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.1396F, 0.0F));
 
         crossbowPart.addOrReplaceChild("loadbarcross",
                 CubeListBuilder.create()
                         .texOffs(0, 13)
+                        .mirror()
                         .addBox(-2.0F, -8.5F, -0.5F, 4.0F, 1.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.5585F, 0.0F, 0.0F));
 
         crossbowPart.addOrReplaceChild("loadbarl",
                 CubeListBuilder.create()
                         .texOffs(0, 15)
+                        .mirror()
                         .addBox(2.0F, -9.0F, -1.0F, 1.0F, 11.0F, 2.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.5585F, 0.0F, 0.0F));
 
         crossbowPart.addOrReplaceChild("loadbarr",
                 CubeListBuilder.create()
                         .texOffs(0, 15)
+                        .mirror()
                         .addBox(-3.0F, -9.0F, -1.0F, 1.0F, 11.0F, 2.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.5585F, 0.0F, 0.0F));
 
         crossbowPart.addOrReplaceChild("crossl1",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
+                        .mirror()
                         .addBox(0.0F, 0.0F, -6.0F, 5.0F, 2.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.2443F, 0.0F));
 
         crossbowPart.addOrReplaceChild("crossl2",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
+                        .mirror()
                         .addBox(4.0F, 0.0F, -5.0F, 3.0F, 2.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.2443F, 0.0F));
 
         crossbowPart.addOrReplaceChild("crossl3",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
+                        .mirror()
                         .addBox(6.0F, 0.0F, -4.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, -0.2443F, 0.0F));
 
         crossbowPart.addOrReplaceChild("crossr1",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
+                        .mirror()
                         .addBox(-5.0F, 0.0F, -6.0F, 5.0F, 2.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.2443F, 0.0F));
 
         crossbowPart.addOrReplaceChild("crossr2",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
+                        .mirror()
                         .addBox(-7.0F, 0.0F, -5.0F, 3.0F, 2.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.2443F, 0.0F));
 
         crossbowPart.addOrReplaceChild("crossr3",
                 CubeListBuilder.create()
                         .texOffs(0, 0)
+                        .mirror()
                         .addBox(-8.0F, 0.0F, -4.0F, 2.0F, 2.0F, 1.0F, CubeDeformation.NONE),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.2443F, 0.0F));
 

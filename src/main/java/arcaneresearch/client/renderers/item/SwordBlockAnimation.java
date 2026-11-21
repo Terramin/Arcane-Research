@@ -8,31 +8,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import arcaneresearch.common.items.tools.ItemElementalSword;
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-@OnlyIn(Dist.CLIENT)
+import arcaneresearch.common.items.tools.elemental.ElementalSwordItem;
 public final class SwordBlockAnimation {
 
       
@@ -43,7 +20,7 @@ public final class SwordBlockAnimation {
                                                HumanoidArm arm, ItemStack stack,
                                                float partialTick, float equipProgress, float swingProgress) {
             try {
-                if (stack.isEmpty() || !(stack.getItem() instanceof ItemElementalSword)) {
+                if (stack.isEmpty() || !(stack.getItem() instanceof ElementalSwordItem)) {
                     return false;
                 }
                 Minecraft mc = Minecraft.getInstance();
@@ -53,7 +30,7 @@ public final class SwordBlockAnimation {
                 InteractionHand hand = arm == player.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 ItemStack useStack = player.getUseItem();
                 boolean using = player.isUsingItem() && !useStack.isEmpty()
-                        && useStack.getItem() instanceof ItemElementalSword
+                        && useStack.getItem() instanceof ElementalSwordItem
                         && player.getUsedItemHand() == hand && player.getUseItemRemainingTicks() > 0;
                 if (!using) {
                     return false;

@@ -14,7 +14,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -32,8 +31,6 @@ import arcaneresearch.discovered.scan.ScanTargets;
 import arcaneresearch.init.ModSounds;
 import arcaneresearch.invscan.client.ScanFlightSystem;
 import arcaneresearch.invscan.mixin.AbstractContainerScreenInvoker;
-
-@OnlyIn(Dist.CLIENT)
 public final class InvScanClient {
 
     private static final int SCAN_TICKS = 20;

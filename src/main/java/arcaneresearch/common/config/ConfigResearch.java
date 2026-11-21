@@ -37,7 +37,7 @@ import arcaneresearch.common.lib.research.*;
 import arcaneresearch.common.lib.research.theorycraft.TheoryRegistry;
 import arcaneresearch.init.ModBlocks;
 import arcaneresearch.init.ModItems;
-
+import arcaneresearch.message.api.StoryTellingAPI;
 public class ConfigResearch {
 
     public static final String[] TC_CATEGORIES = {

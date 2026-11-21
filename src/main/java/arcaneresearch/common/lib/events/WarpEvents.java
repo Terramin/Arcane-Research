@@ -23,6 +23,7 @@ import arcaneresearch.common.entities.monster.EntityMindSpider;
 import arcaneresearch.common.entities.monster.cult.EntityCultistPortalLesser;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketMiscEvent;
+import arcaneresearch.message.api.StoryTellingAPI;
 import arcaneresearch.init.ModEffects;
 import arcaneresearch.init.ModEntities;
 
@@ -76,16 +77,39 @@ public class WarpEvents {
                 player.sendOverlayMessage(getWarpText(8));
                 ArcaneresearchApi.internalMethods.completeResearch(player, "!BATHSALTS");
             }
-            if (actualwarp > 25 && !ArcaneresearchCapabilities.knowsResearch(player, "ELDRITCHMINOR")) {
-                ArcaneresearchApi.internalMethods.completeResearch(player, "ELDRITCHMINOR");
-            }
-            if (actualwarp > 50 && !ArcaneresearchCapabilities.knowsResearch(player, "ELDRITCHMAJOR")) {
-                ArcaneresearchApi.internalMethods.completeResearch(player, "ELDRITCHMAJOR");
-            }
         }
 
         if (player instanceof ServerPlayer serverPlayer) {
             wc.sync(serverPlayer);
+        }
+    }
+
+    /**
+     * Grants the warp-gated lore research deterministically. Unlike the random
+     * warp event above, this runs on every scheduled check, so reaching the
+     * threshold can never be missed because of an unlucky die roll, an empty
+     * warp counter, wuss mode or a warp ward.
+     */
+    public static void checkWarpResearch(Player player) {
+        if (player.level().isClientSide()) return;
+        if (ArcaneresearchApi.internalMethods == null) return;
+        IPlayerWarp wc = ArcaneresearchCapabilities.getWarp(player);
+        if (wc == null) return;
+
+        // Only permanent and normal warp count - temporary warp and gear warp
+        // are deliberately excluded, exactly as in the original warp event.
+        int actualwarp = wc.get(IPlayerWarp.EnumWarpType.PERMANENT)
+                + wc.get(IPlayerWarp.EnumWarpType.NORMAL);
+        grantWarpResearch(player, actualwarp);
+    }
+
+    private static void grantWarpResearch(Player player, int actualwarp) {
+        // Strict '>' thresholds are intentional: 26+ / 51+ is required.
+        if (actualwarp > 25 && !ArcaneresearchCapabilities.knowsResearchStrict(player, "ELDRITCHMINOR")) {
+            ArcaneresearchApi.internalMethods.completeResearch(player, "ELDRITCHMINOR");
+        }
+        if (actualwarp > 50 && !ArcaneresearchCapabilities.knowsResearchStrict(player, "ELDRITCHMAJOR")) {
+            ArcaneresearchApi.internalMethods.completeResearch(player, "ELDRITCHMAJOR");
         }
     }
 
@@ -391,6 +415,12 @@ public class WarpEvents {
         w += curiosWarp[0];
 
         return w;
+    }
+
+    private static void sendWarpText(Player player, int index) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            StoryTellingAPI.sendStandartMsg(serverPlayer, getWarpText(index));
+        }
     }
 
     private static net.minecraft.network.chat.Component getWarpText(int index) {

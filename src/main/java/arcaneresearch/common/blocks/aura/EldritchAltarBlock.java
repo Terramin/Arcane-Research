@@ -1,4 +1,5 @@
 package arcaneresearch.common.blocks.aura;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.common.lib.aura.EldritchOculusRitual;
 import arcaneresearch.common.tiles.aura.EldritchAltarTile;
 
@@ -20,7 +21,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import arcaneresearch.common.blocks.aura.AuraBlockEntities;
 import arcaneresearch.init.ModSounds;
 
 import javax.annotation.Nullable;
@@ -132,7 +132,7 @@ public class EldritchAltarBlock extends BaseEntityBlock {
             if (!(tile instanceof EldritchAltarTile altar)) {
                 return InteractionResult.PASS;
             }
-            if (held.getItem() instanceof arcaneresearch.api.wands.IWand) {
+            if (held.getItem() instanceof IFocusHost) {
                 if (!player.isCrouching()
                         && EldritchOculusRitual.createOculus(held, player, level, pos)) {
                     return InteractionResult.CONSUME;

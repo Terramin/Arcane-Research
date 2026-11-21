@@ -1,5 +1,9 @@
 package arcaneresearch.common.menu;
 
+import arcaneresearch.api.wands.FocusItem;
+import arcaneresearch.common.items.casters.ItemFocusPouch;
+import arcaneresearch.common.menu.slot.FocusSlot;
+import arcaneresearch.init.ModMenuTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;

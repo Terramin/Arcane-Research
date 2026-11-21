@@ -1,5 +1,5 @@
 package arcaneresearch.common.blocks.crafting;
-
+import arcaneresearch.api.wands.IFocusHost;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -158,7 +158,7 @@ public class BlockCrucible extends BlockTCDevice {
         }
 
         if (!heldItem.isEmpty() && !player.isShiftKeyDown()
-                && !(heldItem.getItem() instanceof arcaneresearch.api.casters.ICaster)
+                && !(heldItem.getItem() instanceof IFocusHost)
                 && hit.getDirection() == Direction.UP
                 && crucible.isHeated() && crucible.getTank().getFluidAmount() > 0) {
             ItemStack result = crucible.attemptSmelt(heldItem.copy(), player.getName().getString());

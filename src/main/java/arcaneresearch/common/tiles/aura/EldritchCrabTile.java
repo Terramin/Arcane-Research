@@ -20,14 +20,6 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
- 
-
-
-
-
- 
 public class EldritchCrabTile extends TileArcaneresearch {
     public int count = 150;
     private int ticks = 0;
@@ -138,8 +130,6 @@ public class EldritchCrabTile extends TileArcaneresearch {
         crab.finalizeSpawn(server, server.getCurrentDifficultyAt(new BlockPos(x, y, z)), EntitySpawnReason.EVENT, null);
         server.addFreshEntity(crab);
     }
-
-    @OnlyIn(Dist.CLIENT)
     protected void clientTick() {
         Level level = getLevel();
         if (level == null || !level.isClientSide()) {
@@ -157,9 +147,6 @@ public class EldritchCrabTile extends TileArcaneresearch {
         } catch (Exception ignored) {
         }
     }
-
-      
-    @OnlyIn(Dist.CLIENT)
     protected void drawVent() {
         Level level = getLevel();
         if (level == null) {

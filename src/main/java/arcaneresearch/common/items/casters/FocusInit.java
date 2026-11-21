@@ -3,9 +3,13 @@ package arcaneresearch.common.items.casters;
 import net.minecraft.resources.Identifier;
 import arcaneresearch.api.casters.FocusEngine;
 import arcaneresearch.api.casters.FocusMediumRoot;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.common.items.casters.foci.*;
 
 public class FocusInit {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
 
     public static void registerFoci() {
 

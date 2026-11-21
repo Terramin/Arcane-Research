@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "arcaneresearch.helper.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "arcaneresearch.refmap.json",
+  "client": [
+    "PlayerRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

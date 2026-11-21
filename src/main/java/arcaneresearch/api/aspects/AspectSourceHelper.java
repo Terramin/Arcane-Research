@@ -2,15 +2,13 @@ package arcaneresearch.api.aspects;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.lang.reflect.Method;
 
 public class AspectSourceHelper {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AspectSourceHelper.class);
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     private static Method drainEssentiaMethod;
     private static Method findEssentiaMethod;
 
@@ -19,7 +17,7 @@ public class AspectSourceHelper {
             if (drainEssentiaMethod == null) {
                 Class<?> handlerClass = Class.forName("arcaneresearch.common.lib.events.EssentiaHandler");
                 drainEssentiaMethod = handlerClass.getMethod("drainEssentia",
-                    BlockEntity.class, Aspect.class, Direction.class, int.class);
+                        BlockEntity.class, Aspect.class, Direction.class, int.class);
             }
             return (Boolean) drainEssentiaMethod.invoke(null, blockEntity, aspect, direction, range);
         } catch (Exception ex) {
@@ -33,7 +31,7 @@ public class AspectSourceHelper {
             if (findEssentiaMethod == null) {
                 Class<?> handlerClass = Class.forName("arcaneresearch.common.lib.events.EssentiaHandler");
                 findEssentiaMethod = handlerClass.getMethod("findEssentia",
-                    BlockEntity.class, Aspect.class, Direction.class, int.class);
+                        BlockEntity.class, Aspect.class, Direction.class, int.class);
             }
             return (Boolean) findEssentiaMethod.invoke(null, blockEntity, aspect, direction, range);
         } catch (Exception ex) {

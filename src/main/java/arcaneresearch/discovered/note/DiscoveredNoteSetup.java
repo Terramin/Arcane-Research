@@ -20,7 +20,6 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import arcaneresearch.discovered.table.DiscoveredTableResearch;
-import arcaneresearch.discovered.table.DiscoveredTableSetup;
 
  
 
@@ -89,9 +88,6 @@ public class DiscoveredNoteSetup {
                 if (note != null) {
                     event.accept(note);
                 }
-            }
-            if (DiscoveredTableSetup.getSingleTableItem() != null) {
-                event.accept(DiscoveredTableSetup.getSingleTableItem());
             }
         }
     }

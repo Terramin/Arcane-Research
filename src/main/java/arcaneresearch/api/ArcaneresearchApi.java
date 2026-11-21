@@ -20,6 +20,7 @@ import arcaneresearch.api.internal.DummyInternalMethodHandler;
 import arcaneresearch.api.internal.IInternalMethodHandler;
 import arcaneresearch.api.internal.WeightedRandomLoot;
 import arcaneresearch.api.research.IScanEventHandler;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 public class ArcaneresearchApi {
 
@@ -183,7 +184,8 @@ public class ArcaneresearchApi {
             for (var holder : net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(tagKey)) {
                 registerObjectTag(new ItemStack(holder.value()), aspects.copy());
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public static void registerComplexObjectTag(ItemStack item, AspectList aspects) {
@@ -216,7 +218,8 @@ public class ArcaneresearchApi {
             for (var holder : net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(tagKey)) {
                 registerComplexObjectTag(new ItemStack(holder.value()), aspects.copy());
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public static class EntityTagsNBT {
@@ -262,15 +265,15 @@ public class ArcaneresearchApi {
     public static void addWarpToItem(ItemStack craftresult, int amount) {
         if (craftresult == null || craftresult.isEmpty()) return;
         CommonInternals.warpMap.put(
-            Arrays.asList(craftresult.getItem(), craftresult.getDamageValue()),
-            amount
+                Arrays.asList(craftresult.getItem(), craftresult.getDamageValue()),
+                amount
         );
     }
 
     public static int getWarp(ItemStack in) {
         if (in == null || in.isEmpty()) return 0;
         Integer warp = CommonInternals.warpMap.get(
-            Arrays.asList(in.getItem(), in.getDamageValue())
+                Arrays.asList(in.getItem(), in.getDamageValue())
         );
         return warp != null ? warp : 0;
     }

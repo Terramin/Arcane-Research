@@ -1,7 +1,13 @@
 package arcaneresearch.common.items.misc;
 
+import arcaneresearch.api.aura.AuraHelper;
+import arcaneresearch.common.entities.EntityFluxRift;
+import arcaneresearch.common.lib.utils.EntityUtils;
+import arcaneresearch.init.ModSounds;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -62,17 +68,24 @@ public class ItemCreativeFluxSponge extends Item {
             player.sendSystemMessage(Component.literal(totalDrained + " flux drained from 81 chunks.")
                     .withStyle(ChatFormatting.GREEN));
 
+            int removed = 0;
             if (player.isShiftKeyDown()) {
                 java.util.List<EntityFluxRift> rifts = EntityUtils.getEntitiesInRange(level,
                         player.blockPosition(), 32.0, EntityFluxRift.class);
 
                 for (EntityFluxRift rift : rifts) {
                     rift.discard();
+                    removed++;
                 }
 
                 player.sendSystemMessage(Component.literal(rifts.size() + " flux rifts removed.")
                         .withStyle(ChatFormatting.DARK_AQUA));
             }
+
+            player.sendSystemMessage(
+                    Component.literal(removed + " flux rifts removed.")
+                            .withStyle(ChatFormatting.DARK_AQUA)
+            );
         }
 
         

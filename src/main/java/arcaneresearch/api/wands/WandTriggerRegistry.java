@@ -59,7 +59,7 @@ public class WandTriggerRegistry {
     }
 
     public static boolean performTrigger(Level level, ItemStack wand, Player player, BlockPos pos, Direction side,
-            BlockState state) {
+                                         BlockState state) {
         for (String modid : new ArrayList<>(triggers.keySet())) {
             LinkedHashMap<BlockState, List<Trigger>> temp = triggers.get(modid);
             List<Trigger> l = temp.get(state);
@@ -77,7 +77,7 @@ public class WandTriggerRegistry {
     }
 
     public static boolean performTrigger(Level level, ItemStack wand, Player player, BlockPos pos, Direction side,
-            BlockState state, String modid) {
+                                         BlockState state, String modid) {
         if (!triggers.containsKey(modid)) {
             return false;
         }

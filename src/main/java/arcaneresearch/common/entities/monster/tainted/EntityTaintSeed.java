@@ -37,8 +37,6 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityTaintSeed extends Monster implements ITaintedMob {
 
     public int boost = 0;
@@ -185,8 +183,6 @@ public class EntityTaintSeed extends Monster implements ITaintedMob {
             clientTick();
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void clientTick() {
         if (attackAnim > 0.0f) {
             attackAnim *= 0.75f;

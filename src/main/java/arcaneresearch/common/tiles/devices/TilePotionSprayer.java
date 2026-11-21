@@ -22,7 +22,6 @@ import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.*;
 import arcaneresearch.client.fx.FXDispatcher;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.common.config.ConfigAspects;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
 import arcaneresearch.init.ModBlockEntities;
@@ -136,8 +135,6 @@ public class TilePotionSprayer extends TileArcaneresearchInventory implements IA
             tile.activated = false;
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void clientTick(Level level, BlockPos pos, BlockState state, TilePotionSprayer tile) {
         Direction facing = tile.getFacing();
 

@@ -20,7 +20,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.items.IArchitect;
-
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import java.util.ArrayList;
 
 

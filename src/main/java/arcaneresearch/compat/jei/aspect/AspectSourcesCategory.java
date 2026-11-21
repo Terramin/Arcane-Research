@@ -35,12 +35,10 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
 
     private static final int PAGE_SIZE = 18;
 
-    private final IDrawable background;
     private final IDrawable icon;
     private final Component title;
 
     public AspectSourcesCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.THAUMONOMICON.get()));
         this.title = Component.translatable("gui.arcaneresearch.aspect_sources");
     }

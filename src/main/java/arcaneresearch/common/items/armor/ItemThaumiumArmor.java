@@ -26,7 +26,7 @@ public class ItemThaumiumArmor extends Item implements IRunicArmor {
 
     public ItemThaumiumArmor(Item.Properties props, ArmorType type) {
         
-        super(props.humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_THAUMIUM, type)
+        super(props.stacksTo(1).humanoidArmor(ArcaneresearchArmorMaterials.ARMORMAT_THAUMIUM, type)
                 
                 
                 .durability(arcaneresearch.api.ArcaneresearchMaterials.forgeArmorDurability(

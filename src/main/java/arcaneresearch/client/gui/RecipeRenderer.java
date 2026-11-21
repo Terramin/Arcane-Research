@@ -13,7 +13,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
@@ -30,8 +29,6 @@ import arcaneresearch.common.lib.crafting.InfusionRecipeType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-@OnlyIn(Dist.CLIENT)
 public class RecipeRenderer {
 
     private static final Identifier OVERLAY_TEXTURE = Identifier.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/gui_researchbook_overlay.png");

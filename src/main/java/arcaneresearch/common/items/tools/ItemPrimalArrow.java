@@ -2,11 +2,8 @@ package arcaneresearch.common.items.tools;
 
 import net.minecraft.world.item.Item;
 import arcaneresearch.api.aspects.Aspect;
+import net.minecraft.world.item.Item;
 
- 
-
-
- 
 public class ItemPrimalArrow extends Item {
 
     public static final int AIR = 0;

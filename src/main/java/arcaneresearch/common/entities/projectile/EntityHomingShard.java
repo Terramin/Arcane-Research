@@ -21,8 +21,6 @@ import java.util.List;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
 public class EntityHomingShard extends ThrowableProjectile {
 
     private static final EntityDataAccessor<Byte> DATA_STRENGTH =
@@ -157,8 +155,6 @@ public class EntityHomingShard extends ThrowableProjectile {
         }
         super.handleEntityEvent(id);
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void spawnHitFX() {
         FXDispatcher.INSTANCE.burst(getX(), getY(), getZ(), 0.3f);
     }

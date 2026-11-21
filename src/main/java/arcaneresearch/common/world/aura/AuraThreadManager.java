@@ -3,16 +3,13 @@ package arcaneresearch.common.world.aura;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuraThreadManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuraThreadManager.class);
-
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
     private static final Map<ResourceKey<Level>, AuraThread> auraThreads = new ConcurrentHashMap<>();
 
     private static final Map<ResourceKey<Level>, Thread> threads = new ConcurrentHashMap<>();

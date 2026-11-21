@@ -1,5 +1,9 @@
 package arcaneresearch.common.items.wands;
 
+import arcaneresearch.common.blocks.aura.AuraBlocks;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
+import arcaneresearch.common.lib.aura.EldritchOculusRitual;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -15,7 +19,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.blocks.BlocksTC;
-import arcaneresearch.api.wands.IWand;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.wands.IWandTriggerManager;
 import arcaneresearch.api.wands.WandTriggerRegistry;
 import arcaneresearch.common.blocks.IBlockEnabled;
@@ -29,8 +33,10 @@ import arcaneresearch.common.tiles.crafting.TileInfusionMatrix;
 import arcaneresearch.common.tiles.crafting.TilePedestal;
 import arcaneresearch.init.ModEntities;
 import arcaneresearch.init.ModItems;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class WandTriggers implements IWandTriggerManager {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ITEMS);
     private static boolean triggersRegistered = false;
 
     public static synchronized void registerTriggers() {
@@ -113,7 +119,7 @@ public class WandTriggers implements IWandTriggerManager {
                 .getBlock() != Blocks.CAULDRON) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (wand.consumeAllVis(stack, player,
@@ -144,7 +150,7 @@ public class WandTriggers implements IWandTriggerManager {
         if (level.isClientSide()) {
             return false;
         }
-        if (!(stack.getItem() instanceof IWand wand) || wand.getFocus(stack) != null) {
+        if (!(stack.getItem() instanceof IFocusHost wand) || wand.getFocus(stack) != null) {
             return false;
         }
         level.removeBlock(pos, false);
@@ -186,7 +192,7 @@ public class WandTriggers implements IWandTriggerManager {
     }
 
     public static boolean createInfusionAltar(ItemStack stack, Player player, Level level, BlockPos pos) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         if (fitInfusionAltar(level, pos) && wand.consumeAllVis(stack, player,
@@ -250,6 +256,10 @@ public class WandTriggers implements IWandTriggerManager {
         } catch (Exception e) {
             return;
         }
+        BlockState pillarBase = pillar.defaultBlockState();
+
+        BlockState oldMatrixState = level.getBlockState(pos);
+
         setBlockSparkle(level, pos.offset(-1, -1, -1), Blocks.BEDROCK.defaultBlockState());
         setBlockSparkle(level, pos.offset(1, -1, -1), Blocks.BEDROCK.defaultBlockState());
         setBlockSparkle(level, pos.offset(1, -1, 1), Blocks.BEDROCK.defaultBlockState());
@@ -282,7 +292,7 @@ public class WandTriggers implements IWandTriggerManager {
 
     public static boolean createThaumatorium(ItemStack stack, Player player, Level level, BlockPos pos,
                                              Direction side) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         Block metal;
@@ -336,7 +346,7 @@ public class WandTriggers implements IWandTriggerManager {
     }
 
     public static boolean createInfernalFurnace(ItemStack stack, Player player, Level level, BlockPos pos) {
-        if (!(stack.getItem() instanceof IWand wand)) {
+        if (!(stack.getItem() instanceof IFocusHost wand)) {
             return false;
         }
         for (int xx = -2; xx <= 0; xx++) {

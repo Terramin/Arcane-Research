@@ -4,10 +4,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber; 
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import arcaneresearch.Arcaneresearch;
-import arcaneresearch.client.gui.screens.WandFocusPouchScreen;
-import arcaneresearch.common.menu.WandMenuTypes;
 
 
 
@@ -28,11 +25,8 @@ public class WandClientSetup {
         }
     }
 
-    @SubscribeEvent
-    public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
-        event.register(
-                WandMenuTypes.WAND_FOCUS_POUCH.get(), WandFocusPouchScreen::new);
-    }
+    // Focus pouch screens are registered centrally in Arcaneresearch via
+    // RegisterMenuScreensEvent; the old WandFocusPouchScreen/WandMenuTypes were removed upstream.
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -41,9 +35,6 @@ public class WandClientSetup {
                 arcaneresearch.client.renderers.entity.NoProjectileRenderer::new);
         event.registerEntityRenderer(
                 arcaneresearch.common.entities.WandEntities.EXPLOSIVE_ORB.get(),
-                arcaneresearch.client.renderers.entity.NoProjectileRenderer::new);
-        event.registerEntityRenderer(
-                arcaneresearch.common.entities.WandEntities.PRIMAL_ORB.get(),
                 arcaneresearch.client.renderers.entity.NoProjectileRenderer::new);
         event.registerEntityRenderer(
                 arcaneresearch.common.entities.WandEntities.FROST_SHARD.get(),
