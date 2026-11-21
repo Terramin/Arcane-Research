@@ -138,6 +138,51 @@ public abstract class TileVisNode extends TileArcaneresearch {
         return this.children;
     }
 
+    /**
+     * Server-side maintenance of the vis network node. Mirrors the original
+     * TileVisNode.update(): every 40 ticks (or immediately after a refresh)
+     * the node revalidates its children, detaches from an invalid parent and
+     * looks for the closest valid source/relay within range.
+     */
+    public void tickNetwork(Level level) {
+        if (level == null || level.isClientSide) return;
+        if (nodeCounter++ % 40 != 0 && !nodeRefresh) return;
+
+        if (!nodeRefresh && !children.isEmpty()) {
+            for (WeakReference<TileVisNode> ref : children) {
+                TileVisNode child = ref == null ? null : ref.get();
+                if (child == null || !VisNetHandler.canNodeBeSeen(level, this, child)) {
+                    nodeRefresh = true;
+                    break;
+                }
+            }
+        }
+
+        if (nodeRefresh) {
+            for (WeakReference<TileVisNode> ref : children) {
+                TileVisNode child = ref == null ? null : ref.get();
+                if (child != null) child.nodeRefresh = true;
+            }
+            children.clear();
+            parent = null;
+        }
+
+        if (isSource() && !nodeRegged) {
+            VisNetHandler.addSource(level, this);
+            nodeRegged = true;
+        } else if (!isSource() && !VisNetHandler.isNodeValid(parent)) {
+            setParent(VisNetHandler.addNode(level, this));
+            nodeRefresh = true;
+        }
+
+        if (nodeRefresh) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            parentChanged();
+            setChanged();
+        }
+        nodeRefresh = false;
+    }
+
     public void parentChanged() {
     }
 

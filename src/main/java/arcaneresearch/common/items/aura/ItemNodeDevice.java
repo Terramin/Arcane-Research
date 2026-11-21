@@ -10,7 +10,8 @@ public class ItemNodeDevice extends BlockItem {
         STABILIZER,
         ADVANCED,
         TRANSDUCER,
-        CONVERTER
+        CONVERTER,
+        RELAY
     }
 
     private final Kind kind;

@@ -106,7 +106,11 @@ public class TileInfernalFurnace extends TileArcaneresearchInventory implements 
         }
 
         if (tile.speedyTime <= 0) {
-            tile.speedyTime = (int) AuraHelper.drainVis(level, pos, 20.0f, false);
+            // As in TC4, CV delivered through a charged aura node / vis relay
+            // network takes priority over raw aura: 5 CV buys one fast smelt.
+            int cv = arcaneresearch.common.lib.aura.VisNetHandler.drainVis(
+                    level, pos, arcaneresearch.api.aspects.Aspect.FIRE, 5);
+            tile.speedyTime = cv > 0 ? cv / 5 : (int) AuraHelper.drainVis(level, pos, 20.0f, false);
         }
 
         if (tile.furnaceCookTime <= 0) {

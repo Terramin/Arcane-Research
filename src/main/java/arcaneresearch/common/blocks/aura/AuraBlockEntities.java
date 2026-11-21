@@ -64,6 +64,10 @@ public class AuraBlockEntities {
             BLOCK_ENTITIES.register("node_converter", () ->
                     BlockEntityType.Builder.of(AuraBlockEntities::createNodeConverter,
                             AuraBlocks.NODE_CONVERTER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<arcaneresearch.common.tiles.aura.VisRelayTile>> VIS_RELAY =
+            BLOCK_ENTITIES.register("vis_relay", () ->
+                    BlockEntityType.Builder.of(AuraBlockEntities::createVisRelay,
+                            AuraBlocks.VIS_RELAY.get()).build(null));
     public static final RegistryObject<BlockEntityType<arcaneresearch.common.tiles.aura.EldritchPortalTile>> ELDRITCH_PORTAL =
             BLOCK_ENTITIES.register("eldritch_portal", () ->
                     BlockEntityType.Builder.of(AuraBlockEntities::createEldritchPortal,
@@ -129,6 +133,10 @@ public class AuraBlockEntities {
     private static arcaneresearch.common.tiles.aura.NodeConverterTile createNodeConverter(net.minecraft.core.BlockPos pos,
                                                                                net.minecraft.world.level.block.state.BlockState state) {
         return new arcaneresearch.common.tiles.aura.NodeConverterTile(NODE_CONVERTER.get(), pos, state);
+    }
+    private static arcaneresearch.common.tiles.aura.VisRelayTile createVisRelay(net.minecraft.core.BlockPos pos,
+                                                                               net.minecraft.world.level.block.state.BlockState state) {
+        return new arcaneresearch.common.tiles.aura.VisRelayTile(VIS_RELAY.get(), pos, state);
     }
     private static arcaneresearch.common.tiles.aura.EldritchPortalTile createEldritchPortal(net.minecraft.core.BlockPos pos,
                                                                                  net.minecraft.world.level.block.state.BlockState state) {

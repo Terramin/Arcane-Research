@@ -40,6 +40,14 @@ public class NodeDeviceItemRenderer extends BlockEntityWithoutLevelRenderer {
                 NodeConverterRenderer.renderDevice(poseStack, buffer,
                         20, 0, packedLight, packedOverlay);
             }
+            case RELAY -> {
+                // The relay OBJ is modelled around its own origin (rings at y=0,
+                // crystal above), unlike the block models which span 0..1.
+                // Re-centre it at the middle of the item's 1x1x1 display cube.
+                poseStack.translate(0.5D, 0.17D, 0.5D);
+                arcaneresearch.client.renderers.tile.VisRelayRenderer.renderDevice(
+                        poseStack, buffer, 0xFFFFFF, packedLight, packedOverlay);
+            }
             default -> {
                 poseStack.translate(0.0D, 0.125D, 0.0D);
                 StabilizerRenderer.renderDevice(poseStack, buffer,

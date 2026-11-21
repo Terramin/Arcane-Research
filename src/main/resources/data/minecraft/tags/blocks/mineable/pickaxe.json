@@ -76,6 +76,7 @@
     "arcaneresearch:node_stabilizer_advanced",
     "arcaneresearch:node_transducer",
     "arcaneresearch:node_converter",
+    "arcaneresearch:vis_relay",
     "arcaneresearch:mirror_item",
     "arcaneresearch:mirror_essentia",
     "arcaneresearch:lamp_arcane",

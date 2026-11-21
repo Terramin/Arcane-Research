@@ -917,6 +917,10 @@ public class Arcaneresearch {
                 arcaneresearch.common.blocks.aura.AuraBlockEntities.ENERGIZED_NODE.get(),
                 arcaneresearch.client.renderers.tile.EnergizedNodeRenderer::new
             );
+            event.registerBlockEntityRenderer(
+                arcaneresearch.common.blocks.aura.AuraBlockEntities.VIS_RELAY.get(),
+                arcaneresearch.client.renderers.tile.VisRelayRenderer::new
+            );
             LOGGER.info("Registered Arcaneresearch block entity renderers");
             event.registerEntityRenderer(ModEntities.SPECIAL_ITEM.get(),
                     arcaneresearch.client.renderers.entity.SpecialItemRenderer::new);

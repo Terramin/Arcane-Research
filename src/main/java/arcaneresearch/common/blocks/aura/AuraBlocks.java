@@ -34,6 +34,8 @@ public class AuraBlocks {
             arcaneresearch.common.blocks.aura.EldritchAltarBlock::new);
     public static final RegistryObject<Block> NODE_CONVERTER = BLOCKS.register("node_converter",
             arcaneresearch.common.blocks.aura.NodeConverterBlock::new);
+    public static final RegistryObject<Block> VIS_RELAY = BLOCKS.register("vis_relay",
+            BlockVisRelay::new);
     public static final RegistryObject<Block> ELDRITCH_PORTAL = BLOCKS.register("eldritch_portal",
             arcaneresearch.common.blocks.aura.EldritchPortalBlock::new);
     public static final RegistryObject<Block> ELDRITCH_STAIRS = BLOCKS.register("eldritch_stairs",
@@ -73,6 +75,9 @@ public class AuraBlocks {
     public static final RegistryObject<Item> NODE_CONVERTER_ITEM = BLOCK_ITEMS.register("node_converter",
             () -> new arcaneresearch.common.items.aura.ItemNodeDevice(NODE_CONVERTER.get(), new Item.Properties(),
                     arcaneresearch.common.items.aura.ItemNodeDevice.Kind.CONVERTER));
+    public static final RegistryObject<Item> VIS_RELAY_ITEM = BLOCK_ITEMS.register("vis_relay",
+            () -> new arcaneresearch.common.items.aura.ItemNodeDevice(VIS_RELAY.get(), new Item.Properties(),
+                    arcaneresearch.common.items.aura.ItemNodeDevice.Kind.RELAY));
     public static final RegistryObject<Item> ELDRITCH_PORTAL_ITEM = BLOCK_ITEMS.register("eldritch_portal",
             () -> new arcaneresearch.common.items.aura.EldritchPortalItem(ELDRITCH_PORTAL.get(), new Item.Properties()));
     public static final RegistryObject<Item> ELDRITCH_STAIRS_ITEM = BLOCK_ITEMS.register("eldritch_stairs",

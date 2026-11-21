@@ -400,6 +400,24 @@
             ]
         },
         {
+            "key": "VISPOWER",
+            "name": "research.VISPOWER.title",
+            "icons": [ "arcaneresearch:vis_relay" ],
+            "category": "LEGACY", "location": [ 7,6 ],
+            "parents": [ "NODETRANSDUCER" ],
+            "stages": [
+                {
+                    "text": "research.VISPOWER.stage.1",
+                    "recipes": ["arcaneresearch:arcane_workbench/vis_relay"],
+                    "required_craft": ["arcaneresearch:vis_relay"]
+                },
+                {
+                    "text": "research.VISPOWER.stage.2",
+                    "recipes": ["arcaneresearch:arcane_workbench/vis_relay"]
+                }
+            ]
+        },
+        {
             "key": "RUNICARMOR",
             "name": "research.RUNICARMOR.title",
             "icons": [ "arcaneresearch:runic_ring" ],

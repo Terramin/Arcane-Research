@@ -238,6 +238,7 @@ public class ModCreativeTabs {
                         output.accept(arcaneresearch.common.blocks.aura.AuraBlocks.STABILIZER_ADVANCED_ITEM.get());
                         output.accept(arcaneresearch.common.blocks.aura.AuraBlocks.TRANSDUCER_ITEM.get());
                         acceptBlock(output, AuraBlocks.NODE_CONVERTER.get());
+                        output.accept(arcaneresearch.common.blocks.aura.AuraBlocks.VIS_RELAY_ITEM.get());
                         acceptBlock(output, AuraBlocks.AURA_TOTEM.get());
                         acceptBlock(output, AuraBlocks.OBSIDIAN_TOTEM.get());
                         acceptBlock(output, ModBlocks.INFUSION_MATRIX.get());

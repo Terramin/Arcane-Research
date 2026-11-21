@@ -1,0 +1,22 @@
+{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "VISPOWER",
+  "vis": 80,
+  "crystals": {
+    "aer": 1,
+    "ordo": 1
+  },
+  "pattern": [
+    " I ",
+    "ICI",
+    " I "
+  ],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "C": { "item": "arcaneresearch:crystal_essence" }
+  },
+  "result": {
+    "item": "arcaneresearch:vis_relay",
+    "count": 2
+  }
+}

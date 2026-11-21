@@ -222,8 +222,18 @@ public class TileNodeEnergized extends TileVisNode implements IAspectContainer {
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
+        // TileArcaneresearch.saveAdditional() delegates to writeSyncNBT(), so
+        // the energized node data is written by the override below as well.
         super.saveAdditional(tag);
+    }
 
+    @Override
+    protected void writeSyncNBT(@NotNull CompoundTag tag) {
+        super.writeSyncNBT(tag);
+
+        // getUpdateTag() uses writeSyncNBT() only. Without this the client
+        // never receives the aspect list when the transducer creates the
+        // energized node at runtime, so no aspect icons are drawn above it.
         tag.putString("nodeId", this.id);
         tag.putByte("type", (byte) getNodeType().ordinal());
 
