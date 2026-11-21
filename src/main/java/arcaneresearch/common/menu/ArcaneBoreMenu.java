@@ -1,6 +1,8 @@
 package arcaneresearch.common.menu;
 
 import arcaneresearch.common.entities.construct.EntityArcaneBore;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.common.menu.slot.PickaxeSlot;
 import arcaneresearch.init.ModMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class ArcaneBoreMenu extends AbstractContainerMenu {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ENTITIES);
 
     private final EntityArcaneBore bore;
 
@@ -23,6 +26,7 @@ public class ArcaneBoreMenu extends AbstractContainerMenu {
     public ArcaneBoreMenu(int containerId, Inventory playerInventory, EntityArcaneBore bore) {
         super(ModMenuTypes.ARCANE_BORE.get(), containerId);
         this.bore = bore;
+        LOGGER.debug("Bore menu opened: bore={}, pos={}, active={}", bore.getId(), bore.blockPosition(), bore.isActive());
 
         addSlot(new PickaxeSlot(bore, 0, 80, 29));
 

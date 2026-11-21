@@ -38,11 +38,15 @@ import arcaneresearch.init.ModItems;
 import arcaneresearch.init.ModSounds;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 public class EntityArcaneBore extends EntityOwnedConstruct {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.ENTITIES);
     private static final EntityDataAccessor<Direction> FACING =
             SynchedEntityData.defineId(EntityArcaneBore.class, EntityDataSerializers.DIRECTION);
     private static final EntityDataAccessor<Boolean> ACTIVE =
@@ -61,6 +65,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     private float radInc = 1.0f;
     private float charge = 0.0f;
     private long soundDelay = 0L;
+    private boolean lastLoggedActive = false;
     public EntityArcaneBore(EntityType<? extends EntityArcaneBore> type, Level level) {
         super(type, level);
     }
@@ -97,7 +102,13 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     public void tick() {
         super.tick();
         if (!level().isClientSide) {
+            if (isActive() != lastLoggedActive) {
+                lastLoggedActive = isActive();
+                LOGGER.debug("Bore {} active={}, charge={}, pos={}", getId(), lastLoggedActive, charge, blockPosition());
+            }
             if (getHealth() < getMaxHealth() && tickCount % 50 == 0) {
+                LOGGER.once("bore.heal", LogLevel.DEBUG,
+                        "Bore {} self-healed at {}/{} HP", getId(), getHealth(), getMaxHealth());
                 heal(1.0f);
             }
             if (tickCount % 10 == 0 && charge < 10.0f) {
@@ -131,6 +142,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                 lookTowards(new Vec3(digTarget.getX() + 0.5, digTarget.getY(), digTarget.getZ() + 0.5), 10.0f, 90.0f);
                 if (digDelay-- <= 0 && dig()) {
                     charge -= digCost;
+                    LOGGER.debug("Bore {} consumed {} vis on dig (charge={})", getId(), digCost, charge);
                     if (soundDelay < System.currentTimeMillis()) {
                         soundDelay = System.currentTimeMillis() + 1200L + random.nextInt(100);
                         if (ModSounds.RUMBLE != null) {
@@ -142,11 +154,16 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             if (digTarget == null && isActive() && validInventory()) {
                 findNextBlockToDig();
                 if (digTarget != null) {
+                    LOGGER.debug("Bore {} targeting {} (delay={}t, radius={}, depth={})",
+                            getId(), digTarget, digDelayMax, getDigRadius(), getDigDepth());
                     level().broadcastEntityEvent(this, (byte) 16);
                     PacketHandler.sendToAllTrackingChunk(
                             new PacketFXBoreDig(digTarget, this, digDelayMax),
                             (ServerLevel) level(), digTarget);
                 } else {
+                    LOGGER.once("bore.no.target", LogLevel.DEBUG,
+                            "Bore {} found no dig target (charge={}, validPickaxe={})",
+                            getId(), charge, validInventory());
                     level().broadcastEntityEvent(this, (byte) 17);
                     Direction facing = getFacing();
                     lookTowards(new Vec3(getX() + facing.getStepX() * 2.0,
@@ -253,6 +270,8 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(
                     serverLevel, fakePlayer.gameMode.getGameModeForPlayer(), fakePlayer, digTarget);
             if (exp == -1) {
+                LOGGER.once("bore.break.cancelled", LogLevel.DEBUG,
+                        "Bore {} block break at {} was cancelled", getId(), digTarget);
                 digTarget = null;
                 return false;
             }
@@ -272,6 +291,8 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             serverLevel.levelEvent(null, 2001, digTarget,
                     net.minecraft.world.level.block.Block.getId(digBs));
             serverLevel.destroyBlock(digTarget, false);
+            LOGGER.debug("Bore {} destroyed {} at {} (drops={}, fortune={}, silk={})",
+                    getId(), digBs.getBlock(), digTarget, items.size(), fortune, silktouch);
             if (exp > 0) {
                 digBs.getBlock().popExperience(serverLevel, digTarget, exp);
             }
@@ -311,6 +332,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                 breakCounter -= 50;
                 ItemStack heldStack = getMainHandItem();
                 heldStack.hurtAndBreak(1, this, (e) -> {
+                    LOGGER.debug("Bore {} pickaxe broke", getId());
                 });
             }
             b = true;
@@ -392,15 +414,21 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             z = net.minecraft.util.Mth.floor(vres.z);
         }
         digTargetPrev = new BlockPos(x, y, z);
+        LOGGER.once("bore.spiral", LogLevel.DEBUG,
+                "Bore {} spiral step: angle={}, radius={}, target={}", getId(), spiral, currentRadius, digTargetPrev);
     }
     private void rechargeVis() {
         float drained = AuraHandler.drainVis(level(), blockPosition(), 10.0f, false);
         charge += drained;
+        if (drained > 0.0f && tickCount % 100 == 0) {
+            LOGGER.debug("Bore {} drained {} vis from aura at {} (charge={})", getId(), drained, blockPosition(), charge);
+        }
     }
     @Override
     public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide && isOwner(player) && isAlive()) {
             if (player.isShiftKeyDown()) {
+                LOGGER.debug("Player {} dismantled bore {}", player, getId());
                 if (ModSounds.ZAP != null) {
                     playSound(ModSounds.ZAP.get(), 1.0f, 1.0f);
                 }
@@ -412,6 +440,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                 return InteractionResult.SUCCESS;
             } else {
                 if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                    LOGGER.debug("Player {} opened bore {} menu", player, getId());
                     net.minecraftforge.network.NetworkHooks.openScreen(serverPlayer,
                             new net.minecraft.world.MenuProvider() {
                                 @Override
@@ -438,6 +467,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         if (source.getEntity() instanceof LivingEntity living && isOwner(living)) {
             Direction dir = Direction.orderedByNearest(this)[0];
             if (dir != Direction.DOWN) {
+                LOGGER.debug("Bore {} facing changed by owner to {}", getId(), dir);
                 setFacing(dir);
             }
             return false;
@@ -497,8 +527,10 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 16) {
+            LOGGER.once("bore.client.digging", LogLevel.DEBUG, "Bore {} started digging (client)", getId());
             clientDigging = true;
         } else if (id == 17) {
+            LOGGER.once("bore.client.idle", LogLevel.DEBUG, "Bore {} stopped digging (client)", getId());
             clientDigging = false;
         } else {
             super.handleEntityEvent(id);

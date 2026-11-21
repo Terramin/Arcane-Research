@@ -12,12 +12,16 @@ import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.renderers.TCRenderTypes;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbowAdvanced;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretCrossbowAdvanced> {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/crossbow_advanced.png");
     private static final ResourceLocation MODEL =
@@ -36,11 +40,16 @@ public class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretC
         super.render(turret, entityYaw, partialTicks, poseStack, buffer, packedLight);
         TurretObjModel model = TurretObjModel.load(MODEL);
         if (model == null) {
+            LOGGER.once("render.turret.advanced.model", LogLevel.DEBUG,
+                    "Advanced turret {} model {} is unavailable", turret.getId(), MODEL);
             return;
         }
         turret.loadProgressForRender = turret.getLoadProgress(partialTicks);
         float loadProgress = turret.loadProgressForRender;
         float swing = turret.getAttackAnim(partialTicks);
+        LOGGER.once("render.turret.advanced", LogLevel.DEBUG,
+                "Rendering advanced turret {} (load={}, swing={}, groups={})",
+                turret.getId(), loadProgress, swing, model.getGroupNames());
         VertexConsumer consumer = buffer.getBuffer(TCRenderTypes.objSolid(TEXTURE));
         float r = 1.0f, g = 1.0f, b = 1.0f;
         if (turret.hurtTime > 0) {

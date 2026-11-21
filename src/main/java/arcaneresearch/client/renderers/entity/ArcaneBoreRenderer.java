@@ -14,6 +14,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.client.models.entity.ArcaneBoreModel;
 import arcaneresearch.client.renderers.TCRenderTypes;
@@ -22,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBoreModel> {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/arcanebore.png");
     private static final ResourceLocation BEAM_TEXTURE =
@@ -57,8 +61,13 @@ public class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBore
         entity.yBodyRot = 0.0F;
         entity.yBodyRotO = 0.0F;
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+        LOGGER.once("render.bore", LogLevel.DEBUG,
+                "Rendering bore {} (active={}, digging={}, pickaxe={}, target={})",
+                entity.getId(), entity.isActive(), entity.isClientDigging(), entity.hasValidInventory(), entity.getDigTarget());
         if (entity.isClientDigging() && entity.isActive() && entity.hasValidInventory()) {
-            renderMiningBeam(entity, partialTicks, poseStack, buffer, packedLight);
+            try (ArcaneLogger.Timing ignored = LOGGER.timer("render.bore.beam")) {
+                renderMiningBeam(entity, partialTicks, poseStack, buffer, packedLight);
+            }
         }
     }
     private void renderMiningBeam(EntityArcaneBore entity, float partialTicks,

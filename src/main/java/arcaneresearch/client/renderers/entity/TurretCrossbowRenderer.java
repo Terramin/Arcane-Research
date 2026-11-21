@@ -7,12 +7,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.models.entity.CrossbowModel;
 import arcaneresearch.common.entities.construct.EntityTurretCrossbow;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class TurretCrossbowRenderer extends MobRenderer<EntityTurretCrossbow, CrossbowModel> {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/crossbow.png");
     public TurretCrossbowRenderer(EntityRendererProvider.Context context) {
@@ -26,6 +30,8 @@ public class TurretCrossbowRenderer extends MobRenderer<EntityTurretCrossbow, Cr
     public void render(EntityTurretCrossbow entity, float entityYaw, float partialTicks,
                        @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         entity.loadProgressForRender = entity.getLoadProgress(partialTicks);
+        LOGGER.once("render.turret.basic", LogLevel.DEBUG,
+                "Rendering basic turret {} (load={}, target={})", entity.getId(), entity.loadProgressForRender, entity.getTarget());
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
     @Override

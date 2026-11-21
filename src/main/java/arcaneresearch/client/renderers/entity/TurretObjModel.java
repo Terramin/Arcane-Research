@@ -8,7 +8,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 @OnlyIn(Dist.CLIENT)
 public class TurretObjModel {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final Map<ResourceLocation, TurretObjModel> CACHE = new ConcurrentHashMap<>();
     private final LinkedHashMap<String, List<Tri>> groups = new LinkedHashMap<>();
     public static TurretObjModel load(ResourceLocation loc) {
@@ -60,9 +63,11 @@ public class TurretObjModel {
                 }
             }
         } catch (Exception e) {
-            Arcaneresearch.LOGGER.error("Failed to load OBJ model {}", loc, e);
+            LOGGER.error("Failed to load OBJ model {}", loc, e);
             return null;
         }
+        int triangles = model.groups.values().stream().mapToInt(List::size).sum();
+        LOGGER.debug("Loaded OBJ model {}: {} groups, {} triangles", loc, model.groups.size(), triangles);
         return model;
     }
     private static int resolve(int idx, int size) {
@@ -122,6 +127,7 @@ public class TurretObjModel {
                             float r, float g, float b, float a) {
         List<Tri> tris = groups.get(group);
         if (tris == null || tris.isEmpty()) {
+            LOGGER.once("render.obj.missing.group", LogLevel.DEBUG, "OBJ model has no group '{}'", group);
             return;
         }
         Matrix4f pose = poseStack.last().pose();

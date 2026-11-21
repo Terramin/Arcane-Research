@@ -11,10 +11,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.function.Supplier;
 
 public class PacketFXBoreDig {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.NETWORK);
     private final int x;
     private final int y;
     private final int z;
@@ -69,17 +73,22 @@ public class PacketFXBoreDig {
             BlockPos pos = new BlockPos(packet.x, packet.y, packet.z);
             Entity bore = level.getEntity(packet.boreId);
             if (bore == null) {
+                LOGGER.once("bore.fx.missing", LogLevel.DEBUG,
+                        "Bore entity {} not found for dig FX at {}", packet.boreId, pos);
                 return;
             }
             BlockState state = level.getBlockState(pos);
             if (state.is(Blocks.AIR)) {
                 return;
             }
+            LOGGER.once("bore.fx.apply", LogLevel.DEBUG,
+                    "Applying bore dig FX at {} with delay {} (bore={})", pos, packet.delay, packet.boreId);
             FXDispatcher.INSTANCE.boreDigFx(
                     pos.getX(), pos.getY(), pos.getZ(),
                     bore, state, 0, packet.delay
             );
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            LOGGER.once("bore.fx.error", LogLevel.DEBUG, "Failed to apply bore dig FX", e);
         }
     }
 }

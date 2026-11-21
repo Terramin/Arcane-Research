@@ -90,5 +90,23 @@ overlay, seals, jar liquid, fog overrides, HUD overlay, golem rendering,
 post-shader and teleport-warp shader state, plus OBJ model load details for
 crystal/wand meshes. Use `/arcaneresearch debug DEBUG RENDER` to see them.
 
+### Turrets and Arcane Bore
+
+Construct gameplay diagnostics use category `ENTITIES`, their renderers use
+`RENDER`, and the dig FX packet uses `NETWORK`:
+
+```
+/arcaneresearch debug DEBUG ENTITIES   # AI, targeting, digging, charge
+/arcaneresearch debug DEBUG RENDER     # turret/bore model + beam state
+/arcaneresearch debug DEBUG NETWORK    # bore dig FX packets
+```
+
+Tracked events: turret shots (damage/ammo), dispenser reloads, target
+acquisition/drops, self-healing, activator-rail toggling, ownership actions;
+advanced-turret target flags, PvP restrictions and target-loss reasons; bore
+activation, vis recharge, dig target selection, block destruction and drops,
+pickaxe break, spiral/radius steps, client digging state; menu openings and
+OBJ model group/triangle counts. A `render.bore.beam` timing probe is included.
+
 Statistics are cleared when a new session starts and can be cleared manually
 with `/arcaneresearch debug reset`.
