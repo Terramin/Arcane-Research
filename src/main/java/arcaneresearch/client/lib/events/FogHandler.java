@@ -5,9 +5,13 @@ import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class FogHandler {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     public static boolean fogFiddled = false;
     public static float fogTarget = 0.0f;
     public static int fogDuration = 0;
@@ -36,12 +40,16 @@ public class FogHandler {
         float near = Math.min(event.getNearPlaneDistance(), far * 0.15f);
         event.setNearPlaneDistance(near);
         event.setFarPlaneDistance(far);
+        LOGGER.once("render.fog", LogLevel.DEBUG,
+                "Overriding fog planes: near={}, far={}, target={}", near, far, fogTarget);
     }
     public static void triggerLongFog() {
+        LOGGER.debug("Triggering long fog");
         fogFiddled = true;
         fogDuration = 2400;
     }
     public static void triggerShortFog() {
+        LOGGER.debug("Triggering short fog");
         fogFiddled = true;
         if (fogDuration < 200) {
             fogDuration = 200;

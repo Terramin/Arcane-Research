@@ -55,6 +55,7 @@ public final class PortalWarpFx {
             }
             active = true;
             startMs = Util.getMillis();
+            LOGGER.debug("Teleport warp shader started");
         } catch (Exception e) {
             LOGGER.warn("[Arcaneresearch] failed to load teleport warp shader", e);
             active = false;
@@ -81,6 +82,7 @@ public final class PortalWarpFx {
         }
         long elapsed = Util.getMillis() - startMs;
         if (elapsed >= TOTAL_MS) {
+            LOGGER.debug("Teleport warp shader finished after {}ms", elapsed);
             mc.gameRenderer.shutdownEffect();
             active = false;
             return;

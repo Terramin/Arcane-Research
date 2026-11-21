@@ -19,6 +19,9 @@ import org.joml.Quaternionf;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.ArcaneresearchApiHelper;
 import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.tiles.essentia.TileJar;
@@ -28,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @OnlyIn(Dist.CLIENT)
 public class JarRenderer implements BlockEntityRenderer<TileJar> {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation LIQUID_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/animatedglow.png");
     private static final int LIQUID_FRAMES = 20;
@@ -112,6 +116,8 @@ public class JarRenderer implements BlockEntityRenderer<TileJar> {
         Aspect aspect = tile.getAspect();
         if (aspect == null) return;
         int amount = tile.getAmount();
+        LOGGER.once("render.jar.liquid", LogLevel.DEBUG,
+                "Rendering jar liquid at {}: {} units of {}", tile.getBlockPos(), amount, aspect.getTag());
         float fillLevel = amount / 250.0f;
         float liquidHeight = 0.0625f + fillLevel * 0.625f;
 

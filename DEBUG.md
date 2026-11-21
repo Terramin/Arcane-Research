@@ -79,9 +79,16 @@ route through the session filters.
 * a bounded set of keys used by `once(...)`;
 * a JVM memory summary shown by `debug status`.
 
-Built-in timing probes: `aura.process` (category `AURA`) and `maze.ensure` /
-`maze.arrival.neighborhood` (category `WORLD`). They appear in `debug status`
-only while a matching session is active.
+Built-in timing probes: `aura.process` (category `AURA`), `maze.ensure` /
+`maze.arrival.neighborhood` (category `WORLD`) and `render.architect`
+(category `RENDER`). They appear in `debug status` only while a matching
+session is active.
+
+Renderer diagnostics (category `RENDER`) are emitted through `once(...)` so a
+busy frame never floods the log: aspect tags, scan popup targets, architect
+overlay, seals, jar liquid, fog overrides, HUD overlay, golem rendering,
+post-shader and teleport-warp shader state, plus OBJ model load details for
+crystal/wand meshes. Use `/arcaneresearch debug DEBUG RENDER` to see them.
 
 Statistics are cleared when a new session starts and can be cleared manually
 with `/arcaneresearch debug reset`.

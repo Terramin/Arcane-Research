@@ -18,6 +18,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.golems.seals.ISealConfigArea;
 import arcaneresearch.api.golems.seals.ISealEntity;
 import arcaneresearch.api.golems.seals.SealPos;
@@ -35,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @OnlyIn(Dist.CLIENT)
 public class SealRenderer {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation DEFAULT_SEAL_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/item/seals/seal_blank.png");
     private static final ResourceLocation MIDDLE =
@@ -62,6 +66,8 @@ public class SealRenderer {
         String dimKey = player.level().dimension().location().toString();
         ConcurrentHashMap<SealPos, SealEntity> seals = SealHandler.sealEntities.get(dimKey);
         if (seals == null || seals.isEmpty()) return;
+        LOGGER.once("render.seals", LogLevel.DEBUG,
+                "Rendering {} seals in dimension {}", seals.size(), dimKey);
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         RenderSystem.enableBlend();

@@ -94,6 +94,7 @@ public final class TCShaderHandler {
                 return;
             }
             active = want;
+            LOGGER.debug("Post shader activated: {}", want);
             LOGGER.info("[Arcaneresearch] post shader on: {}", want);
         } catch (Exception e) {
             LOGGER.warn("Failed to load Arcaneresearch post shader {}", want, e);
@@ -103,6 +104,7 @@ public final class TCShaderHandler {
 
     private static void stop(@NotNull Minecraft mc) {
         if (active != null) {
+            LOGGER.debug("Post shader deactivated: {}", active);
             mc.gameRenderer.shutdownEffect();
         }
         active = null;

@@ -10,6 +10,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.golems.ISealDisplayer;
 import arcaneresearch.api.golems.parts.GolemMaterial;
 import arcaneresearch.client.models.entity.GolemModel;
@@ -17,6 +20,7 @@ import arcaneresearch.common.golems.EntityArcaneresearchGolem;
 import arcaneresearch.common.lib.utils.EntityUtils;
 @OnlyIn(Dist.CLIENT)
 public class GolemRenderer extends MobRenderer<EntityArcaneresearchGolem, GolemModel> {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation DEFAULT_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/entity/golems/mat_wood.png");
     private final GolemObjLayer objLayer;
@@ -44,6 +48,8 @@ public class GolemRenderer extends MobRenderer<EntityArcaneresearchGolem, GolemM
         Player player = Minecraft.getInstance().player;
         boolean visible = !entity.isInvisible();
         boolean translucent = !visible && player != null && !entity.isInvisibleTo(player);
+        LOGGER.once("render.golem", LogLevel.DEBUG,
+                "Rendering golem {} (visible={}, translucent={})", entity, visible, translucent);
         if (visible || translucent) {
             if (translucent) {
                 objLayer.setGhost(1.0F, 1.0F, 1.0F, 0.15F, false);

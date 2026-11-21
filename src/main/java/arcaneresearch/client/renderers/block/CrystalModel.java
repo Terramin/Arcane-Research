@@ -51,6 +51,7 @@ public class CrystalModel implements BakedModel {
         tex = tex2;
         try {
             sourceMesh = new MeshLoader().loadFromResource(model);
+            LOGGER.debug("Loaded crystal model {}: {} parts", model, sourceMesh.parts.size());
             for (MeshPart mp : sourceMesh.parts) {
                 mp.tintIndex = 0;
             }

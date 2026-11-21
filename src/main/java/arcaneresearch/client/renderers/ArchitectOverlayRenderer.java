@@ -16,9 +16,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.joml.Matrix4f;
 import arcaneresearch.api.items.IArchitect;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import java.util.ArrayList;
 @OnlyIn(Dist.CLIENT)
 public class ArchitectOverlayRenderer {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final ResourceLocation CFRAME =
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/frame_corner.png");
     private static final ResourceLocation SFRAME =
@@ -44,6 +48,8 @@ public class ArchitectOverlayRenderer {
         if (blocks == null || blocks.isEmpty()) {
             return false;
         }
+        LOGGER.once("render.architect", LogLevel.DEBUG,
+                "Architect overlay: {} blocks around {}", blocks.size(), target.getBlockPos());
         drawArchitectAxis(poseStack, player, target.getBlockPos(), partialTick,
                 architect.showAxis(stack, level, player, target.getDirection(), IArchitect.EnumAxis.X),
                 architect.showAxis(stack, level, player, target.getDirection(), IArchitect.EnumAxis.Y),
@@ -57,8 +63,10 @@ public class ArchitectOverlayRenderer {
         RenderSystem.disableCull();
         RenderSystem.depthMask(false);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        for (BlockPos pos : blocks) {
-            drawOverlayBlock(poseStack, pos, blocks, cameraPos);
+        try (ArcaneLogger.Timing ignored = LOGGER.timer("render.architect")) {
+            for (BlockPos pos : blocks) {
+                drawOverlayBlock(poseStack, pos, blocks, cameraPos);
+            }
         }
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.enableCull();

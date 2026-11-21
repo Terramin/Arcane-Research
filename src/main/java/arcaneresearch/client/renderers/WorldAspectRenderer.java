@@ -16,11 +16,15 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 @OnlyIn(Dist.CLIENT)
 public class WorldAspectRenderer {
+    private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     private static final int ROW_SIZE = 5;
     private static final int TAGSCALE_MILLI_MAX = 500;
     private static final AtomicInteger TAGSCALE_MILLI = new AtomicInteger(0);
@@ -67,6 +71,8 @@ public class WorldAspectRenderer {
         Minecraft mc = Minecraft.getInstance();
         Camera camera = mc.gameRenderer.getMainCamera();
         Vec3 cameraPos = camera.getPosition();
+        LOGGER.once("render.aspect.tags", LogLevel.DEBUG,
+                "Drawing {} aspect tags at [{}, {}, {}], scale={}", tags.size(), x, y, z, tagscale);
 
         Aspect[] allAspects = tags.getAspects();
         if (allAspects == null || allAspects.length == 0) return;

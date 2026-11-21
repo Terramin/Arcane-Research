@@ -16,6 +16,9 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.debug.ArcaneLogger;
+import arcaneresearch.debug.LogLevel;
+import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
@@ -36,6 +39,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class HudHandler {
+    private static final ArcaneLogger RENDER_LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     public static final Queue<KnowledgeGainTracker> knowledgeGainTrackers = new ConcurrentLinkedQueue<>();
     private static final ResourceLocation HUD_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/hud.png");
@@ -110,6 +114,8 @@ public class HudHandler {
                 yOffset += 76;
             }
         }
+        RENDER_LOGGER.once("render.hud", LogLevel.DEBUG,
+                "Arcane HUD overlay: thaumometer={}, knowledgeGains={}", holdingThaumometer, kgFade);
         if (false && holdingThaumometer) {
             renderScanTargetHud(graphics, mc, player, screenWidth, screenHeight);
         }

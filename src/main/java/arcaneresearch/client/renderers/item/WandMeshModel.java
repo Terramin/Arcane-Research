@@ -141,6 +141,7 @@ public class WandMeshModel implements BakedModel {
         try {
             this.generalQuads.clear();
             this.sourceMesh = new MeshLoader().loadFromResource(this.model);
+            LOGGER.debug("Loaded wand model {}: {} parts", this.model, this.sourceMesh.parts.size());
         } catch (java.io.IOException e) {
             LOGGER.error("Failed to load wand model {}", this.model, e);
         }
