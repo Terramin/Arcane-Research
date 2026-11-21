@@ -108,6 +108,15 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:${jei_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Unit tests cover pure JVM logic: no Minecraft bootstrap, no world/session state,
+// no network or rendering. See TESTING.md for the conventions.
+tasks.named('test', Test) {
+    useJUnitPlatform()
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

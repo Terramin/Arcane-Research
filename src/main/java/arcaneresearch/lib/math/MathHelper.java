@@ -14,7 +14,7 @@ public class MathHelper {
         MathHelper.SIN_TABLE[0] = 0.0;
         MathHelper.SIN_TABLE[16384] = 1.0;
         MathHelper.SIN_TABLE[32768] = 0.0;
-        MathHelper.SIN_TABLE[49152] = 1.0;
+        MathHelper.SIN_TABLE[49152] = -1.0;
     }
     public static double sin(double d) {
         return MathHelper.SIN_TABLE[(int) ((float) d * 10430.378f) & 0xFFFF];

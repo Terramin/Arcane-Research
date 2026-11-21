@@ -61,16 +61,14 @@ public class HexUtils {
         ArrayList<Hex> ring = getRing(radius);
         if (ring.isEmpty()) return new ArrayList<>(0);
 
-        ArrayList<Hex> results = new ArrayList<>(entries);
-        float spacing = ring.size() / (float) entries;
+        int count = Math.min(entries, ring.size());
+        float spacing = ring.size() / (float) count;
         float pos = random.nextInt(ring.size());
 
-        for (int i = 0; i < entries; i++) {
+        ArrayList<Hex> results = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
             results.add(ring.get((int) pos));
-            pos += spacing;
-            if (pos >= ring.size()) {
-                pos -= ring.size();
-            }
+            pos = (pos + spacing) % ring.size();
         }
         return results;
     }
@@ -118,7 +116,9 @@ public class HexUtils {
         }
 
         public CubicHex toCubicHex() {
-            return new CubicHex(q, r, -q - r);
+            // Axial (q, r) maps to cube (x, y, z) = (q, -q-r, r); CubicHex.toHex()
+            // reads x and z back, so this must round-trip to the original cell.
+            return new CubicHex(q, -q - r, r);
         }
 
         public Pixel toPixel(int size) {
