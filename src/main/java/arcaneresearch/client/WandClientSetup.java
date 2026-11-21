@@ -20,9 +20,6 @@ public class WandClientSetup {
                     arcaneresearch.common.entities.WandEntities.EXPLOSIVE_ORB.get(),
                     arcaneresearch.client.renderers.entity.NoProjectileRenderer::new);
             net.minecraft.client.renderer.entity.EntityRenderers.register(
-                    arcaneresearch.common.entities.WandEntities.PRIMAL_ORB.get(),
-                    arcaneresearch.client.renderers.entity.NoProjectileRenderer::new);
-            net.minecraft.client.renderer.entity.EntityRenderers.register(
                     arcaneresearch.common.entities.WandEntities.FROST_SHARD.get(),
                     net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
             net.minecraft.client.renderer.entity.EntityRenderers.register(
