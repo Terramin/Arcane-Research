@@ -271,7 +271,7 @@ public class EntityArcaneresearchGolem extends EntityOwnedConstruct implements I
                 }
             }
             int healInterval = repair ? 40 : 100;
-            if (tickCount % healInterval == 0) {
+            if (tickCount % healInterval == 0 && getHealth() < getMaxHealth()) {
                 heal(1.0f);
             }
             if (climber) {
