@@ -1,4 +1,4 @@
-{
+﻿{
   "item.arcaneresearch.thaumonomicon.normal": "ソーモノミコン",
   "item.arcaneresearch.thaumonomicon.cheat": "ソーモノミコン(チートシート)",
   "item.arcaneresearch.thaumonomicon_creative": "ソーモノミコン(クリエイティブ)",
@@ -454,14 +454,14 @@
   "entity.arcaneresearch.MindSpider": "精神蜘蛛",
   "entity.arcaneresearch.EldritchGuardian": "エルドリッチガーディアン",
   "entity.arcaneresearch.EldritchWarden": "エルドリッチの守護神",
-  "entity.EldritchWarden.name.custom": "%dもの、%s",
+  "entity.EldritchWarden.name.custom": "%sもの、%d",
   "entity.arcaneresearch.EldritchGolem": "エルドリッチの構造物",
   "entity.EldritchGolem.name.custom": "%s エルドリッチの構造物",
   "entity.arcaneresearch.EldritchOrb": "エルドリッチオーブ",
   "entity.arcaneresearch.CultistKnight": "紅の騎士",
   "entity.arcaneresearch.CultistCleric": "紅の神官",
   "entity.arcaneresearch.CultistLeader": "紅の執政官",
-  "entity.CultistLeader.name.custom": "%d執政官、%s",
+  "entity.CultistLeader.name.custom": "%s執政官、%d",
   "entity.arcaneresearch.CultistPortalGreater": "紅の大ポータル",
   "entity.arcaneresearch.CultistPortalLesser": "紅の小ポータル",
   "entity.arcaneresearch.EldritchCrab": "エルドリッチのカニ",

@@ -1,4 +1,4 @@
-{
+﻿{
   "item.arcaneresearch.thaumonomicon.normal": "사우모노미콘",
   "item.arcaneresearch.thaumonomicon.cheat": "사우모노미콘(크리에이티브)",
   "item.arcaneresearch.thaumonomicon_creative": "크리에이티브 사우모노미콘",
@@ -459,14 +459,14 @@
   "entity.arcaneresearch.MindSpider": "환영 거미",
   "entity.arcaneresearch.EldritchGuardian": "엘드리치 가디언",
   "entity.arcaneresearch.EldritchWarden": "엘드리치 수호자",
-  "entity.EldritchWarden.name.custom": "%d %s",
+  "entity.EldritchWarden.name.custom": "%s %d",
   "entity.arcaneresearch.EldritchGolem": "엘드리치 골렘",
   "entity.EldritchGolem.name.custom": "%s 엘드리치 골렘",
   "entity.arcaneresearch.EldritchOrb": "엘드리치 구체",
   "entity.arcaneresearch.CultistKnight": "크림슨 기사",
   "entity.arcaneresearch.CultistCleric": "크림슨 사제",
   "entity.arcaneresearch.CultistLeader": "크림슨 고위 성직자",
-  "entity.CultistLeader.name.custom": "%d 고위 성직자 %s",
+  "entity.CultistLeader.name.custom": "%s 고위 성직자 %d",
   "entity.arcaneresearch.CultistPortalGreater": "거대 크림슨 포탈",
   "entity.arcaneresearch.CultistPortalLesser": "크림슨 포탈",
   "entity.arcaneresearch.EldritchCrab": "엘드리치 게",

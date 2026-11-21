@@ -1,4 +1,4 @@
-{
+﻿{
   "item.arcaneresearch.thaumonomicon.normal": "魔导手册",
   "item.arcaneresearch.thaumonomicon.cheat": "作弊者魔导手册",
   "item.arcaneresearch.thaumonomicon_creative": "创造模式魔导手册",
@@ -462,7 +462,7 @@
   "entity.arcaneresearch.MindSpider": "心魔蜘蛛",
   "entity.arcaneresearch.EldritchGuardian": "邪术守卫",
   "entity.arcaneresearch.EldritchWarden": "邪术典狱官",
-  "entity.EldritchWarden.name.custom": "%d典狱官%s",
+  "entity.EldritchWarden.name.custom": "%s典狱官%d",
   "entity.arcaneresearch.EldritchGolem": "邪术构装体",
   "entity.EldritchGolem.name.custom": "邪术构装体%s",
   "entity.arcaneresearch.EldritchOrb": "邪术球",

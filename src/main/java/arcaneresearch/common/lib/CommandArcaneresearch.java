@@ -29,6 +29,7 @@ import arcaneresearch.api.research.ResearchStage;
 import arcaneresearch.common.config.ConfigResearch;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.playerdata.PacketWarpMessage;
+import arcaneresearch.common.lib.research.ResearchGraphTraversal;
 import arcaneresearch.common.lib.research.ResearchManager;
 import arcaneresearch.common.world.aura.AuraHandler;
 
@@ -323,43 +324,47 @@ public class CommandArcaneresearch {
     }
 
     public static void giveRecursiveResearch(ServerPlayer player, String research) {
-        if (research.contains("@")) {
-            research = research.substring(0, research.indexOf("@"));
-        }
-        String finalResearch = research;
-        ResearchEntry res = ResearchCategories.getResearch(research);
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player);
-        if (knowledge != null && !knowledge.isResearchComplete(finalResearch)) {
-            if (res != null && res.getParents() != null) {
-                for (String rsi : res.getParentsStripped()) {
-                    giveRecursiveResearch(player, rsi);
-                }
+        if (knowledge == null) {
+            return;
+        }
+        List<String> order = ResearchGraphTraversal.plan(research, key -> {
+            ResearchEntry entry = ResearchCategories.getResearch(key);
+            if (entry == null) {
+                return null;
             }
-            if (res != null && res.getStages() != null) {
-                for (ResearchStage page : res.getStages()) {
-                    if (page.getResearch() != null) {
-                        for (String gr : page.getResearch()) {
-                            ResearchManager.completeResearch(player, gr);
-                        }
+            List<String> parents = entry.getParentsStripped() == null
+                    ? List.of() : Arrays.asList(entry.getParentsStripped());
+            List<String> siblings = entry.getSiblings() == null
+                    ? List.of() : Arrays.asList(entry.getSiblings());
+            List<String> required = new ArrayList<>();
+            if (entry.getStages() != null) {
+                for (ResearchStage stage : entry.getStages()) {
+                    if (stage.getResearch() != null) {
+                        required.addAll(Arrays.asList(stage.getResearch()));
                     }
                 }
             }
-            ResearchManager.completeResearch(player, finalResearch);
-            for (String rc : ResearchCategories.researchCategories.keySet()) {
-                for (ResearchEntry ri : ResearchCategories.getResearchCategory(rc).research.values()) {
-                    if (ri.getStages() != null) {
-                        for (ResearchStage stage : ri.getStages()) {
-                            if (stage.getResearch() != null && Arrays.asList(stage.getResearch()).contains(finalResearch)) {
-                                knowledge.setResearchFlag(ri.getKey(), IPlayerKnowledge.EnumResearchFlag.PAGE);
-                                break;
-                            }
+            return new ResearchGraphTraversal.Node(parents, siblings, required);
+        }, key -> !knowledge.isResearchComplete(key));
+
+        for (String key : order) {
+            if (knowledge.isResearchComplete(key)) {
+                continue;
+            }
+            ResearchManager.completeResearch(player, key);
+            for (ResearchCategory category : ResearchCategories.researchCategories.values()) {
+                for (ResearchEntry ri : category.research.values()) {
+                    if (ri.getStages() == null || ri.getKey() == null) {
+                        continue;
+                    }
+                    for (ResearchStage stage : ri.getStages()) {
+                        if (stage.getResearch() != null
+                                && Arrays.asList(stage.getResearch()).contains(key)) {
+                            knowledge.setResearchFlag(ri.getKey(), IPlayerKnowledge.EnumResearchFlag.PAGE);
+                            break;
                         }
                     }
-                }
-            }
-            if (res != null && res.getSiblings() != null) {
-                for (String rsi : res.getSiblings()) {
-                    giveRecursiveResearch(player, rsi);
                 }
             }
         }

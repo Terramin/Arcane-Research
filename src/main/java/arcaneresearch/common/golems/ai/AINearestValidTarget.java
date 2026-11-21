@@ -43,49 +43,30 @@ public class AINearestValidTarget<T extends LivingEntity> extends TargetGoal {
         Team team = attacker.getTeam();
         Team targetTeam = target.getTeam();
         boolean friendly = attacker instanceof ITargets targets && targets.getTargetFriendly();
-        if (team != null && targetTeam == team && !friendly) {
-            return false;
-        }
-        if (team != null && targetTeam != team && friendly) {
-            return false;
-        }
-        return true;
+        return TargetingRules.friendlyTargetingValid(team != null, team == targetTeam, friendly);
     }
     public static boolean isGoodTarget(Mob attacker, LivingEntity target, boolean excludeCreative, boolean checkSight) {
-        if (target == null || target == attacker || !target.isAlive()) {
+        if (target == null) {
             return false;
         }
-        if (!attacker.canAttack(target)) {
-            return false;
-        }
-        if (!friendlyTargetingValid(attacker, target)) {
-            return false;
-        }
+        Team team = attacker.getTeam();
+        Team targetTeam = target.getTeam();
         boolean friendly = attacker instanceof ITargets targets && targets.getTargetFriendly();
-        if (attacker instanceof OwnableEntity ownable && ownable.getOwnerUUID() != null) {
-            if (target instanceof OwnableEntity targetOwned
-                    && ownable.getOwnerUUID().equals(targetOwned.getOwnerUUID()) && !friendly) {
-                return false;
-            }
-            if (!(target instanceof OwnableEntity) && !(target instanceof Player) && friendly) {
-                return false;
-            }
-            if (target instanceof OwnableEntity targetOwned
-                    && !ownable.getOwnerUUID().equals(targetOwned.getOwnerUUID()) && friendly) {
-                return false;
-            }
-            if (target instanceof Player playerTarget
-                    && ownable.getOwnerUUID().equals(playerTarget.getUUID()) && !friendly) {
-                return false;
-            }
-        } else if (target instanceof Player playerTarget && !excludeCreative
-                && playerTarget.getAbilities().invulnerable && !friendly) {
-            return false;
-        }
-        if (target instanceof ServerPlayer serverPlayer && serverPlayer.isSpectator()) {
-            return false;
-        }
-        return !checkSight || attacker.getSensing().hasLineOfSight(target);
+        boolean hasOwner = attacker instanceof OwnableEntity ownable && ownable.getOwnerUUID() != null;
+        java.util.UUID owner = hasOwner ? ((OwnableEntity) attacker).getOwnerUUID() : null;
+        boolean targetOwned = target instanceof OwnableEntity;
+        boolean sameOwner = targetOwned && owner != null && owner.equals(((OwnableEntity) target).getOwnerUUID());
+        boolean targetIsPlayer = target instanceof Player;
+        boolean targetIsOwner = targetIsPlayer && owner != null && owner.equals(target.getUUID());
+        boolean invulnerable = targetIsPlayer && ((Player) target).getAbilities().invulnerable;
+        boolean spectator = target instanceof ServerPlayer serverPlayer && serverPlayer.isSpectator();
+
+        return TargetingRules.goodTarget(new TargetingRules.Facts(
+                target.isAlive(), target == attacker, attacker.canAttack(target),
+                team != null, team == targetTeam, friendly,
+                hasOwner, targetOwned, sameOwner,
+                targetIsPlayer, targetIsOwner, invulnerable, excludeCreative,
+                spectator, !checkSight || attacker.getSensing().hasLineOfSight(target), checkSight));
     }
     protected Predicate<LivingEntity> combinedSelector() {
         return entity -> {

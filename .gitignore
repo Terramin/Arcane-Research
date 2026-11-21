@@ -6,5 +6,6 @@ build/
 .idea/
 /run/
 /run-data/
+/logs/
 /patches/
 /org/

@@ -208,64 +208,40 @@ public class EssentiaHandler {
             if (delay > System.currentTimeMillis()) return;
             sourcesDelay.remove(tileLoc);
         }
-        Direction searchDir = direction;
-        int start = 0;
-        if (searchDir == null) {
-            start = -range;
-            searchDir = Direction.UP;
-        }
+        Direction searchDir = direction == null ? Direction.UP : direction;
         Direction.Axis axis = searchDir.getAxis();
-        int stepX = searchDir.getStepX();
-        int stepY = searchDir.getStepY();
-        int stepZ = searchDir.getStepZ();
         int baseX = tileLoc.pos.getX();
         int baseY = tileLoc.pos.getY();
         int baseZ = tileLoc.pos.getZ();
         BlockEntity selfTile = level.getBlockEntity(tileLoc.pos);
         TileMirrorEssentia selfMirror = selfTile instanceof TileMirrorEssentia m ? m : null;
         ArrayList<WorldCoordinates> sourceList = new ArrayList<>();
-        for (int aa = -range; aa <= range; ++aa) {
-            for (int bb = -range; bb <= range; ++bb) {
-                for (int cc = start; cc < range; ++cc) {
-                    if (aa == 0 && bb == 0 && cc == 0) continue;
-                    int dx, dy, dz;
-                    if (axis == Direction.Axis.Y) {
-                        dx = aa;
-                        dy = cc * stepY;
-                        dz = bb;
-                    } else if (axis == Direction.Axis.Z) {
-                        dx = aa;
-                        dy = bb;
-                        dz = cc * stepZ;
-                    } else {
-                        dx = cc * stepX;
-                        dy = aa;
-                        dz = bb;
-                    }
-                    int xx = baseX + dx;
-                    int yy = baseY + dy;
-                    int zz = baseZ + dz;
-                    BlockPos pos = new BlockPos(xx, yy, zz);
-                    BlockEntity te = level.getBlockEntity(pos);
-                    if (!(te instanceof IAspectSource)) continue;
-                    if (selfMirror != null && te instanceof TileMirrorEssentia mirror) {
-                        if (selfMirror.linkX == xx && selfMirror.linkY == yy && selfMirror.linkZ == zz
-                                && selfMirror.linkDimension != null
-                                && selfMirror.linkDimension.equals(mirror.getLevel() != null ? mirror.getLevel().dimension() : level.dimension())) {
-                            continue;
-                        }
-                        if (mirror.linkX == baseX && mirror.linkY == baseY && mirror.linkZ == baseZ
-                                && mirror.linkDimension != null
-                                && mirror.linkDimension.equals(level.dimension())) {
-                            continue;
-                        }
-                    }
-                    sourceList.add(new WorldCoordinates(pos, level));
+        for (int[] offset : EssentiaRouting.offsets(axis.name().charAt(0),
+                searchDir.getStepX(), searchDir.getStepY(), searchDir.getStepZ(),
+                range, direction == null)) {
+            int xx = baseX + offset[0];
+            int yy = baseY + offset[1];
+            int zz = baseZ + offset[2];
+            BlockPos pos = new BlockPos(xx, yy, zz);
+            BlockEntity te = level.getBlockEntity(pos);
+            if (!(te instanceof IAspectSource)) continue;
+            if (selfMirror != null && te instanceof TileMirrorEssentia mirror) {
+                if (selfMirror.linkX == xx && selfMirror.linkY == yy && selfMirror.linkZ == zz
+                        && selfMirror.linkDimension != null
+                        && selfMirror.linkDimension.equals(mirror.getLevel() != null ? mirror.getLevel().dimension() : level.dimension())) {
+                    continue;
+                }
+                if (mirror.linkX == baseX && mirror.linkY == baseY && mirror.linkZ == baseZ
+                        && mirror.linkDimension != null
+                        && mirror.linkDimension.equals(level.dimension())) {
+                    continue;
                 }
             }
+            sourceList.add(new WorldCoordinates(pos, level));
         }
         if (!sourceList.isEmpty()) {
-            sourceList.sort(Comparator.comparingDouble(wc -> wc.getDistanceSquaredToWorldCoordinates(tileLoc)));
+            EssentiaRouting.sortNearestFirst(sourceList,
+                    wc -> new int[]{wc.pos.getX(), wc.pos.getY(), wc.pos.getZ()}, baseX, baseY, baseZ);
             sources.put(tileLoc, sourceList);
         } else {
             sourcesDelay.put(tileLoc, System.currentTimeMillis() + DELAY);

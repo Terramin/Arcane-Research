@@ -131,12 +131,10 @@ public class VisNetHandler {
     }
 
     private static float inRange(AuraPos cc1, AuraPos cc2, int range) {
-        if (cc1 == null || cc2 == null || cc1.dim() == null || cc2.dim() == null || cc1.pos() == null || cc2.pos() == null) {
+        if (cc1 == null || cc2 == null || cc1.pos() == null || cc2.pos() == null) {
             return -1.0F;
         }
-        if (!cc1.dim().equals(cc2.dim())) return -1.0F;
-        double distance = cc1.pos().distSqr(cc2.pos());
-        return (distance > (range * range)) ? -1.0F : (float) distance;
+        return VisRange.inRange(cc1.dim(), cc2.dim(), cc1.pos().distSqr(cc2.pos()), range);
     }
 
     private static void calculateNearbyNodes(Level level, BlockPos pos) {
