@@ -1,7 +1,10 @@
 package arcaneresearch.discovered.client;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import net.minecraft.client.gui.Font;
@@ -14,6 +17,17 @@ public final class DiscoveredNoteText {
     private static final Pattern BR_PATTERN = Pattern.compile("(?i)<br\\s*/?>");
     private static final Pattern WS_PATTERN = Pattern.compile("\\s+");
 
+    private static final int CACHE_LIMIT = 16;
+    private static final Map<LinesKey, List<FormattedCharSequence>> LINES_CACHE = new LinkedHashMap<>();
+    private static final Map<FitKey, Fit> FIT_CACHE = new LinkedHashMap<>();
+
+    private record LinesKey(Font font, String text, boolean scrambled, int wrapWidth, int maxLines) {
+    }
+
+    private record FitKey(Font font, String text, boolean scrambled, int baseWrap,
+                          float baseScale, float availH, float minScale) {
+    }
+
     private DiscoveredNoteText() {
     }
 
@@ -21,15 +35,22 @@ public final class DiscoveredNoteText {
     }
 
     public static List<FormattedCharSequence> parchmentLines(Font font, Component desc,
-                                                             boolean scrambled, int wrapWidth, int maxLines) {
-        if (font == null) {
+                                                              boolean scrambled, int wrapWidth, int maxLines) {
+        if (font == null || desc == null) {
             return new ArrayList<>();
         }
-        List<FormattedCharSequence> out = splitParas(font, desc, scrambled, wrapWidth);
-        if (maxLines >= 0 && out.size() > maxLines) {
-            return new ArrayList<>(out.subList(0, maxLines));
+        String raw = desc.getString();
+        LinesKey key = new LinesKey(font, raw, scrambled, wrapWidth, maxLines);
+        List<FormattedCharSequence> cached = LINES_CACHE.get(key);
+        if (cached != null) {
+            return cached;
         }
-        return out;
+        List<FormattedCharSequence> lines = splitParas(font, raw, scrambled, wrapWidth);
+        if (maxLines >= 0 && lines.size() > maxLines) {
+            lines = new ArrayList<>(lines.subList(0, maxLines));
+        }
+        putCached(LINES_CACHE, key, lines);
+        return lines;
     }
 
     public static Fit parchmentFit(Font font, Component desc, boolean scrambled,
@@ -37,17 +58,41 @@ public final class DiscoveredNoteText {
         if (font == null || desc == null || availH <= 0.0F) {
             return new Fit(List.of(), minScale);
         }
+        String raw = desc.getString();
+        FitKey key = new FitKey(font, raw, scrambled, baseWrap, baseScale, availH, minScale);
+        Fit cached = FIT_CACHE.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        Fit fit = computeFit(font, raw, scrambled, baseWrap, baseScale, availH, minScale);
+        putCached(FIT_CACHE, key, fit);
+        return fit;
+    }
+
+    private static <K, V> void putCached(Map<K, V> cache, K key, V value) {
+        if (cache.size() >= CACHE_LIMIT) {
+            Iterator<K> it = cache.keySet().iterator();
+            if (it.hasNext()) {
+                it.remove();
+            }
+        }
+        cache.put(key, value);
+    }
+
+    private static Fit computeFit(Font font, String raw, boolean scrambled,
+                                  int baseWrap, float baseScale, float availH, float minScale) {
         int lh = font.lineHeight;
-        List<FormattedCharSequence> lines = splitParas(font, desc, scrambled, baseWrap);
+        List<FormattedCharSequence> lines = splitParas(font, raw, scrambled, baseWrap);
         if (lines.size() * lh * baseScale <= availH) {
             return new Fit(lines, baseScale);
         }
         float lo = minScale;
         float hi = baseScale;
-        List<FormattedCharSequence> best = splitParas(font, desc, scrambled, wrapFor(baseWrap, baseScale, lo));
+        List<FormattedCharSequence> best = splitParas(font, raw, scrambled, wrapFor(baseWrap, baseScale, lo));
         for (int i = 0; i < 10; i++) {
             float mid = (lo + hi) / 2.0F;
-            List<FormattedCharSequence> midLines = splitParas(font, desc, scrambled, wrapFor(baseWrap, baseScale, mid));
+            List<FormattedCharSequence> midLines =
+                    splitParas(font, raw, scrambled, wrapFor(baseWrap, baseScale, mid));
             if (midLines.size() * lh * mid <= availH) {
                 lo = mid;
                 best = midLines;
@@ -78,18 +123,14 @@ public final class DiscoveredNoteText {
         return Math.min(512, Math.max(24, rounded));
     }
 
-    private static List<FormattedCharSequence> splitParas(Font font, Component desc,
+    private static List<FormattedCharSequence> splitParas(Font font, String raw,
                                                           boolean scrambled, int wrapWidth) {
         List<FormattedCharSequence> out = new ArrayList<>();
-        if (font == null || desc == null) {
+        if (font == null || raw == null || raw.isEmpty()) {
             return out;
         }
-        String raw = desc.getString();
-        if (raw.isEmpty()) {
-            return out;
-        }
-        raw = IMG_PATTERN.matcher(raw).replaceAll(" ");
-        String[] paras = BR_PATTERN.split(raw);
+        String stripped = IMG_PATTERN.matcher(raw).replaceAll(" ");
+        String[] paras = BR_PATTERN.split(stripped);
         for (String para : paras) {
             if (para == null) {
                 continue;
