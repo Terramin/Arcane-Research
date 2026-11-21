@@ -100,7 +100,6 @@ public class CommandArcaneresearch {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("arcaneresearch")
                 .requires(source -> source.hasPermission(2));
-        dispatcher.register(Commands.literal("arcres").redirect(builder.build()));
         builder.then(Commands.literal("help")
                 .executes(context -> help(context.getSource())));
         builder.then(Commands.literal("reload")
@@ -169,7 +168,6 @@ public class CommandArcaneresearch {
     }
 
     private static int help(CommandSourceStack source) {
-        source.sendSuccess(() -> Component.literal("§3You can also use /arcres instead of /arcaneresearch."), false);
         source.sendSuccess(() -> Component.literal("§3Use this to give research to a player."), false);
         source.sendSuccess(() -> Component.literal("  /arcaneresearch research <list|player> <list|all|reset|<research>>"), false);
         source.sendSuccess(() -> Component.literal("§3Flags like !gotthaumonomicon can be given by key too."), false);
