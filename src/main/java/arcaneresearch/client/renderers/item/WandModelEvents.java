@@ -1,7 +1,12 @@
 package arcaneresearch.client.renderers.item;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+
+import arcaneresearch.Arcaneresearch;
+import arcaneresearch.common.items.wands.WandItems;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.SimpleBakedModel;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,80 +14,42 @@ import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import arcaneresearch.Arcaneresearch;
-import arcaneresearch.api.wands.FocusItem;
-import arcaneresearch.api.wands.WandCap;
-import arcaneresearch.api.wands.WandRod;
-import arcaneresearch.common.items.wands.WandItems;
+
+import java.util.EnumMap;
+import java.util.List;
+
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class WandModelEvents {
     @SubscribeEvent
-    public static void registerWandPartModels(ModelEvent.RegisterAdditional event) {
-        event.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "wand/parts_stitch"), "inventory"));
-        event.register(new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", "staff"), "inventory"));
+    public static void registerStaffModel(ModelEvent.RegisterAdditional event) {
+        event.register(new ModelResourceLocation(
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "staff"), "inventory"));
     }
+
     @SubscribeEvent
-    public static void bakeWandModels(ModelEvent.ModifyBakingResult event) {
-        try {
-            WandItems.initWands();
-        } catch (Exception ignored) {
+    public static void prepareWandModels(ModelEvent.ModifyBakingResult event) {
+        ModelResourceLocation wandKey = new ModelResourceLocation(
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "wand"), "inventory");
+        ModelResourceLocation staffKey = new ModelResourceLocation(
+                ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "staff"), "inventory");
+        BakedModel wandBase = event.getModels().get(wandKey);
+        BakedModel staffBase = event.getModels().get(staffKey);
+        if (wandBase == null) {
+            return;
         }
-        WandMeshModel.cache.clear();
-        var models = event.getModels();
-        registerWandMesh(models, "wand", false);
-        registerWandMesh(models, "staff", true);
+        BakedModel staff = staffBase != null
+                ? new CustomRendererItemModel(new SimpleBakedModel(List.of(),
+                        new EnumMap<>(Direction.class), false, false, false,
+                        staffBase.getParticleIcon(), staffBase.getTransforms(), ItemOverrides.EMPTY))
+                : new CustomRendererItemModel(wandBase);
+        event.getModels().put(wandKey, new WandDisplayModel(new CustomRendererItemModel(wandBase), staff));
     }
-    private static void registerWandMesh(java.util.Map<ResourceLocation, BakedModel> models,
-                                         String itemName, boolean staff) {
-        ModelResourceLocation key = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("arcaneresearch", itemName), "inventory");
-        ResourceLocation icon = ResourceLocation.fromNamespaceAndPath("arcaneresearch", staff ? "item/wand/rod_greatwood_mat" : "item/wand/rod_wood_mat");
-        ItemTransforms jsonTransforms = null;
-        BakedModel placeholder = models.get(key);
-        if (placeholder != null) {
-            try {
-                jsonTransforms = placeholder.getTransforms();
-            } catch (Exception ignored) {
-            }
-        }
-        WandMeshModel wandModel = new WandMeshModel(itemName);
-        ItemTransforms init = jsonTransforms != null
-                ? jsonTransforms : (staff ? WandTransforms.STAFF : WandTransforms.WAND);
-        wandModel.initialize(init, icon);
-        models.put(key, wandModel);
-        if (staff) {
-            WandMeshModel.staffTransforms = wandModel.getTransforms();
-        }
-        for (WandCap cap : WandCap.caps.values()) {
-            String capKey = (staff ? "staff" : "wand") + cap.getTag();
-            WandMeshModel capModel = new WandMeshModel(capKey, cap, staff);
-            capModel.initialize(wandModel.getTransforms(), icon);
-            if (!staff) {
-                String sceptreKey = "sceptre" + cap.getTag();
-                WandMeshModel sceptreModel = new WandMeshModel(sceptreKey, cap);
-                sceptreModel.initialize(wandModel.getTransforms(), icon);
-            }
-        }
-        for (WandRod rod : WandRod.rods.values()) {
-            if (rod.isStaff() != staff) {
-                continue;
-            }
-            String rodKey = (staff ? "staff" : "wand") + rod.getTag();
-            WandMeshModel rodModel = new WandMeshModel(rodKey, rod);
-            rodModel.initialize(wandModel.getTransforms(), icon);
-        }
-        for (FocusItem focus : FocusItem.foci.values()) {
-            String focusKey = "focus" + focus.getFocusId();
-            WandMeshModel focusModel = new WandMeshModel(focusKey, focus);
-            focusModel.initialize(wandModel.getTransforms(), icon);
-        }
-    }
+
     @SubscribeEvent
     public static void registerWandColors(RegisterColorHandlersEvent.Item event) {
         try {
-            event.register((stack, tintIndex) ->
-                    arcaneresearch.helper.TintHelper.wandFocusColor(stack, tintIndex),
-                    WandItems.WAND.get());
+            WandItems.initWands();
         } catch (Exception ignored) {
         }
     }

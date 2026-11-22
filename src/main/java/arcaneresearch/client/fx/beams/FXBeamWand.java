@@ -158,7 +158,13 @@ public class FXBeamWand extends TextureSheetParticle {
             Vec3 tip = null;
             if (sourceEntity instanceof net.minecraft.world.entity.player.Player p) {
                 tip = arcaneresearch.client.lib.events.WandTipHelper.tipWorld(p, partialTicks,
-                        0.0F, 0.0F, beamType == 2
+                        beamType == 2
+                                ? arcaneresearch.client.lib.events.WandTipHelper.TIP_DX_BEAM
+                                : 0.0F,
+                        beamType == 2
+                                ? arcaneresearch.client.lib.events.WandTipHelper.TIP_DY_BEAM
+                                : 0.0F,
+                        beamType == 2
                                 ? arcaneresearch.client.lib.events.WandTipHelper.TIP_DZ_BEAM
                                 : 0.0F);
             }

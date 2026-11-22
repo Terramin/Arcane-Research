@@ -14,6 +14,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public final class WandTipHelper {
     public static final float TIP_DZ_SIDE = -0.12F;
     public static final float TIP_DZ_BEAM = -0.16F;
+    public static final float TIP_DX_BEAM = 0.25F;
+    public static final float TIP_DY_BEAM = 0.04F;
     private WandTipHelper() {
     }
     public static boolean isRightHand(Player player) {
@@ -163,6 +165,7 @@ public final class WandTipHelper {
                     arcaneresearch.client.renderers.item.WandUseAnimation.resolveState(
                             local, handStack, hand, partialTicks);
             com.mojang.blaze3d.vertex.PoseStack ps = new com.mojang.blaze3d.vertex.PoseStack();
+            arcaneresearch.client.renderers.item.WandUseAnimation.applyPoseOffset(ps);
             float bx = net.minecraft.util.Mth.lerp(partialTicks, local.xBobO, local.xBob);
             float by = net.minecraft.util.Mth.lerp(partialTicks, local.yBobO, local.yBob);
             ps.mulPose(com.mojang.math.Axis.XP.rotationDegrees(
@@ -177,26 +180,16 @@ public final class WandTipHelper {
                 swinging = InteractionHand.MAIN_HAND;
             }
             float sw = swinging == hand ? player.getAttackAnim(partialTicks) : 0.0F;
-            arcaneresearch.client.renderers.item.WandUseAnimation.applyBasePose(ps, arm, i,
-                    st != null && st.using(), local, local.getUseItem(), equip, sw, partialTicks);
+            arcaneresearch.client.renderers.item.WandUseAnimation.applyBasePose(ps, local, arm, i,
+                    st != null && st.using(), local.getUseItem(), equip, sw, partialTicks);
+            arcaneresearch.client.renderers.item.WandUseAnimation.applyModelBasis(
+                    ps, arm == HumanoidArm.RIGHT ? 1.0F : -1.0F, handStack);
             if (st != null) {
                 arcaneresearch.client.renderers.item.WandUseAnimation.applyWaveBlock(
-                        ps, st.focusStack(), st.u(), st.tilt());
+                        ps, arm == HumanoidArm.RIGHT ? 1.0F : -1.0F, st.u(), st.tilt(), st.focusStack());
             }
-            IFocusHost wand =
-                    (IFocusHost) handStack.getItem();
-            boolean right = arm == HumanoidArm.RIGHT;
-            float dtx = (right ? 1.13F : -1.13F) * 0.0625F;
-            float dty = 3.2F * 0.0625F;
-            float dtz = 1.13F * 0.0625F;
-            ps.translate(dtx, dty, dtz);
-            ps.mulPose(com.mojang.math.Axis.YP.rotationDegrees(right ? -90.0F : 90.0F));
-            ps.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(right ? 25.0F : -25.0F));
-            ps.scale(0.68F, 0.68F, 0.68F);
-            ps.translate(-0.5F, -0.5F, -0.5F);
             org.joml.Matrix4f m = new org.joml.Matrix4f(ps.last().pose());
-            boolean hasFocus = wand.getFocus(handStack) != null;
-            float tipY = hasFocus ? 1.16F : 1.125F;
+            float tipY = arcaneresearch.client.renderers.item.WandUseAnimation.tipModelY(handStack);
             org.joml.Vector4f p = new org.joml.Vector4f(0.5F + modelDx, tipY + modelDy, 0.5F + modelDz, 1.0F);
             m.transform(p);
             Minecraft mc = Minecraft.getInstance();

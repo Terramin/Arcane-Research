@@ -1,6 +1,6 @@
 package arcaneresearch.common.items.wands;
 
-import arcaneresearch.client.renderers.item.WandUseAnimation;
+import arcaneresearch.client.renderers.item.WandItemRenderer;
 import arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -53,7 +53,7 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(WandUseAnimation.HAND_EXTENSION);
+        WandItemRenderer.registerClientItemExtensions(consumer);
     }
 
     @SuppressWarnings("resource")
@@ -542,8 +542,6 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
                 FocusManager.setCooldown(player, focus.getActivationCooldown(focusStack));
                 if (focus.onFocusActivation(stack, level, player, hit, 0)) {
                     consumeAllVis(stack, player, cost, level.isClientSide, false);
-                    arcaneresearch.helper.ClientRunHelper.runOnClient(
-                            () -> arcaneresearch.client.renderers.item.WandUseAnimation.noteCast(hand));
                 }
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
             }

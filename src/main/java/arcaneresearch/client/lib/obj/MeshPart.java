@@ -6,12 +6,15 @@ public class MeshPart {
     public Material material;
     public List<int[]> indices;
     public int tintIndex;
+    public boolean fullBright;
     public MeshPart() {
         tintIndex = -1;
+        fullBright = false;
         indices = new ArrayList<int[]>();
     }
     public MeshPart(MeshPart p, int ti) {
         tintIndex = -1;
+        fullBright = p.fullBright;
         indices = new ArrayList<int[]>();
         name = p.name;
         material = p.material;

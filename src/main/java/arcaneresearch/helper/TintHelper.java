@@ -156,17 +156,37 @@ public final class TintHelper {
         return WHITE;
     }
     public static int wandFocusColor(ItemStack stack, int tintIndex) {
-        if (tintIndex == 1 && stack != null && !stack.isEmpty()
-                && stack.getItem() instanceof IFocusHost wand) {
+        if (stack == null || stack.isEmpty() || !(stack.getItem() instanceof IFocusHost wand)) {
+            return NONE;
+        }
+        float ticks = net.minecraft.Util.getMillis() / 50.0F;
+        if (tintIndex == 1) {
             try {
                 FocusItem focus = wand.getFocus(stack);
                 if (focus != null) {
-                    return focus.getFocusColor(wand.getFocusStack(stack));
+                    int rgb = focus.getFocusColor(wand.getFocusStack(stack));
+                    // Thaumaturge's focus light oscillates with a 3-tick period.
+                    float pulse = 0.92F + 0.08F * (0.5F + 0.5F * (float) Math.sin(ticks / 3.0F));
+                    return scale(rgb, pulse);
                 }
             } catch (Exception ignored) {
             }
+            return NONE;
+        }
+        if (tintIndex == 2) {
+            // Full-bright glowing rod: pulse between ~75% and 100% brightness.
+            float pulse = 0.875F + 0.125F * (0.5F + 0.5F * (float) Math.sin(ticks / 3.0F));
+            return scale(0xFFF2CC, pulse);
         }
         return NONE;
+    }
+
+    private static int scale(int argb, float factor) {
+        int a = (argb >>> 24) & 0xFF;
+        int r = Math.min(255, (int) (((argb >>> 16) & 0xFF) * factor));
+        int g = Math.min(255, (int) (((argb >>> 8) & 0xFF) * factor));
+        int b = Math.min(255, (int) ((argb & 0xFF) * factor));
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
     public static int golemMaterialColor(ItemStack stack) {
         if (stack != null && stack.hasTag() && stack.getTag().contains("props")) {

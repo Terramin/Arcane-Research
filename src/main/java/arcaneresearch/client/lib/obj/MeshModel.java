@@ -176,7 +176,11 @@ public class MeshModel {
                 baker.uv(texCoord.x, texCoord.y);
             }
             baker.overlayCoords(0, 10);
-            baker.uv2(0, 0);
+            if (part.fullBright) {
+                baker.uv2(net.minecraft.client.renderer.LightTexture.FULL_BRIGHT);
+            } else {
+                baker.uv2(0, 0);
+            }
             baker.normal(normal.x, normal.y, normal.z);
             baker.endVertex();
         }

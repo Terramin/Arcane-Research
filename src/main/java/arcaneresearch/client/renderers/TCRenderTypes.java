@@ -23,6 +23,7 @@ public final class TCRenderTypes extends RenderStateShard {
     private static final Map<ResourceLocation, RenderType> GOLEM_GHOST = new ConcurrentHashMap<>();
     private static final Map<ResourceLocation, RenderType> ADDITIVE_NO_CULL = new ConcurrentHashMap<>();
     private static final Map<ResourceLocation, RenderType> CUTOUT = new ConcurrentHashMap<>();
+    private static final Map<ResourceLocation, RenderType> CUTOUT_NO_CULL = new ConcurrentHashMap<>();
     private static volatile RenderType ORB_TENDRILS = null;
 
     private TCRenderTypes() {
@@ -79,6 +80,23 @@ public final class TCRenderTypes extends RenderStateShard {
                         .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
                         .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
                         .setCullState(RenderStateShard.CULL)
+                        .setLightmapState(RenderStateShard.LIGHTMAP)
+                        .setOverlayState(RenderStateShard.OVERLAY)
+                        .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+                        .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                        .createCompositeState(true)));
+    }
+
+    /** Matches Thaumaturge's ENTITY_CUTOUT_FLAT pipeline, which is rendered with culling disabled. */
+    public static RenderType cutoutTexturedNoCull(ResourceLocation texture) {
+        return CUTOUT_NO_CULL.computeIfAbsent(texture, tex -> RenderType.create(
+                "arcaneresearch_cutout_textured_nocull", DefaultVertexFormat.NEW_ENTITY,
+                VertexFormat.Mode.QUADS, 256, true, false,
+                RenderType.CompositeState.builder()
+                        .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_CUTOUT_SHADER)
+                        .setTextureState(new RenderStateShard.TextureStateShard(tex, false, false))
+                        .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
+                        .setCullState(RenderStateShard.NO_CULL)
                         .setLightmapState(RenderStateShard.LIGHTMAP)
                         .setOverlayState(RenderStateShard.OVERLAY)
                         .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)

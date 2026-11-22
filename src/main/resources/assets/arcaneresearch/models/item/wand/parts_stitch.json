@@ -18,6 +18,8 @@
         "layer14": "arcaneresearch:item/wand/cap_silver_mat",
         "layer15": "arcaneresearch:item/wand/cap_thaumium_mat",
         "layer16": "arcaneresearch:item/wand/cap_void_mat",
-        "layer17": "arcaneresearch:item/wand/focus"
+        "layer17": "arcaneresearch:item/wand/focus",
+        "layer18": "arcaneresearch:item/wand/focus_mat",
+        "layer19": "arcaneresearch:item/wand/focus_primal_depth"
     }
 }
