@@ -167,6 +167,8 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(graphics);
+        confirmButton.setButtonActive(!getTile().getItem(0).isEmpty()
+                && !getTile().hasVisRemaining() && valid);
         super.render(graphics, mouseX, mouseY, partialTick);
         drawPartsList(graphics, mouseX, mouseY);
         if (!getTile().data.isEmpty() && nameField != null) {
@@ -186,8 +188,6 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         for (HoverButton button : crystalButtons) {
             button.renderTooltip(graphics, mouseX, mouseY);
         }
-        assert confirmButton != null;
-        confirmButton.setButtonActive(!getTile().hasVisRemaining() && valid);
         this.renderTooltip(graphics, mouseX, mouseY);
     }
     @Override
@@ -200,17 +200,17 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         graphics.blit(TEX_BG, x, y, 0, 0, imageWidth, imageHeight);
         graphics.blit(TEX_SIDE, x - 71, y - 3, 0, 0, 71, 239);
         TileFocalManipulator tile = getTile();
-        if (tile.getItem(0).isEmpty() || tile.doGuiReset) {
-            if (tile.doGuiReset) {
+        boolean hasFocus = !tile.getItem(0).isEmpty();
+        if (!hasFocus || tile.doGuiReset) {
+            tile.data.clear();
+            tile.focusName = hasFocus ? tile.getItem(0).getHoverName().getString() : "";
+            if (hasFocus && tile.doGuiReset) {
                 resetNodes();
             } else {
-                tile.data.clear();
                 gatherInfo(false);
-            }
-            tile.focusName = "";
-            if (!tile.getItem(0).isEmpty()) {
-                tile.focusName = tile.getItem(0).getHoverName().getString();
-                setNameFieldValue(tile.focusName);
+                if (!hasFocus) {
+                    setNameFieldValue("");
+                }
             }
             tile.doGuiReset = false;
         }
@@ -220,43 +220,45 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         }
         drawNodes(graphics, leftPos + 132 - scrollX, topPos + 48 - scrollY, mouseX, mouseY);
         graphics.blit(TEX_MAIN, x, y, 0, 0, imageWidth, imageHeight);
-        if (maxComplexity > 0) {
-            int complexColor = totalComplexity > maxComplexity ? 16151160 : 16761407;
-            graphics.drawString(font, totalComplexity + "/" + maxComplexity, x + 242, y + 36, complexColor, true);
-        }
-        assert minecraft != null;
-        assert minecraft.player != null;
-        int xpColor = costXp > minecraft.player.experienceLevel ? 16151160 : 10092429;
-        graphics.drawString(font, String.valueOf(costXp), x + 242, y + 50, xpColor, true);
-        AspectList creationCost = getTile().getPreviewCost();
-        List<Aspect> costAspects = new ArrayList<>();
-        for (Aspect aspect : creationCost.getAspectsSortedByName()) {
-            if (creationCost.getAmount(aspect) > 0) {
-                costAspects.add(aspect);
+        if (hasFocus) {
+            if (maxComplexity > 0) {
+                int complexColor = totalComplexity > maxComplexity ? 16151160 : 16761407;
+                graphics.drawString(font, totalComplexity + "/" + maxComplexity, x + 242, y + 36, complexColor, true);
             }
-        }
-        if (!costAspects.isEmpty()) {
-            graphics.drawString(font, Component.translatable("wandtable.text1").getString(),
-                    x + 234, y + 68, 10092429, true);
-            int aspectY = y + 80;
-            for (Aspect aspect : costAspects) {
-                int amount = creationCost.getAmount(aspect);
-                graphics.drawString(font, "§" + aspect.getChatcolor() + aspect.getName()
-                                + "§r " + amount,
-                        x + 234, aspectY, 0xFFFFFF, true);
-                aspectY += 9;
+            assert minecraft != null;
+            assert minecraft.player != null;
+            int xpColor = costXp > minecraft.player.experienceLevel ? 16151160 : 10092429;
+            graphics.drawString(font, String.valueOf(costXp), x + 242, y + 50, xpColor, true);
+            AspectList creationCost = getTile().getPreviewCost();
+            List<Aspect> costAspects = new ArrayList<>();
+            for (Aspect aspect : creationCost.getAspectsSortedByName()) {
+                if (creationCost.getAmount(aspect) > 0) {
+                    costAspects.add(aspect);
+                }
             }
-        }
-        if (components != null && components.length > 0) {
-            graphics.drawString(font, ChatFormatting.GOLD + Component.translatable("wandtable.text4").getString(),
-                    x + 230, y + 132, 10092429, true);
-        }
-        if (!tile.data.isEmpty() && tile.focusName != null) {
-            graphics.blit(TEX_BASE, leftPos + 24, topPos + 8, 192, 224, 8, 14);
-            for (int i = 1; i < 22; i++) {
-                graphics.blit(TEX_BASE, leftPos + 24 + i * 8, topPos + 8, 200, 224, 8, 14);
+            if (!costAspects.isEmpty()) {
+                graphics.drawString(font, Component.translatable("wandtable.text1").getString(),
+                        x + 234, y + 68, 10092429, true);
+                int aspectY = y + 80;
+                for (Aspect aspect : costAspects) {
+                    int amount = creationCost.getAmount(aspect);
+                    graphics.drawString(font, "§" + aspect.getChatcolor() + aspect.getName()
+                                    + "§r " + amount,
+                            x + 234, aspectY, 0xFFFFFF, true);
+                    aspectY += 9;
+                }
             }
-            graphics.blit(TEX_BASE, leftPos + 24 + 22 * 8, topPos + 8, 208, 224, 8, 14);
+            if (components != null && components.length > 0) {
+                graphics.drawString(font, ChatFormatting.GOLD + Component.translatable("wandtable.text4").getString(),
+                        x + 230, y + 132, 10092429, true);
+            }
+            if (!tile.data.isEmpty() && tile.focusName != null) {
+                graphics.blit(TEX_BASE, leftPos + 24, topPos + 8, 192, 224, 8, 14);
+                for (int i = 1; i < 22; i++) {
+                    graphics.blit(TEX_BASE, leftPos + 24 + i * 8, topPos + 8, 200, 224, 8, 14);
+                }
+                graphics.blit(TEX_BASE, leftPos + 24 + 22 * 8, topPos + 8, 208, 224, 8, 14);
+            }
         }
     }
     @Override
@@ -272,7 +274,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
             FocusNode node = (FocusNode) FocusEngine.getElement(key);
             if (node != null) {
                 float scale = node.getType() == IFocusElement.EnumUnitType.MOD ? 24.0f : 32.0f;
-                boolean hover = isInRegion(gx + 28, gy + 32 + 24 * index, 20, 20, mouseX, mouseY);
+                boolean hover = isInRegion(gx + 28, gy + 33 + 25 * index, 20, 20, mouseX, mouseY);
                 drawPart(graphics, node, gx + 38, 43 + gy + 25 * index, scale, hover);
             }
             if (++index > 5) break;
@@ -619,7 +621,6 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
         TileFocalManipulator tile = getTile();
         shownParts.clear();
         components = null;
-        rebuildSettingSpinners();
         if (tile.getItem(0).isEmpty()) {
             if (partsScrollbar != null) {
                 removeWidget(partsScrollbar);
@@ -633,9 +634,17 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
                 removeWidget(mainScrollbarX);
                 mainScrollbarX = null;
             }
+            totalComplexity = 0;
+            maxComplexity = 0;
+            costXp = 0;
+            valid = false;
+            selectedNode = -1;
+            lastNodeHover = -1;
+            rebuildSettingSpinners();
             rebuildCrystalButtons();
             return;
         }
+        rebuildSettingSpinners();
         Map<String, Integer> compCount = new HashMap<>();
         totalComplexity = 0;
         maxComplexity = 0;
@@ -878,7 +887,7 @@ public class FocalManipulatorScreen extends AbstractContainerScreen<FocalManipul
             if (selectedNode >= 0) {
                 for (String key : shownParts) {
                     if (++count - 1 < partsStart) continue;
-                    if (isInRegion(gx + 28, gy + 32 + 24 * index, 20, 20, (int) mouseX, (int) mouseY)) {
+                    if (isInRegion(gx + 28, gy + 33 + 25 * index, 20, 20, (int) mouseX, (int) mouseY)) {
                         Class<? extends FocusNode> nodeClass = FocusEngine.elements.get(key);
                         if (nodeClass != null) {
                             addNodeAt(nodeClass, selectedNode, true);
