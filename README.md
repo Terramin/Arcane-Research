@@ -6,13 +6,6 @@ Ported version for Minecraft 1.20.1 Forge
 
 > ## Port is \\\\\\\~99% complete
 
-> 26.3 NeoForge 26.3.0.94 + JEI 31.16.0.86 + Curios 17.0.0-beta.3+26.3
-> 1.20.1 Forge 47.4.28 + JEI + Curios
-
-> New content will be added, and mechanics will be expanded.
->
-> I ran into issues maintaining two versions of the code, so I’m rewriting it for compatibility between 26.3 and 1.20.1 to minimize future changes.
-> 
 > The textures were created by Ufoss_xxs. Thanks to him for the help.(The author distributes the textures under a free license, subject to attribution.)
 
 ## Branches
