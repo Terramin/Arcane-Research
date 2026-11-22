@@ -37,6 +37,8 @@ public class EntityFocusProjectile extends ThrowableProjectile implements IEntit
     private FocusPackage focusPackage;
     private Entity seekTarget;
     private boolean firstParticle = true;
+    /** Keep the orb from colliding with its caster before it has left the caster's hitbox. */
+    private int ownerImmunityTicks = 10;
     public EntityFocusProjectile(EntityType<? extends EntityFocusProjectile> type, Level level) {
         super(type, level);
     }
@@ -121,6 +123,14 @@ public class EntityFocusProjectile extends ThrowableProjectile implements IEntit
         }
     }
     @Override
+    protected boolean canHitEntity(Entity pTarget) {
+        Entity owner = getOwner();
+        if (ownerImmunityTicks > 0 && owner != null && pTarget.is(owner)) {
+            return false;
+        }
+        return super.canHitEntity(pTarget);
+    }
+    @Override
     protected void onHitEntity(EntityHitResult result) {
     }
     @Override
@@ -139,6 +149,9 @@ public class EntityFocusProjectile extends ThrowableProjectile implements IEntit
     @Override
     public void tick() {
         super.tick();
+        if (ownerImmunityTicks > 0) {
+            ownerImmunityTicks--;
+        }
         if (tickCount > 1200) {
             discard();
             return;

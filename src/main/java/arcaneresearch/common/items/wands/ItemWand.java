@@ -149,6 +149,12 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
         return out;
     }
 
+    /** True when not a single primal aspect has free capacity left. */
+    private boolean isFull(ItemStack stack) {
+        AspectList room = getAspectsWithRoom(stack);
+        return room == null || room.size() == 0;
+    }
+
     private void storeVisInternal(ItemStack stack, Aspect aspect, int amount) {
         stack.getOrCreateTag().putInt(aspect.getTag(), amount);
     }
@@ -521,6 +527,9 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof arcaneresearch.common.tiles.aura.AuraNodeTile
                     || be instanceof arcaneresearch.common.tiles.aura.TileJarNode) {
+                if (isFull(stack)) {
+                    return InteractionResultHolder.consume(stack);
+                }
                 setObjectInUse(stack, pos.getX(), pos.getY(), pos.getZ());
                 player.startUsingItem(hand);
                 return InteractionResultHolder.consume(stack);
@@ -566,6 +575,9 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
         IWandable target = getObjectInUse(stack, level);
         if (target != null) {
             target.onUsingWandTick(stack, player, remainingTicks);
+            if (isFull(stack)) {
+                player.stopUsingItem();
+            }
             return;
         }
 
