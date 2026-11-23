@@ -58,11 +58,7 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
         this.jarType = type;
     }
     private static void orientJarFacing(TileJar jar, float yaw) {
-        int l = Mth.floor(yaw * 4.0f / 360.0f + 0.5f) & 3;
-        if (l == 0) jar.setFacing(2);
-        else if (l == 1) jar.setFacing(5);
-        else if (l == 2) jar.setFacing(3);
-        else jar.setFacing(4);
+        jar.setFacing(JarFacing.fromYaw(yaw));
     }
     private static Aspect getLabelAspect(ItemStack labelStack) {
         if (labelStack.getItem() instanceof ItemLabel label) {
@@ -162,7 +158,9 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
             level.playSound(null, pos, ModSounds.KEY.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             return InteractionResult.SUCCESS;
         }
-        if (player.isShiftKeyDown() && jar.getAspectFilter() != null && side.get3DDataValue() == jar.getFacing()) {
+        // TileJar.facing uses Direction.ordinal(), not get3DDataValue():
+        // 2=NORTH, 3=SOUTH, 4=WEST, 5=EAST.
+        if (player.isShiftKeyDown() && jar.getAspectFilter() != null && side.ordinal() == jar.getFacing()) {
             if (level.isClientSide) {
                 return InteractionResult.SUCCESS;
             }

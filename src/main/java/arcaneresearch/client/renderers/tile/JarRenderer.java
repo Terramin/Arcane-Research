@@ -23,6 +23,7 @@ import arcaneresearch.debug.ArcaneLogger;
 import arcaneresearch.debug.LogLevel;
 import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.client.lib.UtilsFX;
+import arcaneresearch.common.blocks.essentia.JarFacing;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.tiles.essentia.TileJar;
 
@@ -48,9 +49,6 @@ public class JarRenderer implements BlockEntityRenderer<TileJar> {
     private static final Map<ResourceLocation, RenderType> TRANSLUCENT_CACHE = new ConcurrentHashMap<>();
 
     private static final Quaternionf ROT_XP_180 = Axis.XP.rotationDegrees(180.0F);
-    private static final Quaternionf ROT_YP_180 = Axis.YP.rotationDegrees(180.0F);
-    private static final Quaternionf ROT_YP_270 = Axis.YP.rotationDegrees(270.0F);
-    private static final Quaternionf ROT_YP_90 = Axis.YP.rotationDegrees(90.0F);
 
     private static final int LIGHT_FULL = 0x00F000F0;
 
@@ -191,15 +189,10 @@ public class JarRenderer implements BlockEntityRenderer<TileJar> {
         try {
             poseStack.translate(0.5, 0.5, 0.5);
             int facing = tile.getFacing();
-            Quaternionf facingRot = switch (facing) {
-                case 3 -> ROT_YP_180;
-                case 4 -> ROT_YP_270;
-                case 5 -> ROT_YP_90;
-                default -> null;
-            };
-            if (facingRot != null) {
-                poseStack.mulPose(facingRot);
-            }
+            // TileJar.facing uses the legacy Direction.ordinal() convention:
+            // 2=NORTH, 3=SOUTH, 4=WEST, 5=EAST. The label quad is drawn on +Z
+            // and there is no global X-flip here, so NORTH needs the 180 deg turn.
+            poseStack.mulPose(Axis.YP.rotationDegrees(JarFacing.labelYawDegrees(facing)));
             poseStack.translate(0, -0.1, 0.315);
             if (ModConfig.CONFIG_GRAPHICS.crooked && tile.getLevel() != null) {
                 String tag = aspect.getTag();

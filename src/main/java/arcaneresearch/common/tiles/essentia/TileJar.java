@@ -21,6 +21,7 @@ public class TileJar extends TileArcaneresearch implements IAspectSource, IEssen
     protected Aspect aspect = null;
     protected Aspect aspectFilter = null;
     protected int amount = 0;
+    // Direction.ordinal() convention: 2=NORTH, 3=SOUTH, 4=WEST, 5=EAST.
     protected int facing = 2;
     protected boolean blocked = false;
     protected int tickCount = 0;
