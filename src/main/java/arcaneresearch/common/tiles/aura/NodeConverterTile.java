@@ -96,6 +96,7 @@ public class NodeConverterTile extends TileArcaneresearch {
                     staging.setAspects(base);
                     staging.setId(nid);
                     staging.setupNode();
+                    staging.syncAspectsToClients();
                 }
 
                 this.stage = 60;
@@ -300,6 +301,7 @@ public class NodeConverterTile extends TileArcaneresearch {
                 newEnergized.setAspects(base);
                 if (nid != null) newEnergized.setId(nid);
                 newEnergized.setupNode();
+                newEnergized.syncAspectsToClients();
             }
         } else {
             if (fresh instanceof AuraNodeTile node) {

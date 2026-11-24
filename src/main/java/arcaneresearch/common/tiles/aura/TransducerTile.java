@@ -62,6 +62,7 @@ public class TransducerTile extends TileArcaneresearch {
                     en.setId(node.getId());
                     en.setAspects(base);
                     en.setupNode();
+                    en.syncAspectsToClients();
                 }
 
                 tile.checkStatus(level);

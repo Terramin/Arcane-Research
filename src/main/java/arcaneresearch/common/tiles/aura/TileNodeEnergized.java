@@ -40,6 +40,9 @@ public class TileNodeEnergized extends TileVisNode implements IAspectContainer {
 
         if (tile.visBase.size() == 0 && tile.getAuraBase().size() > 0) {
             tile.setupNode();
+            if (tile.visBase.size() > 0) {
+                tile.syncAspectsToClients();
+            }
         }
 
         tile.vis = tile.visBase.copy();
@@ -80,14 +83,17 @@ public class TileNodeEnergized extends TileVisNode implements IAspectContainer {
         }
     }
 
-    public void setupNode() {
-        this.visBase = new AspectList();
+    /**
+     * Derives the visible aspect list from the node's aura. Kept separate from
+     * {@link #setupNode()} so the client can rebuild it from the always-synced
+     * aura when the custom {@code AEB} update key was not delivered.
+     */
+    private AspectList computeVis(AspectList aura, net.minecraft.util.RandomSource random) {
+        AspectList out = new AspectList();
 
-        AspectList temp = reduceToPrimals(getAuraBase());
+        AspectList temp = reduceToPrimals(aura);
 
         NodeModifier mod = getNodeModifier();
-        boolean unstable = getNodeType() == NodeType.UNSTABLE;
-        Level lvl = level;
 
         for (Aspect aspect : temp.getAspects()) {
             if (aspect == null) continue;
@@ -104,14 +110,23 @@ public class TileNodeEnergized extends TileVisNode implements IAspectContainer {
 
             amt = Math.max(0, Math.round((float) Math.sqrt(amt)));
 
-            if (unstable && lvl != null) {
-                amt += lvl.random.nextInt(5) - 2;
+            if (random != null) {
+                amt += random.nextInt(5) - 2;
             }
 
             if (amt >= 1) {
-                this.visBase.merge(aspect, amt);
+                out.merge(aspect, amt);
             }
         }
+
+        return out;
+    }
+
+    public void setupNode() {
+        Level lvl = level;
+        boolean unstable = getNodeType() == NodeType.UNSTABLE;
+
+        this.visBase = computeVis(getAuraBase(), unstable && lvl != null ? lvl.random : null);
 
         setChanged();
 
@@ -266,6 +281,26 @@ public class TileNodeEnergized extends TileVisNode implements IAspectContainer {
         }
     }
 
+    /**
+     * Forces the aspect data to clients with our own channel. The converter and
+     * transducer call this right after {@link #setupNode()} so a stale or
+     * coalesced block-entity update cannot leave the goggles popup empty.
+     */
+    public void syncAspectsToClients() {
+        if (level == null || level.isClientSide) return;
+
+        CompoundTag tag = new CompoundTag();
+        writeSyncNBT(tag);
+        sendMessageToClients(tag);
+    }
+
+    @Override
+    public void messageFromServer(CompoundTag nbt) {
+        if (level != null && level.isClientSide && nbt != null) {
+            loadEnergized(nbt);
+        }
+    }
+
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
@@ -313,5 +348,15 @@ public class TileNodeEnergized extends TileVisNode implements IAspectContainer {
 
         this.auraBase = new AspectList();
         this.auraBase.readFromNBT(tag);
+
+        // The derived vis list is written under the custom "AEB" key. A block
+        // entity update emitted before setupNode() ran (or an older world) can
+        // omit it, which left the client with no aspects and made the goggles
+        // popup disappear on a freshly converted/stabilized node. The aura is
+        // always synced under the standard "Aspects" key, so rebuild the
+        // display list from it as a fallback.
+        if (this.visBase.size() == 0 && this.auraBase.size() > 0) {
+            this.visBase = computeVis(this.auraBase, null);
+        }
     }
 }
