@@ -14,6 +14,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IEssentiaContainerItem;
@@ -142,5 +144,22 @@ public class BlockJarItem extends BlockItem implements IEssentiaContainerItem {
     @Override
     public boolean ignoreContainedAspects() {
         return false;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void initializeClient(
+            java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(new net.minecraftforge.client.extensions.common.IClientItemExtensions() {
+            private arcaneresearch.client.renderers.item.JarItemRenderer renderer;
+
+            @Override
+            public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (renderer == null) {
+                    renderer = new arcaneresearch.client.renderers.item.JarItemRenderer();
+                }
+                return renderer;
+            }
+        });
     }
 }

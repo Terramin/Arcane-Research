@@ -17,6 +17,11 @@ public class CustomRendererItemModel implements BakedModel {
     public CustomRendererItemModel(BakedModel base) {
         this.base = base;
     }
+
+    /** Original model behind the custom-renderer wrapper. */
+    public BakedModel base() {
+        return base;
+    }
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side,
                                     RandomSource rand) {

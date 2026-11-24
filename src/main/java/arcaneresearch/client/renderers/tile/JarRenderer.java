@@ -22,13 +22,10 @@ import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.debug.ArcaneLogger;
 import arcaneresearch.debug.LogLevel;
 import arcaneresearch.debug.ProfileCategory;
-import arcaneresearch.client.lib.UtilsFX;
+import arcaneresearch.client.renderers.JarLabelRenderer;
 import arcaneresearch.common.blocks.essentia.JarFacing;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.tiles.essentia.TileJar;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @OnlyIn(Dist.CLIENT)
 public class JarRenderer implements BlockEntityRenderer<TileJar> {
@@ -37,16 +34,11 @@ public class JarRenderer implements BlockEntityRenderer<TileJar> {
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/block/animatedglow.png");
     private static final int LIQUID_FRAMES = 20;
     private static final int LIQUID_CYCLE = 38;
-    private static final ResourceLocation LABEL_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/label.png");
     private static final ResourceLocation BRINE_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/models/jarbrine.png");
 
     private static final RenderType BRINE_TYPE = RenderType.entityCutoutNoCull(BRINE_TEXTURE);
     private static final RenderType LIQUID_TYPE = RenderType.entityTranslucent(LIQUID_TEXTURE);
-    private static final RenderType LABEL_TYPE = RenderType.entityTranslucent(LABEL_TEXTURE);
-
-    private static final Map<ResourceLocation, RenderType> TRANSLUCENT_CACHE = new ConcurrentHashMap<>();
 
     private static final Quaternionf ROT_XP_180 = Axis.XP.rotationDegrees(180.0F);
 
@@ -57,10 +49,6 @@ public class JarRenderer implements BlockEntityRenderer<TileJar> {
     public JarRenderer(BlockEntityRendererProvider.Context context) {
         this.fittings = new arcaneresearch.client.models.block.JarModel(
                 context.bakeLayer(arcaneresearch.client.models.block.JarModel.LAYER_LOCATION));
-    }
-
-    private static RenderType translucentCached(ResourceLocation texture) {
-        return TRANSLUCENT_CACHE.computeIfAbsent(texture, RenderType::entityTranslucent);
     }
 
     private static int getLiquidFrame(Level level) {
@@ -190,43 +178,16 @@ public class JarRenderer implements BlockEntityRenderer<TileJar> {
             poseStack.translate(0.5, 0.5, 0.5);
             int facing = tile.getFacing();
             // TileJar.facing uses the legacy Direction.ordinal() convention:
-            // 2=NORTH, 3=SOUTH, 4=WEST, 5=EAST. The label quad is drawn on +Z
-            // and there is no global X-flip here, so NORTH needs the 180 deg turn.
-            poseStack.mulPose(Axis.YP.rotationDegrees(JarFacing.labelYawDegrees(facing)));
-            poseStack.translate(0, -0.1, 0.315);
+            // 2=NORTH, 3=SOUTH, 4=WEST, 5=EAST. JarFacing maps that to the yaw
+            // of the +Z label quad, which is what the item renderer reuses too.
+            Float crooked = null;
             if (ModConfig.CONFIG_GRAPHICS.crooked && tile.getLevel() != null) {
                 String tag = aspect.getTag();
                 int tagHash = tag != null ? tag.hashCode() : 0;
-                float rot = (float) (((tagHash + tile.getBlockPos().getX() + facing) % 4) - 2);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(rot));
+                crooked = (float) (((tagHash + tile.getBlockPos().getX() + facing) % 4) - 2);
             }
-            poseStack.scale(0.5f, 0.5f, 0.5f);
-            VertexConsumer labelConsumer = buffer.getBuffer(LABEL_TYPE);
-            Matrix4f matrix = poseStack.last().pose();
-            float size = 0.5f;
-            labelConsumer.vertex(matrix, -size, -size, 0).color(255, 255, 255, 255).uv(0, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0, 0, 1).endVertex();
-            labelConsumer.vertex(matrix, size, -size, 0).color(255, 255, 255, 255).uv(1, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0, 0, 1).endVertex();
-            labelConsumer.vertex(matrix, size, size, 0).color(255, 255, 255, 255).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0, 0, 1).endVertex();
-            labelConsumer.vertex(matrix, -size, size, 0).color(255, 255, 255, 255).uv(0, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(0, 0, 1).endVertex();
-
-            ResourceLocation image = aspect.getImage();
-            if (image == null) return;
-            ResourceLocation stripped = UtilsFX.strippedAspectTexture(image);
-            if (stripped == null) return;
-
-            poseStack.translate(0, 0, 0.01);
-            poseStack.scale(0.03f, 0.03f, 0.03f);
-            int colorInt = aspect.getColor();
-            float r = ((colorInt >> 16) & 0xFF) / 255f;
-            float g = ((colorInt >> 8) & 0xFF) / 255f;
-            float b = (colorInt & 0xFF) / 255f;
-            VertexConsumer iconConsumer = buffer.getBuffer(translucentCached(stripped));
-            Matrix4f iconMatrix = poseStack.last().pose();
-            float iconSize = 8;
-            iconConsumer.vertex(iconMatrix, -iconSize, -iconSize, 0).color(r, g, b, 1f).uv(0, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LIGHT_FULL).normal(0, 0, 1).endVertex();
-            iconConsumer.vertex(iconMatrix, iconSize, -iconSize, 0).color(r, g, b, 1f).uv(1, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LIGHT_FULL).normal(0, 0, 1).endVertex();
-            iconConsumer.vertex(iconMatrix, iconSize, iconSize, 0).color(r, g, b, 1f).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LIGHT_FULL).normal(0, 0, 1).endVertex();
-            iconConsumer.vertex(iconMatrix, -iconSize, iconSize, 0).color(r, g, b, 1f).uv(0, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LIGHT_FULL).normal(0, 0, 1).endVertex();
+            JarLabelRenderer.render(JarFacing.labelYawDegrees(facing), crooked, aspect,
+                    poseStack, buffer, packedLight);
         } finally {
             poseStack.popPose();
         }
