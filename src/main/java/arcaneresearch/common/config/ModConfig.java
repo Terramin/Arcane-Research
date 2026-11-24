@@ -128,6 +128,7 @@ public class ModConfig {
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.SALIS_MUNDUS.get()), 3, 0);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.SALIS_MUNDUS.get()), 6, 1);
         ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.SALIS_MUNDUS.get()), 9, 2);
+        ArcaneresearchApi.addLootBagItem(new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get()), 25, 0, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.CHORUS_FRUIT), 5, 0, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.COMPASS), 5, 0, 1, 2);
         ArcaneresearchApi.addLootBagItem(new ItemStack(Items.COOKIE), 5, 0, 1, 2);

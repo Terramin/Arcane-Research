@@ -49,6 +49,7 @@ public class ConfigEntities {
         forInv.add(entry(3, new ItemStack(Items.EXPERIENCE_BOTTLE)));
         forInv.add(entry(3, new ItemStack(Items.EXPERIENCE_BOTTLE)));
         forInv.add(entry(3, new ItemStack(Items.GOLDEN_APPLE)));
+        forInv.add(entry(3, new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get())));
         forInv.add(entry(4, new ItemStack(ModItems.THAUMIUM_PICK.get())));
         forInv.add(entry(4, new ItemStack(ModItems.THAUMIUM_AXE.get())));
         forInv.add(entry(4, new ItemStack(ModItems.THAUMIUM_HOE.get())));
@@ -63,9 +64,11 @@ public class ConfigEntities {
         forMag.add(entry(1, ArcaneresearchApiHelper.makeCrystal(Aspect.WATER)));
         forMag.add(entry(1, ArcaneresearchApiHelper.makeCrystal(Aspect.ORDER)));
         forMag.add(entry(1, ArcaneresearchApiHelper.makeCrystal(Aspect.ENTROPY)));
+        forMag.add(entry(1, new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get())));
         forMag.add(entry(2, PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.SWIFTNESS)));
         forMag.add(entry(2, PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.HEALING)));
         forMag.add(entry(2, ArcaneresearchApiHelper.makeCrystal(Aspect.FLUX)));
+        forMag.add(entry(2, new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get())));
         forMag.add(entry(3, new ItemStack(Items.EXPERIENCE_BOTTLE)));
         forMag.add(entry(3, new ItemStack(Items.EXPERIENCE_BOTTLE)));
         forMag.add(entry(3, ArcaneresearchApiHelper.makeCrystal(Aspect.AURA)));
@@ -92,6 +95,7 @@ public class ConfigEntities {
         forArc.add(entry(3, new ItemStack(Items.EXPERIENCE_BOTTLE)));
         forArc.add(entry(3, new ItemStack(Items.EXPERIENCE_BOTTLE)));
         forArc.add(entry(3, new ItemStack(Items.GOLDEN_APPLE)));
+        forArc.add(entry(3, new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get())));
         forArc.add(entry(4, new ItemStack(Items.ENDER_EYE)));
         forArc.add(entry(4, new ItemStack(Items.ENCHANTED_GOLDEN_APPLE)));
         forInv.add(entry(4, new ItemStack(Items.SPECTRAL_ARROW)));

@@ -705,6 +705,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.THAUMOMETER.get()), new AspectList().add(Aspect.SENSES, 10).add(Aspect.AURA, 10).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SCRIBING_TOOLS.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.CRAFT, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIOSITY.get()), new AspectList().add(Aspect.MIND, 10).add(Aspect.SENSES, 5));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get()), new AspectList().add(Aspect.MIND, 8));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_ARCANE.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.AURA, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_PRESERVED.get()), new AspectList().add(Aspect.LIFE, 10).add(Aspect.DEATH, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CURIO_ANCIENT.get()), new AspectList().add(Aspect.EARTH, 10).add(Aspect.ORDER, 5));

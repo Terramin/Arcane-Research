@@ -34,6 +34,15 @@
             "meta": [ "ROUND" , "HIDDEN" ],        
             "stages": [{"text": "research.KNOWLEDGETYPES.stage.1"}]
         },        {
+            "key": "KNOWFRAG",
+            "name": "research.KNOWFRAG.title",
+            "icons": [ "arcaneresearch:knowledge_fragment" ],
+            "category": "BASICS", "location": [ 2,1 ],
+            "parents": [ "FIRSTSTEPS" ],
+            "meta": [ "ROUND","AUTOUNLOCK" ],
+            "stages": [{"text": "research.KNOWFRAG.stage.1"}]
+        },
+        {
             "key": "DISCOVERIES",    
             "name": "research.DISCOVERIES.title",
             "icons": [ "arcaneresearch:textures/research/knowledge_theory.png" ],

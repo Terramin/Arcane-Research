@@ -91,6 +91,14 @@ public class EntityPech extends Monster implements RangedAttackMob {
     public EntityPech(Level level) {
         this(ModEntities.PECH.get(), level);
     }
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int lootingLevel, boolean wasRecentlyHit) {
+        super.dropCustomDeathLoot(source, lootingLevel, wasRecentlyHit);
+        // TC4 EntityPech.dropRareDrop: always drops one knowledge fragment.
+        if (wasRecentlyHit) {
+            this.spawnAtLocation(new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get()));
+        }
+    }
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 30.0)

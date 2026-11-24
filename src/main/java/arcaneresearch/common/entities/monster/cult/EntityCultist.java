@@ -2,6 +2,7 @@ package arcaneresearch.common.entities.monster.cult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -13,7 +14,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.entities.monster.boss.EntityCultistLeader;
+import arcaneresearch.common.lib.research.KnowledgeFragmentDrops;
 import arcaneresearch.init.ModEntities;
+import arcaneresearch.init.ModItems;
+import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 public class EntityCultist extends Monster {
     private BlockPos homePos;
@@ -45,6 +49,14 @@ public class EntityCultist extends Monster {
         return false;
     }
     protected void setLoot(DifficultyInstance difficulty) {
+    }
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int lootingLevel, boolean wasRecentlyHit) {
+        super.dropCustomDeathLoot(source, lootingLevel, wasRecentlyHit);
+        // TC4 EntityCultist.dropFewItems: one fragment on r == 0 of 10, player kills only.
+        if (wasRecentlyHit && KnowledgeFragmentDrops.cultistDrop(this.random.nextFloat())) {
+            this.spawnAtLocation(new ItemStack(ModItems.KNOWLEDGE_FRAGMENT.get()));
+        }
     }
     protected void setEnchantmentBasedOnDifficulty(DifficultyInstance difficulty) {
     }

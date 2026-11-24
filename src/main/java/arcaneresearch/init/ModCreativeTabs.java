@@ -276,6 +276,7 @@ public class ModCreativeTabs {
                             output.accept(ModItems.THAUMONOMICON_CHEAT.get());
                         }
                         output.accept(ModItems.CURIOSITY.get());
+                        output.accept(ModItems.KNOWLEDGE_FRAGMENT.get());
                         output.accept(ModItems.CURIO_ARCANE.get());
                         output.accept(ModItems.CURIO_PRESERVED.get());
                         output.accept(ModItems.CURIO_ANCIENT.get());
