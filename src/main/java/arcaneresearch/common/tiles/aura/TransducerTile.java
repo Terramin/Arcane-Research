@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.sounds.SoundSource;
-import net.minecraftforge.network.PacketDistributor;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
@@ -16,8 +15,6 @@ import arcaneresearch.common.blocks.aura.BlockEnergizedNode;
 import arcaneresearch.common.lib.aura.AuraFX;
 import arcaneresearch.common.lib.aura.NodeModifier;
 import arcaneresearch.common.lib.aura.NodeType;
-import arcaneresearch.common.lib.network.PacketHandler;
-import arcaneresearch.common.lib.network.fx.PacketFXNodeBolt;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import org.jetbrains.annotations.NotNull;
 
@@ -115,18 +112,14 @@ public class TransducerTile extends TileArcaneresearch {
 
         boolean powered = level.hasNeighborSignal(pos);
 
-        if (tile.status == 1 && !powered) {
-            tile.status = 0;
-            tile.setChanged();
-        }
-
+        // Thaumcraft never resets `status` when power is lost. The counter
+        // simply winds down; if power returns before the node reverts, charging
+        // resumes from the current count. Resetting status here would leave
+        // the converter stuck in the decrementing branch forever.
         if (tile.status == 0 || !powered) {
             if (tile.count > 0) {
                 tile.count--;
                 tile.setChanged();
-            }
-            if (tile.count > 50) {
-                spawnNodeBolts(level, pos, tile.hasStabilizer(level));
             }
         } else if (tile.count < 1000) {
             tile.count++;
@@ -151,9 +144,6 @@ public class TransducerTile extends TileArcaneresearch {
                 }
             }
 
-            if (tile.count > 50) {
-                spawnNodeBolts(level, pos, tile.hasStabilizer(level));
-            }
         }
 
         if (tile.count > 1000) {
@@ -166,12 +156,21 @@ public class TransducerTile extends TileArcaneresearch {
         if (level == null) return;
 
         boolean powered = level.hasNeighborSignal(pos);
+        boolean withStabilizer = tile.hasStabilizer(level);
         if (tile.status == 0 || !powered) {
             if (tile.count > 0) {
                 tile.count--;
+                if (tile.count > 50) {
+                    spawnClientBolts(level, pos, withStabilizer);
+                }
             }
         } else if (tile.count < 1000) {
             tile.count++;
+            // Thaumcraft keeps the arcs inside this branch only: once count
+            // reaches 1000 the conversion is done and the bolts stop.
+            if (tile.count > 50) {
+                spawnClientBolts(level, pos, withStabilizer);
+            }
         }
 
         if (tile.count > 1000) {
@@ -179,31 +178,24 @@ public class TransducerTile extends TileArcaneresearch {
         }
     }
 
-    static void spawnNodeBolts(Level level, BlockPos pos, boolean withStabilizer) {
-        if (level == null || level.isClientSide) return;
-
+    /** Port of Thaumcraft's ClientProxy.nodeBolt calls in TileNodeConverter. */
+    static void spawnClientBolts(Level level, BlockPos pos, boolean withStabilizer) {
         double x = pos.getX();
         double y = pos.getY();
         double z = pos.getZ();
-        PacketDistributor.TargetPoint target = new PacketDistributor.TargetPoint(
-                x + 0.5D, y - 0.5D, z + 0.5D, 32.0D, level.dimension());
 
-        if (level.random.nextInt(4) == 0) {
-            PacketHandler.sendToNear(new PacketFXNodeBolt(
-                    x + 0.25D + level.random.nextFloat() * 0.5D,
-                    y + 0.5D,
+        if (level.random.nextBoolean()) {
+            arcaneresearch.client.fx.FXDispatcher.INSTANCE.nodeBolt(
+                    x + 0.25D + level.random.nextFloat() * 0.5D, y + 0.5D,
                     z + 0.25D + level.random.nextFloat() * 0.5D,
-                    x + 0.5D, y - 0.5D, z + 0.5D,
-                    level.random.nextLong()), target);
+                    x + 0.5D, y - 0.5D, z + 0.5D, level.random.nextLong());
         }
 
-        if (withStabilizer && level.random.nextInt(4) == 0) {
-            PacketHandler.sendToNear(new PacketFXNodeBolt(
-                    x + 0.25D + level.random.nextFloat() * 0.5D,
-                    y - 1.5D,
+        if (withStabilizer && level.random.nextBoolean()) {
+            arcaneresearch.client.fx.FXDispatcher.INSTANCE.nodeBolt(
+                    x + 0.25D + level.random.nextFloat() * 0.5D, y - 1.5D,
                     z + 0.25D + level.random.nextFloat() * 0.5D,
-                    x + 0.5D, y - 0.5D, z + 0.5D,
-                    level.random.nextLong()), target);
+                    x + 0.5D, y - 0.5D, z + 0.5D, level.random.nextLong());
         }
     }
 

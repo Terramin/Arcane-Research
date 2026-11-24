@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
@@ -43,7 +42,6 @@ public class VisRelayRenderer implements BlockEntityRenderer<VisRelayTile> {
         Level level = tile.getLevel();
         if (level == null) return;
 
-        BlockPos pos = tile.getBlockPos();
         Direction facing = tile.getBlockState().getValue(BlockVisRelay.FACING);
         Vec3i normal = facing.getNormal();
         int color = VisRelayTile.colorFor(tile.getAttunement());
@@ -73,19 +71,8 @@ public class VisRelayRenderer implements BlockEntityRenderer<VisRelayTile> {
             poseStack.popPose();
         }
 
-        BlockPos parent = tile.getClientParentPos();
-        if (parent == null) return;
-
-        Vector3f from = new Vector3f(
-                0.5F - normal.getX() * 0.15F,
-                0.5F - normal.getY() * 0.15F,
-                0.5F - normal.getZ() * 0.15F);
-        Vector3f to = new Vector3f(
-                parent.getX() - pos.getX() + 0.5F,
-                parent.getY() - pos.getY() + 0.5F,
-                parent.getZ() - pos.getZ() + 0.5F);
-        AuraNodeRenderHelper.drawFloatyLine(poseStack, buffer, from, to, color,
-                -0.02F, 1.0F, tile.getPulse() > 0 ? 0.24F : 0.13F);
+        // The vis-channel beam is drawn by FXBeamPower from VisRelayTile's
+        // client tick, matching Thaumcraft's TileVisRelay.drawEffect().
     }
 
     @Override

@@ -194,9 +194,11 @@ public class AuraNodeRenderHelper extends RenderStateShard {
 
             if (mod != null) {
                 switch (mod) {
+                    // Thaumcraft ordinal mapping: BRIGHT x1.5, PALE x0.66,
+                    // FADING pulses with sin(ticks/3).
                     case BRIGHT -> alpha *= 1.5F;
-                    case FADING -> alpha *= 0.66F;
-                    case PALE -> alpha *= Mth.sin(ticks / 3.0F) * 0.25F + 0.33F;
+                    case PALE -> alpha *= 0.66F;
+                    case FADING -> alpha *= Mth.sin(ticks / 3.0F) * 0.25F + 0.33F;
                     default -> {
                     }
                 }

@@ -171,11 +171,24 @@ public class FXLightning extends TextureSheetParticle {
     private final int maxAge;
     private int boltAge;
     private int type = 0;
+    private final int increment;
+
     public FXLightning(ClientLevel level, double x1, double y1, double z1,
                        double x2, double y2, double z2,
                        long seed, int duration, float multi) {
+        this(level, x1, y1, z1, x2, y2, z2, seed, duration, multi, 1);
+    }
+
+    /**
+     * @param speed how much the bolt age advances each tick. Thaumcraft's node
+     *              arcs use 5 so the bolt grows and dies within a few ticks.
+     */
+    public FXLightning(ClientLevel level, double x1, double y1, double z1,
+                       double x2, double y2, double z2,
+                       long seed, int duration, float multi, int speed) {
         super(level, (x1 + x2) / 2.0D, (y1 + y2) / 2.0D, (z1 + z2) / 2.0D, 0, 0, 0);
         this.rand = new Random(seed);
+        this.increment = Math.max(1, speed);
         this.setSize(0.02f, 0.02f);
         this.xd = 0;
         this.yd = 0;
@@ -299,7 +312,7 @@ public class FXLightning extends TextureSheetParticle {
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
-        this.boltAge++;
+        this.boltAge += this.increment;
         if (this.boltAge > this.maxAge) {
             this.remove();
         }

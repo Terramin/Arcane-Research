@@ -280,6 +280,12 @@ public class PacketHandler {
                 .decoder(PacketFXTeleport::decode)
                 .consumerMainThread(PacketFXTeleport::handle)
                 .add();
+        INSTANCE.messageBuilder(arcaneresearch.common.lib.network.fx.PacketFXVisDrain.class,
+                        nextId(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(arcaneresearch.common.lib.network.fx.PacketFXVisDrain::encode)
+                .decoder(arcaneresearch.common.lib.network.fx.PacketFXVisDrain::decode)
+                .consumerMainThread(arcaneresearch.common.lib.network.fx.PacketFXVisDrain::handle)
+                .add();
         Arcaneresearch.LOGGER.info("Arcaneresearch network packets registered");
     }
 

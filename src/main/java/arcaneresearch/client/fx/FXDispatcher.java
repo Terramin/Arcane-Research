@@ -612,6 +612,20 @@ public class FXDispatcher {
         particle.setRotationSpeedWithStart(rand.nextFloat(), rand.nextBoolean() ? -0.25f : 0.25f);
         addParticle(particle);
     }
+    /** Thaumcraft's PacketFXVisDrain: consumer -> source flying sparkle. */
+    public void visDrainSparkle(int x, int y, int z, int x2, int y2, int z2, int color) {
+        ClientLevel level = getClientLevel();
+        if (level == null) return;
+        Color c = new Color(color);
+        FXVisSparkle particle = new FXVisSparkle(level,
+                x + 0.4 + rand.nextFloat() * 0.2f,
+                y + 0.4 + rand.nextFloat() * 0.2f,
+                z + 0.4 + rand.nextFloat() * 0.2f,
+                x2 + rand.nextFloat(), y2 + rand.nextFloat(), z2 + rand.nextFloat());
+        particle.setColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f);
+        addParticle(particle);
+    }
+
     public void visSparkle(int x, int y, int z, int x2, int y2, int z2, int color) {
         ClientLevel level = getClientLevel();
         if (level != null) {
@@ -868,14 +882,45 @@ public class FXDispatcher {
         if (level == null) {
             return;
         }
+        // Thaumcraft's ClientProxy.nodeBolt: duration 10, multiplier 4, speed 5,
+        // purple (type 0), width 0.03. Added directly so the arc is never
+        // dropped by the generic particle throttle.
         arcaneresearch.client.fx.beams.FXLightning bolt =
                 new arcaneresearch.client.fx.beams.FXLightning(
-                        level, x1, y1, z1, x2, y2, z2, seed, 10, 4.0F);
+                        level, x1, y1, z1, x2, y2, z2, seed, 10, 4.0F, 5);
         bolt.defaultFractal();
         bolt.setType(0);
         bolt.finalizeBolt();
-        addParticle(bolt);
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level != null) {
+            mc.particleEngine.add(bolt);
+        }
     }
+    /**
+     * Thaumcraft's ClientProxy.beamPower: one persistent FX per relay, reused
+     * while the link is alive so the scrolling texture and pulse carry over.
+     */
+    public Object beamPower(double sx, double sy, double sz, double tx, double ty, double tz,
+                            float r, float g, float b, boolean pulse, Object input) {
+        ClientLevel level = getClientLevel();
+        if (level == null) return null;
+
+        arcaneresearch.client.fx.beams.FXBeamPower beam =
+                input instanceof arcaneresearch.client.fx.beams.FXBeamPower existing ? existing : null;
+        if (beam == null || !beam.isAlive()) {
+            beam = new arcaneresearch.client.fx.beams.FXBeamPower(
+                    level, sx, sy, sz, tx, ty, tz, r, g, b, 8);
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.level != null) {
+                mc.particleEngine.add(beam);
+            }
+        } else {
+            beam.updateBeam(sx, sy, sz, tx, ty, tz);
+            beam.setPulse(pulse, r, g, b);
+        }
+        return beam;
+    }
+
     public Object beamCont(LivingEntity p, double tx, double ty, double tz, int type, int color, boolean reverse, float endmod, Object input, int impact) {
         ClientLevel level = getClientLevel();
         if (level == null) return null;

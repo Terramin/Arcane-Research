@@ -2,7 +2,8 @@ package arcaneresearch.common.tiles.aura;
 
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.wands.IWandable;
-import arcaneresearch.common.lib.aura.AuraFX;
+import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.blocks.aura.BlockVisRelay;
 import arcaneresearch.common.lib.aura.VisNetHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,6 +38,26 @@ public class VisRelayTile extends TileVisNode implements IWandable {
     /** Parent position mirrored to the client for drawing the power beam. */
     private BlockPos clientParentPos = null;
 
+    /** Persistent vis-channel beam FX (client only). */
+    private transient Object beam = null;
+    private float pRed = 0.5F;
+    private float pGreen = 0.5F;
+    private float pBlue = 0.5F;
+
+    /**
+     * Where the crystal actually sits, derived from VisRelayRenderer's pose:
+     * base at 0.5 - facing*0.46875, then the OBJ's crystal centre (local
+     * y=0.43) scaled by 0.56 along the facing axis.
+     */
+    private static final float CRYSTAL_OFFSET = 0.46875F - 0.43F * 0.56F;
+
+    private static net.minecraft.world.phys.Vec3 crystalEnd(BlockPos pos, Direction facing) {
+        return new net.minecraft.world.phys.Vec3(
+                pos.getX() + 0.5D - facing.getStepX() * CRYSTAL_OFFSET,
+                pos.getY() + 0.5D - facing.getStepY() * CRYSTAL_OFFSET,
+                pos.getZ() + 0.5D - facing.getStepZ() * CRYSTAL_OFFSET);
+    }
+
     public VisRelayTile(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
@@ -47,6 +68,39 @@ public class VisRelayTile extends TileVisNode implements IWandable {
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, VisRelayTile tile) {
         if (tile.pulse > 0) tile.pulse--;
+
+        // Thaumcraft's TileVisRelay.drawEffect(): keep the per-relay power beam
+        // alive, feed it both endpoints and let it brighten on a vis pulse.
+        if (level == null) return;
+        BlockPos parent = tile.clientParentPos;
+        if (parent == null) {
+            tile.beam = null;
+            return;
+        }
+
+        Direction parentDir = null;
+        net.minecraft.world.level.block.entity.BlockEntity parentTe = level.getBlockEntity(parent);
+        if (parentTe instanceof VisRelayTile pr) {
+            parentDir = pr.getBlockState().getValue(BlockVisRelay.FACING);
+        }
+        Direction ownDir = state.getValue(BlockVisRelay.FACING);
+
+        net.minecraft.world.phys.Vec3 start = parentDir != null
+                ? crystalEnd(parent, parentDir)
+                : new net.minecraft.world.phys.Vec3(
+                        parent.getX() + 0.5D, parent.getY() + 0.5D, parent.getZ() + 0.5D);
+        net.minecraft.world.phys.Vec3 end = crystalEnd(pos, ownDir);
+
+        boolean pulsing = tile.pulse > 0;
+        if (!pulsing) {
+            tile.pRed = Math.min(1.0F, tile.pRed + 0.025F);
+            tile.pGreen = Math.min(1.0F, tile.pGreen + 0.025F);
+            tile.pBlue = Math.min(1.0F, tile.pBlue + 0.025F);
+        }
+
+        tile.beam = FXDispatcher.INSTANCE.beamPower(
+                start.x, start.y, start.z, end.x, end.y, end.z,
+                tile.pRed, tile.pGreen, tile.pBlue, pulsing, tile.beam);
     }
 
     @Override
@@ -181,8 +235,12 @@ public class VisRelayTile extends TileVisNode implements IWandable {
         if (level == null || level.isClientSide) return;
 
         level.blockEvent(worldPosition, getBlockState().getBlock(), 1, indexFor(aspect) + 1);
-        if (level.getGameTime() % 5 == 0) {
-            AuraFX.nodeSparkle(level, worldPosition, aspect == null ? 0xFFFFFF : aspect.getColor());
+
+        // Thaumcraft's TileVisRelay.addPulse() walks upstream and flashes the
+        // whole chain, but only relays that are not already pulsing.
+        TileVisNode parentNode = parent != null ? parent.get() : null;
+        if (parentNode instanceof VisRelayTile upstream && upstream.pulse == 0) {
+            upstream.triggerConsumeEffect(aspect);
         }
     }
 
@@ -190,6 +248,12 @@ public class VisRelayTile extends TileVisNode implements IWandable {
     public boolean triggerEvent(int id, int param) {
         if (id == 1 && level != null && level.isClientSide) {
             this.pulse = 5;
+            if (param > 0 && param <= ATTUNEMENTS.length) {
+                int color = colorFor((byte) (param - 1));
+                this.pRed = ((color >> 16) & 0xFF) / 255.0F;
+                this.pGreen = ((color >> 8) & 0xFF) / 255.0F;
+                this.pBlue = (color & 0xFF) / 255.0F;
+            }
             return true;
         }
         return super.triggerEvent(id, param);

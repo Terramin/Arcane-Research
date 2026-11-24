@@ -37,10 +37,7 @@ public class VisNetHandler {
                 int a = node.consumeVis(aspect, amount);
                 drainedAmount += a;
                 amount -= a;
-                if (a > 0) {
-                    BlockPos np = node.getBlockPos();
-                    AuraFX.nodeSparkle(level, np, aspect.getColor());
-                }
+                // No vis-drain sparkles: the beam itself is the only feedback.
                 if (amount <= 0) break;
             }
         }

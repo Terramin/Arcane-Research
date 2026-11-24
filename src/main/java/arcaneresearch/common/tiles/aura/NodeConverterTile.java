@@ -38,10 +38,21 @@ public class NodeConverterTile extends TileArcaneresearch {
         if (level == null) return;
 
         boolean powered = level.hasNeighborSignal(pos);
+        boolean withStabilizer = tile.hasStabilizer();
         if (tile.status == 0 || !powered) {
-            if (tile.count > 0) tile.count--;
+            if (tile.count > 0) {
+                tile.count--;
+                if (tile.count > 50) {
+                    TransducerTile.spawnClientBolts(level, pos, withStabilizer);
+                }
+            }
         } else if (tile.count < 1000) {
             tile.count++;
+            // Once the node has been energized (count == 1000) the arcs stop,
+            // exactly as in Thaumcraft.
+            if (tile.count > 50) {
+                TransducerTile.spawnClientBolts(level, pos, withStabilizer);
+            }
         }
 
         if (tile.count > 1000) tile.count = 1000;
@@ -57,8 +68,10 @@ public class NodeConverterTile extends TileArcaneresearch {
         BlockPos belowPos = this.worldPosition.below();
         boolean powered = level.hasNeighborSignal(this.worldPosition);
 
-        if (this.status == 1 && !powered) {
-            checkStatus();
+        // Losing power during the staging phase restores the normal node, but
+        // `status` stays 1 so re-applying power resumes charging (TC parity).
+        if (this.status == 1 && !powered && isStagingAiry(belowPos)) {
+            restoreNode();
         }
 
         if (isStagingAiry(belowPos) && this.status == 1 && powered) {
@@ -78,7 +91,9 @@ public class NodeConverterTile extends TileArcaneresearch {
 
             if (below instanceof AuraNodeTile node && level.getBlockState(belowPos).is(auraNode)) {
 
-                AspectList base = node.getAspects().copy();
+                // Thaumcraft uses the untouched aura base, not the currently
+                // drained vis list, so the energized node keeps the full aura.
+                AspectList base = node.getAspectsBase().copy();
                 NodeType type = node.getNodeType();
                 NodeModifier mod = node.getNodeModifier();
                 String nid = node.getId();
@@ -111,15 +126,9 @@ public class NodeConverterTile extends TileArcaneresearch {
 
         if (this.status == 0 || !powered) {
             if (this.count > 0) this.count--;
-            if (this.count > 50) {
-                TransducerTile.spawnNodeBolts(level, this.worldPosition, hasStabilizer());
-            }
         } else if (this.count < 1000) {
             this.count++;
             drainBelow();
-            if (this.count > 50) {
-                TransducerTile.spawnNodeBolts(level, this.worldPosition, hasStabilizer());
-            }
         }
 
         if (this.count > 1000) {
