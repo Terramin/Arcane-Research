@@ -546,7 +546,10 @@ public class ResearchPageScreen extends Screen {
             }
         }
         int lineHeight = font.lineHeight;
-        int heightRemaining = 182;
+        // The complete button occupies the bottom strip of the first left
+        // page. Keep body lines above it instead of letting the last line
+        // render under the label.
+        int heightRemaining = 182 - (isComplete ? 0 : 18);
         int dividerSpace = 0;
         if (research.getKey().equals("KNOWLEDGETYPES")) {
             heightRemaining -= 2;
@@ -731,6 +734,7 @@ public class ResearchPageScreen extends Screen {
     }
     private List<String> wrapText(String text) {
         List<String> lines = new ArrayList<>();
+        final int maxWidth = PAGE_WIDTH - 8;
         String[] paragraphs = text.split("<LINE>|\\n");
         for (String paragraph : paragraphs) {
             if (paragraph.trim().isEmpty()) {
@@ -740,9 +744,28 @@ public class ResearchPageScreen extends Screen {
             String[] words = paragraph.split(" ");
             StringBuilder currentLine = new StringBuilder();
             for (String word : words) {
+                if (word.isEmpty()) {
+                    continue;
+                }
+                if (font.width(word) > maxWidth) {
+                    // A single overlong token would otherwise overflow the page.
+                    if (!currentLine.isEmpty()) {
+                        lines.add(currentLine.toString());
+                        currentLine.setLength(0);
+                    }
+                    StringBuilder piece = new StringBuilder();
+                    for (char c : word.toCharArray()) {
+                        piece.append(c);
+                        if (font.width(piece.toString()) >= maxWidth) {
+                            lines.add(piece.toString());
+                            piece.setLength(0);
+                        }
+                    }
+                    currentLine.append(piece);
+                    continue;
+                }
                 String testLine = currentLine.isEmpty() ? word : currentLine + " " + word;
-                int testWidth = font.width(testLine);
-                if (testWidth > 140 && !currentLine.isEmpty()) {
+                if (font.width(testLine) > maxWidth && !currentLine.isEmpty()) {
                     lines.add(currentLine.toString());
                     currentLine = new StringBuilder(word);
                 } else {
@@ -794,7 +817,9 @@ public class ResearchPageScreen extends Screen {
             } else {
                 float vv = 140f / titleWidth;
                 graphics.pose().pushPose();
-                graphics.pose().translate(sw - 15 + 70 - titleWidth / 2f * vv, (sh - 10 + 1) * vv, 0);
+                // Scale the glyphs around the title's own origin: multiplying the
+                // translation by vv pushed long titles progressively upward.
+                graphics.pose().translate(sw - 15 + 70 - titleWidth / 2f * vv, sh - 10 + 1, 0);
                 graphics.pose().scale(vv, vv, 1f);
                 graphics.drawString(font, title, 0, 0, 0x202020, false);
                 graphics.pose().popPose();
@@ -1055,6 +1080,20 @@ public class ResearchPageScreen extends Screen {
             shownRecipe = null;
         }
     }
+    /**
+     * Requirement icons are drawn with depth testing disabled. The button
+     * label is drawn with depth testing on, but without writing depth: it
+     * stays on the button while later overlays (essentia aspects, knowledge,
+     * recipes) still cover it normally.
+     */
+    private void drawButtonLabel(GuiGraphics graphics, String text, float x, float y) {
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(false);
+        graphics.drawString(font, text, x, y, 0xFFFFFF, true);
+        RenderSystem.depthMask(true);
+        RenderSystem.disableDepthTest();
+    }
+
     private List<net.minecraft.network.chat.Component> drawRequirements(GuiGraphics graphics, int sw, int sh, int mx, int my, ResearchStage stage) {
         RenderSystem.disableDepthTest();
         RenderSystem.enableBlend();
@@ -1287,7 +1326,7 @@ public class ResearchPageScreen extends Screen {
                 reqBtnVisible = true;
                 if (hold) {
                     String s = Component.translatable("tc.stage.hold").getString();
-                    graphics.drawString(font, s, sw + 52 - font.width(s) / 2f, y - 4, 0xFFFFFF, true);
+                    drawButtonLabel(graphics, s, sw + 52 - font.width(s) / 2f, y - 4);
                 } else {
                     boolean hover = mx >= reqBtnX && my >= reqBtnY && mx < reqBtnX + 64 && my < reqBtnY + 12;
                     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -1298,7 +1337,7 @@ public class ResearchPageScreen extends Screen {
                     graphics.blit(TEXTURE, reqBtnX, reqBtnY, 84, 216, 64, 12);
                     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
                     String s = Component.translatable("tc.stage.complete").getString();
-                    graphics.drawString(font, s, sw + 52 - font.width(s) / 2f, y - 4, 0xFFFFFF, true);
+                    drawButtonLabel(graphics, s, sw + 52 - font.width(s) / 2f, y - 4);
                 }
             }
         }
@@ -1359,7 +1398,13 @@ public class ResearchPageScreen extends Screen {
         if (shownRecipe == null && !hold && hasAllRequisites
                 && reqBtnVisible && mouseX >= reqBtnX && mouseX < reqBtnX + 64
                 && mouseY >= reqBtnY && mouseY < reqBtnY + 12) {
-            PacketHandler.sendToServer(new PacketSyncProgressToServer(research.getKey(), false, true, true));
+            // After a research revoke the entry is no longer known; the button
+            // must then act as a discovery (first=true), not a stage advance.
+            boolean autoUnlock = research.hasMeta(ResearchEntry.EnumResearchMeta.AUTOUNLOCK);
+            boolean known = playerKnowledge != null
+                    && playerKnowledge.isResearchKnown(research.getKey());
+            PacketHandler.sendToServer(new PacketSyncProgressToServer(
+                    research.getKey(), autoUnlock && !known, true, true));
             playWriteSound();
             lastCheck = 0L;
             hold = true;

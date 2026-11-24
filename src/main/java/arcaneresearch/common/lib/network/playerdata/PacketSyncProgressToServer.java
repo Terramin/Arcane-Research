@@ -59,7 +59,15 @@ public class PacketSyncProgressToServer {
             ServerPlayer player = ctx.getSender();
             if (player == null) return;
             boolean knowsResearch = ArcaneresearchCapabilities.isResearchKnown(player, msg.key);
-            if (msg.first != knowsResearch) {
+            // A revoked AUTOUNLOCK entry can still be clicked from its old page;
+            // allow the advance when its parents are satisfied even if the
+            // client sent the stale "stage advance" flag.
+            ResearchEntry entry = ResearchCategories.getResearch(msg.key);
+            boolean recoverUnknown = !knowsResearch
+                    && entry != null
+                    && entry.hasMeta(ResearchEntry.EnumResearchMeta.AUTOUNLOCK)
+                    && ResearchManager.doesPlayerHaveRequisites(player, msg.key);
+            if (msg.first != knowsResearch || recoverUnknown) {
                 if (msg.checks && !checkRequisites(player, msg.key)) {
                     return;
                 }
@@ -80,7 +88,12 @@ public class PacketSyncProgressToServer {
         IPlayerKnowledge knowledge = ArcaneresearchCapabilities.getKnowledge(player).orElse(null);
         int currentStage = knowledge.getResearchStage(key) - 1;
         if (currentStage < 0) {
-            return false;
+            // Only AUTOUNLOCK entries are inserted at stage 0 ("known" but
+            // not started). Other entries keep the old rejection behaviour.
+            if (!research.hasMeta(ResearchEntry.EnumResearchMeta.AUTOUNLOCK)) {
+                return false;
+            }
+            currentStage = 0;
         }
         if (currentStage >= research.getStages().length) {
             return true;
