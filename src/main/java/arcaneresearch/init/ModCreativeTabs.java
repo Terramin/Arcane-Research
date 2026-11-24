@@ -207,6 +207,11 @@ public class ModCreativeTabs {
                             BlockJarItem.setAspectsStatic(jar, new AspectList().add(aspect, 250));
                             output.accept(jar);
                         }
+                        for (Aspect aspect : Aspect.aspects.values()) {
+                            ItemStack jar = new ItemStack(ModBlocks.JAR_VOID.get());
+                            BlockJarItem.setAspectsStatic(jar, new AspectList().add(aspect, 250));
+                            output.accept(jar);
+                        }
                         java.util.List<ItemStack> auraJars = new java.util.ArrayList<>();
                         java.util.List<ItemStack> auraNodes = new java.util.ArrayList<>();
                         Aspect[] auraPrimals = {Aspect.AIR, Aspect.EARTH, Aspect.FIRE,
@@ -342,14 +347,6 @@ public class ModCreativeTabs {
                         output.accept(ModItems.BRAIN_CURIOUS.get());
                         output.accept(ModItems.GOLEM_MODULE_AGGRESSION.get());
                         output.accept(ModItems.GOLEM_MODULE_VISION.get());
-                        for (Aspect aspect : Aspect.aspects.values()) {
-                            output.accept(arcaneresearch.common.items.resources.ItemCrystalEssence.createStack(
-                                    ModItems.CRYSTAL_ESSENCE.get(), aspect, 1));
-                        }
-                        for (Aspect aspect : Aspect.aspects.values()) {
-                            output.accept(arcaneresearch.common.items.resources.ItemWispEssence.createStack(
-                                    ModItems.WISP_ESSENCE.get(), aspect, 1));
-                        }
                         output.accept(ModItems.CHUNKS_BEEF.get());
                         output.accept(ModItems.CHUNKS_CHICKEN.get());
                         output.accept(ModItems.CHUNKS_PORK.get());
@@ -367,6 +364,14 @@ public class ModCreativeTabs {
                         output.accept(ModItems.PHIAL_EMPTY.get());
                         for (Aspect aspect : Aspect.aspects.values()) {
                             output.accept(arcaneresearch.common.items.consumables.ItemPhial.makeFilledPhial(aspect));
+                        }
+                        for (Aspect aspect : Aspect.aspects.values()) {
+                            output.accept(arcaneresearch.common.items.resources.ItemWispEssence.createStack(
+                                    ModItems.WISP_ESSENCE.get(), aspect, 1));
+                        }
+                        for (Aspect aspect : Aspect.aspects.values()) {
+                            output.accept(arcaneresearch.common.items.resources.ItemCrystalEssence.createStack(
+                                    ModItems.CRYSTAL_ESSENCE.get(), aspect, 1));
                         }
                         output.accept(ModItems.ALUMENTUM.get());
                         output.accept(ModItems.JAR_BRACE.get());
@@ -534,19 +539,35 @@ public class ModCreativeTabs {
                             output.accept(arcaneresearch.common.items.wands.ItemWandCap.createStack(cap));
                         }
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND.get());
+                        // Жезлы (обычные и зачарованные)
                         for (arcaneresearch.api.wands.WandRod rod : arcaneresearch.api.wands.WandRod.rods.values()) {
+                            if (rod.isStaff()) continue;
                             for (arcaneresearch.api.wands.WandCap cap : arcaneresearch.api.wands.WandCap.caps.values()) {
                                 output.accept(createWandStack(rod, cap));
                             }
                         }
                         for (arcaneresearch.api.wands.WandRod rod : arcaneresearch.api.wands.WandRod.rods.values()) {
+                            if (rod.isStaff()) continue;
                             for (arcaneresearch.api.wands.WandCap cap : arcaneresearch.api.wands.WandCap.caps.values()) {
                                 output.accept(createEnchantedWandStack(rod, cap));
                             }
                         }
-                        output.accept(createSceptreStack("wood", "iron"));
-                        output.accept(createSceptreStack("greatwood", "gold"));
-                        output.accept(createSceptreStack("silverwood", "thaumium"));
+                        // Скипетры — обычные и зачарованные, по всем комбинациям
+                        for (arcaneresearch.api.wands.WandRod rod : arcaneresearch.api.wands.WandRod.rods.values()) {
+                            if (rod.isStaff()) continue;
+                            for (arcaneresearch.api.wands.WandCap cap : arcaneresearch.api.wands.WandCap.caps.values()) {
+                                output.accept(createSceptreStack(rod, cap));
+                                output.accept(createEnchantedSceptreStack(rod, cap));
+                            }
+                        }
+                        // Посохи (стержни-стаффы)
+                        for (arcaneresearch.api.wands.WandRod rod : arcaneresearch.api.wands.WandRod.rods.values()) {
+                            if (!rod.isStaff()) continue;
+                            for (arcaneresearch.api.wands.WandCap cap : arcaneresearch.api.wands.WandCap.caps.values()) {
+                                output.accept(createWandStack(rod, cap));
+                                output.accept(createEnchantedWandStack(rod, cap));
+                            }
+                        }
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FIRE.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_FROST.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_SHOCK.get());
@@ -619,19 +640,17 @@ public class ModCreativeTabs {
                 arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment.MAGIC_EFFICIENCY, 3);
         return stack;
     }
-    private static ItemStack createSceptreStack(String rodTag, String capTag) {
-        ItemStack stack = new ItemStack(arcaneresearch.common.items.wands.WandItems.WAND.get());
-        if (stack.getItem() instanceof IFocusHostWand wand) {
-            arcaneresearch.api.wands.WandRod rod =
-                    arcaneresearch.api.wands.WandRod.rods.get(rodTag);
-            arcaneresearch.api.wands.WandCap cap =
-                    arcaneresearch.api.wands.WandCap.caps.get(capTag);
-            if (rod != null && cap != null) {
-                wand.setRod(stack, rod);
-                wand.setCap(stack, cap);
-                arcaneresearch.common.items.wands.ItemWand.setSceptre(stack);
-            }
-        }
+    private static ItemStack createSceptreStack(arcaneresearch.api.wands.WandRod rod,
+                                                arcaneresearch.api.wands.WandCap cap) {
+        ItemStack stack = createWandStack(rod, cap);
+        arcaneresearch.common.items.wands.ItemWand.setSceptre(stack);
+        return stack;
+    }
+    private static ItemStack createEnchantedSceptreStack(arcaneresearch.api.wands.WandRod rod,
+                                                         arcaneresearch.api.wands.WandCap cap) {
+        ItemStack stack = createSceptreStack(rod, cap);
+        arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment.addInfusionEnchantment(stack,
+                arcaneresearch.common.lib.enchantment.EnumInfusionEnchantment.MAGIC_EFFICIENCY, 3);
         return stack;
     }
     private static ItemStack createGolemStackById(int materialId, int headId, int armsId, int legsId, int addonId) {
