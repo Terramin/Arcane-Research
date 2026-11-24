@@ -314,7 +314,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> RESEARCH_TABLE = registerBlock("research_table",
             BlockResearchTable::new);
     public static final RegistryObject<Block> DECONSTRUCTION_TABLE = registerBlock("deconstruction_table",
-            DeconstructBlock::new);
+            DeconstructBlock::new, DeconstructionTableItem::new);
     public static final RegistryObject<Block> INFUSION_MATRIX = registerBlock("infusion_matrix",
             BlockInfusionMatrix::new);
     public static final RegistryObject<Block> FOCAL_MANIPULATOR = registerBlock("focal_manipulator",

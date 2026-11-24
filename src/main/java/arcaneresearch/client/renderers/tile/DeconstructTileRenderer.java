@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.client.renderers.DeconstructionTablePlacement;
 import arcaneresearch.client.lib.GhostItem;
 import arcaneresearch.client.lib.UtilsFX;
 import arcaneresearch.common.tiles.crafting.DeconstructTile;
@@ -31,8 +32,6 @@ import org.joml.Matrix4f;
 public class DeconstructTileRenderer implements BlockEntityRenderer<DeconstructTile> {
     private static final float TAG_SCALE = 0.024F;
     private static final float GHOST_ALPHA = 0.75F;
-    private static final float THAUMOMETER_SCALE = 0.640625F;
-    private static final float THAUMOMETER_OFFSET = THAUMOMETER_SCALE * 0.35F / 2.0F;
 
     private final ItemRenderer itemRenderer;
 
@@ -58,8 +57,10 @@ public class DeconstructTileRenderer implements BlockEntityRenderer<DeconstructT
         }
 
         poseStack.pushPose();
-        poseStack.translate(0.5F + THAUMOMETER_OFFSET, 1.024F + THAUMOMETER_OFFSET, 0.5F + THAUMOMETER_OFFSET);
-        poseStack.scale(THAUMOMETER_SCALE, THAUMOMETER_SCALE, THAUMOMETER_SCALE);
+        poseStack.translate(DeconstructionTablePlacement.X, DeconstructionTablePlacement.Y,
+                DeconstructionTablePlacement.Z);
+        poseStack.scale(DeconstructionTablePlacement.SCALE, DeconstructionTablePlacement.SCALE,
+                DeconstructionTablePlacement.SCALE);
         itemRenderer.renderStatic(thaumometerStack, ItemDisplayContext.GROUND,
                 packedLight, OverlayTexture.NO_OVERLAY, poseStack, buffer, level, 0);
         poseStack.popPose();
