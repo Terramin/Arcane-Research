@@ -289,17 +289,12 @@ public final class WandItemModelRenderer {
     }
 
     private static void submitBox(PoseStack poseStack, VertexConsumer buffer, BoxSpec box, int tint, int light) {
-        submitBox(poseStack, buffer, box, tint, light, TEXTURE_SIZE, TEXTURE_SIZE, 0);
-    }
-
-    private static void submitBox(PoseStack poseStack, VertexConsumer buffer, BoxSpec box, int tint,
-                                  int light, int texW, int texH, int vOffset) {
         WandBoxGeometry.box(poseStack, buffer,
                 box.minX() * PIXEL, box.minY() * PIXEL, box.minZ() * PIXEL,
                 (box.minX() + box.width()) * PIXEL, (box.minY() + box.height()) * PIXEL,
                 (box.minZ() + box.depth()) * PIXEL,
-                box.u(), vOffset, box.width(), box.height(), box.depth(),
-                texW, texH, tint, light, true);
+                box.u(), box.v(), box.width(), box.height(), box.depth(),
+                TEXTURE_SIZE, TEXTURE_SIZE, tint, light, true);
     }
 
     private static ResourceLocation wandTexture(String name) {
