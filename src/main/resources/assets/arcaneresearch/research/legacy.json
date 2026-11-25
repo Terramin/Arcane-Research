@@ -1,12 +1,22 @@
 {
-    "entries" :[
+    "entries": [
         {
             "key": "LEGACYTHAUMATURGE",
             "name": "research.LEGACYTHAUMATURGE.title",
-            "icons": [ "arcaneresearch:textures/research/r_legacyknowledges.png" ],
-            "category": "LEGACY", "location": [ 0,0 ],
-            "meta": [ "ROUND" ],
-            "parents": [ "FIRSTSTEPS" ],
+            "icons": [
+                "arcaneresearch:textures/research/r_legacyknowledges.png"
+            ],
+            "category": "LEGACY",
+            "location": [
+                0,
+                0
+            ],
+            "meta": [
+                "ROUND"
+            ],
+            "parents": [
+                "FIRSTSTEPS"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYTHAUMATURGE.stage.1"
@@ -16,13 +26,25 @@
         {
             "key": "LEGACYWANDS",
             "name": "research.LEGACYWANDS.title",
-            "icons": [ "arcaneresearch:wand" ],
-            "category": "LEGACY", "location": [ -3,0 ],
-            "parents": [ "LEGACYTHAUMATURGE", "INFUSION" ],
+            "icons": [
+                "arcaneresearch:wand"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -7,
+                0
+            ],
+            "parents": [
+                "LEGACYTHAUMATURGE",
+                "INFUSION"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYWANDS.stage.1",
-                    "recipes": [ "arcaneresearch:arcane_workbench/wand_cap_iron", "arcaneresearch:arcane_workbench/wand_wood_iron" ],
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_cap_iron",
+                        "arcaneresearch:arcane_workbench/wand_wood_iron"
+                    ],
                     "required_craft": [
                         "arcaneresearch:wand_cap;1;{cap:\"iron\"}",
                         "arcaneresearch:wand"
@@ -33,190 +55,352 @@
         {
             "key": "LEGACYFOCUSFIRE",
             "name": "research.LEGACYFOCUSFIRE.title",
-            "icons": [ "arcaneresearch:wand_focus_fire" ],
-            "category": "LEGACY", "location": [ -4,-2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_fire"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -24,
+                -2
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSFIRE.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_fire" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_fire" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_fire"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_fire"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSFROST",
             "name": "research.LEGACYFOCUSFROST.title",
-            "icons": [ "arcaneresearch:wand_focus_frost" ],
-            "category": "LEGACY", "location": [ -5,-2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_frost"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -28,
+                -2
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSFROST.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_frost" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_frost" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_frost"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_frost"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSSHOCK",
             "name": "research.LEGACYFOCUSSHOCK.title",
-            "icons": [ "arcaneresearch:wand_focus_shock" ],
-            "category": "LEGACY", "location": [ -6,-2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_shock"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -25,
+                3
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSSHOCK.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_shock" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_shock" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_shock"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_shock"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSEXCAVATION",
             "name": "research.LEGACYFOCUSEXCAVATION.title",
-            "icons": [ "arcaneresearch:wand_focus_excavation" ],
-            "category": "LEGACY", "location": [ -7,-2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_excavation"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -27,
+                3
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSEXCAVATION.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_excavation" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_excavation" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_excavation"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_excavation"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSBUILDER",
             "name": "research.LEGACYFOCUSBUILDER.title",
-            "icons": [ "arcaneresearch:wand_focus_builder" ],
-            "category": "LEGACY", "location": [ -8,-2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_builder"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -26,
+                -2
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSBUILDER.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_builder" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_builder" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_builder"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_builder"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSTRADE",
             "name": "research.LEGACYFOCUSTRADE.title",
-            "icons": [ "arcaneresearch:wand_focus_trade" ],
-            "category": "LEGACY", "location": [ -9,-2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_trade"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -23,
+                -3
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSTRADE.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_trade" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_trade" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_trade"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_trade"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSHOLE",
             "name": "research.LEGACYFOCUSHOLE.title",
-            "icons": [ "arcaneresearch:wand_focus_hole" ],
-            "category": "LEGACY", "location": [ -4,2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_hole"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -27,
+                -3
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSHOLE.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_hole" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_hole" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_hole"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_hole"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSGRAPPLE",
             "name": "research.LEGACYFOCUSGRAPPLE.title",
-            "icons": [ "arcaneresearch:wand_focus_grapple" ],
-            "category": "LEGACY", "location": [ -5,2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_grapple"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -26,
+                2
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSGRAPPLE.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_grapple" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_grapple" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_grapple"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_grapple"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSSHARD",
             "name": "research.LEGACYFOCUSSHARD.title",
-            "icons": [ "arcaneresearch:wand_focus_shard" ],
-            "category": "LEGACY", "location": [ -6,2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_shard"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -25,
+                -3
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSSHARD.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_shard" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_shard" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_shard"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_shard"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSPRIMAL",
             "name": "research.LEGACYFOCUSPRIMAL.title",
-            "icons": [ "arcaneresearch:wand_focus_primal" ],
-            "category": "LEGACY", "location": [ -7,2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_primal"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -24,
+                2
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSPRIMAL.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_primal" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_primal" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_primal"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_primal"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSHELLBAT",
             "name": "research.LEGACYFOCUSHELLBAT.title",
-            "icons": [ "arcaneresearch:wand_focus_hellbat" ],
-            "category": "LEGACY", "location": [ -8,2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_hellbat"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -23,
+                3
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSHELLBAT.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_hellbat" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_hellbat" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_hellbat"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_hellbat"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYFOCUSPECH",
             "name": "research.LEGACYFOCUSPECH.title",
-            "icons": [ "arcaneresearch:wand_focus_pech" ],
-            "category": "LEGACY", "location": [ -9,2 ],
-            "parents": [ "LEGACYWANDS" ],
+            "icons": [
+                "arcaneresearch:wand_focus_pech"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -28,
+                2
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYFOCUSPECH.stage.1",
-                    "recipes": [ "arcaneresearch:infusion/wand_focus_pech" ],
-                    "required_craft": [ "arcaneresearch:wand_focus_pech" ]
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_pech"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_pech"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYELDRITCHALTAR",
             "name": "research.LEGACYELDRITCHALTAR.title",
-            "icons": [ "arcaneresearch:eldritch_altar" ],
-            "category": "LEGACY", "location": [ 6,0 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:eldritch_altar"
+            ],
+            "category": "LEGACY",
+            "location": [
+                4,
+                0
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYELDRITCHALTAR.stage.1",
-                    "recipes": ["arcaneresearch:eldritchportal"]
+                    "recipes": [
+                        "arcaneresearch:eldritchportal"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYELDRITCHEYE",
             "name": "research.LEGACYELDRITCHEYE.title",
-            "icons": [ "arcaneresearch:eldritch_eye" ],
-            "category": "LEGACY", "location": [ 8,0 ],
-            "parents": [ "LEGACYELDRITCHALTAR" ],
+            "icons": [
+                "arcaneresearch:eldritch_eye"
+            ],
+            "category": "LEGACY",
+            "location": [
+                6,
+                -1
+            ],
+            "parents": [
+                "LEGACYELDRITCHALTAR"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYELDRITCHEYE.stage.1"
@@ -232,13 +416,23 @@
         {
             "key": "LEGACYOCULUS",
             "name": "research.LEGACYOCULUS.title",
-            "icons": [ "arcaneresearch:wand" ],
-            "category": "LEGACY", "location": [ 10,0 ],
-            "parents": [ "LEGACYELDRITCHEYE" ],
+            "icons": [
+                "arcaneresearch:wand"
+            ],
+            "category": "LEGACY",
+            "location": [
+                8,
+                0
+            ],
+            "parents": [
+                "LEGACYELDRITCHEYE"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYOCULUS.stage.1",
-                    "recipes": ["arcaneresearch:eldritchportal"]
+                    "recipes": [
+                        "arcaneresearch:eldritchportal"
+                    ]
                 },
                 {
                     "text": "research.LEGACYOCULUS.stage.2"
@@ -246,12 +440,20 @@
             ]
         },
         {
-        "key": "ENTEROUTER",
-        "name": "research.ENTEROUTER.title",
-        "icons": [ "arcaneresearch:eldritch_portal" ],
-        "category": "LEGACY", "location": [ 12,0 ],
-        "parents": [ "LEGACYOCULUS" ],
-        "stages": [
+            "key": "ENTEROUTER",
+            "name": "research.ENTEROUTER.title",
+            "icons": [
+                "arcaneresearch:eldritch_portal"
+            ],
+            "category": "LEGACY",
+            "location": [
+                10,
+                -1
+            ],
+            "parents": [
+                "LEGACYOCULUS"
+            ],
+            "stages": [
                 {
                     "text": "research.ENTEROUTER.stage.1"
                 }
@@ -260,22 +462,40 @@
         {
             "key": "LEGACYAURANODES",
             "name": "research.LEGACYAURANODES.title",
-            "icons": [ "arcaneresearch:aura_node;1;{Aspects:[{key:\"aer\",amount:30},{key:\"terra\",amount:30},{key:\"ignis\",amount:30},{key:\"aqua\",amount:30},{key:\"ordo\",amount:30},{key:\"perditio\",amount:30}],nodetype:0}" ],
-            "category": "LEGACY", "location": [ 3,2 ],
-            "parents": [ "LEGACYTHAUMATURGE" ],
+            "icons": [
+                "arcaneresearch:aura_node;1;{Aspects:[{key:\"aer\",amount:30},{key:\"terra\",amount:30},{key:\"ignis\",amount:30},{key:\"aqua\",amount:30},{key:\"ordo\",amount:30},{key:\"perditio\",amount:30}],nodetype:0}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                0,
+                3
+            ],
+            "parents": [
+                "LEGACYTHAUMATURGE"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYAURANODES.stage.1",
-                    "required_research": [ "!arcaneresearch:aura_node;arcaneresearch:aura_node" ]
+                    "required_research": [
+                        "!arcaneresearch:aura_node;arcaneresearch:aura_node"
+                    ]
                 }
             ]
         },
         {
             "key": "LEGACYNODENORMAL",
             "name": "research.LEGACYNODENORMAL.title",
-            "icons": [ "arcaneresearch:aura_node;1;{Aspects:[{key:\"aer\",amount:30}],nodetype:0}" ],
-            "category": "LEGACY", "location": [ 1,4 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:aura_node;1;{Aspects:[{key:\"aer\",amount:30}],nodetype:0}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -2,
+                6
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYNODENORMAL.stage.1"
@@ -285,9 +505,17 @@
         {
             "key": "LEGACYNODEUNSTABLE",
             "name": "research.LEGACYNODEUNSTABLE.title",
-            "icons": [ "arcaneresearch:aura_node;1;{Aspects:[{key:\"ignis\",amount:30}],nodetype:1}" ],
-            "category": "LEGACY", "location": [ 2,4 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:aura_node;1;{Aspects:[{key:\"ignis\",amount:30}],nodetype:1}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -1,
+                6
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYNODEUNSTABLE.stage.1"
@@ -297,9 +525,17 @@
         {
             "key": "LEGACYNODEDARK",
             "name": "research.LEGACYNODEDARK.title",
-            "icons": [ "arcaneresearch:aura_node;1;{Aspects:[{key:\"perditio\",amount:30}],nodetype:2}" ],
-            "category": "LEGACY", "location": [ 3,4 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:aura_node;1;{Aspects:[{key:\"perditio\",amount:30}],nodetype:2}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                0,
+                6
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYNODEDARK.stage.1"
@@ -309,9 +545,17 @@
         {
             "key": "LEGACYNODETAINTED",
             "name": "research.LEGACYNODETAINTED.title",
-            "icons": [ "arcaneresearch:aura_node;1;{Aspects:[{key:\"aqua\",amount:30}],nodetype:3}" ],
-            "category": "LEGACY", "location": [ 4,4 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:aura_node;1;{Aspects:[{key:\"aqua\",amount:30}],nodetype:3}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                1,
+                6
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYNODETAINTED.stage.1"
@@ -321,9 +565,17 @@
         {
             "key": "LEGACYNODEHUNGRY",
             "name": "research.LEGACYNODEHUNGRY.title",
-            "icons": [ "arcaneresearch:aura_node;1;{Aspects:[{key:\"terra\",amount:30}],nodetype:4}" ],
-            "category": "LEGACY", "location": [ 5,4 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:aura_node;1;{Aspects:[{key:\"terra\",amount:30}],nodetype:4}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                2,
+                6
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYNODEHUNGRY.stage.1"
@@ -333,9 +585,17 @@
         {
             "key": "LEGACYNODEPURE",
             "name": "research.LEGACYNODEPURE.title",
-            "icons": [ "arcaneresearch:aura_node;1;{Aspects:[{key:\"ordo\",amount:30}],nodetype:5}" ],
-            "category": "LEGACY", "location": [ 6,4 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:aura_node;1;{Aspects:[{key:\"ordo\",amount:30}],nodetype:5}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                3,
+                6
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.LEGACYNODEPURE.stage.1"
@@ -345,9 +605,17 @@
         {
             "key": "LEGACYJARNODE",
             "name": "research.LEGACYJARNODE.title",
-            "icons": [ "arcaneresearch:jar_node;1;{Aspects:[{key:\"aer\",amount:30}],nodetype:0}" ],
-            "category": "LEGACY", "location": [ 3,8 ],
-            "meta": [ "REVERSE" ],
+            "icons": [
+                "arcaneresearch:jar_node;1;{Aspects:[{key:\"aer\",amount:30}],nodetype:0}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                0,
+                10
+            ],
+            "meta": [
+                "REVERSE"
+            ],
             "parents": [
                 "LEGACYNODENORMAL",
                 "LEGACYNODEUNSTABLE",
@@ -359,164 +627,897 @@
             "stages": [
                 {
                     "text": "research.LEGACYJARNODE.stage.1",
-                    "recipes": ["arcaneresearch:nodejar"]
+                    "recipes": [
+                        "arcaneresearch:nodejar"
+                    ]
                 }
             ]
         },
         {
             "key": "NODESTABILIZER",
             "name": "research.NODESTABILIZER.title",
-            "icons": [ "arcaneresearch:node_stabilizer" ],
-            "category": "LEGACY", "location": [ 9,2 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:node_stabilizer"
+            ],
+            "category": "LEGACY",
+            "location": [
+                6,
+                3
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.NODESTABILIZER.stage.1",
-                    "recipes": ["arcaneresearch:arcane_workbench/node_stabilizer","arcaneresearch:infusion/node_stabilizer_advanced","arcaneresearch:arcane_workbench/aura_totem","arcaneresearch:arcane_workbench/node_converter","arcaneresearch:arcane_workbench/node_transducer"],
-                    "required_craft": ["arcaneresearch:node_stabilizer"]
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/node_stabilizer"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:node_stabilizer"
+                    ]
                 },
                 {
                     "text": "research.NODESTABILIZER.stage.2",
-                    "recipes": ["arcaneresearch:arcane_workbench/node_stabilizer","arcaneresearch:infusion/node_stabilizer_advanced","arcaneresearch:arcane_workbench/aura_totem","arcaneresearch:arcane_workbench/node_converter","arcaneresearch:arcane_workbench/node_transducer"]
+                    "recipes": [
+                        "arcaneresearch:infusion/node_stabilizer_advanced"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:node_stabilizer_advanced"
+                    ]
                 }
             ]
         },
         {
             "key": "NODETRANSDUCER",
             "name": "research.NODETRANSDUCER.title",
-            "icons": [ "arcaneresearch:node_transducer" ],
-            "category": "LEGACY", "location": [ 8,4 ],
-            "parents": [ "LEGACYAURANODES" ],
+            "icons": [
+                "arcaneresearch:node_transducer"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -5,
+                3
+            ],
+            "parents": [
+                "LEGACYAURANODES"
+            ],
             "stages": [
                 {
                     "text": "research.NODETRANSDUCER.stage.1",
-                    "recipes": ["arcaneresearch:arcane_workbench/node_transducer"],
-                    "required_craft": ["arcaneresearch:node_transducer"]
-                },
-                {
-                    "text": "research.NODETRANSDUCER.stage.2",
-                    "recipes": ["arcaneresearch:arcane_workbench/node_transducer"]
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/node_transducer",
+                        "arcaneresearch:arcane_workbench/node_converter"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:node_transducer",
+                        "arcaneresearch:node_converter"
+                    ]
                 }
             ]
         },
         {
             "key": "VISPOWER",
             "name": "research.VISPOWER.title",
-            "icons": [ "arcaneresearch:vis_relay" ],
-            "category": "LEGACY", "location": [ 7,6 ],
-            "parents": [ "NODETRANSDUCER" ],
+            "icons": [
+                "arcaneresearch:vis_relay"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -7,
+                5
+            ],
+            "parents": [
+                "NODETRANSDUCER"
+            ],
             "stages": [
                 {
                     "text": "research.VISPOWER.stage.1",
-                    "recipes": ["arcaneresearch:arcane_workbench/vis_relay"],
-                    "required_craft": ["arcaneresearch:vis_relay"]
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/vis_relay"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:vis_relay"
+                    ]
                 },
                 {
                     "text": "research.VISPOWER.stage.2",
-                    "recipes": ["arcaneresearch:arcane_workbench/vis_relay"]
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/vis_relay"
+                    ]
                 }
             ]
         },
         {
             "key": "RUNICARMOR",
             "name": "research.RUNICARMOR.title",
-            "icons": [ "arcaneresearch:runic_ring" ],
-            "category": "LEGACY", "location": [ 0,-4 ],
-            "parents": [ "LEGACYTHAUMATURGE" ],
-            "meta": [ "HIDDEN" ],
+            "icons": [
+                "arcaneresearch:runic_ring"
+            ],
+            "category": "LEGACY",
+            "location": [
+                0,
+                -4
+            ],
+            "parents": [
+                "LEGACYTHAUMATURGE"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
             "stages": [
                 {
                     "text": "research.RUNICARMOR.stage.1"
                 },
                 {
                     "text": "research.RUNICARMOR.stage.2",
-                    "recipes": ["arcaneresearch:infusion/runic_ring", "arcaneresearch:infusion/runic_amulet", "arcaneresearch:infusion/runic_girdle"]
+                    "recipes": [
+                        "arcaneresearch:infusion/runic_ring",
+                        "arcaneresearch:infusion/runic_amulet",
+                        "arcaneresearch:infusion/runic_girdle"
+                    ]
                 }
             ]
         },
         {
             "key": "RUNICCHARGED",
             "name": "research.RUNICCHARGED.title",
-            "icons": [ "arcaneresearch:runic_ring_charged" ],
-            "category": "LEGACY", "location": [ -1,-5 ],
-            "parents": [ "RUNICARMOR" ],
-            "meta": [ "HIDDEN" ],
+            "icons": [
+                "arcaneresearch:runic_ring_charged"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -2,
+                -6
+            ],
+            "parents": [
+                "RUNICARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
             "stages": [
                 {
                     "text": "research.RUNICCHARGED.stage.1"
                 },
                 {
                     "text": "research.RUNICCHARGED.stage.2",
-                    "recipes": ["arcaneresearch:infusion/runic_ring_charged"]
+                    "recipes": [
+                        "arcaneresearch:infusion/runic_ring_charged"
+                    ]
                 }
             ]
         },
         {
             "key": "RUNICHEALING",
             "name": "research.RUNICHEALING.title",
-            "icons": [ "arcaneresearch:runic_ring_regen" ],
-            "category": "LEGACY", "location": [ 1,-5 ],
-            "parents": [ "RUNICARMOR" ],
-            "meta": [ "HIDDEN" ],
+            "icons": [
+                "arcaneresearch:runic_ring_regen"
+            ],
+            "category": "LEGACY",
+            "location": [
+                2,
+                -6
+            ],
+            "parents": [
+                "RUNICARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
             "stages": [
                 {
                     "text": "research.RUNICHEALING.stage.1"
                 },
                 {
                     "text": "research.RUNICHEALING.stage.2",
-                    "recipes": ["arcaneresearch:infusion/runic_ring_regen"]
+                    "recipes": [
+                        "arcaneresearch:infusion/runic_ring_regen"
+                    ]
                 }
             ]
         },
         {
             "key": "RUNICKINETIC",
             "name": "research.RUNICKINETIC.title",
-            "icons": [ "arcaneresearch:runic_girdle_kinetic" ],
-            "category": "LEGACY", "location": [ -1,-3 ],
-            "parents": [ "RUNICARMOR" ],
-            "meta": [ "HIDDEN" ],
+            "icons": [
+                "arcaneresearch:runic_girdle_kinetic"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -2,
+                -2
+            ],
+            "parents": [
+                "RUNICARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
             "stages": [
                 {
                     "text": "research.RUNICKINETIC.stage.1"
                 },
                 {
                     "text": "research.RUNICKINETIC.stage.2",
-                    "recipes": ["arcaneresearch:infusion/runic_girdle_kinetic"]
+                    "recipes": [
+                        "arcaneresearch:infusion/runic_girdle_kinetic"
+                    ]
                 }
             ]
         },
         {
             "key": "RUNICEMERGENCY",
             "name": "research.RUNICEMERGENCY.title",
-            "icons": [ "arcaneresearch:runic_amulet_emergency" ],
-            "category": "LEGACY", "location": [ 1,-3 ],
-            "parents": [ "RUNICARMOR" ],
-            "meta": [ "HIDDEN" ],
+            "icons": [
+                "arcaneresearch:runic_amulet_emergency"
+            ],
+            "category": "LEGACY",
+            "location": [
+                2,
+                -2
+            ],
+            "parents": [
+                "RUNICARMOR"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
             "stages": [
                 {
                     "text": "research.RUNICEMERGENCY.stage.1"
                 },
                 {
                     "text": "research.RUNICEMERGENCY.stage.2",
-                    "recipes": ["arcaneresearch:infusion/runic_amulet_emergency"]
+                    "recipes": [
+                        "arcaneresearch:infusion/runic_amulet_emergency"
+                    ]
                 }
             ]
         },
         {
             "key": "RUNICSHIELDING",
             "name": "research.RUNICSHIELDING.title",
-            "icons": [ "arcaneresearch:textures/research/r_runicupg.png" ],
-            "category": "LEGACY", "location": [ 2,-4 ],
-            "parents": [ "RUNICARMOR" ],
+            "icons": [
+                "arcaneresearch:textures/research/r_runicupg.png"
+            ],
+            "category": "LEGACY",
+            "location": [
+                0,
+                -8
+            ],
+            "parents": [
+                "RUNICARMOR"
+            ],
             "stages": [
                 {
                     "text": "research.RUNICSHIELDING.stage.1",
-                    "required_knowledge": ["THEORY;INFUSION;1"],
-                    "required_item": ["arcaneresearch:enchanted_placeholder;1;{StoredEnchantments:[{id:'minecraft:protection',lvl:1s}]}", "arcaneresearch:amber"]
+                    "required_knowledge": [
+                        "THEORY;INFUSION;1"
+                    ],
+                    "required_item": [
+                        "arcaneresearch:enchanted_placeholder;1;{StoredEnchantments:[{id:'minecraft:protection',lvl:1s}]}",
+                        "arcaneresearch:amber"
+                    ]
                 },
                 {
                     "text": "research.RUNICSHIELDING.stage.2",
-                    "recipes": ["arcaneresearch:runic_armor_fake_0", "arcaneresearch:runic_armor_fake_1", "arcaneresearch:runic_armor_fake_2", "arcaneresearch:runic_armor_fake_3", "arcaneresearch:runic_armor_fake_4", "arcaneresearch:runic_armor_chest_fake_0", "arcaneresearch:runic_armor_chest_fake_1", "arcaneresearch:runic_armor_chest_fake_2", "arcaneresearch:runic_armor_chest_fake_3", "arcaneresearch:runic_armor_chest_fake_4"]
+                    "recipes": [
+                        "arcaneresearch:runic_armor_fake_0",
+                        "arcaneresearch:runic_armor_fake_1",
+                        "arcaneresearch:runic_armor_fake_2",
+                        "arcaneresearch:runic_armor_fake_3",
+                        "arcaneresearch:runic_armor_fake_4",
+                        "arcaneresearch:runic_armor_chest_fake_0",
+                        "arcaneresearch:runic_armor_chest_fake_1",
+                        "arcaneresearch:runic_armor_chest_fake_2",
+                        "arcaneresearch:runic_armor_chest_fake_3",
+                        "arcaneresearch:runic_armor_chest_fake_4"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_greatwood",
+            "name": "research.ROD_greatwood.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"greatwood\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -13,
+                0
+            ],
+            "parents": [
+                "LEGACYWANDS"
+            ],
+            "meta": [
+                "ROUND"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_greatwood.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_greatwood"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"greatwood\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_reed",
+            "name": "research.ROD_reed.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"reed\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -21,
+                3
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_reed.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_reed"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"reed\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_blaze",
+            "name": "research.ROD_blaze.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"blaze\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -16,
+                -5
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "INFUSION"
+            ],
+            "meta": [
+                "HIDDEN",
+                "REVERSE"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_blaze.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_blaze"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"blaze\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_obsidian",
+            "name": "research.ROD_obsidian.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"obsidian\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -15,
+                2
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_obsidian.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_obsidian"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"obsidian\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_ice",
+            "name": "research.ROD_ice.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"ice\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -17,
+                3
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_ice.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_ice"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"ice\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_quartz",
+            "name": "research.ROD_quartz.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"quartz\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -19,
+                5
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "INFUSION"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_quartz.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_quartz"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"quartz\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_bone",
+            "name": "research.ROD_bone.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"bone\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -11,
+                2
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "INFUSION"
+            ],
+            "meta": [
+                "HIDDEN",
+                "REVERSE"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_bone.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_bone"
+                    ],
+                    "warp": 1,
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"bone\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_silverwood",
+            "name": "research.ROD_silverwood.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"silverwood\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -13,
+                7
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "INFUSION"
+            ],
+            "meta": [
+                "ROUND",
+                "REVERSE"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_silverwood.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_silverwood"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"silverwood\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_greatwood_staff",
+            "name": "research.ROD_greatwood_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"greatwood_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -11,
+                9
+            ],
+            "parents": [
+                "ROD_silverwood"
+            ],
+            "meta": [
+                "ROUND",
+                "REVERSE"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_greatwood_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_greatwood_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"greatwood_staff\"}"
+                    ]
+                },
+                {
+                    "text": "research.ROD_greatwood_staff.stage.2",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_greatwood_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"greatwood_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_reed_staff",
+            "name": "research.ROD_reed_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"reed_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -21,
+                7
+            ],
+            "parents": [
+                "ROD_reed",
+                "~ROD_greatwood_staff"
+            ],
+            "meta": [
+                "HIDDEN",
+                "REVERSE"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_reed_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_reed_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"reed_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_blaze_staff",
+            "name": "research.ROD_blaze_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"blaze_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -19,
+                -5
+            ],
+            "parents": [
+                "ROD_blaze",
+                "~ROD_greatwood_staff"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_blaze_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_blaze_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"blaze_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_obsidian_staff",
+            "name": "research.ROD_obsidian_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"obsidian_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -15,
+                5
+            ],
+            "parents": [
+                "ROD_obsidian",
+                "~ROD_greatwood_staff"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_obsidian_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_obsidian_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"obsidian_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_ice_staff",
+            "name": "research.ROD_ice_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"ice_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -17,
+                7
+            ],
+            "parents": [
+                "ROD_ice",
+                "~ROD_greatwood_staff"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_ice_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_ice_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"ice_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_quartz_staff",
+            "name": "research.ROD_quartz_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"quartz_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -19,
+                9
+            ],
+            "parents": [
+                "ROD_quartz",
+                "~ROD_greatwood_staff"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_quartz_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_quartz_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"quartz_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_bone_staff",
+            "name": "research.ROD_bone_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"bone_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -11,
+                5
+            ],
+            "parents": [
+                "ROD_bone",
+                "~ROD_greatwood_staff"
+            ],
+            "meta": [
+                "HIDDEN",
+                "REVERSE"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_bone_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_bone_staff"
+                    ],
+                    "warp": 1,
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"bone_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_silverwood_staff",
+            "name": "research.ROD_silverwood_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"silverwood_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -11,
+                11
+            ],
+            "parents": [
+                "ROD_silverwood",
+                "~ROD_greatwood_staff"
+            ],
+            "meta": [
+                "HIDDEN",
+                "REVERSE"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_silverwood_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:arcane_workbench/wand_rod_silverwood_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"silverwood_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "ROD_primal_staff",
+            "name": "research.ROD_primal_staff.title",
+            "icons": [
+                "arcaneresearch:wand_rod;1;{rod:\"primal_staff\"}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -21,
+                -4
+            ],
+            "parents": [
+                "ROD_greatwood",
+                "~ROD_silverwood_staff"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.ROD_primal_staff.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_rod_primal_staff"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_rod;1;{rod:\"primal_staff\"}"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "SCEPTRE",
+            "name": "research.SCEPTRE.title",
+            "icons": [
+                "arcaneresearch:wand;1;{rod:\"silverwood\",cap:\"thaumium\",sceptre:1b}"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -13,
+                13
+            ],
+            "parents": [
+                "ROD_silverwood"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.SCEPTRE.stage.1"
+                }
+            ]
+        },
+        {
+            "key": "NODESTABILIZERADV",
+            "name": "research.NODESTABILIZERADV.title",
+            "icons": [
+                "arcaneresearch:node_stabilizer_advanced"
+            ],
+            "category": "LEGACY",
+            "location": [
+                8,
+                5
+            ],
+            "parents": [
+                "NODESTABILIZER"
+            ],
+            "meta": [
+                "HIDDEN"
+            ],
+            "stages": [
+                {
+                    "text": "research.NODESTABILIZERADV.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/node_stabilizer_advanced"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:node_stabilizer_advanced"
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "FOCUSWARDING",
+            "name": "research.FOCUSWARDING.title",
+            "icons": [
+                "arcaneresearch:wand_focus_warding"
+            ],
+            "category": "LEGACY",
+            "location": [
+                -30,
+                0
+            ],
+            "parents": [
+                "ROD_greatwood"
+            ],
+            "stages": [
+                {
+                    "text": "research.FOCUSWARDING.stage.1",
+                    "recipes": [
+                        "arcaneresearch:infusion/wand_focus_warding"
+                    ],
+                    "required_craft": [
+                        "arcaneresearch:wand_focus_warding"
+                    ]
                 }
             ]
         }

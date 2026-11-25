@@ -744,6 +744,7 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_PRIMAL.get()), new AspectList().add(Aspect.MAGIC, 15).add(Aspect.AURA, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_HELLBAT.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.FIRE, 10).add(Aspect.BEAST, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_PECH.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.EXCHANGE, 10));
+        ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_FOCUS_WARDING.get()), new AspectList().add(Aspect.MAGIC, 10).add(Aspect.PROTECT, 10).add(Aspect.EARTH, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(WandItems.WAND_PECH_BLAST.get()), new AspectList().add(Aspect.ENERGY, 10).add(Aspect.ENTROPY, 5));
         try {
             if (arcaneresearch.discovered.note.DiscoveredNoteSetup.getNoteItem() != null) {

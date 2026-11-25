@@ -154,6 +154,8 @@ public class ModItems {
             () -> new KnowledgeCurioItem("rites"));
     public static final RegistryObject<Item> KNOWLEDGE_FRAGMENT = ITEMS.register("knowledge_fragment",
             KnowledgeFragmentItem::new);
+    public static final RegistryObject<Item> PRIMAL_CHARM = ITEMS.register("primal_charm",
+            arcaneresearch.common.items.resources.ItemPrimalCharm::new);
     public static final RegistryObject<Item> PRIMORDIAL_PEARL = ITEMS.register("primordial_pearl",
             arcaneresearch.common.items.resources.PrimordialPearlItem::new);
     public static final RegistryObject<Item> ELDRITCH_EYE = ITEMS.register("eldritch_eye",

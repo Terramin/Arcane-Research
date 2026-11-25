@@ -1,0 +1,16 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "",
+  "vis": 8,
+  "crystals": { "ordo": 8 },
+  "pattern": ["  S", " G ", "G  "],
+  "key": {
+    "S": { "item": "arcaneresearch:primal_charm" },
+    "G": {
+      "type": "forge:partial_nbt",
+      "item": "arcaneresearch:wand_rod",
+      "nbt": "{rod:\"greatwood\"}"
+    }
+  },
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"greatwood_staff\"}" }
+}

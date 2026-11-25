@@ -15,6 +15,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.lib.network.fx.*;
 import arcaneresearch.common.lib.network.misc.*;
 import arcaneresearch.common.lib.network.playerdata.*;
+import arcaneresearch.common.lib.network.wards.PacketWardSync;
 import arcaneresearch.common.lib.network.tiles.PacketTileToClient;
 import arcaneresearch.common.lib.network.tiles.PacketTileToServer;
 
@@ -170,6 +171,11 @@ public class PacketHandler {
                 .decoder(PacketFXMagicDustSparkles::decode)
                 .consumerMainThread(PacketFXMagicDustSparkles::handle)
                 .add();
+        INSTANCE.messageBuilder(PacketWardSync.class, nextId(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(PacketWardSync::encode)
+                .decoder(PacketWardSync::decode)
+                .consumerMainThread(PacketWardSync::handle)
+                .add();
         INSTANCE.messageBuilder(PacketSyncProgressToServer.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
                 .encoder(PacketSyncProgressToServer::encode)
                 .decoder(PacketSyncProgressToServer::decode)
@@ -285,6 +291,12 @@ public class PacketHandler {
                 .encoder(arcaneresearch.common.lib.network.fx.PacketFXVisDrain::encode)
                 .decoder(arcaneresearch.common.lib.network.fx.PacketFXVisDrain::decode)
                 .consumerMainThread(arcaneresearch.common.lib.network.fx.PacketFXVisDrain::handle)
+                .add();
+        INSTANCE.messageBuilder(arcaneresearch.common.lib.network.fx.PacketFXWardSparkle.class,
+                        nextId(), NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(arcaneresearch.common.lib.network.fx.PacketFXWardSparkle::encode)
+                .decoder(arcaneresearch.common.lib.network.fx.PacketFXWardSparkle::decode)
+                .consumerMainThread(arcaneresearch.common.lib.network.fx.PacketFXWardSparkle::handle)
                 .add();
         Arcaneresearch.LOGGER.info("Arcaneresearch network packets registered");
     }

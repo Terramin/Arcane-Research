@@ -1,0 +1,36 @@
+﻿{
+  "parent": "minecraft:item/generated",
+  "textures": { "layer0": "arcaneresearch:item/primal_charm/frame_0" },
+  "overrides": [
+    { "predicate": { "arcaneresearch:charm_frame": 1 }, "model": "arcaneresearch:item/primal_charm/frame_1" },
+    { "predicate": { "arcaneresearch:charm_frame": 2 }, "model": "arcaneresearch:item/primal_charm/frame_2" },
+    { "predicate": { "arcaneresearch:charm_frame": 3 }, "model": "arcaneresearch:item/primal_charm/frame_3" },
+    { "predicate": { "arcaneresearch:charm_frame": 4 }, "model": "arcaneresearch:item/primal_charm/frame_4" },
+    { "predicate": { "arcaneresearch:charm_frame": 5 }, "model": "arcaneresearch:item/primal_charm/frame_5" },
+    { "predicate": { "arcaneresearch:charm_frame": 6 }, "model": "arcaneresearch:item/primal_charm/frame_6" },
+    { "predicate": { "arcaneresearch:charm_frame": 7 }, "model": "arcaneresearch:item/primal_charm/frame_7" },
+    { "predicate": { "arcaneresearch:charm_frame": 8 }, "model": "arcaneresearch:item/primal_charm/frame_8" },
+    { "predicate": { "arcaneresearch:charm_frame": 9 }, "model": "arcaneresearch:item/primal_charm/frame_9" },
+    { "predicate": { "arcaneresearch:charm_frame": 10 }, "model": "arcaneresearch:item/primal_charm/frame_10" },
+    { "predicate": { "arcaneresearch:charm_frame": 11 }, "model": "arcaneresearch:item/primal_charm/frame_11" },
+    { "predicate": { "arcaneresearch:charm_frame": 12 }, "model": "arcaneresearch:item/primal_charm/frame_12" },
+    { "predicate": { "arcaneresearch:charm_frame": 13 }, "model": "arcaneresearch:item/primal_charm/frame_13" },
+    { "predicate": { "arcaneresearch:charm_frame": 14 }, "model": "arcaneresearch:item/primal_charm/frame_14" },
+    { "predicate": { "arcaneresearch:charm_frame": 15 }, "model": "arcaneresearch:item/primal_charm/frame_15" },
+    { "predicate": { "arcaneresearch:charm_frame": 16 }, "model": "arcaneresearch:item/primal_charm/frame_16" },
+    { "predicate": { "arcaneresearch:charm_frame": 17 }, "model": "arcaneresearch:item/primal_charm/frame_17" },
+    { "predicate": { "arcaneresearch:charm_frame": 18 }, "model": "arcaneresearch:item/primal_charm/frame_18" },
+    { "predicate": { "arcaneresearch:charm_frame": 19 }, "model": "arcaneresearch:item/primal_charm/frame_19" },
+    { "predicate": { "arcaneresearch:charm_frame": 20 }, "model": "arcaneresearch:item/primal_charm/frame_20" },
+    { "predicate": { "arcaneresearch:charm_frame": 21 }, "model": "arcaneresearch:item/primal_charm/frame_21" },
+    { "predicate": { "arcaneresearch:charm_frame": 22 }, "model": "arcaneresearch:item/primal_charm/frame_22" },
+    { "predicate": { "arcaneresearch:charm_frame": 23 }, "model": "arcaneresearch:item/primal_charm/frame_23" },
+    { "predicate": { "arcaneresearch:charm_frame": 24 }, "model": "arcaneresearch:item/primal_charm/frame_24" },
+    { "predicate": { "arcaneresearch:charm_frame": 25 }, "model": "arcaneresearch:item/primal_charm/frame_25" },
+    { "predicate": { "arcaneresearch:charm_frame": 26 }, "model": "arcaneresearch:item/primal_charm/frame_26" },
+    { "predicate": { "arcaneresearch:charm_frame": 27 }, "model": "arcaneresearch:item/primal_charm/frame_27" },
+    { "predicate": { "arcaneresearch:charm_frame": 28 }, "model": "arcaneresearch:item/primal_charm/frame_28" },
+    { "predicate": { "arcaneresearch:charm_frame": 29 }, "model": "arcaneresearch:item/primal_charm/frame_29" }
+  ]
+}
+

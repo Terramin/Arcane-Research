@@ -30,14 +30,14 @@
             "key": "KNOWLEDGETYPES",    
             "name": "research.KNOWLEDGETYPES.title",
             "icons": [ "arcaneresearch:textures/research/knowledge_theory.png" ],
-            "category": "BASICS", "location": [ 2,-1 ], 
+            "category": "BASICS", "location": [ 2,0 ], 
             "meta": [ "ROUND" , "HIDDEN" ],        
             "stages": [{"text": "research.KNOWLEDGETYPES.stage.1"}]
         },        {
             "key": "KNOWFRAG",
             "name": "research.KNOWFRAG.title",
             "icons": [ "arcaneresearch:knowledge_fragment" ],
-            "category": "BASICS", "location": [ 2,1 ],
+            "category": "BASICS", "location": [ -1,-1 ],
             "parents": [ "FIRSTSTEPS" ],
             "meta": [ "ROUND","AUTOUNLOCK" ],
             "stages": [{"text": "research.KNOWFRAG.stage.1"}]
@@ -46,7 +46,7 @@
             "key": "DISCOVERIES",    
             "name": "research.DISCOVERIES.title",
             "icons": [ "arcaneresearch:textures/research/knowledge_theory.png" ],
-            "category": "BASICS", "location": [ 2,-3 ], 
+            "category": "BASICS", "location": [ 5,-2 ], 
             "parents": [ "THEORYRESEARCH" ],
             "meta": [ "ROUND","HIDDEN" ],
            "stages": [
@@ -66,7 +66,7 @@
             "key": "THEORYRESEARCH",    
             "name": "research.THEORYRESEARCH.title",
             "icons": [ "arcaneresearch:textures/research/knowledge_theory.png" ],
-            "category": "BASICS", "location": [ 4,-1 ], 
+            "category": "BASICS", "location": [ 4,0 ], 
             "parents": [ "KNOWLEDGETYPES" ],
             "meta": [ "ROUND" , "HIDDEN" ],        
             "stages": [
@@ -85,7 +85,7 @@
             "key": "FLUX",    
             "name": "research.FLUX.title",
             "icons": [ "arcaneresearch:textures/research/r_flux.png" ],
-            "category": "BASICS", "location": [ -2,-2 ], 
+            "category": "BASICS", "location": [ -2,-3 ], 
             "meta": [ "ROUND","HIDDEN" ],       
             "stages": [
                 {"text": "research.FLUX.stage.1", "required_research":["f_toomuchflux"]},
@@ -292,7 +292,7 @@
             "key": "CRIMSONAMULET",
             "name": "research.CRIMSONAMULET.title",
             "icons": [ "arcaneresearch:crimson_cult_amulet" ],
-            "category": "BASICS", "location": [ -6,6 ],
+            "category": "BASICS", "location": [ -8,6 ],
             "parents": [ "!gotcrimsonamulet" ],
             "meta": [ "HIDDEN" ],
             "stages": [
@@ -309,7 +309,7 @@
             "key": "CRIMSONBLADE",
             "name": "research.CRIMSONBLADE.title",
             "icons": [ "arcaneresearch:crimson_cult_blade" ],
-            "category": "BASICS", "location": [ -6,8 ],
+            "category": "BASICS", "location": [ -10,8 ],
             "parents": [ "CRIMSONAMULET" ],
             "meta": [ "HIDDEN" ],
             "stages": [
@@ -348,7 +348,7 @@
             "key": "CELESTIALSCANNING",    
             "name": "research.CELESTIALSCANNING.title",
             "icons": [ "arcaneresearch:textures/research/r_celestial.png" ],
-            "category": "BASICS", "location": [ 4,1 ], 
+            "category": "BASICS", "location": [ 5,2 ], 
             "parents": [ "THEORYRESEARCH" ],
             "meta": [ "ROUND"],        
             "stages": [
@@ -362,7 +362,7 @@
         "key": "FLUXCLEANUP",    
         "name": "research.FLUXCLEANUP.title",
         "icons": [ "arcaneresearch:condenser" ],
-        "category": "BASICS", "location": [ -2, -4 ], 
+        "category": "BASICS", "location": [ -2,-5 ], 
         "parents": [ "FLUX", "f_toomuchflux", "VISBATTERY" ],        
         "stages": [
                 {
@@ -380,7 +380,7 @@
             "key": "FLUXRIFT",    
             "name": "research.FLUXRIFT.title",
             "icons": [ "arcaneresearch:textures/research/r_fluxrift.png" ],
-            "category": "BASICS", "location": [ 0,-3 ], 
+            "category": "BASICS", "location": [ 0,-4 ], 
             "parents": [ "FLUX", "!FluxRift" ],        
             "meta": [ "ROUND","HIDDEN" ],       
             "stages": [
@@ -391,7 +391,7 @@
         "key": "RIFTCLOSER",    
         "name": "research.RIFTCLOSER.title",
         "icons": [ "arcaneresearch:causality_collapser" ],
-        "category": "BASICS", "location": [ 0, -5 ], 
+        "category": "BASICS", "location": [ 0,-6 ], 
         "parents": [ "FLUXRIFT", "INFUSION", "VISBATTERY" ],        
         "stages": [
                 {
@@ -408,7 +408,7 @@
         "key": "DECONSTRUCTOR",    
         "name": "research.DECONSTRUCTOR.title",
         "icons": [ "arcaneresearch:deconstruction_table" ],
-        "category": "BASICS", "location": [ 3,-4 ], 
+        "category": "BASICS", "location": [ 7,-2 ], 
         "parents": [ "DISCOVERIES" ],        
         "meta": [ "ROUND","HIDDEN" ],       
         "stages": [{"text": "research.DECONSTRUCTOR.stage.1", "recipes": ["arcaneresearch:arcane_workbench/deconstruction_table"]}]

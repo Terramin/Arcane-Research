@@ -23,11 +23,11 @@ import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
 public class FXBlockWard extends TextureSheetParticle {
-    private static final ResourceLocation[] TEXTURES = new ResourceLocation[15];
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[16];
 
     static {
-        for (int i = 0; i < 15; i++) {
-            TEXTURES[i] = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/models/hemis" + (i + 1) + ".png");
+        for (int i = 0; i < 16; i++) {
+            TEXTURES[i] = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/models/hemis" + i + ".png");
         }
     }
 
@@ -106,9 +106,11 @@ public class FXBlockWard extends TextureSheetParticle {
             localRotation = null;
         }
 
-        this.offsetX = stepX != 0 ? 0 : Mth.clamp(hitX - 0.6f + random.nextFloat() * 0.2f, -0.4f, 0.4f);
-        this.offsetY = stepY != 0 ? 0 : Mth.clamp(hitY - 0.6f + random.nextFloat() * 0.2f, -0.4f, 0.4f);
-        this.offsetZ = stepZ != 0 ? 0 : Mth.clamp(hitZ - 0.6f + random.nextFloat() * 0.2f, -0.4f, 0.4f);
+        // Keep the hemisphere centred on the block face instead of drifting
+        // toward the exact hit position.
+        this.offsetX = 0.0f;
+        this.offsetY = 0.0f;
+        this.offsetZ = 0.0f;
 
         this.rCol = 1.0f;
         this.gCol = 1.0f;
@@ -151,7 +153,7 @@ public class FXBlockWard extends TextureSheetParticle {
         BufferBuilder builder = tesselator.getBuilder();
 
         float fade = (age + partialTicks) / lifetime;
-        int frame = Math.min(14, (int) (15.0f * fade));
+        int frame = Math.min(15, (int) (16.0f * fade));
 
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, TEXTURES[frame]);

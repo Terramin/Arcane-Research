@@ -23,7 +23,7 @@
         "key": "ELDRITCHMINOR",    
         "name": "research.ELDRITCHMINOR.title",
         "icons": [ "arcaneresearch:textures/research/r_eldritchminor.png" ],
-        "category": "ELDRITCH", "location": [ 1,1 ], 
+        "category": "ELDRITCH", "location": [ 2,2 ], 
         "meta": [ "ROUND", "HIDDEN" ],        
         "stages": [
                 {
@@ -36,7 +36,7 @@
         "key": "ELDRITCHMAJOR",    
         "name": "research.ELDRITCHMAJOR.title",
         "icons": [ "arcaneresearch:textures/research/r_eldritchmajor.png" ],
-        "category": "ELDRITCH", "location": [ -1,1 ], 
+        "category": "ELDRITCH", "location": [ -2,2 ], 
         "meta": [ "ROUND", "HIDDEN" ],        
         "stages": [
                 {
@@ -51,7 +51,7 @@
         "key": "VOIDSIPHON",    
         "name": "research.VOIDSIPHON.title",
         "icons": [ "arcaneresearch:void_siphon" ],
-        "category": "ELDRITCH", "location": [ 3,0 ], 
+        "category": "ELDRITCH", "location": [ 4,0 ], 
         "parents": [ "BASEELDRITCH", "INFUSION" ],    
         "stages": [
                 {
@@ -69,7 +69,7 @@
         "key": "VOIDSEERPEARL",    
         "name": "research.VOIDSEERPEARL.title",
         "icons": [ "arcaneresearch:voidseer_charm" ],
-        "category": "ELDRITCH", "location": [ -3,0 ], 
+        "category": "ELDRITCH", "location": [ -4,0 ], 
         "parents": [ "BASEELDRITCH", "CURIOSITYBAND" ],    
         "stages": [
                 {
@@ -87,7 +87,7 @@
         "key": "VOIDROBEARMOR",    
         "name": "research.VOIDROBEARMOR.title",
         "icons": [ "arcaneresearch:void_robe_helm" ],
-        "category": "ELDRITCH", "location": [ 0,3 ], 
+        "category": "ELDRITCH", "location": [ 0,4 ], 
         "parents": [ "BASEELDRITCH", "ARMORFORTRESS" ],    
         "stages": [
                 {
@@ -105,7 +105,7 @@
         "key": "PRIMALCRUSHER",    
         "name": "research.PRIMALCRUSHER.title",
         "icons": [ "arcaneresearch:primal_crusher" ],
-        "category": "ELDRITCH", "location": [ 0,-3 ], 
+        "category": "ELDRITCH", "location": [ 0,-4 ], 
         "parents": [ "BASEELDRITCH", "ELEMENTALTOOLS" ],    
         "stages": [
                 {

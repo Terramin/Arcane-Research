@@ -1,0 +1,10 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 0,
+  "aspects": { "aer": 12, "praecantatio": 6, "motus": 6 },
+  "center": { "item": "minecraft:sugar_cane" },
+  "ingredients": [ { "item": "arcaneresearch:salis_mundus" }, { "item": "arcaneresearch:salis_mundus" }, { "type": "arcaneresearch:crystal", "aspect": "aer" } ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"reed\"}" }
+}
+

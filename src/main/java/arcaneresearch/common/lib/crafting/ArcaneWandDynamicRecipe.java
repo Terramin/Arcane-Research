@@ -111,7 +111,8 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
                 return null;
             }
             AspectList cost = ArcaneWandRecipe.getSceptreVisCost(matrix);
-            int vis = Math.min((cap.getCraftCost() + rod.getCraftCost()) * 45, 1800);
+            int vis = Math.min(ArcaneWandRecipe.sceptreCrystalCost(
+                    cap.getCraftCost(), rod.getCraftCost()) * 30, 1800);
             return new ArcaneWandDynamicRecipe(cap.getTag(), rod.getTag(), cost, vis, true);
         } catch (Exception e) {
             return null;
@@ -150,6 +151,18 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
         return out;
     }
 
+    /** TC4 uses the craftable rod item; the basic wooden rod is still a stick. */
+    private static ItemStack rodIngredient(WandRod rod) {
+        if (rod == null) {
+            return ItemStack.EMPTY;
+        }
+        if ("wood".equals(rod.getTag())) {
+            return rod.getItem().copy();
+        }
+        ItemStack rodStack = arcaneresearch.common.items.wands.ItemWandRod.createStack(rod.getTag());
+        return rodStack.isEmpty() ? rod.getItem().copy() : rodStack;
+    }
+
     public static ArcaneWandDynamicRecipe forPair(WandCap cap, WandRod rod) {
         AspectList cost = new AspectList();
         int vis = 0;
@@ -175,11 +188,11 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
             int cc = cap.getCraftCost();
             int cr = rod.getCraftCost();
             if (cc >= 0 && cr >= 0) {
-                int amount = Math.min((int) ((cc + cr) * 1.5F), 96);
+                int amount = ArcaneWandRecipe.sceptreCrystalCost(cc, cr);
                 for (Aspect as : Aspect.getPrimalAspects()) {
                     cost.add(as, amount);
                 }
-                vis = Math.min((cc + cr) * 45, 1800);
+                vis = Math.min(amount * 30, 1800);
             }
         } catch (Exception ignored) {
         }
@@ -263,14 +276,14 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
                     }
                 }
                 if (rod != null) {
-                    ItemStack rodStack = rod.getItem().copy();
+                    ItemStack rodStack = rodIngredient(rod);
                     if (!rodStack.isEmpty()) {
                         out.set(4, Ingredient.of(rodStack));
                     }
                 }
-                if (arcaneresearch.init.ModItems.SALIS_MUNDUS.isPresent()) {
+                if (arcaneresearch.init.ModItems.PRIMAL_CHARM.isPresent()) {
                     out.set(2, Ingredient.of(
-                            new ItemStack(arcaneresearch.init.ModItems.SALIS_MUNDUS.get())));
+                            new ItemStack(arcaneresearch.init.ModItems.PRIMAL_CHARM.get())));
                 }
                 return out;
             }
@@ -283,7 +296,7 @@ public class ArcaneWandDynamicRecipe implements IArcaneRecipe {
                 }
             }
             if (rod != null) {
-                ItemStack rodStack = rod.getItem().copy();
+                ItemStack rodStack = rodIngredient(rod);
                 if (!rodStack.isEmpty()) {
                     out.set(4, Ingredient.of(rodStack));
                 }

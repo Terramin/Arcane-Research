@@ -1,0 +1,10 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 0,
+  "aspects": { "aqua": 12, "praecantatio": 6, "gelum": 6 },
+  "center": { "item": "minecraft:ice" },
+  "ingredients": [ { "item": "arcaneresearch:salis_mundus" }, { "item": "arcaneresearch:salis_mundus" }, { "type": "arcaneresearch:crystal", "aspect": "aqua" } ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"ice\"}" }
+}
+

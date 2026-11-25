@@ -211,6 +211,14 @@ public class FocusItem extends Item {
         return true;
     }
 
+    /**
+     * TC4 foci charge vis themselves (and may skip the cost entirely, e.g. when
+     * lifting a ward). True means the wand must not pre-check or charge for it.
+     */
+    public boolean handlesOwnVisCost(ItemStack focusstack) {
+        return false;
+    }
+
     public boolean onFocusBlockStartBreak(ItemStack wandstack, BlockPos pos, Player player) {
         return false;
     }

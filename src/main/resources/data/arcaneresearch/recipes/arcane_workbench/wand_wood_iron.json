@@ -1,27 +1,19 @@
 {
   "type": "arcaneresearch:arcane_workbench_shaped",
   "research": "",
-  "vis": 60,
-  "crystals": {
-    "aer": 2,
-    "aqua": 2,
-    "ignis": 2,
-    "terra": 2,
-    "ordo": 2,
-    "perditio": 2
-  },
+  "vis": 0,
   "pattern": [
-    "  C",
-    " R ",
-    "C  "
+    "  I",
+    " S ",
+    "I  "
   ],
   "key": {
-    "C": {
+    "I": {
       "type": "forge:partial_nbt",
       "item": "arcaneresearch:wand_cap",
       "nbt": "{cap:\"iron\"}"
     },
-    "R": {
+    "S": {
       "item": "minecraft:stick"
     }
   },

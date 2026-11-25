@@ -1,0 +1,24 @@
+﻿{
+  "parent": "minecraft:item/generated",
+  "textures": { "layer0": "arcaneresearch:item/wand_rod_greatwood" },
+  "overrides": [
+    { "predicate": { "arcaneresearch:rod": 1 }, "model": "arcaneresearch:item/wand_rod/greatwood" },
+    { "predicate": { "arcaneresearch:rod": 2 }, "model": "arcaneresearch:item/wand_rod/obsidian" },
+    { "predicate": { "arcaneresearch:rod": 3 }, "model": "arcaneresearch:item/wand_rod/silverwood" },
+    { "predicate": { "arcaneresearch:rod": 4 }, "model": "arcaneresearch:item/wand_rod/ice" },
+    { "predicate": { "arcaneresearch:rod": 5 }, "model": "arcaneresearch:item/wand_rod/quartz" },
+    { "predicate": { "arcaneresearch:rod": 6 }, "model": "arcaneresearch:item/wand_rod/reed" },
+    { "predicate": { "arcaneresearch:rod": 7 }, "model": "arcaneresearch:item/wand_rod/blaze" },
+    { "predicate": { "arcaneresearch:rod": 8 }, "model": "arcaneresearch:item/wand_rod/bone" },
+    { "predicate": { "arcaneresearch:rod": 9 }, "model": "arcaneresearch:item/wand_rod/greatwood_staff" },
+    { "predicate": { "arcaneresearch:rod": 10 }, "model": "arcaneresearch:item/wand_rod/obsidian_staff" },
+    { "predicate": { "arcaneresearch:rod": 11 }, "model": "arcaneresearch:item/wand_rod/silverwood_staff" },
+    { "predicate": { "arcaneresearch:rod": 12 }, "model": "arcaneresearch:item/wand_rod/ice_staff" },
+    { "predicate": { "arcaneresearch:rod": 13 }, "model": "arcaneresearch:item/wand_rod/quartz_staff" },
+    { "predicate": { "arcaneresearch:rod": 14 }, "model": "arcaneresearch:item/wand_rod/reed_staff" },
+    { "predicate": { "arcaneresearch:rod": 15 }, "model": "arcaneresearch:item/wand_rod/blaze_staff" },
+    { "predicate": { "arcaneresearch:rod": 16 }, "model": "arcaneresearch:item/wand_rod/bone_staff" },
+    { "predicate": { "arcaneresearch:rod": 17 }, "model": "arcaneresearch:item/wand_rod/primal_staff" }
+  ]
+}
+

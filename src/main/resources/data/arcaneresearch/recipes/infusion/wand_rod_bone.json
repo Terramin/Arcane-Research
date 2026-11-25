@@ -1,0 +1,10 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 0,
+  "aspects": { "perditio": 12, "praecantatio": 6, "exanimis": 6 },
+  "center": { "item": "minecraft:bone" },
+  "ingredients": [ { "item": "arcaneresearch:salis_mundus" }, { "item": "arcaneresearch:salis_mundus" }, { "type": "arcaneresearch:crystal", "aspect": "perditio" } ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"bone\"}" }
+}
+

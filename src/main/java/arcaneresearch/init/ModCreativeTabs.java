@@ -277,6 +277,10 @@ public class ModCreativeTabs {
                         }
                         output.accept(ModItems.CURIOSITY.get());
                         output.accept(ModItems.KNOWLEDGE_FRAGMENT.get());
+                        output.accept(ModItems.PRIMAL_CHARM.get());
+                        for (String rodTag : arcaneresearch.common.items.wands.ItemWandRod.ROD_TAGS) {
+                            output.accept(arcaneresearch.common.items.wands.ItemWandRod.createStack(rodTag));
+                        }
                         output.accept(ModItems.CURIO_ARCANE.get());
                         output.accept(ModItems.CURIO_PRESERVED.get());
                         output.accept(ModItems.CURIO_ANCIENT.get());
@@ -539,7 +543,6 @@ public class ModCreativeTabs {
                         for (arcaneresearch.api.wands.WandCap cap : arcaneresearch.api.wands.WandCap.caps.values()) {
                             output.accept(arcaneresearch.common.items.wands.ItemWandCap.createStack(cap));
                         }
-                        output.accept(arcaneresearch.common.items.wands.WandItems.WAND.get());
                         // Жезлы (обычные и зачарованные)
                         for (arcaneresearch.api.wands.WandRod rod : arcaneresearch.api.wands.WandRod.rods.values()) {
                             if (rod.isStaff()) continue;
@@ -581,6 +584,7 @@ public class ModCreativeTabs {
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_PRIMAL.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_HELLBAT.get());
                         output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_PECH.get());
+                        output.accept(arcaneresearch.common.items.wands.WandItems.WAND_FOCUS_WARDING.get());
                         output.accept(ModItems.GOLEM_BELL.get());
                         output.accept(ModItems.GOLEM_PLACER.get());
                         output.accept(createGolemStackById(0, 0, 0, 0, 0));

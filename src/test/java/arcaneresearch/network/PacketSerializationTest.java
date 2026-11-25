@@ -15,6 +15,7 @@ import arcaneresearch.common.lib.network.fx.PacketFXSlash;
 import arcaneresearch.common.lib.network.fx.PacketFXSonic;
 import arcaneresearch.common.lib.network.fx.PacketFXVisDrain;
 import arcaneresearch.common.lib.network.fx.PacketFXWispZap;
+import arcaneresearch.common.lib.network.fx.PacketFXWardSparkle;
 import arcaneresearch.common.lib.network.misc.PacketBiomeChange;
 import arcaneresearch.common.lib.network.misc.PacketFocusChangeToServer;
 import arcaneresearch.common.lib.network.misc.PacketMiscStringToServer;
@@ -56,6 +57,7 @@ class PacketSerializationTest {
                 Arguments.of(new PacketFXShield(11, 22)),
                 Arguments.of(new PacketFXSlash(1, 2)),
                 Arguments.of(new PacketFXWispZap(3, 4)),
+                Arguments.of(new PacketFXWardSparkle(new BlockPos(3, 4, 5), 0xFCA000)),
                 Arguments.of(new PacketFXVisDrain(10, 64, -20, 12, 65, -18, 3)),
                 Arguments.of(new PacketFXSonic(99)),
                 Arguments.of(new PacketFXBlockMist(new BlockPos(1, 2, 3), 0x00FF00)),

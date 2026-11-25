@@ -1,0 +1,10 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 0,
+  "aspects": { "ordo": 12, "praecantatio": 6, "vitreus": 6 },
+  "center": { "item": "minecraft:quartz_block" },
+  "ingredients": [ { "item": "arcaneresearch:salis_mundus" }, { "item": "arcaneresearch:salis_mundus" }, { "type": "arcaneresearch:crystal", "aspect": "ordo" } ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"quartz\"}" }
+}
+

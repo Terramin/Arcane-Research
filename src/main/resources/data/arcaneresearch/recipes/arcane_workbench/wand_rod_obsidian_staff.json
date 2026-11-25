@@ -1,0 +1,16 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "",
+  "vis": 14,
+  "crystals": { "ordo": 14 },
+  "pattern": ["  S", " G ", "G  "],
+  "key": {
+    "S": { "item": "arcaneresearch:primal_charm" },
+    "G": {
+      "type": "forge:partial_nbt",
+      "item": "arcaneresearch:wand_rod",
+      "nbt": "{rod:\"obsidian\"}"
+    }
+  },
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"obsidian_staff\"}" }
+}

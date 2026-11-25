@@ -562,7 +562,8 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
         }
 
         AspectList cost = focus.getVisCost(focusStack);
-        if (!consumeAllVis(stack, player, cost, true, false)) {
+        boolean ownCost = focus.handlesOwnVisCost(focusStack);
+        if (!ownCost && !consumeAllVis(stack, player, cost, true, false)) {
             AURA_LOGGER.once("caster.cast.shortage", LogLevel.DEBUG,
                     "Caster cannot activate {}: insufficient vis", focus.getClass().getSimpleName());
             return InteractionResultHolder.fail(stack);
@@ -590,7 +591,9 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
         if (!activated) {
             return InteractionResultHolder.fail(stack);
         }
-        consumeAllVis(stack, player, cost, false, false);
+        if (!ownCost) {
+            consumeAllVis(stack, player, cost, false, false);
+        }
 
         player.swing(hand);
         player.getCooldowns().addCooldown(this, focus.getActivationCooldown(focusStack));

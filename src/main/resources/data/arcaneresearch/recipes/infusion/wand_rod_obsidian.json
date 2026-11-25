@@ -1,0 +1,10 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 0,
+  "aspects": { "terra": 12, "praecantatio": 6, "tenebrae": 6 },
+  "center": { "item": "minecraft:obsidian" },
+  "ingredients": [ { "item": "arcaneresearch:salis_mundus" }, { "item": "arcaneresearch:salis_mundus" }, { "type": "arcaneresearch:crystal", "aspect": "terra" } ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"obsidian\"}" }
+}
+

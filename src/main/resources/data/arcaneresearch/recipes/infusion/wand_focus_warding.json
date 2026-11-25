@@ -1,0 +1,27 @@
+{
+  "type": "arcaneresearch:infusion",
+  "research": "FOCUSWARDING",
+  "instability": 4,
+  "center": {
+    "item": "minecraft:emerald"
+  },
+  "ingredients": [
+    { "item": "arcaneresearch:quicksilver" },
+    { "type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "item": "minecraft:quartz" },
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" },
+    { "item": "arcaneresearch:quicksilver" },
+    { "type": "arcaneresearch:crystal", "aspect": "terra" },
+    { "item": "minecraft:quartz" },
+    { "type": "arcaneresearch:crystal", "aspect": "ordo" }
+  ],
+  "aspects": {
+    "terra": 250,
+    "praemunio": 250,
+    "ordo": 250,
+    "cognitio": 100
+  },
+  "result": {
+    "item": "arcaneresearch:wand_focus_warding"
+  }
+}

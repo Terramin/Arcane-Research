@@ -43,18 +43,19 @@ public class ArchitectOverlayRenderer {
         if (target == null) {
             return false;
         }
-        ArrayList<BlockPos> blocks = architect.getArchitectBlocks(stack, level,
-                target.getBlockPos(), target.getDirection(), player);
+        ArrayList<BlockPos> blocks = getCachedBlocks(architect, stack, level, target, player);
         if (blocks == null || blocks.isEmpty()) {
             return false;
         }
         LOGGER.once("render.architect", LogLevel.DEBUG,
                 "Architect overlay: {} blocks around {}", blocks.size(), target.getBlockPos());
-        drawArchitectAxis(poseStack, player, target.getBlockPos(), partialTick,
+        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        arcaneresearch.client.wards.WardRenderHelper.renderAxis(poseStack, target.getBlockPos(),
+                cameraPos,
                 architect.showAxis(stack, level, player, target.getDirection(), IArchitect.EnumAxis.X),
                 architect.showAxis(stack, level, player, target.getDirection(), IArchitect.EnumAxis.Y),
-                architect.showAxis(stack, level, player, target.getDirection(), IArchitect.EnumAxis.Z));
-        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+                architect.showAxis(stack, level, player, target.getDirection(), IArchitect.EnumAxis.Z),
+                partialTick);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(
                 com.mojang.blaze3d.platform.GlStateManager.SourceFactor.SRC_ALPHA,
@@ -62,10 +63,13 @@ public class ArchitectOverlayRenderer {
         RenderSystem.disableDepthTest();
         RenderSystem.disableCull();
         RenderSystem.depthMask(false);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         try (ArcaneLogger.Timing ignored = LOGGER.timer("render.architect")) {
             for (BlockPos pos : blocks) {
-                drawOverlayBlock(poseStack, pos, blocks, cameraPos);
+                float r = (float) (0.3 + 0.2 * Math.sin(player.tickCount / 2.0F + pos.getX()));
+                float g = (float) (0.3 + 0.2 * Math.sin(player.tickCount / 3.0F + pos.getY()));
+                float b = (float) (0.8 + 0.2 * Math.sin(player.tickCount / 4.0F + pos.getZ()));
+                arcaneresearch.client.wards.WardRenderHelper.renderBlock(poseStack, pos,
+                        blocks::contains, r, g, b, 0.2F, cameraPos);
             }
         }
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -75,6 +79,27 @@ public class ArchitectOverlayRenderer {
         RenderSystem.defaultBlendFunc();
         return true;
     }
+    private static long cacheTime;
+    private static String cacheKey;
+    private static ArrayList<BlockPos> cacheBlocks;
+
+    private static ArrayList<BlockPos> getCachedBlocks(IArchitect architect, ItemStack stack,
+                                                       Level level, BlockHitResult target, Player player) {
+        long now = System.currentTimeMillis();
+        String key = target.getBlockPos() + ":" + target.getDirection() + ":"
+                + (stack.getTag() == null ? "" : stack.getTag().getInt("areax") + "/"
+                + stack.getTag().getInt("areay") + "/" + stack.getTag().getInt("areaz")
+                + "/" + stack.getTag().getInt("aread"));
+        if (cacheBlocks != null && key.equals(cacheKey) && now - cacheTime < 100L) {
+            return cacheBlocks;
+        }
+        cacheTime = now;
+        cacheKey = key;
+        cacheBlocks = architect.getArchitectBlocks(stack, level, target.getBlockPos(),
+                target.getDirection(), player);
+        return cacheBlocks;
+    }
+
     private static boolean isConnectedBlock(ArrayList<BlockPos> blocks, BlockPos pos) {
         return blocks.contains(pos);
     }

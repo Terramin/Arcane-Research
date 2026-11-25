@@ -1,0 +1,10 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 0,
+  "aspects": { "ignis": 12, "praecantatio": 6, "bestia": 6 },
+  "center": { "item": "minecraft:blaze_rod" },
+  "ingredients": [ { "item": "arcaneresearch:salis_mundus" }, { "item": "arcaneresearch:salis_mundus" }, { "type": "arcaneresearch:crystal", "aspect": "ignis" } ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"blaze\"}" }
+}
+

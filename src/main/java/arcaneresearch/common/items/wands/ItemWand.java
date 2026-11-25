@@ -546,10 +546,11 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
 
         if (!focus.isVisCostPerTick(focusStack) && !FocusManager.isOnCooldown(player)) {
             AspectList cost = focus.getVisCost(stack);
-            if (consumeAllVis(stack, player, cost, true, false)) {
+            if (focus.handlesOwnVisCost(focusStack) || consumeAllVis(stack, player, cost, true, false)) {
                 LOGGER.debug("Wand activating focus {} (cost={})", focus.getClass().getSimpleName(), cost.visSize());
                 FocusManager.setCooldown(player, focus.getActivationCooldown(focusStack));
-                if (focus.onFocusActivation(stack, level, player, hit, 0)) {
+                boolean activated = focus.onFocusActivation(stack, level, player, hit, 0);
+                if (!focus.handlesOwnVisCost(focusStack) && activated) {
                     consumeAllVis(stack, player, cost, level.isClientSide, false);
                 }
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
@@ -734,8 +735,7 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
     @Override
     public boolean showAxis(ItemStack stack, Level level, Player player, Direction side, IArchitect.EnumAxis axis) {
         FocusItem focus = getFocus(stack);
-        if (focus instanceof IArchitect architect
-                && focus.isUpgradedWith(getFocusStack(stack), FocusUpgradeType.architect)) {
+        if (focus instanceof IArchitect architect) {
             return architect.showAxis(stack, level, player, side, axis);
         }
         return false;

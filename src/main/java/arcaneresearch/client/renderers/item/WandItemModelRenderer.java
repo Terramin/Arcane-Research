@@ -196,8 +196,39 @@ public final class WandItemModelRenderer {
         float pulse = 0.92F + 0.08F * (0.5F + 0.5F * Mth.sin(ticks / FOCUS_LIGHT_PERIOD));
         int rgb = scaleTint(arg.focusColor() & 0xFFFFFF, pulse);
         int tint = (FOCUS_ALPHA << 24) | rgb;
+        boolean warding = arg.stack().getItem() instanceof arcaneresearch.api.wands.IFocusHost host
+                && host.getFocus(arg.stack())
+                instanceof arcaneresearch.common.items.wands.foci.ItemFocusWarding;
+        // TC4 ModelWand: the 3D focus always uses wand.png tinted by focusColor.
+        // A focus with a depth layer is rendered more transparent (0.6 vs 0.95).
+        int alpha = warding ? 0x99 : FOCUS_ALPHA;
+        if (warding) {
+            // Depth cube only; no ornament decals are rendered on the wand.
+            submitDepth(poseStack, buffer, ticks, isStaff);
+        }
         submitBox(poseStack, buffer.getBuffer(RenderType.entityTranslucent(FOCUS_TEXTURE)),
-                FOCUS_BOX, tint, FULL_BRIGHT);
+                FOCUS_BOX, (alpha << 24) | rgb, FULL_BRIGHT);
+        poseStack.popPose();
+    }
+
+    /** TC4's getFocusDepthLayerIcon: a small, offset, blurred cube. */
+    private static void submitDepth(PoseStack poseStack, MultiBufferSource buffer, float ticks,
+                                    boolean isStaff) {
+        ResourceLocation depth = wandTexture("focus_warding_depth.png");
+        // Values are pre-Fit: the focus Fit scale (0.5 / 0.525) is already in
+        // the pose, so these match TC4's 0.16 / 0.165 final depth cube.
+        float size = isStaff ? 0.314F : 0.32F;
+        float height = isStaff ? 0.319F : 0.32F;
+        float offsetY = isStaff ? -0.272F : -0.18F;
+        int frame = ((int) ticks) % 9;
+        poseStack.pushPose();
+        poseStack.translate(0.0F, offsetY, 0.0F);
+        poseStack.scale(1.0F, height / size, 1.0F);
+        WandBoxGeometry.box(poseStack,
+                buffer.getBuffer(RenderType.entityTranslucent(depth)),
+                -size / 2.0F, -size / 2.0F, -size / 2.0F,
+                size / 2.0F, size / 2.0F, size / 2.0F,
+                0, frame * 24, 8, 8, 8, 24, 24 * 9, WHITE_TINT, FULL_BRIGHT, true);
         poseStack.popPose();
     }
 
@@ -258,12 +289,22 @@ public final class WandItemModelRenderer {
     }
 
     private static void submitBox(PoseStack poseStack, VertexConsumer buffer, BoxSpec box, int tint, int light) {
+        submitBox(poseStack, buffer, box, tint, light, TEXTURE_SIZE, TEXTURE_SIZE, 0);
+    }
+
+    private static void submitBox(PoseStack poseStack, VertexConsumer buffer, BoxSpec box, int tint,
+                                  int light, int texW, int texH, int vOffset) {
         WandBoxGeometry.box(poseStack, buffer,
                 box.minX() * PIXEL, box.minY() * PIXEL, box.minZ() * PIXEL,
                 (box.minX() + box.width()) * PIXEL, (box.minY() + box.height()) * PIXEL,
                 (box.minZ() + box.depth()) * PIXEL,
-                box.u(), box.v(), box.width(), box.height(), box.depth(),
-                TEXTURE_SIZE, TEXTURE_SIZE, tint, light, true);
+                box.u(), vOffset, box.width(), box.height(), box.depth(),
+                texW, texH, tint, light, true);
+    }
+
+    private static ResourceLocation wandTexture(String name) {
+        return ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID,
+                "textures/item/wand/" + name);
     }
 
     private static RenderType cutout(ResourceLocation texture) {

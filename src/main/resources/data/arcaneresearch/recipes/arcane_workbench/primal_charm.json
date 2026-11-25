@@ -1,0 +1,18 @@
+﻿{
+  "type": "arcaneresearch:arcane_workbench_shaped",
+  "research": "",
+  "vis": 25,
+  "crystals": { "aer": 25, "ignis": 25, "aqua": 25, "terra": 25, "ordo": 25, "perditio": 25 },
+  "pattern": ["123", "ISI", "456"],
+  "key": {
+    "I": { "item": "minecraft:gold_ingot" },
+    "S": { "item": "arcaneresearch:salis_mundus" },
+    "1": { "type": "arcaneresearch:crystal", "aspect": "aer" },
+    "2": { "type": "arcaneresearch:crystal", "aspect": "ignis" },
+    "3": { "type": "arcaneresearch:crystal", "aspect": "aqua" },
+    "4": { "type": "arcaneresearch:crystal", "aspect": "terra" },
+    "5": { "type": "arcaneresearch:crystal", "aspect": "ordo" },
+    "6": { "type": "arcaneresearch:crystal", "aspect": "perditio" }
+  },
+  "result": { "item": "arcaneresearch:primal_charm" }
+}

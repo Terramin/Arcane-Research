@@ -355,6 +355,17 @@ public class Arcaneresearch {
                         ResourceLocation.fromNamespaceAndPath(MODID, "cap"),
                         (stack, level, entity, seed) ->
                                 arcaneresearch.common.items.wands.ItemWandCap.getCapIndex(stack));
+                ItemProperties.register(
+                        arcaneresearch.common.items.wands.WandItems.WAND_ROD.get(),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "rod"),
+                        (stack, level, entity, seed) ->
+                                arcaneresearch.common.items.wands.ItemWandRod.getRodIndex(stack));
+                // 30 frames cut from the original 16x480 charm.png, 10 fps.
+                ItemProperties.register(
+                        ModItems.PRIMAL_CHARM.get(),
+                        ResourceLocation.fromNamespaceAndPath(MODID, "charm_frame"),
+                        (stack, level, entity, seed) ->
+                                (float) ((net.minecraft.Util.getMillis() / 100L) % 30L));
                 net.minecraft.client.renderer.entity.EntityRenderers.register(
                     ModEntities.ARCANERESEARCH_GOLEM.get(),
                     arcaneresearch.client.renderers.entity.GolemRenderer::new

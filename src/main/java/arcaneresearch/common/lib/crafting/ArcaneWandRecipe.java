@@ -38,12 +38,15 @@ public class ArcaneWandRecipe {
                 }
             }
             for (WandRod wr : WandRod.rods.values()) {
-                if (checkItemEquals(rod, wr.getItem())) {
+                if (matchesRodComponent(rod, wr)) {
                     br = wr.getTag();
                     break;
                 }
             }
             if (bc != null && br != null) {
+                if (isBasicWand(bc, br)) {
+                    return ItemStack.EMPTY;
+                }
                 out = WandItems.createWandStack();
                 if (out.getItem() instanceof IFocusHostWand w) {
                     w.setCap(out, WandCap.caps.get(bc));
@@ -55,6 +58,9 @@ public class ArcaneWandRecipe {
     }
     public static AspectList getVisCost(CraftingContainer inv) {
         AspectList al = new AspectList();
+        if (getCraftingResult(inv).isEmpty()) {
+            return al;
+        }
         int cc = -1;
         int cr = -1;
         ItemStack cap1 = getSlot(inv, 0, 2);
@@ -72,7 +78,7 @@ public class ArcaneWandRecipe {
                 }
             }
             for (WandRod wr : WandRod.rods.values()) {
-                if (checkItemEquals(rod, wr.getItem())) {
+                if (matchesRodComponent(rod, wr)) {
                     cr = wr.getCraftCost();
                     break;
                 }
@@ -86,13 +92,31 @@ public class ArcaneWandRecipe {
         }
         return al;
     }
+    // TC4 ArcaneWandRecipe: cost = cap craft cost * rod craft cost, charged to
+    // each primal aspect. Wood rod + iron cap is the free basic wand and is
+    // handled by its own recipe instead.
     public static int wandCrystalCost(int capCost, int rodCost) {
-        return Math.min(capCost + rodCost, 64);
+        return Math.min(capCost * rodCost, 64);
     }
     public static int wandVisCost(int capCost, int rodCost) {
-        return Math.min((capCost + rodCost) * 30, 1200);
+        return Math.min(wandCrystalCost(capCost, rodCost) * 30, 1200);
+    }
+    public static int sceptreCrystalCost(int capCost, int rodCost) {
+        return Math.min((int) (capCost * rodCost * 1.5F), 64);
+    }
+    private static boolean isBasicWand(String capTag, String rodTag) {
+        return "iron".equals(capTag) && "wood".equals(rodTag);
+    }
+    private static boolean matchesRodComponent(ItemStack input, WandRod rod) {
+        if (input.getItem() instanceof arcaneresearch.common.items.wands.ItemWandRod) {
+            return rod.getTag().equals(arcaneresearch.common.items.wands.ItemWandRod.getRodTag(input));
+        }
+        return checkItemEquals(input, rod.getItem());
     }
     public static boolean matches(CraftingContainer inv, Player player) {
+        if (getCraftingResult(inv).isEmpty()) {
+            return false;
+        }
         ItemStack cap1 = getSlot(inv, 0, 2);
         ItemStack cap2 = getSlot(inv, 2, 0);
         ItemStack rod = getSlot(inv, 1, 1);
@@ -126,7 +150,8 @@ public class ArcaneWandRecipe {
         if (cap == null || rod == null) {
             return al;
         }
-        int amount = Math.min((int) ((cap.getCraftCost() + rod.getCraftCost()) * 1.5F), 96);
+        // TC4 ArcaneSceptreRecipe: (cap cost * rod cost) * 1.5 per primal aspect.
+        int amount = sceptreCrystalCost(cap.getCraftCost(), rod.getCraftCost());
         for (Aspect as : Aspect.getPrimalAspects()) {
             al.add(as, amount);
         }
@@ -157,7 +182,7 @@ public class ArcaneWandRecipe {
         if (!checkItemEquals(cap1, cap2) || !checkItemEquals(cap1, cap3)) {
             return null;
         }
-        if (!salis.is(arcaneresearch.init.ModItems.SALIS_MUNDUS.get())) {
+        if (!salis.is(arcaneresearch.init.ModItems.PRIMAL_CHARM.get())) {
             return null;
         }
         String bc = null;
@@ -169,7 +194,7 @@ public class ArcaneWandRecipe {
             }
         }
         for (WandRod wr : WandRod.rods.values()) {
-            if (checkItemEquals(rod, wr.getItem())) {
+            if (matchesRodComponent(rod, wr)) {
                 br = wr.getTag();
                 break;
             }
@@ -210,7 +235,7 @@ public class ArcaneWandRecipe {
                 }
             }
             for (WandRod wr : WandRod.rods.values()) {
-                if (checkItemEquals(rod, wr.getItem())
+                if (matchesRodComponent(rod, wr)
                         && (player == null || WandResearchHelper.isResearchComplete(player, wr.getResearch()))) {
                     br = true;
                     break;

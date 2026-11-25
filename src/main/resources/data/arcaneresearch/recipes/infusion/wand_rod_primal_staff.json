@@ -1,0 +1,19 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 8,
+  "aspects": { "aer": 32, "ignis": 32, "aqua": 32, "terra": 32, "ordo": 32, "perditio": 32, "praecantatio": 64 },
+  "center": { "type": "forge:partial_nbt", "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"silverwood\"}" },
+  "ingredients": [
+    { "item": "arcaneresearch:primal_charm" },
+    { "item": "arcaneresearch:primal_charm" },
+    { "type": "forge:partial_nbt", "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"obsidian\"}" },
+    { "type": "forge:partial_nbt", "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"ice\"}" },
+    { "type": "forge:partial_nbt", "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"quartz\"}" },
+    { "type": "forge:partial_nbt", "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"reed\"}" },
+    { "type": "forge:partial_nbt", "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"blaze\"}" },
+    { "type": "forge:partial_nbt", "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"bone\"}" }
+  ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"primal_staff\"}" }
+}
+

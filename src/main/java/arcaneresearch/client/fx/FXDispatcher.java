@@ -456,6 +456,21 @@ public class FXDispatcher {
             }
         }
     }
+    /** Bright sparkle burst used when a ward is created or lifted (TC4 colour 0xFCA000). */
+    public void drawWardSparkle(BlockPos p, int color) {
+        Random random = new Random();
+        float r = ((color >> 16) & 0xFF) / 255.0F;
+        float g = ((color >> 8) & 0xFF) / 255.0F;
+        float b = (color & 0xFF) / 255.0F;
+        for (int i = 0; i < 7; i++) {
+            drawSimpleSparkle(random,
+                    p.getX() + 0.5 + random.nextGaussian() * 0.3,
+                    p.getY() + 0.5 + random.nextGaussian() * 0.3,
+                    p.getZ() + 0.5 + random.nextGaussian() * 0.3,
+                    0, 0.0025, 0, 0.4F, r, g, b, random.nextInt(5), 1.0F, 0.01F, 16);
+        }
+    }
+
     public void drawBlockSparkles(BlockPos p, Vec3 start) {
         ClientLevel level = getClientLevel();
         if (level == null) return;
@@ -1008,10 +1023,13 @@ public class FXDispatcher {
             addParticle(shield);
         }
     }
-    public void blockWard(double x, double y, double z, Direction side, float r, float g, float b) {
+    /** TC4 proxy.blockWard(): the last three arguments are hit offsets, not a colour. */
+    public void blockWard(double x, double y, double z, Direction side,
+                          float hitX, float hitY, float hitZ) {
         ClientLevel level = getClientLevel();
         if (level != null) {
-            FXBlockWard ward = new FXBlockWard(level, x + 0.5, y + 0.5, z + 0.5, side, r, g, b);
+            FXBlockWard ward = new FXBlockWard(level, x + 0.5, y + 0.5, z + 0.5,
+                    side, hitX, hitY, hitZ);
             addParticle(ward);
         }
     }

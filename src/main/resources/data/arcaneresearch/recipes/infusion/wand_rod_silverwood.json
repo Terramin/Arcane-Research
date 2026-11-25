@@ -1,0 +1,10 @@
+﻿{
+  "type": "arcaneresearch:infusion",
+  "research": "LEGACYWANDS",
+  "instability": 0,
+  "aspects": { "aer": 9, "ignis": 9, "aqua": 9, "terra": 9, "ordo": 9, "perditio": 9, "praecantatio": 9 },
+  "center": { "item": "arcaneresearch:silverwood_log" },
+  "ingredients": [ { "type": "arcaneresearch:crystal", "aspect": "aer" }, { "type": "arcaneresearch:crystal", "aspect": "ignis" }, { "type": "arcaneresearch:crystal", "aspect": "aqua" }, { "type": "arcaneresearch:crystal", "aspect": "terra" }, { "type": "arcaneresearch:crystal", "aspect": "ordo" }, { "type": "arcaneresearch:crystal", "aspect": "perditio" }, { "type": "arcaneresearch:crystal", "aspect": "praecantatio" } ],
+  "result": { "item": "arcaneresearch:wand_rod", "nbt": "{rod:\"silverwood\"}" }
+}
+
