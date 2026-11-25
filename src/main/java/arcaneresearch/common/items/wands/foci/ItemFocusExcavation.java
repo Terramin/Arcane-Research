@@ -93,6 +93,11 @@ public class ItemFocusExcavation extends FocusItem {
     }
 
     @Override
+    public WandFocusAnimation getAnimation(ItemStack focusstack) {
+        return WandFocusAnimation.CHARGE;
+    }
+
+    @Override
     public boolean onFocusActivation(ItemStack stack, Level level, LivingEntity caster, HitResult hit, int count) {
         if (!(stack.getItem() instanceof IFocusHost wand) || !(caster instanceof Player player)) {
             return false;
