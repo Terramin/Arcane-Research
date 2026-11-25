@@ -635,7 +635,7 @@ public class ItemCaster extends Item implements IFocusHost, IArchitect {
         FocusItem focus = getFocus(stack);
         if (focus != null && !focusStack.isEmpty() && !FocusManager.isOnCooldown(entity)) {
             FocusManager.setCooldown(entity, focus.getActivationCooldown(focusStack));
-            return focusStack.getItem().onEntitySwing(stack, entity);
+            return focusStack.getItem().onEntitySwing(focusStack, entity);
         }
         return super.onEntitySwing(stack, entity);
     }

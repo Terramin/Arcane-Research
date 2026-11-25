@@ -55,7 +55,7 @@ public class PechWandItem extends Item {
             return InteractionResultHolder.pass(stack);
         }
 
-        if (!player.getAbilities().instabuild) {
+        if (!clientSide && !player.getAbilities().instabuild) {
             stack.shrink(1);
         }
 

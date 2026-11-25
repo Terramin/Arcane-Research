@@ -3,7 +3,6 @@ package arcaneresearch.common.lib.network.wand;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.api.wands.IFocusHostWand;
@@ -12,11 +11,11 @@ import arcaneresearch.debug.ArcaneLogger;
 import arcaneresearch.debug.LogLevel;
 import arcaneresearch.debug.ProfileCategory;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class PacketWandFocusChangeToServer {
     private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.NETWORK);
+    /** Kept in the wire format for old clients; the server never trusts it. */
     private int playerId;
     private String focus;
 
@@ -47,31 +46,30 @@ public class PacketWandFocusChangeToServer {
         return msg;
     }
 
-    private static boolean isSceptre(ItemStack stack) {
-        return stack.getItem() instanceof IFocusHostWand wand && wand.isSceptre(stack);
+    /** Sceptres are crafting-only wands: research states that foci cannot be fitted to them. */
+    private static boolean acceptsFocus(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof IFocusHost)) {
+            return false;
+        }
+        return !(stack.getItem() instanceof IFocusHostWand wand && wand.isSceptre(stack));
     }
 
     public static void handle(PacketWandFocusChangeToServer msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
+            // The sender is the only authority here. Never look up another
+            // player by a client-provided id: that allowed changing other
+            // players' foci. The id field stays in the protocol for old
+            // clients but is deliberately ignored.
             ServerPlayer player = ctx.get().getSender();
-            if (player != null && msg.playerId != 0 && player.getId() != msg.playerId) {
-                player = null;
-                Level level = Objects.requireNonNull(ctx.get().getSender()).level();
-                if (level.getEntity(msg.playerId) instanceof ServerPlayer sp2) {
-                    player = sp2;
-                }
-            }
             if (player != null) {
                 ItemStack held = player.getMainHandItem();
-                if (held.isEmpty() || !(held.getItem() instanceof IFocusHost) || isSceptre(held)) {
-                    ItemStack off = player.getOffhandItem();
-                    if (!off.isEmpty() && off.getItem() instanceof IFocusHost && !isSceptre(off)) {
-                        held = off;
-                    } else {
+                if (!acceptsFocus(held)) {
+                    held = player.getOffhandItem();
+                    if (!acceptsFocus(held)) {
                         held = ItemStack.EMPTY;
                     }
                 }
-                if (!held.isEmpty() && held.getItem() instanceof IFocusHost) {
+                if (!held.isEmpty()) {
                     LOGGER.debug("Focus change packet from {}: requested {}", player.getName().getString(), msg.focus);
                     FocusManager.changeFocus(held, player.level(), player, msg.focus);
                 } else {

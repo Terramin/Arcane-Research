@@ -8,6 +8,15 @@ import arcaneresearch.api.aspects.AspectList;
 public interface IFocusHost {
     int getMaxVis(ItemStack stack);
 
+    /**
+     * Capacity in hundredths of a vis — the unit used by the internal vis tags.
+     * Wands keep the 1.5x sceptre bonus here so no half point is lost to early
+     * truncation; casters and other hosts can keep using the integer default.
+     */
+    default int getMaxVisHundredths(ItemStack stack) {
+        return getMaxVis(stack) * 100;
+    }
+
     int getVis(ItemStack stack, Aspect aspect);
 
     AspectList getAllVis(ItemStack stack);
@@ -16,8 +25,17 @@ public interface IFocusHost {
 
     float getConsumptionModifier(ItemStack stack, Player player, Aspect aspect, boolean crafting);
 
+    /**
+     * The last flag means "simulate": check affordability without mutating the
+     * stack. It is not a crafting-discount switch — pass {@code false} to
+     * {@link #getConsumptionModifier} for that.
+     */
     boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean simulate);
 
+    /**
+     * @param simulate check only, never write NBT
+     * @param crafting suppress focus/staff bonuses when computing the modifier
+     */
     boolean consumeAllVis(ItemStack stack, Player player, AspectList cost, boolean simulate, boolean crafting);
 
     int addVis(ItemStack stack, Aspect aspect, int amount, boolean simulate);

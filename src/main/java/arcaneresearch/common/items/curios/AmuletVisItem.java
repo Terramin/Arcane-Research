@@ -63,7 +63,7 @@ public class AmuletVisItem extends EquippableCurioItem implements IRunicArmor {
                             continue;
                         }
                         int wandVis = held.hasTag() ? Objects.requireNonNull(held.getTag()).getInt(aspect.getTag()) : 0;
-                        int amt = Math.min(5, wand.getMaxVis(held) * 100 - wandVis);
+                        int amt = Math.min(5, wand.getMaxVisHundredths(held) - wandVis);
                         amt = Math.min(amt, getVis(stack, aspect));
                         if (amt > 0) {
                             storeVis(stack, aspect, getVis(stack, aspect) - amt);

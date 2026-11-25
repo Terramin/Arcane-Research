@@ -18,5 +18,24 @@ public interface IFocusHostWand extends IFocusHost {
 
     boolean isStaff(ItemStack stack);
 
-    boolean isSceptre(ItemStack stack);
+    /**
+     * A sceptre is a wand with the {@code sceptre} flag set. The flag is part
+     * of the wand's data, not of its rod/staff geometry: a sceptre can be
+     * built from any rod. Always read the boolean, never just tag presence —
+     * {@code sceptre: false} must not turn a wand into a sceptre.
+     */
+    default boolean isSceptre(ItemStack stack) {
+        return stack.getTag() != null && stack.getTag().getBoolean("sceptre");
+    }
+
+    default void setSceptre(ItemStack stack, boolean sceptre) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        if (sceptre) {
+            stack.getOrCreateTag().putBoolean("sceptre", true);
+        } else if (stack.getTag() != null) {
+            stack.getTag().remove("sceptre");
+        }
+    }
 }

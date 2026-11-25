@@ -68,15 +68,22 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
 
     @Override
     public int getMaxVis(ItemStack stack) {
+        return getMaxVisInternal(stack) / 100;
+    }
+
+    @Override
+    public int getMaxVisHundredths(ItemStack stack) {
+        return getMaxVisInternal(stack);
+    }
+
+    private int getMaxVisInternal(ItemStack stack) {
         WandRod rod = getRod(stack);
         if (rod == null) {
             return 0;
         }
-        return (int) (rod.getCapacity() * (isSceptre(stack) ? 1.5F : 1.0F));
-    }
-
-    private int getMaxVisInternal(ItemStack stack) {
-        return getMaxVis(stack) * 100;
+        // Keep the 1.5x sceptre bonus in hundredths; rounding to whole vis
+        // first used to lose up to half a point of capacity (375 -> 562 instead of 562.5).
+        return (int) (rod.getCapacity() * (isSceptre(stack) ? 1.5F : 1.0F) * 100.0F);
     }
 
     @Override
@@ -160,13 +167,15 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
     }
 
     @Override
-    public boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean crafting) {
+    public boolean consumeVis(ItemStack stack, Player player, Aspect aspect, int amount, boolean simulate) {
         amount *= 100;
-        amount = (int) (amount * getConsumptionModifier(stack, player, aspect, crafting));
+        amount = (int) (amount * getConsumptionModifier(stack, player, aspect, false));
 
         int current = getVisInternal(stack, aspect);
         if (current >= amount) {
-            storeVisInternal(stack, aspect, current - amount);
+            if (!simulate && !isClientSide(player)) {
+                storeVisInternal(stack, aspect, current - amount);
+            }
             AURA_LOGGER.debug("Wand consumed {} {} vis ({} left)", amount, aspect.getTag(), current - amount);
             return true;
         }
@@ -354,15 +363,10 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
         return rod != null && rod.isStaff();
     }
 
-    @Override
-    public boolean isSceptre(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.contains("sceptre");
-    }
-
+    /** Kept for the crafting code; the form flag itself lives in the API. */
     public static void setSceptre(ItemStack stack) {
-        if (!stack.isEmpty()) {
-            stack.getOrCreateTag().putBoolean("sceptre", true);
+        if (!stack.isEmpty() && stack.getItem() instanceof IFocusHostWand wand) {
+            wand.setSceptre(stack, true);
         }
     }
 
@@ -400,8 +404,11 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
             if (rod != null && rod.getOnUpdate() != null) {
                 rod.getOnUpdate().onUpdate(stack, player);
             }
-            if (player.tickCount % 5 == 0) {
-                int rate = FocusManager.getBaseChargeRate(player, selected, slot);
+            boolean held = selected || player.getOffhandItem() == stack;
+            if (held && player.tickCount % 5 == 0) {
+                // Node tapper research only benefits the wand in the hotbar;
+                // an offhand wand still gets the base recharge rate.
+                int rate = FocusManager.getBaseChargeRate(player, held, selected ? slot : 9);
                 if (rate > 0) {
                     handleRecharge(level, stack, player.blockPosition(), player, rate);
                 }
@@ -545,7 +552,7 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
         ItemStack focusStack = getFocusStack(stack);
 
         if (!focus.isVisCostPerTick(focusStack) && !FocusManager.isOnCooldown(player)) {
-            AspectList cost = focus.getVisCost(stack);
+            AspectList cost = focus.getVisCost(focusStack);
             if (focus.handlesOwnVisCost(focusStack) || consumeAllVis(stack, player, cost, true, false)) {
                 LOGGER.debug("Wand activating focus {} (cost={})", focus.getClass().getSimpleName(), cost.visSize());
                 FocusManager.setCooldown(player, focus.getActivationCooldown(focusStack));
@@ -587,7 +594,7 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
             return;
         }
 
-        AspectList cost = focus.getVisCost(stack);
+        AspectList cost = focus.getVisCost(getFocusStack(stack));
         if (!consumeAllVis(stack, player, cost, true, false)) {
             LOGGER.once("wand.tick.shortage", LogLevel.DEBUG,
                     "Wand stopped channeling {}: not enough vis", focus.getClass().getSimpleName());
@@ -659,9 +666,10 @@ public class ItemWand extends Item implements IFocusHostWand, IArchitect, IArchi
     @Override
     public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
         ItemStack focusStack = getFocusStack(stack);
-        if (!focusStack.isEmpty() && !FocusManager.isOnCooldown(entity)) {
-            FocusManager.setCooldown(entity, getFocus(stack).getActivationCooldown(focusStack));
-            return focusStack.getItem().onEntitySwing(stack, entity);
+        FocusItem focus = getFocus(stack);
+        if (focus != null && !focusStack.isEmpty() && !FocusManager.isOnCooldown(entity)) {
+            FocusManager.setCooldown(entity, focus.getActivationCooldown(focusStack));
+            return focusStack.getItem().onEntitySwing(focusStack, entity);
         }
         return super.onEntitySwing(stack, entity);
     }

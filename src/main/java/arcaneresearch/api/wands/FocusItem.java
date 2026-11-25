@@ -101,7 +101,8 @@ public class FocusItem extends Item {
             }
         }
         for (Short upgradeId : map.keySet()) {
-            String key = FocusUpgradeType.types[upgradeId] != null
+            String key = upgradeId >= 0 && upgradeId < FocusUpgradeType.types.length
+                    && FocusUpgradeType.types[upgradeId] != null
                     ? FocusUpgradeType.types[upgradeId].getLocalizedName()
                     : ("focus.upgrade." + upgradeId);
             int count = map.get(upgradeId);
@@ -147,8 +148,12 @@ public class FocusItem extends Item {
         return out;
     }
 
+    /**
+     * Null Object: a focus without an explicit cost simply costs nothing.
+     * HUD, tooltips and the simulate/pay paths all read this directly.
+     */
     public AspectList getVisCost(ItemStack focusstack) {
-        return null;
+        return new AspectList();
     }
 
     public int getActivationCooldown(ItemStack focusstack) {
@@ -179,8 +184,11 @@ public class FocusItem extends Item {
     }
 
     public boolean applyUpgrade(ItemStack focusstack, FocusUpgradeType type, int rank) {
+        if (type == null || rank < 1 || rank > 5) {
+            return false;
+        }
         short[] upgrades = getAppliedUpgrades(focusstack);
-        if (upgrades[rank - 1] != -1 || rank < 1 || rank > 5) {
+        if (rank > upgrades.length || upgrades[rank - 1] != -1) {
             return false;
         }
         upgrades[rank - 1] = type.id;
