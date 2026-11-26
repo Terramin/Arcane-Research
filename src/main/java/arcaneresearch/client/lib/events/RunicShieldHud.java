@@ -18,7 +18,7 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = Arcaneresearch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class RunicShieldHud {
-    private static final ResourceLocation SHEET = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles_1710.png");
+    private static final ResourceLocation SHEET = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/base_particles.png");
     private static final Map<Integer, Integer> charge = new HashMap<>();
     private static final Map<Integer, Integer> total = new HashMap<>();
     public static void applySync(int playerId, int current, int max) {
@@ -69,13 +69,13 @@ public class RunicShieldHud {
             int py = baseY - row * rowHeight;
             int cell = a % 10;
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(SHEET, px, py, 160, 16, 9, 9, 256, 256);
+            graphics.blit(SHEET, px, py, 128, 512, 9, 9, 1024, 1024);
             graphics.pose().pushPose();
             graphics.pose().translate(px, py, 0.0F);
             graphics.pose().scale(0.5F, 0.5F, 1.0F);
             graphics.setColor(1.0F, 0.75F, 0.24F,
                     Mth.sin(player.tickCount / 4.0F + cell) * 0.4F + 0.6F);
-            graphics.blit(SHEET, 0, 0, cell * 16, 96, 16, 16, 256, 256);
+            graphics.blit(SHEET, 0, 0, 144 + cell * 16, 512, 16, 16, 1024, 1024);
             graphics.pose().popPose();
         }
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);

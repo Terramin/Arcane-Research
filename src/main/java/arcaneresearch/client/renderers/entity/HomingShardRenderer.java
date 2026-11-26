@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @OnlyIn(Dist.CLIENT)
 public class HomingShardRenderer extends EntityRenderer<EntityHomingShard> {
     private static final ResourceLocation PARTICLES =
-            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/base_particles.png");
     private static final ResourceLocation BEAM_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/beaml.png");
     private static final int TRAIL_LENGTH = 14;

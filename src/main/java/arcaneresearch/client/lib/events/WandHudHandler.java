@@ -20,7 +20,7 @@ import java.util.HashMap;
 @OnlyIn(Dist.CLIENT)
 public class WandHudHandler {
     public static AspectList currentAura = new AspectList();
-    final ResourceLocation hudTex = ResourceLocation.parse("arcaneresearch:textures/gui/wand_hud.png");
+    final ResourceLocation hudTex = ResourceLocation.parse("arcaneresearch:textures/gui/base_hud.png");
     HashMap<Integer, AspectList> oldvals = new HashMap<>();
     long nextsync = 0L;
     DecimalFormat secondsFormatter = new DecimalFormat("#######.#");
@@ -50,7 +50,7 @@ public class WandHudHandler {
         graphics.pose().scale(0.5F, 0.5F, 1.0F);
         com.mojang.blaze3d.systems.RenderSystem.enableBlend();
         com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
-        graphics.blit(this.hudTex, 0, 0, 0, 0, 64, 64, 256, 256);
+        graphics.blit(this.hudTex, 0, 0, 0, 0, 64, 64, 192, 128);
         graphics.pose().popPose();
         graphics.pose().translate(16.0F, 16.0F, 0.0F);
         int max = wand.getMaxVis(wandstack);
@@ -74,20 +74,20 @@ public class WandHudHandler {
             int color = aspect.getColor();
             graphics.setColor((color >> 16 & 255) / 255.0F, (color >> 8 & 255) / 255.0F,
                     (color & 255) / 255.0F, 0.8F);
-            graphics.blit(this.hudTex, -4, 35 - loc, 104, 0, 8, loc, 256, 256);
+            graphics.blit(this.hudTex, -4, 35 - loc, 80, 42, 8, loc, 192, 128);
             graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(this.hudTex, -8, -3, 72, 0, 16, 42, 256, 256);
+            graphics.blit(this.hudTex, -8, -3, 80, 0, 16, 42, 192, 128);
             int sh = 0;
             if (focus != null && !focusStack.isEmpty()
                     && focus.getVisCost(focusStack).getAmount(aspect) > 0) {
-                graphics.blit(this.hudTex, -4, -8, 136, 0, 8, 8, 256, 256);
+                graphics.blit(this.hudTex, -4, -8, 96, 74, 8, 8, 192, 128);
                 sh = 8;
             }
             if (old != null) {
                 if (old.getAmount(aspect) > amt) {
-                    graphics.blit(this.hudTex, -4, -8 - sh, 128, 0, 8, 8, 256, 256);
+                    graphics.blit(this.hudTex, -4, -8 - sh, 88, 74, 8, 8, 192, 128);
                 } else if (old.getAmount(aspect) < amt) {
-                    graphics.blit(this.hudTex, -4, -8 - sh, 120, 0, 8, 8, 256, 256);
+                    graphics.blit(this.hudTex, -4, -8 - sh, 80, 74, 8, 8, 192, 128);
                 }
             }
             if (player.isCrouching()) {

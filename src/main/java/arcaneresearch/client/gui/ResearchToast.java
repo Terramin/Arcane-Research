@@ -18,7 +18,7 @@ import arcaneresearch.init.ModSounds;
 @OnlyIn(Dist.CLIENT)
 public class ResearchToast implements Toast {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/hud.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/base_hud.png");
     private static final long DISPLAY_TIME = 5000L;
     private final ResearchEntry entry;
     private final Component title;
@@ -93,7 +93,7 @@ public class ResearchToast implements Toast {
             }
         }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        graphics.blit(TEXTURE, 0, 0, 0, 224, this.width(), this.height());
+        graphics.blit(TEXTURE, 0, 0, 0, 96, this.width(), this.height());
         drawResearchIcon(graphics, entry, 6, 8);
         var font = toastComponent.getMinecraft().font;
         graphics.drawString(font, title, 30, 7, 10631665, false);

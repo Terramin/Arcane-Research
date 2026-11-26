@@ -37,7 +37,7 @@ public class HexTableDraw {
     static final ResourceLocation UNKNOWN =
             IDsHelper.mod("textures/aspects/_unknown.png");
     static final ResourceLocation ORB =
-            IDsHelper.mod("textures/misc/particles_1710.png");
+            IDsHelper.mod("textures/misc/base_particles.png");
     static final int SHEET_X = 94;
     static final int SHEET_Y = 8;
     static final int SHEET = 150;
@@ -222,10 +222,10 @@ public class HexTableDraw {
 
     private void drawOrbSprite(GuiGraphics graphics, int x, int y, int rgb) {
         int part = (int) (orbTick() % 8);
-        int u = 128 + part * 32;
+        int u = part * 16;
         RenderSystem.setShaderColor(((rgb >> 16) & 0xFF) / 255.0F,
                 ((rgb >> 8) & 0xFF) / 255.0F, (rgb & 0xFF) / 255.0F, 1.0F);
-        GuiBlitHelper.blit(graphics, ORB, x, y, u, 128, 16, 16, 256, 256);
+        GuiBlitHelper.blit(graphics, ORB, x, y, u, 512, 16, 16, 1024, 1024);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 

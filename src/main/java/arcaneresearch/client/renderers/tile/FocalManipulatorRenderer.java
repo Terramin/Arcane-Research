@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @OnlyIn(Dist.CLIENT)
 public class FocalManipulatorRenderer implements BlockEntityRenderer<TileFocalManipulator> {
     private static final ResourceLocation PARTICLE_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/base_particles.png");
     private static final RenderType PARTICLE_TYPE = RenderType.entityTranslucentEmissive(PARTICLE_TEXTURE);
     // Vanilla lightning writes depth, so overlapping rays clip each other and the item.
     // Use the same additive shader/state but write colour only.

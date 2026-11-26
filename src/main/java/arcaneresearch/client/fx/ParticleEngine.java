@@ -9,7 +9,7 @@ import arcaneresearch.client.lib.events.handler.ParticleHandler;
 @OnlyIn(Dist.CLIENT)
 public class ParticleEngine {
     public static ResourceLocation particleTexture =
-            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/base_particles.png");
     public static void addEffect(Level level, Particle fx) {
         if (level == null || !level.isClientSide || fx == null) {
             return;

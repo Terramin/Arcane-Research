@@ -22,7 +22,7 @@ public class FXBeamBore extends TextureSheetParticle {
     private static final ResourceLocation BEAM1_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam1.png");
     private static final ResourceLocation BEAM2_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam2.png");
     private static final ResourceLocation BEAM3_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/beam3.png");
-    private static final ResourceLocation PARTICLE_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
+    private static final ResourceLocation PARTICLE_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/base_particles.png");
     private static final ResourceLocation NODE_TEXTURE = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/auranodes.png");
     public int impact = 0;
     protected double targetX;

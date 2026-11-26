@@ -23,7 +23,7 @@ import org.joml.Quaternionf;
 @OnlyIn(Dist.CLIENT)
 public class FXPlane extends TextureSheetParticle {
     private static final ResourceLocation PARTICLE_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/base_particles.png");
 
     private static final float INV_32 = 1.0f / 32.0f;
     private static final float V0 = 10.0f / 32.0f;

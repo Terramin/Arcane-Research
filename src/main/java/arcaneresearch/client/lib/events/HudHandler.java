@@ -42,7 +42,7 @@ public class HudHandler {
     private static final ArcaneLogger RENDER_LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
     public static final Queue<KnowledgeGainTracker> knowledgeGainTrackers = new ConcurrentLinkedQueue<>();
     private static final ResourceLocation HUD_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/hud.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/base_hud.png");
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#######.#");
     private static final float MAX_VIS = 525.0f;
     private static final ResourceLocation BOOK =
@@ -270,11 +270,11 @@ public class HudHandler {
             graphics.pose().translate(5, start, 0);
             graphics.pose().scale(1f, vis, 1f);
             RenderSystem.setShaderColor(0.7f, 0.4f, 0.9f, 1f);
-            graphics.blit(HUD_TEXTURE, 0, 0, 88, 56, 8, 64, 256, 256);
+            graphics.blit(HUD_TEXTURE, 0, 0, 96, 0, 8, 64, 192, 128);
             graphics.pose().popPose();
             RenderSystem.blendFunc(770, 1);
             RenderSystem.setShaderColor(1f, 1f, 1f, 0.5f);
-            graphics.blit(HUD_TEXTURE, 5, (int) start, 96, (int) (56 + count % 64), 8, (int) (vis * 64), 256, 256);
+            graphics.blit(HUD_TEXTURE, 5, (int) start, 176, (int) (count % 64), 8, (int) (vis * 64), 192, 128);
             RenderSystem.defaultBlendFunc();
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             if (player.isShiftKeyDown()) {
@@ -297,11 +297,11 @@ public class HudHandler {
             graphics.pose().translate(5, start, 0);
             graphics.pose().scale(1f, flux, 1f);
             RenderSystem.setShaderColor(0.25f, 0.1f, 0.3f, 1f);
-            graphics.blit(HUD_TEXTURE, 0, 0, 88, 56, 8, 64, 256, 256);
+            graphics.blit(HUD_TEXTURE, 0, 0, 96, 0, 8, 64, 192, 128);
             graphics.pose().popPose();
             RenderSystem.blendFunc(770, 1);
             RenderSystem.setShaderColor(0.7f, 0.4f, 1f, 0.5f);
-            graphics.blit(HUD_TEXTURE, 5, (int) start, 104, (int) (120 - count2 % 64), 8, (int) (flux * 64), 256, 256);
+            graphics.blit(HUD_TEXTURE, 5, (int) start, 184, (int) (64 - count2 % 64), 8, (int) (flux * 64), 192, 128);
             RenderSystem.defaultBlendFunc();
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             if (player.isShiftKeyDown()) {
@@ -321,8 +321,8 @@ public class HudHandler {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        graphics.blit(HUD_TEXTURE, 1, 1, 72, 48, 16, 80, 256, 256);
-        graphics.blit(HUD_TEXTURE, 2, (int) (8 + (1 - base) * 64), 117, 61, 14, 5, 256, 256);
+        graphics.blit(HUD_TEXTURE, 1, 1, 64, 0, 16, 80, 192, 128);
+        graphics.blit(HUD_TEXTURE, 2, (int) (8 + (1 - base) * 64), 88, 84, 14, 5, 192, 128);
         graphics.pose().popPose();
         RenderSystem.disableBlend();
     }
@@ -382,26 +382,26 @@ public class HudHandler {
         graphics.pose().pushPose();
         graphics.pose().translate(0, yOffset, 0);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        graphics.blit(HUD_TEXTURE, 1, 1, 152, 0, 20, 76, 256, 256);
+        graphics.blit(HUD_TEXTURE, 1, 1, 104, 0, 20, 76, 192, 128);
         if (t > 0) {
             RenderSystem.setShaderColor(1f, 0.5f, 1f, 1f);
-            graphics.blit(HUD_TEXTURE, 7, 21 + gap, 200, gap, 8, wt + gap, 256, 256);
+            graphics.blit(HUD_TEXTURE, 7, 21 + gap, 144, gap, 8, wt + gap, 192, 128);
         }
         if (s > 0) {
             RenderSystem.setShaderColor(0.75f, 0f, 0.75f, 1f);
-            graphics.blit(HUD_TEXTURE, 7, 21 + wt + gap, 200, wt + gap, 8, wt + ws + gap, 256, 256);
+            graphics.blit(HUD_TEXTURE, 7, 21 + wt + gap, 144, wt + gap, 8, wt + ws + gap, 192, 128);
         }
         if (p > 0) {
             RenderSystem.setShaderColor(0.5f, 0f, 0.5f, 1f);
-            graphics.blit(HUD_TEXTURE, 7, 21 + wt + ws + gap, 200, wt + ws + gap, 8, 48, 256, 256);
+            graphics.blit(HUD_TEXTURE, 7, 21 + wt + ws + gap, 144, wt + ws + gap, 8, 48, 192, 128);
         }
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        graphics.blit(HUD_TEXTURE, 1, 1, 176, 0, 20, 76, 256, 256);
+        graphics.blit(HUD_TEXTURE, 1, 1, 124, 0, 20, 76, 192, 128);
         if (tw >= 100f) {
             java.util.Random rng = new java.util.Random();
             graphics.pose().pushPose();
             graphics.pose().scale(0.75f, 0.75f, 1f);
-            graphics.blit(HUD_TEXTURE, 3 + rng.nextInt(2), 3 + rng.nextInt(2), 216, 0, 20, 16, 256, 256);
+            graphics.blit(HUD_TEXTURE, 3 + rng.nextInt(2), 3 + rng.nextInt(2), 152, 0, 20, 16, 192, 128);
             graphics.pose().popPose();
         }
         graphics.pose().popPose();

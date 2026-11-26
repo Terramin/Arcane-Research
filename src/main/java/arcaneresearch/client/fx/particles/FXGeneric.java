@@ -54,7 +54,7 @@ public class FXGeneric extends TextureSheetParticle {
     private final Quaternionf renderQuat = new Quaternionf();
 
     public static final ResourceLocation TC_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/particles.png");
+            ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/base_particles.png");
 
     public static final ParticleRenderType TC_ADDITIVE = new ParticleRenderType() {
         @Override
