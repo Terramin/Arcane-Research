@@ -2070,6 +2070,7 @@
   "item.arcaneresearch.wand_focus_frost": "Набалдашник: Заморозка",
   "item.arcaneresearch.wand_focus_warding": "Набалдашник: Укрепление",
   "item.arcaneresearch.wand_focus_warding.tooltip": "Щёлкните правой кнопкой по блоку, чтобы защитить его от разрушения и взрывов. Повторный щелчок снимает Вашу защиту.",
+  "item.arcaneresearch.wand_focus_warding.tooltip.group": "Зажмите Shift+Ctrl и щелкните правой кнопкой по защищённому блоку, чтобы снять всю связанную группу Ваших вардов.",
   "item.Wand.wood.rod": "деревянный",
   "item.Wand.greatwood.rod": "великодревесный",
   "item.Wand.silverwood.rod": "серебродревесный",

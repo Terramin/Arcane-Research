@@ -100,6 +100,8 @@ public class ItemFocusWarding extends FocusItem implements IArchitectExtended {
                                      List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("item.arcaneresearch.wand_focus_warding.tooltip")
                 .withStyle(ChatFormatting.DARK_PURPLE));
+        tooltip.add(Component.translatable("item.arcaneresearch.wand_focus_warding.tooltip.group")
+                .withStyle(ChatFormatting.DARK_PURPLE));
         super.addFocusInformation(focusstack, level, tooltip, flag);
     }
 

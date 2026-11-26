@@ -1305,6 +1305,7 @@
   "item.arcaneresearch.wand_focus_trade": "Wand Focus: Equal Trade",
   "item.arcaneresearch.wand_focus_warding": "Wand Focus: Warding",
   "item.arcaneresearch.wand_focus_warding.tooltip": "Right-click a block to seal it against breaking and explosions. Right-click again to lift your ward.",
+  "item.arcaneresearch.wand_focus_warding.tooltip.group": "Hold Shift+Ctrl and right-click a warded block to lift your whole connected group of wards.",
   "item.arcaneresearch.wand_pech_blast": "Pech's Curse",
   "item.arcaneresearch.wand_rod": "Wand Rod",
   "item.arcaneresearch.wand_rod.blaze": "Blazing Rod",
