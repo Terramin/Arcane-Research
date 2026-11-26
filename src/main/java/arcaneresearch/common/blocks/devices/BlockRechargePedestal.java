@@ -22,7 +22,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import arcaneresearch.api.items.IRechargable;
 import arcaneresearch.common.tiles.devices.TileRechargePedestal;
 import arcaneresearch.init.ModBlockEntities;
 import javax.annotation.Nullable;
@@ -53,7 +52,7 @@ public class BlockRechargePedestal extends Block implements EntityBlock {
         if (be instanceof TileRechargePedestal pedestal) {
             ItemStack heldItem = player.getItemInHand(hand);
             ItemStack pedestalItem = pedestal.getItem(0);
-            if (pedestalItem.isEmpty() && heldItem.getItem() instanceof IRechargable) {
+            if (pedestalItem.isEmpty() && TileRechargePedestal.canCharge(heldItem)) {
                 ItemStack toPlace = heldItem.copy();
                 toPlace.setCount(1);
                 pedestal.setItem(0, toPlace);

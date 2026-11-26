@@ -5,7 +5,10 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IAspectContainer;
 import arcaneresearch.api.items.IRechargable;
 import arcaneresearch.api.items.RechargeHelper;
+import arcaneresearch.api.wands.IFocusHost;
 import arcaneresearch.client.fx.FXDispatcher;
+import arcaneresearch.common.items.casters.ItemCaster;
+import arcaneresearch.common.items.wands.ItemWand;
 import arcaneresearch.common.tiles.TileArcaneresearchInventory;
 import arcaneresearch.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -28,6 +31,12 @@ import static arcaneresearch.api.items.RechargeHelper.*;
 public class TileRechargePedestal extends TileArcaneresearchInventory implements IAspectContainer, WorldlyContainer {
 
     private static final int[] SLOTS = {0};
+    /** Generic chargeable items recharge slowly; wands/casters use their in-hand cadence. */
+    private static final int GENERIC_PERIOD = 10;
+    private static final int HAND_PERIOD = 5;
+    private static final int HAND_RATE = 1;
+    /** The pedestal recharges casting tools twice as fast as holding them. */
+    private static final int PEDESTAL_MULTIPLIER = 2;
 
     private int counter = 0;
 
@@ -45,11 +54,30 @@ public class TileRechargePedestal extends TileArcaneresearchInventory implements
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileRechargePedestal tile) {
         tile.counter++;
-        if (tile.counter % 10 != 0) return;
         ItemStack stack = tile.getItem(0);
-        if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable)) return;
-        float recharged = rechargeItem(level, stack, pos, null, 5);
-        if (recharged <= 0) return;
+        if (stack.isEmpty()) {
+            return;
+        }
+        boolean handCharged = stack.getItem() instanceof ItemWand || stack.getItem() instanceof ItemCaster;
+        if (!handCharged && !(stack.getItem() instanceof IRechargable)) {
+            return;
+        }
+        if (tile.counter % (handCharged ? HAND_PERIOD : GENERIC_PERIOD) != 0) {
+            return;
+        }
+        boolean recharged;
+        if (stack.getItem() instanceof ItemWand wand) {
+            recharged = wand.handleRecharge(level, stack, pos, null,
+                    HAND_RATE * PEDESTAL_MULTIPLIER) != null;
+        } else if (stack.getItem() instanceof ItemCaster caster) {
+            recharged = caster.handleRecharge(level, stack, pos, null,
+                    HAND_RATE * PEDESTAL_MULTIPLIER) != null;
+        } else {
+            recharged = rechargeItem(level, stack, pos, null, 5) > 0;
+        }
+        if (!recharged) {
+            return;
+        }
         tile.markDirtyAndSync();
         ArrayList<Aspect> primals = Aspect.getPrimalAspects();
         if (primals.isEmpty()) return;
@@ -64,9 +92,15 @@ public class TileRechargePedestal extends TileArcaneresearchInventory implements
         setItem(slot, stack);
     }
 
+    public static boolean canCharge(ItemStack stack) {
+        return stack.getItem() instanceof IRechargable
+                || stack.getItem() instanceof ItemWand
+                || stack.getItem() instanceof ItemCaster;
+    }
+
     @Override
     public boolean canPlaceItem(int slot, @NotNull ItemStack stack) {
-        return slot == 0 && stack.getItem() instanceof IRechargable;
+        return slot == 0 && canCharge(stack);
     }
 
     @Override
@@ -76,7 +110,7 @@ public class TileRechargePedestal extends TileArcaneresearchInventory implements
 
     @Override
     public boolean canPlaceItemThroughFace(int slot, @NotNull ItemStack stack, Direction direction) {
-        return slot == 0 && stack.getItem() instanceof IRechargable;
+        return slot == 0 && canCharge(stack);
     }
 
     @Override
@@ -87,7 +121,14 @@ public class TileRechargePedestal extends TileArcaneresearchInventory implements
     @Override
     public AspectList getAspects() {
         ItemStack stack = (level == null || level.isClientSide) ? getSyncedStackInSlot(0) : getItem(0);
-        if (!stack.isEmpty() && stack.getItem() instanceof IRechargable) {
+        if (stack.isEmpty()) {
+            return null;
+        }
+        if (stack.getItem() instanceof IFocusHost host) {
+            AspectList vis = host.getAllVis(stack);
+            return vis != null && vis.size() > 0 ? vis : null;
+        }
+        if (stack.getItem() instanceof IRechargable) {
             int charge = Math.round(getCharge(stack));
             if (charge > 0) {
                 return new AspectList().add(Aspect.ENERGY, charge);
