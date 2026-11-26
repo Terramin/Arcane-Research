@@ -102,6 +102,7 @@ public class TileTubeValve extends TileTube {
                 if (te instanceof TileTube otherTube) {
                     otherTube.openSides[dir.getOpposite().ordinal()] = openSides[subHit];
                     otherTube.markDirtyAndSync();
+                    otherTube.syncConnectionState();
                 }
             }
             return true;

@@ -369,6 +369,10 @@ public class TileTube extends TileArcaneresearch implements IEssentiaTransport, 
                 if (te instanceof TileTube otherTube) {
                     otherTube.openSides[side.getOpposite().ordinal()] = openSides[side.ordinal()];
                     otherTube.markDirtyAndSync();
+                    // markDirtyAndSync only sends BE data; the neighbour's
+                    // blockstate (and therefore its rendered shape) must be
+                    // refreshed too, or it still looks disconnected.
+                    otherTube.syncConnectionState();
                 }
             }
         }

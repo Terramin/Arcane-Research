@@ -7,6 +7,10 @@ import net.minecraft.core.Direction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,6 +35,17 @@ class TubeLogicTest {
         assertFalse(tube.canOutputTo(Direction.NORTH));
         assertTrue(tube.isConnectable(Direction.SOUTH));
         assertFalse(tube.isConnectable(null));
+    }
+
+    @Test
+    void togglingSideRefreshesTheNeighboursRenderedConnections() throws Exception {
+        Path java = Path.of(System.getProperty("arcaneresearch.resources.dir", "src/main/resources"))
+                .getParent().resolve("java/arcaneresearch/common/tiles/essentia");
+        for (String file : new String[]{"TileTube.java", "TileTubeValve.java"}) {
+            String source = Files.readString(java.resolve(file), StandardCharsets.UTF_8);
+            assertTrue(source.contains("otherTube.syncConnectionState()"),
+                    file + " must refresh the neighbour blockstate");
+        }
     }
 
     @Test
