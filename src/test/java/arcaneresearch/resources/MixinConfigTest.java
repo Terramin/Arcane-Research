@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -20,10 +21,11 @@ class MixinConfigTest {
             "arcaneresearch.mixins.json",
             "arcaneresearch.crit.mixins.json",
             "arcaneresearch.lore.mixins.json",
-            "arcaneresearch.helper.mixins.json");
+            "arcaneresearch.helper.mixins.json",
+            "arcaneresearch.wards.mixins.json");
 
     @Test
-    void allFourConfigsArePresentAndDeclareRequiredMetadata() {
+    void allConfigsArePresentAndDeclareRequiredMetadata() {
         for (String name : CONFIGS) {
             assertTrue(ResourceFiles.exists(name), "missing mixin config " + name);
             JsonObject config = ResourceFiles.readJson(name).getAsJsonObject();
@@ -62,5 +64,16 @@ class MixinConfigTest {
             assertTrue(count > 0, name + " declares no mixins");
             assertTrue(missing.isEmpty(), name + " references missing classes: " + missing);
         }
+    }
+
+    @Test
+    void wardBreakMixinStopsClientSideBreakPrediction() throws Exception {
+        Path mixin = ResourceFiles.javaRoot().resolve(
+                "arcaneresearch/client/wards/mixin/WardBlockBreakMixin.java");
+        String source = Files.readString(mixin, StandardCharsets.UTF_8);
+        assertTrue(source.contains("@Mixin(MultiPlayerGameMode.class)"));
+        assertTrue(source.contains("startDestroyBlock"));
+        assertTrue(source.contains("destroyBlock"));
+        assertTrue(source.contains("setReturnValue(false)"));
     }
 }

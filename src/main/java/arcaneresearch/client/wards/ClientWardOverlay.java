@@ -8,9 +8,11 @@ import arcaneresearch.common.wards.WardEntry;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -96,11 +98,16 @@ public final class ClientWardOverlay {
     /** Hit effect: the original BlockWarded spawns its hemisphere FX on attack. */
     @SubscribeEvent
     public static void onLeftClick(net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event) {
-        if (event.getLevel().isClientSide && event.getFace() != null
-                && isWardedForClient(event.getLevel().dimension().location().toString(), event.getPos())) {
+        if (event.getLevel().isClientSide) {
+            spawnWardHitFx(event.getLevel(), event.getPos(), event.getFace());
+        }
+    }
+
+    /** Called both from the left-click event and from the dig-prevention mixin. */
+    public static void spawnWardHitFx(Level level, BlockPos pos, Direction face) {
+        if (face != null && isWardedForClient(level.dimension().location().toString(), pos)) {
             arcaneresearch.client.fx.FXDispatcher.INSTANCE.blockWard(
-                    event.getPos().getX(), event.getPos().getY(), event.getPos().getZ(),
-                    event.getFace(), 0.6F, 0.6F, 0.6F);
+                    pos.getX(), pos.getY(), pos.getZ(), face, 0.6F, 0.6F, 0.6F);
         }
     }
 

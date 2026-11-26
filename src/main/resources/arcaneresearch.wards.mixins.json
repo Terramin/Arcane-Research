@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "arcaneresearch.client.wards.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "arcaneresearch.refmap.json",
+  "client": [
+    "WardBlockBreakMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
