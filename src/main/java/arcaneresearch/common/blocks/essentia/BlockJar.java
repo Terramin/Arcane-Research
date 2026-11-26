@@ -37,6 +37,7 @@ import arcaneresearch.api.blocks.ILabelable;
 import arcaneresearch.client.fx.FXDispatcher;
 import arcaneresearch.common.items.consumables.ItemLabel;
 import arcaneresearch.common.tiles.essentia.TileJar;
+import arcaneresearch.common.tiles.essentia.JarBrainRules;
 import arcaneresearch.common.tiles.essentia.TileJarBrain;
 import arcaneresearch.common.tiles.essentia.TileJarVoid;
 import arcaneresearch.init.ModBlockEntities;
@@ -123,18 +124,16 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
                                  InteractionHand hand, BlockHitResult hit) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof TileJarBrain brain) {
+            // The original sets eatDelay on both sides, before the isRemote check.
+            brain.eatDelay = JarBrainRules.EAT_DELAY;
             if (level.isClientSide) {
                 level.playSound(player, pos, ModSounds.JAR.get(), SoundSource.BLOCKS, 0.2f, 1.0f);
                 return InteractionResult.SUCCESS;
             }
-            brain.eatDelay = 40;
-            int var6 = level.random.nextInt(Math.min(brain.xp + 1, 64));
+            int var6 = level.random.nextInt(JarBrainRules.orbValueCap(brain.xp));
             if (var6 > 0) {
                 brain.xp -= var6;
-                int xp = var6;
-                while (xp > 0) {
-                    int split = ExperienceOrb.getExperienceValue(xp);
-                    xp -= split;
+                for (int split : JarBrainRules.splitOrbValues(var6)) {
                     level.addFreshEntity(new ExperienceOrb(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, split));
                 }
                 level.sendBlockUpdated(pos, state, state, 3);
@@ -220,7 +219,6 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
             ItemStack drop = new ItemStack(this);
             if (brain.xp > 0) {
                 drop.getOrCreateTag().putInt("xp", brain.xp);
-                drop.getOrCreateTag().putInt("XP", brain.xp);
             }
             return Collections.singletonList(drop);
         }
@@ -269,8 +267,7 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         BlockEntity tile = level.getBlockEntity(pos);
         if (tile instanceof TileJarBrain brain) {
-            float r = brain.xp / (float) TileJarBrain.MAX_XP;
-            return Mth.floor(r * 14.0f) + (brain.xp > 0 ? 1 : 0);
+            return JarBrainRules.comparatorOutput(brain.xp, brain.xpMax);
         }
         if (tile instanceof TileJar jar) {
             float r = jar.getAmount() / 250.0f;
@@ -289,7 +286,7 @@ public class BlockJar extends Block implements EntityBlock, ILabelable {
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource rand) {
         BlockEntity tile = level.getBlockEntity(pos);
-        if (tile instanceof TileJarBrain brain && brain.xp >= TileJarBrain.MAX_XP
+        if (tile instanceof TileJarBrain brain && brain.xpMax > 0 && brain.xp >= brain.xpMax
                 && FXDispatcher.INSTANCE != null) {
             FXDispatcher.INSTANCE.spark(pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
                     3.0f, 0.2f + rand.nextFloat() * 0.2f, 1.0f, 0.3f + rand.nextFloat() * 0.2f, 0.5f);

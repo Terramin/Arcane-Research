@@ -17,6 +17,10 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.client.models.block.BrainModel;
 import arcaneresearch.common.tiles.essentia.TileJarBrain;
 
+/**
+ * Renders the preserved brain inside a jar, together with the translucent brine.
+ * Rotation and bob are interpolated between the last two client ticks.
+ */
 @OnlyIn(Dist.CLIENT)
 public class JarBrainRenderer implements BlockEntityRenderer<TileJarBrain> {
     private static final ResourceLocation BRAIN_TEXTURE =
@@ -52,7 +56,9 @@ public class JarBrainRenderer implements BlockEntityRenderer<TileJarBrain> {
             poseStack.translate(0.5, 0.01, 0.5);
             poseStack.mulPose(ROT_XP_180);
             poseStack.translate(0.0F, -0.77F + yOffset, 0.0F);
-            poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+            // brainRotation is stored in radians (atan2/wrapAngle); the original
+            // converts with f3 * 180 / PI before calling glRotatef.
+            poseStack.mulPose(Axis.YP.rotationDegrees((float) Math.toDegrees(rotation)));
             poseStack.mulPose(ROT_YP_NEG_90);
             float scale = 0.4F;
             poseStack.scale(scale, scale, scale);

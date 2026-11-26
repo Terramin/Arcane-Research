@@ -18,20 +18,36 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.List;
 
+/**
+ * Block entity for the jar that stores experience and animates a preserved brain.
+ *
+ * <p>The server owns XP collection and orb absorption; the client owns the visual
+ * rotation, bob and ambient sound. Both sides pull nearby orbs through the shared
+ * {@link JarBrainRules} helpers so the two views stay consistent.</p>
+ */
 public class TileJarBrain extends TileArcaneresearch {
 
-    public static final int MAX_XP = 2000;
-    private static final float TWO_PI = (float) (Math.PI * 2.0);
+    /** Default capacity; see {@link JarBrainRules#DEFAULT_MAX_XP}. */
+    public static final int MAX_XP = JarBrainRules.DEFAULT_MAX_XP;
 
+    /** Stored experience points, always clamped to {@link #xpMax} on load and tick. */
     public int xp = 0;
+    /** Mutable XP limit; kept as a field so it can be adjusted per tile. */
+    public int xpMax = MAX_XP;
+    /** Remaining ticks during which orbs cannot be absorbed (set by shaking the jar). */
     public int eatDelay = 0;
+    /** Current yaw of the brain, in radians. */
     public float brainRotation = 0;
+    /** Yaw used by the renderer to interpolate the previous tick, in radians. */
     public float brainRotationPrev = 0;
+    /** Current vertical offset of the brain. */
     public float brainY = 0;
+    /** Vertical offset from the previous tick, used for interpolation. */
     public float brainYPrev = 0;
 
     private float bobPhase = 0;
-    private long lastSigh = 0;
+    private long lastSigh = System.currentTimeMillis() + JarBrainRules.INITIAL_SIGH_DELAY;
+    private float targetRotation = 0;
     private int tickCount = 0;
 
     @Nullable
@@ -39,26 +55,38 @@ public class TileJarBrain extends TileArcaneresearch {
     @Nullable
     private AABB eatBox;
 
+    /**
+     * @param type registered block entity type
+     * @param pos block position
+     * @param state initial block state
+     */
     public TileJarBrain(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
+    /** Convenience constructor using the registered jar-brain block entity type. */
     public TileJarBrain(BlockPos pos, BlockState state) {
         this(ModBlockEntities.JAR_BRAIN.get(), pos, state);
     }
 
+    /**
+     * Server half of the tick: clamps XP, applies the pause after shaking, pulls the
+     * closest orb and absorbs every orb touching the jar's centre box.
+     */
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileJarBrain tile) {
         tile.tickCount++;
-        if (tile.xp > MAX_XP) {
-            tile.xp = MAX_XP;
-        }
+        tile.xp = JarBrainRules.clampXp(tile.xp, tile.xpMax);
+        boolean mayEat = JarBrainRules.serverMayEat(tile.xp, tile.xpMax, tile.eatDelay);
 
         if (tile.eatDelay > 0) {
             tile.eatDelay--;
-        } else if (tile.xp < MAX_XP) {
+        } else if (mayEat) {
             AABB box = tile.pullBox;
             if (box == null) {
-                box = new AABB(tile.worldPosition).inflate(8.0);
+                JarBrainRules.Bounds bounds = JarBrainRules.pullBox(
+                        tile.worldPosition.getX(), tile.worldPosition.getY(), tile.worldPosition.getZ());
+                box = new AABB(bounds.minX(), bounds.minY(), bounds.minZ(),
+                        bounds.maxX(), bounds.maxY(), bounds.maxZ());
                 tile.pullBox = box;
             }
             List<ExperienceOrb> orbs = level.getEntitiesOfClass(ExperienceOrb.class, box);
@@ -78,27 +106,14 @@ public class TileJarBrain extends TileArcaneresearch {
                 }
 
                 if (closest != null) {
-                    double ox = closest.getX();
-                    double oy = closest.getY();
-                    double oz = closest.getZ();
-                    double dx = (cx - ox) / 25.0;
-                    double dy = (cy - oy) / 25.0;
-                    double dz = (cz - oz) / 25.0;
-                    double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                    double pull = 1.0 - dist;
-                    if (pull > 0.0 && dist > 1e-6) {
-                        pull *= pull;
-                        Vec3 motion = closest.getDeltaMovement();
-                        closest.setDeltaMovement(
-                                motion.x + dx / dist * pull * 0.3,
-                                motion.y + dy / dist * pull * 0.5,
-                                motion.z + dz / dist * pull * 0.3);
-                    }
+                    pullOrb(pos, closest);
                 }
 
                 AABB eat = tile.eatBox;
                 if (eat == null) {
-                    eat = new AABB(cx - 0.6, cy - 0.6, cz - 0.6, cx + 0.6, cy + 0.6, cz + 0.6);
+                    JarBrainRules.Bounds bounds = JarBrainRules.eatBox(cx, cy, cz);
+                    eat = new AABB(bounds.minX(), bounds.minY(), bounds.minZ(),
+                            bounds.maxX(), bounds.maxY(), bounds.maxZ());
                     tile.eatBox = eat;
                 }
 
@@ -106,49 +121,81 @@ public class TileJarBrain extends TileArcaneresearch {
                 for (ExperienceOrb orb : orbs) {
                     if (eat.intersects(orb.getBoundingBox())) {
                         tile.xp += orb.getValue();
-                        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP,
-                                SoundSource.BLOCKS, 0.1f,
+                        // The original uses eo.playSound(...): orb position, entity category.
+                        orb.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.1f,
                                 (level.random.nextFloat() - level.random.nextFloat()) * 0.2f + 1.0f);
                         orb.discard();
                         ate = true;
                     }
                 }
                 if (ate) {
-                    if (tile.xp > MAX_XP) {
-                        tile.xp = MAX_XP;
-                    }
+                    tile.xp = JarBrainRules.clampXp(tile.xp, tile.xpMax);
                     tile.syncTile(false);
-                    tile.setChanged();
                 }
             }
         }
     }
 
+    /**
+     * Client half of the tick: pulls orbs locally, follows the nearest player when no
+     * orb is nearby, plays the ambient brain sound, and advances the bob animation.
+     */
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileJarBrain tile) {
         tile.brainRotationPrev = tile.brainRotation;
         tile.brainYPrev = tile.brainY;
-        Player watcher = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                6.0, e -> e instanceof Player);
-        if (watcher != null) {
-            double dx = watcher.getX() - (pos.getX() + 0.5);
-            double dz = watcher.getZ() - (pos.getZ() + 0.5);
-            float target = (float) Math.atan2(dz, dx);
-            float delta = target - tile.brainRotation;
-            while (delta >= Math.PI) delta -= TWO_PI;
-            while (delta < -Math.PI) delta += TWO_PI;
-            tile.brainRotation += delta * 0.04f;
-            long now = System.currentTimeMillis();
-            if (tile.lastSigh < now) {
+
+        // Like the original update(), the brain only watches a player (and sighs) when
+        // there is no XP orb nearby and the jar is not full. The orb pull runs on both
+        // sides in the original, so it is shared with serverTick via pullOrb().
+        @Nullable ExperienceOrb orb = tile.xp < tile.xpMax ? tile.getClosestXPOrb() : null;
+        boolean orbNearby = orb != null;
+        if (orb != null && JarBrainRules.clientMayPull(tile.xp, tile.xpMax, tile.eatDelay, orbNearby)) {
+            pullOrb(pos, orb);
+        }
+        Player watcher = null;
+        if (JarBrainRules.clientMayWatch(tile.xp, tile.xpMax, orbNearby)) {
+            watcher = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    6.0, e -> e instanceof Player && !e.isSpectator());
+            if (watcher != null && tile.lastSigh < System.currentTimeMillis()) {
                 level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                         ModSounds.BRAIN.get(), SoundSource.AMBIENT, 0.15f,
                         0.8f + level.random.nextFloat() * 0.4f, false);
-                tile.lastSigh = now + 5000L + level.random.nextInt(25000);
+                tile.lastSigh = JarBrainRules.nextSigh(System.currentTimeMillis(),
+                        () -> level.random.nextInt(JarBrainRules.SIGH_JITTER));
             }
-        } else {
-            tile.brainRotation += 0.01f;
         }
-        tile.bobPhase += 0.05f;
-        tile.brainY = (float) Math.sin(tile.bobPhase) * 0.03f;
+
+        if (watcher != null) {
+            double dx = watcher.getX() - (pos.getX() + 0.5);
+            double dz = watcher.getZ() - (pos.getZ() + 0.5);
+            tile.targetRotation = (float) Math.atan2(dz, dx);
+        } else {
+            // The original keeps a persistent target angle and lets it drift while idle,
+            // so the current rotation smoothly chases it instead of jumping.
+            tile.targetRotation = JarBrainRules.idleTarget(tile.targetRotation);
+        }
+
+        tile.brainRotation = JarBrainRules.chaseTarget(
+                tile.brainRotation, tile.targetRotation, JarBrainRules.ROTATION_SPEED);
+
+        // Original: sin(player.ticksExisted / 14.0F) * 0.03F + 0.03F with a -0.8 offset;
+        // the renderer applies the equivalent -0.77 base, so only the frequency matters.
+        tile.bobPhase = JarBrainRules.advanceBob(tile.bobPhase);
+        tile.brainY = JarBrainRules.bobY(tile.bobPhase);
+
+        // The original decrements eatDelay in the shared update() on both sides.
+        if (tile.eatDelay > 0) {
+            tile.eatDelay--;
+        }
+    }
+
+    /** Shared pull from the original update(): blocks 48-69. */
+    private static void pullOrb(BlockPos pos, ExperienceOrb orb) {
+        JarBrainRules.Pull pull = JarBrainRules.orbPull(
+                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                orb.getX(), orb.getY(), orb.getZ());
+        Vec3 motion = orb.getDeltaMovement();
+        orb.setDeltaMovement(motion.x + pull.x(), motion.y + pull.y(), motion.z + pull.z());
     }
 
     @Override
@@ -160,9 +207,14 @@ public class TileJarBrain extends TileArcaneresearch {
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
-        xp = Math.min(tag.getInt("XP"), MAX_XP);
+        xp = JarBrainRules.clampXp(tag.getInt("XP"), xpMax);
     }
 
+    /**
+     * Finds the nearest experience orb inside the cached enlarged search box.
+     *
+     * @return the closest orb, or {@code null} when the level is absent or the box is empty
+     */
     @Nullable
     private ExperienceOrb getClosestXPOrb() {
         if (level == null) {
@@ -170,7 +222,10 @@ public class TileJarBrain extends TileArcaneresearch {
         }
         AABB box = pullBox;
         if (box == null) {
-            box = new AABB(worldPosition).inflate(8.0);
+            JarBrainRules.Bounds bounds = JarBrainRules.pullBox(
+                    worldPosition.getX(), worldPosition.getY(), worldPosition.getZ());
+            box = new AABB(bounds.minX(), bounds.minY(), bounds.minZ(),
+                    bounds.maxX(), bounds.maxY(), bounds.maxZ());
             pullBox = box;
         }
         List<ExperienceOrb> ents = level.getEntitiesOfClass(ExperienceOrb.class, box);
@@ -189,16 +244,16 @@ public class TileJarBrain extends TileArcaneresearch {
         return closest;
     }
 
+    /**
+     * Transfers stored XP directly to a player.
+     *
+     * @param player receiving player; no transfer happens when null
+     * @param all when true, release all XP; otherwise only enough for the next level
+     * @return the amount actually transferred
+     */
     public int dispenseXP(Player player, boolean all) {
         if (level == null || xp <= 0 || player == null) return 0;
-        int toDispense;
-        if (all) {
-            toDispense = xp;
-        } else {
-            int currentLevel = player.experienceLevel;
-            int xpForNextLevel = getXpNeededForLevel(currentLevel + 1) - getXpNeededForLevel(currentLevel);
-            toDispense = Math.min(xp, xpForNextLevel);
-        }
+        int toDispense = JarBrainRules.dispenseAmount(xp, player.experienceLevel, all);
         if (toDispense > 0) {
             player.giveExperiencePoints(toDispense);
             xp -= toDispense;
@@ -209,33 +264,27 @@ public class TileJarBrain extends TileArcaneresearch {
         return toDispense;
     }
 
-    private int getXpNeededForLevel(int level) {
-        if (level <= 16) {
-            return level * level + 6 * level;
-        } else if (level <= 31) {
-            return (int) (2.5 * level * level - 40.5 * level + 360);
-        } else {
-            return (int) (4.5 * level * level - 162.5 * level + 2220);
-        }
-    }
-
+    /** @return the stored experience points */
     public int getXP() {
         return xp;
     }
 
+    /** @return stored XP as a fraction of {@link #xpMax}, in {@code [0, 1]} */
     public float getFillPercent() {
-        return (float) xp / MAX_XP;
+        return JarBrainRules.fillPercent(xp, xpMax);
     }
 
+    /** @return comparator signal in {@code [0, 15]} derived from the stored XP */
     public int getComparatorOutput() {
-        if (xp == 0) return 0;
-        return 1 + (int) ((xp / (float) MAX_XP) * 14);
+        return JarBrainRules.comparatorOutput(xp, xpMax);
     }
 
+    /** @return number of server ticks observed; used by diagnostics and tests */
     public int getTickCount() {
         return tickCount;
     }
 
+    /** @param tickCount new diagnostic tick counter value */
     public void setTickCount(int tickCount) {
         this.tickCount = tickCount;
     }
