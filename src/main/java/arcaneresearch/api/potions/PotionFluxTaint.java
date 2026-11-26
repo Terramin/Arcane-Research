@@ -1,6 +1,5 @@
 package arcaneresearch.api.potions;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,16 +9,8 @@ import arcaneresearch.api.entities.ITaintedMob;
 import arcaneresearch.common.entities.monster.mods.ChampionModifier;
 
 public class PotionFluxTaint extends MobEffect {
-    public static MobEffect instance = null;
-    private int statusIconIndex = -1;
-    static final ResourceLocation rl = ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/potions.png");
-
     public PotionFluxTaint() {
         super(MobEffectCategory.HARMFUL, 0x6600AA);
-    }
-
-    public PotionFluxTaint(boolean isBadEffect, int liquidColor) {
-        super(isBadEffect ? MobEffectCategory.HARMFUL : MobEffectCategory.BENEFICIAL, liquidColor);
     }
 
     @Override

@@ -25,9 +25,8 @@ import java.util.List;
 public final class WandItemModelRenderer {
     private static final ResourceLocation FOCUS_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/wand/wand.png");
-    // Identical to Thaumaturge's textures/misc/script.png.
     private static final ResourceLocation RUNE_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/wand_runes.png");
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/misc/script.png");
 
     private static final int WHITE_TINT = 0xFFFFFFFF;
     private static final int WHITE_RGB = 0xFFFFFF;
