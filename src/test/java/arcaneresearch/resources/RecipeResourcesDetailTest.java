@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,6 +72,44 @@ class RecipeResourcesDetailTest {
             }
         }
         assertTrue(problems.isEmpty(), "invalid workbench recipes: " + problems);
+    }
+
+    @Test
+    void crystalEssenceInputsUseTheVariantAwareIngredient() {
+        List<String> problems = new ArrayList<>();
+        for (Path file : ResourceFiles.jsonFilesIn(RECIPES)) {
+            String name = ResourceFiles.relative(file);
+            // Crucible recipes produce aspect-tagged crystals in their result.
+            if (name.startsWith(RECIPES + "/crucible")) {
+                continue;
+            }
+            findPlainCrystalInputs(ResourceFiles.readJson(file), name, false, problems);
+        }
+        assertTrue(problems.isEmpty(), "crystal inputs without aspect variants: " + problems);
+    }
+
+    private static void findPlainCrystalInputs(JsonElement element, String name,
+                                               boolean skip, List<String> problems) {
+        if (element == null) {
+            return;
+        }
+        if (element.isJsonObject()) {
+            for (Map.Entry<String, JsonElement> member : element.getAsJsonObject().entrySet()) {
+                boolean childSkip = skip || "result".equals(member.getKey());
+                if (!childSkip && member.getValue().isJsonObject()) {
+                    JsonElement item = member.getValue().getAsJsonObject().get("item");
+                    if (item != null && item.isJsonPrimitive()
+                            && "arcaneresearch:crystal_essence".equals(item.getAsString())) {
+                        problems.add(name + " (" + member.getKey() + ")");
+                    }
+                }
+                findPlainCrystalInputs(member.getValue(), name, childSkip, problems);
+            }
+        } else if (element.isJsonArray()) {
+            for (JsonElement child : element.getAsJsonArray()) {
+                findPlainCrystalInputs(child, name, skip, problems);
+            }
+        }
     }
 
     @Test
