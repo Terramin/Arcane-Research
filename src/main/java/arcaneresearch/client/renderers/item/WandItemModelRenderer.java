@@ -50,6 +50,9 @@ public final class WandItemModelRenderer {
     private static final float STAFF_FOCUS_XZ = 0.525F;
     private static final float STAFF_FOCUS_Y_SCALE = 0.5525F;
     private static final float WAND_FOCUS_SCALE = 0.5F;
+    /** TC4 ModelWand draws the focus depth layer at these absolute model-space Y values. */
+    private static final float DEPTH_Y_PLAIN = -0.09F;
+    private static final float DEPTH_Y_STAFF = -0.15F;
     private static final int FOCUS_ALPHA = (int) (0.95F * 255.0F);
     private static final int FOCUS_LIGHT_BASE = 195;
     private static final int FOCUS_LIGHT_AMPLITUDE = 10;
@@ -219,7 +222,11 @@ public final class WandItemModelRenderer {
         // the pose, so these match TC4's 0.16 / 0.165 final depth cube.
         float size = isStaff ? 0.314F : 0.32F;
         float height = isStaff ? 0.319F : 0.32F;
-        float offsetY = isStaff ? -0.272F : -0.18F;
+        // Undo the whole focus Fit, including the staff translate. Using only
+        // DEPTH_Y_STAFF / STAFF_FOCUS_Y_SCALE here places the cube too high.
+        float offsetY = isStaff
+                ? (DEPTH_Y_STAFF - STAFF_FOCUS_Y) / STAFF_FOCUS_Y_SCALE
+                : DEPTH_Y_PLAIN / WAND_FOCUS_SCALE;
         int frame = ((int) ticks) % 9;
         poseStack.pushPose();
         poseStack.translate(0.0F, offsetY, 0.0F);
