@@ -125,8 +125,20 @@ public class TileRechargePedestal extends TileArcaneresearchInventory implements
             return null;
         }
         if (stack.getItem() instanceof IFocusHost host) {
+            // getAllVis includes every primal, even empty ones — only report
+            // the aspects that actually carry vis.
             AspectList vis = host.getAllVis(stack);
-            return vis != null && vis.size() > 0 ? vis : null;
+            if (vis == null || vis.visSize() <= 0) {
+                return null;
+            }
+            AspectList out = new AspectList();
+            for (Aspect aspect : vis.getAspects()) {
+                int amount = vis.getAmount(aspect);
+                if (amount > 0) {
+                    out.add(aspect, amount);
+                }
+            }
+            return out.size() > 0 ? out : null;
         }
         if (stack.getItem() instanceof IRechargable) {
             int charge = Math.round(getCharge(stack));

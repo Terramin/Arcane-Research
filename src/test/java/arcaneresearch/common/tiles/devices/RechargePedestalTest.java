@@ -28,10 +28,19 @@ class RechargePedestalTest {
     }
 
     @Test
+    void genericRechargableItemsAreStillAccepted() throws Exception {
+        String tile = source("common/tiles/devices/TileRechargePedestal.java");
+        assertTrue(tile.contains("stack.getItem() instanceof IRechargable"));
+        assertTrue(tile.contains("public static boolean canCharge(ItemStack stack)"));
+    }
+
+    @Test
     void castingToolsUseTheDoubledHandRate() throws Exception {
         String tile = source("common/tiles/devices/TileRechargePedestal.java");
         assertTrue(tile.contains("HAND_PERIOD = 5"));
         assertTrue(tile.contains("PEDESTAL_MULTIPLIER = 2"));
         assertTrue(tile.contains("HAND_RATE * PEDESTAL_MULTIPLIER"));
+        // Ordinary IRechargable items keep their original slow recharge path.
+        assertTrue(tile.contains("rechargeItem(level, stack, pos, null, 5) > 0"));
     }
 }
