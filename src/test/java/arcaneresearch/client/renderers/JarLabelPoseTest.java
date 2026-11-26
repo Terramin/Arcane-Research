@@ -1,11 +1,14 @@
 package arcaneresearch.client.renderers;
 
+import arcaneresearch.client.renderers.item.JarItemGroundOffset;
+import net.minecraft.world.item.ItemDisplayContext;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Jar: coordinate frame of the item label")
 class JarLabelPoseTest {
@@ -30,5 +33,13 @@ class JarLabelPoseTest {
         assertEquals(-0.1F, label.y, EPS);
         assertEquals(0.315F, label.z, EPS);
         assertEquals(0.0025F, label.z - body.z, EPS);
+    }
+
+    @Test
+    void onlyDroppedItemsAreLiftedOffTheGround() {
+        assertTrue(JarItemGroundOffset.lift(ItemDisplayContext.GROUND) > 0.0F);
+        assertEquals(0.0F, JarItemGroundOffset.lift(ItemDisplayContext.GUI), EPS);
+        assertEquals(0.0F, JarItemGroundOffset.lift(ItemDisplayContext.FIXED), EPS);
+        assertEquals(0.0F, JarItemGroundOffset.lift(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND), EPS);
     }
 }

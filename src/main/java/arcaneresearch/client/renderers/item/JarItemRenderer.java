@@ -62,6 +62,10 @@ public final class JarItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext transform, PoseStack poseStack,
                              MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        float lift = JarItemGroundOffset.lift(transform);
+        if (lift != 0.0F) {
+            poseStack.translate(0.0F, lift, 0.0F);
+        }
         // A fixed side per context: no per-frame re-selection, so the label
         // cannot hop between faces while the item spins in hand or on the floor.
         int yaw = JarItemLabelSide.yawDegrees(transform);
