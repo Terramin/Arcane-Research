@@ -27,6 +27,7 @@ import arcaneresearch.common.lib.network.playerdata.PacketSyncProgressToServer;
 import arcaneresearch.common.lib.network.playerdata.PacketSyncResearchFlagsToServer;
 import arcaneresearch.common.lib.network.playerdata.PacketWarpMessage;
 import arcaneresearch.common.lib.network.misc.PacketItemKeyToServer;
+import arcaneresearch.common.lib.network.wards.PacketWardControlToServer;
 import io.netty.buffer.Unpooled;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -67,6 +68,8 @@ class PacketSerializationTest {
                 Arguments.of(new PacketFXBlockArc(1, 2, 3, 4.5f, 6.5f, 7.5f, 1f, 0f, 0.5f)),
                 Arguments.of(new PacketFocusChangeToServer("arcaneresearch:focus_fire")),
                 Arguments.of(new PacketItemKeyToServer(34, 2)),
+                Arguments.of(new PacketWardControlToServer(true)),
+                Arguments.of(new PacketWardControlToServer(false)),
                 Arguments.of(new PacketNote(10, 64, -20, "minecraft:overworld", (byte) 7)),
                 Arguments.of(new PacketBiomeChange(1, 2, 3, "minecraft:plains")),
                 Arguments.of(new PacketSelectThaumotoriumRecipeToServer(null, new BlockPos(3, 4, 5), 123456)),

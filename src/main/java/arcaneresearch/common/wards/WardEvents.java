@@ -105,6 +105,11 @@ public final class WardEvents {
     }
 
     @SubscribeEvent
+    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        WardControlState.clear(event.getEntity());
+    }
+
+    @SubscribeEvent
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
         if (event.phase != TickEvent.Phase.END
                 || !(event.level instanceof ServerLevel level)

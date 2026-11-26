@@ -11,6 +11,8 @@ import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.fx.PacketFXWardSparkle;
 import arcaneresearch.common.lib.utils.BlockUtils;
 import arcaneresearch.common.lib.wands.WandSounds;
+import arcaneresearch.common.wards.WardControlState;
+import arcaneresearch.common.wards.WardData;
 import arcaneresearch.common.wards.WardEntry;
 import arcaneresearch.common.wards.WardManager;
 import arcaneresearch.common.wards.WardStorage;
@@ -52,6 +54,7 @@ public class ItemFocusWarding extends FocusItem implements IArchitectExtended {
     private static final Map<String, Long> DELAY = new HashMap<>();
     private static final long DELAY_MS = 500L;
     private static final int SPARKLE_COLOR = 0xFCA000;
+    private static final int MAX_GROUP = 4096;
 
     public ItemFocusWarding() {
         super("warding", 16771535);
@@ -133,10 +136,19 @@ public class ItemFocusWarding extends FocusItem implements IArchitectExtended {
         WardEntry originEntry = WardManager.getEntry(level, pos);
         boolean unwardOnly = originEntry != null && originEntry.isOwnedBy(player);
 
-        List<BlockPos> targets = getArchitectBlocks(wandstack, level, pos,
-                blockHit.getDirection(), player);
-        if (targets.isEmpty()) {
-            targets.add(pos);
+        // Shift+Ctrl + right-click lifts the whole connected group of the
+        // player's wards, regardless of the architect upgrade / area size.
+        boolean removeGroup = unwardOnly && player.isCrouching()
+                && WardControlState.isControlDown(player);
+        List<BlockPos> targets;
+        if (removeGroup) {
+            targets = WardData.connectedGroup(storage.entries(), pos, player.getUUID(), MAX_GROUP);
+        } else {
+            targets = getArchitectBlocks(wandstack, level, pos,
+                    blockHit.getDirection(), player);
+            if (targets.isEmpty()) {
+                targets.add(pos);
+            }
         }
 
         boolean changed = false;

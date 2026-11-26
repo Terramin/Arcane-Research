@@ -58,6 +58,32 @@ class WardDataTest {
     }
 
     @Test
+    void connectedGroupFollowsFaceAdjacentWardsOfTheSameOwnerOnly() {
+        Map<BlockPos, WardEntry> wards = new HashMap<>();
+        BlockPos origin = new BlockPos(0, 0, 0);
+        BlockPos east = new BlockPos(1, 0, 0);
+        BlockPos above = new BlockPos(1, 1, 0);
+        BlockPos chain = new BlockPos(2, 1, 0);
+        BlockPos foreign = new BlockPos(1, 0, 1);
+        BlockPos beyondForeign = new BlockPos(1, 0, 2);
+        BlockPos isolated = new BlockPos(5, 5, 5);
+        wards.put(origin, new WardEntry(ALICE, "Alice"));
+        wards.put(east, new WardEntry(ALICE, "Alice"));
+        wards.put(above, new WardEntry(ALICE, "Alice"));
+        wards.put(chain, new WardEntry(ALICE, "Alice"));
+        wards.put(foreign, new WardEntry(BOB, "Bob"));
+        wards.put(beyondForeign, new WardEntry(ALICE, "Alice"));
+        wards.put(isolated, new WardEntry(ALICE, "Alice"));
+
+        Set<BlockPos> group = Set.copyOf(WardData.connectedGroup(wards, origin, ALICE, 64));
+        assertEquals(Set.of(origin, east, above, chain), group);
+        assertFalse(group.contains(foreign));
+        assertFalse(group.contains(beyondForeign));
+        assertFalse(group.contains(isolated));
+        assertTrue(WardData.connectedGroup(wards, origin, BOB, 64).isEmpty());
+    }
+
+    @Test
     void explosionsNeverIncludeWardedCoordinates() {
         List<BlockPos> affected = List.of(new BlockPos(0, 0, 0), new BlockPos(1, 0, 0),
                 new BlockPos(2, 0, 0));

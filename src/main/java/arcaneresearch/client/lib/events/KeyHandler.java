@@ -17,6 +17,7 @@ import arcaneresearch.common.items.curios.CloudRingItem;
 import arcaneresearch.common.lib.compat.CuriosCompat;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.common.lib.network.misc.PacketItemKeyToServer;
+import arcaneresearch.common.lib.network.wards.PacketWardControlToServer;
 import arcaneresearch.common.lib.network.wand.PacketWandFocusChangeToServer;
 import arcaneresearch.init.ModItems;
 @OnlyIn(Dist.CLIENT)
@@ -32,6 +33,7 @@ public class KeyHandler {
     private static boolean keyPressedF = false;
     private static boolean keyPressedG = false;
     private static boolean keyPressedRemove = false;
+    private static boolean controlDownSent = false;
     public static void init() {
         keyF = new KeyMapping(
                 "key.arcaneresearch.focus",
@@ -67,7 +69,11 @@ public class KeyHandler {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.screen != null) {
+        if (mc.player == null) {
+            return;
+        }
+        processWardControl(mc);
+        if (mc.screen != null) {
             if (keyPressedF) {
                 radialActive = false;
                 keyPressedF = false;
@@ -86,6 +92,27 @@ public class KeyHandler {
         processRemoveFocus(player);
         processCloudRing(player, mc);
     }
+    /** Vanilla does not sync Ctrl to the server; the ward focus needs it for group removal. */
+    private static void processWardControl(Minecraft mc) {
+        boolean ctrl = isControlDown(mc);
+        if (ctrl != controlDownSent) {
+            controlDownSent = ctrl;
+            PacketHandler.sendToServer(new PacketWardControlToServer(ctrl));
+        }
+    }
+
+    private static boolean isControlDown(Minecraft mc) {
+        long windowHandle = mc.getWindow().getWindow();
+        return InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_LEFT_CONTROL)
+                || InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_RIGHT_CONTROL);
+    }
+
+    private static boolean isShiftDown(Minecraft mc) {
+        long windowHandle = mc.getWindow().getWindow();
+        return InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_LEFT_SHIFT)
+                || InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_RIGHT_SHIFT);
+    }
+
     private static void processKeyF(Player player) {
         if (keyF == null) return;
         if (keyF.isDown()) {
@@ -120,11 +147,8 @@ public class KeyHandler {
         if (keyG.isDown()) {
             if (!keyPressedG) {
                 lastPressG = System.currentTimeMillis();
-                long windowHandle = Minecraft.getInstance().getWindow().getWindow();
-                boolean ctrlDown = InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_LEFT_CONTROL) ||
-                        InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_RIGHT_CONTROL);
-                boolean shiftDown = InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_LEFT_SHIFT) ||
-                        InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_RIGHT_SHIFT);
+                boolean ctrlDown = isControlDown(Minecraft.getInstance());
+                boolean shiftDown = isShiftDown(Minecraft.getInstance());
                 int modifier = ctrlDown ? 1 : (shiftDown ? 2 : 0);
                 PacketHandler.sendToServer(new PacketItemKeyToServer(1, modifier));
             }

@@ -15,6 +15,7 @@ import arcaneresearch.Arcaneresearch;
 import arcaneresearch.common.lib.network.fx.*;
 import arcaneresearch.common.lib.network.misc.*;
 import arcaneresearch.common.lib.network.playerdata.*;
+import arcaneresearch.common.lib.network.wards.PacketWardControlToServer;
 import arcaneresearch.common.lib.network.wards.PacketWardSync;
 import arcaneresearch.common.lib.network.tiles.PacketTileToClient;
 import arcaneresearch.common.lib.network.tiles.PacketTileToServer;
@@ -175,6 +176,11 @@ public class PacketHandler {
                 .encoder(PacketWardSync::encode)
                 .decoder(PacketWardSync::decode)
                 .consumerMainThread(PacketWardSync::handle)
+                .add();
+        INSTANCE.messageBuilder(PacketWardControlToServer.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(PacketWardControlToServer::encode)
+                .decoder(PacketWardControlToServer::decode)
+                .consumerMainThread(PacketWardControlToServer::handle)
                 .add();
         INSTANCE.messageBuilder(PacketSyncProgressToServer.class, nextId(), NetworkDirection.PLAY_TO_SERVER)
                 .encoder(PacketSyncProgressToServer::encode)

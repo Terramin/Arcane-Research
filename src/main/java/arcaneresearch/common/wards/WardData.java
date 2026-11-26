@@ -1,14 +1,20 @@
 package arcaneresearch.common.wards;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /** Pure NBT helpers for the warded-block registry. No world/session state. */
@@ -62,6 +68,39 @@ public final class WardData {
     public static boolean canRemove(Map<BlockPos, WardEntry> wards, BlockPos pos, UUID player) {
         WardEntry current = wards.get(pos);
         return current != null && (player != null && current.isOwnedBy(player));
+    }
+
+    /**
+     * Connected group of the player's wards reached by face-adjacency from
+     * {@code origin}. Wards of other owners are not removed and do not link
+     * the group together.
+     */
+    public static List<BlockPos> connectedGroup(Map<BlockPos, WardEntry> wards, BlockPos origin,
+                                                UUID player, int limit) {
+        List<BlockPos> out = new ArrayList<>();
+        if (origin == null || player == null || !canRemove(wards, origin, player)) {
+            return out;
+        }
+        Set<BlockPos> visited = new HashSet<>();
+        Deque<BlockPos> queue = new ArrayDeque<>();
+        visited.add(origin);
+        queue.add(origin);
+        while (!queue.isEmpty() && out.size() < limit) {
+            BlockPos current = queue.removeFirst();
+            WardEntry entry = wards.get(current);
+            if (entry == null || !entry.isOwnedBy(player)) {
+                continue;
+            }
+            out.add(current);
+            for (Direction dir : Direction.values()) {
+                BlockPos next = current.relative(dir);
+                WardEntry neighbour = wards.get(next);
+                if (visited.add(next) && neighbour != null && neighbour.isOwnedBy(player)) {
+                    queue.add(next);
+                }
+            }
+        }
+        return out;
     }
 
     /** Explosions must never include a warded coordinate in their block list. */
