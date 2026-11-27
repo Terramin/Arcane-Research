@@ -93,7 +93,11 @@ public class ResearchToast implements Toast {
             }
         }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        graphics.blit(TEXTURE, 0, 0, 0, 96, this.width(), this.height());
+        // EN: base_hud.png is 192x128; without the explicit size blit() assumes 256x256
+        //     and samples the top of the sheet instead of the toast backdrop at v=96.
+        // RU: base_hud.png имеет размер 192x128; без явного размера blit() считает 256x256
+        //     и берёт верх полотна вместо подложки Toast на v=96.
+        graphics.blit(TEXTURE, 0, 0, 0, 96, this.width(), this.height(), 192, 128);
         drawResearchIcon(graphics, entry, 6, 8);
         var font = toastComponent.getMinecraft().font;
         graphics.drawString(font, title, 30, 7, 10631665, false);
