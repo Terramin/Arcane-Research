@@ -285,6 +285,16 @@ class CrucibleWiringTest {
         assertTrue(config.contains("newItemStack(ModItems.CELESTIAL_NOTES_SUN.get()),newAspectList().add(Aspect.MIND,5).add(Aspect.DARKNESS,5).add(Aspect.LIGHT,5)"));
     }
 
+    @Test
+    @DisplayName("amulet and NBT-marked labels have aspect registrations")
+    void amuletAndLabelAspects() {
+        String config = java("arcaneresearch/common/config/ConfigAspects.java");
+        assertTrue(config.contains("newItemStack(ModItems.CRIMSON_CULT_AMULET.get())"));
+        assertTrue(config.contains("add(Aspect.ELDRITCH,15)"));
+        assertTrue(config.contains("privatestaticvoidregisterFilledLabelAspects()"));
+        assertTrue(config.contains("putString(\"aspect\",aspect.getTag())"));
+    }
+
     private static void assertEqualsCount(String source, String needle, int expected) {
         int count = 0;
         int index = 0;

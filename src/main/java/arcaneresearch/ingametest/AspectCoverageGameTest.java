@@ -8,9 +8,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import arcaneresearch.Arcaneresearch;
+import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
+import arcaneresearch.init.ModItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -169,6 +171,37 @@ public final class AspectCoverageGameTest {
         if (!unexpected.isEmpty()) {
             helper.fail("Entities without aspects outside the technical whitelist: " + unexpected);
             return;
+        }
+        helper.succeed();
+    }
+
+    /**
+     * Checks the two mod items whose aspects depend on special data: the cult
+     * amulet and a label marked with an aspect in NBT.
+     *
+     * @param helper game-test helper used to report success or failure
+     */
+    @GameTest(template = "default_3x3x3", timeoutTicks = 20000)
+    @PrefixGameTestTemplate(false)
+    public static void modItemAspects(GameTestHelper helper) {
+        AspectList amulet = ArcaneresearchCraftingManager.getObjectTags(
+                new ItemStack(ModItems.CRIMSON_CULT_AMULET.get()));
+        if (amulet == null || amulet.getAmount(Aspect.ELDRITCH) < 1) {
+            helper.fail("Crimson cult amulet has no eldritch aspect");
+            return;
+        }
+
+        for (Aspect aspect : Aspect.aspects.values()) {
+            if (aspect == null) {
+                continue;
+            }
+            ItemStack label = new ItemStack(ModItems.LABEL_FILLED.get());
+            label.getOrCreateTag().putString("aspect", aspect.getTag());
+            AspectList found = ArcaneresearchCraftingManager.getObjectTags(label);
+            if (found == null || found.getAmount(aspect) < 1) {
+                helper.fail("Marked label " + aspect.getTag() + " resolves no aspect");
+                return;
+            }
         }
         helper.succeed();
     }

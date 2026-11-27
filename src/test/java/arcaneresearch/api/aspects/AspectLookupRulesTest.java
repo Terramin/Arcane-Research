@@ -102,6 +102,21 @@ class AspectLookupRulesTest {
     }
 
     @Test
+    @DisplayName("NBT-аспект метки даёт отдельный ключ для каждого аспекта")
+    void labelledNbtKeys() {
+        CompoundTag aer = new CompoundTag();
+        aer.putString("aspect", "aer");
+        CompoundTag ignis = new CompoundTag();
+        ignis.putString("aspect", "ignis");
+        ResourceLocation id = ResourceLocation.parse("arcaneresearch:label_filled");
+
+        assertEquals("arcaneresearch:label_filled#{aspect:\"aer\"}", AspectLookupRules.key(id, aer));
+        assertEquals("arcaneresearch:label_filled#{aspect:\"ignis\"}", AspectLookupRules.key(id, ignis));
+        assertEquals(2, AspectLookupRules.candidates(id, aer).size());
+        assertTrue(AspectLookupRules.candidates(id, aer).get(0).contains("aspect:\"aer\""));
+    }
+
+    @Test
     @DisplayName("taggedEntries возвращает только записи с тегом")
     void taggedEntries() {
         Map<String, AspectList> source = new java.util.HashMap<>();

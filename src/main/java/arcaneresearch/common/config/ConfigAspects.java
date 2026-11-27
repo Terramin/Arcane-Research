@@ -992,6 +992,29 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_PROVIDE.get()), new AspectList().add(Aspect.EXCHANGE, 5).add(Aspect.DESIRE, 3).add(Aspect.ORDER, 3));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_STOCK.get()), new AspectList().add(Aspect.ORDER, 10).add(Aspect.MIND, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_USE.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 3));
+
+        // Rare cultist drop: an eldritch amulet carrying the cult's aversion.
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CRIMSON_CULT_AMULET.get()),
+                new AspectList().add(Aspect.ELDRITCH, 15).add(Aspect.DARKNESS, 10)
+                        .add(Aspect.MAGIC, 10).add(Aspect.AVERSION, 5));
+        registerFilledLabelAspects();
+    }
+
+    /**
+     * Registers one NBT-specific entry per aspect for marked labels. The label
+     * stores the aspect tag in the {@code aspect} NBT field, so the canonical
+     * lookup key becomes {@code label_filled#{"aspect":"aer"}} and the stack
+     * resolves to exactly that aspect.
+     */
+    private static void registerFilledLabelAspects() {
+        for (Aspect aspect : Aspect.aspects.values()) {
+            if (aspect == null) {
+                continue;
+            }
+            ItemStack label = new ItemStack(ModItems.LABEL_FILLED.get());
+            label.getOrCreateTag().putString("aspect", aspect.getTag());
+            ArcaneresearchApi.registerObjectTag(label, new AspectList().add(aspect, 1));
+        }
     }
 
     // ---------------------------------------------------------------- new content
