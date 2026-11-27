@@ -12,6 +12,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
@@ -20,6 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import arcaneresearch.common.tiles.misc.NitorRules;
 
 @OnlyIn(Dist.CLIENT)
 public class FXGeneric extends TextureSheetParticle {
@@ -28,6 +30,8 @@ public class FXGeneric extends TextureSheetParticle {
     protected double windX = 0;
     protected double windZ = 0;
     protected int layer = 0;
+    /** Render through fluid geometry so submerged particles stay visible from above. */
+    protected boolean visibleInFluid = false;
     protected float startR, startG, startB;
     protected float endR, endG, endB;
     protected boolean loop = false;
@@ -52,6 +56,7 @@ public class FXGeneric extends TextureSheetParticle {
 
     private final Vector3f renderScratch = new Vector3f();
     private final Quaternionf renderQuat = new Quaternionf();
+    private final BlockPos.MutableBlockPos fluidPos = new BlockPos.MutableBlockPos();
 
     public static final ResourceLocation TC_TEXTURE =
             ResourceLocation.fromNamespaceAndPath("arcaneresearch", "textures/misc/base_particles.png");
@@ -147,15 +152,6 @@ public class FXGeneric extends TextureSheetParticle {
             return "TC_NORMAL_NO_DEPTH";
         }
     };
-
-    public static ParticleRenderType renderTypeForLayer(int layer) {
-        return switch (layer) {
-            case 0, 4 -> TC_ADDITIVE;
-            case 2 -> TC_ADDITIVE_NO_DEPTH;
-            case 3 -> TC_NORMAL_NO_DEPTH;
-            default -> TC_NORMAL;
-        };
-    }
 
     public FXGeneric(ClientLevel level, double x, double y, double z) {
         super(level, x, y, z);
@@ -393,9 +389,20 @@ public class FXGeneric extends TextureSheetParticle {
         buffer.vertex(v.x(), v.y(), v.z()).uv(u0, v1).color(pr, pg, pb, ca).uv2(light).endVertex();
     }
 
+    /** Selects the render type, switching to a no-depth variant when submerged. */
     @Override
     public @NotNull ParticleRenderType getRenderType() {
-        return renderTypeForLayer(layer);
+        boolean submerged = false;
+        if (visibleInFluid && this.level != null) {
+            fluidPos.set((int) this.x, (int) this.y, (int) this.z);
+            submerged = !this.level.getFluidState(fluidPos).isEmpty();
+        }
+        return switch (NitorRules.renderKind(layer, submerged, visibleInFluid)) {
+            case ADDITIVE -> TC_ADDITIVE;
+            case NORMAL -> TC_NORMAL;
+            case ADDITIVE_NO_DEPTH -> TC_ADDITIVE_NO_DEPTH;
+            case NORMAL_NO_DEPTH -> TC_NORMAL_NO_DEPTH;
+        };
     }
 
     @Override
@@ -468,6 +475,11 @@ public class FXGeneric extends TextureSheetParticle {
 
     public void setLayer(int layer) {
         this.layer = layer;
+    }
+
+    /** @param visible whether the particle should render through fluid geometry */
+    public void setVisibleInFluid(boolean visible) {
+        this.visibleInFluid = visible;
     }
 
     public void setLoop(boolean loop) {

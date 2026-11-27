@@ -1283,6 +1283,7 @@ public class FXDispatcher {
         }
         return null;
     }
+    /** Spawns the short-lived white core spark of a nitor block. */
     public void drawNitorCore(double x, double y, double z, double vx, double vy, double vz) {
         ClientLevel level = getClientLevel();
         if (level != null) {
@@ -1294,9 +1295,16 @@ public class FXDispatcher {
             particle.setScaleKeyframes(0.1f, 0.1f + (float) rand.nextGaussian() * 0.01f, 0.1f);
             particle.setLayer(0);
             particle.setRandomMovementScale(0.0002f, 0.0002f, 0.0002f);
+            particle.setVisibleInFluid(true);
             addParticle(particle);
         }
     }
+    /**
+     * Spawns a looping coloured flame particle for a nitor block.
+     *
+     * @param color RGB value of the dye colour
+     * @param delay ticks before the particle appears
+     */
     public void drawNitorFlames(double x, double y, double z, double vx, double vy, double vz, int color, int delay) {
         ClientLevel level = getClientLevel();
         if (level != null) {
@@ -1310,6 +1318,7 @@ public class FXDispatcher {
             particle.setParticles(264, 8, 1);
             particle.setScaleKeyframes(0.3f + rand.nextFloat() * 0.1f, 0.005f);
             particle.setRandomMovementScale(0.0025f, 0.0f, 0.0025f);
+            particle.setVisibleInFluid(true);
             addParticleDelayed(particle, delay);
         }
     }

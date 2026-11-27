@@ -33,6 +33,35 @@ public final class NitorRules {
     private NitorRules() {
     }
 
+    /** Particle render categories used by the nitor flame and core. */
+    public enum RenderKind {
+        ADDITIVE,
+        NORMAL,
+        ADDITIVE_NO_DEPTH,
+        NORMAL_NO_DEPTH
+    }
+
+    /**
+     * Selects a particle render type. Submerged particles marked as fluid-visible skip
+     * the depth test so they remain visible when the viewer is in air above water.
+     *
+     * @param layer particle layer from {@code FXGeneric}
+     * @param submerged whether the particle is currently inside a fluid
+     * @param visibleInFluid whether this particle opted into fluid visibility
+     * @return the render category to use
+     */
+    public static RenderKind renderKind(int layer, boolean submerged, boolean visibleInFluid) {
+        if (visibleInFluid && submerged) {
+            return layer == 1 ? RenderKind.NORMAL_NO_DEPTH : RenderKind.ADDITIVE_NO_DEPTH;
+        }
+        return switch (layer) {
+            case 0, 4 -> RenderKind.ADDITIVE;
+            case 2 -> RenderKind.ADDITIVE_NO_DEPTH;
+            case 3 -> RenderKind.NORMAL_NO_DEPTH;
+            default -> RenderKind.NORMAL;
+        };
+    }
+
     /** @return whether the core particle should be drawn on this tick counter */
     public static boolean shouldDrawCore(int count) {
         return count % CORE_INTERVAL == 0;

@@ -98,6 +98,39 @@ class NitorRulesTest {
     }
 
     @Test
+    @DisplayName("render type switches to no-depth only for submerged fluid-visible particles")
+    void renderKind() {
+        assertEquals(NitorRules.RenderKind.ADDITIVE, NitorRules.renderKind(0, false, false));
+        assertEquals(NitorRules.RenderKind.NORMAL, NitorRules.renderKind(1, false, false));
+        assertEquals(NitorRules.RenderKind.ADDITIVE_NO_DEPTH, NitorRules.renderKind(2, false, false));
+        assertEquals(NitorRules.RenderKind.NORMAL_NO_DEPTH, NitorRules.renderKind(3, false, false));
+
+        assertEquals(NitorRules.RenderKind.ADDITIVE_NO_DEPTH, NitorRules.renderKind(0, true, true));
+        assertEquals(NitorRules.RenderKind.NORMAL_NO_DEPTH, NitorRules.renderKind(1, true, true));
+        assertEquals(NitorRules.RenderKind.ADDITIVE, NitorRules.renderKind(0, true, false));
+        assertEquals(NitorRules.RenderKind.NORMAL, NitorRules.renderKind(1, true, false));
+        assertEquals(NitorRules.RenderKind.ADDITIVE, NitorRules.renderKind(0, false, true));
+    }
+
+    @Test
+    @DisplayName("nitor particles render through water so they are visible from above")
+    void particlesVisibleInFluid() {
+        String dispatcher = java("arcaneresearch/client/fx/FXDispatcher.java");
+        int count = 0;
+        int index = 0;
+        while ((index = dispatcher.indexOf("setVisibleInFluid(true)", index)) >= 0) {
+            count++;
+            index += "setVisibleInFluid(true)".length();
+        }
+        assertEquals(2, count, "both core and flame particles need the fluid-visible flag");
+
+        String particle = java("arcaneresearch/client/fx/particles/FXGeneric.java");
+        assertTrue(particle.contains("visibleInFluid"));
+        assertTrue(particle.contains("getFluidState(fluidPos).isEmpty()"));
+        assertTrue(particle.contains("TC_ADDITIVE_NO_DEPTH"));
+    }
+
+    @Test
     @DisplayName("all sixteen nitor colors have blockstates, models, loot and dye recipes")
     void colorResources() {
         String[] colors = {"white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
