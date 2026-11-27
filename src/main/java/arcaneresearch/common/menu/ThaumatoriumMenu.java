@@ -12,15 +12,22 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Container menu of the alchemy furnace: slot 0 holds the catalyst, slots 1..27 the
+ * main inventory and 28..36 the hotbar. The tile is updated when the menu opens and
+ * whenever the player selects a recipe from the synchronized list.
+ */
 public class ThaumatoriumMenu extends AbstractContainerMenu {
 
     private final TileThaumatorium thaumatorium;
     private final Player player;
 
+    /** Client-side constructor reading the furnace position from the packet payload. */
     public ThaumatoriumMenu(int containerId, Inventory playerInventory, FriendlyByteBuf extraData) {
         this(containerId, playerInventory, getBlockEntity(playerInventory, extraData));
     }
 
+    /** Server-side constructor bound to an existing furnace block entity. */
     public ThaumatoriumMenu(int containerId, Inventory playerInventory, TileThaumatorium blockEntity) {
         super(ModMenuTypes.THAUMATORIUM.get(), containerId);
         this.thaumatorium = blockEntity;
@@ -78,17 +85,14 @@ public class ThaumatoriumMenu extends AbstractContainerMenu {
         ItemStack stackInSlot = slot.getItem();
         ItemStack result = stackInSlot.copy();
 
-        if (index == 0) {
-            if (!moveItemStackTo(stackInSlot, 1, total, true)) return ItemStack.EMPTY;
-        } else {
-            if (!moveItemStackTo(stackInSlot, 0, 1, false)) {
-                if (index < 28) {
-                    if (!moveItemStackTo(stackInSlot, 28, total, false)) return ItemStack.EMPTY;
-                } else {
-                    if (!moveItemStackTo(stackInSlot, 1, 28, false)) return ItemStack.EMPTY;
-                }
+        boolean moved = false;
+        for (int[] range : arcaneresearch.common.tiles.crafting.ThaumatoriumRules.moveAttempts(index, total)) {
+            if (moveItemStackTo(stackInSlot, range[0], range[1], false)) {
+                moved = true;
+                break;
             }
         }
+        if (!moved) return ItemStack.EMPTY;
 
         if (stackInSlot.isEmpty()) {
             slot.setByPlayer(ItemStack.EMPTY);

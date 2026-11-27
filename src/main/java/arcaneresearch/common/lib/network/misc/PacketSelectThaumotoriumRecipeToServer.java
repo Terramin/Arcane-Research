@@ -12,10 +12,19 @@ import arcaneresearch.common.tiles.crafting.TileThaumatorium;
 
 import java.util.function.Supplier;
 
+/**
+ * Client-to-server packet selecting a crucible recipe for a furnace. Adding a recipe
+ * records the selecting player's name; removing one also clears the active craft.
+ */
 public class PacketSelectThaumotoriumRecipeToServer {
     private final long pos;
     private final int recipeHash;
 
+    /**
+     * @param player sending player (kept for signature compatibility, unused)
+     * @param pos furnace position
+     * @param recipeHash hash of the recipe to add or remove
+     */
     public PacketSelectThaumotoriumRecipeToServer(Player player, BlockPos pos, int recipeHash) {
         this.pos = pos.asLong();
         this.recipeHash = recipeHash;
@@ -26,15 +35,18 @@ public class PacketSelectThaumotoriumRecipeToServer {
         this.recipeHash = recipeHash;
     }
 
+    /** Writes the packed position and recipe hash. */
     public static void encode(PacketSelectThaumotoriumRecipeToServer packet, FriendlyByteBuf buf) {
         buf.writeLong(packet.pos);
         buf.writeInt(packet.recipeHash);
     }
 
+    /** Reads a packet produced by {@link #encode}. */
     public static PacketSelectThaumotoriumRecipeToServer decode(FriendlyByteBuf buf) {
         return new PacketSelectThaumotoriumRecipeToServer(buf.readLong(), buf.readInt());
     }
 
+    /** Applies the selection on the server thread and syncs the furnace when it changed. */
     public static void handle(PacketSelectThaumotoriumRecipeToServer packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
@@ -51,13 +63,14 @@ public class PacketSelectThaumotoriumRecipeToServer {
                     thaumatorium.recipeEssentia.remove(idx);
                     thaumatorium.recipePlayer.remove(idx);
                     thaumatorium.recipeHash.remove(idx);
-                    thaumatorium.currentCraft = -1;
+                    thaumatorium.clearCurrentRecipe();
                     flag = true;
                     break;
                 }
                 i++;
             }
-            if (!flag && thaumatorium.recipeHash.size() < thaumatorium.maxRecipes) {
+            if (!flag && arcaneresearch.common.tiles.crafting.ThaumatoriumRules.canAddRecipe(
+                    thaumatorium.recipeHash.size(), thaumatorium.maxRecipes)) {
                 for (CrucibleRecipe cr : thaumatorium.recipes) {
                     if (cr.hash == packet.recipeHash) {
                         thaumatorium.recipeEssentia.add(cr.getAspects().copy());

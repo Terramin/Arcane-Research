@@ -26,10 +26,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
+import arcaneresearch.common.tiles.crafting.ThaumatoriumRules;
 import arcaneresearch.common.tiles.crafting.TileThaumatorium;
 import arcaneresearch.init.ModBlockEntities;
 import arcaneresearch.init.ModBlocks;
 import javax.annotation.Nullable;
+/**
+ * Lower half of the alchemy furnace. It requires a crucible below and a top block
+ * above; losing either support turns the furnace back into an alchemical brass block
+ * while dropping the stored catalyst.
+ */
 public class BlockThaumatorium extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final VoxelShape SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 14.0, 15.0);
@@ -49,11 +55,6 @@ public class BlockThaumatorium extends Block implements EntityBlock {
     }
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockPos above = context.getClickedPos().above();
-        Level level = context.getLevel();
-        if (!level.getBlockState(above).canBeReplaced(context)) {
-            return null;
-        }
         return this.defaultBlockState()
                 .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
@@ -69,16 +70,18 @@ public class BlockThaumatorium extends Block implements EntityBlock {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         BlockPos above = pos.above();
-        if (level.getBlockState(above).canBeReplaced()) {
+        // onPlace may already have turned the furnace into brass (no crucible below);
+        // do not leave a top block hanging over a failed placement.
+        if (level.getBlockState(pos).is(ModBlocks.THAUMATORIUM.get())
+                && level.getBlockState(above).isAir()) {
             level.setBlock(above, ModBlocks.THAUMATORIUM_TOP.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
     @Override
     public BlockState updateShape(BlockState state, Direction facing, BlockState facingState,
                                   LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
-        if (facing == Direction.UP && !facingState.is(ModBlocks.THAUMATORIUM_TOP.get())) {
-            return ModBlocks.ALCHEMICAL_BRASS_BLOCK.get().defaultBlockState();
-        }
+        // Only the crucible below is required. Checking the top block here would
+        // revert the furnace while a Salis Mundus swap is still placing it.
         if (facing == Direction.DOWN && !facingState.is(ModBlocks.CRUCIBLE.get())) {
             return ModBlocks.ALCHEMICAL_BRASS_BLOCK.get().defaultBlockState();
         }
@@ -110,10 +113,15 @@ public class BlockThaumatorium extends Block implements EntityBlock {
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         Block brass = ModBlocks.ALCHEMICAL_BRASS_BLOCK.get();
-        if (isMoving || state.is(newState.getBlock()) || newState.is(brass)) {
+        // Even when the furnace turns back into brass (support removed) the catalyst
+        // must be dropped; only moving/same-block replacements skip the drop.
+        if (!ThaumatoriumRules.shouldDropContents(isMoving, state.is(newState.getBlock()))) {
             super.onRemove(state, level, pos, newState, isMoving);
             return;
         }
+        boolean brassConversion = newState.is(brass);
+
+        // The catalyst is dropped on any change, including a conversion to brass.
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof TileThaumatorium thaumatorium) {
             for (int i = 0; i < thaumatorium.getContainerSize(); i++) {
@@ -124,12 +132,17 @@ public class BlockThaumatorium extends Block implements EntityBlock {
                 }
             }
         }
-        BlockPos above = pos.above();
-        if (level.getBlockState(above).is(ModBlocks.THAUMATORIUM_TOP.get())) {
-            level.setBlock(above, brass.defaultBlockState(), Block.UPDATE_ALL);
+
+        // The block item is dropped only for a real break. Converting the partner to
+        // brass must not chain another drop, otherwise one furnace yields two ingots.
+        if (ThaumatoriumRules.shouldDropBlockItem(brassConversion)) {
+            BlockPos above = pos.above();
+            if (level.getBlockState(above).is(ModBlocks.THAUMATORIUM_TOP.get())) {
+                level.setBlock(above, brass.defaultBlockState(), Block.UPDATE_ALL);
+            }
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+                    new ItemStack(brass));
         }
-        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
-                new ItemStack(brass));
         super.onRemove(state, level, pos, newState, isMoving);
     }
     @Override

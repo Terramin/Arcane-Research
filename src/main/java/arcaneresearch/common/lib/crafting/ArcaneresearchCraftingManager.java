@@ -126,6 +126,13 @@ public class ArcaneresearchCraftingManager {
     private static int bridgedCrucibleFingerprint = 0;
     private static final java.util.Set<net.minecraft.resources.ResourceLocation> bridgedCrucibleKeys =
             new java.util.HashSet<>();
+    /** Incremented whenever the bridged catalogue is replaced, so tiles can re-resolve. */
+    private static volatile int catalogVersion = 0;
+
+    /** @return current version of the bridged crucible catalogue */
+    public static int catalogVersion() {
+        return catalogVersion;
+    }
 
     public static void ensureCrucibleBridge(@javax.annotation.Nullable Level level) {
         if (level == null) return;
@@ -135,10 +142,15 @@ public class ArcaneresearchCraftingManager {
         } catch (Exception e) {
             return;
         }
-        int fingerprint = datapack.size() + 1;
-        for (CrucibleRecipeType recipe : datapack) {
-            fingerprint = 31 * fingerprint + recipe.getId().hashCode();
-        }
+        // A client with an empty recipe manager must not clear the shared catalog.
+        if (datapack.isEmpty()) return;
+        // Include result and aspects: /reload may change them without changing IDs.
+        int fingerprint = arcaneresearch.common.tiles.crafting.ThaumatoriumRules.recipeFingerprint(
+                datapack.stream()
+                        .map(recipe -> recipe.getId() + "|" + recipe.getResultItem()
+                                + "|" + recipe.getAspects())
+                        .map(String::hashCode)
+                        .toList());
         if (fingerprint == bridgedCrucibleFingerprint && !bridgedCrucibleKeys.isEmpty()) {
             return;
         }
@@ -170,6 +182,7 @@ public class ArcaneresearchCraftingManager {
             catalog.putAll(converted);
             bridgedCrucibleKeys.addAll(converted.keySet());
             bridgedCrucibleFingerprint = fingerprint;
+            catalogVersion++;
         }
     }
 

@@ -23,6 +23,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+/**
+ * Upper half of the alchemy furnace. It owns no state of its own: every call is
+ * delegated to the furnace block entity below, including the container menu.
+ */
 public class TileThaumatoriumTop extends TileArcaneresearch implements IAspectContainer, IEssentiaTransport, WorldlyContainer, MenuProvider {
     private static final int[] SLOTS = {0};
 
