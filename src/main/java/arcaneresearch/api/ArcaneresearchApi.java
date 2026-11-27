@@ -28,6 +28,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ArcaneresearchApi {
     public static IInternalMethodHandler internalMethods = new DummyInternalMethodHandler();
 
+    private record PendingTag(String name, AspectList aspects, boolean complex) {
+    }
+
+    /** String tag registrations are deferred until Forge binds the item tags. */
+    private static final List<PendingTag> PENDING_TAGS = new ArrayList<>();
+
     public static void registerResearchLocation(ResourceLocation loc) {
         if (!CommonInternals.jsonLocs.containsKey(loc.toString())) {
             CommonInternals.jsonLocs.put(loc.toString(), loc);
@@ -177,18 +183,72 @@ public class ArcaneresearchApi {
         AspectHelper.registerObjectTag(item, aspects);
     }
 
+    /**
+     * Registers aspects for every item in a named item tag, deferring until tags
+     * are bound if called during common setup.
+     *
+     * @param tagName item tag id
+     * @param aspects aspects to register (copied)
+     */
     public static void registerObjectTag(String tagName, AspectList aspects) {
+        queueTag(tagName, aspects, false);
+    }
+
+    /**
+     * Queues or immediately applies a tag registration.
+     *
+     * @param complex whether to merge with existing aspects instead of replacing
+     */
+    private static void queueTag(String tagName, AspectList aspects, boolean complex) {
+        if (tagName == null || aspects == null) {
+            return;
+        }
+        ResourceLocation tagLoc = ResourceLocation.tryParse(tagName);
+        if (tagLoc == null) {
+            arcaneresearch.Arcaneresearch.LOGGER.warn("Invalid aspect tag name: {}", tagName);
+            return;
+        }
+        TagKey<Item> tagKey = ItemTags.create(tagLoc);
         try {
-            ResourceLocation tagLoc = ResourceLocation.tryParse(tagName);
-            TagKey<Item> tagKey = ItemTags.create(tagLoc);
-            var tag = ForgeRegistries.ITEMS.tags().getTag(tagKey);
-            if (tag.isBound()) {
-                for (Item item : tag) {
+            if (!ForgeRegistries.ITEMS.tags().getTag(tagKey).isBound()) {
+                // Tags are bound after common setup; retry on TagsUpdatedEvent.
+                PENDING_TAGS.add(new PendingTag(tagName, aspects.copy(), complex));
+                return;
+            }
+        } catch (Exception e) {
+            arcaneresearch.Arcaneresearch.LOGGER.warn("Cannot resolve aspect tag {}: {}", tagName, e.toString());
+            return;
+        }
+        applyTag(tagName, tagKey, aspects, complex);
+    }
+
+    /** Applies a bound tag registration to every item it contains. */
+    private static void applyTag(String tagName, TagKey<Item> tagKey, AspectList aspects, boolean complex) {
+        try {
+            for (Item item : ForgeRegistries.ITEMS.tags().getTag(tagKey)) {
+                if (complex) {
+                    registerComplexObjectTag(new ItemStack(item), aspects.copy());
+                } else {
                     registerObjectTag(new ItemStack(item), aspects.copy());
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            arcaneresearch.Arcaneresearch.LOGGER.warn("Cannot apply aspect tag {}: {}", tagName, e.toString());
         }
+    }
+
+    /** Applies registrations that were queued before item tags were bound. */
+    public static void flushPendingTags() {
+        if (PENDING_TAGS.isEmpty()) {
+            return;
+        }
+        for (PendingTag pending : PENDING_TAGS) {
+            ResourceLocation loc = ResourceLocation.tryParse(pending.name());
+            if (loc != null) {
+                applyTag(pending.name(), ItemTags.create(loc), pending.aspects(), pending.complex());
+            }
+        }
+        PENDING_TAGS.clear();
     }
 
     public static void registerComplexObjectTag(ItemStack item, AspectList aspects) {
@@ -213,17 +273,7 @@ public class ArcaneresearchApi {
     }
 
     public static void registerComplexObjectTag(String tagName, AspectList aspects) {
-        try {
-            ResourceLocation tagLoc = ResourceLocation.parse(tagName);
-            TagKey<Item> tagKey = ItemTags.create(tagLoc);
-            var tag = ForgeRegistries.ITEMS.tags().getTag(tagKey);
-            if (tag.isBound()) {
-                for (Item item : tag) {
-                    registerComplexObjectTag(new ItemStack(item), aspects.copy());
-                }
-            }
-        } catch (Exception ignored) {
-        }
+        queueTag(tagName, aspects, true);
     }
 
     public static class EntityTagsNBT {

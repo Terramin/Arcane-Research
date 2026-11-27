@@ -1,13 +1,19 @@
 package arcaneresearch.common.lib.crafting;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
+import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
@@ -251,26 +257,37 @@ public class ArcaneresearchCraftingManager {
         return null;
     }
 
+    /** Maximum number of *distinct* aspects kept on one item stack. */
+    public static final int OBJECT_ASPECT_CAP = 10;
+
+    /** @return all aspects of the stack, never null; uses a fresh recursion guard */
     public static AspectList getObjectTags(ItemStack stack) {
+        return getObjectTags(stack, new java.util.ArrayList<>());
+    }
+
+    /**
+     * Resolves all aspects of a stack, including bonuses, containers and recipes.
+     *
+     * @param stack item to inspect
+     * @param history recursion guard shared with recipe generation; mutated with
+     *                the serialized stack key on each recipe lookup
+     * @return a non-null list, capped to {@link #ASPECT_CAP} per aspect and
+     *         {@link #OBJECT_ASPECT_CAP} distinct aspects
+     */
+    public static AspectList getObjectTags(ItemStack stack, java.util.ArrayList<String> history) {
         if (stack == null || stack.isEmpty()) {
             return new AspectList();
         }
         AspectList aspects = AspectHelper.getObjectAspects(stack);
         if (stack.getItem() instanceof IEssentiaContainerItem container) {
-            if (!container.ignoreContainedAspects()) {
-                AspectList contained = container.getAspects(stack);
-                if (contained != null && contained.size() > 0) {
-                    // The original clears the container's base tags and uses only
-                    // the stored essentia; merging would duplicate aspects.
-                    aspects = contained.copy();
-                }
-            }
+            aspects = AspectTagRules.containerAspects(aspects, container.getAspects(stack),
+                    container.ignoreContainedAspects());
         }
         if (aspects == null) {
-            aspects = generateTags(stack);
+            aspects = generateTags(stack, history);
         }
         aspects = getBonusTags(stack, aspects);
-        return capAspects(aspects, ASPECT_CAP);
+        return AspectHelper.cullTags(capAspects(aspects, ASPECT_CAP), OBJECT_ASPECT_CAP);
     }
 
     public static void registerObjectAspects(ItemStack stack, AspectList aspects) {
@@ -279,8 +296,23 @@ public class ArcaneresearchCraftingManager {
         }
     }
 
+    /**
+     * Generates aspects for an item and caches the result, including an empty list
+     * for unknown items.
+     *
+     * @param stack item to inspect
+     * @return aspects, or null only for a null/empty stack
+     */
     public static AspectList generateTags(ItemStack stack) {
-        return generateTags(stack, new java.util.ArrayList<>());
+        AspectList tags = generateTags(stack, new java.util.ArrayList<>());
+        if (tags == null && stack != null && !stack.isEmpty()) {
+            // The original caches an empty list so unknown items are not re-scanned
+            // on every tooltip, scan or crucible tick.
+            AspectList empty = new AspectList();
+            ArcaneresearchApi.registerObjectTag(stack, empty);
+            return empty;
+        }
+        return tags;
     }
 
     public static AspectList generateTags(ItemStack stack, java.util.ArrayList<String> history) {
@@ -315,17 +347,6 @@ public class ArcaneresearchCraftingManager {
         return null;
     }
 
-    private static AspectList getTagsRecursive(ItemStack stack, java.util.ArrayList<String> history) {
-        if (stack == null || stack.isEmpty()) {
-            return null;
-        }
-        AspectList registered = AspectHelper.getObjectAspects(stack);
-        if (registered != null) {
-            return capAspects(getBonusTags(stack, registered), ASPECT_CAP);
-        }
-        return generateTags(stack, history);
-    }
-
     private static AspectList generateTagsFromCrucibleRecipes(ItemStack stack,
                                                               java.util.ArrayList<String> history) {
         arcaneresearch.api.crafting.CrucibleRecipe cr =
@@ -340,7 +361,7 @@ public class ArcaneresearchCraftingManager {
         if (cat == null || cat.isEmpty()) {
             return null;
         }
-        AspectList ot2 = getTagsRecursive(cat, history);
+        AspectList ot2 = getObjectTags(cat, history);
         AspectList out = new AspectList();
         if (ot2 != null && ot2.size() > 0) {
             for (Aspect tt : ot2.getAspects()) {
@@ -452,7 +473,7 @@ public class ArcaneresearchCraftingManager {
             if (remainder != null && !remainder.isEmpty()) {
                 remainders.add(remainder);
             }
-            AspectList obj = getTagsRecursive(stacks[0], history);
+            AspectList obj = getObjectTags(stacks[0], history);
             if (obj == null) {
                 continue;
             }
@@ -464,7 +485,7 @@ public class ArcaneresearchCraftingManager {
         }
         for (ItemStack remainder : remainders) {
             if (!remainder.isEmpty()) {
-                AspectList obj = getTagsRecursive(remainder, history);
+                AspectList obj = getObjectTags(remainder, history);
                 if (obj == null) {
                     continue;
                 }
@@ -518,6 +539,14 @@ public class ArcaneresearchCraftingManager {
         return null;
     }
 
+    /**
+     * Adds bonus aspects from armour, weapons, enchantments and food.
+     * Enchantments are read from the {@code id}/{@code lvl} NBT fields; aspects
+     * contributed by several enchantments are combined with max, not sum.
+     *
+     * @param stack item to inspect
+     * @param sourceTags aspects already resolved for the item
+     */
     private static AspectList getBonusTags(ItemStack stack, AspectList sourceTags) {
         AspectList result = new AspectList();
         if (stack == null || stack.isEmpty()) {
@@ -551,9 +580,20 @@ public class ArcaneresearchCraftingManager {
             int tier = tieredItem.getTier().getLevel();
             result.merge(Aspect.TOOL, (tier + 1) * 4);
         }
-        var enchantments = stack.getEnchantmentTags();
-        if (enchantments != null && !enchantments.isEmpty()) {
-            result.merge(Aspect.MAGIC, enchantments.size() * 3);
+        ListTag enchantments = enchantmentTags(stack);
+        int magic = 0;
+        for (int i = 0; i < enchantments.size(); i++) {
+            CompoundTag entry = enchantments.getCompound(i);
+            String id = entry.getString("id");
+            EnchantmentAspectRules.Contribution contribution = EnchantmentAspectRules.contribution(
+                    id, entry.getInt("lvl"), rarityBonus(id));
+            for (Aspect aspect : contribution.aspects().getAspects()) {
+                result.merge(aspect, contribution.aspects().getAmount(aspect));
+            }
+            magic += contribution.magic();
+        }
+        if (magic > 0) {
+            result.merge(Aspect.MAGIC, magic);
         }
         if (item.isEdible()) {
             var food = item.getFoodProperties();
@@ -567,17 +607,46 @@ public class ArcaneresearchCraftingManager {
         return result;
     }
 
+    /**
+     * Rarity bonus from the enchantment registry; unknown ids use the vanilla table.
+     *
+     * @param id enchantment id from NBT ({@code id} field)
+     * @return 0/2/4/6 for common/uncommon/rare/very rare
+     */
+    private static int rarityBonus(String id) {
+        ResourceLocation key = ResourceLocation.tryParse(id);
+        Enchantment enchantment = key == null ? null : BuiltInRegistries.ENCHANTMENT.get(key);
+        if (enchantment == null) {
+            return EnchantmentAspectRules.vanillaRarityBonus(id);
+        }
+        return switch (enchantment.getRarity()) {
+            case UNCOMMON -> 2;
+            case RARE -> 4;
+            case VERY_RARE -> 6;
+            default -> 0;
+        };
+    }
+
+    /**
+     * Enchanted books store their enchantments under {@code StoredEnchantments},
+     * not {@code Enchantments}; read the correct list for each item type.
+     *
+     * @param stack item to inspect
+     * @return list of enchantment compounds, never null
+     */
+    private static ListTag enchantmentTags(ItemStack stack) {
+        return AspectTagRules.enchantmentTag(stack.getItem() instanceof EnchantedBookItem,
+                stack.getTag(), stack.getEnchantmentTags());
+    }
+
+    /**
+     * Copies aspects and clamps every amount to {@code maxAmount}.
+     *
+     * @param source aspects to copy, may be null
+     * @param maxAmount per-aspect ceiling (500 in the original)
+     * @return a new, non-null list
+     */
     private static AspectList capAspects(AspectList source, int maxAmount) {
-        if (source == null) {
-            return new AspectList();
-        }
-        AspectList result = new AspectList();
-        for (Aspect aspect : source.getAspects()) {
-            if (aspect != null) {
-                int amount = Math.min(maxAmount, source.getAmount(aspect));
-                result.add(aspect, amount);
-            }
-        }
-        return result;
+        return AspectTagRules.cap(source, maxAmount);
     }
 }

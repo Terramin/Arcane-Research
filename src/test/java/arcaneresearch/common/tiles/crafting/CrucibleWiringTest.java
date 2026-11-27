@@ -94,8 +94,10 @@ class CrucibleWiringTest {
     @DisplayName("essentia containers replace base aspects instead of merging them")
     void essentiaContainerReplacement() {
         String manager = java(MANAGER);
-        assertTrue(manager.contains("aspects=contained.copy()"));
+        assertTrue(manager.contains("AspectTagRules.containerAspects("));
         assertFalse(manager.contains("merged.add(tag,aspects.getAmount(tag))"));
+        String rules = java("arcaneresearch/common/lib/crafting/AspectTagRules.java");
+        assertTrue(rules.contains("returncontained.copy()"));
     }
 
     @Test
@@ -104,6 +106,65 @@ class CrucibleWiringTest {
         String tile = java(TILE);
         assertTrue(tile.contains("playLocalSound("));
         assertTrue(tile.contains("ModSounds.SPILL.get()"));
+    }
+
+    @Test
+    @DisplayName("string tag registrations are deferred until tags are bound")
+    void deferredTagRegistration() {
+        String api = java("arcaneresearch/api/ArcaneresearchApi.java");
+        assertTrue(api.contains("flushPendingTags()"));
+        assertTrue(api.contains("isBound()"));
+        assertTrue(api.contains("Cannotresolveaspecttag"));
+
+        String handler = java("arcaneresearch/common/lib/events/TagReloadHandler.java");
+        assertTrue(handler.contains("TagsUpdatedEvent"));
+        assertTrue(handler.contains("ArcaneresearchApi.flushPendingTags()"));
+    }
+
+    @Test
+    @DisplayName("ConfigAspects avoids item tags that do not exist in 1.20.1")
+    void noMissingItemTags() {
+        String config = java("arcaneresearch/common/config/ConfigAspects.java");
+        for (String missing : new String[]{"minecraft:grass", "forge:dirt", "forge:vines",
+                "forge:dusts/iron", "forge:dusts/gold", "forge:dusts/copper"}) {
+            assertFalse(config.contains("\"" + missing + "\""), missing);
+        }
+        assertTrue(config.contains("newItemStack(Blocks.DIRT)"));
+    }
+
+    @Test
+    @DisplayName("unknown items cache an empty aspect list instead of rescanning recipes")
+    void emptyAspectsCached() {
+        String manager = java(MANAGER);
+        assertTrue(manager.contains("AspectListempty=newAspectList()"));
+        assertTrue(manager.contains("registerObjectTag(stack,empty)"));
+    }
+
+    @Test
+    @DisplayName("enchantments use the profile table and books read StoredEnchantments")
+    void enchantmentAspects() {
+        String manager = java(MANAGER);
+        assertTrue(manager.contains("EnchantmentAspectRules.contribution("));
+        assertTrue(manager.contains("AspectTagRules.enchantmentTag("));
+        assertFalse(manager.contains("Aspect.MAGIC,enchantments.size()*3"));
+    }
+
+    @Test
+    @DisplayName("recipe recursion goes through getObjectTags, not a stripped-down helper")
+    void recursionUsesObjectTags() {
+        String manager = java(MANAGER);
+        assertFalse(manager.contains("getTagsRecursive("));
+        assertTrue(manager.contains("getObjectTags(cat,history)"));
+        assertTrue(manager.contains("getObjectTags(stacks[0],history)"));
+        assertTrue(manager.contains("getObjectTags(remainder,history)"));
+    }
+
+    @Test
+    @DisplayName("object tags are culled to ten aspects")
+    void cullingApplied() {
+        String manager = java(MANAGER);
+        assertTrue(manager.contains("OBJECT_ASPECT_CAP=10"));
+        assertTrue(manager.contains("AspectHelper.cullTags(capAspects(aspects,ASPECT_CAP),OBJECT_ASPECT_CAP)"));
     }
 
     @Test
