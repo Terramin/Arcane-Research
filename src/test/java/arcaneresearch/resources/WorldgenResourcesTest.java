@@ -26,7 +26,7 @@ class WorldgenResourcesTest {
             String feature = string(ResourceFiles.readJson(file).getAsJsonObject(), "feature");
             checkConfigured(feature, file.getFileName().toString(), problems);
         }
-        assertEquals(36, files.size());
+        assertEquals(38, files.size());
         assertTrue(problems.isEmpty(), "broken placed features: " + problems);
     }
 
@@ -94,7 +94,7 @@ class WorldgenResourcesTest {
     @Test
     void everyConfiguredFeatureHasAType() {
         List<Path> files = ResourceFiles.jsonFilesIn(WORLDGEN + "/configured_feature");
-        assertEquals(23, files.size());
+        assertEquals(24, files.size());
         for (Path file : files) {
             assertTrue(ResourceFiles.readJson(file).getAsJsonObject().has("type"),
                     file.getFileName() + " has no type");

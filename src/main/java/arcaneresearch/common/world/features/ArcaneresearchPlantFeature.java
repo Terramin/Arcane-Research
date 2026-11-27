@@ -116,7 +116,8 @@ public class ArcaneresearchPlantFeature extends Feature<NoneFeatureConfiguration
     public enum PlantType {
         CINDERPEARL(ModBlocks.CINDERPEARL, true,  false, 18, 3),
         SHIMMERLEAF(ModBlocks.SHIMMERLEAF, false, false, 18, 2),
-        VISHROOM   (ModBlocks.VISHROOM,    false, true,  36, 2);
+        VISHROOM       (ModBlocks.VISHROOM, false, true, 36, 2),
+        VISHROOM_SPARSE(ModBlocks.VISHROOM, false, true, 18, 2);
 
         private final Supplier<Block> blockSupplier;
         private final boolean requiresSand;

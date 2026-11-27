@@ -47,6 +47,10 @@ public class ModFeatures {
             FEATURES.register("vishroom_patch",
                     () -> new ArcaneresearchPlantFeature(NoneFeatureConfiguration.CODEC,
                             ArcaneresearchPlantFeature.PlantType.VISHROOM));
+    public static final RegistryObject<Feature<NoneFeatureConfiguration>> VISHROOM_PATCH_SPARSE =
+            FEATURES.register("vishroom_patch_sparse",
+                    () -> new ArcaneresearchPlantFeature(NoneFeatureConfiguration.CODEC,
+                            ArcaneresearchPlantFeature.PlantType.VISHROOM_SPARSE));
     public static final RegistryObject<GrassAmbientFeature> GRASS_AMBIENT_PATCH =
             FEATURES.register("grass_ambient_patch",
                     () -> new GrassAmbientFeature(NoneFeatureConfiguration.CODEC));

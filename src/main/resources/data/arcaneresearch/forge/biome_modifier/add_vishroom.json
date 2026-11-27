@@ -1,6 +1,9 @@
 {
   "type": "forge:add_features",
-  "biomes": "#minecraft:is_overworld",
+  "biomes": [
+    "arcaneresearch:eerie",
+    "arcaneresearch:eldritch"
+  ],
   "features": "arcaneresearch:vishroom_patch",
   "step": "underground_decoration"
 }
