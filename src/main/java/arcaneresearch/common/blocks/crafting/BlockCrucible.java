@@ -32,6 +32,10 @@ import arcaneresearch.common.blocks.BlockTCDevice;
 import arcaneresearch.common.tiles.crafting.TileCrucible;
 import arcaneresearch.init.ModBlockEntities;
 import javax.annotation.Nullable;
+/**
+ * Alchemy crucible block. Accepts water from buckets and fluid handlers, smelts a
+ * single item per right click, and spills its contents when broken.
+ */
 public class BlockCrucible extends BlockTCDevice {
     private static final VoxelShape SHAPE = Shapes.or(
             Block.box(0.0, 3.0, 0.0, 2.0, 16.0, 16.0),
@@ -120,6 +124,7 @@ public class BlockCrucible extends BlockTCDevice {
             if (crucible.getTank().getFluidAmount() < crucible.getTank().getCapacity()) {
                 if (FluidUtil.interactWithFluidHandler(player, hand, crucible.getTank())) {
                     crucible.markDirtyAndSync();
+                    level.sendBlockUpdated(pos, state, state, 3);
                     level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.33f,
                             1.0f + (level.random.nextFloat() - level.random.nextFloat()) * 0.3f);
                 }
@@ -130,14 +135,14 @@ public class BlockCrucible extends BlockTCDevice {
                 && !(heldItem.getItem() instanceof IFocusHost)
                 && hit.getDirection() == net.minecraft.core.Direction.UP
                 && crucible.isHeated() && crucible.getTank().getFluidAmount() > 0) {
-            ItemStack result = crucible.attemptSmelt(heldItem.copy(), player.getName().getString());
-            if (result == null || result.getCount() < heldItem.getCount()) {
+            // The original processes exactly one item per right click; processing the
+            // whole stack would consume ~half of it and drain 50 water per craft.
+            ItemStack single = heldItem.copy();
+            single.setCount(1);
+            ItemStack result = crucible.attemptSmelt(single, player.getName().getString());
+            if (result == null || result.isEmpty()) {
                 if (!player.getAbilities().instabuild) {
-                    if (result == null || result.isEmpty()) {
-                        heldItem.shrink(1);
-                    } else {
-                        player.setItemInHand(hand, result);
-                    }
+                    heldItem.shrink(1);
                 }
                 return InteractionResult.SUCCESS;
             }

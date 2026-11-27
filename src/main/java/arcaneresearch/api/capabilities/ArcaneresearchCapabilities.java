@@ -41,27 +41,32 @@ public class ArcaneresearchCapabilities {
         return true;
     }
 
+    /** Delegates key parsing to {@link arcaneresearch.common.lib.research.ResearchKeyRules}. */
     public static boolean knowsResearchStrict(@Nonnull Player player, @Nonnull String... research) {
         IPlayerKnowledge knowledge = getKnowledge(player);
         if (knowledge == null) return false;
-        for (String r : research) {
-            if (r.contains("&&")) {
-                String[] rr = r.split("&&");
-                if (!knowsResearchStrict(player, rr)) return false;
-            } else if (r.contains("||")) {
-                String[] rr = r.split("\\|\\|");
-                boolean anyTrue = false;
-                for (String str : rr) {
-                    if (knowsResearchStrict(player, str)) {
-                        anyTrue = true;
-                        break;
+
+        arcaneresearch.common.lib.research.ResearchKeyRules.State state =
+                new arcaneresearch.common.lib.research.ResearchKeyRules.State() {
+                    @Override
+                    public boolean known(String key) {
+                        return knowledge.isResearchKnown(key);
                     }
-                }
-                if (!anyTrue) return false;
-            } else if (r.contains("@")) {
-                if (!knowledge.isResearchKnown(r)) return false;
-            } else {
-                if (!knowledge.isResearchComplete(r)) return false;
+
+                    @Override
+                    public boolean complete(String key) {
+                        return knowledge.isResearchComplete(key);
+                    }
+
+                    @Override
+                    public int stage(String key) {
+                        return knowledge.getResearchStage(key);
+                    }
+                };
+
+        for (String key : research) {
+            if (!arcaneresearch.common.lib.research.ResearchKeyRules.matches(key, state)) {
+                return false;
             }
         }
         return true;

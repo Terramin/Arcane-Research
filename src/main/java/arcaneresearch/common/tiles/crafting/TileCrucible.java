@@ -27,7 +27,7 @@ import arcaneresearch.client.fx.FXDispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import arcaneresearch.common.entities.EntitySpecialItem;
-import arcaneresearch.common.lib.crafting.CrucibleRecipeType;
+import arcaneresearch.common.lib.crafting.CrucibleMatch;
 import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.common.tiles.TileArcaneresearch;
 import arcaneresearch.init.ModBlockEntities;
@@ -39,78 +39,127 @@ import arcaneresearch.debug.ProfileCategory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Block entity of the alchemy crucible. It holds water and dissolved aspects, heats
+ * up above a heat source and turns matching items into crucible-craft outputs.
+ *
+ * <p>Heating, spill timing and the liquid level are pure rules in
+ * {@link CrucibleRules}; NBT and colour handling live in {@link CrucibleNbtRules}
+ * and {@link CrucibleRenderRules}.</p>
+ */
 public class TileCrucible extends TileArcaneresearch implements IAspectContainer {
     private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.BLOCKS);
     private static final ArcaneLogger AURA_LOGGER = ArcaneLogger.forCategory(ProfileCategory.AURA);
-    public static final int MAX_ASPECTS = 500;
-    public static final int TANK_CAPACITY = 1000;
+    /** Maximum vis that can be stored before the crucible starts spilling. */
+    public static final int MAX_ASPECTS = CrucibleRules.ASPECT_LIMIT;
+    /** Maximum amount of water the internal tank can hold. */
+    public static final int TANK_CAPACITY = CrucibleRules.TANK_CAPACITY;
 
-    private final FluidTank tank = new FluidTank(TANK_CAPACITY) {
+    /** Tank that syncs the tile whenever fluid actually changes via a capability. */
+    private final class SyncingFluidTank extends FluidTank {
+        SyncingFluidTank() {
+            super(TANK_CAPACITY);
+        }
+
         @Override
         public boolean isFluidValid(FluidStack stack) {
             return stack.getFluid() == Fluids.WATER;
         }
-    };
+
+        @Override
+        public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
+            int filled = super.fill(resource, action);
+            if (action.execute() && filled > 0) {
+                markDirtyAndSync();
+            }
+            return filled;
+        }
+
+        @Override
+        public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
+            FluidStack drained = super.drain(resource, action);
+            if (action.execute() && !drained.isEmpty()) {
+                markDirtyAndSync();
+            }
+            return drained;
+        }
+
+        @Override
+        public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
+            FluidStack drained = super.drain(maxDrain, action);
+            if (action.execute() && !drained.isEmpty()) {
+                markDirtyAndSync();
+            }
+            return drained;
+        }
+    }
+
+    private final FluidTank tank = new SyncingFluidTank();
 
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> tank);
 
     private final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
+    /** Current heat, 0..200; boiling starts at 151. */
     public short heat = 0;
+    /** Aspects dissolved in the water. */
     public AspectList aspects = new AspectList();
 
     private int bellows = -1;
-    private long tickCounter = -100;
+    private long tickCounter = CrucibleRules.COUNTER_INITIAL;
 
     private AABB renderBox;
 
+    /**
+     * @param pos block position
+     * @param state initial block state
+     */
     public TileCrucible(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CRUCIBLE.get(), pos, state);
     }
 
+    /**
+     * Server tick: updates heat from the block below, handles overflow and the
+     * periodic aspect spill.
+     */
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileCrucible tile) {
         if (level == null) return;
 
         tile.tickCounter++;
         int prevHeat = tile.heat;
 
-        if (tile.tank.getFluidAmount() > 0) {
+        boolean hasWater = tile.tank.getFluidAmount() > 0;
+        boolean heatSource = false;
+        if (hasWater) {
             tile.mutablePos.set(pos.getX(), pos.getY() - 1, pos.getZ());
-            BlockState below = level.getBlockState(tile.mutablePos);
+            heatSource = tile.isHeatSource(level.getBlockState(tile.mutablePos));
+        }
+        int delta = CrucibleRules.heatDelta(hasWater, heatSource, tile.heat);
+        tile.heat += delta;
 
-            if (tile.isHeatSource(below)) {
-                if (tile.heat < 200) {
-                    tile.heat++;
-
-                    if (prevHeat < 151 && tile.heat >= 151) {
-                        LOGGER.debug("Crucible {} reached boiling heat ({})", pos, tile.heat);
-                        tile.markDirtyAndSync();
-                    }
-                }
-            } else if (tile.heat > 0) {
-                tile.heat--;
-
-                if (tile.heat == 149) {
-                    LOGGER.debug("Crucible {} cooled below boiling point", pos);
-                    tile.markDirtyAndSync();
-                }
+        if (CrucibleRules.shouldSyncHeat(prevHeat, tile.heat, hasWater, heatSource)) {
+            if (delta > 0) {
+                LOGGER.debug("Crucible {} reached boiling heat ({})", pos, tile.heat);
+            } else {
+                LOGGER.debug("Crucible {} cooled below boiling point", pos);
             }
-        } else if (tile.heat > 0) {
-            tile.heat--;
+            tile.markDirtyAndSync();
         }
 
-        if (tile.aspects.visSize() > MAX_ASPECTS) {
+        int vis = tile.aspects.visSize();
+        if (CrucibleRules.shouldSpill(vis)) {
             AURA_LOGGER.once("crucible.overflow", LogLevel.DEBUG,
-                    "Crucible {} overflowing: {} vis stored (limit {})", pos, tile.aspects.visSize(), MAX_ASPECTS);
+                    "Crucible {} overflowing: {} vis stored (limit {})", pos, vis, MAX_ASPECTS);
+            // Overflow spills immediately but must not reset the periodic counter.
             tile.spillRandom();
         }
-
-        if (tile.tickCounter >= 100) {
+        if (tile.tickCounter >= CrucibleRules.SPILL_INTERVAL) {
             tile.spillRandom();
             tile.tickCounter = 0;
         }
     }
 
+    /** Client tick: draws froth and aspect bubbles while the crucible has water. */
     public static void clientTick(Level level, BlockPos pos, BlockState state, TileCrucible tile) {
         if (level == null) return;
 
@@ -122,7 +171,7 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
     @Override
     protected void writeSyncNBT(CompoundTag tag) {
         super.writeSyncNBT(tag);
-        tag.putShort("Heat", heat);
+        CrucibleNbtRules.writeHeat(tag, heat);
         tank.writeToNBT(tag);
         aspects.writeToNBT(tag);
     }
@@ -130,8 +179,11 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
     @Override
     protected void readSyncNBT(CompoundTag tag) {
         super.readSyncNBT(tag);
-        heat = tag.getShort("Heat");
+        heat = CrucibleNbtRules.readHeat(tag);
         tank.readFromNBT(tag);
+        if (CrucibleNbtRules.hasEmptyFlag(tag)) {
+            tank.drain(TANK_CAPACITY, IFluidHandler.FluidAction.EXECUTE);
+        }
         aspects.readFromNBT(tag);
     }
 
@@ -185,6 +237,11 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
                 || state.getBlock() instanceof arcaneresearch.common.blocks.misc.BlockNitor;
     }
 
+    /**
+     * Smelts a dropped item, consuming it when the result is fully used.
+     *
+     * @param itemEntity item falling into the crucible
+     */
     public void attemptSmelt(ItemEntity itemEntity) {
         if (level == null || level.isClientSide || itemEntity == null) return;
         if (heat < 151 || tank.getFluidAmount() <= 0) return;
@@ -205,6 +262,14 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         }
     }
 
+    /**
+     * Runs one item through the crucible, either crafting a recipe or dissolving
+     * it into its aspects.
+     *
+     * @param item item stack to process
+     * @param username name of the player who dropped it, may be empty
+     * @return the remaining stack, or {@code null} when fully consumed
+     */
     public ItemStack attemptSmelt(ItemStack item, String username) {
         if (level == null || item == null) return item;
 
@@ -224,26 +289,28 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         Block block = getBlockState().getBlock();
 
         for (int a = 0; a < stacksize; ++a) {
-            CrucibleRecipeType recipe = ArcaneresearchCraftingManager.findMatchingCrucibleRecipe(
+            CrucibleMatch recipe = ArcaneresearchCraftingManager.findMatchingCrucibleRecipe(
                     aspects, item, player, level);
 
             if (recipe != null && tank.getFluidAmount() > 0) {
-                ItemStack out = recipe.assemble(null, level.registryAccess()).copy();
+                ItemStack out = recipe.output().get().copy();
 
                 if (player != null) {
+                    // Forge 1.20.1's event is void, so there is no replacement result
+                    // to apply; it is fired purely for other mods' listeners.
                     net.minecraftforge.event.ForgeEventFactory.firePlayerCraftingEvent(
                             player, out, new net.minecraft.world.SimpleContainer(item.copy()));
                 }
 
                 LOGGER.debug("Crucible {} crafted {} from {} (water={})",
                         worldPosition, out, item, tank.getFluidAmount());
-                aspects = recipe.removeMatchingAspects(aspects);
-                tank.drain(50, IFluidHandler.FluidAction.EXECUTE);
+                aspects = recipe.removeAspects(aspects);
+                tank.drain(CrucibleRules.WATER_PER_CRAFT, IFluidHandler.FluidAction.EXECUTE);
                 ejectItem(out);
 
                 craftDone = true;
                 --stacksize;
-                tickCounter = -250;
+                tickCounter = CrucibleRules.COUNTER_AFTER_CRAFT;
             } else {
                 AspectList itemAspects = getItemAspects(item);
 
@@ -256,7 +323,7 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
 
                     bubble = true;
                     --stacksize;
-                    tickCounter = -150;
+                    tickCounter = CrucibleRules.COUNTER_AFTER_ABSORB;
                 }
             }
         }
@@ -286,6 +353,7 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         return ArcaneresearchCraftingManager.getObjectTags(item);
     }
 
+    /** Ejects a craft result above the crucible, splitting it into legal stack sizes. */
     public void ejectItem(ItemStack items) {
         if (level == null || level.isClientSide || items == null || items.isEmpty()) return;
 
@@ -315,25 +383,27 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         }
     }
 
+    /** Removes one random aspect and pollutes the aura, then syncs the tile. */
     public void spillRandom() {
-        if (level == null || aspects.size() <= 0) return;
+        if (level == null) return;
 
         Aspect[] aspectArray = aspects.getAspects();
-
         if (aspectArray.length > 0) {
             Aspect toSpill = aspectArray[level.random.nextInt(aspectArray.length)];
             aspects.remove(toSpill, 1);
 
-            float pollution = (toSpill == Aspect.FLUX) ? 1.0f : 0.25f;
+            float pollution = CrucibleRules.spillPollution(toSpill == Aspect.FLUX);
             AURA_LOGGER.once("crucible.spill", LogLevel.DEBUG,
                     "Crucible {} spilled {} (pollution={}, vis left={})",
                     worldPosition, toSpill, pollution, aspects.visSize());
             AuraHelper.polluteAura(level, worldPosition, pollution, true);
         }
 
+        // The original syncs on every spill, including the periodic empty one.
         markDirtyAndSync();
     }
 
+    /** Empties the tank and all aspects, polluting the aura with their vis. */
     public void spillAll() {
         if (level == null) return;
 
@@ -356,6 +426,7 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         }
     }
 
+    /** Alias of {@link #spillAll()} kept for API compatibility. */
     public void spillRemnants() {
         spillAll();
     }
@@ -390,6 +461,9 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         }
 
         if (id == 2) {
+            level.playLocalSound(
+                    worldPosition.getX() + 0.5f, worldPosition.getY() + 0.5f, worldPosition.getZ() + 0.5f,
+                    ModSounds.SPILL.get(), SoundSource.BLOCKS, 0.2f, 1.0f, false);
             for (int q = 0; q < 10; ++q) {
                 FXDispatcher.INSTANCE.crucibleBoil(worldPosition, this, param);
             }
@@ -459,23 +533,14 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         fluidHandler.invalidate();
     }
 
+    /** @return the internal water tank, wrapped to sync changes */
     public FluidTank getTank() {
         return tank;
     }
 
+    /** @return height of the liquid surface, including the aspect-driven offset */
     public float getFluidHeight() {
-        float base = 0.3f + 0.5f * (tank.getFluidAmount() / (float) TANK_CAPACITY);
-        float out = base + aspects.visSize() / (float) MAX_ASPECTS * (1.0f - base);
-
-        if (out > 1.0f) {
-            out = 1.001f;
-        }
-
-        if (out == 1.0f) {
-            out = 0.9999f;
-        }
-
-        return out;
+        return CrucibleRules.fluidHeight(tank.getFluidAmount(), aspects.visSize());
     }
 
     @Override
@@ -490,7 +555,8 @@ public class TileCrucible extends TileArcaneresearch implements IAspectContainer
         return renderBox;
     }
 
+    /** @return whether the crucible is hot enough to smelt items */
     public boolean isHeated() {
-        return heat >= 151;
+        return CrucibleRules.isHeated(heat);
     }
 }

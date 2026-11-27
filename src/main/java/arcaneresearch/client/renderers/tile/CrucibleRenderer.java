@@ -11,20 +11,23 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
-import arcaneresearch.api.aspects.Aspect;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.common.tiles.crafting.TileCrucible;
 import arcaneresearch.debug.ArcaneLogger;
 import arcaneresearch.debug.LogLevel;
 import arcaneresearch.debug.ProfileCategory;
 
+/**
+ * Renders the crucible's liquid surface. The colour comes from
+ * {@link arcaneresearch.common.tiles.crafting.CrucibleRenderRules} and the height
+ * from the tile's water and dissolved vis.
+ */
 @OnlyIn(Dist.CLIENT)
 public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible> {
     private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RENDER);
@@ -67,45 +70,17 @@ public class CrucibleRenderer implements BlockEntityRenderer<TileCrucible> {
                 "Rendering crucible {} (heat={}, water={}, aspects={}, height={})",
                 tile.getBlockPos(), tile.heat, tile.getTank().getFluidAmount(), total, fluidHeight);
 
-        float r, g, b;
-
-        if (total > 0) {
-            double ar = 0.0, ag = 0.0, ab = 0.0;
-
-            for (Aspect aspect : aspects.getAspects()) {
-                if (aspect == null) continue;
-
-                int color = aspect.getColor() & 0xFFFFFF;
-                int amount = aspects.getAmount(aspect);
-
-                ar += ((color >> 16) & 0xFF) * (double) amount;
-                ag += ((color >> 8) & 0xFF) * (double) amount;
-                ab += (color & 0xFF) * (double) amount;
-            }
-
-            r = (float) (ar / total / 255.0);
-            g = (float) (ag / total / 255.0);
-            b = (float) (ab / total / 255.0);
-        } else {
-            int waterColor = 0x3F76E4;
-
-            if (tile.getLevel() != null) {
-                waterColor = tile.getLevel().getBiome(tile.getBlockPos()).value()
-                        .getSpecialEffects().getWaterColor();
-            }
-
-            r = ((waterColor >> 16) & 0xFF) / 255.0f;
-            g = ((waterColor >> 8) & 0xFF) / 255.0f;
-            b = (waterColor & 0xFF) / 255.0f;
+        int waterColor = arcaneresearch.common.tiles.crafting.CrucibleRenderRules.DEFAULT_WATER_COLOR;
+        if (tile.getLevel() != null) {
+            waterColor = tile.getLevel().getBiome(tile.getBlockPos()).value()
+                    .getSpecialEffects().getWaterColor();
         }
-
-        float recolor = (float) total / TileCrucible.MAX_ASPECTS;
-
-        if (recolor > 0.0f) {
-            recolor = Mth.clamp(0.5f + recolor / 2.0f, 0.0f, 1.0f);
-        }
-
-        float alpha = 1.0f - recolor / 2.0f;
+        arcaneresearch.common.tiles.crafting.CrucibleRenderRules.FluidColor fluidColor =
+                arcaneresearch.common.tiles.crafting.CrucibleRenderRules.fluidColor(aspects, waterColor);
+        float r = fluidColor.r();
+        float g = fluidColor.g();
+        float b = fluidColor.b();
+        float alpha = fluidColor.alpha();
 
         poseStack.pushPose();
 

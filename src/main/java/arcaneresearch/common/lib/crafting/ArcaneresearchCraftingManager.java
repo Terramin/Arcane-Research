@@ -91,27 +91,56 @@ public class ArcaneresearchCraftingManager {
         return recipe != null ? recipe.getVis() : 0;
     }
 
-    public static CrucibleRecipeType findMatchingCrucibleRecipe(AspectList crucibleAspects,
-                                                                ItemStack catalyst,
-                                                                Player player,
-                                                                Level level) {
-        if (catalyst.isEmpty() || level == null) {
+    /**
+     * Finds the available crucible recipe with the highest aspect cost.
+     * Recipes found without a player are ignored, exactly as in the original.
+     */
+    public static CrucibleMatch findMatchingCrucibleRecipe(AspectList crucibleAspects,
+                                                           ItemStack catalyst,
+                                                           Player player,
+                                                           Level level) {
+        if (catalyst.isEmpty() || level == null || player == null) {
             return null;
         }
+        ItemStack single = catalyst.copy();
+        single.setCount(1);
+
+        CrucibleMatch best = null;
+        int highest = 0;
+
         for (Recipe<?> recipe : level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.CRUCIBLE.get())) {
-            if (recipe instanceof CrucibleRecipeType crucibleRecipe) {
-                if (crucibleRecipe.matchesCrucible(crucibleAspects, catalyst)) {
-                    String research = crucibleRecipe.getResearch();
-                    if (research != null && !research.isEmpty() && player != null) {
-                        if (!ArcaneresearchCapabilities.isResearchKnown(player, research)) {
-                            continue;
-                        }
-                    }
-                    return crucibleRecipe;
+            if (recipe instanceof CrucibleRecipeType crucibleRecipe
+                    && crucibleRecipe.getAspects() != null
+                    && knowsRecipe(player, crucibleRecipe.getResearch())
+                    && crucibleRecipe.matchesCrucible(crucibleAspects, single)) {
+                CrucibleMatch match = CrucibleMatch.of(crucibleRecipe);
+                if (match.visSize() > highest) {
+                    highest = match.visSize();
+                    best = match;
                 }
             }
         }
-        return null;
+
+        // Programmatically registered recipes live in the legacy catalog.
+        for (Object recipe : arcaneresearch.api.ArcaneresearchApi.getCraftingRecipes().values()) {
+            if (recipe instanceof arcaneresearch.api.crafting.CrucibleRecipe legacy
+                    && legacy.getAspects() != null
+                    && knowsRecipe(player, legacy.getResearch())
+                    && legacy.matches(crucibleAspects, single)) {
+                CrucibleMatch match = CrucibleMatch.of(legacy);
+                if (match.visSize() > highest) {
+                    highest = match.visSize();
+                    best = match;
+                }
+            }
+        }
+        return best;
+    }
+
+    private static boolean knowsRecipe(Player player, String research) {
+        return research == null || research.isEmpty()
+                || arcaneresearch.api.capabilities.ArcaneresearchCapabilities
+                        .knowsResearchStrict(player, research);
     }
 
     public static List<CrucibleRecipeType> findCrucibleRecipesForCatalyst(ItemStack catalyst, Level level) {
@@ -231,18 +260,9 @@ public class ArcaneresearchCraftingManager {
             if (!container.ignoreContainedAspects()) {
                 AspectList contained = container.getAspects(stack);
                 if (contained != null && contained.size() > 0) {
-                    if (aspects == null) {
-                        aspects = contained;
-                    } else {
-                        AspectList merged = new AspectList();
-                        for (Aspect tag : contained.getAspects()) {
-                            merged.add(tag, contained.getAmount(tag));
-                        }
-                        for (Aspect tag : aspects.getAspects()) {
-                            merged.add(tag, aspects.getAmount(tag));
-                        }
-                        aspects = merged;
-                    }
+                    // The original clears the container's base tags and uses only
+                    // the stored essentia; merging would duplicate aspects.
+                    aspects = contained.copy();
                 }
             }
         }
@@ -285,6 +305,9 @@ public class ArcaneresearchCraftingManager {
         history.add(ss);
         if (history.size() < 100) {
             AspectList ret = generateTagsFromRecipes(sc, history);
+            if (ret == null) {
+                return null;
+            }
             ret = capAspects(ret, ASPECT_CAP);
             arcaneresearch.api.ArcaneresearchApi.registerObjectTag(stack, ret);
             return ret;
@@ -478,12 +501,9 @@ public class ArcaneresearchCraftingManager {
             return ret;
         }
         ret = generateTagsFromCraftingRecipes(stack, history);
-        if (ret != null) {
-            return ret;
-        }
-        AspectList fallback = new AspectList();
-        fallback.add(Aspect.ENTROPY, 1);
-        return fallback;
+        // Unknown items have no aspects; the original returns null instead of
+        // inventing an ENTROPY point that would dissolve them in the crucible.
+        return ret;
     }
 
     private static Level craftingLevel() {
