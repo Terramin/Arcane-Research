@@ -31,22 +31,22 @@ public class TileNitor extends TileArcaneresearch {
         int color = mapColor.col;
 
         double cx = pos.getX() + 0.5;
-        double cy = pos.getY() + 0.45;
+        double cy = pos.getY() + NitorRules.FLAME_Y;
         double cz = pos.getZ() + 0.5;
 
         FXDispatcher.INSTANCE.drawNitorFlames(
-                cx + random.nextGaussian() * 0.025,
-                cy + random.nextGaussian() * 0.025,
-                cz + random.nextGaussian() * 0.025,
-                random.nextGaussian() * 0.0025,
-                random.nextFloat() * 0.06,
-                random.nextGaussian() * 0.0025,
+                cx + NitorRules.flameOffset(random.nextGaussian()),
+                cy + NitorRules.flameOffset(random.nextGaussian()),
+                cz + NitorRules.flameOffset(random.nextGaussian()),
+                NitorRules.flameVelocity(random.nextGaussian()),
+                NitorRules.flameRise(random.nextFloat()),
+                NitorRules.flameVelocity(random.nextGaussian()),
                 color, 0);
 
-        if (tile.count++ % 10 == 0) {
+        if (NitorRules.shouldDrawCore(tile.count++)) {
             FXDispatcher.INSTANCE.drawNitorCore(
                     pos.getX() + 0.5,
-                    pos.getY() + 0.49,
+                    pos.getY() + NitorRules.CORE_Y,
                     pos.getZ() + 0.5,
                     0.0, 0.0, 0.0);
         }

@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 
 public class ItemAlumentum extends Item {
     public ItemAlumentum() {
-        super(new Properties().stacksTo(64));
+        super(new Properties().stacksTo(AlumentumRules.STACK_SIZE));
     }
 
     @Override
@@ -27,10 +27,12 @@ public class ItemAlumentum extends Item {
         }
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.EGG_THROW, SoundSource.PLAYERS,
-                0.3f, 0.4f / (level.random.nextFloat() * 0.4f + 0.8f));
+                AlumentumRules.SOUND_VOLUME, AlumentumRules.soundPitch(level.random.nextFloat()));
         if (!level.isClientSide) {
             EntityAlumentum alumentum = new EntityAlumentum(level, player);
-            alumentum.shootFromRotation(player, player.getXRot(), player.getYRot(), -5.0f, 0.4f, 2.0f);
+            alumentum.shootFromRotation(player, player.getXRot(), player.getYRot(),
+                    AlumentumRules.THROW_ANGLE, AlumentumRules.THROW_INACCURACY,
+                    AlumentumRules.THROW_POWER);
             level.addFreshEntity(alumentum);
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
@@ -38,6 +40,6 @@ public class ItemAlumentum extends Item {
 
     @Override
     public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
-        return 4800;
+        return AlumentumRules.BURN_TIME;
     }
 }

@@ -23,7 +23,7 @@ public class EntityAlumentum extends ThrowableProjectile {
     }
     @Override
     public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
-        super.shoot(x, y, z, 0.75f, inaccuracy);
+        super.shoot(x, y, z, arcaneresearch.common.items.consumables.AlumentumRules.VELOCITY, inaccuracy);
     }
     @Override
     public void tick() {
@@ -34,14 +34,15 @@ public class EntityAlumentum extends ThrowableProjectile {
     }
     @OnlyIn(Dist.CLIENT)
     private void spawnAlumentumFX() {
-        for (double i = 0.0; i < 3.0; ++i) {
-            double coeff = i / 3.0;
+        for (int i = 0; i < arcaneresearch.common.items.consumables.AlumentumRules.FX_SAMPLES; ++i) {
+            double coeff = arcaneresearch.common.items.consumables.AlumentumRules.trailCoefficient(i);
             FXDispatcher.INSTANCE.drawAlumentum(
                     (float) (xOld + (getX() - xOld) * coeff),
                     (float) (yOld + (getY() - yOld) * coeff) + getBbHeight() / 2.0f,
                     (float) (zOld + (getZ() - zOld) * coeff),
-                    0.0125f * (random.nextFloat() - 0.5f), 0.0125f * (random.nextFloat() - 0.5f),
-                    0.0125f * (random.nextFloat() - 0.5f),
+                    arcaneresearch.common.items.consumables.AlumentumRules.trailJitter(random.nextFloat()),
+                    arcaneresearch.common.items.consumables.AlumentumRules.trailJitter(random.nextFloat()),
+                    arcaneresearch.common.items.consumables.AlumentumRules.trailJitter(random.nextFloat()),
                     random.nextFloat() * 0.2f, random.nextFloat() * 0.1f, random.nextFloat() * 0.1f,
                     0.5f, 4.0f);
             FXDispatcher.INSTANCE.drawGenericParticles(
@@ -54,12 +55,17 @@ public class EntityAlumentum extends ThrowableProjectile {
     protected void onHit(HitResult result) {
         super.onHit(result);
         if (!level().isClientSide) {
-            level().explode(this, getX(), getY(), getZ(), 1.1f, Level.ExplosionInteraction.BLOCK);
+            // The original passes isFlaming=true; the 6-argument overload always
+            // passes false, so use the explicit overload to keep the fire effect.
+            level().explode(this, getX(), getY(), getZ(),
+                    arcaneresearch.common.items.consumables.AlumentumRules.EXPLOSION_RADIUS,
+                    arcaneresearch.common.items.consumables.AlumentumRules.EXPLOSION_FLAMING,
+                    Level.ExplosionInteraction.BLOCK);
             discard();
         }
     }
     @Override
     protected float getGravity() {
-        return 0.03f;
+        return arcaneresearch.common.items.consumables.AlumentumRules.GRAVITY;
     }
 }
