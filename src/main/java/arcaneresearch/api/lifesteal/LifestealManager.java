@@ -63,4 +63,31 @@ public final class LifestealManager {
         MinecraftForge.EVENT_BUS.post(new LifestealAppliedEvent(player, target, finalHeal));
         return true;
     }
+
+    /**
+     * EN: Applies a flat heal amount, bypassing the LifestealStats caps meant for enchantments.
+     *     Still fires LifestealEvent / LifestealAppliedEvent so other mods can react.
+     *     The exact requested amount is carried by the event's {@code amount} field.
+     * RU: Применяет фиксированное лечение, минуя лимиты LifestealStats, предназначенные
+     *     для зачарований. События LifestealEvent / LifestealAppliedEvent всё равно вызываются.
+     *     Точное запрошенное количество передаётся в поле {@code amount} события.
+     */
+    public static boolean applyFlatHeal(Player player, LivingEntity target, float amount) {
+        if (amount <= 0.0F || player == target) {
+            return false;
+        }
+        LifestealEvent event = new LifestealEvent(player, target, LifestealStats.NONE, amount);
+        if (MinecraftForge.EVENT_BUS.post(event)) {
+            return false;
+        }
+        // EN: Health still cannot go above the player's maximum.
+        // RU: Здоровье по-прежнему не может превысить максимум игрока.
+        float finalHeal = Math.min(event.getAmount(), player.getMaxHealth() - player.getHealth());
+        if (finalHeal <= 0.0F) {
+            return false;
+        }
+        player.heal(finalHeal);
+        MinecraftForge.EVENT_BUS.post(new LifestealAppliedEvent(player, target, finalHeal));
+        return true;
+    }
 }

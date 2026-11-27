@@ -8,6 +8,7 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
@@ -39,6 +40,7 @@ import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.capabilities.IPlayerKnowledge;
 import arcaneresearch.api.capabilities.ArcaneresearchCapabilities;
 import arcaneresearch.api.entities.ITaintedMob;
+import arcaneresearch.api.lifesteal.LifestealManager;
 import arcaneresearch.common.config.ModConfig;
 import arcaneresearch.common.entities.construct.EntityOwnedConstruct;
 import arcaneresearch.common.entities.monster.boss.EntityArcaneresearchBoss;
@@ -48,6 +50,7 @@ import arcaneresearch.common.items.armor.ItemBootsTraveller;
 import arcaneresearch.common.items.armor.ItemFortressArmor;
 import arcaneresearch.common.items.curios.CharmUndyingItem;
 import arcaneresearch.common.lib.compat.CuriosCompat;
+import arcaneresearch.common.lib.potions.PotionLifeLeach;
 import arcaneresearch.common.lib.network.PacketHandler;
 import arcaneresearch.message.api.StoryTellingAPI;
 import arcaneresearch.common.lib.network.fx.PacketFXShield;
@@ -321,6 +324,19 @@ public class EntityEvents {
                 && player.level().random.nextFloat() < damage / 12.0f) {
             player.heal(1.0f);
         }
+        // EN: Life Leech: heal 1 HP (half a heart) per effect level on every landed attack.
+        //     Flat healing avoids the 5 HP enchantment cap of LifestealStats.
+        // RU: «Похищение жизни»: 1 HP (полсердца) за уровень эффекта за каждый попавший удар.
+        //     Фиксированное лечение обходит лимит зачарований в 5 HP у LifestealStats.
+        if (damage <= 0.0f || target == player || player.level().isClientSide) {
+            return;
+        }
+        MobEffectInstance leech = player.getEffect(ModEffects.LIFE_LEACH.get());
+        if (leech == null) {
+            return;
+        }
+        LifestealManager.applyFlatHeal(player, target,
+                PotionLifeLeach.healFor(leech.getAmplifier()));
     }
 
     @SubscribeEvent

@@ -28,4 +28,6 @@ public class ModEffects {
             MOB_EFFECTS.register("blurred_vision", PotionBlurredVision::new);
     public static final RegistryObject<MobEffect> INFECTIOUS_VIS_EXHAUST =
             MOB_EFFECTS.register("infectious_vis_exhaust", PotionInfectiousVisExhaust::new);
+    public static final RegistryObject<MobEffect> LIFE_LEACH =
+            MOB_EFFECTS.register("life_leach", PotionLifeLeach::new);
 }
