@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.api.aspects.EntityTagRules;
 import arcaneresearch.api.crafting.CrucibleRecipe;
 import arcaneresearch.api.crafting.IArcaneRecipe;
 import arcaneresearch.api.crafting.IArcaneresearchRecipe;
@@ -28,6 +29,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class ArcaneresearchApi {
     public static IInternalMethodHandler internalMethods = new DummyInternalMethodHandler();
 
+    /**
+     * A string-based registration waiting for tags to be bound.
+     *
+     * @param name item tag id
+     * @param aspects aspects to apply
+     * @param complex whether to merge instead of replace
+     */
     private record PendingTag(String name, AspectList aspects, boolean complex) {
     }
 
@@ -178,9 +186,30 @@ public class ArcaneresearchApi {
     }
 
     public static void registerObjectTag(ItemStack item, AspectList aspects) {
+        putOverride(item, aspects);
+    }
+
+    /** Registers aspects for one item, replacing any previous registration. */
+    public static void putOverride(ItemStack item, AspectList aspects) {
         if (item == null || item.isEmpty()) return;
-        if (aspects == null) aspects = new AspectList();
-        AspectHelper.registerObjectTag(item, aspects);
+        AspectHelper.putOverride(item, aspects != null ? aspects : new AspectList());
+    }
+
+    /** Registers aspects for one item, adding to any previous registration. */
+    public static void putMerge(ItemStack item, AspectList aspects) {
+        if (item == null || item.isEmpty()) return;
+        AspectHelper.putMerge(item, aspects != null ? aspects : new AspectList());
+    }
+
+    /**
+     * Registers aspects for one item by its registry id. Unlike the
+     * {@link String} overload this is a direct item registration, not a tag.
+     *
+     * @param itemId vanilla/mod item id
+     * @param aspects aspects to register
+     */
+    public static void registerObjectTag(ResourceLocation itemId, AspectList aspects) {
+        AspectHelper.registerObjectTag(itemId, aspects);
     }
 
     /**
@@ -276,21 +305,37 @@ public class ArcaneresearchApi {
         queueTag(tagName, aspects, true);
     }
 
+    /** One NBT field that an entity must have for a variant registration. */
     public static class EntityTagsNBT {
+        /** NBT field name. */
         public String name;
+        /** Expected field value. */
         public Object value;
 
+        /**
+         * @param name NBT field name
+         * @param value expected field value
+         */
         public EntityTagsNBT(String name, Object value) {
             this.name = name;
             this.value = value;
         }
     }
 
+    /** One entity aspect registration, optionally limited by NBT conditions. */
     public static class EntityTags {
+        /** Entity registry id. */
         public String entityName;
+        /** Required NBT fields; empty for the base registration. */
         public EntityTagsNBT[] nbts;
+        /** Aspects to assign. */
         public AspectList aspects;
 
+        /**
+         * @param entityName entity registry id
+         * @param aspects aspects to assign
+         * @param nbts optional NBT conditions
+         */
         public EntityTags(String entityName, AspectList aspects, EntityTagsNBT... nbts) {
             this.entityName = entityName;
             this.nbts = nbts;
@@ -298,13 +343,28 @@ public class ArcaneresearchApi {
         }
     }
 
+    /**
+     * Registers aspects for an entity, optionally only when NBT fields match.
+     *
+     * @param entityName entity registry id
+     * @param aspects aspects to assign
+     * @param nbt optional NBT conditions for a variant
+     */
     public static void registerEntityTag(String entityName, AspectList aspects, EntityTagsNBT... nbt) {
         CommonInternals.scanEntities.add(new EntityTags(entityName, aspects, nbt));
-        if (nbt == null || nbt.length == 0) {
-            try {
-                AspectHelper.registerEntityTag(ResourceLocation.parse(entityName), aspects);
-            } catch (Exception ignored) {
+        ResourceLocation id = ResourceLocation.tryParse(entityName);
+        if (id == null) {
+            arcaneresearch.Arcaneresearch.LOGGER.warn(
+                    "Cannot resolve entity id '{}'; aspect registration skipped", entityName);
+            return;
+        }
+        AspectHelper.registerEntityTag(id, aspects);
+        if (nbt != null && nbt.length > 0) {
+            List<EntityTagRules.Condition> conditions = new ArrayList<>();
+            for (EntityTagsNBT condition : nbt) {
+                conditions.add(new EntityTagRules.Condition(condition.name, condition.value));
             }
+            AspectHelper.registerEntityVariant(id, conditions, aspects);
         }
     }
 

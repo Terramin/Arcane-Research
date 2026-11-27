@@ -230,4 +230,68 @@ class CrucibleWiringTest {
         assertTrue(tile.contains("CrucibleRules.fluidHeight("));
         assertTrue(tile.contains("CrucibleRules.isHeated("));
     }
+
+    @Test
+    @DisplayName("item lookup uses the exact/damage-agnostic/stripped cascade")
+    void strippedNbtCascade() {
+        String helper = java("arcaneresearch/api/aspects/AspectHelper.java");
+        assertTrue(helper.contains("AspectLookupRules.candidates(itemId,tag)"));
+        String rules = java("arcaneresearch/api/aspects/AspectLookupRules.java");
+        assertTrue(rules.contains("withoutDamage("));
+        assertTrue(rules.contains("Collections.sort(keys)"));
+        assertTrue(rules.contains("result.add(itemId.toString())"));
+    }
+
+    @Test
+    @DisplayName("NBT entity variants are registered and resolved against entity data")
+    void entityNbtVariants() {
+        String api = java("arcaneresearch/api/ArcaneresearchApi.java");
+        assertTrue(api.contains("AspectHelper.registerEntityVariant(id,conditions,aspects)"));
+        String helper = java("arcaneresearch/api/aspects/AspectHelper.java");
+        assertTrue(helper.contains("entity.saveWithoutId(newCompoundTag())"));
+        assertTrue(helper.contains("EntityTagRules.matches(tag,variant.conditions())"));
+    }
+
+    @Test
+    @DisplayName("JEI and tooltips use the same capped aspect list as the crucible")
+    void unifiedCull() {
+        String jei = java("arcaneresearch/compat/jei/aspect/AspectSourcesCategory.java");
+        assertTrue(jei.contains("ArcaneresearchCraftingManager.getObjectTags(stack)"));
+        assertFalse(jei.contains("AspectHelper.getObjectAspects(stack)"));
+
+        String tooltip = java("arcaneresearch/client/lib/events/AspectTooltipEvents.java");
+        assertTrue(tooltip.contains("AspectHelper.cullTags(essentiaItem.getAspects(stack),"));
+        assertTrue(tooltip.contains("ArcaneresearchCraftingManager.OBJECT_ASPECT_CAP"));
+        int start = tooltip.indexOf("onGatherTooltipComponents(");
+        String method = tooltip.substring(start, start + 700);
+        assertTrue(method.contains("ArcaneresearchCraftingManager.getObjectTags(stack)"));
+        assertFalse(method.contains("ignoreContainedAspects()"));
+    }
+
+    @Test
+    @DisplayName("duplicate registrations are gone and override/merge helpers exist")
+    void duplicateRegistrationHelpers() {
+        String helper = java("arcaneresearch/api/aspects/AspectHelper.java");
+        assertTrue(helper.contains("publicstaticvoidputOverride("));
+        assertTrue(helper.contains("publicstaticvoidputMerge("));
+        assertTrue(helper.contains("merged.merge(aspect,aspects.getAmount(aspect))"));
+
+        String api = java("arcaneresearch/api/ArcaneresearchApi.java");
+        assertTrue(api.contains("publicstaticvoidputMerge(ItemStack"));
+
+        String config = java("arcaneresearch/common/config/ConfigAspects.java");
+        assertEqualsCount(config, "newItemStack(Blocks.GRASS_BLOCK)", 1);
+        assertEqualsCount(config, "newItemStack(ModItems.CELESTIAL_NOTES_SUN.get())", 1);
+        assertTrue(config.contains("newItemStack(ModItems.CELESTIAL_NOTES_SUN.get()),newAspectList().add(Aspect.MIND,5).add(Aspect.DARKNESS,5).add(Aspect.LIGHT,5)"));
+    }
+
+    private static void assertEqualsCount(String source, String needle, int expected) {
+        int count = 0;
+        int index = 0;
+        while ((index = source.indexOf(needle, index)) >= 0) {
+            count++;
+            index += needle.length();
+        }
+        org.junit.jupiter.api.Assertions.assertEquals(expected, count, needle);
+    }
 }

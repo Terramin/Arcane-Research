@@ -1,7 +1,11 @@
 package arcaneresearch.common.config;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.PotionUtils;
@@ -14,6 +18,7 @@ import arcaneresearch.api.ArcaneresearchApi;
 import arcaneresearch.debug.ArcaneLogger;
 import arcaneresearch.debug.ProfileCategory;
 import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.AspectRegistryEvent;
 import arcaneresearch.common.blocks.aura.AuraBlocks;
@@ -30,10 +35,12 @@ import java.util.Objects;
 public class ConfigAspects {
     private static final ArcaneLogger LOGGER = ArcaneLogger.forCategory(ProfileCategory.RESEARCH);
 
+    /** Registers every configured item, entity and mod-specific aspect. */
     public static void init() {
         registerItemAspects();
         registerEntityAspects();
         registerArcaneresearchItems();
+        registerNewContentAspects();
         AspectRegistryEvent are = new AspectRegistryEvent();
         MinecraftForge.EVENT_BUS.post(are);
     }
@@ -278,7 +285,6 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GLASS_PANE), new AspectList().add(Aspect.CRYSTAL, 1));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.MOSSY_COBBLESTONE), new AspectList().add(Aspect.EARTH, 5).add(Aspect.PLANT, 3).add(Aspect.ENTROPY, 1));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.MOSSY_STONE_BRICKS), new AspectList().add(Aspect.EARTH, 5).add(Aspect.PLANT, 1).add(Aspect.ORDER, 1));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.GRASS_BLOCK), new AspectList().add(Aspect.EARTH, 5).add(Aspect.PLANT, 2));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.TALL_GRASS), new AspectList().add(Aspect.PLANT, 5).add(Aspect.AIR, 1));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.FERN), new AspectList().add(Aspect.PLANT, 5).add(Aspect.AIR, 1));
         ArcaneresearchApi.registerObjectTag(new ItemStack(Blocks.LARGE_FERN), new AspectList().add(Aspect.PLANT, 5).add(Aspect.AIR, 1));
@@ -712,7 +718,9 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.TAINT_TENDRIL.get()), new AspectList().add(Aspect.FLUX, 5).add(Aspect.PLANT, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModFluids.PURIFYING_FLUID_BUCKET.get()), new AspectList().add(Aspect.WATER, 10).add(Aspect.LIFE, 5).add(Aspect.ORDER, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PECH_WAND.get()), new AspectList().add(Aspect.MAN, 5).add(Aspect.MAGIC, 10).add(Aspect.TOOL, 5));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_SUN.get()), new AspectList().add(Aspect.MIND, 10).add(Aspect.LIGHT, 10));
+        // Original registers one wildcard celestialNotes stack with MIND 5,
+        // DARKNESS 5, LIGHT 5; the duplicate later in this method was a copy/paste.
+        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_SUN.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5).add(Aspect.LIGHT, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_STARS_1.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_STARS_2.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.MAGIC, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_STARS_3.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.MAGIC, 5));
@@ -757,7 +765,6 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.PRIMORDIAL_PEARL.get()), new AspectList()
                 .add(Aspect.AIR, 10).add(Aspect.FIRE, 10).add(Aspect.WATER, 10)
                 .add(Aspect.EARTH, 10).add(Aspect.ORDER, 10).add(Aspect.ENTROPY, 10));
-        ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.CELESTIAL_NOTES_SUN.get()), new AspectList().add(Aspect.MIND, 5).add(Aspect.DARKNESS, 5).add(Aspect.LIGHT, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.TRIPLE_MEAT_TREAT.get()), new AspectList().add(Aspect.LIFE, 10).add(Aspect.DESIRE, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.ZOMBIE_BRAIN.get()), new AspectList().add(Aspect.LIFE, 5).add(Aspect.MIND, 20).add(Aspect.UNDEAD, 10));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModBlocks.TAINT_FIBRE.get()), new AspectList().add(Aspect.PLANT, 5).add(Aspect.FLUX, 10));
@@ -985,5 +992,312 @@ public class ConfigAspects {
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_PROVIDE.get()), new AspectList().add(Aspect.EXCHANGE, 5).add(Aspect.DESIRE, 3).add(Aspect.ORDER, 3));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_STOCK.get()), new AspectList().add(Aspect.ORDER, 10).add(Aspect.MIND, 5));
         ArcaneresearchApi.registerObjectTag(new ItemStack(ModItems.SEAL_USE.get()), new AspectList().add(Aspect.CRAFT, 5).add(Aspect.TOOL, 5).add(Aspect.MECHANISM, 3));
+    }
+
+    // ---------------------------------------------------------------- new content
+
+    /**
+     * Registrations for content that did not exist in 1.12.2. The
+     * original assigns aspects through OreDictionary entries, so a direct port
+     * cannot cover 1.13+ items and entities; each entry below uses the closest
+     * material/theme equivalent from the original tables. Living mobs are
+     * registered in {@link #registerEntityAspects()}.
+     */
+    private static void registerNewContentAspects() {
+        registerUtilityEntities();
+        registerNewItems();
+        registerSpawnEggs();
+    }
+
+    /**
+     * Non-living entities that still need aspects for scanning and crucible
+     * recipes. Purely technical entities (player, item, marker, displays,
+     * falling block, lightning bolt, area effect cloud) are intentionally left
+     * empty, just as the original left its technical entities empty.
+     */
+    private static void registerUtilityEntities() {
+        // Projectiles
+        ArcaneresearchApi.registerEntityTag("minecraft:arrow",
+                new AspectList().add(Aspect.MOTION, 5).add(Aspect.METAL, 1).add(Aspect.TOOL, 1));
+        ArcaneresearchApi.registerEntityTag("minecraft:spectral_arrow",
+                new AspectList().add(Aspect.MOTION, 5).add(Aspect.MAGIC, 5).add(Aspect.SOUL, 3));
+        ArcaneresearchApi.registerEntityTag("minecraft:trident",
+                new AspectList().add(Aspect.METAL, 10).add(Aspect.MOTION, 10)
+                        .add(Aspect.WATER, 5).add(Aspect.TOOL, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:snowball",
+                new AspectList().add(Aspect.COLD, 5).add(Aspect.MOTION, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:egg",
+                new AspectList().add(Aspect.LIFE, 5).add(Aspect.BEAST, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:ender_pearl",
+                new AspectList().add(Aspect.ELDRITCH, 10).add(Aspect.MOTION, 10).add(Aspect.EXCHANGE, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:eye_of_ender",
+                new AspectList().add(Aspect.ELDRITCH, 15).add(Aspect.SENSES, 10).add(Aspect.MOTION, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:potion",
+                new AspectList().add(Aspect.ALCHEMY, 10).add(Aspect.WATER, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:experience_bottle",
+                new AspectList().add(Aspect.MIND, 10).add(Aspect.ALCHEMY, 5).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:firework_rocket",
+                new AspectList().add(Aspect.FIRE, 10).add(Aspect.MOTION, 10).add(Aspect.ENERGY, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:fireball",
+                new AspectList().add(Aspect.FIRE, 15).add(Aspect.MOTION, 10).add(Aspect.MAGIC, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:small_fireball",
+                new AspectList().add(Aspect.FIRE, 10).add(Aspect.MOTION, 8).add(Aspect.MAGIC, 3));
+        ArcaneresearchApi.registerEntityTag("minecraft:dragon_fireball",
+                new AspectList().add(Aspect.FIRE, 20).add(Aspect.MOTION, 10).add(Aspect.ELDRITCH, 10));
+        ArcaneresearchApi.registerEntityTag("minecraft:wither_skull",
+                new AspectList().add(Aspect.UNDEAD, 15).add(Aspect.DEATH, 10).add(Aspect.FIRE, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:shulker_bullet",
+                new AspectList().add(Aspect.ELDRITCH, 5).add(Aspect.MOTION, 5).add(Aspect.FLIGHT, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:llama_spit",
+                new AspectList().add(Aspect.BEAST, 5).add(Aspect.MOTION, 5).add(Aspect.AVERSION, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:evoker_fangs",
+                new AspectList().add(Aspect.MAGIC, 10).add(Aspect.EARTH, 5).add(Aspect.TRAP, 5));
+
+        // Vehicles and mechanisms
+        ArcaneresearchApi.registerEntityTag("minecraft:boat",
+                new AspectList().add(Aspect.PLANT, 10).add(Aspect.WATER, 5).add(Aspect.TOOL, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:chest_boat",
+                new AspectList().add(Aspect.PLANT, 10).add(Aspect.WATER, 5)
+                        .add(Aspect.TOOL, 5).add(Aspect.CRAFT, 3));
+        for (String id : new String[]{"minecraft:minecart", "minecraft:chest_minecart",
+                "minecraft:furnace_minecart", "minecraft:hopper_minecart",
+                "minecraft:tnt_minecart", "minecraft:spawner_minecart",
+                "minecraft:command_block_minecart"}) {
+            ArcaneresearchApi.registerEntityTag(id,
+                    new AspectList().add(Aspect.METAL, 10).add(Aspect.MECHANISM, 10).add(Aspect.MOTION, 5));
+        }
+        ArcaneresearchApi.registerEntityTag("minecraft:tnt",
+                new AspectList().add(Aspect.FIRE, 15).add(Aspect.ENERGY, 10).add(Aspect.ENTROPY, 10));
+
+        // World furniture
+        ArcaneresearchApi.registerEntityTag("minecraft:armor_stand",
+                new AspectList().add(Aspect.MAN, 5).add(Aspect.MECHANISM, 5).add(Aspect.CRAFT, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:item_frame",
+                new AspectList().add(Aspect.CRAFT, 5).add(Aspect.MAN, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:glow_item_frame",
+                new AspectList().add(Aspect.CRAFT, 5).add(Aspect.MAN, 5).add(Aspect.LIGHT, 5));
+        ArcaneresearchApi.registerEntityTag("minecraft:painting",
+                new AspectList().add(Aspect.CRAFT, 5).add(Aspect.SENSES, 5).add(Aspect.PLANT, 3));
+        ArcaneresearchApi.registerEntityTag("minecraft:leash_knot",
+                new AspectList().add(Aspect.TRAP, 5).add(Aspect.PLANT, 5).add(Aspect.MOTION, 3));
+    }
+
+    /** Registers one vanilla item by id (not an item tag). */
+    private static void item(String path, AspectList aspects) {
+        ArcaneresearchApi.registerObjectTag(ResourceLocation.parse("minecraft:" + path), aspects);
+    }
+
+    /** Starts an aspect list with a single aspect. */
+    private static AspectList a(Aspect aspect, int amount) {
+        return new AspectList().add(aspect, amount);
+    }
+
+    /**
+     * New vanilla items and blocks that did not exist in 1.12.2. Values follow
+     * the original material tables: stone-like blocks get EARTH, plants get
+     * PLANT, metals get METAL, crystals get CRYSTAL, nether stone gets FIRE, and
+     * the dark 1.16+ stones combine EARTH with DARKNESS.
+     */
+    private static void registerNewItems() {
+        // --- Copper oxidation variants: same metal, more ordered over time ---
+        for (String stage : new String[]{"exposed", "weathered", "oxidized"}) {
+            item(stage + "_copper", a(Aspect.METAL, 10).add(Aspect.EXCHANGE, 5));
+            item(stage + "_cut_copper", a(Aspect.METAL, 10).add(Aspect.EXCHANGE, 5).add(Aspect.ORDER, 2));
+            item(stage + "_cut_copper_stairs", a(Aspect.METAL, 5).add(Aspect.EXCHANGE, 3));
+            item(stage + "_cut_copper_slab", a(Aspect.METAL, 5).add(Aspect.EXCHANGE, 3));
+        }
+
+        // --- Stone-like blocks ---
+        item("calcite", a(Aspect.EARTH, 5).add(Aspect.CRYSTAL, 3).add(Aspect.ORDER, 2));
+        item("smooth_stone", a(Aspect.EARTH, 5).add(Aspect.ORDER, 2));
+        item("smooth_stone_slab", a(Aspect.EARTH, 3).add(Aspect.ORDER, 1));
+        item("dripstone_block", a(Aspect.EARTH, 5).add(Aspect.WATER, 3));
+        item("pointed_dripstone", a(Aspect.EARTH, 3).add(Aspect.WATER, 3));
+        item("mud", a(Aspect.EARTH, 5).add(Aspect.WATER, 3));
+        item("mud_brick_slab", a(Aspect.EARTH, 3).add(Aspect.WATER, 2));
+        item("rooted_dirt", a(Aspect.EARTH, 5).add(Aspect.PLANT, 2));
+        item("soul_soil", a(Aspect.EARTH, 3).add(Aspect.SOUL, 5));
+        item("basalt", a(Aspect.EARTH, 5).add(Aspect.FIRE, 5));
+        item("polished_basalt", a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.ORDER, 2));
+        item("smooth_basalt", a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.ORDER, 2));
+
+        // --- Netherrack/dark stones (1.16+) ---
+        item("crimson_nylium", a(Aspect.EARTH, 5).add(Aspect.PLANT, 3).add(Aspect.FIRE, 3));
+        item("warped_nylium", a(Aspect.EARTH, 5).add(Aspect.PLANT, 3).add(Aspect.SOUL, 3));
+        item("blackstone", a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.DARKNESS, 3));
+        item("blackstone_slab", a(Aspect.EARTH, 3).add(Aspect.FIRE, 3).add(Aspect.DARKNESS, 2));
+        item("blackstone_stairs", a(Aspect.EARTH, 3).add(Aspect.FIRE, 3).add(Aspect.DARKNESS, 2));
+        item("blackstone_wall", a(Aspect.EARTH, 3).add(Aspect.FIRE, 3).add(Aspect.DARKNESS, 2));
+        item("gilded_blackstone", a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.METAL, 5));
+        for (String id : new String[]{"polished_blackstone", "polished_blackstone_slab",
+                "polished_blackstone_stairs", "polished_blackstone_wall"}) {
+            item(id, a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.ORDER, 2));
+        }
+        for (String id : new String[]{"polished_blackstone_bricks", "polished_blackstone_brick_slab",
+                "polished_blackstone_brick_stairs", "polished_blackstone_brick_wall"}) {
+            item(id, a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.ORDER, 3));
+        }
+        item("chiseled_polished_blackstone", a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.ORDER, 5));
+        item("cracked_polished_blackstone_bricks", a(Aspect.EARTH, 5).add(Aspect.FIRE, 5).add(Aspect.ENTROPY, 3));
+        for (String id : new String[]{"cracked_deepslate_bricks", "cracked_deepslate_tiles",
+                "deepslate_tile_slab", "reinforced_deepslate"}) {
+            item(id, a(Aspect.EARTH, 5).add(Aspect.DARKNESS, 3).add(Aspect.ORDER, 2));
+        }
+        for (String id : new String[]{"infested_stone_bricks", "infested_mossy_stone_bricks",
+                "infested_cracked_stone_bricks", "infested_chiseled_stone_bricks"}) {
+            item(id, a(Aspect.EARTH, 5).add(Aspect.TRAP, 5));
+        }
+        item("sculk_vein", a(Aspect.SOUL, 10).add(Aspect.DARKNESS, 5));
+
+        // --- Nether brick family (original: EARTH + FIRE) ---
+        for (String id : new String[]{"nether_brick", "nether_bricks", "cracked_nether_bricks",
+                "chiseled_nether_bricks", "nether_brick_slab", "nether_brick_stairs",
+                "nether_brick_wall", "nether_brick_fence"}) {
+            item(id, a(Aspect.EARTH, 5).add(Aspect.FIRE, 2));
+        }
+
+        // --- Bricks and quartz family ---
+        for (String id : new String[]{"brick", "bricks", "brick_slab", "brick_stairs", "brick_wall"}) {
+            item(id, a(Aspect.EARTH, 5).add(Aspect.ORDER, 3));
+        }
+        for (String id : new String[]{"smooth_quartz", "chiseled_quartz_block",
+                "quartz_slab", "quartz_stairs", "smooth_quartz_slab", "smooth_quartz_stairs"}) {
+            item(id, a(Aspect.CRYSTAL, 5).add(Aspect.EARTH, 3));
+        }
+        for (String id : new String[]{"smooth_sandstone", "smooth_red_sandstone",
+                "smooth_sandstone_slab", "smooth_sandstone_stairs",
+                "smooth_red_sandstone_slab", "smooth_red_sandstone_stairs"}) {
+            item(id, a(Aspect.EARTH, 5).add(Aspect.ORDER, 2));
+        }
+        item("petrified_oak_slab", a(Aspect.PLANT, 5).add(Aspect.EARTH, 3).add(Aspect.ENTROPY, 3));
+
+        // --- Anvil damage states ---
+        item("chipped_anvil", a(Aspect.METAL, 15).add(Aspect.TOOL, 5).add(Aspect.ENTROPY, 2));
+        item("damaged_anvil", a(Aspect.METAL, 15).add(Aspect.TOOL, 5).add(Aspect.ENTROPY, 4));
+
+        // --- Concrete and glazed terracotta (both added in 1.12) ---
+        for (String color : new String[]{"white", "orange", "magenta", "light_blue", "yellow",
+                "lime", "pink", "gray", "light_gray", "cyan", "purple", "blue",
+                "brown", "green", "red", "black"}) {
+            item(color + "_concrete", a(Aspect.EARTH, 5).add(Aspect.ORDER, 3));
+            item(color + "_glazed_terracotta", a(Aspect.EARTH, 5).add(Aspect.ORDER, 3));
+        }
+
+        // --- Plants, fungi and aquatic life ---
+        for (String id : new String[]{"bamboo", "bamboo_planks", "bamboo_mosaic",
+                "bamboo_block", "stripped_bamboo_block", "bamboo_slab", "bamboo_mosaic_slab",
+                "bamboo_fence", "bamboo_stairs", "bamboo_mosaic_stairs", "bamboo_button",
+                "bamboo_pressure_plate", "bamboo_door", "bamboo_trapdoor", "bamboo_raft",
+                "bamboo_sign"}) {
+            item(id, a(Aspect.PLANT, 10).add(Aspect.LIFE, 3));
+        }
+        for (String id : new String[]{"grass", "seagrass", "sea_pickle", "crimson_fungus",
+                "warped_fungus", "crimson_roots", "warped_roots", "nether_sprouts",
+                "weeping_vines", "twisting_vines", "moss_carpet", "moss_block",
+                "hanging_roots", "big_dripleaf", "small_dripleaf", "kelp",
+                "torchflower_seeds", "pitcher_pod", "cocoa_beans", "mushroom_stem",
+                "mangrove_roots", "muddy_mangrove_roots"}) {
+            item(id, a(Aspect.PLANT, 5).add(Aspect.LIFE, 2));
+        }
+        item("glow_lichen", a(Aspect.PLANT, 5).add(Aspect.LIGHT, 5));
+        item("warped_wart_block", a(Aspect.PLANT, 10).add(Aspect.FIRE, 3));
+        item("shroomlight", a(Aspect.PLANT, 5).add(Aspect.LIGHT, 10));
+        item("carved_pumpkin", a(Aspect.PLANT, 10).add(Aspect.CRAFT, 2));
+
+        // --- Corals (1.13): living ones get LIFE, dead ones get DEATH ---
+        for (String kind : new String[]{"tube", "brain", "bubble", "fire", "horn"}) {
+            item(kind + "_coral_block", a(Aspect.LIFE, 5).add(Aspect.WATER, 5));
+            item(kind + "_coral", a(Aspect.LIFE, 5).add(Aspect.WATER, 5));
+            item(kind + "_coral_fan", a(Aspect.LIFE, 5).add(Aspect.WATER, 5));
+            item("dead_" + kind + "_coral_block", a(Aspect.DEATH, 5).add(Aspect.WATER, 3));
+            item("dead_" + kind + "_coral", a(Aspect.DEATH, 5).add(Aspect.WATER, 3));
+            item("dead_" + kind + "_coral_fan", a(Aspect.DEATH, 5).add(Aspect.WATER, 3));
+        }
+
+        // --- Crystals and lights (1.17+) ---
+        for (String id : new String[]{"small_amethyst_bud", "medium_amethyst_bud",
+                "large_amethyst_bud", "amethyst_cluster"}) {
+            item(id, a(Aspect.CRYSTAL, 10).add(Aspect.EARTH, 3));
+        }
+        for (String id : new String[]{"ochre_froglight", "verdant_froglight", "pearlescent_froglight"}) {
+            item(id, a(Aspect.LIGHT, 15).add(Aspect.LIFE, 5));
+        }
+        item("crying_obsidian", a(Aspect.DARKNESS, 10).add(Aspect.ELDRITCH, 10).add(Aspect.WATER, 5));
+
+        // --- Eggs and spawns ---
+        item("turtle_egg", a(Aspect.LIFE, 5).add(Aspect.BEAST, 5).add(Aspect.EARTH, 3));
+        item("sniffer_egg", a(Aspect.LIFE, 5).add(Aspect.BEAST, 10).add(Aspect.SENSES, 5));
+        item("frogspawn", a(Aspect.LIFE, 5).add(Aspect.WATER, 5));
+
+        // --- Archaeology (1.20) ---
+        item("suspicious_sand", a(Aspect.EARTH, 5).add(Aspect.SENSES, 3));
+        item("suspicious_gravel", a(Aspect.EARTH, 5).add(Aspect.ENTROPY, 2).add(Aspect.SENSES, 3));
+        item("decorated_pot", a(Aspect.EARTH, 5).add(Aspect.CRAFT, 5));
+        for (String pattern : new String[]{"angler", "archer", "arms_up", "blade", "brewer",
+                "burn", "danger", "explorer", "friend", "heart", "heartbreak", "howl",
+                "miner", "mourner", "plenty", "prize", "sheaf", "shelter", "skull", "snort"}) {
+            item(pattern + "_pottery_sherd", a(Aspect.EARTH, 3).add(Aspect.CRAFT, 3).add(Aspect.SENSES, 3));
+        }
+
+        // --- Miscellaneous new tools and treasures ---
+        item("scaffolding", a(Aspect.PLANT, 5).add(Aspect.CRAFT, 5).add(Aspect.MECHANISM, 3));
+        item("trident", a(Aspect.METAL, 10).add(Aspect.MOTION, 10).add(Aspect.WATER, 5).add(Aspect.TOOL, 5));
+        item("heart_of_the_sea", a(Aspect.LIFE, 10).add(Aspect.WATER, 10).add(Aspect.MAGIC, 5));
+        item("bell", a(Aspect.METAL, 15).add(Aspect.SENSES, 10).add(Aspect.MAGIC, 5));
+        item("piglin_head", a(Aspect.BEAST, 10).add(Aspect.DEATH, 10).add(Aspect.UNDEAD, 5));
+        item("pufferfish_bucket", a(Aspect.METAL, 5).add(Aspect.WATER, 10).add(Aspect.DEATH, 5));
+        item("bundle", a(Aspect.CRAFT, 5).add(Aspect.PLANT, 5));
+        item("firework_star", a(Aspect.FIRE, 10).add(Aspect.ALCHEMY, 5).add(Aspect.ENERGY, 5));
+        item("filled_map", a(Aspect.SENSES, 10).add(Aspect.MIND, 5).add(Aspect.CRAFT, 3));
+        item("disc_fragment_5", a(Aspect.SENSES, 10).add(Aspect.MAGIC, 5));
+        item("music_disc_otherside", a(Aspect.SENSES, 15).add(Aspect.MAGIC, 5));
+        for (String id : new String[]{"globe_banner_pattern", "piglin_banner_pattern"}) {
+            item(id, a(Aspect.CRAFT, 5).add(Aspect.SENSES, 3));
+        }
+
+        // --- One missed 1.12.2-era stone variant ---
+        item("cracked_stone_bricks", a(Aspect.EARTH, 5).add(Aspect.ENTROPY, 3));
+
+        // --- Creative-only items are still scannable in this port ---
+        item("spawner", a(Aspect.EARTH, 10).add(Aspect.TRAP, 10).add(Aspect.MAGIC, 5));
+        for (String id : new String[]{"command_block", "repeating_command_block",
+                "chain_command_block", "command_block_minecart"}) {
+            item(id, a(Aspect.MAGIC, 20).add(Aspect.MIND, 10).add(Aspect.MECHANISM, 10));
+        }
+        for (String id : new String[]{"barrier", "structure_void"}) {
+            item(id, a(Aspect.VOID, 10).add(Aspect.ORDER, 5));
+        }
+        item("light", a(Aspect.LIGHT, 20).add(Aspect.MAGIC, 5));
+        for (String id : new String[]{"structure_block", "jigsaw"}) {
+            item(id, a(Aspect.CRAFT, 10).add(Aspect.MECHANISM, 10).add(Aspect.MAGIC, 5));
+        }
+        item("knowledge_book", a(Aspect.MIND, 15).add(Aspect.MAGIC, 10).add(Aspect.CRAFT, 5));
+        item("debug_stick", a(Aspect.TOOL, 10).add(Aspect.MECHANISM, 5).add(Aspect.EXCHANGE, 5));
+    }
+
+    /**
+     * Spawn eggs inherit a quarter of their mob's aspects. The original did not
+     * register eggs, but 1.20.1 added many new mobs whose eggs would otherwise
+     * be unscannable.
+     */
+    private static void registerSpawnEggs() {
+        for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
+            ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+            if (id == null || !"minecraft".equals(id.getNamespace())) {
+                continue;
+            }
+            AspectList mob = AspectHelper.getEntityAspects(id);
+            SpawnEggItem eggItem = SpawnEggItem.byId(type);
+            if (mob == null || eggItem == null) {
+                continue;
+            }
+            AspectList eggAspects = new AspectList();
+            for (Aspect aspect : mob.getAspects()) {
+                if (aspect != null) {
+                    eggAspects.add(aspect, Math.max(1, mob.getAmount(aspect) / 4));
+                }
+            }
+            ArcaneresearchApi.registerObjectTag(new ItemStack(eggItem), eggAspects);
+        }
     }
 }

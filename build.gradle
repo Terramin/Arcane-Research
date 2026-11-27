@@ -68,6 +68,16 @@ minecraft {
     }
 }
 
+// In-game simulation tests use their own folder instead of the vanilla
+// "gameteststructures" path; see AspectCoverageGameTest's static initializer.
+tasks.register('copyGameTestStructures', Copy) {
+    from 'ingametest'
+    into 'run/ingametest'
+}
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    dependsOn 'copyGameTestStructures'
+}
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 mixin {

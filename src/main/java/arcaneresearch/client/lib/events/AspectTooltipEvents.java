@@ -21,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
+import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
 import arcaneresearch.api.aspects.IEssentiaContainerItem;
 import arcaneresearch.api.items.IRechargable;
@@ -74,7 +75,8 @@ public class AspectTooltipEvents {
                 }
             }
             if (stack.getItem() instanceof IEssentiaContainerItem essentiaItem) {
-                AspectList aspects = essentiaItem.getAspects(stack);
+                AspectList aspects = AspectHelper.cullTags(essentiaItem.getAspects(stack),
+                        ArcaneresearchCraftingManager.OBJECT_ASPECT_CAP);
                 if (aspects != null && aspects.size() > 0) {
                     for (Aspect tag : aspects.getAspectsSortedByName()) {
                         int tagColor = tag.getColor();
@@ -113,17 +115,9 @@ public class AspectTooltipEvents {
             return;
         }
         try {
-            AspectList tags = null;
-            if (stack.getItem() instanceof IEssentiaContainerItem container
-                    && !container.ignoreContainedAspects()) {
-                AspectList contained = container.getAspects(stack);
-                if (contained != null && contained.size() > 0) {
-                    tags = contained;
-                }
-            }
-            if (tags == null) {
-                tags = ArcaneresearchCraftingManager.getObjectTags(stack);
-            }
+            // One source of truth: the same capped list the crucible and the
+            // scanner use, including essentia-container replacement logic.
+            AspectList tags = ArcaneresearchCraftingManager.getObjectTags(stack);
             if (tags == null || tags.size() == 0) {
                 return;
             }

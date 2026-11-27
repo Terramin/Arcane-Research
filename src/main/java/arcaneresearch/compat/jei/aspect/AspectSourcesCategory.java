@@ -14,8 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import arcaneresearch.Arcaneresearch;
 import arcaneresearch.api.aspects.Aspect;
-import arcaneresearch.api.aspects.AspectHelper;
 import arcaneresearch.api.aspects.AspectList;
+import arcaneresearch.common.lib.crafting.ArcaneresearchCraftingManager;
 import arcaneresearch.compat.jei.ArcaneresearchJEIPlugin;
 import arcaneresearch.init.ModItems;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +81,7 @@ public class AspectSourcesCategory implements IRecipeCategory<AspectSourcesCateg
             }
             AspectList aspects;
             try {
-                aspects = AspectHelper.getObjectAspects(stack);
+                aspects = ArcaneresearchCraftingManager.getObjectTags(stack);
             } catch (Exception ignored) {
                 continue;
             }
