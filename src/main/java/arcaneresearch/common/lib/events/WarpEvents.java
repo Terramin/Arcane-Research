@@ -2,6 +2,8 @@ package arcaneresearch.common.lib.events;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -46,7 +48,8 @@ public class WarpEvents {
         int r = player.level().random.nextInt(100);
         if (warpCounter > 0 && warp > 0 && r <= Math.sqrt(warpCounter)) {
             warp = Math.min(100, (warp + warp + warpCounter) / 3);
-            warpCounter -= (int) Math.max(5.0, Math.sqrt(warpCounter) * 2.0 - gearWarp * 2);
+            warpCounter = arcaneresearch.common.lib.utils.WarpRules.nextCounter(
+                    warpCounter, gearWarp);
             wc.setCounter(warpCounter);
             int eff = player.level().random.nextInt(warp) + gearWarp;
             net.minecraft.world.item.ItemStack helm = player.getInventory().armor.get(3);
@@ -101,6 +104,14 @@ public class WarpEvents {
         }
     }
 
+    /**
+     * Removes milk from an effect's curative items. Hunger additionally gets
+     * bread and zombie brain as the only cures, exactly as in the 1.12.2 tables.
+     */
+    private static MobEffectInstance warpEffect(MobEffectInstance effect, boolean hunger) {
+        return arcaneresearch.common.lib.utils.WarpRules.applyWarpCuratives(effect, hunger);
+    }
+
     private static void triggerWarpEffect(Player player, int eff, int warp, int nw) {
         Level level = player.level();
         if (eff <= 4) {
@@ -119,21 +130,24 @@ public class WarpEvents {
         } else if (eff <= 12) {
             sendWarpText(player, 11);
         } else if (eff <= 16) {
-            MobEffectInstance pe = new MobEffectInstance(ModEffects.VIS_EXHAUST.get(), 5000, Math.min(3, warp / 15), true, true);
+            MobEffectInstance pe = warpEffect(new MobEffectInstance(ModEffects.VIS_EXHAUST.get(),
+                    5000, Math.min(3, warp / 15), true, true), false);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
             sendWarpText(player, 1);
         } else if (eff <= 20) {
-            MobEffectInstance pe = new MobEffectInstance(ModEffects.THAUMARHIA.get(), Math.min(32000, 10 * warp), 0, true, true);
+            MobEffectInstance pe = warpEffect(new MobEffectInstance(ModEffects.THAUMARHIA.get(),
+                    Math.min(32000, 10 * warp), 0, true, true), false);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
             }
             sendWarpText(player, 15);
         } else if (eff <= 24) {
-            MobEffectInstance pe = new MobEffectInstance(ModEffects.UNNATURAL_HUNGER.get(), 5000, Math.min(3, warp / 15), true, true);
+            MobEffectInstance pe = warpEffect(new MobEffectInstance(ModEffects.UNNATURAL_HUNGER.get(),
+                    5000, Math.min(3, warp / 15), true, true), true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
@@ -149,7 +163,8 @@ public class WarpEvents {
             } catch (Exception ignored) {
             }
         } else if (eff <= 40) {
-            MobEffectInstance pe = new MobEffectInstance(ModEffects.SUN_SCORNED.get(), 5000, Math.min(3, warp / 15), true, true);
+            MobEffectInstance pe = warpEffect(new MobEffectInstance(ModEffects.SUN_SCORNED.get(),
+                    5000, Math.min(3, warp / 15), true, true), false);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
@@ -162,7 +177,8 @@ public class WarpEvents {
             }
             sendWarpText(player, 9);
         } else if (eff <= 48) {
-            MobEffectInstance pe = new MobEffectInstance(ModEffects.INFECTIOUS_VIS_EXHAUST.get(), 6000, Math.min(3, warp / 15), true, true);
+            MobEffectInstance pe = warpEffect(new MobEffectInstance(ModEffects.INFECTIOUS_VIS_EXHAUST.get(),
+                    6000, Math.min(3, warp / 15), true, true), false);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
@@ -172,7 +188,8 @@ public class WarpEvents {
             player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, Math.min(40 * warp, 6000), 0, true, true));
             sendWarpText(player, 10);
         } else if (eff <= 56) {
-            MobEffectInstance pe = new MobEffectInstance(ModEffects.DEATH_GAZE.get(), 6000, Math.min(3, warp / 15), true, true);
+            MobEffectInstance pe = warpEffect(new MobEffectInstance(ModEffects.DEATH_GAZE.get(),
+                    6000, Math.min(3, warp / 15), true, true), false);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
@@ -195,7 +212,8 @@ public class WarpEvents {
             }
             sendWarpText(player, 14);
         } else if (eff <= 80) {
-            MobEffectInstance pe = new MobEffectInstance(ModEffects.UNNATURAL_HUNGER.get(), 6000, Math.min(3, warp / 15), true, true);
+            MobEffectInstance pe = warpEffect(new MobEffectInstance(ModEffects.UNNATURAL_HUNGER.get(),
+                    6000, Math.min(3, warp / 15), true, true), true);
             try {
                 player.addEffect(pe);
             } catch (Exception ignored) {
@@ -308,6 +326,7 @@ public class WarpEvents {
         sendWarpText(player, 7);
     }
 
+    /** Applies Death Gaze to living entities inside the cone and line of sight. */
     public static void checkDeathGaze(Player player) {
         if (player.level().isClientSide) return;
         MobEffectInstance effect = player.getEffect(ModEffects.DEATH_GAZE.get());
@@ -319,13 +338,25 @@ public class WarpEvents {
         List<Entity> entities = level.getEntities(player, searchBox);
         Vec3 playerLook = player.getLookAngle();
         Vec3 playerEyes = player.getEyePosition();
+        // 0.75 is a cone aperture in radians in the original, not a cosine.
+        double[] apex = {playerEyes.x, playerEyes.y, playerEyes.z};
+        Vec3 axisEnd = playerLook.scale(range).add(playerEyes);
+        double[] axis = {axisEnd.x, axisEnd.y, axisEnd.z};
         for (Entity entity : entities) {
             if (!(entity instanceof LivingEntity living)) continue;
             if (!entity.isAlive()) continue;
             if (living.hasEffect(MobEffects.WITHER)) continue;
-            Vec3 toEntity = entity.position().add(0, entity.getBbHeight() / 2, 0).subtract(playerEyes).normalize();
-            double dot = playerLook.dot(toEntity);
-            if (dot < 0.75) continue;
+            double[] target = {entity.getX(),
+                    entity.getBoundingBox().minY + entity.getBbHeight() / 2, entity.getZ()};
+            if (!arcaneresearch.common.lib.utils.WarpVisionRules.isLyingInCone(
+                    target, apex, axis, 0.75f)) {
+                continue;
+            }
+            if (level.clip(new ClipContext(playerEyes, entity.getEyePosition(),
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType()
+                    != HitResult.Type.MISS) {
+                continue;
+            }
             if (entity instanceof Player targetPlayer) {
                 if (level.getServer() != null && !level.getServer().isPvpAllowed()) {
                     continue;

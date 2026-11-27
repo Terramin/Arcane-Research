@@ -350,7 +350,8 @@ public class EntityEldritchWarden extends EntityArcaneresearchBoss implements Ra
             } catch (Exception ignored) {
             }
             if (target instanceof Player player) {
-                ArcaneresearchApi.internalMethods.addWarpToPlayer(player, 1, IPlayerWarp.EnumWarpType.NORMAL);
+                ArcaneresearchApi.internalMethods.addWarpToPlayer(player,
+                        3 + level().random.nextInt(3), IPlayerWarp.EnumWarpType.TEMPORARY);
             }
             playSound(ModSounds.EG_SCREECH.get(), 4.0f, 1.0f + random.nextFloat() * 0.1f);
         }

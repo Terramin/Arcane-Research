@@ -295,6 +295,27 @@ class CrucibleWiringTest {
         assertTrue(config.contains("putString(\"aspect\",aspect.getTag())"));
     }
 
+    @Test
+    @DisplayName("warp: counter cast, warden type and Death Gaze cone follow the original")
+    void warpParity() {
+        String events = java("arcaneresearch/common/lib/events/WarpEvents.java");
+        assertTrue(events.contains("WarpRules.nextCounter(warpCounter,gearWarp)"));
+        assertEqualsCount(events, "warpEffect(newMobEffectInstance(", 7);
+        assertTrue(events.contains("private static MobEffectInstance warpEffect(".replace(" ", "")));
+
+        String rules = java("arcaneresearch/common/lib/utils/WarpRules.java");
+        assertTrue(rules.contains("(int)(counter-Math.max(5.0,"));
+        assertTrue(rules.contains("effect.getCurativeItems().clear()"));
+        assertTrue(rules.contains("newItemStack(Items.BREAD)"));
+        assertTrue(rules.contains("newItemStack(ModItems.ZOMBIE_BRAIN.get())"));
+        assertTrue(events.contains("WarpVisionRules.isLyingInCone(target,apex,axis,0.75f)"));
+        assertTrue(events.contains("newClipContext(playerEyes,entity.getEyePosition()"));
+
+        String warden = java("arcaneresearch/common/entities/monster/boss/EntityEldritchWarden.java");
+        assertTrue(warden.contains("3+level().random.nextInt(3)"));
+        assertTrue(warden.contains("IPlayerWarp.EnumWarpType.TEMPORARY"));
+    }
+
     private static void assertEqualsCount(String source, String needle, int expected) {
         int count = 0;
         int index = 0;
