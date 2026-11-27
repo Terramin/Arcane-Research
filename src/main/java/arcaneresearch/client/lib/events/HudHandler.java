@@ -43,6 +43,9 @@ public class HudHandler {
     public static final Queue<KnowledgeGainTracker> knowledgeGainTrackers = new ConcurrentLinkedQueue<>();
     private static final ResourceLocation HUD_TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/base_hud.png");
+    // Standalone glass vial for the thaumometer HUD, preserved from the original Thaumcraft sheet.
+    private static final ResourceLocation THAUMOMETER_FLASK =
+            ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "textures/gui/thaumometer_flask.png");
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#######.#");
     private static final float MAX_VIS = 525.0f;
     private static final ResourceLocation BOOK =
@@ -321,7 +324,7 @@ public class HudHandler {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        graphics.blit(HUD_TEXTURE, 1, 1, 64, 0, 16, 80, 192, 128);
+        graphics.blit(THAUMOMETER_FLASK, 1, 1, 0, 0, 16, 80, 16, 80);
         graphics.blit(HUD_TEXTURE, 2, (int) (8 + (1 - base) * 64), 88, 84, 14, 5, 192, 128);
         graphics.pose().popPose();
         RenderSystem.disableBlend();
