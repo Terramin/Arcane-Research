@@ -317,6 +317,14 @@ public class EntityEvents {
         }
     }
 
+    /**
+     * EN: Applies player-side on-hit bonuses: the Sipping Fiend mask and the Life Leech effect.
+     * RU: Применяет бонусы игрока при попадании: маска «Пирующий дьявол» и эффект «Похищение жизни».
+     *
+     * @param player attacking player / атакующий игрок
+     * @param target entity being hurt / сущность, которой наносится урон
+     * @param damage final damage of the hit / итоговый урон удара
+     */
     private static void handlePlayerAttack(Player player, LivingEntity target, float damage) {
         ItemStack helm = player.getInventory().getArmor(3);
         if (!helm.isEmpty() && helm.getItem() instanceof ItemFortressArmor

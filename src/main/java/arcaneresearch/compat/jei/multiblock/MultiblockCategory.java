@@ -27,8 +27,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * EN: JEI recipe category for multiblock blueprints. Renders the structure as an
+ *     animated 3D preview with the required parts listed underneath.
+ * RU: Категория рецептов JEI для чертежей многоблочных структур. Рисует структуру
+ *     как анимированное 3D-превью со списком необходимых частей снизу.
+ */
 @net.minecraftforge.api.distmarker.OnlyIn(net.minecraftforge.api.distmarker.Dist.CLIENT)
 public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.BluePrint> {
+    /** EN: Legacy category id, kept for resource compatibility. RU: Старый id категории для совместимости ресурсов. */
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Arcaneresearch.MODID, "multiblock");
     private static final int WIDTH = 150;
     private static final int HEIGHT = 150;
@@ -37,41 +44,86 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
     private static final float ROT_X = 25.0f;
     private static final float ROT_Y = -45.0f;
     private static final int PARTS_Y = 124;
+
+    /** EN: Category icon (Salis Mundus). RU: Иконка категории (Salis Mundus). */
     private final IDrawable icon;
+    /** EN: Localized category title. RU: Локализованное название категории. */
     private final Component title;
+    /** EN: Recipe whose block access was cached last. RU: Рецепт, для которого последний раз создан доступ к блокам. */
     private ArcaneresearchApi.BluePrint currentRecipe;
+    /** EN: Cached 3D block access for the displayed blueprint. RU: Кэш доступа к блокам для отображаемого чертежа. */
     private BlueprintBlockAccess access;
 
+    /**
+     * EN: Creates the category, using Salis Mundus as its icon.
+     * RU: Создаёт категорию, используя Salis Mundus в качестве иконки.
+     *
+     * @param guiHelper JEI helper used to turn the icon item into a drawable / хелпер JEI для создания иконки
+     */
     public MultiblockCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.SALIS_MUNDUS.get()));
         this.title = Component.translatable("gui.arcaneresearch.multiblock");
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return the JEI recipe type for multiblock blueprints / тип рецептов JEI для чертежей
+     */
     @Override
     public @NotNull RecipeType<ArcaneresearchApi.BluePrint> getRecipeType() {
         return ArcaneresearchJEIPlugin.MULTIBLOCK_TYPE;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return localized category title / локализованное название категории
+     */
     @Override
     public @NotNull Component getTitle() {
         return title;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return category width in pixels / ширина категории в пикселях
+     */
     @Override
     public int getWidth() {
         return WIDTH;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return category height in pixels / высота категории в пикселях
+     */
     @Override
     public int getHeight() {
         return HEIGHT;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return category icon / иконка категории
+     */
     @Override
     public IDrawable getIcon() {
         return icon;
     }
 
+    /**
+     * EN: Adds the blueprint's ingredient list as input slots along the bottom and caches
+     *     the 3D block access for the recipe.
+     * RU: Добавляет ингредиенты чертежа как слоты ввода внизу и кэширует 3D-доступ к блокам.
+     *
+     * @param builder JEI recipe layout builder / построитель разметки рецепта JEI
+     * @param recipe  blueprint being displayed / отображаемый чертёж
+     * @param focuses JEI focus group / группа фокуса JEI
+     */
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, ArcaneresearchApi.BluePrint recipe, @NotNull IFocusGroup focuses) {
         this.currentRecipe = recipe;
@@ -94,19 +146,32 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
         }
     }
 
+    /**
+     * EN: Draws the animated 3D structure preview and the research badge.
+     *     Parts are re-read every frame because {@link #setRecipe} already assigned
+     *     {@code currentRecipe}/{@code access}; a cached local array would stay null
+     *     and the blueprint would never be drawn.
+     * RU: Рисует анимированное 3D-превью структуры и метку исследования. Части читаются
+     *     каждый кадр, потому что {@link #setRecipe} уже выставил {@code currentRecipe}/{@code access};
+     *     локальный кэш остался бы null и чертёж никогда не отрисовывался.
+     *
+     * @param recipe        blueprint being displayed / отображаемый чертёж
+     * @param recipeSlotsView JEI recipe slots / слоты рецепта JEI
+     * @param guiGraphics   rendering helper / помощник отрисовки
+     * @param mouseX        mouse X within the recipe GUI / координата X мыши
+     * @param mouseY        mouse Y within the recipe GUI / координата Y мыши
+     */
     @Override
     public void draw(ArcaneresearchApi.@NotNull BluePrint recipe, @NotNull IRecipeSlotsView recipeSlotsView,
                      @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if (recipe == null || guiGraphics == null) {
             return;
         }
-        Part[][][] currentParts = null;
+        Part[][][] parts = recipe.getParts();
         if (access == null || currentRecipe != recipe) {
             currentRecipe = recipe;
-            currentParts = recipe.getParts();
-            access = (currentParts == null) ? null : new BlueprintBlockAccess(currentParts);
+            access = (parts == null) ? null : new BlueprintBlockAccess(parts);
         }
-        Part[][][] parts = currentParts;
         if (access == null || parts == null) {
             JeiResearch.drawTopRight(guiGraphics, recipe.getResearch(), WIDTH);
             return;
@@ -178,6 +243,16 @@ public class MultiblockCategory implements IRecipeCategory<ArcaneresearchApi.Blu
         JeiResearch.drawTopRight(guiGraphics, recipe.getResearch(), WIDTH);
     }
 
+    /**
+     * EN: Adds the research requirement tooltip for the recipe.
+     * RU: Добавляет подсказку о требуемом исследовании для рецепта.
+     *
+     * @param tooltip        JEI tooltip builder / построитель подсказки JEI
+     * @param recipe         blueprint being displayed / отображаемый чертёж
+     * @param recipeSlotsView JEI recipe slots / слоты рецепта JEI
+     * @param mouseX         mouse X within the recipe GUI / координата X мыши
+     * @param mouseY         mouse Y within the recipe GUI / координата Y мыши
+     */
     @Override
     public void getTooltip(ITooltipBuilder tooltip, ArcaneresearchApi.BluePrint recipe, @NotNull IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         tooltip.addAll(JeiResearch.tooltip(recipe.getResearch(), mouseX, mouseY, WIDTH));

@@ -71,6 +71,11 @@ public final class LifestealManager {
      * RU: Применяет фиксированное лечение, минуя лимиты LifestealStats, предназначенные
      *     для зачарований. События LifestealEvent / LifestealAppliedEvent всё равно вызываются.
      *     Точное запрошенное количество передаётся в поле {@code amount} события.
+     *
+     * @param player healer / лечащийся игрок
+     * @param target damaged entity / сущность, получившая урон
+     * @param amount requested heal in health points / запрошенное лечение в очках здоровья
+     * @return true if health was actually restored / true, если здоровье действительно восстановлено
      */
     public static boolean applyFlatHeal(Player player, LivingEntity target, float amount) {
         if (amount <= 0.0F || player == target) {

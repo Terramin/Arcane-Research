@@ -27,8 +27,12 @@ public final class LifestealSimulationTest {
     }
 
     /**
-     * Verifies that hurting a mob while affected actually heals the player, with the
-     * amount coming from the effect level rather than the 5 HP enchantment cap.
+     * EN: Verifies that hurting a mob while affected actually heals the player, with the
+     *     amount coming from the effect level rather than the 5 HP enchantment cap.
+     * RU: Проверяет, что урон по мобу с эффектом действительно лечит игрока, а количество
+     *     лечения зависит от уровня эффекта, а не от лимита зачарований в 5 HP.
+     *
+     * @param helper game-test helper / помощник игрового теста
      */
     @GameTest(template = "default_3x3x3", timeoutTicks = 200)
     @PrefixGameTestTemplate(false)
